@@ -1,0 +1,59 @@
+<div class="content-wrap cndn-wrap">
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    TVS GIGO SMS
+                </div>
+                <div class="panel-body">
+                    <ol class="breadcrumb">
+                        <li class="active">
+                            Menus
+                        </li>
+                    </ol>
+                    <div class="well well-sm">
+                        Hi, {{user.name}}<br>
+                        <span ng-if="user.employee.designation">
+                            {{user.employee.designation.name}}<br>
+                        </span>
+                        <a href=".#!/gigo-pkg/mobile/profile">
+                            View Profile
+                        </a>
+                    </div>
+                    <div class="list-group">
+                        <a href=".#!/gigo-pkg/mobile/dashboard" class="list-group-item">
+                            Dashboard
+                        </a>
+                        <a href=".#!/gigo-pkg/mobile/kanban-dashboard" class="list-group-item">
+                            KANBAN App
+                        </a>
+                        <a href="#" class="list-group-item">
+                            Vehicle Gate In
+                        </a>
+                        <a href="#" class="list-group-item">
+                            Vehicle Gate Out
+                        </a>
+                        <a href="#" class="list-group-item">
+                            Inward Vehicle
+                        </a>
+                        <a href="#" class="list-group-item">
+                            Job Cards
+                        </a>
+                        <a href="#" class="list-group-item">
+                            Material Gate Passes
+                        </a>
+                        <a href="#" class="list-group-item">
+                            View Profile
+                        </a>
+                        <a href="#" class="list-group-item">
+                            Change Password
+                        </a>
+                        <a href="javascript:;" class="list-group-item" ng-click="logout()">
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- Content Wrap -->
