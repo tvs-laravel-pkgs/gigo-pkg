@@ -4,6 +4,11 @@ app.component('mobileLogin', {
         $scope.loading = true;
         var self = this;
 
+        if (HelperService.isLoggedIn()) {
+            $location.path('/gigo-pkg/mobile/dashboard');
+            return;
+        }
+
         var form_id = '#form';
         var v = jQuery(form_id).validate({
             ignore: '',
@@ -61,6 +66,10 @@ app.component('mobileDashboard', {
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $cookies) {
         $scope.loading = true;
         var self = this;
+        if (!HelperService.isLoggedIn()) {
+            $location.path('/gigo-pkg/mobile/login');
+            return;
+        }
         $rootScope.loading = false;
     }
 });
@@ -70,13 +79,15 @@ app.component('mobileMenus', {
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $cookies) {
         $scope.loading = true;
         var self = this;
-        HelperService.isLoggedIn();
+        if (!HelperService.isLoggedIn()) {
+            $location.path('/gigo-pkg/mobile/login');
+            return;
+        }
         $scope.user = angular.fromJson($cookies.get('user'));
 
         $scope.logout = function() {
             $cookies.remove('user');
             $location.path('/gigo-pkg/mobile/login');
-            // $scope.$apply();
         }
         $rootScope.loading = false;
     }
@@ -88,6 +99,10 @@ app.component('mobileKanbanDashboard', {
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $cookies) {
         $scope.loading = true;
         var self = this;
+        if (!HelperService.isLoggedIn()) {
+            $location.path('/gigo-pkg/mobile/login');
+            return;
+        }
         $scope.user = angular.fromJson($cookies.get('user'));
         $rootScope.loading = false;
     }
@@ -101,6 +116,10 @@ app.component('mobileAttendanceScanQr', {
         $scope.user = angular.fromJson($cookies.get('user'));
         $rootScope.loading = false;
 
+        if (!HelperService.isLoggedIn()) {
+            $location.path('/gigo-pkg/mobile/login');
+            return;
+        }
 
         var form_id = '#form';
         var v = jQuery(form_id).validate({
