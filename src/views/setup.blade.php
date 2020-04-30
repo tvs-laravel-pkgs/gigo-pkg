@@ -30,6 +30,24 @@
 	        title: 'Mobile Dashboard',
 	    }).
 
+	     //Repair Order Types
+	    when('/gigo-pkg/repair-order-type/list', {
+	        template: '<repair-order-type-list></repair-order-type-list>',
+	        title: 'Repair Order Type',
+	    }).
+	    when('/gigo-pkg/repair-order-type/add', {
+	        template: '<repair-order-type-add></repair-order-type-add>',
+	        title: 'Add Repair Order Type',
+	    }).
+	    when('/gigo-pkg/repair-order-type/edit/:id', {
+	        template: '<repair-order-type-add></repair-order-type-add>',
+	        title: 'Edit Repair Order Type',
+	    }).
+	    when('/gigo-pkg/repair-order-type/view/:id', {
+	        template: '<repair-order-type-view></repair-order-type-view>',
+	        title: 'View Repair Order Type',
+	    }).
+
 	    //Job Cards
 	    when('/gigo-pkg/job-card/list', {
 	        template: '<job-card-list></job-card-list>',
@@ -47,6 +65,9 @@
 	        template: '<job-card-view></job-card-view>',
 	        title: 'View Job Card',
 	    });
+
+	   
+
 	}]);
 
     var mobile_login_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/login.html')}}";
@@ -60,6 +81,12 @@
     var job_card_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/form.html')}}";
     var job_card_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/view.html')}}";
 
+    //Repair Order Types
+    var repair_order_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/list.html')}}";
+    var repair_order_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/form.html')}}";
+    var repair_order_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/view.html')}}";
+
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
