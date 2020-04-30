@@ -3,7 +3,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Repair Order Type(<span id="table_infos"></span>)</h1>
+                    <h1 class="title type-2">Repair Order Types(<span id="table_infos"></span>)</h1>
                     <!-- <p class="subtitle">Masters / JV Masters / Job Cards</p> -->
                 </div><!-- Page Header Content -->
                 <div class="page-header-content search-block">
@@ -15,7 +15,7 @@
                     </div><!-- Search Filter -->
                 </div>
                 <div class="page-header-content button-block">
-                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#job-card-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#repair-order-type-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
@@ -41,7 +41,7 @@
                         <thead>
                             <tr>
                                 <th class="action">Actions</th>
-                                <th>Code</th>
+                                <th>Short Name</th>
                                 <th>Name</th>
                             </tr>
                         </thead>
@@ -52,26 +52,26 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Filter Modal -->
-<div class="modal fade filter" id="job-card-filter-modal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade filter" id="repair-order-type-filter-modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title" id="myModalLabel">Job Card Filter</h5>
+                <h5 class="modal-title" id="myModalLabel">Repair Order Types</h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Code</label>
-                                <input type="text" class="form-control" id="code" name="code" placeholder="Enter Repair Order Code" autocomplete="off">
+                                <label>Short Name</label>
+                                <input type="text" class="form-control" id="short_name" name="short_name" placeholder="Enter Repair Order Short Name" autocomplete="off">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Name</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Short Name" autocomplete="off">
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Repair Order Name" autocomplete="off">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">

@@ -1,5 +1,5 @@
 app.component('repairOrderTypeList', {
-    templateUrl: repair_order_list_template_url,
+    templateUrl: repair_order_type_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
         $('#repair_order_type_table').focus();
@@ -47,16 +47,16 @@ app.component('repairOrderTypeList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
+                    d.short_name = $('#short_name').val();
                     d.name = $('#name').val();
-                    d.code = $('#code').val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'name', name: 'repair_order_type.name' },
-                { data: 'code', name: 'repair_order_type.code' },
+                { data: 'short_name', name: 'repair_order_types.short_name' },
+                { data: 'name', name: 'repair_order_types.name' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -106,7 +106,6 @@ app.component('repairOrderTypeList', {
         $http.get(
             laravel_routes['getRepairOrderFilter']
         ).then(function(response) {
-            console.log(response);
             self.extras = response.data.extras;
         });
         $element.find('input').on('keydown', function(ev) {
@@ -127,7 +126,7 @@ app.component('repairOrderTypeList', {
         $('#name').on('keyup', function() {
             dataTables.fnFilter();
         });
-        $('#code').on('keyup', function() {
+        $('#short_name').on('keyup', function() {
             dataTables.fnFilter();
         });
         $scope.onSelectedStatus = function(id) {
@@ -136,7 +135,7 @@ app.component('repairOrderTypeList', {
         }
         $scope.reset_filter = function() {
             $("#name").val('');
-            $("#code").val('');
+            $("#short_name").val('');
             $("#status").val('');
             dataTables.fnFilter();
         }
@@ -147,11 +146,11 @@ app.component('repairOrderTypeList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 app.component('repairOrderTypeForm', {
-    templateUrl: repair_order_form_template_url,
+    templateUrl: repair_order_type_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-repair-order-types') || !self.hasPermission('edit-repair-order-types')) {
+        if (!self.hasPermission('add-repair-order-type') || !self.hasPermission('edit-repair-order-type')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
@@ -178,11 +177,11 @@ app.component('repairOrderTypeForm', {
         });
 
         //Save Form Data 
-        var form_id = '#repair_order';
+        var form_id = '#repair_order_type';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'code': {
+                'short_name': {
                     required: true,
                     minlength: 2,
                     maxlength: 24,
@@ -194,7 +193,7 @@ app.component('repairOrderTypeForm', {
                 },
             },
             messages: {
-                'code': {
+                'short_name': {
                     minlength: 'Minimum 2 Characters',
                     maxlength: 'Maximum 24 Characters',
                 },
@@ -247,14 +246,14 @@ app.component('repairOrderTypeForm', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 app.component('repairOrderTypeView', {
-    templateUrl: repair_order_view_template_url,
+    templateUrl: repair_order_type_view_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
-        /*if (self.hasPermission('view-job-card')) {
+        if (self.hasPermission('view-repair-order-type')) {
             window.location = "#!/page-permission-denied";
             return false;
-        }*/
+        }
         self.angular_routes = angular_routes;
         $http.get(
             laravel_routes['getRepairOrderTypeView'], {
@@ -263,9 +262,7 @@ app.component('repairOrderTypeView', {
                 }
             }
         ).then(function(response) {
-            console.log(response);
-            self.job_card = response.data.job_card;
-            self.jv_fields = response.data.jv_fields;
+            self.repair_order_type_view = response.data.repair_order_type_view;
             self.action = response.data.action;
         });
     }

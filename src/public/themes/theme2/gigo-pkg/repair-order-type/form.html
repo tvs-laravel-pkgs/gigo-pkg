@@ -24,8 +24,8 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
-        <form id="repair_order" autocomplete="off">
-            <input type="hidden" name="id" value="{{$ctrl.job_card.id}}">
+        <form id="repair_order_type" autocomplete="off">
+            <input type="hidden" name="id" value="{{$ctrl.repair_order_type.id}}">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
                     <div class="tab-form-header">
@@ -51,10 +51,10 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Code
+                                                    Short Name
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.code" name="code" placeholder="Enter Repair Order Code" autofocus />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order_type.short_name" name="short_name" placeholder="Enter Repair Short Name" autofocus />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -63,7 +63,7 @@
                                                     Name
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.name" name="name" placeholder="Enter Repair Order Name" />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order_type.name" name="name" placeholder="Enter Repair Order Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">

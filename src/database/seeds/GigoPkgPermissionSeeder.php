@@ -138,38 +138,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'my-job-cards',
 				'display_name' => 'My Job Cards',
 			],
-
-			//Repair Order
-			[
-				'display_order' => 99,
-				'parent' => null,
-				'name' => 'repair-order-types',
-				'display_name' => 'Repair Order Type',
-			],
-			[
-				'display_order' => 1,
-				'parent' => 'repair-order-types',
-				'name' => 'add-repair-order-type',
-				'display_name' => 'Add',
-			],
-			[
-				'display_order' => 2,
-				'parent' => 'repair-order-types',
-				'name' => 'edit-repair-order-type',
-				'display_name' => 'Edit',
-			],
-			[
-				'display_order' => 3,
-				'parent' => 'repair-order-types',
-				'name' => 'view-repair-order-type',
-				'display_name' => 'View',
-			],
-			[
-				'display_order' => 4,
-				'parent' => 'repair-order-types',
-				'name' => 'delete-repair-order-type',
-				'display_name' => 'Delete',
-			],
+			
 		];
 		Permission::createFromArrays($permissions);
 	}

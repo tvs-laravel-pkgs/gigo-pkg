@@ -3,8 +3,7 @@
 namespace Abs\GigoPkg;
 use Abs\ApprovalPkg\ApprovalType;
 use Abs\ApprovalPkg\EntityStatus;
-use Abs\GigoPkg\JobCard;
-use App\ActivityLog;
+use Abs\GigoPkg\RepairOrderType;
 use App\Config;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -33,38 +32,33 @@ class RepairOrderTypeController extends Controller {
 	}
 
 	public function getRepairOrderTypeList(Request $request) {
-		dd('ff');
 		$repair_order_type = RepairOrderType::withTrashed()
 			->select([
-				'repair_order_type.id',
-				'repair_order_type.name',
-				'repair_order_type.code',
+				'repair_order_types.id',
+				'repair_order_types.short_name',
+				'repair_order_types.name',
 			])
 			->where(function ($query) use ($request) {
-				if (!empty($request->name)) {
-					$query->where('repair_order_type.name', 'LIKE', '%' . $request->name . '%');
+				if (!empty($request->short_name)) {
+					$query->where('repair_order_types.short_name', 'LIKE', '%' . $request->short_name . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
-				if (!empty($request->code)) {
-					$query->where('repair_order_type.code', 'LIKE', '%' . $request->code . '%');
+				if (!empty($request->name)) {
+					$query->where('repair_order_types.name', 'LIKE', '%' . $request->name . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
 				if ($request->status == '1') {
-					$query->whereNull('repair_order_type.deleted_at');
+					$query->whereNull('repair_order_types.deleted_at');
 				} else if ($request->status == '0') {
-					$query->whereNotNull('repair_order_type.deleted_at');
+					$query->whereNotNull('repair_order_types.deleted_at');
 				}
 			})
-			->where('repair_order_type.company_id', Auth::user()->company_id)
+			->where('repair_order_types.company_id', Auth::user()->company_id)
 		;
 
 		return Datatables::of($repair_order_type)
-			->addColumn('name', function ($repair_order_type) {
-				$status = $repair_order_type->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $repair_order_type->name;
-			})
 			->addColumn('action', function ($repair_order_type) {
 				$img_edit = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
 				$img_edit_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
@@ -76,9 +70,9 @@ class RepairOrderTypeController extends Controller {
 				if (Entrust::can('edit-repair-order-type')) {
 					$output .= '<a href="#!/gigo-pkg/repair-order-type/edit/' . $repair_order_type->id . '" id = "" title="Edit"><img src="' . $img_edit . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img_edit_active . '" onmouseout=this.src="' . $img_edit . '"></a>';
 				}
-				if (Entrust::can('view-repair-order-type')) {
+				/*if (Entrust::can('view-repair-order-type')) {
 					$output .= '<a href="#!/gigo-pkg/repair-order-type/view/' . $repair_order_type->id . '" id = "" title="View"><img src="' . $img_view . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img_view_active . '" onmouseout=this.src="' . $img_view . '"></a>';
-				}
+				}*/
 				if (Entrust::can('delete-repair-order-type')) {
 					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_repair_order_type" onclick="angular.element(this).scope().deleteRepairOrderType(' . $repair_order_type->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete_active . '" onmouseout=this.src="' . $img_delete . '"></a>
 					';
@@ -104,32 +98,35 @@ class RepairOrderTypeController extends Controller {
 
 	public function getRepairOrderTypeView(Request $request) {
 		$id = $request->id;
-		$this->data['repair_order_type'] = $repair_order_type = RepairOrderType::withTrashed()->find($id);
+		$this->data['repair_order_type_view'] = $repair_order_type = RepairOrderType::withTrashed()->find($id);
 		$this->data['action'] = 'View';
 		return response()->json($this->data);
 	}
 
 	public function saveRepairOrder(Request $request) {
-		dd($request->all());
 		try {
 			$error_messages = [
-				'code.required' => 'Code is Required',
-				'code.min' => 'Code is Minimum 3 Charachers',
-				'code.max' => 'Code is Maximum 24 Charachers',
+				'short_name.required' => 'Short Name is Required',
+				'short_name.unique' => 'Short Name is already taken',
+				'short_name.min' => 'Short Name is Minimum 3 Charachers',
+				'short_name.max' => 'Short Name is Maximum 24 Charachers',
 				'name.required' => 'Name is Required',
+				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 64 Charachers',
 			];
 			$validator = Validator::make($request->all(), [
+				'short_name' => [
+					'required:true',
+					'min:2',
+					'max:24',
+					'unique:repair_order_types,short_name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				],
 				'name' => [
 					'required:true',
 					'min:3',
 					'max:64',
-				],
-				'code' => [
-					'required:true',
-					'min:2',
-					'max:24',
+					'unique:repair_order_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 			], $error_messages);
 			if ($validator->fails()) {

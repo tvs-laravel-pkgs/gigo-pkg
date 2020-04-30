@@ -12,7 +12,7 @@
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>{{$ctrl.action}} Repair Order Type</b></h1>
                     <p class="subtitle">
-                        Masters / JV Masters /
+                        Masters / Services /
                         <a href="#!/gigo-pkg/repair-order-type/list">
                             Repair Order Type
                         </a> /
@@ -50,16 +50,16 @@
                                     <div class="row">
                                         <ul class="grid-row">
                                             <li class="grid-col-3">
-                                                <span class="grid-col-label">Code</span>
-                                                <span class="grid-col-value">{{$ctrl.job_card.name}}</span>
+                                                <span class="grid-col-label">Short Name</span>
+                                                <span class="grid-col-value">{{$ctrl.repair_order_type_view.short_name}}</span>
                                             </li>
                                             <li class="grid-col-3">
                                                 <span class="grid-col-label">Name</span>
-                                                <span class="grid-col-value">{{$ctrl.job_card.short_name}}</span>
+                                                <span class="grid-col-value">{{$ctrl.repair_order_type_view.name}}</span>
                                             </li>
                                             <li class="grid-col-3">
                                                 <span class="grid-col-label">Active Status</span>
-                                                <span class="grid-col-value {{$ctrl.job_card.deleted_at ==NULL ? 'color-green' : 'color-red'}}">{{$ctrl.job_card.deleted_at ? 'Inactive': 'Active'}}</span>
+                                                <span class="grid-col-value {{$ctrl.job_card.deleted_at ==NULL ? 'color-green' : 'color-red'}}">{{$ctrl.repair_order_type_view.deleted_at ? 'Inactive': 'Active'}}</span>
                                             </li>
                                         </ul>
                                     </div><!-- Row -->
