@@ -19,6 +19,70 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Mobile Simulation',
 			],
 
+			//Repair Order Types
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'repair-order-types',
+				'display_name' => 'Repair Order Types',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'repair-order-types',
+				'name' => 'add-repair-order-type',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'repair-order-types',
+				'name' => 'edit-repair-order-type',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'repair-order-types',
+				'name' => 'view-repair-order-type',
+				'display_name' => 'View',
+			],
+			[
+				'display_order' => 4,
+				'parent' => 'repair-order-types',
+				'name' => 'delete-repair-order-type',
+				'display_name' => 'Delete',
+			],
+
+			//Repair Orders
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'repair-orders',
+				'display_name' => 'Repair Orders',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'repair-orders',
+				'name' => 'add-repair-order',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'repair-orders',
+				'name' => 'edit-repair-order',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'repair-orders',
+				'name' => 'view-repair-order',
+				'display_name' => 'View',
+			],
+			[
+				'display_order' => 4,
+				'parent' => 'repair-orders',
+				'name' => 'delete-repair-order',
+				'display_name' => 'Delete',
+			],
+
 			//Job Cards
 			[
 				'display_order' => 99,
