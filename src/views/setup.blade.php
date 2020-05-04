@@ -48,6 +48,25 @@
 	        title: 'View Repair Order Type',
 	    }).
 
+
+	    //Repair Order 
+	    when('/gigo-pkg/repair-order/list', {
+	        template: '<repair-order-list></repair-order-list>',
+	        title: 'Repair Order',
+	    }).
+	    when('/gigo-pkg/repair-order/add', {
+	        template: '<repair-order-form></repair-order-form>',
+	        title: 'Add Repair Order',
+	    }).
+	    when('/gigo-pkg/repair-order/edit/:id', {
+	        template: '<repair-order-form></repair-order-form>',
+	        title: 'Edit Repair Order',
+	    }).
+	    when('/gigo-pkg/repair-order/view/:id', {
+	        template: '<repair-order-view></repair-order-view>',
+	        title: 'View Repair Order',
+	    }).
+
 	    //Job Cards
 	    when('/gigo-pkg/job-card/list', {
 	        template: '<job-card-list></job-card-list>',
@@ -64,9 +83,21 @@
 	    when('/gigo-pkg/job-card/view/:id', {
 	        template: '<job-card-view></job-card-view>',
 	        title: 'View Job Card',
-	    });
+	    }).
 
-	   
+	    //SHIFTS
+	    when('/gigo-pkg/shift/list', {
+	        template: '<shift-list></shift-list>',
+	        title: 'Shifts',
+	    }).
+	    when('/gigo-pkg/shift/add', {
+	        template: '<shift-form></shift-form>',
+	        title: 'Add Shift',
+	    }).
+	    when('/gigo-pkg/shift/edit/:id', {
+	        template: '<shift-form></shift-form>',
+	        title: 'Edit Shift',
+	    });	   
 
 	}]);
 
@@ -77,8 +108,8 @@
     var mobile_attendance_scan_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/attendance/scan-qr.html')}}";
 
 	//Repair Orders
-    /*var repair_order_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/list.html')}}";
-    var repair_order_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/form.html')}}";*/
+    var repair_order_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/list.html')}}";
+    var repair_order_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/form.html')}}";
 
 	//Job Cards
     var job_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/list.html')}}";
@@ -90,9 +121,14 @@
     var repair_order_type_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/form.html')}}";
     var repair_order_type_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/view.html')}}";
 
+    //SHIFTS
+    var shift_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/shift/list.html')}}";
+    var shift_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/shift/form.html')}}";
+
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
-<!-- <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/controller.js')}}"></script> -->
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/shift/controller.js')}}"></script>
 

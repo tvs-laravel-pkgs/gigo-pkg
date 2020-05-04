@@ -5,16 +5,16 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/job-card/list" type="button" class="btn-back btn-img">
+                    <a href="#!/gigo-pkg/repair-order/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Job Card</b></h1>
+                    <h1 class="title"><b>{{$ctrl.action}} Repair Order</b></h1>
                     <p class="subtitle">
-                        Masters / JV Masters /
-                        <a href="#!/gigo-pkg/job-card/list">
-                            Job Cards
+                        Masters /
+                        <a href="#!/gigo-pkg/repair-order/list">
+                            Repair Order
                         </a> /
                         {{$ctrl.action}}
                     </p>
@@ -24,8 +24,8 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
-        <form id="form" autocomplete="off">
-            <input type="hidden" name="id" value="{{$ctrl.job_card.id}}">
+        <form id="repair_order" autocomplete="off">
+            <input type="hidden" name="id" value="{{$ctrl.repair_order.id}}">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
                     <div class="tab-form-header">
@@ -38,11 +38,6 @@
                                             General Info
                                         </a>
                                     </li>
-                                    <li>
-                                        <a data-target="#field-configuration" data-toggle="tab" aria-expanded="true" class="filter">
-                                            Field Configuration
-                                        </a>
-                                    </li>
                                 </ul>
                             </div><!-- Filters -->
                         </div><!-- Tab Header -->
@@ -53,64 +48,91 @@
                             <div class="tab-pane fade in active" id="general-information" data-animation="fadeInUp" data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
-                                        <div class="col-md-3">
+                                         <div class="col-md-3">
                                             <div class="input-text form-group">
-                                                <label>
-                                                    Job Card Name
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.job_card.name" name="name" placeholder="Enter Job Card Name" autofocus />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Jv Type Short Name
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.job_card.short_name" name="short_name" placeholder="Enter Jv Type Short Name" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>Verification Flow <sup class="mandatory">*</sup></label>
-                                                <md-select ng-model="$ctrl.job_card.approval_type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Verification Flow">
+                                                <label>Type<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.repair_order.type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Repair Order Type">
                                                     <md-select-header class="demo-select-header">
                                                         <input ng-model="searchTerm" type="search" placeholder="Search for a Verification Flow" class="demo-header-searchbox md-text">
                                                     </md-select-header>
                                                     <md-optgroup>
-                                                        <md-option ng-value="approval_type.id" ng-repeat="approval_type in $ctrl.extras.approval_type_list | filter:searchTerm">{{approval_type.name}}</md-option>
+                                                        <md-option ng-value="repair_order_type.id" ng-repeat="repair_order_type in $ctrl.repair_order_type | filter:searchTerm">{{repair_order_type.short_name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
-                                                <input type="hidden" class="form-control required" name="approval_type_id" id="approval_type_id" value="{{$ctrl.job_card.approval_type_id}}">
+                                                <input type="hidden" class="form-control required" name="type_id" id="type_id" value="{{$ctrl.repair_order.type_id}}">
                                             </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
-                                                <label>Initial Status <sup class="mandatory">*</sup></label>
-                                                <md-select ng-model="$ctrl.job_card.initial_status_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Initial Status">
+                                                <label>
+                                                    DBM Code
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.code" name="code" placeholder="Enter DBM Code" autofocus />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    DMS Code
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.alt_code" name="alt_code" placeholder="Enter DMS Code" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Name
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.name" name="name" placeholder="Enter Repair Order Name" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Skill Level<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.repair_order.skill_level_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Skil Level">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm1" type="search" placeholder="Search for a Initial Status" class="demo-header-searchbox md-text">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Verification Flow" class="demo-header-searchbox md-text">
                                                     </md-select-header>
                                                     <md-optgroup>
-                                                        <md-option ng-value="approval_type_status.id" ng-repeat="approval_type_status in $ctrl.extras.status_list | filter:searchTerm1">{{approval_type_status.name}}</md-option>
+                                                        <md-option ng-value="skill_level.id" ng-repeat="skill_level in $ctrl.skill_level | filter:searchTerm">{{skill_level.name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
-                                                <input type="hidden" class="form-control required" name="initial_status_id" id="initial_status_id" value="{{$ctrl.job_card.initial_status_id}}">
+                                                <input type="hidden" class="form-control required" name="skill_level_id" id="skill_level_id" value="{{$ctrl.repair_order.skill_level_id}}">
                                             </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
-                                                <label>Final Approved Status <sup class="mandatory">*</sup></label>
-                                                <md-select ng-model="$ctrl.job_card.final_approved_status_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Final Approved Status">
+                                                <label>
+                                                    Hours
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.hours" name="hours" placeholder="Enter Repair Order Hours" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                         <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Amount
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.amount" name="amount" placeholder="Enter Repair Order Amount" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                         <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Tax Code<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.repair_order.tax_code_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Tax Code">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm2" type="search" placeholder="Search for a Final Approved Status" class="demo-header-searchbox md-text">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Verification Flow" class="demo-header-searchbox md-text">
                                                     </md-select-header>
                                                     <md-optgroup>
-                                                        <md-option ng-value="approval_type_status.id" ng-repeat="approval_type_status in $ctrl.extras.status_list | filter:searchTerm2">{{approval_type_status.name}}</md-option>
+                                                        <md-option ng-value="tax_code.id" ng-repeat="tax_code in $ctrl.tax_code | filter:searchTerm">{{tax_code.code}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
-                                                <input type="hidden" class="form-control required" name="final_approved_status_id" id="final_approved_status_id" value="{{$ctrl.job_card.final_approved_status_id}}">
+                                                <input type="hidden" class="form-control required" name="tax_code_id" id="tax_code_id" value="{{$ctrl.repair_order.tax_code_id}}">
                                             </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -127,162 +149,17 @@
                                                 </div>
                                             </div><!-- Form Group -->
                                         </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a class="btn btn-secondary btn-nxt my-tooltip" ng-shortcut="'meta+shift+down'" ng-shortcut-click data-title="ctrl+shift+down">
-                                                        Next
-                                                    </a>
-                                                    <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">
-                                                        Submit
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
-                            <div class="tab-pane fade" id="field-configuration" data-animation="fadeInUp" data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-lg-8 col-md-10">
-                                            <div class="table-responsive">
-                                                <table class="table table-form">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="width-280">Title</th>
-                                                            <!-- <th class="width-120">Is Open</th> -->
-                                                            <th class="width-120">Is Editable</th>
-                                                            <th class="width-230">Value</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>
-                                                                <input type="hidden" name="jv_fields[0][field_id]" value="1420">
-                                                                Journal Name
-                                                            </td>
-                                                            <!-- <td>
-                                                                <div class="tab-switch">
-                                                                    <md-switch ng-model="$ctrl.jv_fields[0].is_open" aria-label="Switch 1" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-sm type-2" ng-change="onChangedIsOpen($ctrl.jv_fields[0].is_open,0);$ctrl.jv_fields[0].value='';$ctrl.jv_fields[0].is_editable='Yes';">
-                                                                        {{ $ctrl.jv_fields[0].is_open }}
-                                                                    </md-switch>
-                                                                    <input type="hidden" name="jv_fields[0][is_open]" value="{{$ctrl.jv_fields[0].is_open}}">
-                                                                </div>
-                                                            </td> -->
-                                                            <td>
-                                                                <!-- <div class="tab-switch" ng-if="$ctrl.IsOpenYes0"> -->
-                                                                <div class="tab-switch">
-                                                                    <md-switch ng-model="$ctrl.jv_fields[0].is_editable" aria-label="Switch 1" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-sm type-2" ng-change="onChangedIsEditable($ctrl.jv_fields[0].is_editable,0);$ctrl.jv_fields[0].value='';">
-                                                                        {{ $ctrl.jv_fields[0].is_editable }}
-                                                                    </md-switch>
-                                                                    <input type="hidden" name="jv_fields[0][is_editable]" value="{{$ctrl.jv_fields[0].is_editable}}">
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <!-- <md-select class="type-sm" ng-model="$ctrl.jv_fields[0].value" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Journal" ng-if="$ctrl.IsOpenYes0 && $ctrl.isEditableYes0"> -->
-                                                                <md-select class="type-sm" ng-model="$ctrl.jv_fields[0].value" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Journal" ng-if="$ctrl.isEditableYes0">
-                                                                    <md-select-header class="demo-select-header">
-                                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Journal" class="demo-header-searchbox md-text">
-                                                                    </md-select-header>
-                                                                    <md-optgroup>
-                                                                        <md-option ng-value="journal.id" ng-repeat="journal in $ctrl.extras.journal_list | filter:searchTerm">{{journal.name}}</md-option>
-                                                                    </md-optgroup>
-                                                                </md-select>
-                                                                <input type="hidden" class="form-control type-sm" name="jv_fields[0][value]" id="value0" value="{{$ctrl.jv_fields[0].value}}">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <input type="hidden" name="jv_fields[1][field_id]" value="1421">
-                                                                From Account
-                                                            </td>
-                                                            <!-- <td>
-                                                                <div class="tab-switch">
-                                                                    <md-switch ng-model="$ctrl.jv_fields[1].is_open" aria-label="Switch 2" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-sm type-2" ng-change="onChangedIsOpen($ctrl.jv_fields[1].is_open,1);$ctrl.jv_fields[1].value='';$ctrl.jv_fields[1].is_editable='Yes';">
-                                                                        {{ $ctrl.jv_fields[1].is_open }}
-                                                                    </md-switch>
-                                                                    <input type="hidden" name="jv_fields[1][is_open]" value="{{$ctrl.jv_fields[1].is_open}}">
-                                                                </div>
-                                                            </td> -->
-                                                            <td>
-                                                                <!-- <div class="tab-switch" ng-if="$ctrl.IsOpenYes1"> -->
-                                                                <div class="tab-switch">
-                                                                    <md-switch ng-model="$ctrl.jv_fields[1].is_editable" aria-label="Switch 1" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-sm type-2" ng-change="onChangedIsEditable($ctrl.jv_fields[1].is_editable,1);$ctrl.jv_fields[1].value='';">
-                                                                        {{ $ctrl.jv_fields[1].is_editable }}
-                                                                    </md-switch>
-                                                                    <input type="hidden" name="jv_fields[1][is_editable]" value="{{$ctrl.jv_fields[1].is_editable}}">
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <!-- <md-select class="type-sm" ng-model="$ctrl.jv_fields[1].value" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select From Account" ng-if="$ctrl.IsOpenYes1 && $ctrl.isEditableYes1"> -->
-                                                                <md-select class="type-sm" ng-model="$ctrl.jv_fields[1].value" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select From Account" ng-if="$ctrl.isEditableYes1">
-                                                                    <md-select-header class="demo-select-header">
-                                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
-                                                                    </md-select-header>
-                                                                    <md-optgroup>
-                                                                        <md-option ng-value="account.id" ng-repeat="account in $ctrl.extras.jv_account_type_list | filter:searchTerm">{{account.name}}</md-option>
-                                                                    </md-optgroup>
-                                                                </md-select>
-                                                                <input type="hidden" class="form-control type-sm" name="jv_fields[1][value]" id="value1" value="{{$ctrl.jv_fields[1].value}}">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <input type="hidden" name="jv_fields[2][field_id]" value="1422">
-                                                                To Account
-                                                            </td>
-                                                            <!-- <td>
-                                                                <div class="tab-switch">
-                                                                    <md-switch ng-model="$ctrl.jv_fields[2].is_open" aria-label="Switch 1" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-sm type-2" ng-change="onChangedIsOpen($ctrl.jv_fields[2].is_open,2);$ctrl.jv_fields[2].value='';$ctrl.jv_fields[2].is_editable='Yes';">
-                                                                        {{ $ctrl.jv_fields[2].is_open }}
-                                                                    </md-switch>
-                                                                    <input type="hidden" name="jv_fields[2][is_open]" value="{{$ctrl.jv_fields[2].is_open}}">
-                                                                </div>
-                                                            </td> -->
-                                                            <td>
-                                                                <!-- <div class="tab-switch" ng-if="$ctrl.IsOpenYes2"> -->
-                                                                <div class="tab-switch">
-                                                                    <md-switch ng-model="$ctrl.jv_fields[2].is_editable" aria-label="Switch 1" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-sm type-2" ng-change="onChangedIsEditable($ctrl.jv_fields[2].is_editable,2);$ctrl.jv_fields[2].value='';">
-                                                                        {{ $ctrl.jv_fields[2].is_editable }}
-                                                                    </md-switch>
-                                                                    <input type="hidden" name="jv_fields[2][is_editable]" value="{{$ctrl.jv_fields[2].is_editable}}">
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <!-- <md-select class="type-sm" ng-model="$ctrl.jv_fields[2].value" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select To Account" ng-if="$ctrl.IsOpenYes2 && $ctrl.isEditableYes2"> -->
-                                                                <md-select class="type-sm" ng-model="$ctrl.jv_fields[2].value" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select To Account" ng-if="$ctrl.isEditableYes2">
-                                                                    <md-select-header class="demo-select-header">
-                                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a To Account" class="demo-header-searchbox md-text">
-                                                                    </md-select-header>
-                                                                    <md-optgroup>
-                                                                        <md-option ng-value="account.id" ng-repeat="account in $ctrl.extras.jv_account_type_list | filter:searchTerm">{{account.name}}</md-option>
-                                                                    </md-optgroup>
-                                                                </md-select>
-                                                                <input type="hidden" class="form-control type-sm" name="jv_fields[2][value]" id="value2" value="{{$ctrl.jv_fields[2].value}}">
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                    <tfoot>
-                                                        <tr>
-                                                            <td colspan="4">
-                                                            </td>
-                                                        </tr>
-                                                    </tfoot>
-                                                </table>
-                                            </div><!-- Table Responsive -->
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
+                            <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <a class="btn btn-secondary btn-prev my-tooltip" ng-shortcut="'meta+shift+up'" ng-shortcut-click data-title="ctrl+shift+up">Previous</a>
+                                                    <a href="#!/gigo-pkg/repair-order/list"class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
                                                     <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
                         </div><!-- Tab Content -->
                     </div><!-- Tab Form Body -->
                 </div><!-- Tab Form Wrap -->

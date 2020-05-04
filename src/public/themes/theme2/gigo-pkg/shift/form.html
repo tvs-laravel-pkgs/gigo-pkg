@@ -5,18 +5,18 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/repair-order-type/list" type="button" class="btn-back btn-img">
+                    <a href="#!/gigo-pkg/shift/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Repair Order Type</b></h1>
+                    <h1 class="title"><b>{{$ctrl.action}} Shift</b></h1>
                     <p class="subtitle">
                         Masters /
-                        <a href="#!/gigo-pkg/repair-order-type/list">
-                            Repair Order Type
+                        <a href="#!/gigo-pkg/shift/list">
+                            Shift
                         </a> /
-                        {{$ctrl.action}}
+                        {{$ctrl.action}} Shift
                     </p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
@@ -24,8 +24,8 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
-        <form id="repair_order_type" autocomplete="off">
-            <input type="hidden" name="id" value="{{$ctrl.repair_order_type.id}}">
+        <form id="shift_form" autocomplete="off">
+            <input type="hidden" name="id" value="{{$ctrl.shift.id}}">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
                     <div class="tab-form-header">
@@ -51,19 +51,10 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Short Name
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order_type.short_name" name="short_name" placeholder="Enter Repair Short Name" autofocus />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
                                                     Name
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order_type.name" name="name" placeholder="Enter Repair Order Name" />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.shift.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -84,13 +75,13 @@
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
                             <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a href="#!/gigo-pkg/repair-order-type/list"class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
-                                                    <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a href="#!/gigo-pkg/shift/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
+                                        <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
+                                    </div>
+                                </div>
+                            </div><!-- Tab Footer -->
                         </div><!-- Tab Content -->
                     </div><!-- Tab Form Body -->
                 </div><!-- Tab Form Wrap -->
