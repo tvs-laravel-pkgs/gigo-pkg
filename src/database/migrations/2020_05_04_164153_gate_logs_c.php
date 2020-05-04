@@ -11,6 +11,7 @@ class GateLogsC extends Migration {
 	 * @return void
 	 */
 	public function up() {
+		Schema::dropIfExists('gate_logs');
 		Schema::create('gate_logs', function (Blueprint $table) {
 			$table->increments('id');
 			$table->unsignedInteger('company_id');
