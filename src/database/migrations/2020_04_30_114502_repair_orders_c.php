@@ -19,6 +19,7 @@ class RepairOrdersC extends Migration {
 				$table->string('code', 36);
 				$table->string('alt_code', 36)->nullable();
 				$table->string('name', 128);
+				$table->unsignedInteger('uom_id')->nullable();
 				$table->unsignedInteger('skill_level_id')->nullable();
 				$table->unsignedMediumInteger('hours');
 				$table->unsignedDecimal('amount', 12, 2);
@@ -30,6 +31,7 @@ class RepairOrdersC extends Migration {
 				$table->softDeletes();
 
 				$table->foreign('company_id')->references('id')->on('companies')->onDelete('CASCADE')->onUpdate('cascade');
+				$table->foreign('uom_id')->references('id')->on('uoms')->onDelete('SET NULL')->onUpdate('cascade');
 				$table->foreign('type_id')->references('id')->on('repair_order_types')->onDelete('CASCADE')->onUpdate('cascade');
 
 				$table->foreign('skill_level_id')->references('id')->on('skill_levels')->onDelete('SET NULL')->onUpdate('cascade');
