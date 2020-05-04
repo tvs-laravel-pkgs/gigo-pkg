@@ -17,7 +17,7 @@ class JobOrdersC extends Migration {
 
 				$table->increments('id');
 				$table->unsignedInteger('company_id');
-				$table->unsignedInteger('gate_log_id', 32);
+				$table->unsignedInteger('gate_log_id');
 				$table->string('number', 191);
 				$table->unsignedInteger('type_id')->nullable();
 				$table->unsignedInteger('quote_type_id')->nullable();
