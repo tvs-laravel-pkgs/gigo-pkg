@@ -47,25 +47,23 @@ app.component('jobCardList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.name = $('#name').val();
-                    d.short_name = $('#short_name').val();
-                    d.journal_name = $("#journal_name").val();
-                    d.from_account = $("#from_account").val();
-                    d.to_account = $("#to_account").val();
+                    d.short_name = $("#short_name").val();
+                    d.name = $("#name").val();
+                    d.description = $("#description").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'name', name: 'job_cards.name' },
                 { data: 'short_name', name: 'job_cards.short_name' },
-                { data: 'journal', name: 'journals.name' },
-                { data: 'from_account', name: 'from_ac.name' },
-                { data: 'to_account', name: 'to_ac.name' },
+                { data: 'name', name: 'job_cards.name' },
+                { data: 'description', name: 'job_cards.description' },
+                { data: 'status', name: '' },
+
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
-                $('#table_info').html(total)
+                $('#table_infos').html(total)
                 $('.foot_info').html('Showing ' + start + ' to ' + end + ' of ' + max + ' entries')
             },
             rowCallback: function(row, data) {
@@ -108,9 +106,9 @@ app.component('jobCardList', {
             });
         }
 
-        //FOR FILTER
+        // FOR FILTER
         $http.get(
-            laravel_routes['getJvFilterData']
+            laravel_routes['getJobCardFilter']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
@@ -130,43 +128,29 @@ app.component('jobCardList', {
                 $mdSelect.hide();
             }
         });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
         $('#short_name').on('keyup', function() {
             dataTables.fnFilter();
         });
-        $scope.onSelectedJournal = function(id) {
-            $('#journal_name').val(id);
+        $('#name').on('keyup', function() {
             dataTables.fnFilter();
-        }
-        $scope.onSelectedFromAccount = function(id) {
-            $('#from_account').val(id);
-            dataTables.fnFilter();
-        }
-        $scope.onSelectedToAccount = function(id) {
-            $('#to_account').val(id);
-            dataTables.fnFilter();
-        }
+        });
         $scope.onSelectedStatus = function(id) {
             $('#status').val(id);
             dataTables.fnFilter();
         }
         $scope.reset_filter = function() {
-            $("#name").val('');
             $("#short_name").val('');
-            $("#journal_name").val('');
-            $("#from_account").val('');
-            $("#to_account").val('');
+            $("#name").val('');
             $("#status").val('');
             dataTables.fnFilter();
         }
-
         $rootScope.loading = false;
     }
 });
+
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
+
 app.component('jobCardForm', {
     templateUrl: job_card_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
@@ -184,11 +168,8 @@ app.component('jobCardForm', {
                 }
             }
         ).then(function(response) {
-            // console.log(response);
             self.job_card = response.data.job_card;
-            self.extras = response.data.extras;
             self.action = response.data.action;
-            self.jv_fields = response.data.jv_field;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
                 if (self.job_card.deleted_at) {
@@ -196,109 +177,44 @@ app.component('jobCardForm', {
                 } else {
                     self.switch_value = 'Active';
                 }
-                angular.forEach(self.jv_fields, function(value, key) {
-                    // console.log(value, key);
-                    // if (value.is_open == 1) {
-                    //     var is_open = 'Yes';
-                    //     self.jv_fields[key].is_open = 'Yes';
-                    // } else {
-                    //     var is_open = 'No';
-                    //     self.jv_fields[key].is_open = 'No';
-                    // }
-                    // $scope.onChangedIsOpen(is_open, key);
-                    if (value.is_editable == 1) {
-                        var is_editable = 'Yes';
-                        self.jv_fields[key].is_editable = 'Yes';
-                    } else {
-                        var is_editable = 'No';
-                        self.jv_fields[key].is_editable = 'No';
-                    }
-                    $scope.onChangedIsEditable(is_editable, key);
-                });
-                // $scope.onSelectedApprovalType(self.job_card.approval_type_id);
             } else {
                 self.switch_value = 'Active';
             }
         });
 
-        $("input:text:visible:first").focus();
-
-        $element.find('input').on('keydown', function(ev) {
-            ev.stopPropagation();
-        });
-        $scope.clearSearchTerm = function() {
-            $scope.searchTerm = '';
-            $scope.searchTerm1 = '';
-            $scope.searchTerm2 = '';
-        };
-
-
-
-        //ON CHANGED IS EDITABLE
-        $scope.onChangedIsEditable = function(value, index) {
-            // console.log(value, index);
-            if (value == 'No') {
-                if (index == 0) {
-                    self.isEditableYes0 = true;
-                    $("#value0").addClass('required');
-                }
-                if (index == 1) {
-                    self.isEditableYes1 = true;
-                    $("#value1").addClass('required');
-                }
-                if (index == 2) {
-                    self.isEditableYes2 = true;
-                    $("#value2").addClass('required');
-                }
-            } else {
-                if (index == 0) {
-                    self.isEditableYes0 = false;
-                    $("#value0").removeClass('required');
-                }
-                if (index == 1) {
-                    self.isEditableYes1 = false;
-                    $("#value1").removeClass('required');
-                }
-                if (index == 2) {
-                    self.isEditableYes2 = false;
-                    $("#value2").removeClass('required');
-                }
-            }
-        }
-
-        var form_id = '#form';
+        //Save Form Data 
+        var form_id = '#job_card_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
+                'short_name': {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 32,
+                },
                 'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 64,
+                    maxlength: 128,
                 },
-                'short_name': {
-                    required: true,
-                    minlength: 2,
-                    maxlength: 24,
-                },
-                'initial_status_id': {
-                    required: true,
-                },
-                'final_approved_status_id': {
-                    required: true,
-                },
-                'approval_type_id': {
-                    required: true,
-                },
+                'description': {
+                    minlength: 3,
+                    maxlength: 255,
+                }
             },
             messages: {
+                'short_name': {
+                    minlength: 'Minimum 3 Characters',
+                    maxlength: 'Maximum 32 Characters',
+                },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 64 Characters',
+                    maxlength: 'Maximum 128 Characters',
                 },
-                'short_name': {
-                    minlength: 'Minimum 2 Characters',
-                    maxlength: 'Maximum 24 Characters',
-                },
+                'description': {
+                    minlength: 'Minimum 3 Characters',
+                    maxlength: 'Maximum 255 Characters',
+                }
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
@@ -343,27 +259,3 @@ app.component('jobCardForm', {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.component('jobCardView', {
-    templateUrl: job_card_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope) {
-        var self = this;
-        self.hasPermission = HelperService.hasPermission;
-        if (self.hasPermission('view-job-card')) {
-            window.location = "#!/page-permission-denied";
-            return false;
-        }
-        self.angular_routes = angular_routes;
-        $http.get(
-            laravel_routes['getJobCardView'], {
-                params: {
-                    id: $routeParams.id,
-                }
-            }
-        ).then(function(response) {
-            console.log(response);
-            self.job_card = response.data.job_card;
-            self.jv_fields = response.data.jv_fields;
-            self.action = response.data.action;
-        });
-    }
-});

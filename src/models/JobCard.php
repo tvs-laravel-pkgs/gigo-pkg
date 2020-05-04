@@ -13,14 +13,17 @@ class JobCard extends Model {
 	use SoftDeletes;
 	protected $table = 'job_cards';
 	public $timestamps = true;
-	protected $fillable = [
-		'name',
-		'short_name',
-		'initial_status_id',
-		'final_approved_status_id',
-		'approval_type_id',
-		'company_id',
-	];
+	protected $fillable =
+		["id","job_order_id","number","order_number","floor_supervisor_id","status_id"]
+	;
+
+	public function getDateOfJoinAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
+	public function setDateOfJoinAttribute($date) {
+		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
 
 	public static function createFromObject($record_data) {
 
@@ -55,6 +58,19 @@ class JobCard extends Model {
 		$record->created_by_id = $admin->id;
 		$record->save();
 		return $record;
+	}
+
+	public static function getList($params = [], $add_default = true, $default_text = 'Select Job Card') {
+		$list = Collect(Self::select([
+			'id',
+			'name',
+		])
+				->orderBy('name')
+				->get());
+		if ($add_default) {
+			$list->prepend(['id' => '', 'name' => $default_text]);
+		}
+		return $list;
 	}
 
 }

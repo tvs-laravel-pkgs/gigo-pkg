@@ -12,11 +12,395 @@ class GigoPkgPermissionSeeder extends Seeder {
 	 */
 	public function run() {
 		$permissions = [
+
+			//Service Types
 			[
 				'display_order' => 99,
 				'parent' => null,
-				'name' => 'mobile-simulation',
-				'display_name' => 'Mobile Simulation',
+				'name' => 'service-types',
+				'display_name' => 'Service Types',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'service-types',
+				'name' => 'add-service-type',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'service-types',
+				'name' => 'edit-service-type',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'service-types',
+				'name' => 'delete-service-type',
+				'display_name' => 'Delete',
+			],
+
+			//Vehicles
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'vehicles',
+				'display_name' => 'Vehicles',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'vehicles',
+				'name' => 'add-vehicle',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'vehicles',
+				'name' => 'edit-vehicle',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicles',
+				'name' => 'delete-vehicle',
+				'display_name' => 'Delete',
+			],
+
+			//Vehicle Owners
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'vehicle-owners',
+				'display_name' => 'Vehicle Owners',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'vehicle-owners',
+				'name' => 'add-vehicle-owner',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'vehicle-owners',
+				'name' => 'edit-vehicle-owner',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicle-owners',
+				'name' => 'delete-vehicle-owner',
+				'display_name' => 'Delete',
+			],
+
+			//Amc Members
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'amc-members',
+				'display_name' => 'Amc Members',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'amc-members',
+				'name' => 'add-amc-member',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'amc-members',
+				'name' => 'edit-amc-member',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'amc-members',
+				'name' => 'delete-amc-member',
+				'display_name' => 'Delete',
+			],
+
+			//Vehicle Warranty Members
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'vehicle-warranty-members',
+				'display_name' => 'Vehicle Warranty Members',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'vehicle-warranty-members',
+				'name' => 'add-vehicle-warranty-member',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'vehicle-warranty-members',
+				'name' => 'edit-vehicle-warranty-member',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicle-warranty-members',
+				'name' => 'delete-vehicle-warranty-member',
+				'display_name' => 'Delete',
+			],
+
+			//Insurance Members
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'insurance-members',
+				'display_name' => 'Insurance Members',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'insurance-members',
+				'name' => 'add-insurance-member',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'insurance-members',
+				'name' => 'edit-insurance-member',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'insurance-members',
+				'name' => 'delete-insurance-member',
+				'display_name' => 'Delete',
+			],
+
+			//Quote Types
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'quote-types',
+				'display_name' => 'Quote Types',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'quote-types',
+				'name' => 'add-quote-type',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'quote-types',
+				'name' => 'edit-quote-type',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'quote-types',
+				'name' => 'delete-quote-type',
+				'display_name' => 'Delete',
+			],
+
+			//Vehicle Inventory Items
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'vehicle-inventory-items',
+				'display_name' => 'Vehicle Inventory Items',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'vehicle-inventory-items',
+				'name' => 'add-vehicle-inventory-item',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'vehicle-inventory-items',
+				'name' => 'edit-vehicle-inventory-item',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicle-inventory-items',
+				'name' => 'delete-vehicle-inventory-item',
+				'display_name' => 'Delete',
+			],
+
+			//Vehicle Inspection Item Groups
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'vehicle-inspection-item-groups',
+				'display_name' => 'Vehicle Inspection Item Groups',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'vehicle-inspection-item-groups',
+				'name' => 'add-vehicle-inspection-item-group',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'vehicle-inspection-item-groups',
+				'name' => 'edit-vehicle-inspection-item-group',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicle-inspection-item-groups',
+				'name' => 'delete-vehicle-inspection-item-group',
+				'display_name' => 'Delete',
+			],
+
+			//Vehicle Inspection Items
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'vehicle-inspection-items',
+				'display_name' => 'Vehicle Inspection Items',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'vehicle-inspection-items',
+				'name' => 'add-vehicle-inspection-item',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'vehicle-inspection-items',
+				'name' => 'edit-vehicle-inspection-item',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicle-inspection-items',
+				'name' => 'delete-vehicle-inspection-item',
+				'display_name' => 'Delete',
+			],
+
+			//Customer Voices
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'customer-voices',
+				'display_name' => 'Customer Voices',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'customer-voices',
+				'name' => 'add-customer-voice',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'customer-voices',
+				'name' => 'edit-customer-voice',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'customer-voices',
+				'name' => 'delete-customer-voice',
+				'display_name' => 'Delete',
+			],
+
+			//Split Order Types
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'split-order-types',
+				'display_name' => 'Split Order Types',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'split-order-types',
+				'name' => 'add-split-order-type',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'split-order-types',
+				'name' => 'edit-split-order-type',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'split-order-types',
+				'name' => 'delete-split-order-type',
+				'display_name' => 'Delete',
+			],
+
+			//Estimation Types
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'estimation-types',
+				'display_name' => 'Estimation Types',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'estimation-types',
+				'name' => 'add-estimation-type',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'estimation-types',
+				'name' => 'edit-estimation-type',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'estimation-types',
+				'name' => 'delete-estimation-type',
+				'display_name' => 'Delete',
+			],
+
+			//Gate Passes
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'gate-passes',
+				'display_name' => 'Gate Passes',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'gate-passes',
+				'name' => 'add-gate-pass',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'gate-passes',
+				'name' => 'edit-gate-pass',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'gate-passes',
+				'name' => 'delete-gate-pass',
+				'display_name' => 'Delete',
+			],
+
+			//Gate Logs
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'gate-logs',
+				'display_name' => 'Gate Logs',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'gate-logs',
+				'name' => 'add-gate-log',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'gate-logs',
+				'name' => 'edit-gate-log',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'gate-logs',
+				'name' => 'delete-gate-log',
+				'display_name' => 'Delete',
 			],
 
 			//Repair Order Types
@@ -41,71 +425,163 @@ class GigoPkgPermissionSeeder extends Seeder {
 			[
 				'display_order' => 3,
 				'parent' => 'repair-order-types',
-				'name' => 'view-repair-order-type',
-				'display_name' => 'View',
-			],
-			[
-				'display_order' => 4,
-				'parent' => 'repair-order-types',
 				'name' => 'delete-repair-order-type',
 				'display_name' => 'Delete',
 			],
 
-			//Repair Orders
+			//Job Orders
 			[
 				'display_order' => 99,
 				'parent' => null,
-				'name' => 'repair-orders',
-				'display_name' => 'Repair Orders',
+				'name' => 'job-orders',
+				'display_name' => 'Job Orders',
 			],
 			[
 				'display_order' => 1,
-				'parent' => 'repair-orders',
-				'name' => 'add-repair-order',
+				'parent' => 'job-orders',
+				'name' => 'add-job-order',
 				'display_name' => 'Add',
 			],
 			[
 				'display_order' => 2,
-				'parent' => 'repair-orders',
-				'name' => 'edit-repair-order',
+				'parent' => 'job-orders',
+				'name' => 'edit-job-order',
 				'display_name' => 'Edit',
 			],
 			[
 				'display_order' => 3,
-				'parent' => 'repair-orders',
-				'name' => 'view-repair-order',
-				'display_name' => 'View',
-			],
-			[
-				'display_order' => 4,
-				'parent' => 'repair-orders',
-				'name' => 'delete-repair-order',
+				'parent' => 'job-orders',
+				'name' => 'delete-job-order',
 				'display_name' => 'Delete',
 			],
 
-			//SHIFTS
+			//Job Order Repair Orders
 			[
 				'display_order' => 99,
 				'parent' => null,
-				'name' => 'shifts',
-				'display_name' => 'Shifts',
+				'name' => 'job-order-repair-orders',
+				'display_name' => 'Job Order Repair Orders',
 			],
 			[
 				'display_order' => 1,
-				'parent' => 'shifts',
-				'name' => 'add-shift',
+				'parent' => 'job-order-repair-orders',
+				'name' => 'add-job-order-repair-order',
 				'display_name' => 'Add',
 			],
 			[
 				'display_order' => 2,
-				'parent' => 'shifts',
-				'name' => 'edit-shift',
+				'parent' => 'job-order-repair-orders',
+				'name' => 'edit-job-order-repair-order',
 				'display_name' => 'Edit',
 			],
 			[
 				'display_order' => 3,
-				'parent' => 'shifts',
-				'name' => 'delete-shift',
+				'parent' => 'job-order-repair-orders',
+				'name' => 'delete-job-order-repair-order',
+				'display_name' => 'Delete',
+			],
+
+			//Repair Order Mechanics
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'repair-order-mechanics',
+				'display_name' => 'Repair Order Mechanics',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'repair-order-mechanics',
+				'name' => 'add-repair-order-mechanic',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'repair-order-mechanics',
+				'name' => 'edit-repair-order-mechanic',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'repair-order-mechanics',
+				'name' => 'delete-repair-order-mechanic',
+				'display_name' => 'Delete',
+			],
+
+			//Mechanic Time Logs
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'mechanic-time-logs',
+				'display_name' => 'Mechanic Time Logs',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'mechanic-time-logs',
+				'name' => 'add-mechanic-time-log',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'mechanic-time-logs',
+				'name' => 'edit-mechanic-time-log',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'mechanic-time-logs',
+				'name' => 'delete-mechanic-time-log',
+				'display_name' => 'Delete',
+			],
+
+			//Job Order Parts
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'job-order-parts',
+				'display_name' => 'Job Order Parts',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'job-order-parts',
+				'name' => 'add-job-order-part',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'job-order-parts',
+				'name' => 'edit-job-order-part',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'job-order-parts',
+				'name' => 'delete-job-order-part',
+				'display_name' => 'Delete',
+			],
+
+			//Job Order Issued Parts
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'job-order-issued-parts',
+				'display_name' => 'Job Order Issued Parts',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'job-order-issued-parts',
+				'name' => 'add-job-order-issued-part',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'job-order-issued-parts',
+				'name' => 'edit-job-order-issued-part',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'job-order-issued-parts',
+				'name' => 'delete-job-order-issued-part',
 				'display_name' => 'Delete',
 			],
 
@@ -131,14 +607,15 @@ class GigoPkgPermissionSeeder extends Seeder {
 			[
 				'display_order' => 3,
 				'parent' => 'job-cards',
-				'name' => 'view-job-card',
-				'display_name' => 'View',
-			],
-			[
-				'display_order' => 4,
-				'parent' => 'job-cards',
 				'name' => 'delete-job-card',
 				'display_name' => 'Delete',
+			],
+
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'mobile-simulation',
+				'display_name' => 'Mobile Simulation',
 			],
 
 			//KANBAN App
@@ -164,7 +641,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'my-job-cards',
 				'display_name' => 'My Job Cards',
 			],
-			
+
 		];
 		Permission::createFromArrays($permissions);
 	}

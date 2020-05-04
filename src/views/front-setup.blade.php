@@ -5,6 +5,6 @@
 @endif
 
 <script type="text/javascript">
-    {{-- var journal_voucher_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/journal-voucher/journal-vouchers.html')}}"; --}}
+    var job_cards_voucher_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/job-card.html')}}";
 </script>
-<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/journal-voucher/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/controller.js')}}"></script>

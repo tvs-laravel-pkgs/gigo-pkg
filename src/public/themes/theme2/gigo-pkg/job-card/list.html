@@ -3,26 +3,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Job Cards (<span id="table_info"></span>)</h1>
-                    <!-- <p class="subtitle">Masters / JV Masters / Job Cards</p> -->
-                </div><!-- Page Header Content -->
-                <div class="page-header-content button-block">
-                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#job-card-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
-                </div><!-- Page Header Content -->
-            </div><!-- Page Header Content Left -->
-            <div class="page-header-content-right">
-                <div class="page-header-content indicator-block">
-                    <ul class="indicator-list">
-                        <li class="green">Active</li>
-                        <li class="red">In Active</li>
-                    </ul>
-                </div><!-- Page Header Content -->
-                <div class="page-header-content reset-block">
-                    <div class="reset-wrap">
-                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
-                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
-                        </button>
-                    </div>
+                    <h1 class="title type-2">Job Cards(<span id="table_infos"></span>)</h1>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content search-block">
                     <div class="search_filter">
@@ -31,7 +12,20 @@
                             <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
+                </div>
+                <div class="page-header-content button-block">
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#job-card-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
                 </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+            <div class="page-header-content-right">
+                <div class="page-header-content reset-block">
+                    <div class="reset-wrap">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
+                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
+                        </button>
+                    </div>
+                </div><!-- Page Header Content -->
+                <!-- Page Header Content -->
                 <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
                     <a href="#!/gigo-pkg/job-card/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
                 </div><!-- Page Header Content -->
@@ -45,12 +39,11 @@
                     <table class="table" id="job_cards_list" style="width: 100% !important;">
                         <thead>
                             <tr>
-                                <th class="action">Actions</th>
-                                <th>Job Card Name</th>
+                                <th>Actions</th>
                                 <th>Short Name</th>
-                                <th>Journal Name</th>
-                                <th>From A/C Type </th>
-                                <th>To A/C Type </th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                     </table>
@@ -72,56 +65,14 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Job Card Name</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Job Card Name" autocomplete="off">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
                                 <label>Short Name</label>
                                 <input type="text" class="form-control" id="short_name" name="short_name" placeholder="Enter Short Name" autocomplete="off">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Journal</label>
-                                <md-select ng-model="$ctrl.journal" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Journal" ng-change="onSelectedJournal($ctrl.journal)">
-                                    <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Journal" class="demo-header-searchbox md-text">
-                                    </md-select-header>
-                                    <md-optgroup>
-                                        <md-option ng-value="journal.id" ng-repeat="journal in $ctrl.extras.journal_list | filter:searchTerm">{{journal.name}}</md-option>
-                                    </md-optgroup>
-                                </md-select>
-                                <input type="hidden" class="form-control type-sm" name="journal_name" id="journal_name" value="">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>From Account</label>
-                                <md-select ng-model="$ctrl.from_account" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select From Account" ng-change="onSelectedFromAccount($ctrl.from_account)">
-                                    <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm1" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
-                                    </md-select-header>
-                                    <md-optgroup>
-                                        <md-option ng-value="account.id" ng-repeat="account in $ctrl.extras.jv_account_type_list | filter:searchTerm1">{{account.name}}</md-option>
-                                    </md-optgroup>
-                                </md-select>
-                                <input type="hidden" class="form-control type-sm" name="from_account" id="from_account" value="">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>To Account</label>
-                                <md-select ng-model="$ctrl.to_account" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select To Account" ng-change="onSelectedToAccount($ctrl.to_account)">
-                                    <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm2" type="search" placeholder="Search for a To Account" class="demo-header-searchbox md-text">
-                                    </md-select-header>
-                                    <md-optgroup>
-                                        <md-option ng-value="account.id" ng-repeat="account in $ctrl.extras.jv_account_type_list | filter:searchTerm2">{{account.name}}</md-option>
-                                    </md-optgroup>
-                                </md-select>
-                                <input type="hidden" class="form-control type-sm" name="to_account" id="to_account" value="">
+                                <label>Name</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" autocomplete="off">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
