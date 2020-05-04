@@ -12,13 +12,14 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/job-card/get', 'JobCardController@getJobCard')->name('getJobCard');
 
 
-	//Repair Order
+	//Repair Order Types
 	Route::get('/repair-order-type/get-list', 'RepairOrderTypeController@getRepairOrderTypeList')->name('getRepairOrderTypeList');
-	Route::get('/repair-order-type/get-form-data', 'RepairOrderTypeController@getRepairOrderFormData')->name('getRepairOrderFormData');
-    Route::post('/repair-order-type/form-save', 'RepairOrderTypeController@saveRepairOrder')->name('saveRepairOrder');
-    Route::get('/repair-order-type/get-filter', 'RepairOrderTypeController@getRepairOrderFilter')->name('getRepairOrderFilter');
+	Route::get('/repair-order-type/get-form-data', 'RepairOrderTypeController@getRepairOrderTypeFormData')->name('getRepairOrderTypeFormData');
+    Route::post('/repair-order-type/form-save', 'RepairOrderTypeController@saveRepairOrderType')->name('saveRepairOrderType');
+    Route::get('/repair-order-type/get-filter', 'RepairOrderTypeController@getRepairOrderTypeFilter')->name('getRepairOrderTypeFilter');
     Route::get('/repair-order-type/delete', 'RepairOrderTypeController@deleteRepairOrderType')->name('deleteRepairOrderType');
     Route::get('/repair-order-type/view', 'RepairOrderTypeController@getRepairOrderTypeView')->name('getRepairOrderTypeView');
+
 
     //SHIFTS 
 	Route::get('/shift/get-list', 'ShiftController@getShiftList')->name('getShiftList');
@@ -26,5 +27,12 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/shift/save', 'ShiftController@saveShift')->name('saveShift');
 	Route::get('/shift/delete', 'ShiftController@deleteShift')->name('deleteShift');
 	Route::get('/shift/get-filter-data', 'ShiftController@getShiftFilter')->name('getShiftFilter');
+
+    //Repair Order 
+    Route::get('/repair-order/get-form-data', 'RepairOrderController@getRepairOrderFormData')->name('getRepairOrderFormData');
+    Route::post('/repair-order/form-save', 'RepairOrderController@saveRepairOrder')->name('saveRepairOrder');
+    Route::get('/repair-order/get-list', 'RepairOrderController@getRepairOrderList')->name('getRepairOrderList');
+    Route::get('/repair-order/get-filter', 'RepairOrderController@getRepairOrderFilter')->name('getRepairOrderFilter');
+    Route::get('/repair-order/delete', 'RepairOrderController@deleteRepairOrder')->name('deleteRepairOrder');
 
 });

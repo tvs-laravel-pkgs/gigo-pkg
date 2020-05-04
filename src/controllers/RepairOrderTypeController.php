@@ -20,7 +20,7 @@ class RepairOrderTypeController extends Controller {
 		$this->data['theme'] = config('custom.admin_theme');
 	}
 
-	public function getRepairOrderFilter() {
+	public function getRepairOrderTypeFilter() {
 		$this->data['extras'] = [
 			'status' => [
 				['id' => '', 'name' => 'Select Status'],
@@ -37,6 +37,7 @@ class RepairOrderTypeController extends Controller {
 				'repair_order_types.id',
 				'repair_order_types.short_name',
 				'repair_order_types.name',
+				DB::raw('IF(repair_order_types.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->where(function ($query) use ($request) {
 				if (!empty($request->short_name)) {
@@ -59,6 +60,10 @@ class RepairOrderTypeController extends Controller {
 		;
 
 		return Datatables::of($repair_order_type)
+		    ->addColumn('status', function ($repair_order_type) {
+				$status = $repair_order_type->status == 'Active' ? 'green' : 'red';
+				return '<span class="status-indigator ' . $status . '"></span>' . $repair_order_type->status;
+			})
 			->addColumn('action', function ($repair_order_type) {
 				$img_edit = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
 				$img_edit_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
@@ -82,7 +87,7 @@ class RepairOrderTypeController extends Controller {
 			->make(true);
 	}
 
-	public function getRepairOrderFormData(Request $request) {
+	public function getRepairOrderTypeFormData(Request $request) {
 		$id = $request->id;
 		if (!$id) {
 			$repair_order_type = new RepairOrderType;
@@ -103,7 +108,7 @@ class RepairOrderTypeController extends Controller {
 		return response()->json($this->data);
 	}
 
-	public function saveRepairOrder(Request $request) {
+	public function saveRepairOrderType(Request $request) {
 		try {
 			$error_messages = [
 				'short_name.required' => 'Short Name is Required',
@@ -135,25 +140,25 @@ class RepairOrderTypeController extends Controller {
 
 			DB::beginTransaction();
 			if (!$request->id) {
-				$repair_order = new RepairOrderType;
-				$repair_order->created_by_id = Auth::user()->id;
-				$repair_order->created_at = Carbon::now();
-				$repair_order->updated_at = NULL;
+				$repair_order_type = new RepairOrderType;
+				$repair_order_type->created_by_id = Auth::user()->id;
+				$repair_order_type->created_at = Carbon::now();
+				$repair_order_type->updated_at = NULL;
 			} else {
-				$repair_order = RepairOrderType::withTrashed()->find($request->id);
-				$repair_order->updated_by_id = Auth::user()->id;
-				$repair_order->updated_at = Carbon::now();
+				$repair_order_type = RepairOrderType::withTrashed()->find($request->id);
+				$repair_order_type->updated_by_id = Auth::user()->id;
+				$repair_order_type->updated_at = Carbon::now();
 			}
-			$repair_order->fill($request->all());
-			$repair_order->company_id = Auth::user()->company_id;
+			$repair_order_type->fill($request->all());
+			$repair_order_type->company_id = Auth::user()->company_id;
 			if ($request->status == 'Inactive') {
-				$repair_order->deleted_at = Carbon::now();
-				$repair_order->deleted_by_id = Auth::user()->id;
+				$repair_order_type->deleted_at = Carbon::now();
+				$repair_order_type->deleted_by_id = Auth::user()->id;
 			} else {
-				$repair_order->deleted_by_id = NULL;
-				$repair_order->deleted_at = NULL;
+				$repair_order_type->deleted_by_id = NULL;
+				$repair_order_type->deleted_at = NULL;
 			}
-			$repair_order->save();
+			$repair_order_type->save();
 			
 			DB::commit();
 			if (!($request->id)) {

@@ -57,6 +57,7 @@ app.component('repairOrderTypeList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'short_name', name: 'repair_order_types.short_name' },
                 { data: 'name', name: 'repair_order_types.name' },
+                { data: 'status', name: '' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -104,7 +105,7 @@ app.component('repairOrderTypeList', {
 
         //FOR FILTER
         $http.get(
-            laravel_routes['getRepairOrderFilter']
+            laravel_routes['getRepairOrderTypeFilter']
         ).then(function(response) {
             self.extras = response.data.extras;
         });
@@ -123,7 +124,7 @@ app.component('repairOrderTypeList', {
                 $mdSelect.hide();
             }
         });
-        $('#name').on('keyup', function() {
+        /*$('#name').on('keyup', function() {
             dataTables.fnFilter();
         });
         $('#short_name').on('keyup', function() {
@@ -132,6 +133,11 @@ app.component('repairOrderTypeList', {
         $scope.onSelectedStatus = function(id) {
             $('#status').val(id);
             dataTables.fnFilter();
+        }*/
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
+            dataTables.fnFilter();
+            $('#repair-order-type-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
             $("#name").val('');
@@ -156,7 +162,7 @@ app.component('repairOrderTypeForm', {
         }
         self.angular_routes = angular_routes;
         $http.get(
-            laravel_routes['getRepairOrderFormData'], {
+            laravel_routes['getRepairOrderTypeFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
@@ -209,7 +215,7 @@ app.component('repairOrderTypeForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveRepairOrder'],
+                        url: laravel_routes['saveRepairOrderType'],
                         method: "POST",
                         data: formData,
                         processData: false,
