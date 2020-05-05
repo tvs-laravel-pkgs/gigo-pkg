@@ -17,6 +17,17 @@ class ServiceTypeController extends Controller {
 		$this->data['theme'] = config('custom.theme');
 	}
 
+	public function getServiceTypeFilterData() {
+		$this->data['extras'] = [
+			'status' => [
+				['id' => '', 'name' => 'Select Status'],
+				['id' => '1', 'name' => 'Active'],
+				['id' => '0', 'name' => 'Inactive'],
+			],
+		];
+		return response()->json($this->data);
+	}
+
 	public function getServiceTypeList(Request $request) {
 		$service_types = ServiceType::withTrashed()
 
@@ -24,11 +35,14 @@ class ServiceTypeController extends Controller {
 				'service_types.id',
 				'service_types.name',
 				'service_types.code',
-
 				DB::raw('IF(service_types.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->where('service_types.company_id', Auth::user()->company_id)
-
+			->where(function ($query) use ($request) {
+				if (!empty($request->short_name)) {
+					$query->where('service_types.code', 'LIKE', '%' . $request->short_name . '%');
+				}
+			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('service_types.name', 'LIKE', '%' . $request->name . '%');
@@ -44,10 +58,9 @@ class ServiceTypeController extends Controller {
 		;
 
 		return Datatables::of($service_types)
-			->rawColumns(['name', 'action'])
-			->addColumn('name', function ($service_type) {
-				$status = $service_type->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $service_type->name;
+			->addColumn('status', function ($service_types) {
+				$status = $service_types->status == 'Active' ? 'green' : 'red';
+				return '<span class="status-indigator ' . $status . '"></span>' . $service_types->status;
 			})
 			->addColumn('action', function ($service_type) {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
@@ -55,10 +68,10 @@ class ServiceTypeController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('edit-service_type')) {
-					$output .= '<a href="#!/gigo-pkg/service_type/edit/' . $service_type->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				if (Entrust::can('edit-service-type')) {
+					$output .= '<a href="#!/gigo-pkg/service-type/edit/' . $service_type->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
-				if (Entrust::can('delete-service_type')) {
+				if (Entrust::can('delete-service-type')) {
 					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#service_type-delete-modal" onclick="angular.element(this).scope().deleteServiceType(' . $service_type->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
 				return $output;
