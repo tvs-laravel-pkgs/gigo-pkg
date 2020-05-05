@@ -130,15 +130,20 @@ class CustomerVoiceController extends Controller {
 			DB::beginTransaction();
 			if (!$request->id) {
 				$customer_voice = new CustomerVoice;
-				$customer_voice->company_id = Auth::user()->company_id;
+				$customer_voice->created_by_id = Auth::user()->id;
 			} else {
 				$customer_voice = CustomerVoice::withTrashed()->find($request->id);
+				$customer_voice->updated_by_id = Auth::user()->id;
 			}
+			$customer_voice->company_id = Auth::user()->company_id;
 			$customer_voice->fill($request->all());
 			if ($request->status == 'Inactive') {
 				$customer_voice->deleted_at = Carbon::now();
+				$customer_voice->deleted_by_id = Auth::user()->id;
+
 			} else {
 				$customer_voice->deleted_at = NULL;
+				$customer_voice->deleted_by_id = NULL;
 			}
 			$customer_voice->save();
 

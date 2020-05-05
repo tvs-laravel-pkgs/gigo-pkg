@@ -175,6 +175,8 @@ app.component('customerVoiceForm', {
             }
         });
 
+        $("input:text:visible:first").focus();
+
         //Save Form Data 
         var form_id = '#customer_voice_form';
         var v = jQuery(form_id).validate({
