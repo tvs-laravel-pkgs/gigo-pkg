@@ -164,13 +164,6 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/repair-order-type/delete', 'RepairOrderTypeController@deleteRepairOrderType')->name('deleteRepairOrderType');
 	Route::get('/repair-order-type/view', 'RepairOrderTypeController@getRepairOrderTypeView')->name('getRepairOrderTypeView');
 
-	//SHIFTS
-	Route::get('/shift/get-list', 'ShiftController@getShiftList')->name('getShiftList');
-	Route::get('/shift/get-form-data', 'ShiftController@getShiftFormData')->name('getShiftFormData');
-	Route::post('/shift/save', 'ShiftController@saveShift')->name('saveShift');
-	Route::get('/shift/delete', 'ShiftController@deleteShift')->name('deleteShift');
-	Route::get('/shift/get-filter-data', 'ShiftController@getShiftFilter')->name('getShiftFilter');
-
 	//Repair Order
 	Route::get('/repair-order/get-form-data', 'RepairOrderController@getRepairOrderFormData')->name('getRepairOrderFormData');
 	Route::post('/repair-order/form-save', 'RepairOrderController@saveRepairOrder')->name('saveRepairOrder');

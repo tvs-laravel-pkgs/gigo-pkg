@@ -1,4 +1,4 @@
 <?php
 return [
-	'DEV' => env('GIGO_PKG', false),
+	'DEV' => env('GIGO_PKG_DEV', false),
 ];
