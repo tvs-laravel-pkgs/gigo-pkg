@@ -13,9 +13,11 @@ class CustomerVoice extends Model {
 	use SoftDeletes;
 	protected $table = 'customer_voices';
 	public $timestamps = true;
-	protected $fillable =
-		["id","company_id","code","name"]
-	;
+	protected $fillable = [
+		"company_id",
+		"code",
+		"name",
+	];
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
