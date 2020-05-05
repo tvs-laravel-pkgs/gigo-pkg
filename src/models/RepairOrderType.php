@@ -14,7 +14,7 @@ class RepairOrderType extends Model {
 	protected $table = 'repair_order_types';
 	public $timestamps = true;
 	protected $fillable =
-		["id","company_id","code","name"]
+		["id","company_id","short_name","name"]
 	;
 
 	public function getDateOfJoinAttribute($value) {

@@ -403,6 +403,34 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+
+
+			//Repair Order 
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'repair-orders',
+				'display_name' => 'Repair Order',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'repair-orders',
+				'name' => 'add-repair-order',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'repair-orders',
+				'name' => 'edit-repair-order',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'repair-orders',
+				'name' => 'delete-repair-order',
+				'display_name' => 'Delete',
+			],
+
 			//Repair Order Types
 			[
 				'display_order' => 99,
