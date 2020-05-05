@@ -128,14 +128,21 @@ class ServiceTypeController extends Controller {
 			DB::beginTransaction();
 			if (!$request->id) {
 				$service_type = new ServiceType;
-				$service_type->company_id = Auth::user()->company_id;
+				$service_type->created_by_id = Auth::user()->id;
+				$service_type->created_at = Carbon::now();
+				$service_type->updated_at = NULL;
 			} else {
 				$service_type = ServiceType::withTrashed()->find($request->id);
+				$service_type->updated_by_id = Auth::user()->id;
+				$service_type->updated_at = Carbon::now();
 			}
 			$service_type->fill($request->all());
+			$service_type->company_id = Auth::user()->company_id;
 			if ($request->status == 'Inactive') {
 				$service_type->deleted_at = Carbon::now();
+				$service_type->deleted_by_id = Auth::user()->id;
 			} else {
+				$service_type->deleted_by_id = NULL;
 				$service_type->deleted_at = NULL;
 			}
 			$service_type->save();
