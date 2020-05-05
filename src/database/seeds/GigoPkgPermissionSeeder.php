@@ -403,9 +403,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
-
-
-			//Repair Order 
+			//Repair Order
 			[
 				'display_order' => 99,
 				'parent' => null,
@@ -646,20 +644,20 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Mobile Simulation',
 			],
 
-			//KANBAN App
-			[
-				'display_order' => 99,
-				'parent' => null,
-				'name' => 'kanban-app',
-				'display_name' => 'KANBAN App',
-			],
-
 			//Mobile Permissions
 			[
 				'display_order' => 99,
 				'parent' => null,
 				'name' => 'mobile-permissions',
-				'display_name' => 'Mobile Permissions',
+				'display_name' => 'Mobile App',
+			],
+
+			//KANBAN App
+			[
+				'display_order' => 99,
+				'parent' => 'mobile-permissions',
+				'name' => 'kanban-app',
+				'display_name' => 'KANBAN App',
 			],
 
 			//My Job Cards
@@ -668,6 +666,136 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'parent' => 'mobile-permissions',
 				'name' => 'my-job-cards',
 				'display_name' => 'My Job Cards',
+			],
+
+			//Gate In Entry
+			[
+				'display_order' => 99,
+				'parent' => 'mobile-permissions',
+				'name' => 'mobile-gate-in-entry',
+				'display_name' => 'Gate In Entry',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-gate-in-entry-view-all',
+				'display_name' => 'View All',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-gate-in-entry-outlet-based',
+				'display_name' => 'Outlet Based',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-gate-in-entry-own-only',
+				'display_name' => 'Own Only',
+			],
+
+			//Gate Out Entry
+			[
+				'display_order' => 99,
+				'parent' => 'mobile-permissions',
+				'name' => 'mobile-gate-out-entry',
+				'display_name' => 'Gate Out Entry',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'mobile-gate-out-entry',
+				'name' => 'mobile-gate-out-entry-view-all',
+				'display_name' => 'View All',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-gate-out-entry-outlet-based',
+				'display_name' => 'Working Outlet Based',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-gate-out-entry-own-only',
+				'display_name' => 'Own Only',
+			],
+
+			//Inward Vehicle
+			[
+				'display_order' => 99,
+				'parent' => 'mobile-permissions',
+				'name' => 'mobile-inward-vehicle',
+				'display_name' => 'Inward Vehicle',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-inward-vehicle-view-all',
+				'display_name' => 'View All',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-inward-vehicle-outlet-based',
+				'display_name' => 'Working Outlet Based',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-inward-vehicle-own-only',
+				'display_name' => 'Own Only',
+			],
+
+			//Job Cards
+			[
+				'display_order' => 99,
+				'parent' => 'mobile-permissions',
+				'name' => 'mobile-job-cards',
+				'display_name' => 'Job Cards',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-job-cards-view-all',
+				'display_name' => 'View All',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-job-cards-outlet-based',
+				'display_name' => 'Working Outlet Based',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-job-cards-own-only',
+				'display_name' => 'Own Only',
+			],
+
+			//Material Gate Passes
+			[
+				'display_order' => 99,
+				'parent' => 'mobile-permissions',
+				'name' => 'mobile-material-gate-passes',
+				'display_name' => 'Material Gate Passes',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-material-gate-passes-view-all',
+				'display_name' => 'View All',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-material-gate-passes-outlet-based',
+				'display_name' => 'Working Outlet Based',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'mobile-gate-in-entry',
+				'name' => 'mobile-material-gate-passes-own-only',
+				'display_name' => 'Own Only',
 			],
 
 		];

@@ -1,0 +1,90 @@
+<div class="content-wrap cndn-wrap">
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    TVS GIGO SMS
+                    <div class="btn-group pull-right">
+                        <a href=".#!/gigo-pkg/mobile/menus" class="btn btn-danger btn-sm">
+                            <span class="glyphicon glyphicon-menu-hamburger"></span>
+                        </a>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ol class="breadcrumb">
+                        <li class="active">
+                            Gate In Vehicle
+                        </li>
+                    </ol>
+                    <form id="form">
+                        <h6>Photos</h6>
+                        <div class="form-group">
+                            <label>Vehicle Photo *</label>
+                            <input type="file" name="vehicle_photo">
+                        </div>
+                        <div class="form-group">
+                            <label>Driver Photo *</label>
+                            <input type="file" name="driver_photo">
+                        </div>
+                        <div class="form-group">
+                            <label>KM Reading Photo *</label>
+                            <input type="file" name="km_reading_photo">
+                        </div>
+                        <div class="form-group">
+                            <h6>Registration Type *</h6>
+                            <label class="radio-inline" style="display: inline;">
+                                <input type="radio" name="is_registered" value="1">
+                                Registered
+                            </label>
+                            <label class="radio-inline" style="display: inline;">
+                                <input type="radio" name="is_registered" value="0">
+                                Unregistered
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Vehicle Registration Number *</label>
+                            <input type="text" class="form-control" name="registration_number">
+                        </div>
+                        <div class="form-group">
+                            <label>KM Reading *</label>
+                            <input type="text" class="form-control" name="km_reading">
+                        </div>
+                        <div class="form-group">
+                            <label>Driver Name *</label>
+                            <input type="text" class="form-control" name="driver_name">
+                        </div>
+                        <div class="form-group">
+                            <label>Driver Mobile Number</label>
+                            <input type="text" class="form-control" name="contact_number">
+                        </div>
+                        <div class="form-group">
+                            <label>Remarks (if any)</label>
+                            <textarea class="form-control" name="gate_in_remarks"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-default submit">
+                            Submit
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal fade alert-modal failure" id="gate_in_sucess">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h5>Gate In Success</h5>
+                <p>
+                    Vehicle sucessfully gated in<br />
+                    <h6>
+                        Gate In Number : GI001<br />
+                        Reg. Number : TN37BV5826
+                    </h6>
+                </p>
+                <button class="btn btn-rose" data-dismiss="modal">Done</button>
+            </div>
+        </div>
+    </div>
+</div>

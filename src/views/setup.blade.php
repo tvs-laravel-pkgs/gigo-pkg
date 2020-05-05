@@ -8,28 +8,6 @@
 	app.config(['$routeProvider', function($routeProvider) {
 
 	    $routeProvider.
-	    //Mobile Simulation
-	    when('/gigo-pkg/mobile/login', {
-	        template: '<mobile-login></mobile-login>',
-	        title: 'Mobile Login',
-	    }).
-	    when('/gigo-pkg/mobile/dashboard', {
-	        template: '<mobile-dashboard></mobile-dashboard>',
-	        title: 'Mobile Dashboard',
-	    }).
-	    when('/gigo-pkg/mobile/menus', {
-	        template: '<mobile-menus></mobile-menus>',
-	        title: 'Mobile Menus',
-	    }).
-	    when('/gigo-pkg/mobile/kanban-dashboard', {
-	        template: '<mobile-kanban-dashboard></mobile-kanban-dashboard>',
-	        title: 'KANBAN Dashboard',
-	    }).
-	    when('/gigo-pkg/mobile/attendance/scan-qr', {
-	        template: '<mobile-attendance-scan-qr></mobile-attendance-scan-qr>',
-	        title: 'Mobile Dashboard',
-	    }).
-
 	     //Repair Order Types
 	    when('/gigo-pkg/repair-order-type/list', {
 	        template: '<repair-order-type-list></repair-order-type-list>',
@@ -69,12 +47,6 @@
 
 	}]);
 
-    var mobile_login_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/login.html')}}";
-    var mobile_dashboard_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/dashboard.html')}}";
-    var mobile_menus_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/menus.html')}}";
-    var mobile_kanban_dashboard_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/kanban-dashboard.html')}}";
-    var mobile_attendance_scan_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/attendance/scan-qr.html')}}";
-
 	//Repair Orders
     var repair_order_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/list.html')}}";
     var repair_order_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/form.html')}}";
@@ -85,10 +57,8 @@
     var repair_order_type_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/view.html')}}";
 
 </script>
-<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/controller.js')}}"></script>
-<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
@@ -773,3 +743,166 @@
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/controller.js')}}'></script>
 
 
+
+{{-- MOBILE PAGES --}}
+
+{{-- MOBILE COMMON PAGES --}}
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    //Mobile Common Pages
+	    when('/gigo-pkg/mobile/login', {
+	        template: '<mobile-login></mobile-login>',
+	        title: 'Mobile Login',
+	    }).
+	    when('/gigo-pkg/mobile/dashboard', {
+	        template: '<mobile-dashboard></mobile-dashboard>',
+	        title: 'Mobile Dashboard',
+	    }).
+	    when('/gigo-pkg/mobile/menus', {
+	        template: '<mobile-menus></mobile-menus>',
+	        title: 'Mobile Menus',
+	    }).
+	    when('/gigo-pkg/mobile/kanban-dashboard', {
+	        template: '<mobile-kanban-dashboard></mobile-kanban-dashboard>',
+	        title: 'KANBAN Dashboard',
+	    }).
+	    when('/gigo-pkg/mobile/attendance/scan-qr', {
+	        template: '<mobile-attendance-scan-qr></mobile-attendance-scan-qr>',
+	        title: 'Mobile Dashboard',
+	    });
+	}]);
+
+    var mobile_login_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/login.html')}}";
+    var mobile_dashboard_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/dashboard.html')}}";
+    var mobile_menus_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/menus.html')}}";
+    var mobile_kanban_dashboard_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/kanban-dashboard.html')}}";
+    var mobile_header_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/partials/header.html')}}";
+
+    var mobile_attendance_scan_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/attendance/scan-qr.html')}}";
+</script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/controller.js')}}"></script>
+
+{{-- MOBILE GATE IN VEHICLE --}}
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    when('/gigo-pkg/mobile/gate-in-vehicle', {
+	        template: '<mobile-gate-in-vehicle></mobile-gate-in-vehicle>',
+	        title: 'Mobile - Gate In Vehicle',
+	    });
+	}]);
+    var mobile_gate_in_vehicle_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/gate-in-vehicle/form.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/gate-in-vehicle/controller.js')}}'></script>
+
+{{-- MOBILE VEHICLE GATE PASSES --}}
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    when('/gigo-pkg/mobile/vehicle-gate-passes', {
+	        template: '<mobile-vehicle-gate-pass-list></mobile-vehicle-gate-pass-list>',
+	        title: 'Mobile Vehicle Gate Passes',
+	    })
+	    // when('/gigo-pkg/mobile/vehicle-gate-pass/add', {
+	    //     template: '<vehicle-gate-pass-form></vehicle-gate-pass-form>',
+	    //     title: 'Add Vehicle Gate Pass',
+	    // }).
+	    // when('/gigo-pkg/mobile/vehicle-gate-pass/edit/:id', {
+	    //     template: '<vehicle-gate-pass-form></vehicle-gate-pass-form>',
+	    //     title: 'Edit Vehicle Gate Pass',
+	    // }).
+	    // when('/gigo-pkg/mobile/vehicle-gate-pass/card-list', {
+	    //     template: '<vehicle-gate-pass-card-list></vehicle-gate-pass-card-list>',
+	    //     title: 'Vehicle Gate Pass Card List',
+	    // })
+	    ;
+	}]);
+    var mobile_vehicle_gate_pass_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/vehicle-gate-pass/list.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/vehicle-gate-pass/controller.js')}}'></script>
+
+{{-- MOBILE INWARD VEHICLE  --}}
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    when('/gigo-pkg/mobile/inward-vehicle/list', {
+	        template: '<mobile-inward-vehicle-list></mobile-inward-vehicle-list>',
+	        title: 'Inward Vehicles',
+	    }).
+	    when('/gigo-pkg/mobile/inward-vehicle/vehicle-detail', {
+	        template: '<mobile-inward-vehicle-detail-view></mobile-inward-vehicle-detail-view>',
+	        title: 'Inward Vehicle - Vehicle Details',
+	    });
+	}]);
+
+	//Inward Vehicles
+    var mobile_inward_vehicle_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/list.html')}}';
+    var mobile_inward_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/vehicle-detail-view.html')}}';
+    var mobile_inward_vehicle_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/card-list.html')}}';
+    var mobile_inward_vehicle_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/partials/inward-vehicle-modal-form.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/controller.js')}}'></script>
+
+
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    //Job Card
+	    when('/gigo-pkg/mobile/job-card/list', {
+	        template: '<mobile-job-card-list></mobile-job-card-list>',
+	        title: 'Job Cards',
+	    }).
+	    when('/gigo-pkg/mobile/job-card/add', {
+	        template: '<mobile-job-card-form></mobile-job-card-form>',
+	        title: 'Add Job Card',
+	    }).
+	    when('/gigo-pkg/mobile/job-card/edit/:id', {
+	        template: '<mobile-job-card-form></mobile-job-card-form>',
+	        title: 'Edit Job Card',
+	    }).
+	    when('/gigo-pkg/mobile/job-card/card-list', {
+	        template: '<mobile-job-card-card-list></mobile-job-card-card-list>',
+	        title: 'Job Card Card List',
+	    });
+	}]);
+
+	//Job Cards
+    var mobile_job_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/job-card/list.html')}}';
+    var mobile_job_card_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/job-card/form.html')}}';
+    var mobile_job_card_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/job-card/card-list.html')}}';
+    var mobile_job_card_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/partials/job-card-modal-form.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/job-card/controller.js')}}'></script>
+
+
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    //Material Gate Pass
+	    when('/gigo-pkg/mobile/material-gate-pass/list', {
+	        template: '<mobile-material-gate-pass-list></mobile-material-gate-pass-list>',
+	        title: 'Material Gate Passes',
+	    }).
+	    when('/gigo-pkg/mobile/material-gate-pass/add', {
+	        template: '<mobile-material-gate-pass-form></mobile-material-gate-pass-form>',
+	        title: 'Add Material Gate Pass',
+	    }).
+	    when('/gigo-pkg/mobile/material-gate-pass/edit/:id', {
+	        template: '<mobile-material-gate-pass-form></mobile-material-gate-pass-form>',
+	        title: 'Edit Material Gate Pass',
+	    }).
+	    when('/gigo-pkg/mobile/material-gate-pass/card-list', {
+	        template: '<mobile-material-gate-pass-card-list></mobile-material-gate-pass-card-list>',
+	        title: 'Material Gate Pass Card List',
+	    });
+	}]);
+
+	//Material Gate Passes
+    var mobile_material_gate_pass_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/material-gate-pass/list.html')}}';
+    var mobile_material_gate_pass_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/material-gate-pass/form.html')}}';
+    var mobile_material_gate_pass_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/material-gate-pass/card-list.html')}}';
+    var mobile_material_gate_pass_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/partials/material-gate-pass-modal-form.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/material-gate-pass/controller.js')}}'></script>
+<link rel="stylesheet" type="text/css" href="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/mobile.css')}}">

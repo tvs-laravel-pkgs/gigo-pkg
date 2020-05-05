@@ -21,34 +21,38 @@
                         </a>
                     </div>
                     <div class="list-group">
-                        <a href=".#!/gigo-pkg/mobile/dashboard" class="list-group-item">
+                        <a href=".#!/gigo-pkg/mobile/dashboard" class="list-group-item" ng-if="hasPerm('mobile-dashboard')">
                             Dashboard
                         </a>
-                        <a href=".#!/gigo-pkg/mobile/kanban-dashboard" class="list-group-item">
+                    </div>
+                    <div class="list-group list-group">
+                        <a href=".#!/gigo-pkg/mobile/kanban-dashboard" class="list-group-item list-group-item-success" ng-if="hasPerm('kanban-app')">
                             KANBAN App
                         </a>
-                        <a href="#" class="list-group-item">
-                            Vehicle Gate In
+                        <a href=".#!/gigo-pkg/mobile/gate-in-vehicle" class="list-group-item list-group-item-success" ng-if="hasPerm('mobile-gate-in-entry')">
+                            Gate In Vehicle
                         </a>
-                        <a href="#" class="list-group-item">
-                            Vehicle Gate Out
+                        <a href=".#!/gigo-pkg/mobile/vehicle-gate-pass/list" class="list-group-item list-group-item-success" ng-if="hasPerm('mobile-gate-out-entry')">
+                            Vehicle Gate Passes
                         </a>
-                        <a href="#" class="list-group-item">
+                        <a href=".#!/gigo-pkg/mobile/inward-vehicle/list" class="list-group-item list-group-item-success" ng-if="hasPerm('mobile-inward-vehicle')">
                             Inward Vehicle
                         </a>
-                        <a href="#" class="list-group-item">
+                        <a href=".#!/gigo-pkg/mobile/job-card/list" class="list-group-item list-group-item-success" ng-if="hasPerm('mobile-job-cards')">
                             Job Cards
                         </a>
-                        <a href="#" class="list-group-item">
+                        <a href=".#!/gigo-pkg/mobile/material-gate-pass/list" class="list-group-item list-group-item-success" ng-if="hasPerm('mobile-material-gate-passes')">
                             Material Gate Passes
                         </a>
-                        <a href="#" class="list-group-item">
+                    </div>
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-info">
                             View Profile
                         </a>
-                        <a href="#" class="list-group-item">
+                        <a href="#" class="list-group-item list-group-item-info">
                             Change Password
                         </a>
-                        <a href="javascript:;" class="list-group-item" ng-click="logout()">
+                        <a href="javascript:;" class="list-group-item list-group-item-info" ng-click="logout()">
                             Logout
                         </a>
                     </div>
