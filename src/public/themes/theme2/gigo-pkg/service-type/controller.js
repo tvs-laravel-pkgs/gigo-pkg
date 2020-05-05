@@ -49,18 +49,15 @@ app.component('serviceTypeList', {
                 data: function(d) {
                     d.short_name = $("#short_name").val();
                     d.name = $("#name").val();
-                    d.description = $("#description").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'service_types.short_name' },
+                { data: 'code', name: 'service_types.code' },
                 { data: 'name', name: 'service_types.name' },
-                { data: 'description', name: 'service_types.description' },
                 { data: 'status', name: '' },
-
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -108,7 +105,7 @@ app.component('serviceTypeList', {
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getServiceTypeFilter']
+            laravel_routes['getServiceTypeFilterData']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
@@ -128,15 +125,11 @@ app.component('serviceTypeList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+       
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
             dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-            dataTables.fnFilter();
+            $('#service-type-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
             $("#short_name").val('');
@@ -187,7 +180,7 @@ app.component('serviceTypeForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
+                'code': {
                     required: true,
                     minlength: 3,
                     maxlength: 32,
@@ -197,13 +190,9 @@ app.component('serviceTypeForm', {
                     minlength: 3,
                     maxlength: 128,
                 },
-                'description': {
-                    minlength: 3,
-                    maxlength: 255,
-                }
             },
             messages: {
-                'short_name': {
+                'code': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
@@ -211,10 +200,6 @@ app.component('serviceTypeForm', {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 128 Characters',
                 },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
-                }
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');

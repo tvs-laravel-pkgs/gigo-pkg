@@ -43,6 +43,21 @@
 	    when('/gigo-pkg/repair-order/view/:id', {
 	        template: '<repair-order-view></repair-order-view>',
 	        title: 'View Repair Order',
+	    }).
+
+
+	    //Service Type
+	    when('/gigo-pkg/service-type/list', {
+	        template: '<service-type-list></service-type-list>',
+	        title: 'Service Types',
+	    }).
+	    when('/gigo-pkg/service-type/add', {
+	        template: '<service-type-form></service-type-form>',
+	        title: 'Add Service Type',
+	    }).
+	    when('/gigo-pkg/service-type/edit/:id', {
+	        template: '<service-type-form></service-type-form>',
+	        title: 'Edit Service Type',
 	    });
 
 	}]);
@@ -56,13 +71,18 @@
     var repair_order_type_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/form.html')}}";
     var repair_order_type_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/view.html')}}";
 
+    //Service Types
+    var service_type_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/list.html')}}";
+    var service_type_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/form.html')}}";
+
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
-	app.config(['$routeProvider', function($routeProvider) {
+	/*app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
 	    //Service Type
 	    when('/gigo-pkg/service-type/list', {
@@ -81,15 +101,15 @@
 	        template: '<service-type-card-list></service-type-card-list>',
 	        title: 'Service Type Card List',
 	    });
-	}]);
+	}]);*/
 
 	//Service Types
-    var service_type_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/list.html')}}';
+    /*var service_type_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/list.html')}}';
     var service_type_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/form.html')}}';
     var service_type_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/card-list.html')}}';
-    var service_type_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/service-type-modal-form.html')}}';
+    var service_type_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/service-type-modal-form.html')}}';*/
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/controller.js')}}'></script>
+<!-- <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/controller.js')}}'></script> -->
 
 
 <script type='text/javascript'>

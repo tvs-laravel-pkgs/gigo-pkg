@@ -47,20 +47,16 @@ app.component('customerVoiceList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
+                    d.code = $("#code").val();
                     d.name = $("#name").val();
-                    d.description = $("#description").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'customer_voices.short_name' },
+                { data: 'code', name: 'customer_voices.code' },
                 { data: 'name', name: 'customer_voices.name' },
-                { data: 'description', name: 'customer_voices.description' },
-                { data: 'status', name: '' },
-
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -108,9 +104,9 @@ app.component('customerVoiceList', {
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getCustomerVoiceFilter']
+            laravel_routes['getCustomerVoiceFilterData']
         ).then(function(response) {
-            // console.log(response);
+            console.log(response);
             self.extras = response.data.extras;
         });
         $element.find('input').on('keydown', function(ev) {
@@ -118,9 +114,6 @@ app.component('customerVoiceList', {
         });
         $scope.clearSearchTerm = function() {
             $scope.searchTerm = '';
-            $scope.searchTerm1 = '';
-            $scope.searchTerm2 = '';
-            $scope.searchTerm3 = '';
         };
         /* Modal Md Select Hide */
         $('.modal').bind('click', function(event) {
@@ -128,7 +121,7 @@ app.component('customerVoiceList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+        $('#code').on('keyup', function() {
             dataTables.fnFilter();
         });
         $('#name').on('keyup', function() {
@@ -139,7 +132,7 @@ app.component('customerVoiceList', {
             dataTables.fnFilter();
         }
         $scope.reset_filter = function() {
-            $("#short_name").val('');
+            $("#code").val('');
             $("#name").val('');
             $("#status").val('');
             dataTables.fnFilter();
@@ -182,6 +175,8 @@ app.component('customerVoiceForm', {
             }
         });
 
+        $("input:text:visible:first").focus();
+
         //Save Form Data 
         var form_id = '#customer_voice_form';
         var v = jQuery(form_id).validate({
@@ -197,10 +192,6 @@ app.component('customerVoiceForm', {
                     minlength: 3,
                     maxlength: 128,
                 },
-                'description': {
-                    minlength: 3,
-                    maxlength: 255,
-                }
             },
             messages: {
                 'short_name': {
@@ -209,15 +200,8 @@ app.component('customerVoiceForm', {
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
+                    maxlength: 'Maximum 191 Characters',
                 },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
-                }
-            },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);

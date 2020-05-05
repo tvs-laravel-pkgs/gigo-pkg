@@ -51,10 +51,10 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Short Name
+                                                    Code
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.customer_voice.short_name" name="short_name" placeholder="Enter Short Name" autofocus />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.customer_voice.code" name="code" placeholder="Enter Code" autofocus />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -64,14 +64,6 @@
                                                     <sup class="mandatory">*</sup>
                                                 </label>
                                                 <input type="text" class="form-control required" ng-model="$ctrl.customer_voice.name" name="name" placeholder="Enter Name" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Description
-                                                </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.customer_voice.description" name="description" placeholder="Enter Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -94,7 +86,7 @@
                             <div class="tab-pane-footer">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <a href="#!/gigo-pkg/customer-voice/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
+                                        <a href="#!/gigo-pkg/customer-voice/list" class="btn btn-secondary btn-prev my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">Cancel</a>
                                         <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
                                     </div>
                                 </div>

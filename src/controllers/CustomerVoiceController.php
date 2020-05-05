@@ -1,8 +1,8 @@
 <?php
 
 namespace Abs\GigoPkg;
-use App\Http\Controllers\Controller;
 use App\CustomerVoice;
+use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -17,9 +17,20 @@ class CustomerVoiceController extends Controller {
 		$this->data['theme'] = config('custom.theme');
 	}
 
-	public function getCustomerVoiceList(Request $request) {
-		$customer_voices = CustomerVoice::withTrashed()
+	public function getCustomerVoiceFilterData() {
+		$this->data['extras'] = [
+			'status' => [
+				['id' => '', 'name' => 'Select Status'],
+				['id' => '1', 'name' => 'Active'],
+				['id' => '0', 'name' => 'Inactive'],
+			],
+		];
+		return response()->json($this->data);
+	}
 
+	public function getCustomerVoiceList(Request $request) {
+		// dd($request->all());
+		$customer_voices = CustomerVoice::withTrashed()
 			->select([
 				'customer_voices.id',
 				'customer_voices.name',
@@ -28,10 +39,14 @@ class CustomerVoiceController extends Controller {
 				DB::raw('IF(customer_voices.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->where('customer_voices.company_id', Auth::user()->company_id)
-
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('customer_voices.name', 'LIKE', '%' . $request->name . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->code)) {
+					$query->where('customer_voices.code', 'LIKE', '%' . $request->code . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
@@ -55,11 +70,11 @@ class CustomerVoiceController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('edit-customer_voice')) {
-					$output .= '<a href="#!/gigo-pkg/customer_voice/edit/' . $customer_voice->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				if (Entrust::can('edit-customer-voice')) {
+					$output .= '<a href="#!/gigo-pkg/customer-voice/edit/' . $customer_voice->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"  alt="Edit"></a>';
 				}
-				if (Entrust::can('delete-customer_voice')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#customer_voice-delete-modal" onclick="angular.element(this).scope().deleteCustomerVoice(' . $customer_voice->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+				if (Entrust::can('delete-customer-voice')) {
+					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_customer_voice" onclick="angular.element(this).scope().deleteCustomerVoice(' . $customer_voice->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '" alt="Delete"></a>';
 				}
 				return $output;
 			})
@@ -85,10 +100,10 @@ class CustomerVoiceController extends Controller {
 		// dd($request->all());
 		try {
 			$error_messages = [
-				'code.required' => 'Short Name is Required',
-				'code.unique' => 'Short Name is already taken',
-				'code.min' => 'Short Name is Minimum 3 Charachers',
-				'code.max' => 'Short Name is Maximum 32 Charachers',
+				'code.required' => 'Code is Required',
+				'code.unique' => 'Code is already taken',
+				'code.min' => 'Code is Minimum 3 Charachers',
+				'code.max' => 'Code is Maximum 32 Charachers',
 				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
@@ -115,15 +130,20 @@ class CustomerVoiceController extends Controller {
 			DB::beginTransaction();
 			if (!$request->id) {
 				$customer_voice = new CustomerVoice;
-				$customer_voice->company_id = Auth::user()->company_id;
+				$customer_voice->created_by_id = Auth::user()->id;
 			} else {
 				$customer_voice = CustomerVoice::withTrashed()->find($request->id);
+				$customer_voice->updated_by_id = Auth::user()->id;
 			}
+			$customer_voice->company_id = Auth::user()->company_id;
 			$customer_voice->fill($request->all());
 			if ($request->status == 'Inactive') {
 				$customer_voice->deleted_at = Carbon::now();
+				$customer_voice->deleted_by_id = Auth::user()->id;
+
 			} else {
 				$customer_voice->deleted_at = NULL;
+				$customer_voice->deleted_by_id = NULL;
 			}
 			$customer_voice->save();
 
