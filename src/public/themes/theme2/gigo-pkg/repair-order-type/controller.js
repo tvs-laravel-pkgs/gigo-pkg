@@ -55,8 +55,8 @@ app.component('repairOrderTypeList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'repair_order_types.short_name' },
-                { data: 'name', name: 'repair_order_types.name' },
+                { data: 'short_name', name: 'repair_order_types.short_name' ,searchable: true },
+                { data: 'name', name: 'repair_order_types.name' ,searchable: true },
                 { data: 'status', name: '' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -143,7 +143,7 @@ app.component('repairOrderTypeList', {
             $("#name").val('');
             $("#short_name").val('');
             $("#status").val('');
-            dataTables.fnFilter();
+            //dataTables.fnFilter();
         }
 
         $rootScope.loading = false;
@@ -155,6 +155,7 @@ app.component('repairOrderTypeForm', {
     templateUrl: repair_order_type_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('add-repair-order-type') || !self.hasPermission('edit-repair-order-type')) {
             window.location = "#!/page-permission-denied";

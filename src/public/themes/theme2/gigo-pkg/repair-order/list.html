@@ -72,21 +72,81 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title" id="myModalLabel">Repair Order Filter</h5>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Short Name</label>
-                                <input type="text" class="form-control" id="short_name" name="short_name" placeholder="Enter Repair Order Short Name" autocomplete="off">
+                                <label>DBM Code</label>
+                                <input type="text" class="form-control" id="dbm_code" name="dbm_code" placeholder="Enter DBM Code" autocomplete="off">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>DMS Code</label>
+                                <input type="text" class="form-control" id="dms_code" name="dms_code" placeholder="Enter DMS Code" autocomplete="off">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Name</label>
                                 <input type="text" class="form-control" id="name" name="name" placeholder="Enter Repair Order Name" autocomplete="off">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Type</label>
+                                <md-select ng-model="$ctrl.repair_order_type_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedtype($ctrl.repair_order_type_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Repair Order Type">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="repair_order_type.short_name" ng-repeat="repair_order_type in $ctrl.repair_order_type | filter:searchTerm">{{repair_order_type.short_name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="type" id="type" value="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Skill Level</label>
+                                <md-select ng-model="$ctrl.skill_level_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedSkil($ctrl.skill_level_selected)"data-md-container-class="selectdemoSelectHeader" placeholder="Select Skill Level">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="skill_level.name" ng-repeat="skill_level in $ctrl.skill_level | filter:searchTerm">{{skill_level.name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="skill_level" id="skill_level" value="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                         <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Hours</label>
+                                <input type="text" class="form-control" id="hours" name="hours" placeholder="Enter Repair Order Hours" autocomplete="off">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                         <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Amount</label>
+                                <input type="text" class="form-control" id="amount" name="amount" placeholder="Enter Repair Order Amount" autocomplete="off">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                         <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tax Code</label>
+                                <md-select ng-model="$ctrl.tax_code_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedtaxcode($ctrl.tax_code_selected)"data-md-container-class="selectdemoSelectHeader" placeholder="Select Tax Code">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="tax_code.code" ng-repeat="tax_code in $ctrl.tax_code | filter:searchTerm">{{tax_code.code}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="tax_code" id="tax_code" value="">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
@@ -109,7 +169,7 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.to_account='';$ctrl.skill_level_selected='';$ctrl.repair_order_type_selected='';$ctrl.status='';$ctrl.tax_code_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
                     </div><!-- Column -->
                     <div class="col-md-6 text-right">
                         <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">Apply</button>
