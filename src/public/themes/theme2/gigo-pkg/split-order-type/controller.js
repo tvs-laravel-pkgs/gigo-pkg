@@ -47,18 +47,16 @@ app.component('splitOrderTypeList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
+                    d.code = $("#code").val();
                     d.name = $("#name").val();
-                    d.description = $("#description").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'split_order_types.short_name' },
+                { data: 'code', name: 'split_order_types.code' },
                 { data: 'name', name: 'split_order_types.name' },
-                { data: 'description', name: 'split_order_types.description' },
                 { data: 'status', name: '' },
 
             ],
@@ -128,18 +126,15 @@ app.component('splitOrderTypeList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
             dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-            dataTables.fnFilter();
+            $('#split-order-type-filter-modal').modal('hide');
         }
+
         $scope.reset_filter = function() {
-            $("#short_name").val('');
+            $("#code").val('');
             $("#name").val('');
             $("#status").val('');
             dataTables.fnFilter();
@@ -155,11 +150,14 @@ app.component('splitOrderTypeForm', {
     templateUrl: split_order_type_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
+
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-split-order-type') || !self.hasPermission('edit-split-order-type')) {
-            window.location = "#!/page-permission-denied";
+        if (!self.hasPermission('add-split-order-type') && !self.hasPermission('edit-split-order-type')) {
+            window.location = "#!/permission-denied";
             return false;
         }
+
         self.angular_routes = angular_routes;
         $http.get(
             laravel_routes['getSplitOrderTypeFormData'], {
@@ -187,7 +185,7 @@ app.component('splitOrderTypeForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
+                'code': {
                     required: true,
                     minlength: 3,
                     maxlength: 32,
@@ -195,25 +193,17 @@ app.component('splitOrderTypeForm', {
                 'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 128,
-                },
-                'description': {
-                    minlength: 3,
-                    maxlength: 255,
+                    maxlength: 191,
                 }
             },
             messages: {
-                'short_name': {
+                'code': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
-                },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
+                    maxlength: 'Maximum 191 Characters',
                 }
             },
             invalidHandler: function(event, validator) {

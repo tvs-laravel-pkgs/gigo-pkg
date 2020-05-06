@@ -79,12 +79,12 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/customer-voice/delete', 'CustomerVoiceController@deleteCustomerVoice')->name('deleteCustomerVoice');
 	Route::get('/customer-voice/get-filter-data', 'CustomerVoiceController@getCustomerVoiceFilterData')->name('getCustomerVoiceFilterData');
 
-	//Split Order Type
+	//Split Order Types
 	Route::get('/split-order-type/get-list', 'SplitOrderTypeController@getSplitOrderTypeList')->name('getSplitOrderTypeList');
 	Route::get('/split-order-type/get-form-data', 'SplitOrderTypeController@getSplitOrderTypeFormData')->name('getSplitOrderTypeFormData');
 	Route::post('/split-order-type/save', 'SplitOrderTypeController@saveSplitOrderType')->name('saveSplitOrderType');
 	Route::get('/split-order-type/delete', 'SplitOrderTypeController@deleteSplitOrderType')->name('deleteSplitOrderType');
-	Route::get('/split-order-type/get-filter-data', 'SplitOrderTypeController@getSplitOrderTypeFilterData')->name('getSplitOrderTypeFilterData');
+	Route::get('/split-order-type/get-filter-data', 'SplitOrderTypeController@getSplitOrderTypeFilter')->name('getSplitOrderTypeFilter');
 
 	//Estimation Type
 	Route::get('/estimation-type/get-list', 'EstimationTypeController@getEstimationTypeList')->name('getEstimationTypeList');
