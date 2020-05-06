@@ -3,8 +3,16 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Vehicle Inventory Items(<span id="table_infos"></span>)</h1>
+                    <h1 class="title type-2">Vehicle Inventory Items<span class="badge badge-secondary" id="table_infos"></span></h1>
                 </div><!-- Page Header Content -->
+                <div class="page-header-content reset-block">
+                    <div class="reset-wrap">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
+                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
+                        </button>
+                    </div>
+                </div><!-- Page Header Content -->
+                
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
@@ -19,11 +27,7 @@
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
                 <div class="page-header-content reset-block">
-                    <div class="reset-wrap">
-                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
-                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
-                        </button>
-                    </div>
+                    
                 </div><!-- Page Header Content -->
                 <!-- Page Header Content -->
                 <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
@@ -40,9 +44,8 @@
                         <thead>
                             <tr>
                                 <th>Actions</th>
-                                <th>Short Name</th>
                                 <th>Name</th>
-                                <th>Description</th>
+                                <th>Code</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -58,15 +61,15 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title" id="myModalLabel">Vehicle Inventory Item Filter</h5>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Short Name</label>
-                                <input type="text" class="form-control" id="short_name" name="short_name" placeholder="Enter Short Name" autocomplete="off">
+                                <label>Code</label>
+                                <input type="text" class="form-control" id="code" name="code" placeholder="Enter Code" autocomplete="off">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
@@ -89,17 +92,24 @@
                                 <input type="hidden" class="form-control type-sm" name="status" id="status" value="">
                             </div><!-- Field -->
                         </div><!-- Column -->
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-rose my-tooltip" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
-                        </div>
                     </div><!-- Row -->
                 </div><!-- Modal Form -->
             </div><!-- Modal Body -->
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="reset-link my-tooltip" ng-click="reset_filter();$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
+                        <button type="submit" data-dismiss="modal" class="btn btn-primary btn-md" ng-click="apply_filter()">Apply</button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Footer -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
 <!-- Modal -->
-<div class="modal fade alert-modal failure" id="delete_vehicle_inventory_item" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade alert-modal failure" id="vehicle_inventory_item_delete_modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">

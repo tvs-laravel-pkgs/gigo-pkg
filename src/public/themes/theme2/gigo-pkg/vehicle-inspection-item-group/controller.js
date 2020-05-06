@@ -200,7 +200,7 @@ app.component('vehicleInspectionItemGroupForm', {
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
+                    maxlength: 'Maximum 191 Characters',
                 },
             },
             submitHandler: function(form) {
