@@ -55,8 +55,8 @@ app.component('serviceTypeList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'service_types.code' },
-                { data: 'name', name: 'service_types.name' },
+                { data: 'code', name: 'service_types.code' ,searchable: true },
+                { data: 'name', name: 'service_types.name' ,searchable: true },
                 { data: 'status', name: '' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -135,7 +135,7 @@ app.component('serviceTypeList', {
             $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
-            dataTables.fnFilter();
+            //dataTables.fnFilter();
         }
         $rootScope.loading = false;
     }
@@ -148,6 +148,7 @@ app.component('serviceTypeForm', {
     templateUrl: service_type_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('add-service-type') || !self.hasPermission('edit-service-type')) {
             window.location = "#!/page-permission-denied";

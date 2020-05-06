@@ -17,6 +17,17 @@ class QuoteTypeController extends Controller {
 		$this->data['theme'] = config('custom.theme');
 	}
 
+	public function getQuoteTypeFilterData() {
+		$this->data['extras'] = [
+			'status' => [
+				['id' => '', 'name' => 'Select Status'],
+				['id' => '1', 'name' => 'Active'],
+				['id' => '0', 'name' => 'Inactive'],
+			],
+		];
+		return response()->json($this->data);
+	}
+
 	public function getQuoteTypeList(Request $request) {
 		$quote_types = QuoteType::withTrashed()
 
@@ -28,7 +39,11 @@ class QuoteTypeController extends Controller {
 				DB::raw('IF(quote_types.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->where('quote_types.company_id', Auth::user()->company_id)
-
+			->where(function ($query) use ($request) {
+				if (!empty($request->short_name)) {
+					$query->where('quote_types.code', 'LIKE', '%' . $request->short_name . '%');
+				}
+			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('quote_types.name', 'LIKE', '%' . $request->name . '%');
@@ -44,10 +59,9 @@ class QuoteTypeController extends Controller {
 		;
 
 		return Datatables::of($quote_types)
-			->rawColumns(['name', 'action'])
-			->addColumn('name', function ($quote_type) {
-				$status = $quote_type->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $quote_type->name;
+			 ->addColumn('status', function ($quote_types) {
+				$status = $quote_types->status == 'Active' ? 'green' : 'red';
+				return '<span class="status-indigator ' . $status . '"></span>' . $quote_types->status;
 			})
 			->addColumn('action', function ($quote_type) {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
@@ -55,11 +69,11 @@ class QuoteTypeController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('edit-quote_type')) {
-					$output .= '<a href="#!/gigo-pkg/quote_type/edit/' . $quote_type->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				if (Entrust::can('edit-quote-type')) {
+					$output .= '<a href="#!/gigo-pkg/quote-type/edit/' . $quote_type->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
-				if (Entrust::can('delete-quote_type')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#quote_type-delete-modal" onclick="angular.element(this).scope().deleteQuoteType(' . $quote_type->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+				if (Entrust::can('delete-quote-type')) {
+					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#quote-type-delete-modal" onclick="angular.element(this).scope().deleteQuoteType('.$quote_type->id.')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
 				return $output;
 			})
@@ -115,10 +129,15 @@ class QuoteTypeController extends Controller {
 			DB::beginTransaction();
 			if (!$request->id) {
 				$quote_type = new QuoteType;
-				$quote_type->company_id = Auth::user()->company_id;
+				$quote_type->created_by_id = Auth::user()->id;
+				$quote_type->created_at = Carbon::now();
+				$quote_type->updated_at = NULL;
 			} else {
 				$quote_type = QuoteType::withTrashed()->find($request->id);
+				$quote_type->updated_by_id = Auth::user()->id;
+				$quote_type->updated_at = Carbon::now();
 			}
+			$quote_type->company_id = Auth::user()->company_id;
 			$quote_type->fill($request->all());
 			if ($request->status == 'Inactive') {
 				$quote_type->deleted_at = Carbon::now();
@@ -150,7 +169,7 @@ class QuoteTypeController extends Controller {
 
 	public function deleteQuoteType(Request $request) {
 		DB::beginTransaction();
-		// dd($request->id);
+		//dd($request->id);
 		try {
 			$quote_type = QuoteType::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($quote_type) {
