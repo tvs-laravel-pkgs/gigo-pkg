@@ -123,7 +123,10 @@ class CustomerVoiceController extends Controller {
 				],
 			], $error_messages);
 			if ($validator->fails()) {
-				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
+				return response()->json([
+					'success' => false,
+					'errors' => $validator->errors()->all(),
+				]);
 			}
 
 			DB::beginTransaction();
@@ -174,11 +177,17 @@ class CustomerVoiceController extends Controller {
 			$customer_voice = CustomerVoice::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($customer_voice) {
 				DB::commit();
-				return response()->json(['success' => true, 'message' => 'Customer Voice Deleted Successfully']);
+				return response()->json([
+					'success' => true,
+					'message' => 'Customer Voice Deleted Successfully',
+				]);
 			}
 		} catch (Exception $e) {
 			DB::rollBack();
-			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
 		}
 	}
 

@@ -122,7 +122,10 @@ class VehicleInspectionItemGroupController extends Controller {
 				],
 			], $error_messages);
 			if ($validator->fails()) {
-				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
+				return response()->json([
+					'success' => false,
+					'errors' => $validator->errors()->all(),
+				]);
 			}
 
 			DB::beginTransaction();
@@ -172,11 +175,17 @@ class VehicleInspectionItemGroupController extends Controller {
 			$vehicle_inspection_item_group = VehicleInspectionItemGroup::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($vehicle_inspection_item_group) {
 				DB::commit();
-				return response()->json(['success' => true, 'message' => 'Vehicle Inspection Item Group Deleted Successfully']);
+				return response()->json([
+					'success' => true,
+					'message' => 'Vehicle Inspection Item Group Deleted Successfully',
+				]);
 			}
 		} catch (Exception $e) {
 			DB::rollBack();
-			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
 		}
 	}
 
