@@ -57,7 +57,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title" id="myModalLabel">Customer Voice Filter</h5>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
                 <div class="modal-form">
@@ -79,10 +79,10 @@
                                 <label>Status</label>
                                 <md-select ng-model="$ctrl.status" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status" ng-change="onSelectedStatus($ctrl.status)">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchTerm" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">{{status.name}}</md-option>
+                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm">{{status.name}}</md-option>
                                     </md-optgroup>
                                 </md-select>
                                 <input type="hidden" class="form-control type-sm" name="status" id="status" value="">
@@ -97,7 +97,7 @@
                         <button type="button" class="reset-link my-tooltip" ng-click="reset_filter();$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
                     </div><!-- Column -->
                     <div class="col-md-6 text-right">
-                        <button type="submit" class="btn btn-primary btn-md" ng-click="apply_filter()">Apply</button>
+                        <button type="submit" data-dismiss="modal" class="btn btn-primary btn-md" ng-click="apply_filter()">Apply</button>
                     </div><!-- Column -->
                 </div><!-- Row -->
             </div><!-- Modal Footer -->

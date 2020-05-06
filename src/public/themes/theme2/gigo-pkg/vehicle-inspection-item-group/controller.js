@@ -47,20 +47,17 @@ app.component('vehicleInspectionItemGroupList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
+                    d.code = $("#code").val();
                     d.name = $("#name").val();
-                    d.description = $("#description").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'vehicle_inspection_item_groups.short_name' },
+                { data: 'code', name: 'vehicle_inspection_item_groups.code' },
                 { data: 'name', name: 'vehicle_inspection_item_groups.name' },
-                { data: 'description', name: 'vehicle_inspection_item_groups.description' },
-                { data: 'status', name: '' },
-
+                { data: 'status', name: '', searchable: false },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -99,7 +96,7 @@ app.component('vehicleInspectionItemGroupList', {
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Vehicle Inspection Item Group Deleted Successfully');
+                    custom_noty('success', response.data.message);
                     $('#vehicle_inspection_item_groups_list').DataTable().ajax.reload(function(json) {});
                     $location.path('/gigo-pkg/vehicle-inspection-item-group/list');
                 }
@@ -108,7 +105,7 @@ app.component('vehicleInspectionItemGroupList', {
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getVehicleInspectionItemGroupFilter']
+            laravel_routes['getVehicleInspectionItemGroupFilterData']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
@@ -118,9 +115,6 @@ app.component('vehicleInspectionItemGroupList', {
         });
         $scope.clearSearchTerm = function() {
             $scope.searchTerm = '';
-            $scope.searchTerm1 = '';
-            $scope.searchTerm2 = '';
-            $scope.searchTerm3 = '';
         };
         /* Modal Md Select Hide */
         $('.modal').bind('click', function(event) {
@@ -128,21 +122,20 @@ app.component('vehicleInspectionItemGroupList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
+
+        //STATUS ID ASSIGN
         $scope.onSelectedStatus = function(id) {
             $('#status').val(id);
+        }
+        //APPLY FILTER
+        $scope.apply_filter = function() {
             dataTables.fnFilter();
         }
         $scope.reset_filter = function() {
-            $("#short_name").val('');
+            $("#code").val('');
             $("#name").val('');
             $("#status").val('');
-            dataTables.fnFilter();
+            // dataTables.fnFilter();
         }
         $rootScope.loading = false;
     }
@@ -182,12 +175,14 @@ app.component('vehicleInspectionItemGroupForm', {
             }
         });
 
+        $("input:text:visible:first").focus();
+
         //Save Form Data 
         var form_id = '#vehicle_inspection_item_group_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
+                'code': {
                     required: true,
                     minlength: 3,
                     maxlength: 32,
@@ -195,15 +190,11 @@ app.component('vehicleInspectionItemGroupForm', {
                 'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 128,
+                    maxlength: 191,
                 },
-                'description': {
-                    minlength: 3,
-                    maxlength: 255,
-                }
             },
             messages: {
-                'short_name': {
+                'code': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
@@ -211,13 +202,6 @@ app.component('vehicleInspectionItemGroupForm', {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 128 Characters',
                 },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
-                }
-            },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);

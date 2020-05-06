@@ -128,14 +128,14 @@ app.component('customerVoiceList', {
             $('#status').val(id);
         }
         //APPLY FILTER
-        $scope.apply_filter = function(){
-                dataTables.fnFilter();
+        $scope.apply_filter = function() {
+            dataTables.fnFilter();
         }
         $scope.reset_filter = function() {
             $("#code").val('');
             $("#name").val('');
             $("#status").val('');
-            dataTables.fnFilter();
+            // dataTables.fnFilter();
         }
         $rootScope.loading = false;
     }
