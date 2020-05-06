@@ -137,7 +137,7 @@ app.component('splitOrderTypeList', {
             $("#code").val('');
             $("#name").val('');
             $("#status").val('');
-            dataTables.fnFilter();
+            // dataTables.fnFilter();
         }
         $rootScope.loading = false;
     }
