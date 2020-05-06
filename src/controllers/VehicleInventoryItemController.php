@@ -130,14 +130,18 @@ class VehicleInventoryItemController extends Controller {
 			if (!$request->id) {
 				$vehicle_inventory_item = new VehicleInventoryItem;
 				$vehicle_inventory_item->company_id = Auth::user()->company_id;
+				$vehicle_inventory_item->created_by_id = Auth::user()->id;
 			} else {
 				$vehicle_inventory_item = VehicleInventoryItem::withTrashed()->find($request->id);
+				$vehicle_inventory_item->updated_by_id = Auth::user()->id;
 			}
 			$vehicle_inventory_item->fill($request->all());
 			if ($request->status == 'Inactive') {
 				$vehicle_inventory_item->deleted_at = Carbon::now();
+				$vehicle_inventory_item->deleted_by_id = Auth::user()->id;
 			} else {
 				$vehicle_inventory_item->deleted_at = NULL;
+				$vehicle_inventory_item->deleted_by_id =NULL;
 			}
 			$vehicle_inventory_item->save();
 
