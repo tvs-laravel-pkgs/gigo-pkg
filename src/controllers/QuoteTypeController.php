@@ -2,7 +2,7 @@
 
 namespace Abs\GigoPkg;
 use App\Http\Controllers\Controller;
-use App\QuoteType;
+use Abs\GigoPkg\QuoteType;
 use Auth;
 use Carbon\Carbon;
 use DB;

@@ -39,6 +39,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//Service Order Types
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'service-order-types',
+				'display_name' => 'Service Order Types',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'service-order-types',
+				'name' => 'add-service-order-type',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'service-order-types',
+				'name' => 'edit-service-order-type',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'service-order-types',
+				'name' => 'delete-service-order-type',
+				'display_name' => 'Delete',
+			],
+
 			//Vehicles
 			[
 				'display_order' => 99,

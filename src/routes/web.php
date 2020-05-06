@@ -9,6 +9,13 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/service-type/delete', 'ServiceTypeController@deleteServiceType')->name('deleteServiceType');
 	Route::get('/service-type/get-filter-data', 'ServiceTypeController@getServiceTypeFilterData')->name('getServiceTypeFilterData');
 
+	//Service Order Type
+	Route::get('/service-order-type/get-list', 'ServiceOrderTypeController@getServiceOrderTypeList')->name('getServiceOrderTypeList');
+	Route::get('/service-order-type/get-form-data', 'ServiceOrderTypeController@getServiceOrderTypeFormData')->name('getServiceOrderTypeFormData');
+	Route::post('/service-order-type/save', 'ServiceOrderTypeController@saveServiceOrderType')->name('saveServiceOrderType');
+	Route::get('/service-order-type/delete', 'ServiceOrderTypeController@deleteServiceOrderType')->name('deleteServiceOrderType');
+	Route::get('/service-order-type/get-filter-data', 'ServiceOrderTypeController@getServiceOrderTypeFilterData')->name('getServiceOrderTypeFilterData');
+
 	//Vehicle
 	Route::get('/vehicle/get-list', 'VehicleController@getVehicleList')->name('getVehicleList');
 	Route::get('/vehicle/get-form-data', 'VehicleController@getVehicleFormData')->name('getVehicleFormData');

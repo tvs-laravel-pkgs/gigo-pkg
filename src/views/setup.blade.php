@@ -61,6 +61,20 @@
 	        title: 'Edit Service Type',
 	    }).
 
+	    //Service Order Type
+	    when('/gigo-pkg/service-order-type/list', {
+	        template: '<service-order-type-list></service-order-type-list>',
+	        title: 'Service Order Types',
+	    }).
+	    when('/gigo-pkg/service-order-type/add', {
+	        template: '<service-order-type-form></service-order-type-form>',
+	        title: 'Add Service Order Type',
+	    }).
+	    when('/gigo-pkg/service-order-type/edit/:id', {
+	        template: '<service-order-type-form></service-order-type-form>',
+	        title: 'Edit Service Order Type',
+	    }).
+
 	    //Quote Type
 	     when('/gigo-pkg/quote-type/list', {
 	        template: '<quote-type-list></quote-type-list>',
@@ -90,6 +104,11 @@
     var service_type_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/list.html')}}";
     var service_type_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/form.html')}}";
 
+
+    //Service Order Types
+    var service_order_type_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-order-type/list.html')}}";
+    var service_order_type_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-order-type/form.html')}}";
+
     //Quote Types
     var quote_type_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/list.html')}}";
     var quote_type_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/form.html')}}";
@@ -99,6 +118,7 @@
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-order-type/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
