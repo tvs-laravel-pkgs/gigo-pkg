@@ -48,22 +48,28 @@ app.component('repairOrderList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $('#short_name').val();
+                    d.dbm_code = $('#dbm_code').val();
+                    d.dms_code = $('#dms_code').val();
                     d.name = $('#name').val();
+                    d.type = $('#type').val();
+                    d.skill_level = $('#skill_level').val();
+                    d.hours = $('#hours').val();
+                    d.amount = $('#amount').val();
+                    d.tax_code = $('#tax_code').val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'repair_orders.code' },
-                { data: 'alt_code', name: 'repair_orders.alt_code' },
-                { data: 'name', name: 'repair_orders.name' },
-                { data: 'short_name', name: 'repair_order_types.short_name' },
-                { data: 'skill_name', name: 'skill_levels.name' },
-                { data: 'hours', name: 'repair_orders.hours' },
-                { data: 'amount', name: 'repair_orders.amount' },
-                { data: 'tax_code', name: 'tax_codes.code' },
+                { data: 'code', name: 'repair_orders.code' , searchable: true },
+                { data: 'alt_code', name: 'repair_orders.alt_code' , searchable: true },
+                { data: 'name', name: 'repair_orders.name' , searchable: true },
+                { data: 'short_name', name: 'repair_order_types.short_name' , searchable: true },
+                { data: 'skill_name', name: 'skill_levels.name' , searchable: true },
+                { data: 'hours', name: 'repair_orders.hours' , searchable: true},
+                { data: 'amount', name: 'repair_orders.amount', searchable: true },
+                { data: 'tax_code', name: 'tax_codes.code', searchable: true },
                 { data: 'status', name: '' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -115,7 +121,24 @@ app.component('repairOrderList', {
             laravel_routes['getRepairOrderFilter']
         ).then(function(response) {
             self.extras = response.data.extras;
+            self.repair_order_type = response.data.repair_order_type;
+            self.skill_level = response.data.skill_level;
+            self.tax_code = response.data.tax_code;
+            self.tax_code_selected = '';
+            self.skill_level_selected = '';
+            self.repair_order_type_selected = '';
         });
+
+        $scope.onSelectedtaxcode = function(tax_code_selected) {
+            $('#tax_code').val(tax_code_selected);
+        }
+        $scope.onSelectedSkil = function(skill_level_selected) {
+            $('#skill_level').val(skill_level_selected);
+        }
+        $scope.onSelectedtype = function(repair_order_type_selected) {
+            $('#type').val(repair_order_type_selected);
+        }
+        
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -131,16 +154,6 @@ app.component('repairOrderList', {
                 $mdSelect.hide();
             }
         });
-       /* $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $('#short_name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-            dataTables.fnFilter();
-        }*/
         $scope.applyFilter = function() {
             $('#status').val(self.status);
             dataTables.fnFilter();
@@ -148,9 +161,13 @@ app.component('repairOrderList', {
         }
         $scope.reset_filter = function() {
             $("#name").val('');
-            $("#short_name").val('');
+            $("#dbm_code").val('');
+            $("#dms_code").val('');
+            $("#type").val('');
+            $("#hours").val('');
+            $("#amount").val('');
+            $("#tax_code").val('');
             $("#status").val('');
-            dataTables.fnFilter();
         }
 
         $rootScope.loading = false;
@@ -162,6 +179,7 @@ app.component('repairOrderForm', {
     templateUrl: repair_order_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('add-repair-order') || !self.hasPermission('edit-repair-order')) {
             window.location = "#!/page-permission-denied";
