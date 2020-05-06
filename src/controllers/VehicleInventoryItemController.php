@@ -30,6 +30,11 @@ class VehicleInventoryItemController extends Controller {
 			->where('vehicle_inventory_items.company_id', Auth::user()->company_id)
 
 			->where(function ($query) use ($request) {
+				if (!empty($request->code)) {
+					$query->where('vehicle_inventory_items.code', 'LIKE', '%' . $request->code . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('vehicle_inventory_items.name', 'LIKE', '%' . $request->name . '%');
 				}
@@ -44,10 +49,9 @@ class VehicleInventoryItemController extends Controller {
 		;
 
 		return Datatables::of($vehicle_inventory_items)
-			->rawColumns(['name', 'action'])
-			->addColumn('name', function ($vehicle_inventory_item) {
+			->addColumn('status', function ($vehicle_inventory_item) {
 				$status = $vehicle_inventory_item->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $vehicle_inventory_item->name;
+				return '<span class="status-indicator ' . $status . '"></span>' . $vehicle_inventory_item->status;
 			})
 			->addColumn('action', function ($vehicle_inventory_item) {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
@@ -55,11 +59,11 @@ class VehicleInventoryItemController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('edit-vehicle_inventory_item')) {
-					$output .= '<a href="#!/gigo-pkg/vehicle_inventory_item/edit/' . $vehicle_inventory_item->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				if (Entrust::can('edit-vehicle-inventory-item')) {
+					$output .= '<a href="#!/gigo-pkg/vehicle-inventory-item/edit/' . $vehicle_inventory_item->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
-				if (Entrust::can('delete-vehicle_inventory_item')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#vehicle_inventory_item-delete-modal" onclick="angular.element(this).scope().deleteVehicleInventoryItem(' . $vehicle_inventory_item->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+				if (Entrust::can('delete-vehicle-inventory-item')) {
+					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#vehicle_inventory_item_delete_modal" onclick="angular.element(this).scope().deleteVehicleInventoryItem(' . $vehicle_inventory_item->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
 				return $output;
 			})
@@ -78,6 +82,16 @@ class VehicleInventoryItemController extends Controller {
 		$this->data['success'] = true;
 		$this->data['vehicle_inventory_item'] = $vehicle_inventory_item;
 		$this->data['action'] = $action;
+		return response()->json($this->data);
+	}
+	public function getVehicleInventoryItemFilterData() {
+		$this->data['extras'] = [
+			'status' => [
+				['id' => '', 'name' => 'Select Status'],
+				['id' => '1', 'name' => 'Active'],
+				['id' => '0', 'name' => 'Inactive'],
+			],
+		];
 		return response()->json($this->data);
 	}
 
