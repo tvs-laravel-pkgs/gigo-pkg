@@ -57,6 +57,7 @@ app.component('customerVoiceList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'code', name: 'customer_voices.code' },
                 { data: 'name', name: 'customer_voices.name' },
+                { data: 'status', name: '', searchable: false },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -95,7 +96,7 @@ app.component('customerVoiceList', {
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Customer Voice Deleted Successfully');
+                    custom_noty('success', response.data.message);
                     $('#customer_voices_list').DataTable().ajax.reload(function(json) {});
                     $location.path('/gigo-pkg/customer-voice/list');
                 }
@@ -121,15 +122,14 @@ app.component('customerVoiceList', {
                 $mdSelect.hide();
             }
         });
-        $('#code').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
+
+        //STATUS ID ASSIGN
         $scope.onSelectedStatus = function(id) {
             $('#status').val(id);
-            dataTables.fnFilter();
+        }
+        //APPLY FILTER
+        $scope.apply_filter = function(){
+                dataTables.fnFilter();
         }
         $scope.reset_filter = function() {
             $("#code").val('');

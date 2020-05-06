@@ -59,10 +59,9 @@ class CustomerVoiceController extends Controller {
 		;
 
 		return Datatables::of($customer_voices)
-			->rawColumns(['name', 'action'])
-			->addColumn('name', function ($customer_voice) {
+			->addColumn('status', function ($customer_voice) {
 				$status = $customer_voice->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $customer_voice->name;
+				return '<span class="status-indicator ' . $status . '"></span>' . $customer_voice->status;
 			})
 			->addColumn('action', function ($customer_voice) {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
