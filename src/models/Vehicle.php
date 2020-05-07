@@ -14,7 +14,7 @@ class Vehicle extends Model {
 	protected $table = 'vehicles';
 	public $timestamps = true;
 	protected $fillable =
-		["id","company_id","engine_number","chassis_number","model_id","is_registered","registration_number","vin_number","sold_date","warranty_member_id","ewp_expiry_date"]
+		["company_id", "engine_number", "chassis_number", "model_id", "is_registered", "registration_number", "vin_number", "sold_date", "warranty_member_id", "ewp_expiry_date"]
 	;
 
 	public function getDateOfJoinAttribute($value) {

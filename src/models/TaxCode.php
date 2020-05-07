@@ -19,4 +19,17 @@ class TaxCode extends Model {
 		'type_id',
 	];
 
+	public static function getList($params = [], $add_default = true, $default_text = 'Select Tax Code') {
+		$list = Collect(Self::select([
+			'id',
+			'code as name',
+		])
+				->orderBy('code')
+				->get());
+		if ($add_default) {
+			$list->prepend(['id' => '', 'name' => $default_text]);
+		}
+		return $list;
+	}
+
 }
