@@ -896,6 +896,10 @@
 	    });
 	}]);
     var mobile_attendance_scan_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/attendance/scan-qr.html')}}";
+
+    var mobile_attendance_employee_card_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/partials/employee-card.html')}}";
+
+
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/attendance/controller.js')}}'></script>
 

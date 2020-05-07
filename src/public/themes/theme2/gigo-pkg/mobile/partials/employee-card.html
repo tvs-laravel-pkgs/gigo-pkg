@@ -1,0 +1,21 @@
+<div class="text-center block">
+    <img ng-src="$ctrl.response.user.user_profile_image" class="img-circle">
+    <h4>
+        {{$ctrl.response.user.name}}
+    </h4>
+    Employee Code : {{$ctrl.response.user.employee.code}}<br />
+    <span class="label">
+        {{$ctrl.response.user.employee.designation.name}}
+    </span><br />
+    <span class="label">
+        {{$ctrl.response.user.employee.outlet.name}}
+    </span><br />
+    <span class="label">
+        {{$ctrl.response.user.employee.shift.stat_time}}
+    </span><br />
+    <div class="alert alert-success">
+        {{$ctrl.response.message}}
+    </div><br />
+    {{$ctrl.response.attendance_log.date}} - {{$ctrl.response.day}}<br />
+    {{$ctrl.response.attendance_log.in_time}} - {{$ctrl.response.attendance_log.out_time}}
+</div>

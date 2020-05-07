@@ -2,28 +2,112 @@
     <div class="row">
         <div class="col-sm-4 col-sm-offset-4">
             <div class="panel panel-primary">
-                <div class="panel-heading">
-                    TVS GIGO SMS
-                </div>
-                <div class="panel-body">
+                <mobile-header></mobile-header>
+                <div class="panel-body" id="qr-scan-page">
                     <ol class="breadcrumb">
                         <li><a href="#">Attendance</a></li>
                         <li class="active">Scan QR Code</li>
                     </ol>
                     <h6 class="text-center">
-                        {{ user.employee.outlet.name }}
+                        {{ $ctrl.user.employee.outlet.name }}
                     </h6>
+                    <div class="qrscanner" id="scanner"></div>
                     <form id="form">
-                        <div class="qrscanner" id="scanner"></div>
                         <div class="form-group">
                             <label>encrypted_id</label>
-                            <input type="text" class="form-control" name="encrypted_id" id="encrypted_id">
+                            <input type="text" class="form-control" name="encrypted_id" id="encrypted_id" value="{{$ctrl.encrypted_id}}" ng-model="encrypted_id">
                         </div>
-                        <button type="submit" class="btn btn-default submit">
+                        <button type="submit" class="btn btn-default submit center-block" ng-click="sendQRCode()">
                             Submit
                         </button>
                     </form>
                 </div>
+                <!-- -------- -->
+                <!-- CHECK IN SUCCESS PAGE -->
+                <!-- -------- -->
+                <div class="panel-body" id="check-in-success-page" style="display: none;">
+                    <ol class="breadcrumb">
+                        <li>
+                            <a href="#">
+                                Attendance
+                            </a>
+                        </li>
+                        <li class="active">Check In Success</li>
+                    </ol>
+                    <mobile-attendance-employee-card></mobile-attendance-employee-card>
+                    <a href="javascript:;" ng-click="reloadPage()" class="btn btn-default submit center-block">
+                        DONE
+                    </a>
+                </div> <!-- panel-body -->
+                <!-- -------- -->
+                <!-- CHECKOUT FORM -->
+                <!-- -------- -->
+                <div class="panel-body" id="check-out-confirmation-page" style="display: none;">
+                    <ol class="breadcrumb">
+                        <li>
+                            <a href="#">
+                                Attendance
+                            </a>
+                        </li>
+                        <li class="active">
+                            Check Out
+                        </li>
+                    </ol>
+                    <div class="text-center block">
+                        <img ng-src="$ctrl.response.user.user_profile_image" class="img-circle">
+                        <h4>
+                            {{$ctrl.response.user.name}}
+                        </h4>
+                        Employee Code : {{$ctrl.response.user.employee.code}}<br />
+                        <span class="label">
+                            {{$ctrl.response.user.employee.designation.name}}
+                        </span><br />
+                        <span class="label">
+                            {{$ctrl.response.user.employee.outlet.name}}
+                        </span><br />
+                    </div>
+                    {{response.date}} - {{response.day}}<br />
+                    {{response.time}}
+                    <form id="form2">
+                        <input type="hidden" name="encrypted_id" value="{{$ctrl.encrypted_id}}">
+                        <div class="form-group">
+                            <label>Check Out for *</label>
+                            <md-select ng-model="$ctrl.attendance_log.punch_out_method_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader">
+                                <md-select-header class="demo-select-header">
+                                    <input ng-model="searchTerm" type="search" class="demo-header-searchbox md-text">
+                                </md-select-header>
+                                <md-optgroup>
+                                    <md-option ng-value="punch_out_method.id" ng-repeat="punch_out_method in $ctrl.response.extras.punch_out_method_list | filter:searchTerm">{{punch_out_method.name}}</md-option>
+                                </md-optgroup>
+                            </md-select>
+                            <input type="hidden" class="form-control" name="punch_out_method_id" value="{{$ctrl.attendance_log.punch_out_method_id}}">
+                        </div>
+                        <div class="form-group">
+                            <label>Remarks (if any)</label>
+                            <textarea class="form-control" name="remarks"></textarea>
+                        </div>
+                        <button type="submit" ng-click="saveCheckOut()" class="btn btn-primary center-block">
+                            SUBMIT
+                        </button>
+                    </form>
+                </div> <!-- panel-body -->
+                <!-- -------- -->
+                <!-- CHECK OUT SUCCESS PAGE -->
+                <!-- -------- -->
+                <div class="panel-body" id="check-out-success-page" style="display: none;">
+                    <ol class="breadcrumb">
+                        <li>
+                            <a href="#">
+                                Attendance
+                            </a>
+                        </li>
+                        <li class="active">Check Out Success</li>
+                    </ol>
+                    <mobile-attendance-employee-card></mobile-attendance-employee-card>
+                    <a href="javascript:;" ng-click="reloadPage()" class="btn btn-default submit center-block">
+                        DONE
+                    </a>
+                </div> <!-- panel-body -->
             </div>
         </div>
     </div>

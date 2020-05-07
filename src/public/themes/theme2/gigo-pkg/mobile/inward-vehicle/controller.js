@@ -1,5 +1,3 @@
-// angular.module('app').requires.push('qrScanner');
-
 app.directive('mobileInwardHeader', function() {
     return {
         templateUrl: mobile_inward_header_template_url,
@@ -115,6 +113,7 @@ app.component('mobileInwardOrderDetailForm', {
         }
         $scope.hasPerm = HelperService.hasPerm;
         $scope.user = JSON.parse(localStorage.getItem('user'));
+
 
         $scope.saveInwardVehicleDetai = function() {
             $location.path('/gigo-pkg/mobile/inward-vehicle/customer-detail');
