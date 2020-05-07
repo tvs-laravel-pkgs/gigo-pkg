@@ -27,7 +27,6 @@
 	        title: 'View Repair Order Type',
 	    }).
 
-
 	    //Repair Order
 	    when('/gigo-pkg/repair-order/list', {
 	        template: '<repair-order-list></repair-order-list>',
@@ -45,7 +44,6 @@
 	        template: '<repair-order-view></repair-order-view>',
 	        title: 'View Repair Order',
 	    }).
-
 
 	    //Service Type
 	    when('/gigo-pkg/service-type/list', {
@@ -491,6 +489,37 @@
     var split_order_type_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/split-order-type-modal-form.html')}}';
 </script>
 <script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/split-order-type/controller.js')}}"></script>
+
+
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    //Split Order Type
+	    when('/gigo-pkg/bay/list', {
+	        template: '<bay-list></bay-list>',
+	        title: 'Bays',
+	    }).
+	    when('/gigo-pkg/bay/add', {
+	        template: '<bay-form></bay-form>',
+	        title: 'Add Bay',
+	    }).
+	    when('/gigo-pkg/bay/edit/:id', {
+	        template: '<bay-form></bay-form>',
+	        title: 'Edit Bay',
+	    }).
+	    when('/gigo-pkg/bay/card-list', {
+	        template: '<bay-card-list></bay-card-list>',
+	        title: 'Bay Card List',
+	    });
+	}]);
+
+	//Bays
+    var bay_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/bay/list.html')}}';
+    var bay_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/bay/form.html')}}';
+    var bay_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/bay/card-list.html')}}';
+    var bay_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/bay-modal-form.html')}}';
+</script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/bay/controller.js')}}"></script>
 
 
 <script type='text/javascript'>

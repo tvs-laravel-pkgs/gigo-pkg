@@ -1,0 +1,144 @@
+Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/gigo-pkg/bay/list" type="button" class="btn-back btn-img">
+                        <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
+                    </a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>{{$ctrl.action}} Bay</b></h1>
+                    <p class="subtitle">
+                        Masters /
+                        <a href="#!/gigo-pkg/bay/list">
+                            Bays
+                        </a> /
+                        {{$ctrl.action}}
+                    </p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <form id="bay_form" autocomplete="off">
+            <input type="hidden" name="id" value="{{$ctrl.bay.id}}">
+            <div class="page-tab-form pb-70">
+                <div class="tab-form-wrap">
+                    <div class="tab-form-header">
+                        <div class="tab-header">
+                            <!-- Filters -->
+                            <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
+                                <ul class="nav nav-pills cndn-tabs">
+                                    <li class="active">
+                                        <a class="filter active" data-target="#general-information" data-toggle="tab" aria-expanded="true">
+                                            General Info
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div><!-- Filters -->
+                        </div><!-- Tab Header -->
+                    </div><!-- Tab Form Header -->
+                    <div class="tab-form-body">
+                        <div class="tab-content">
+                            <!-- TAB PANEL -->
+                            <div class="tab-pane fade in active" id="general-information" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Short Name
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <input type="text" class="form-control required" ng-model="$ctrl.bay.short_name" name="short_name" placeholder="Enter Short Name" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Name
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <input type="text" class="form-control required" ng-model="$ctrl.bay.name" name="name" placeholder="Enter Name" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Outlet<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.bay.outlet_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Outlet">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Outlet" class="demo-header-searchbox md-text">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="outlet.id" ng-repeat="outlet in $ctrl.extras.outlet_list | filter:searchTerm">{{outlet.code}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" name="outlet_id" id="outlet_id" value="{{$ctrl.bay.outlet_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Bay Status<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.bay.status_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Bay Status">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Bay Status" class="demo-header-searchbox md-text">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="bay_status.id" ng-repeat="bay_status in $ctrl.extras.bay_status_list | filter:searchTerm">{{bay_status.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" name="status_id" id="status_id" value="{{$ctrl.bay.status_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Job Order<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.bay.job_order_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Job Order">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Job Order" class="demo-header-searchbox md-text">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="job_order.id" ng-repeat="job_order in $ctrl.extras.job_order_list | filter:searchTerm">{{job_order.number}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" name="job_order_id" id="job_order_id" value="{{$ctrl.bay.job_order_id}}">
+                                            </div>
+                                            <!-- Field  -->
+                                        </div>
+                                        <!-- Column  -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Active Status
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <div class="tab-switch">
+                                                    <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
+                                                        {{ $ctrl.switch_value }}
+                                                    </md-switch>
+                                                    <input type="hidden" name="status" value="{{$ctrl.switch_value}}">
+                                                </div>
+                                            </div><!-- Form Group -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane-footer">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a href="#!/gigo-pkg/bay/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
+                                        <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
+                                    </div>
+                                </div>
+                            </div><!-- Tab Footer -->
+                        </div><!-- Tab Content -->
+                    </div><!-- Tab Form Body -->
+                </div><!-- Tab Form Wrap -->
+            </div><!-- Page Form -->
+        </form>
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap

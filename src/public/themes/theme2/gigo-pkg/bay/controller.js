@@ -1,20 +1,20 @@
-app.component('splitOrderTypeList', {
-    templateUrl: split_order_type_list_template_url,
+app.component('bayList', {
+    templateUrl: bay_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_split_order_type').focus();
+        $('#search_bay').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('split-order-types')) {
+        if (!self.hasPermission('bays')) {
             window.location = "#!/permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('split-order-types');
+        self.add_permission = self.hasPermission('bays');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#split_order_types_list').DataTable({
+        var dataTable = $('#bays_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -24,6 +24,7 @@ app.component('splitOrderTypeList', {
                     "next": '<i class="icon ion-ios-arrow-forward"></i>',
                     "previous": '<i class="icon ion-ios-arrow-back"></i>'
                 },
+
             },
             pageLength: 10,
             processing: true,
@@ -33,7 +34,7 @@ app.component('splitOrderTypeList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_split_order_type').val(state_save_val.search.search);
+                    $('#search_bay').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -43,22 +44,27 @@ app.component('splitOrderTypeList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getSplitOrderTypeList'],
+                url: laravel_routes['getBayList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.code = $("#code").val();
-                    d.name = $("#name").val();
+                    d.short_name = $('#short_name').val();
+                    d.name = $('#name').val();
+                    d.outlet = $('#outlet').val();
+                    d.bay_status = $('#bay_status').val();
+                    d.job_order = $('#job_order').val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'split_order_types.code' },
-                { data: 'name', name: 'split_order_types.name' },
+                { data: 'short_name', name: 'bays.short_name', searchable: true },
+                { data: 'name', name: 'bays.name', searchable: true },
+                { data: 'outlet', name: 'outlets.code', searchable: true },
+                { data: 'bay_status', name: 'statuses.name', searchable: true },
+                { data: 'job_order', name: 'job_orders.number', searchable: true },
                 { data: 'status', name: '' },
-
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -71,46 +77,63 @@ app.component('splitOrderTypeList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_split_order_type').val('');
-            $('#split_order_types_list').DataTable().search('').draw();
+            $('#search_bay').val('');
+            $('#bays_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#split_order_types_list').DataTable().ajax.reload();
+            $('#bays_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#split_order_types_list').dataTable();
-        $("#search_split_order_type").keyup(function() {
+        var dataTables = $('#bays_list').dataTable();
+        $("#search_bay").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
-        $scope.deleteSplitOrderType = function($id) {
-            $('#split_order_type_id').val($id);
+        $scope.deleteBay = function($id) {
+            $('#bay_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#split_order_type_id').val();
+            $id = $('#bay_id').val();
             $http.get(
-                laravel_routes['deleteSplitOrderType'], {
+                laravel_routes['deleteBay'], {
                     params: {
                         id: $id,
                     }
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Split Order Type Deleted Successfully');
-                    $('#split_order_types_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/split-order-type/list');
+                    custom_noty('success', 'Bay Deleted Successfully');
+                    $('#bays_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/gigo-pkg/bay/list');
                 }
             });
         }
 
-        // FOR FILTER
+        //FOR FILTER
         $http.get(
-            laravel_routes['getSplitOrderTypeFilter']
+            laravel_routes['getBayFilter']
         ).then(function(response) {
-            // console.log(response);
             self.extras = response.data.extras;
+            self.bay = response.data.bay;
+            self.outlet_list = response.data.outlet_list;
+            self.bay_status_list = response.data.bay_status_list;
+            self.job_order_list = response.data.job_order_list;
+            self.outlet_selected = '';
+            self.bay_status_selected = '';
+            self.job_order_selected = '';
         });
+
+        $scope.onSelectedOutlet = function(outlet_selected) {
+            $('#outlet').val(outlet_selected);
+        }
+        $scope.onSelectedBayStatus = function(bay_status_selected) {
+            $('#bay_status').val(bay_status_selected);
+        }
+        $scope.onSelectedJobOrder = function(job_order_selected) {
+            $('#job_order').val(job_order_selected);
+        }
+
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -126,51 +149,54 @@ app.component('splitOrderTypeList', {
                 $mdSelect.hide();
             }
         });
-
         $scope.applyFilter = function() {
             $('#status').val(self.status);
             dataTables.fnFilter();
-            $('#split-order-type-filter-modal').modal('hide');
+            $('#bay-filter-modal').modal('hide');
+        }
+        $scope.reset_filter = function() {
+            $("#short_name").val('');
+            $("#name").val('');
+            $("#outlet").val('');
+            $("#bay_status").val('');
+            $("#job_order").val('');
+            $("#status").val('');
         }
 
-        $scope.reset_filter = function() {
-            $("#code").val('');
-            $("#name").val('');
-            $("#status").val('');
-            // dataTables.fnFilter();
-        }
         $rootScope.loading = false;
     }
 });
-
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-
-app.component('splitOrderTypeForm', {
-    templateUrl: split_order_type_form_template_url,
+app.component('bayForm', {
+    templateUrl: bay_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         $("input:text:visible:first").focus();
-
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-split-order-type') && !self.hasPermission('edit-split-order-type')) {
+        if (!self.hasPermission('add-bay') && !self.hasPermission('edit-bay')) {
             window.location = "#!/permission-denied";
             return false;
         }
-
         self.angular_routes = angular_routes;
         $http.get(
-            laravel_routes['getSplitOrderTypeFormData'], {
+            laravel_routes['getBayFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
             }
         ).then(function(response) {
-            self.split_order_type = response.data.split_order_type;
+            self.bay = response.data.bay;
+            self.extras = response.data.extras;
+            // console.log(self.extras);
+            // return;
+            // self.outlet = response.data.outlet;
+            // self.bay_status = response.data.bay_status;
+            // self.job_order = response.data.job_order;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
-                if (self.split_order_type.deleted_at) {
+                if (self.bay.deleted_at) {
                     self.switch_value = 'Inactive';
                 } else {
                     self.switch_value = 'Active';
@@ -181,11 +207,11 @@ app.component('splitOrderTypeForm', {
         });
 
         //Save Form Data 
-        var form_id = '#split_order_type_form';
+        var form_id = '#bay_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'code': {
+                'short_name': {
                     required: true,
                     minlength: 3,
                     maxlength: 32,
@@ -193,18 +219,25 @@ app.component('splitOrderTypeForm', {
                 'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 191,
-                }
+                    maxlength: 128,
+                },
+                'outlet_id': {
+                    required: true,
+                },
+                'status_id': {
+                    required: true,
+                },
+
             },
             messages: {
-                'code': {
+                'short_name': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 191 Characters',
-                }
+                    maxlength: 'Maximum 128 Characters',
+                },
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
@@ -213,7 +246,7 @@ app.component('splitOrderTypeForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveSplitOrderType'],
+                        url: laravel_routes['saveBay'],
                         method: "POST",
                         data: formData,
                         processData: false,
@@ -222,7 +255,7 @@ app.component('splitOrderTypeForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/split-order-type/list');
+                            $location.path('/gigo-pkg/bay/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -234,7 +267,7 @@ app.component('splitOrderTypeForm', {
                                 custom_noty('error', errors);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/gigo-pkg/split-order-type/list');
+                                $location.path('/gigo-pkg/bay/list');
                                 $scope.$apply();
                             }
                         }
@@ -247,5 +280,3 @@ app.component('splitOrderTypeForm', {
         });
     }
 });
-//------------------------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------------------------
