@@ -351,6 +351,33 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//Bays
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'bays',
+				'display_name' => 'Bays',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'bays',
+				'name' => 'add-bay',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'bays',
+				'name' => 'edit-bay',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'bays',
+				'name' => 'delete-bay',
+				'display_name' => 'Delete',
+			],
+
+
 			//Estimation Types
 			[
 				'display_order' => 99,

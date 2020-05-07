@@ -93,6 +93,13 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/split-order-type/delete', 'SplitOrderTypeController@deleteSplitOrderType')->name('deleteSplitOrderType');
 	Route::get('/split-order-type/get-filter-data', 'SplitOrderTypeController@getSplitOrderTypeFilter')->name('getSplitOrderTypeFilter');
 
+	//Bays
+	Route::get('/bay/get-list', 'BayController@getBayList')->name('getBayList');
+	Route::get('/bay/get-form-data', 'BayController@getBayFormData')->name('getBayFormData');
+	Route::post('/bay/save', 'BayController@saveBay')->name('saveBay');
+	Route::get('/bay/delete', 'BayController@deleteBay')->name('deleteBay');
+	Route::get('/bay/get-filter-data', 'BayController@getBayFilter')->name('getBayFilter');
+
 	//Estimation Type
 	Route::get('/estimation-type/get-list', 'EstimationTypeController@getEstimationTypeList')->name('getEstimationTypeList');
 	Route::get('/estimation-type/get-form-data', 'EstimationTypeController@getEstimationTypeFormData')->name('getEstimationTypeFormData');
