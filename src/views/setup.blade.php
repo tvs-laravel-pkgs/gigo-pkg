@@ -851,16 +851,37 @@
 	        title: 'Inward Vehicles',
 	    }).
 	    when('/gigo-pkg/mobile/inward-vehicle/vehicle-detail', {
-	        template: '<mobile-inward-vehicle-detail-view></mobile-inward-vehicle-detail-view>',
+	        template: '<mobile-inward-vehicle-detail></mobile-inward-vehicle-detail>',
 	        title: 'Inward Vehicle - Vehicle Details',
-	    });
+	    }).
+	    when('/gigo-pkg/mobile/inward-vehicle/vehicle-form', {
+	        template: '<mobile-inward-vehicle-form></mobile-inward-vehicle-form>',
+	        title: 'Inward Vehicle - Vehicle Form',
+	    }).
+	    when('/gigo-pkg/mobile/inward-vehicle/customer-detail', {
+	        template: '<mobile-inward-customer-detail></mobile-inward-customer-detail>',
+	        title: 'Inward Vehicle - Customer Details',
+	    }).
+	    when('/gigo-pkg/mobile/inward-vehicle/customer-form', {
+	        template: '<mobile-inward-customer-form></mobile-inward-customer-form>',
+	        title: 'Inward Vehicle - Customer Form',
+	    }).
+	    when('/gigo-pkg/mobile/inward-vehicle/order-detail-form', {
+	        template: '<mobile-inward-order-detail-form></mobile-inward-order-detail-form>',
+	        title: 'Inward Vehicle - Customer Form',
+	    })
+	    ;
 	}]);
 
 	//Inward Vehicles
     var mobile_inward_vehicle_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/list.html')}}';
-    var mobile_inward_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/vehicle-detail-view.html')}}';
-    var mobile_inward_vehicle_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/card-list.html')}}';
-    var mobile_inward_vehicle_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/partials/inward-vehicle-modal-form.html')}}';
+    var mobile_inward_vehicle_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/vehicle-detail.html')}}';
+    var mobile_inward_vehicle_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/vehicle-form.html')}}';
+    var mobile_inward_customer_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/customer-detail.html')}}';
+    var mobile_inward_customer_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/customer-form.html')}}';
+    var mobile_inward_order_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/order-detail-form.html')}}';
+
+    var mobile_inward_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/partials/header.html')}}';
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/inward-vehicle/controller.js')}}'></script>
 
