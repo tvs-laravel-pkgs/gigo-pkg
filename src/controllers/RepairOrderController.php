@@ -73,12 +73,12 @@ class RepairOrderController extends Controller {
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->type)) {
-					$query->where('repair_order_types.short_name', 'LIKE', '%' . $request->type . '%');
+					$query->where('repair_orders.type_id', 'LIKE', '%' . $request->type . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->skill_level)) {
-					$query->where('skill_levels.name', 'LIKE', '%' . $request->skill_level . '%');
+					$query->where('repair_orders.skill_level_id', 'LIKE', '%' . $request->skill_level . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
@@ -93,7 +93,7 @@ class RepairOrderController extends Controller {
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->tax_code)) {
-					$query->where('tax_codes.code', 'LIKE', '%' . $request->tax_code . '%');
+					$query->where('repair_orders.tax_code_id', 'LIKE', '%' . $request->tax_code . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
