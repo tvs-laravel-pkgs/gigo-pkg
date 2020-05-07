@@ -47,18 +47,23 @@ app.component('vehicleList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
-                    d.name = $("#name").val();
-                    d.description = $("#description").val();
+                    d.engine_numbers = $('#engine_numbers').val();
+                    d.chassis_numbers = $('#chassis_numbers').val();
+                    d.model_ids = $('#model_ids').val();
+                    d.registration_numbers = $('#registration_numbers').val();
+                    d.vin_numbers = $('#vin_numbers').val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'vehicles.short_name' },
-                { data: 'name', name: 'vehicles.name' },
-                { data: 'description', name: 'vehicles.description' },
+                { data: 'engine_number', name: 'vehicles.engine_number' },
+                { data: 'chassis_number', name: 'vehicles.chassis_number' },
+                { data: 'model_name', name: 'models.model_name' },
+                { data: 'registration_number', name: 'vehicles.registration_number' },
+                { data: 'vin_number', name: 'vehicles.vin_number' },
+                { data: 'sold_date', name: 'vehicles.sold_date' },
                 { data: 'status', name: '' },
 
             ],
@@ -108,11 +113,17 @@ app.component('vehicleList', {
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getVehicleFilter']
+            laravel_routes['getVehicleFilterData']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
+            self.model_list = response.data.model_list;
         });
+
+        $scope.onSelectedmodel = function(model_selected) {
+            $('#model_ids').val(model_selected);
+        }
+
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -128,21 +139,18 @@ app.component('vehicleList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
             dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-            dataTables.fnFilter();
+            $('#vehicle-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#short_name").val('');
-            $("#name").val('');
+            $("#engine_numbers").val('');
+            $("#chassis_numbers").val('');
+            $("#model_ids").val('');
+            $("#registration_numbers").val('');
+            $("#vin_numbers").val('');
             $("#status").val('');
-            dataTables.fnFilter();
         }
         $rootScope.loading = false;
     }
@@ -169,17 +177,30 @@ app.component('vehicleForm', {
             }
         ).then(function(response) {
             self.vehicle = response.data.vehicle;
+            self.model_list = response.data.model_list;
+            self.sold_date = response.data.sold_date;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
                 if (self.vehicle.deleted_at) {
                     self.switch_value = 'Inactive';
+                    self.register_val = 'Yes';
                 } else {
                     self.switch_value = 'Active';
+                    self.register_val = 'Yes';
                 }
             } else {
                 self.switch_value = 'Active';
+                self.register_val = 'Yes';
             }
+            if (self.action == 'Edit') {
+                if (self.vehicle.is_registered == 1) {
+                    self.register_val = 'Yes';
+                } else {
+                    self.register_val = 'No';
+                }
+            } 
+
         });
 
         //Save Form Data 
@@ -187,33 +208,49 @@ app.component('vehicleForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
+                'engine_number': {
                     required: true,
-                    minlength: 3,
+                    minlength: 10,
                     maxlength: 32,
                 },
-                'name': {
+                'chassis_number': {
                     required: true,
-                    minlength: 3,
+                    minlength: 10,
                     maxlength: 128,
                 },
-                'description': {
-                    minlength: 3,
-                    maxlength: 255,
-                }
+                'model_id': {
+                    required:true,
+                },
+                'registration_number':{
+                    required:true,
+                    minlength: 10,
+                    maxlength: 32,
+                },
+                'vin_number':{
+                    required:true,
+                    minlength: 10,
+                    maxlength: 32,
+                },
+                'sold_date':{
+                    required:true,
+                },
             },
             messages: {
-                'short_name': {
-                    minlength: 'Minimum 3 Characters',
+                'engine_number': {
+                    minlength: 'Minimum 10 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
-                'name': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
+                'chassis_number': {
+                    minlength: 'Minimum 10 Characters',
+                    maxlength: 'Maximum 32 Characters',
                 },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
+                'registration_number': {
+                    minlength: 'Minimum 10 Characters',
+                    maxlength: 'Maximum 32 Characters',
+                },
+                'vin_number': {
+                    minlength: 'Minimum 10 Characters',
+                    maxlength: 'Maximum 32 Characters',
                 }
             },
             invalidHandler: function(event, validator) {

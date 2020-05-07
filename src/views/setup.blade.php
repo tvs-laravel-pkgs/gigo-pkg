@@ -87,6 +87,20 @@
 	    when('/gigo-pkg/quote-type/edit/:id', {
 	        template: '<quote-type-form></quote-type-form>',
 	        title: 'Edit Quote Type',
+	    }).
+
+	    //Vehicle Master
+	     when('/gigo-pkg/vehicle/list', {
+	        template: '<vehicle-list></vehicle-list>',
+	        title: 'Vehicles',
+	    }).
+	    when('/gigo-pkg/vehicle/add', {
+	        template: '<vehicle-form></vehicle-form>',
+	        title: 'Add Vehicle',
+	    }).
+	    when('/gigo-pkg/vehicle/edit/:id', {
+	        template: '<vehicle-form></vehicle-form>',
+	        title: 'Edit Vehicle',
 	    });
 
 	}]);
@@ -113,12 +127,17 @@
     var quote_type_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/list.html')}}";
     var quote_type_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/form.html')}}";
 
+     //Vehicle
+    var vehicle_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/list.html')}}";
+    var vehicle_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/form.html')}}";
+
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-order-type/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
@@ -152,7 +171,7 @@
 <!-- <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/controller.js')}}'></script> -->
 
 
-<script type='text/javascript'>
+<!-- <script type='text/javascript'>
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
 	    //Vehicle
@@ -180,7 +199,7 @@
     var vehicle_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/card-list.html')}}';
     var vehicle_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/vehicle-modal-form.html')}}';
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/controller.js')}}'></script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/controller.js')}}'></script> -->
 
 
 <script type='text/javascript'>
