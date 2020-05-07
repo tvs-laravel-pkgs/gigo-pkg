@@ -13,9 +13,11 @@ class VehicleInspectionItem extends Model {
 	use SoftDeletes;
 	protected $table = 'vehicle_inspection_items';
 	public $timestamps = true;
-	protected $fillable =
-		["id","group_id","code","name"]
-	;
+	protected $fillable = [
+		"group_id",
+		"code",
+		"name",
+	];
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));

@@ -49,16 +49,16 @@ app.component('quoteTypeList', {
                 data: function(d) {
                     d.short_name = $("#short_name").val();
                     d.name = $("#name").val();
-                    d.description = $("#description").val();
+                    /*d.description = $("#description").val();*/
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'quote_types.short_name' },
-                { data: 'name', name: 'quote_types.name' },
-                { data: 'description', name: 'quote_types.description' },
+                { data: 'code', name: 'quote_types.code',searchable: true },
+                { data: 'name', name: 'quote_types.name' ,searchable: true },
+               /* { data: 'description', name: 'quote_types.description' },*/
                 { data: 'status', name: '' },
 
             ],
@@ -108,7 +108,7 @@ app.component('quoteTypeList', {
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getQuoteTypeFilter']
+            laravel_routes['getQuoteTypeFilterData']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
@@ -128,21 +128,16 @@ app.component('quoteTypeList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
             dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-            dataTables.fnFilter();
+            $('#quote-type-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
             $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
-            dataTables.fnFilter();
+            //dataTables.fnFilter();
         }
         $rootScope.loading = false;
     }
@@ -155,6 +150,7 @@ app.component('quoteTypeForm', {
     templateUrl: quote_type_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('add-quote-type') || !self.hasPermission('edit-quote-type')) {
             window.location = "#!/page-permission-denied";
@@ -187,7 +183,7 @@ app.component('quoteTypeForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
+                'code': {
                     required: true,
                     minlength: 3,
                     maxlength: 32,
@@ -197,13 +193,9 @@ app.component('quoteTypeForm', {
                     minlength: 3,
                     maxlength: 128,
                 },
-                'description': {
-                    minlength: 3,
-                    maxlength: 255,
-                }
             },
             messages: {
-                'short_name': {
+                'code': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
@@ -211,10 +203,6 @@ app.component('quoteTypeForm', {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 128 Characters',
                 },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
-                }
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');

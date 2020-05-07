@@ -2,7 +2,7 @@
 
 namespace Abs\GigoPkg;
 use App\Http\Controllers\Controller;
-use App\ServiceType;
+use Abs\GigoPkg\ServiceType;
 use Auth;
 use Carbon\Carbon;
 use DB;

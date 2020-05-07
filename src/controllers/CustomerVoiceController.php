@@ -59,10 +59,9 @@ class CustomerVoiceController extends Controller {
 		;
 
 		return Datatables::of($customer_voices)
-			->rawColumns(['name', 'action'])
-			->addColumn('name', function ($customer_voice) {
+			->addColumn('status', function ($customer_voice) {
 				$status = $customer_voice->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $customer_voice->name;
+				return '<span class="status-indicator ' . $status . '"></span>' . $customer_voice->status;
 			})
 			->addColumn('action', function ($customer_voice) {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
@@ -124,7 +123,10 @@ class CustomerVoiceController extends Controller {
 				],
 			], $error_messages);
 			if ($validator->fails()) {
-				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
+				return response()->json([
+					'success' => false,
+					'errors' => $validator->errors()->all(),
+				]);
 			}
 
 			DB::beginTransaction();
@@ -175,11 +177,17 @@ class CustomerVoiceController extends Controller {
 			$customer_voice = CustomerVoice::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($customer_voice) {
 				DB::commit();
-				return response()->json(['success' => true, 'message' => 'Customer Voice Deleted Successfully']);
+				return response()->json([
+					'success' => true,
+					'message' => 'Customer Voice Deleted Successfully',
+				]);
 			}
 		} catch (Exception $e) {
 			DB::rollBack();
-			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
 		}
 	}
 

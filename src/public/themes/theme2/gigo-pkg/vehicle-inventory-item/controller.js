@@ -47,19 +47,17 @@ app.component('vehicleInventoryItemList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
+                    d.code = $("#code").val();
                     d.name = $("#name").val();
-                    d.description = $("#description").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'vehicle_inventory_items.short_name' },
+                { data: 'code', name: 'vehicle_inventory_items.code' },
                 { data: 'name', name: 'vehicle_inventory_items.name' },
-                { data: 'description', name: 'vehicle_inventory_items.description' },
-                { data: 'status', name: '' },
+                { data: 'status', name: '',searchable: false },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -108,7 +106,7 @@ app.component('vehicleInventoryItemList', {
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getVehicleInventoryItemFilter']
+            laravel_routes['getVehicleInventoryItemFilterData']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
@@ -128,22 +126,26 @@ app.component('vehicleInventoryItemList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
-            dataTables.fnFilter();
+        $('#code').on('keyup', function() {
+            //dataTables.fnFilter();
         });
         $('#name').on('keyup', function() {
-            dataTables.fnFilter();
+            //dataTables.fnFilter();
         });
         $scope.onSelectedStatus = function(id) {
             $('#status').val(id);
-            dataTables.fnFilter();
+            //dataTables.fnFilter();
         }
         $scope.reset_filter = function() {
-            $("#short_name").val('');
+            $("#code").val('');
             $("#name").val('');
             $("#status").val('');
+            //dataTables.fnFilter();
+        }
+        $scope.apply_filter = function() {
             dataTables.fnFilter();
         }
+
         $rootScope.loading = false;
     }
 });
@@ -187,7 +189,7 @@ app.component('vehicleInventoryItemForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
+                'code': {
                     required: true,
                     minlength: 3,
                     maxlength: 32,
@@ -195,26 +197,18 @@ app.component('vehicleInventoryItemForm', {
                 'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 128,
+                    maxlength: 191,
                 },
-                'description': {
-                    minlength: 3,
-                    maxlength: 255,
-                }
             },
             messages: {
-                'short_name': {
+                'code': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
+                    maxlength: 'Maximum 191 Characters',
                 },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
-                }
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');

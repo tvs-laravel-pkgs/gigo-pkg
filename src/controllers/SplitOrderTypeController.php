@@ -17,23 +17,41 @@ class SplitOrderTypeController extends Controller {
 		$this->data['theme'] = config('custom.theme');
 	}
 
+	public function getSplitOrderTypeFilter() {
+		$this->data['extras'] = [
+			'status' => [
+				['id' => '', 'name' => 'Select Status'],
+				['id' => '1', 'name' => 'Active'],
+				['id' => '0', 'name' => 'Inactive'],
+			],
+		];
+		return response()->json($this->data);
+	}
+
 	public function getSplitOrderTypeList(Request $request) {
 		$split_order_types = SplitOrderType::withTrashed()
 
 			->select([
 				'split_order_types.id',
-				'split_order_types.name',
 				'split_order_types.code',
+				'split_order_types.name',
 
 				DB::raw('IF(split_order_types.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->where('split_order_types.company_id', Auth::user()->company_id)
 
 			->where(function ($query) use ($request) {
+				if (!empty($request->code)) {
+					$query->where('split_order_types.code', 'LIKE', '%' . $request->code . '%');
+				}
+			})
+
+			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('split_order_types.name', 'LIKE', '%' . $request->name . '%');
 				}
 			})
+
 			->where(function ($query) use ($request) {
 				if ($request->status == '1') {
 					$query->whereNull('split_order_types.deleted_at');
@@ -44,24 +62,27 @@ class SplitOrderTypeController extends Controller {
 		;
 
 		return Datatables::of($split_order_types)
-			->rawColumns(['name', 'action'])
-			->addColumn('name', function ($split_order_type) {
+			
+			->addColumn('status', function ($split_order_type) {
 				$status = $split_order_type->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $split_order_type->name;
+				return '<span class="status-indicator ' . $status . '"></span>' . $split_order_type->status;
 			})
+
 			->addColumn('action', function ($split_order_type) {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
-				$output = '';
-				if (Entrust::can('edit-split_order_type')) {
-					$output .= '<a href="#!/gigo-pkg/split_order_type/edit/' . $split_order_type->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				$action = '';
+				if (Entrust::can('edit-split-order-type')) {
+					$action .= '<a href="#!/gigo-pkg/split-order-type/edit/' . $split_order_type->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+
 				}
-				if (Entrust::can('delete-split_order_type')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#split_order_type-delete-modal" onclick="angular.element(this).scope().deleteSplitOrderType(' . $split_order_type->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+				if (Entrust::can('delete-split-order-type')) {
+					$action .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_split_order_type" onclick="angular.element(this).scope().deleteSplitOrderType(' . $split_order_type->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+
 				}
-				return $output;
+				return $action;
 			})
 			->make(true);
 	}
@@ -163,24 +184,24 @@ class SplitOrderTypeController extends Controller {
 		}
 	}
 
-	public function getSplitOrderTypes(Request $request) {
-		$split_order_types = SplitOrderType::withTrashed()
-			->with([
-				'split-order-types',
-				'split-order-types.user',
-			])
-			->select([
-				'split_order_types.id',
-				'split_order_types.name',
-				'split_order_types.code',
-				DB::raw('IF(split_order_types.deleted_at IS NULL, "Active","Inactive") as status'),
-			])
-			->where('split_order_types.company_id', Auth::user()->company_id)
-			->get();
+	// public function getSplitOrderTypes(Request $request) {
+	// 	$split_order_types = SplitOrderType::withTrashed()
+	// 		->with([
+	// 			'split-order-types',
+	// 			'split-order-types.user',
+	// 		])
+	// 		->select([
+	// 			'split_order_types.id',
+	// 			'split_order_types.name',
+	// 			'split_order_types.code',
+	// 			DB::raw('IF(split_order_types.deleted_at IS NULL, "Active","Inactive") as status'),
+	// 		])
+	// 		->where('split_order_types.company_id', Auth::user()->company_id)
+	// 		->get();
 
-		return response()->json([
-			'success' => true,
-			'split_order_types' => $split_order_types,
-		]);
-	}
+	// 	return response()->json([
+	// 		'success' => true,
+	// 		'split_order_types' => $split_order_types,
+	// 	]);
+	// }
 }

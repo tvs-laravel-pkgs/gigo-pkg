@@ -1,20 +1,20 @@
-app.component('vehicleInspectionItemList', {
-    templateUrl: vehicle_inspection_item_list_template_url,
+app.component('serviceOrderTypeList', {
+    templateUrl: service_order_type_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_vehicle_inspection_item').focus();
+        $('#service_order_types_list').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('vehicle-inspection-items')) {
+        if (!self.hasPermission('service-order-types')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-vehicle-inspection-item');
+        self.add_permission = self.hasPermission('add-service-order-type');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#vehicle_inspection_items_list').DataTable({
+        var dataTable = $('#service_order_types_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -33,7 +33,7 @@ app.component('vehicleInspectionItemList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_vehicle_inspection_item').val(state_save_val.search.search);
+                    $('#search_service_order_type').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -43,24 +43,21 @@ app.component('vehicleInspectionItemList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getVehicleInspectionItemList'],
+                url: laravel_routes['getServiceOrderTypeList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.code = $("#code").val();
+                    d.short_name = $("#short_name").val();
                     d.name = $("#name").val();
-                    d.group_id = $("#vehicle_inspection_item_group_id").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'vehicle_inspection_items.code' },
-                { data: 'name', name: 'vehicle_inspection_items.name' },
-                { data: 'item_group_name', name: 'vehicle_inspection_item_groups.name' },
+                { data: 'code', name: 'service_order_types.code' ,searchable: true },
+                { data: 'name', name: 'service_order_types.name' ,searchable: true },
                 { data: 'status', name: '' },
-
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -73,42 +70,42 @@ app.component('vehicleInspectionItemList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_vehicle_inspection_item').val('');
-            $('#vehicle_inspection_items_list').DataTable().search('').draw();
+            $('#search_service_order_type').val('');
+            $('#service_order_types_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#vehicle_inspection_items_list').DataTable().ajax.reload();
+            $('#service_order_types_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#vehicle_inspection_items_list').dataTable();
-        $("#search_vehicle_inspection_item").keyup(function() {
+        var dataTables = $('#service_order_types_list').dataTable();
+        $("#search_service_order_type").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
-        $scope.deleteVehicleInspectionItem = function($id) {
-            $('#vehicle_inspection_item_id').val($id);
+        $scope.deleteServiceOrderType = function($id) {
+            $('#service_order_type_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#vehicle_inspection_item_id').val();
+            $id = $('#service_order_type_id').val();
             $http.get(
-                laravel_routes['deleteVehicleInspectionItem'], {
+                laravel_routes['deleteServiceOrderType'], {
                     params: {
                         id: $id,
                     }
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', response.data.message);
-                    $('#vehicle_inspection_items_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/vehicle-inspection-item/list');
+                    custom_noty('success', 'Service Order Type Deleted Successfully');
+                    $('#service_order_types_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/gigo-pkg/service-order-type/list');
                 }
             });
         }
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getVehicleInspectionItemFilterData']
+            laravel_routes['getServiceOrderTypeFilterData']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
@@ -119,6 +116,8 @@ app.component('vehicleInspectionItemList', {
         $scope.clearSearchTerm = function() {
             $scope.searchTerm = '';
             $scope.searchTerm1 = '';
+            $scope.searchTerm2 = '';
+            $scope.searchTerm3 = '';
         };
         /* Modal Md Select Hide */
         $('.modal').bind('click', function(event) {
@@ -126,25 +125,17 @@ app.component('vehicleInspectionItemList', {
                 $mdSelect.hide();
             }
         });
-        
-        //STATUS ID ASSIGN
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-        }
-        //VEHICLE INSPECTION ITEM GROUP ID ASSIGN
-        $scope.onSelectedGroup = function(id) {
-            $('#vehicle_inspection_item_group_id').val(id);
-        }
-        //APPLY FILTER
-        $scope.apply_filter = function() {
+       
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
             dataTables.fnFilter();
+            $('#service-order-type-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#code").val('');
+            $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
-            $("#vehicle_inspection_item_group_id").val('');
-            // dataTables.fnFilter();
+            //dataTables.fnFilter();
         }
         $rootScope.loading = false;
     }
@@ -153,30 +144,29 @@ app.component('vehicleInspectionItemList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.component('vehicleInspectionItemForm', {
-    templateUrl: vehicle_inspection_item_form_template_url,
+app.component('serviceOrderTypeForm', {
+    templateUrl: service_order_type_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-vehicle-inspection-item') || !self.hasPermission('edit-vehicle-inspection-item')) {
+        if (!self.hasPermission('add-service-order-type') || !self.hasPermission('edit-service-order-type')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
         self.angular_routes = angular_routes;
         $http.get(
-            laravel_routes['getVehicleInspectionItemFormData'], {
+            laravel_routes['getServiceOrderTypeFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
             }
         ).then(function(response) {
-            console.log(response);
-            self.vehicle_inspection_item = response.data.vehicle_inspection_item;
-            self.extras = response.data.extras;
+            self.service_order_type = response.data.service_order_type;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
-                if (self.vehicle_inspection_item.deleted_at) {
+                if (self.service_order_type.deleted_at) {
                     self.switch_value = 'Inactive';
                 } else {
                     self.switch_value = 'Active';
@@ -186,18 +176,8 @@ app.component('vehicleInspectionItemForm', {
             }
         });
 
-        $("input:text:visible:first").focus();
-
-        //FOR SEARCH DDL
-         $element.find('input').on('keydown', function(ev) {
-            ev.stopPropagation();
-        });
-         $scope.clearSearchTerm = function() {
-            $scope.searchTerm = '';
-        };
-
         //Save Form Data 
-        var form_id = '#vehicle_inspection_item_form';
+        var form_id = '#service_order_type_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
@@ -209,11 +189,8 @@ app.component('vehicleInspectionItemForm', {
                 'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 191,
+                    maxlength: 128,
                 },
-                'group_id': {
-                    required:true,
-                }
             },
             messages: {
                 'code': {
@@ -222,14 +199,17 @@ app.component('vehicleInspectionItemForm', {
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 191 Characters',
+                    maxlength: 'Maximum 128 Characters',
                 },
+            },
+            invalidHandler: function(event, validator) {
+                custom_noty('error', 'You have errors, Please check all tabs');
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveVehicleInspectionItem'],
+                        url: laravel_routes['saveServiceOrderType'],
                         method: "POST",
                         data: formData,
                         processData: false,
@@ -238,7 +218,7 @@ app.component('vehicleInspectionItemForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/vehicle-inspection-item/list');
+                            $location.path('/gigo-pkg/service-order-type/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -250,7 +230,7 @@ app.component('vehicleInspectionItemForm', {
                                 custom_noty('error', errors);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/gigo-pkg/vehicle-inspection-item/list');
+                                $location.path('/gigo-pkg/service-order-type/list');
                                 $scope.$apply();
                             }
                         }

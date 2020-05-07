@@ -8,16 +8,14 @@ use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class VehicleInspectionItemGroup extends Model {
+class ServiceOrderType extends Model {
 	use SeederTrait;
 	use SoftDeletes;
-	protected $table = 'vehicle_inspection_item_groups';
+	protected $table = 'service_order_types';
 	public $timestamps = true;
-	protected $fillable = [
-		"company_id",
-		"code",
-		"name",
-	];
+	protected $fillable =
+		["id","company_id","code","name"]
+	;
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -62,7 +60,7 @@ class VehicleInspectionItemGroup extends Model {
 		return $record;
 	}
 
-	public static function getList($params = [], $add_default = true, $default_text = 'Select Vehicle Inspection Item Group') {
+	public static function getList($params = [], $add_default = true, $default_text = 'Select Service Type') {
 		$list = Collect(Self::select([
 			'id',
 			'name',

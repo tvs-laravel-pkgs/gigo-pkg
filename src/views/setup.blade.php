@@ -1,3 +1,4 @@
+
 @if(config('gigo-pkg.DEV'))
     <?php $gigo_pkg_prefix = '/packages/abs/gigo-pkg/src';?>
 @else
@@ -11,7 +12,7 @@
 	     //Repair Order Types
 	    when('/gigo-pkg/repair-order-type/list', {
 	        template: '<repair-order-type-list></repair-order-type-list>',
-	        title: 'Repair Order Type',
+	        title: 'Repair Order Types',
 	    }).
 	    when('/gigo-pkg/repair-order-type/add', {
 	        template: '<repair-order-type-form></repair-order-type-form>',
@@ -30,7 +31,7 @@
 	    //Repair Order
 	    when('/gigo-pkg/repair-order/list', {
 	        template: '<repair-order-list></repair-order-list>',
-	        title: 'Repair Order',
+	        title: 'Repair Orders',
 	    }).
 	    when('/gigo-pkg/repair-order/add', {
 	        template: '<repair-order-form></repair-order-form>',
@@ -58,6 +59,34 @@
 	    when('/gigo-pkg/service-type/edit/:id', {
 	        template: '<service-type-form></service-type-form>',
 	        title: 'Edit Service Type',
+	    }).
+
+	    //Service Order Type
+	    when('/gigo-pkg/service-order-type/list', {
+	        template: '<service-order-type-list></service-order-type-list>',
+	        title: 'Service Order Types',
+	    }).
+	    when('/gigo-pkg/service-order-type/add', {
+	        template: '<service-order-type-form></service-order-type-form>',
+	        title: 'Add Service Order Type',
+	    }).
+	    when('/gigo-pkg/service-order-type/edit/:id', {
+	        template: '<service-order-type-form></service-order-type-form>',
+	        title: 'Edit Service Order Type',
+	    }).
+
+	    //Quote Type
+	     when('/gigo-pkg/quote-type/list', {
+	        template: '<quote-type-list></quote-type-list>',
+	        title: 'Quote Types',
+	    }).
+	    when('/gigo-pkg/quote-type/add', {
+	        template: '<quote-type-form></quote-type-form>',
+	        title: 'Add Quote Type',
+	    }).
+	    when('/gigo-pkg/quote-type/edit/:id', {
+	        template: '<quote-type-form></quote-type-form>',
+	        title: 'Edit Quote Type',
 	    });
 
 	}]);
@@ -75,10 +104,21 @@
     var service_type_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/list.html')}}";
     var service_type_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/form.html')}}";
 
+
+    //Service Order Types
+    var service_order_type_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-order-type/list.html')}}";
+    var service_order_type_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-order-type/form.html')}}";
+
+    //Quote Types
+    var quote_type_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/list.html')}}";
+    var quote_type_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/form.html')}}";
+
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-order-type/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
@@ -267,7 +307,7 @@
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/insurance-member/controller.js')}}'></script>
 
 
-<script type='text/javascript'>
+<!-- <script type='text/javascript'>
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
 	    //Quote Type
@@ -295,7 +335,7 @@
     var quote_type_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/card-list.html')}}';
     var quote_type_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/quote-type-modal-form.html')}}';
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/controller.js')}}'></script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/controller.js')}}'></script> -->
 
 
 <script type='text/javascript'>
@@ -352,12 +392,12 @@
 	}]);
 
 	//Vehicle Inspection Item Groups
-    var vehicle_inspection_item_group_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item-group/list.html')}}';
-    var vehicle_inspection_item_group_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item-group/form.html')}}';
-    var vehicle_inspection_item_group_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item-group/card-list.html')}}';
-    var vehicle_inspection_item_group_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/vehicle-inspection-item-group-modal-form.html')}}';
+    var vehicle_inspection_item_group_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item-group/list.html')}}";
+    var vehicle_inspection_item_group_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item-group/form.html')}}";
+    var vehicle_inspection_item_group_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item-group/card-list.html')}}";
+    var vehicle_inspection_item_group_modal_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/vehicle-inspection-item-group-modal-form.html')}}";
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item-group/controller.js')}}'></script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item-group/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
@@ -383,12 +423,12 @@
 	}]);
 
 	//Vehicle Inspection Items
-    var vehicle_inspection_item_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item/list.html')}}';
-    var vehicle_inspection_item_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item/form.html')}}';
-    var vehicle_inspection_item_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item/card-list.html')}}';
-    var vehicle_inspection_item_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/vehicle-inspection-item-modal-form.html')}}';
+    var vehicle_inspection_item_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item/list.html')}}";
+    var vehicle_inspection_item_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item/form.html')}}";
+    var vehicle_inspection_item_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item/card-list.html')}}";
+    var vehicle_inspection_item_modal_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/vehicle-inspection-item-modal-form.html')}}";
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item/controller.js')}}'></script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-inspection-item/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
@@ -414,12 +454,12 @@
 	}]);
 
 	//Customer Voices
-    var customer_voice_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/customer-voice/list.html')}}';
-    var customer_voice_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/customer-voice/form.html')}}';
-    var customer_voice_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/customer-voice/card-list.html')}}';
-    var customer_voice_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/customer-voice-modal-form.html')}}';
+    var customer_voice_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/customer-voice/list.html')}}";
+    var customer_voice_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/customer-voice/form.html')}}";
+    var customer_voice_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/customer-voice/card-list.html')}}";
+    var customer_voice_modal_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/customer-voice-modal-form.html')}}";
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/customer-voice/controller.js')}}'></script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/customer-voice/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
@@ -450,7 +490,7 @@
     var split_order_type_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/split-order-type/card-list.html')}}';
     var split_order_type_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/split-order-type-modal-form.html')}}';
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/split-order-type/controller.js')}}'></script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/split-order-type/controller.js')}}"></script>
 
 
 <script type='text/javascript'>

@@ -31,10 +31,14 @@ class RepairOrderController extends Controller {
 				['id' => '0', 'name' => 'Inactive'],
 			],
 		];
+		$this->data['repair_order_type'] = RepairOrderType::select('id','short_name')->where('company_id',Auth::user()->company_id)->get();
+		$this->data['skill_level'] = SkillLevel::select('id','name')->where('company_id',Auth::user()->company_id)->get();
+		$this->data['tax_code'] = TaxCode::select('id','code')->where('company_id',Auth::user()->company_id)->get();
 		return response()->json($this->data);
 	}
 
 	public function getRepairOrderList(Request $request) {
+
 		$repair_orders = RepairOrder::withTrashed()
 			->select([
 				'repair_orders.id',
@@ -51,14 +55,45 @@ class RepairOrderController extends Controller {
 			->leftJoin('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')
 			->leftJoin('skill_levels', 'skill_levels.id', 'repair_orders.skill_level_id')
 			->leftJoin('tax_codes', 'tax_codes.id', 'repair_orders.tax_code_id')
+			
 			->where(function ($query) use ($request) {
-				if (!empty($request->short_name)) {
-					$query->where('repair_order_types.short_name', 'LIKE', '%' . $request->short_name . '%');
+				if (!empty($request->dbm_code)) {
+					$query->where('repair_orders.code', 'LIKE', '%' . $request->dbm_code . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->dms_code)) {
+					$query->where('repair_orders.alt_code', 'LIKE', '%' . $request->dms_code . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('repair_orders.name', 'LIKE', '%' . $request->name . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->type)) {
+					$query->where('repair_order_types.short_name', 'LIKE', '%' . $request->type . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->skill_level)) {
+					$query->where('skill_levels.name', 'LIKE', '%' . $request->skill_level . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->hours)) {
+					$query->where('repair_orders.hours', 'LIKE', '%' . $request->hours . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->amount)) {
+					$query->where('repair_orders.amount', 'LIKE', '%' . $request->amount . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->tax_code)) {
+					$query->where('tax_codes.code', 'LIKE', '%' . $request->tax_code . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
