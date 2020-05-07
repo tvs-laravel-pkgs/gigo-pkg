@@ -68,7 +68,7 @@ class ServiceOrderTypeController extends Controller {
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
 				if (Entrust::can('edit-service-order-type')) {
-					$output .= '<a href="#!/gigo-pkg/service-type/edit/' . $service_order_types->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+					$output .= '<a href="#!/gigo-pkg/service-order-type/edit/' . $service_order_types->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
 				if (Entrust::can('delete-service-order-type')) {
 					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#service-order-type-delete-modal" onclick="angular.element(this).scope().deleteServiceOrderType(' . $service_order_types->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
