@@ -252,9 +252,12 @@ class GateLog extends Model {
 			}
 
 			DB::commit();
+			$gate_in_data['gate_in_number'] = $gate_log->number;
+			$gate_in_data['vehicle_number'] = $vehicle->registration_number;
 
 			return response()->json([
 				'success' => true,
+				'gate_in_data' => $gate_in_data,
 				'message' => 'Gate Entry Saved Successfully!!',
 			]);
 
