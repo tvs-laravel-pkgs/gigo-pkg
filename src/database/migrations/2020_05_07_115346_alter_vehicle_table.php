@@ -14,12 +14,10 @@ class AlterVehicleTable extends Migration {
 		Schema::table('vehicles', function (Blueprint $table) {
 			$table->string('engine_number', 64)->nullable()->change();
 			$table->string('chassis_number', 64)->nullable()->change();
-			$table->unsignedInteger('floor_adviser_id')->nullable()->after('sold_date');
 
-			$table->unsignedInteger('status_id')->nullable()->after('floor_adviser_id');
+			$table->unsignedInteger('status_id')->nullable()->after('sold_date');
 
 			$table->foreign('status_id')->references('id')->on('configs')->onDelete('cascade')->onUpdate('cascade');
-			$table->foreign('floor_adviser_id')->references('id')->on('employees')->onDelete('set null')->onUpdate('cascade');
 
 		});
 
@@ -32,13 +30,11 @@ class AlterVehicleTable extends Migration {
 	 */
 	public function down() {
 		Schema::table('vehicles', function (Blueprint $table) {
-			$table->dropForeign('vehicles_floor_adviser_id_foreign');
 			$table->dropForeign('vehicles_status_id_foreign');
 
 			$table->dropColumn('status_id');
 			$table->string('engine_number', 64)->change();
 			$table->string('chassis_number', 64)->change();
-			$table->dropColumn('floor_adviser_id');
 		});
 	}
 }
