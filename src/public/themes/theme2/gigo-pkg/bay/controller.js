@@ -1,20 +1,20 @@
-app.component('vehicleList', {
-    templateUrl: vehicle_list_template_url,
+app.component('bayList', {
+    templateUrl: bay_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_vehicle').focus();
+        $('#search_bay').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('vehicles')) {
-            window.location = "#!/page-permission-denied";
+        if (!self.hasPermission('bays')) {
+            window.location = "#!/permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-vehicle');
+        self.add_permission = self.hasPermission('bays');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#vehicles_list').DataTable({
+        var dataTable = $('#bays_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -24,6 +24,7 @@ app.component('vehicleList', {
                     "next": '<i class="icon ion-ios-arrow-forward"></i>',
                     "previous": '<i class="icon ion-ios-arrow-back"></i>'
                 },
+
             },
             pageLength: 10,
             processing: true,
@@ -33,7 +34,7 @@ app.component('vehicleList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_vehicle').val(state_save_val.search.search);
+                    $('#search_bay').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -43,29 +44,27 @@ app.component('vehicleList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getVehicleList'],
+                url: laravel_routes['getBayList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.engine_numbers = $('#engine_numbers').val();
-                    d.chassis_numbers = $('#chassis_numbers').val();
-                    d.model_ids = $('#model_ids').val();
-                    d.registration_numbers = $('#registration_numbers').val();
-                    d.vin_numbers = $('#vin_numbers').val();
+                    d.short_name = $('#short_name').val();
+                    d.name = $('#name').val();
+                    d.outlet = $('#outlet').val();
+                    d.bay_status = $('#bay_status').val();
+                    d.job_order = $('#job_order').val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'engine_number', name: 'vehicles.engine_number' },
-                { data: 'chassis_number', name: 'vehicles.chassis_number' },
-                { data: 'model_name', name: 'models.model_name' },
-                { data: 'registration_number', name: 'vehicles.registration_number' },
-                { data: 'vin_number', name: 'vehicles.vin_number' },
-                { data: 'sold_date', name: 'vehicles.sold_date' },
+                { data: 'short_name', name: 'bays.short_name', searchable: true },
+                { data: 'name', name: 'bays.name', searchable: true },
+                { data: 'outlet', name: 'outlets.code', searchable: true },
+                { data: 'bay_status', name: 'statuses.name', searchable: true },
+                { data: 'job_order', name: 'job_orders.number', searchable: true },
                 { data: 'status', name: '' },
-
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -78,50 +77,61 @@ app.component('vehicleList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_vehicle').val('');
-            $('#vehicles_list').DataTable().search('').draw();
+            $('#search_bay').val('');
+            $('#bays_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#vehicles_list').DataTable().ajax.reload();
+            $('#bays_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#vehicles_list').dataTable();
-        $("#search_vehicle").keyup(function() {
+        var dataTables = $('#bays_list').dataTable();
+        $("#search_bay").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
-        $scope.deleteVehicle = function($id) {
-            $('#vehicle_id').val($id);
+        $scope.deleteBay = function($id) {
+            $('#bay_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#vehicle_id').val();
+            $id = $('#bay_id').val();
             $http.get(
-                laravel_routes['deleteVehicle'], {
+                laravel_routes['deleteBay'], {
                     params: {
                         id: $id,
                     }
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Vehicle Deleted Successfully');
-                    $('#vehicles_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/vehicle/list');
+                    custom_noty('success', 'Bay Deleted Successfully');
+                    $('#bays_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/gigo-pkg/bay/list');
                 }
             });
         }
 
-        // FOR FILTER
+        //FOR FILTER
         $http.get(
-            laravel_routes['getVehicleFilterData']
+            laravel_routes['getBayFilter']
         ).then(function(response) {
-            // console.log(response);
             self.extras = response.data.extras;
-            self.model_list = response.data.model_list;
+            self.bay = response.data.bay;
+            self.outlet_list = response.data.outlet_list;
+            self.bay_status_list = response.data.bay_status_list;
+            self.job_order_list = response.data.job_order_list;
+            self.outlet_selected = '';
+            self.bay_status_selected = '';
+            self.job_order_selected = '';
         });
 
-        $scope.onSelectedmodel = function(model_selected) {
-            $('#model_ids').val(model_selected);
+        $scope.onSelectedOutlet = function(outlet_selected) {
+            $('#outlet').val(outlet_selected);
+        }
+        $scope.onSelectedBayStatus = function(bay_status_selected) {
+            $('#bay_status').val(bay_status_selected);
+        }
+        $scope.onSelectedJobOrder = function(job_order_selected) {
+            $('#job_order').val(job_order_selected);
         }
 
         $element.find('input').on('keydown', function(ev) {
@@ -142,116 +152,92 @@ app.component('vehicleList', {
         $scope.applyFilter = function() {
             $('#status').val(self.status);
             dataTables.fnFilter();
-            $('#vehicle-filter-modal').modal('hide');
+            $('#bay-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#engine_numbers").val('');
-            $("#chassis_numbers").val('');
-            $("#model_ids").val('');
-            $("#registration_numbers").val('');
-            $("#vin_numbers").val('');
+            $("#short_name").val('');
+            $("#name").val('');
+            $("#outlet").val('');
+            $("#bay_status").val('');
+            $("#job_order").val('');
             $("#status").val('');
         }
+
         $rootScope.loading = false;
     }
 });
-
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-
-app.component('vehicleForm', {
-    templateUrl: vehicle_form_template_url,
+app.component('bayForm', {
+    templateUrl: bay_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-vehicle') || !self.hasPermission('edit-vehicle')) {
-            window.location = "#!/page-permission-denied";
+        if (!self.hasPermission('add-bay') && !self.hasPermission('edit-bay')) {
+            window.location = "#!/permission-denied";
             return false;
         }
         self.angular_routes = angular_routes;
         $http.get(
-            laravel_routes['getVehicleFormData'], {
+            laravel_routes['getBayFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
             }
         ).then(function(response) {
-            self.vehicle = response.data.vehicle;
-            self.model_list = response.data.model_list;
-            self.sold_date = response.data.sold_date;
+            self.bay = response.data.bay;
+            self.extras = response.data.extras;
+            // console.log(self.extras);
+            // return;
+            // self.outlet = response.data.outlet;
+            // self.bay_status = response.data.bay_status;
+            // self.job_order = response.data.job_order;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
-                if (self.vehicle.deleted_at) {
+                if (self.bay.deleted_at) {
                     self.switch_value = 'Inactive';
-                    self.register_val = 'Yes';
                 } else {
                     self.switch_value = 'Active';
-                    self.register_val = 'Yes';
                 }
             } else {
                 self.switch_value = 'Active';
-                self.register_val = 'Yes';
             }
-            if (self.action == 'Edit') {
-                if (self.vehicle.is_registered == 1) {
-                    self.register_val = 'Yes';
-                } else {
-                    self.register_val = 'No';
-                }
-            } 
-
         });
 
         //Save Form Data 
-        var form_id = '#vehicle_form';
+        var form_id = '#bay_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'engine_number': {
+                'short_name': {
                     required: true,
-                    minlength: 10,
+                    minlength: 3,
                     maxlength: 32,
                 },
-                'chassis_number': {
+                'name': {
                     required: true,
-                    minlength: 10,
+                    minlength: 3,
                     maxlength: 128,
                 },
-                'model_id': {
-                    required:true,
+                'outlet_id': {
+                    required: true,
                 },
-                'registration_number':{
-                    required:true,
-                    minlength: 10,
-                    maxlength: 32,
+                'status_id': {
+                    required: true,
                 },
-                'vin_number':{
-                    required:true,
-                    minlength: 10,
-                    maxlength: 32,
-                },
-                'sold_date':{
-                    required:true,
-                },
+
             },
             messages: {
-                'engine_number': {
-                    minlength: 'Minimum 10 Characters',
+                'short_name': {
+                    minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
-                'chassis_number': {
-                    minlength: 'Minimum 10 Characters',
-                    maxlength: 'Maximum 32 Characters',
+                'name': {
+                    minlength: 'Minimum 3 Characters',
+                    maxlength: 'Maximum 128 Characters',
                 },
-                'registration_number': {
-                    minlength: 'Minimum 10 Characters',
-                    maxlength: 'Maximum 32 Characters',
-                },
-                'vin_number': {
-                    minlength: 'Minimum 10 Characters',
-                    maxlength: 'Maximum 32 Characters',
-                }
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
@@ -260,7 +246,7 @@ app.component('vehicleForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveVehicle'],
+                        url: laravel_routes['saveBay'],
                         method: "POST",
                         data: formData,
                         processData: false,
@@ -269,7 +255,7 @@ app.component('vehicleForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/vehicle/list');
+                            $location.path('/gigo-pkg/bay/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -281,7 +267,7 @@ app.component('vehicleForm', {
                                 custom_noty('error', errors);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/gigo-pkg/vehicle/list');
+                                $location.path('/gigo-pkg/bay/list');
                                 $scope.$apply();
                             }
                         }
@@ -294,5 +280,3 @@ app.component('vehicleForm', {
         });
     }
 });
-//------------------------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------------------------

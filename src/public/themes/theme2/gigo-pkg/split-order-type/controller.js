@@ -8,10 +8,10 @@ app.component('splitOrderTypeList', {
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('split-order-types')) {
-            window.location = "#!/page-permission-denied";
+            window.location = "#!/permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-split-order-type');
+        self.add_permission = self.hasPermission('split-order-types');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
         var dataTable = $('#split_order_types_list').DataTable({
