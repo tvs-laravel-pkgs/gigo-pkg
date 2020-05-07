@@ -3,10 +3,17 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\Attachment;
 use App\Company;
 use App\Config;
+use App\Vehicle;
+use Auth;
+use Carbon\Carbon;
+use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Storage;
+use Validator;
 
 class GateLog extends Model {
 	use SeederTrait;
@@ -14,7 +21,7 @@ class GateLog extends Model {
 	protected $table = 'gate_logs';
 	public $timestamps = true;
 	protected $fillable =
-		["id","company_id","number","date","driver_name","contact_number","vehicle_id","km_reading","reading_type_id","gate_in_remarks","gate_out_date","gate_out_remarks","gate_pass_id","status_id"]
+		["company_id", "number", "date", "driver_name", "contact_number", "vehicle_id", "km_reading", "reading_type_id", "gate_in_remarks", "gate_out_date", "gate_out_remarks", "gate_pass_id", "status_id"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
@@ -71,6 +78,153 @@ class GateLog extends Model {
 			$list->prepend(['id' => '', 'name' => $default_text]);
 		}
 		return $list;
+	}
+
+	public static function saveVehicleGateInEntry($request) {
+		try {
+			//REGISTRATION NUMBER VALIDATION EX: TN28 AA8888
+			if (!preg_match('/[a-z]{2}( |)\d{2}(?: |,)(?:[a-z\d]{1}[a-z])\1\d{4}/i', $request->registration_number)) {
+				return response()->json([
+					'success' => false,
+					'errors' => ['Registration Number Not Valid!'],
+				]);
+			}
+
+			$validator = Validator::make($request->all(), [
+				'vehicle_photo' => [
+					'required:true',
+					'mimes:jpeg,jpg,png,bmp,tif,tiff,gif,eps',
+					// 'max:3072',
+				],
+				'km_reading_photo' => [
+					'required:true',
+					'mimes:jpeg,jpg,png,bmp,tif,tiff,gif,eps',
+					// 'max:3072',
+				],
+				'driver_photo' => [
+					'required:true',
+					'mimes:jpeg,jpg,png,bmp,tif,tiff,gif,eps',
+					// 'max:3072',
+				],
+				'is_registered' => [
+					'required:true',
+					'integer',
+				],
+				'registration_number' => [
+					'required:true',
+					'string',
+					'max:11',
+					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . $request->user()->company_id,
+				],
+				'km_reading' => [
+					'required:true',
+					'numeric',
+				],
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+			// dd($request->user()->company_id);
+			//NEW VEHICLE GATE ENTRY DETAILS
+			$vehile = Vehicle::firstOrNew([
+				'company_id' => Auth::user()->company_id,
+				'registration_number' => $request->registration_number,
+			]);
+			$vehile->fill($request->all());
+			$vehile->company_id = $request->user()->company_id;
+			$vehile->created_by_id = $request->user()->id;
+			$vehile->save();
+
+			//NEW GATE IN ENTRY
+			$gate_log = new GateLog;
+			$gate_log->fill($request->all());
+			$gate_log->company_id = $request->user()->company_id;
+			$gate_log->created_by_id = $request->user()->id;
+			$gate_log->gate_in_date = Carbon::now();
+			$gate_log->status_id = 1; //NEW FOR TESTING
+			$gate_log->vehicle_id = $vehile->id;
+			$gate_log->save();
+
+			$gate_log->number = 'GI' . $gate_log->id;
+			$gate_log->save();
+
+			//CREATE DIRECTORY TO STORAGE PATH
+			$attachement_path = storage_path('app/public/gigo/gate_in/attachments/');
+			Storage::makeDirectory($attachement_path, 0777);
+
+			//SAVE VEHICLE PHOTO ATTACHMENT
+			if (!empty($request->vehicle_photo)) {
+				$file_name_with_extension = $request->vehicle_photo->getClientOriginalName();
+				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+				$extension = $request->vehicle_photo->getClientOriginalExtension();
+
+				$name = $vehile->id . '_' . $file_name . '.' . $extension;
+
+				$request->vehicle_photo->move(storage_path('app/public/gigo/gate_in/attachments/'), $name);
+				$attachement = new Attachment;
+				$attachement->attachment_of_id = 223; //NEED TO CONFIRM
+				$attachement->attachment_type_id = 244; //NEED TO CONFIRM
+				$attachement->entity_id = $vehile->id;
+				$attachement->name = $name;
+				$attachement->save();
+			}
+
+			//SAVE KM READING PHOTO
+			if (!empty($request->km_reading_photo)) {
+				$file_name_with_extension = $request->km_reading_photo->getClientOriginalName();
+				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+				$extension = $request->km_reading_photo->getClientOriginalExtension();
+
+				$name = $vehile->id . '_' . $file_name . '.' . $extension;
+
+				$request->km_reading_photo->move(storage_path('app/public/gigo/gate_in/attachments/'), $name);
+				$attachement = new Attachment;
+				$attachement->attachment_of_id = 223; //NEED TO CONFIRM
+				$attachement->attachment_type_id = 244; //NEED TO CONFIRM
+				$attachement->entity_id = $vehile->id;
+				$attachement->name = $name;
+				$attachement->save();
+			}
+
+			//SAVE DRIVER PHOTO
+			if (!empty($request->driver_photo)) {
+				$file_name_with_extension = $request->driver_photo->getClientOriginalName();
+				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+				$extension = $request->driver_photo->getClientOriginalExtension();
+
+				$name = $vehile->id . '_' . $file_name . '.' . $extension;
+
+				$request->driver_photo->move(storage_path('app/public/gigo/gate_in/attachments/'), $name);
+				$attachement = new Attachment;
+				$attachement->attachment_of_id = 223; //NEED TO CONFIRM
+				$attachement->attachment_type_id = 244; //NEED TO CONFIRM
+				$attachement->entity_id = $vehile->id;
+				$attachement->name = $name;
+				$attachement->save();
+			}
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Gate Entry Saved Successfully!!',
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+
 	}
 
 }
