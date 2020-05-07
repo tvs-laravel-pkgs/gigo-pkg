@@ -685,13 +685,23 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'kanban-app',
 				'display_name' => 'KANBAN App',
 			],
-
-			//My Job Cards
+			[
+				'display_order' => 1,
+				'parent' => 'kanban-app',
+				'name' => 'mobile-attendanace',
+				'display_name' => 'Attendance',
+			],
 			[
 				'display_order' => 99,
 				'parent' => 'mobile-permissions',
-				'name' => 'my-job-cards',
+				'name' => 'mobile-my-job-cards',
 				'display_name' => 'My Job Cards',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'kanban-app',
+				'name' => 'mobile-my-time-sheet',
+				'display_name' => 'My Time Sheet',
 			],
 
 			//Gate In Entry

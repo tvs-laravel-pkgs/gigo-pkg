@@ -1,3 +1,14 @@
+// angular.module('app').requires.push('qrScanner');
+
+app.directive('mobileInwardHeader', function() {
+    return {
+        templateUrl: mobile_inward_header_template_url,
+        controller: function() {}
+    }
+});
+//-------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------
+
 app.component('mobileInwardVehicleList', {
     templateUrl: mobile_inward_vehicle_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $cookies) {
@@ -114,10 +125,3 @@ app.component('mobileInwardOrderDetailForm', {
 });
 //-------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------
-
-app.directive('mobileInwardHeader', function() {
-    return {
-        templateUrl: mobile_inward_header_template_url,
-        controller: function() {}
-    }
-});

@@ -826,10 +826,6 @@
 	    when('/gigo-pkg/mobile/kanban-dashboard', {
 	        template: '<mobile-kanban-dashboard></mobile-kanban-dashboard>',
 	        title: 'KANBAN Dashboard',
-	    }).
-	    when('/gigo-pkg/mobile/attendance/scan-qr', {
-	        template: '<mobile-attendance-scan-qr></mobile-attendance-scan-qr>',
-	        title: 'Mobile Dashboard',
 	    });
 	}]);
 
@@ -839,9 +835,21 @@
     var mobile_kanban_dashboard_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/kanban-dashboard.html')}}";
     var mobile_header_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/partials/header.html')}}";
 
-    var mobile_attendance_scan_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/attendance/scan-qr.html')}}";
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/controller.js')}}"></script>
+
+{{-- MOBILE ATTENDANCE --}}
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    when('/gigo-pkg/mobile/attendance/scan-qr', {
+	        template: '<mobile-attendance-scan-qr></mobile-attendance-scan-qr>',
+	        title: 'Attendance - Scan QR Code',
+	    });
+	}]);
+    var mobile_attendance_scan_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/attendance/scan-qr.html')}}";
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/attendance/controller.js')}}'></script>
 
 {{-- MOBILE GATE IN VEHICLE --}}
 <script type='text/javascript'>

@@ -103,7 +103,9 @@ app.component('mobileKanbanDashboard', {
             $location.path('/gigo-pkg/mobile/login');
             return;
         }
-        $scope.user = angular.fromJson($cookies.get('user'));
+        $scope.hasPerm = HelperService.hasPerm;
+        $scope.user = JSON.parse(localStorage.getItem('user'));
+
         $rootScope.loading = false;
     }
 });

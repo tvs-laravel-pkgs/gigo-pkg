@@ -20,11 +20,14 @@
                         {{user.employee.outlet.name}}
                     </h6>
                     <div class="list-group">
-                        <a href=".#!/gigo-pkg/mobile/attendance/scan-qr" class="list-group-item list-group-item-info">
+                        <a href=".#!/gigo-pkg/mobile/attendance/scan-qr" class="list-group-item list-group-item-info" ng-if="hasPerm('mobile-attendanace')">
                             Attendance
                         </a>
-                        <a href=".#!/gigo-pkg/mobile/kanban-dashboard" class="list-group-item list-group-item-info">
+                        <a href=".#!/gigo-pkg/mobile/kanban-dashboard" class="list-group-item list-group-item-info" ng-if="hasPerm('mobile-my-job-cards')">
                             My Job Cards
+                        </a>
+                        <a href=".#!/gigo-pkg/mobile/kanban-dashboard" class="list-group-item list-group-item-info" ng-if="hasPerm('mobile-my-time-sheet')">
+                            My Time Sheet
                         </a>
                     </div>
                 </div>

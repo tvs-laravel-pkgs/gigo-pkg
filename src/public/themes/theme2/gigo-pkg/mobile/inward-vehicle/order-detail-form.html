@@ -9,22 +9,41 @@
                             Inward Vehicle
                         </li>
                         <li class="active">
-                            {{'Edit'}} Customer Details
+                            Order Details
                         </li>
                     </ol>
                     <mobile-inward-header></mobile-inward-header>
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <div style="overflow: hidden;">
-                                <div class="pull-left">
-                                    Customer Details
+                    <form id="form">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div style="overflow: hidden;">
+                                    <div class="pull-left">
+                                        Driver Details
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="panel-body">
-                            <form id="form">
+                            <div class="panel-body">
                                 <div class="form-group">
-                                    <label>Ownership *</label>
+                                    <label>Driver Name *</label>
+                                    <input type="text" class="form-control" name="driver_name">
+                                </div>
+                                <div class="form-group">
+                                    <label>Driver Mobile Number</label>
+                                    <input type="text" class="form-control" name="driver_mobile_number">
+                                </div>
+                            </div> <!-- panel-body -->
+                        </div> <!-- panel -->
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div style="overflow: hidden;">
+                                    <div class="pull-left">
+                                        Job Order Details
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <label>Order Type *</label>
                                     <md-select ng-model="$ctrl.repair_order.type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader">
                                         <md-select-header class="demo-select-header">
                                             <input ng-model="searchTerm" type="search" class="demo-header-searchbox md-text">
@@ -36,27 +55,7 @@
                                     <input type="hidden" class="form-control required" name="type_id" id="type_id" value="{{$ctrl.repair_order.type_id}}">
                                 </div>
                                 <div class="form-group">
-                                    <label>Customer Name *</label>
-                                    <input type="text" class="form-control" name="name">
-                                </div>
-                                <div class="form-group">
-                                    <label>Mobile Number *</label>
-                                    <input type="text" class="form-control" name="mobile_number">
-                                </div>
-                                <div class="form-group">
-                                    <label>Email</label>
-                                    <input type="text" class="form-control" name="email">
-                                </div>
-                                <div class="form-group">
-                                    <label>Address Line 1 *</label>
-                                    <input type="text" class="form-control" name="address_line_1">
-                                </div>
-                                <div class="form-group">
-                                    <label>Address Line 2</label>
-                                    <input type="text" class="form-control" name="address_line_2">
-                                </div>
-                                <div class="form-group">
-                                    <label>Country *</label>
+                                    <label>Quote Type *</label>
                                     <md-select ng-model="$ctrl.repair_order.type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader">
                                         <md-select-header class="demo-select-header">
                                             <input ng-model="searchTerm" type="search" class="demo-header-searchbox md-text">
@@ -68,7 +67,7 @@
                                     <input type="hidden" class="form-control required" name="type_id" id="type_id" value="{{$ctrl.repair_order.type_id}}">
                                 </div>
                                 <div class="form-group">
-                                    <label>State *</label>
+                                    <label>Service Type *</label>
                                     <md-select ng-model="$ctrl.repair_order.type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader">
                                         <md-select-header class="demo-select-header">
                                             <input ng-model="searchTerm" type="search" class="demo-header-searchbox md-text">
@@ -80,7 +79,11 @@
                                     <input type="hidden" class="form-control required" name="type_id" id="type_id" value="{{$ctrl.repair_order.type_id}}">
                                 </div>
                                 <div class="form-group">
-                                    <label>City *</label>
+                                    <label>KM Reading *</label>
+                                    <input type="text" class="form-control" name="km_reading">
+                                </div>
+                                <div class="form-group">
+                                    <label>Reading Type *</label>
                                     <md-select ng-model="$ctrl.repair_order.type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader">
                                         <md-select-header class="demo-select-header">
                                             <input ng-model="searchTerm" type="search" class="demo-header-searchbox md-text">
@@ -92,20 +95,101 @@
                                     <input type="hidden" class="form-control required" name="type_id" id="type_id" value="{{$ctrl.repair_order.type_id}}">
                                 </div>
                                 <div class="form-group">
-                                    <label>Pincode</label>
+                                    <label>Service Contact Number *</label>
                                     <input type="text" class="form-control" name="pincode">
                                 </div>
-                                <div class="form-group">
-                                    <label>GST Number</label>
-                                    <input type="text" class="form-control" name="pincode">
+                            </div> <!-- panel-body -->
+                        </div> <!-- panel -->
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div style="overflow: hidden;">
+                                    <div class="pull-left">
+                                        Previous Job Card Details
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>PAN Number</label>
-                                    <input type="text" class="form-control" name="pincode">
+                            </div>
+                            <div class="panel-body">
+                                <div class="row simple-row">
+                                    <div class="col-xs-5">
+                                        Customer Name
+                                    </div>
+                                    <div class="col-xs-7">
+                                        : Abdul Kadhar
+                                    </div>
                                 </div>
-                            </form>
-                        </div>
-                    </div>
+                                <div class="row simple-row">
+                                    <div class="col-xs-5">
+                                        Vehicle Model
+                                    </div>
+                                    <div class="col-xs-7">
+                                        : AL 2174 BS-IV
+                                    </div>
+                                </div>
+                                <div class="row simple-row">
+                                    <div class="col-xs-5">
+                                        Membership
+                                    </div>
+                                    <div class="col-xs-7">
+                                        : TVS ONE - Gold
+                                    </div>
+                                </div>
+                            </div> <!-- panel-body -->
+                            <div class="panel-footer">
+                                <div style="overflow: hidden;">
+                                    <div class="pull-left">
+                                        <a href=".#!/gigo-pkg/mobile/inward-vehicle/vehicle-detail" class="btn btn-primary btn-sm">
+                                            View
+                                        </a>
+                                    </div>
+                                </div>
+                            </div> <!-- panel-footer -->
+                        </div> <!-- panel -->
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <div style="overflow: hidden;">
+                                    <div class="pull-left">
+                                        Documents
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <!-- <qr-scanner width="400" height="300" ng-success="onSuccess(data)" ng-error="onError(error)" /> -->
+                                <div class="row simple-row">
+                                    <div class="col-xs-5">
+                                        Customer Name
+                                    </div>
+                                    <div class="col-xs-7">
+                                        : Abdul Kadhar
+                                    </div>
+                                </div>
+                                <div class="row simple-row">
+                                    <div class="col-xs-5">
+                                        Vehicle Model
+                                    </div>
+                                    <div class="col-xs-7">
+                                        : AL 2174 BS-IV
+                                    </div>
+                                </div>
+                                <div class="row simple-row">
+                                    <div class="col-xs-5">
+                                        Membership
+                                    </div>
+                                    <div class="col-xs-7">
+                                        : TVS ONE - Gold
+                                    </div>
+                                </div>
+                            </div> <!-- panel-body -->
+                            <div class="panel-footer">
+                                <div style="overflow: hidden;">
+                                    <div class="pull-left">
+                                        <a href=".#!/gigo-pkg/mobile/inward-vehicle/vehicle-detail" class="btn btn-primary btn-sm">
+                                            View
+                                        </a>
+                                    </div>
+                                </div>
+                            </div> <!-- panel-footer -->
+                        </div> <!-- panel -->
+                    </form>
                 </div>
                 <div class="panel-footer">
                     <div class="block">
