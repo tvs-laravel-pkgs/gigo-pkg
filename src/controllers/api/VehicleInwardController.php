@@ -13,6 +13,10 @@ use App\State;
 use App\Vehicle;
 use App\VehicleModel;
 use App\VehicleOwner;
+use App\JobOrder;
+use App\QuoteType;
+use Abs\GigoPkg\ServiceOrderType;
+use App\ServiceType;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -83,10 +87,43 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+	public function getJobOrderData($id){
+			try {
+				$gate_log = GateLog::find($id);
+				if (!$gate_log) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Gate Log Not Found!',
+					]);
+				}
+
+				$extras = [
+					'job_order_types' => ServiceOrderType::getList(),
+					'quote_types' => QuoteType::getList(),
+					'service_types' => ServiceType::getList(),
+					'reading_types' => Config::getConfigTypeList(33,'name','',true,'Select Reading type'),//Reading types
+				];
+
+			//Job card details need to get future
+			return response()->json([
+				'success' => true,
+				'gate_log' => $gate_log,
+				'extras' => $extras,
+			]);
+
+
+			}catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
 	public function getVehicleFomData($id) {
 		// dd($id);
 		try {
-			$gate_log_validate = GateLog::find($id);
+			$gate_log = GateLog::find($id);
 			if (!$gate_log_validate) {
 				return response()->json([
 					'success' => false,
