@@ -17,12 +17,19 @@ class JobOrder extends Model {
 		["id","company_id","gate_log_id","number","type_id","quote_type_id","service_type_id","outlet_id","contact_number","driver_license_expiry_date","insurance_expiry_date","voc","is_road_test_required","road_test_done_by_id","road_test_performed_by_id","road_test_report","warranty_expiry_date","ewp_expiry_date","status_id","estimated_delivery_date","estimation_type_id","minimum_payable_amount","floor_advisor_id"]
 	;
 
-	public function getDateOfJoinAttribute($value) {
+	public function getDriverLicenseExpiryDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 
-	public function setDateOfJoinAttribute($date) {
-		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	public function setDriverLicenseExpiryDateAttribute($date) {
+		return $this->attributes['driver_license_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+	public function getInsuranceExpiryDateAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
+	public function setInsuranceExpiryDateAttribute($date) {
+		return $this->attributes['insurance_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
 	public static function createFromObject($record_data) {

@@ -3,6 +3,7 @@
 namespace Abs\GigoPkg\Api;
 
 use App\Address;
+use App\Attachment;
 use App\Config;
 use App\Country;
 use App\Customer;
@@ -22,6 +23,8 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
+use Storage;
+use File;
 
 class VehicleInwardController extends Controller {
 	public $successStatus = 200;
@@ -87,7 +90,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
-	public function getJobOrderData($id){
+	public function getJobOrderFormData($id){
 			try {
 				$gate_log = GateLog::find($id);
 				if (!$gate_log) {
@@ -115,6 +118,231 @@ class VehicleInwardController extends Controller {
 			}catch (Exception $e) {
 			return response()->json([
 				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+	public function saveJobOrder(Request $request) {
+		// dd($request->all());
+		try {
+
+			$validator = Validator::make($request->all(), [
+				'gate_log_id' => [
+					'required',
+					'integer',
+					'exists:gate_logs,id'
+				],
+				'driver_name' => [
+					'required',
+					'string',
+					'max:191',
+				],
+				'mobile_number' => [
+					'required',
+					'min:10',
+					'string',
+				],
+				'km_reading' => [
+					'required',
+					'numeric',
+				],
+				'reading_type_id' => [
+					'required',
+					'numeric',
+					'exists:configs,id',
+				],
+				'type_id' => [
+					'required',
+					'numeric',
+					'exists:service_order_types,id',
+				],
+				'quote_type_id' => [
+					'required',
+					'numeric',
+					'exists:quote_types,id',
+				],
+				'service_type_id' => [
+					'required',
+					'numeric',
+					'exists:service_types,id',
+				],
+				'outlet_id' => [
+					'required',
+					'numeric',
+					'exists:outlets,id',
+				],
+				'contact_number' => [
+					'nullable',
+					'min:10',
+					'max:10',
+				],
+				'driver_license_expiry_date' => [
+					'nullable',
+					'date',
+				],
+				'insurance_expiry_date' => [
+					'nullable',
+					'date',
+				],
+				'driver_license_attachment' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+				'insuarance_attachment' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+				'rc_book_attachment' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+			
+			//GATE LOG UPDATE
+			$gate_log=GateLog::find($request->gate_log_id);
+			if(!$gate_log){
+				return response()->json([
+					'success' => false,
+					'error' => 'Gate Log Not Found!',
+				]);
+			}
+			$gate_log->driver_name=$request->driver_name;
+			$gate_log->contact_number=$request->mobile_number;
+			$gate_log->km_reading=$request->km_reading;
+			$gate_log->reading_type_id=$request->reading_type_id;
+			$gate_log->save();
+
+			//JOB ORDER SAVE
+			$job_order = JobOrder::firstOrNew([
+				'gate_log_id' => $request->gate_log_id,
+			]);
+			$job_order->number = mt_rand(1, 10000);
+			$job_order->fill($request->all());
+			$job_order->company_id = Auth::user()->company_id;
+			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->save();
+			//dump($job_order->id);
+			//Number Update
+			$number = sprintf('%03' . 's', $job_order->id);
+			$job_order->number = "JO-" . $number;
+			$job_order->save();
+
+			//CREATE DIRECTORY TO STORAGE PATH
+			$attachement_path = storage_path('app/public/gigo/job_order/attachments/');
+			Storage::makeDirectory($attachement_path, 0777);
+
+			//SAVE DRIVER PHOTO ATTACHMENT
+			if (!empty($request->driver_license_attachment)) {
+				//REMOVE OLD ATTACHMENT
+				$remove_previous_attachment = Attachment::where([
+					'entity_id' => $job_order->id,
+					'attachment_of_id' => 227, //Job Order
+					'attachment_type_id' => 251,//Driver License
+				])->first();
+				if (!empty($remove_previous_attachment)) {
+					$img_path = $attachement_path . $remove_previous_attachment->name;
+					if (File::exists($img_path)) {
+						File::delete($img_path);
+					}
+					$remove = $remove_previous_attachment->forceDelete();
+				}
+
+				$file_name_with_extension = $request->driver_license_attachment->getClientOriginalName();
+				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+				$extension = $request->driver_license_attachment->getClientOriginalExtension();
+
+				$name = $job_order->id . '_' . $file_name . '.' . $extension;
+
+				$request->driver_license_attachment->move($attachement_path, $name);
+				$attachement = new Attachment;
+				$attachement->attachment_of_id = 227; //Job Order
+				$attachement->attachment_type_id = 251; //Driver License
+				$attachement->entity_id = $job_order->id;
+				$attachement->name = $name;
+				$attachement->save();
+			}
+			//SAVE INSURANCE PHOTO ATTACHMENT
+			if (!empty($request->insuarance_attachment)) {
+				//REMOVE OLD ATTACHMENT
+				$remove_previous_attachment = Attachment::where([
+					'entity_id' => $job_order->id,
+					'attachment_of_id' => 227, //Job Order
+					'attachment_type_id' => 252,//Vehicle Insurance
+				])->first();
+				if (!empty($remove_previous_attachment)) {
+					$img_path = $attachement_path . $remove_previous_attachment->name;
+					if (File::exists($img_path)) {
+						File::delete($img_path);
+					}
+					$remove = $remove_previous_attachment->forceDelete();
+				} 
+				$file_name_with_extension = $request->insuarance_attachment->getClientOriginalName();
+				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+				$extension = $request->insuarance_attachment->getClientOriginalExtension();
+
+				$name = $job_order->id . '_' . $file_name . '.' . $extension;
+
+				$request->insuarance_attachment->move($attachement_path, $name);
+				$attachement = new Attachment;
+				$attachement->attachment_of_id = 227; //Job Order
+				$attachement->attachment_type_id = 252; //Vehicle Insurance
+				$attachement->entity_id = $job_order->id;
+				$attachement->name = $name;
+				$attachement->save();
+			}
+			//SAVE INSURANCE PHOTO ATTACHMENT
+			if (!empty($request->rc_book_attachment)) {
+				//REMOVE OLD ATTACHMENT
+				$remove_previous_attachment = Attachment::where([
+					'entity_id' => $job_order->id,
+					'attachment_of_id' => 227, //Job Order
+					'attachment_type_id' => 250,//RC Book
+				])->first();
+				if (!empty($remove_previous_attachment)) {
+					$img_path = $attachement_path . $remove_previous_attachment->name;
+					if (File::exists($img_path)) {
+						File::delete($img_path);
+					}
+					$remove = $remove_previous_attachment->forceDelete();
+				} 
+				$file_name_with_extension = $request->rc_book_attachment->getClientOriginalName();
+				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+				$extension = $request->rc_book_attachment->getClientOriginalExtension();
+
+				$name = $job_order->id . '_' . $file_name . '.' . $extension;
+
+				$request->rc_book_attachment->move($attachement_path, $name);
+				$attachement = new Attachment;
+				$attachement->attachment_of_id = 227; //Job Order
+				$attachement->attachment_type_id = 250; //RC Book
+				$attachement->entity_id = $job_order->id;
+				$attachement->name = $name;
+				$attachement->save();
+			}
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Job order saved successfully!!',
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
 				'errors' => ['Exception Error' => $e->getMessage()],
 			]);
 		}
