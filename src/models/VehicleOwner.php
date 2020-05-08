@@ -5,13 +5,14 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
+use App\Customer;
 use Illuminate\Database\Eloquent\Model;
 
 // use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VehicleOwner extends Model {
 	use SeederTrait;
-	// use SoftDeletes;
+	//use SoftDeletes;
 	protected $table = 'vehicle_owners';
 	// public $timestamps = true;
 	public $timestamps = false;
@@ -25,6 +26,9 @@ class VehicleOwner extends Model {
 
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+	public function CustomerDetail() {
+		return $this->belongsTo('App\Customer', 'customer_id');
 	}
 
 	public function CustomerDetail() {

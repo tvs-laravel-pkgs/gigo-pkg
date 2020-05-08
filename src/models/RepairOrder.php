@@ -3,8 +3,6 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
-use App\Company;
-use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -23,5 +21,9 @@ class RepairOrder extends Model {
 		'amount',
 		'tax_code_id',
 	];
+
+	public static function importFromExcel($job) {
+
+	}
 
 }
