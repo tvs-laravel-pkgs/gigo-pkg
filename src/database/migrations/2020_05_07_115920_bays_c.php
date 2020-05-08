@@ -15,7 +15,7 @@ class BaysC extends Migration {
 			Schema::create('bays', function (Blueprint $table) {
 
 				$table->increments('id');
-				$table->unsignedInteger('outlet_id');
+				$table->unsignedInteger('outlet_id')->nullable();
 				$table->string('short_name', 32);
 				$table->string('name', 128)->nullable();
 				$table->unsignedInteger('status_id');
