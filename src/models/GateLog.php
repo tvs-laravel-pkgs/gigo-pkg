@@ -36,6 +36,10 @@ class GateLog extends Model {
 		return $this->belongsTo('App\Vehicle', 'vehicle_id');
 	}
 
+	public function jobOrder() {
+		return $this->hasOne('App\JobOrder', 'gate_log_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
