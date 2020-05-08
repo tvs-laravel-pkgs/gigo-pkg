@@ -7,15 +7,17 @@ use App\Company;
 use App\Config;
 use App\Customer;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+
+// use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VehicleOwner extends Model {
 	use SeederTrait;
 	//use SoftDeletes;
 	protected $table = 'vehicle_owners';
-	public $timestamps = true;
+	// public $timestamps = true;
+	public $timestamps = false;
 	protected $fillable =
-		["vehicle_id","customer_id","from_date","ownership_number","id"]
+		["vehicle_id", "customer_id", "from_date", "ownership_id"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
@@ -25,6 +27,10 @@ class VehicleOwner extends Model {
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
+	public function CustomerDetail() {
+		return $this->belongsTo('App\Customer', 'customer_id');
+	}
+
 	public function CustomerDetail() {
 		return $this->belongsTo('App\Customer', 'customer_id');
 	}

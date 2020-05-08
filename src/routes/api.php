@@ -8,8 +8,18 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 
 		//VEHICLE INWARD
 		Route::post('vehicle-inward-list/get', 'VehicleInwardController@getVehicleInwardList');
-		Route::post('get-vehicle-form-data', 'VehicleInwardController@getVehicleFomData');
+
+		//VEHICLE GET FORM DATA AND SAVE
+		Route::get('get-vehicle-form-data/{id}', 'VehicleInwardController@getVehicleFomData');
 		Route::post('save-vehicle', 'VehicleInwardController@saveVehicle');
-		Route::post('get-customer-form-data', 'VehicleInwardController@getCustomerFomData');
+
+		//VEHICLE GET FORM DATA AND SAVE
+		Route::get('get-customer-form-data/{id}', 'VehicleInwardController@getCustomerFomData');
+		Route::post('save-customer', 'VehicleInwardController@saveCustomer');
+
+		//GTE STATE BASED COUNTRY
+		Route::get('get-state/{id}', 'VehicleInwardController@getState');
+		//GTE CITY BASED STATE
+		Route::get('get-city/{id}', 'VehicleInwardController@getcity');
 	});
 });
