@@ -888,7 +888,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$job_order = jobOrder::find($request->job_order_id);
+			$job_order = JobOrder::find($request->job_order_id);
 
 			$job_order->customerVoice()->sync([]);
 			$job_order->customerVoice()->sync($request->customer_voice_id);
@@ -983,7 +983,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$job_order = jobOrder::find($request->job_order_id);
+			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->is_road_test_required = $request->is_road_test_required;
 			$job_order->road_test_done_by_id = $request->road_test_done_by_id;
 			if ($request->road_test_done_by_id == 8101) {
