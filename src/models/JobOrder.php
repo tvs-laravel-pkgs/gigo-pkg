@@ -35,6 +35,9 @@ class JobOrder extends Model {
 	public function customerVoice() {
 		return $this->belongsToMany('App\CustomerVoice', 'job_order_customer_voice', 'job_order_id', 'customer_voice_id');
 	}
+	public function vehicleInventoryItem() {
+		return $this->belongsToMany('App\VehicleInventoryItem', 'job_order_vehicle_inventory_item', 'job_order_id', 'vehicle_inventory_item_id')->withPivot(['is_available','remarks']);
+	}
 
 	public static function createFromObject($record_data) {
 

@@ -73,4 +73,18 @@ class VehicleInventoryItem extends Model {
 		return $list;
 	}
 
+	public static function getInventoryList($params = [], $add_default = true, $default_text = 'Select Vehicle Inventory Item') {
+		$list = Collect(Self::select([
+			'id',
+			'name',
+		])
+				//->where('field_type_id',1)//Need to change checked box item value
+				->orderBy('name')
+				->get());
+		if ($add_default) {
+			$list->prepend(['id' => '', 'name' => $default_text]);
+		}
+		return $list;
+	}
+
 }

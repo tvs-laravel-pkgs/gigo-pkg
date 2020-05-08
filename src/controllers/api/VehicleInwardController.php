@@ -11,13 +11,13 @@ use App\CustomerDetails;
 use App\CustomerVoice;
 use App\GateLog;
 use App\Http\Controllers\Controller;
-use App\jobOrder;
 use App\State;
 use App\User;
 use App\Vehicle;
 use App\VehicleInspectionItemGroup;
 use App\VehicleModel;
 use App\VehicleOwner;
+use App\VehicleInventoryItem;
 use App\JobOrder;
 use App\QuoteType;
 use Abs\GigoPkg\ServiceOrderType;
@@ -94,6 +94,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+	//JOB ORDER 
 	public function getJobOrderFormData($id){
 			try {
 				$gate_log = GateLog::find($id);
@@ -126,6 +127,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
 	public function saveJobOrder(Request $request) {
 		// dd($request->all());
 		try {
@@ -352,6 +354,112 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//INVENTORY
+	public function getInventoryFormData($id){
+			try {
+				$gate_log = GateLog::find($id);
+				if (!$gate_log) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Gate Log Not Found!',
+					]);
+				}
+
+				$extras = [
+					'inventory_type_list' => VehicleInventoryItem::getInventoryList(),
+				];
+
+			return response()->json([
+				'success' => true,
+				'gate_log' => $gate_log,
+				'extras' => $extras,
+			]);
+
+
+			}catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function saveInventoryItem(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id'
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+			$items_validator = Validator::make($request->vehicle_inventory_items, [
+				'inventory_item_id.*' => [
+					'required:true',
+					'numeric',
+					'exists:vehicle_inventory_items,id'
+				],
+				'is_available.*' => [
+					'required',
+					'numeric',
+				],
+				'remarks.*' => [
+					'nullable',
+					'string',
+				],
+				
+			]);
+			if ($items_validator->fails()) {
+				return response()->json(['success' => false, 'errors' => $items_validator->errors()->all()]);
+			}
+
+			$job_order = JobOrder::find($request->job_order_id);
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job order Not found!',
+				]);
+			}
+
+			DB::beginTransaction();
+			if (isset($request->vehicle_inventory_items) && count($request->vehicle_inventory_items) > 0) {
+
+				$job_order->vehicleInventoryItem()->detach();
+				//Inserting Inventory Items
+				foreach ($request->vehicle_inventory_items as $key => $vehicle_inventory_item) {
+
+					$job_order->vehicleInventoryItem()
+					->attach($vehicle_inventory_item['inventory_item_id'],
+						 [
+						 	'is_available' => $vehicle_inventory_item['is_available'],
+						 	'remarks'=>$vehicle_inventory_item['remarks']
+						 ]
+					);
+				}
+
+			} 
+			DB::commit();
+			return response()->json([
+				'success' => true,
+				'message' => 'Vehicle inventory items added successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
 	public function getVehicleFormData($id) {
 		// dd($id);
 		try {

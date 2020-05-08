@@ -9,9 +9,13 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//VEHICLE INWARD
 		Route::post('vehicle-inward-list/get', 'VehicleInwardController@getVehicleInwardList');
 
-		//VEHICLE GET JOB ORDER DETAILS
+		//VEHICLE GET JOB ORDER FORM DATA AND SAVE
 		Route::get('get-job-order-form-data/{id}', 'VehicleInwardController@getJobOrderFormData');
 		Route::post('save-job-order', 'VehicleInwardController@saveJobOrder');
+
+		//VEHICLE GET INVENTORY FORM DATA AND SAVE
+		Route::get('get-inventory-form-data/{id}', 'VehicleInwardController@getInventoryFormData');
+		Route::post('save-inventory-item', 'VehicleInwardController@saveInventoryItem');
 
 		//VEHICLE GET FORM DATA AND SAVE
 		Route::get('get-vehicle-form-data/{id}', 'VehicleInwardController@getVehicleFormData');
