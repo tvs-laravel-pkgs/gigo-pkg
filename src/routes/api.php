@@ -10,12 +10,23 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::post('vehicle-inward-list/get', 'VehicleInwardController@getVehicleInwardList');
 
 		//VEHICLE GET FORM DATA AND SAVE
-		Route::get('get-vehicle-form-data/{id}', 'VehicleInwardController@getVehicleFomData');
+		Route::get('get-vehicle-form-data/{id}', 'VehicleInwardController@getVehicleFormData');
 		Route::post('save-vehicle', 'VehicleInwardController@saveVehicle');
 
 		//VEHICLE GET FORM DATA AND SAVE
-		Route::get('get-customer-form-data/{id}', 'VehicleInwardController@getCustomerFomData');
+		Route::get('get-customer-form-data/{id}', 'VehicleInwardController@getCustomerFormData');
 		Route::post('save-customer', 'VehicleInwardController@saveCustomer');
+
+		//VEHICLE INSPECTION GET FORM DATA AND SAVE
+		Route::get('get-vehicle-inspection-form-data/{id}', 'VehicleInwardController@getVehicleInspectiongeFormData');
+
+		//VOC GET FORM DATA AND SAVE
+		Route::get('get-voc-form-data/{id}', 'VehicleInwardController@getVocFormData');
+		Route::post('save-voc', 'VehicleInwardController@saveVoc');
+
+		//ROAD TEST OBSERVATION GET FORM DATA AND SAVE
+		Route::get('get-road-test-observation-form-data/{id}', 'VehicleInwardController@getRoadTestObservationFormData');
+		Route::post('save-road-test-observation', 'VehicleInwardController@saveRoadTestObservation');
 
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/{id}', 'VehicleInwardController@getState');

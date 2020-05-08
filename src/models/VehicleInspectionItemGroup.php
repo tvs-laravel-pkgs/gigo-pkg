@@ -27,6 +27,10 @@ class VehicleInspectionItemGroup extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
+	public function vehicleInspectionItems() {
+		return $this->hasMany('App\VehicleInspectionItem', 'group_id', 'id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
