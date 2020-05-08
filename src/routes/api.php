@@ -7,6 +7,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::post('save-vehicle-gate-in-entry', 'VehicleGatePassController@saveVehicleGateInEntry');
 
 		//VEHICLE INWARD
+		Route::post('vehicle-inward-list/get', 'VehicleInwardController@getVehicleInwardList');
 		Route::post('get-vehicle-form-data', 'VehicleInwardController@getVehicleFomData');
 		Route::post('save-vehicle', 'VehicleInwardController@saveVehicle');
 		Route::post('get-customer-form-data', 'VehicleInwardController@getCustomerFomData');

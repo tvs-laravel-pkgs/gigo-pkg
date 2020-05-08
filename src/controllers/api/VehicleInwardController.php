@@ -14,6 +14,55 @@ use Validator;
 class VehicleInwardController extends Controller {
 	public $successStatus = 200;
 
+	public function getVehicleInwardList(Request $request)
+	{
+		try{
+			$validator = Validator::make($request->all(), [
+				'employee_id' => [
+					'required',
+					'exists:employees,id',
+					'integer',
+				],
+			]);
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			$gate_log_ids=[];
+			$gate_logs=GateLog::
+			where('gate_logs.company_id',Auth::user()->company_id)
+			->get();
+			foreach ($gate_logs as $key => $gate_log) {
+				if($gate_log->status_id==8120){ //Gate In Completed
+					$gate_log_ids[]=$gate_log->id;
+				}else{// Others
+					if($gate_log->floor_adviser_id==$request->employee_id){
+						$gate_log_ids[]=$gate_log->id;
+					}
+				}
+			}
+			$vehicle_inward_list=GateLog::with([
+				'vehicleDetail',
+				'vehicleDetail.vehicleOwner',
+				'vehicleDetail.vehicleOwner.CustomerDetail',
+			])
+			->whereIn('gate_logs.id',$gate_log_ids)
+			->get();
+		
+			return response()->json([
+				'success' => true,
+				'vehicle_inward_list' => $vehicle_inward_list,
+			]);
+		}catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
 	public function getVehicleFomData(Request $request) {
 		// dd($request->gate_log_id);
 		try {
