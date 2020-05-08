@@ -2,11 +2,23 @@
 
 namespace Abs\GigoPkg\Api;
 
+use App\Address;
+use App\Config;
+use App\Country;
+use App\Customer;
+use App\CustomerDetails;
 use App\GateLog;
 use App\Http\Controllers\Controller;
+use App\State;
 use App\Vehicle;
 use App\VehicleModel;
+use App\VehicleOwner;
+use App\JobOrder;
+use App\QuoteType;
+use Abs\GigoPkg\ServiceOrderType;
+use App\ServiceType;
 use Auth;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
@@ -14,17 +26,15 @@ use Validator;
 class VehicleInwardController extends Controller {
 	public $successStatus = 200;
 
-	public function getVehicleFomData(Request $request) {
-		// dd($request->gate_log_id);
+	public function getVehicleInwardList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [
-				'gate_log_id' => [
+				'employee_id' => [
 					'required',
-					'exists:gate_logs,id',
+					'exists:employees,id',
 					'integer',
 				],
 			]);
-
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
@@ -32,15 +42,104 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			$gate_log_ids = [];
+			$gate_logs = GateLog::
+				where('gate_logs.company_id', Auth::user()->company_id)
+				->get();
+			foreach ($gate_logs as $key => $gate_log) {
+				if ($gate_log->status_id == 8120) {
+					//Gate In Completed
+					$gate_log_ids[] = $gate_log->id;
+				} else {
+// Others
+					if ($gate_log->floor_adviser_id == $request->employee_id) {
+						$gate_log_ids[] = $gate_log->id;
+					}
+				}
+			}
+
+			$vehicle_inward_list=GateLog::select('gate_logs.*')
+			->with([
+				'vehicleDetail',
+				'vehicleDetail.vehicleOwner',
+				'vehicleDetail.vehicleOwner.CustomerDetail',
+			])
+			->leftJoin('vehicles','gate_logs.vehicle_id','vehicles.id')
+			->leftJoin('vehicle_owners','vehicles.id','vehicle_owners.vehicle_id')
+			->leftJoin('customers','vehicle_owners.customer_id','customers.id')
+			->whereIn('gate_logs.id',$gate_log_ids)
+			->where(function ($query) use ($request) {
+				if (isset($request->search_key)) {
+					$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
+					->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
+				}
+			})
+			->get();
+		
+			return response()->json([
+				'success' => true,
+				'vehicle_inward_list' => $vehicle_inward_list,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+	public function getJobOrderData($id){
+			try {
+				$gate_log = GateLog::find($id);
+				if (!$gate_log) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Gate Log Not Found!',
+					]);
+				}
+
+				$extras = [
+					'job_order_types' => ServiceOrderType::getList(),
+					'quote_types' => QuoteType::getList(),
+					'service_types' => ServiceType::getList(),
+					'reading_types' => Config::getConfigTypeList(33,'name','',true,'Select Reading type'),//Reading types
+				];
+
+			//Job card details need to get future
+			return response()->json([
+				'success' => true,
+				'gate_log' => $gate_log,
+				'extras' => $extras,
+			]);
+
+
+			}catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function getVehicleFomData($id) {
+		// dd($id);
+		try {
+			$gate_log = GateLog::find($id);
+			if (!$gate_log_validate) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Gate Log Not Found!',
+				]);
+			}
+
 			//UPDATE GATE LOG
-			$gate_log = GateLog::where('id', $request->gate_log_id)
+			$gate_log = GateLog::where('id', $id)
 				->update([
 					'status_id' => 8121, //VEHICLE INWARD INPROGRESS
 					'floor_adviser_id' => Auth::user()->entity_id,
 					'updated_by_id' => Auth::user()->id,
 				]);
 
-			$vehicle_detail = GateLog::with(['vehicleDetail'])->find($request->gate_log_id);
+			$gate_log_detail = GateLog::with(['vehicleDetail'])->find($id);
 
 			$extras = [
 				'registration_types' => [
@@ -52,13 +151,14 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'vehicle_detail' => $vehicle_detail,
+				'gate_log_detail' => $gate_log_detail,
 				'extras' => $extras,
 			]);
 			// return VehicleInward::saveVehicleGateInEntry($request);
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
+				'error' => 'Server Network Down!',
 				'errors' => ['Exception Error' => $e->getMessage()],
 			]);
 		}
@@ -83,7 +183,7 @@ class VehicleInwardController extends Controller {
 				if ($error) {
 					return response()->json([
 						'success' => false,
-						'errors' => $error,
+						'error' => $error,
 					]);
 				}
 			}
@@ -109,18 +209,21 @@ class VehicleInwardController extends Controller {
 					'min:7',
 					'max:64',
 					'string',
+					'unique:vehicles,engine_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'chassis_number' => [
 					'required',
 					'min:10',
 					'max:64',
 					'string',
+					'unique:vehicles,chassis_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'vin_number' => [
 					'required',
 					'min:17',
 					'max:32',
 					'string',
+					'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 			]);
 
@@ -129,6 +232,7 @@ class VehicleInwardController extends Controller {
 				$success = false;
 				return response()->json([
 					'success' => false,
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -136,10 +240,10 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 			//VEHICLE GATE ENTRY DETAILS
 			// UNREGISTRED VEHICLE DIFFERENT FLOW WAITING FOR REQUIREMENT
-			if (!$request->is_registered == 1) {
+			if ($request->is_registered != 1) {
 				return response()->json([
-					'success' => true,
-					'message' => 'Unregistred Vehile Not allow!!',
+					'success' => false,
+					'error' => 'Unregistred Vehile Not allow!!',
 				]);
 			}
 
@@ -164,16 +268,202 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
+				'error' => 'Server Network Down!',
 				'errors' => ['Exception Error' => $e->getMessage()],
 			]);
 		}
 	}
 
-	// public function getCustomerFomData(Request $request) {
-	// 	dd($request->all());
+	public function getCustomerFomData($id) {
+		try {
+			$gate_log_validate = GateLog::find($id);
+			if (!$gate_log_validate) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Gate Log Not Found!',
+				]);
+			}
 
-	// 	$customer_detail = GateLog::with(['vehicleDetail'])->find($request->gate_log_id);
+			$gate_lod_details = GateLog::with([
+				'vehicleDetail',
+				'vehicleDetail.vehicleOwner',
+				'vehicleDetail.vehicleOwner.CustomerDetail',
+				'vehicleDetail.vehicleOwner.CustomerDetail.primaryAddress',
+				'vehicleDetail.vehicleOwner.CustomerDetail.primaryAddress.country',
+				'vehicleDetail.vehicleOwner.CustomerDetail.primaryAddress.state',
+				'vehicleDetail.vehicleOwner.CustomerDetail.primaryAddress.city',
+			])->find($id);
 
-	// }
+			$extras = [
+				'country_list' => Country::getList(),
+				'ownership_list' => Config::vehicleOwnershipTypes(),
+			];
+
+			return response()->json([
+				'success' => true,
+				'gate_lod_details' => $gate_lod_details,
+				'extras' => $extras,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function getState($country_id) {
+		$this->data = Country::getState($country_id);
+		$this->data['success'] = true;
+		return response()->json($this->data);
+	}
+
+	public function getcity($state_id) {
+		$this->data = State::getCity($state_id);
+		$this->data['success'] = true;
+		return response()->json($this->data);
+	}
+
+	public function saveCustomer(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'name' => [
+					'required',
+					'min:3',
+					'string',
+					'max:255',
+				],
+				'mobile_no' => [
+					'required',
+					'min:10',
+					'max:10',
+				],
+				'email' => [
+					'nullable',
+					'max:255',
+					'string',
+				],
+				'address_line1' => [
+					'required',
+					'min:3',
+					'max:255',
+					'string',
+				],
+				'address_line2' => [
+					'nullable',
+					'max:255',
+					'string',
+				],
+				'country_id' => [
+					'required',
+					'exists:countries,id',
+					'integer',
+				],
+				'state_id' => [
+					'required',
+					'exists:states,id',
+					'integer',
+				],
+				'city_id' => [
+					'required',
+					'exists:cities,id',
+					'integer',
+				],
+				'pincode' => [
+					'required',
+					'min:6',
+					'max:6',
+				],
+				'gst_number' => [
+					'nullable',
+					'min:15',
+					'max:15',
+				],
+				'pan_number' => [
+					'nullable',
+					'min:10',
+					'max:10',
+				],
+				'ownership_id' => [
+					'required',
+					'exists:configs,id',
+					'integer',
+				],
+
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$gate_log = GateLog::with([
+				'vehicleDetail',
+				'vehicleDetail.vehicleOwner',
+			])
+				->find($request->gate_log_id);
+			// dd($gate_log);
+			if (!$gate_log->vehicleDetail->VehicleOwner) {
+				$customer = new Customer;
+				$customer_details = new CustomerDetails;
+				$address = new Address;
+				$vehicle_owner = new VehicleOwner;
+				$customer->created_by_id = Auth::user()->id;
+			} else {
+				$customer = Customer::find($gate_log->vehicleDetail->VehicleOwner->customer_id);
+				$vehicle_owner = VehicleOwner::find($gate_log->vehicleDetail->VehicleOwner->vehicle_id);
+				$customer->updated_by_id = Auth::user()->id;
+				$address = Address::where('address_of_id', 24)->where('entity_id', $gate_log->vehicleDetail->VehicleOwner->customer_id)->first();
+			}
+			$customer->code = rand(1, 10000);
+			$customer->fill($request->all());
+			$customer->company_id = Auth::user()->company_id;
+			$customer->gst_number = $request->gst_number;
+			$customer->save();
+			$customer->code = 'CUS' . $customer->id;
+			$customer->save();
+
+			//SAVE VEHICLE OWNER
+			$vehicle_owner->vehicle_id = $gate_log->vehicleDetail->id;
+			$vehicle_owner->customer_id = $customer->id;
+			$vehicle_owner->from_date = Carbon::now();
+			$vehicle_owner->ownership_id = $request->ownership_id;
+			$vehicle_owner->save();
+
+			if (!$address) {
+				$address = new Address;
+			}
+			$address->fill($request->all());
+			$address->company_id = Auth::user()->company_id;
+			$address->address_of_id = 24; //CUSTOMER
+			$address->entity_id = $customer->id;
+			$address->address_type_id = 40; //PRIMART ADDRESS
+			$address->name = 'Primary Address';
+			$address->save();
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Vehicle Mapped with customer Successfully!!',
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
 
 }
