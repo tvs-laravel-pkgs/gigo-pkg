@@ -110,7 +110,11 @@ class VehicleController extends Controller {
 		} else {
 			$vehicle = Vehicle::withTrashed()->find($id);
 			$action = 'Edit';
-			$this->data['sold_date'] = date('d-m-Y', strtotime($vehicle->sold_date));
+			if($vehicle->sold_date !=  NULL)
+			{
+				$this->data['sold_date'] = date('d-m-Y', strtotime($vehicle->sold_date));
+			}
+			
 		}
 		$this->data['model_list'] = ModelType::select('id','model_name')->where('company_id',Auth::user()->company_id)->get();
 		$this->data['vehicle'] = $vehicle;
@@ -186,7 +190,10 @@ class VehicleController extends Controller {
 			}
 			$vehicle->fill($request->all());
 			$vehicle->company_id = Auth::user()->company_id;
+			if(isset($request->sold_date))
+			{
 			$vehicle->sold_date = date('Y-m-d', strtotime($request->sold_date));
+		    }
 			if ($request->register_val == 'Yes') {
 				$vehicle->is_registered = 1;
 			} else {
