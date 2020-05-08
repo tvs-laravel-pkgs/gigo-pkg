@@ -157,19 +157,17 @@ class VehicleController extends Controller {
 					'unique:vehicles,chassis_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'registration_number' => [
-					'required:true',
+					'publish_at' => 'nullable',
 					'min:10',
 					'max:32',
 					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'vin_number' => [
-					'required:true',
+					'publish_at' => 'nullable',
 					'min:10',
 					'max:32',
 					'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
-				'model_id' => 'required',
-				'sold_date' => 'required',
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);

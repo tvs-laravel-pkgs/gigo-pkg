@@ -218,7 +218,7 @@ app.component('vehicleForm', {
                     minlength: 10,
                     maxlength: 128,
                 },
-                'model_id': {
+                /*'model_id': {
                     required:true,
                 },
                 'registration_number':{
@@ -233,7 +233,7 @@ app.component('vehicleForm', {
                 },
                 'sold_date':{
                     required:true,
-                },
+                },*/
             },
             messages: {
                 'engine_number': {
@@ -244,14 +244,14 @@ app.component('vehicleForm', {
                     minlength: 'Minimum 10 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
-                'registration_number': {
+                /*'registration_number': {
                     minlength: 'Minimum 10 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
                 'vin_number': {
                     minlength: 'Minimum 10 Characters',
                     maxlength: 'Maximum 32 Characters',
-                }
+                }*/
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');

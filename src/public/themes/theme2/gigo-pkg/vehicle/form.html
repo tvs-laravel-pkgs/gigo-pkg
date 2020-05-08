@@ -77,7 +77,7 @@
                                                         <md-option ng-value="model_list.id" ng-repeat="model_list in $ctrl.model_list | filter:searchTerm">{{model_list.model_name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
-                                                <input type="hidden" class="form-control required" name="model_id" id="model_id" value="{{$ctrl.vehicle.model_id}}">
+                                                <input type="hidden" class="form-control" name="model_id" id="model_id" value="{{$ctrl.vehicle.model_id}}">
                                             </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -97,7 +97,7 @@
                                                     Registration Number
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.vehicle.registration_number" name="registration_number" placeholder="Enter Registration Number" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.vehicle.registration_number" name="registration_number" placeholder="Enter Registration Number" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -106,7 +106,7 @@
                                                     Vin Number
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.vehicle.vin_number" name="vin_number" placeholder="Enter Vin Number" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.vehicle.vin_number" name="vin_number" placeholder="Enter Vin Number" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                          <div class="col-md-3">
