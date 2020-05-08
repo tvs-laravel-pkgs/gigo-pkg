@@ -29,10 +29,6 @@ class Vehicle extends Model {
 		return $this->hasOne('App\VehicleOwner', 'vehicle_id');
 	}
 
-	public function vehicleOwner() {
-		return $this->hasOne('App\VehicleOwner', 'vehicle_id');
-	}
-
 	public static function createFromObject($record_data) {
 
 		$errors = [];

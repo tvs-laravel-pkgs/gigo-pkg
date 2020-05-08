@@ -31,10 +31,6 @@ class VehicleOwner extends Model {
 		return $this->belongsTo('App\Customer', 'customer_id');
 	}
 
-	public function CustomerDetail() {
-		return $this->belongsTo('App\Customer', 'customer_id');
-	}
-
 	public static function createFromObject($record_data) {
 
 		$errors = [];
