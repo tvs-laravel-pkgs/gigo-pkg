@@ -44,12 +44,22 @@ class VehicleInwardController extends Controller {
 					}
 				}
 			}
-			$vehicle_inward_list=GateLog::with([
+			$vehicle_inward_list=GateLog::select('gate_logs.*')
+			->with([
 				'vehicleDetail',
 				'vehicleDetail.vehicleOwner',
 				'vehicleDetail.vehicleOwner.CustomerDetail',
 			])
+			->leftJoin('vehicles','gate_logs.vehicle_id','vehicles.id')
+			->leftJoin('vehicle_owners','vehicles.id','vehicle_owners.vehicle_id')
+			->leftJoin('customers','vehicle_owners.customer_id','customers.id')
 			->whereIn('gate_logs.id',$gate_log_ids)
+			->where(function ($query) use ($request) {
+				if (isset($request->search_key)) {
+					$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
+					->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
+				}
+			})
 			->get();
 		
 			return response()->json([
