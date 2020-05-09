@@ -16,7 +16,6 @@ class AlterGateLogs extends Migration {
 
 			$table->foreign('vehicle_id')->references('id')->on('vehicles')->onDelete('set null')->onUpdate('cascade');
 			$table->foreign('floor_adviser_id')->references('id')->on('employees')->onDelete('set null')->onUpdate('cascade');
-
 		});
 	}
 
