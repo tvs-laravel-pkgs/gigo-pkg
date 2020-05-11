@@ -1,4 +1,4 @@
-<!-- Content Wrap -->
+Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -66,6 +66,23 @@
                                                 <input type="text" class="form-control required" ng-model="$ctrl.vehicle_inventory_item.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
+                                        <!-- {{$ctrl.extras.field_type_list}} -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Field Type
+                                                </label>
+                                                <md-select ng-model="$ctrl.vehicle_inventory_item.field_type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Field Type">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Field Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="field_type.id" ng-repeat="field_type in $ctrl.extras.field_type_list | filter:searchTerm">{{field_type.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" name="field_type_id" id="field_type_id" value="{{$ctrl.vehicle_inventory_item.field_type_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
@@ -97,4 +114,4 @@
             </div><!-- Page Form -->
         </form>
     </div><!-- Page Main Content -->
-</div><!-- Content Wrap -->
+</div><!-- Content Wrap

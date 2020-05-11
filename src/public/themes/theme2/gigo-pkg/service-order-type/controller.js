@@ -184,22 +184,22 @@ app.component('serviceOrderTypeForm', {
                 'code': {
                     required: true,
                     minlength: 3,
-                    maxlength: 32,
+                    maxlength: 64,
                 },
                 'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 128,
+                    maxlength: 64,
                 },
             },
             messages: {
                 'code': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 32 Characters',
+                    maxlength: 'Maximum 64 Characters',
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
+                    maxlength: 'Maximum 64 Characters',
                 },
             },
             invalidHandler: function(event, validator) {

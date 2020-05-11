@@ -7,6 +7,7 @@ use Auth;
 use Carbon\Carbon;
 use DB;
 use Entrust;
+use Abs\AttributePkg\FieldType;
 use Illuminate\Http\Request;
 use Validator;
 use Yajra\Datatables\Datatables;
@@ -24,10 +25,12 @@ class VehicleInventoryItemController extends Controller {
 				'vehicle_inventory_items.id',
 				'vehicle_inventory_items.name',
 				'vehicle_inventory_items.code',
+				'field_types.name as field_type',
 
 				DB::raw('IF(vehicle_inventory_items.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->where('vehicle_inventory_items.company_id', Auth::user()->company_id)
+			->leftJoin('field_types', 'field_types.id', 'vehicle_inventory_items.field_type_id')
 
 			->where(function ($query) use ($request) {
 				if (!empty($request->code)) {
@@ -37,6 +40,11 @@ class VehicleInventoryItemController extends Controller {
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('vehicle_inventory_items.name', 'LIKE', '%' . $request->name . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->field_type)) {
+					$query->where('vehicle_inventory_items.field_type_id', $request->field_type);
 				}
 			})
 			->where(function ($query) use ($request) {
@@ -79,11 +87,16 @@ class VehicleInventoryItemController extends Controller {
 			$vehicle_inventory_item = VehicleInventoryItem::withTrashed()->find($id);
 			$action = 'Edit';
 		}
+		$this->data['extras'] = [
+			// 'field_type_list' => collect(FieldType::select('id','name')->get())->prepend(['id' => '', 'name' => 'Select Field Type']),
+			'field_type_list' => collect(DB::table('field_types')->select('id','name')->get())->prepend(['id' => '', 'name' => 'Select Field Type']),
+			];
 		$this->data['success'] = true;
 		$this->data['vehicle_inventory_item'] = $vehicle_inventory_item;
 		$this->data['action'] = $action;
 		return response()->json($this->data);
 	}
+
 	public function getVehicleInventoryItemFilterData() {
 		$this->data['extras'] = [
 			'status' => [
@@ -92,6 +105,8 @@ class VehicleInventoryItemController extends Controller {
 				['id' => '0', 'name' => 'Inactive'],
 			],
 		];
+		$this->data['field_type_list'] = collect(FieldType::select('id','name')->get())->prepend(['id' => '', 'name' => 'Select Field Type']);
+
 		return response()->json($this->data);
 	}
 

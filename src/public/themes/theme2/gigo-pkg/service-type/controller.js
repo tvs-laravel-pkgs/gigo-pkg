@@ -187,9 +187,8 @@ app.component('serviceTypeForm', {
                     maxlength: 32,
                 },
                 'name': {
-                    required: true,
                     minlength: 3,
-                    maxlength: 128,
+                    maxlength: 191,
                 },
             },
             messages: {
@@ -199,7 +198,7 @@ app.component('serviceTypeForm', {
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
+                    maxlength: 'Maximum 191 Characters',
                 },
             },
             invalidHandler: function(event, validator) {

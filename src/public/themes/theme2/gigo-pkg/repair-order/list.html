@@ -100,10 +100,10 @@
                                 <label>Type</label>
                                 <md-select ng-model="$ctrl.repair_order_type_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedtype($ctrl.repair_order_type_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Repair Order Type">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchType" type="search" placeholder="Search Type" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="repair_order_type.id" ng-repeat="repair_order_type in $ctrl.repair_order_type | filter:searchTerm">{{repair_order_type.short_name}}</md-option>
+                                        <md-option ng-value="repair_order_type.id" ng-repeat="repair_order_type in $ctrl.repair_order_type | filter:searchType">{{repair_order_type.short_name}}</md-option>
                                     </md-optgroup>
                                 </md-select>
                                 <input type="hidden" class="form-control type-sm" name="type" id="type" value="">
@@ -114,36 +114,36 @@
                                 <label>Skill Level</label>
                                 <md-select ng-model="$ctrl.skill_level_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedSkil($ctrl.skill_level_selected)"data-md-container-class="selectdemoSelectHeader" placeholder="Select Skill Level">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchSkil" type="search" placeholder="Search Skil Level" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="skill_level.id" ng-repeat="skill_level in $ctrl.skill_level | filter:searchTerm">{{skill_level.name}}</md-option>
+                                        <md-option ng-value="skill_level.id" ng-repeat="skill_level in $ctrl.skill_level | filter:searchSkil">{{skill_level.name}}</md-option>
                                     </md-optgroup>
                                 </md-select>
                                 <input type="hidden" class="form-control type-sm" name="skill_level" id="skill_level" value="">
                             </div><!-- Field -->
                         </div><!-- Column -->
-                         <div class="col-md-6">
+                         <!-- <div class="col-md-6">
                             <div class="form-group">
                                 <label>Hours</label>
-                                <input type="text" class="form-control" id="hours" name="hours" placeholder="Enter Repair Order Hours" autocomplete="off">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
+                                <input type="text" class="form-control" id="hours" name="hours" placeholder="Enter Repair Order Hours" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" >
+                            </div>
+                        </div>
                          <div class="col-md-6">
                             <div class="form-group">
                                 <label>Amount</label>
-                                <input type="text" class="form-control" id="amount" name="amount" placeholder="Enter Repair Order Amount" autocomplete="off">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
+                                <input type="text" class="form-control" id="amount" name="amount" placeholder="Enter Repair Order Amount" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" >
+                            </div>
+                        </div>-->
                          <div class="col-md-6">
                             <div class="form-group">
                                 <label>Tax Code</label>
                                 <md-select ng-model="$ctrl.tax_code_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedtaxcode($ctrl.tax_code_selected)"data-md-container-class="selectdemoSelectHeader" placeholder="Select Tax Code">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchTaxCode" type="search" placeholder="Search Tax Code" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="tax_code.id" ng-repeat="tax_code in $ctrl.tax_code | filter:searchTerm">{{tax_code.code}}</md-option>
+                                        <md-option ng-value="tax_code.id" ng-repeat="tax_code in $ctrl.tax_code | filter:searchTaxCode">{{tax_code.code}}</md-option>
                                     </md-optgroup>
                                 </md-select>
                                 <input type="hidden" class="form-control type-sm" name="tax_code" id="tax_code" value="">
@@ -154,7 +154,7 @@
                                 <label>Status</label>
                                 <md-select ng-model="$ctrl.status" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchTerm3" type="search" placeholder="Search Status" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
                                         <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">{{status.name}}</md-option>

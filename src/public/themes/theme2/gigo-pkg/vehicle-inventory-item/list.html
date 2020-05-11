@@ -3,7 +3,10 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Vehicle Inventory Items<span class="badge badge-secondary" id="table_infos"></span></h1>
+                    <h1 class="title type-2">
+                        Vehicle Inventory Items
+                        <span class="badge badge-secondary" id="table_infos"></span>
+                    </h1>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
@@ -12,26 +15,42 @@
                         </button>
                     </div>
                 </div><!-- Page Header Content -->
-                
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
                             <input type="search" id="search_vehicle_inventory_item" class="form-control" placeholder="Search" autofocus />
-                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
+                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">
+                                Clear
+                            </button>
                         </label>
                     </div><!-- Search Filter -->
                 </div>
                 <div class="page-header-content button-block">
-                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#vehicle-inventory-item-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#vehicle-inventory-item-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>
+                        Filter
+                    </button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
                 <div class="page-header-content reset-block">
-                    
                 </div><!-- Page Header Content -->
                 <!-- Page Header Content -->
                 <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
-                    <a href="#!/gigo-pkg/vehicle-inventory-item/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
+                    <a href="#!/gigo-pkg/vehicle-inventory-item/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">
+                        Add New
+                    </a>
+                    <div class="dropdown">
+                        <a class="btn-extension dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <img class="img-responsive" src="./public/theme/img/content/extension-white.svg" alt="Extension" />
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                            <li>
+                                <a href="#!/gigo-pkg/vehicle-inventory-item/add">
+                                    Form
+                                </a>
+                            </li>
+                        </ul>
+                    </div><!-- Dropdown -->
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
@@ -46,6 +65,7 @@
                                 <th>Actions</th>
                                 <th>Name</th>
                                 <th>Code</th>
+                                <th>Field Type</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -68,22 +88,42 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Code</label>
+                                <label>
+                                    Code
+                                </label>
                                 <input type="text" class="form-control" id="code" name="code" placeholder="Enter Code" autocomplete="off">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Name</label>
+                                <label>
+                                    Name
+                                </label>
                                 <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" autocomplete="off">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Status</label>
+                                <label>Field Type</label>
+                                <md-select ng-model="$ctrl.field_type_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedFieldType($ctrl.field_type_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Field Type">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a Field Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="field_type.id" ng-repeat="field_type in $ctrl.field_type_list | filter:searchTerm3">{{field_type.name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="field_type" id="field_type" value="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Status
+                                </label>
                                 <md-select ng-model="$ctrl.status" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status" ng-change="onSelectedStatus($ctrl.status)">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
                                         <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">{{status.name}}</md-option>
@@ -98,10 +138,14 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link my-tooltip" ng-click="reset_filter();$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.status='';$ctrl.field_type_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                            Reset Filter
+                        </button>
                     </div><!-- Column -->
                     <div class="col-md-6 text-right">
-                        <button type="submit" data-dismiss="modal" class="btn btn-primary btn-md" ng-click="apply_filter()">Apply</button>
+                        <button type="submit" class="btn btn-primary btn-md" ng-click="applyFilter()">
+                            Apply
+                        </button>
                     </div><!-- Column -->
                 </div><!-- Row -->
             </div><!-- Modal Footer -->
@@ -116,11 +160,19 @@
                 <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
             </div>
             <div class="modal-body">
-                <h5>Delete</h5>
-                <p>You can’t retrive the data again, Are you sure you want to delete? </p>
+                <h5>
+                    Delete
+                </h5>
+                <p>
+                    You can’t retrive the data again, Are you sure you want to delete?
+                </p>
                 <input type="hidden" name="vehicle_inventory_item_id" id="vehicle_inventory_item_id" value="">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">
+                    Cancel
+                </button>
+                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">
+                    Yes
+                </button>
             </div>
         </div>
     </div>

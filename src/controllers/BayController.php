@@ -5,6 +5,7 @@ namespace Abs\GigoPkg;
 use App\Http\Controllers\Controller;
 use App\Bay;
 use App\Outlet;
+use App\Config;
 use Abs\GigoPkg\JobOrder;
 use Abs\StatusPkg\Status;
 use Auth;
@@ -30,9 +31,12 @@ class BayController extends Controller
 			],
 		];
 
-		$this->data['outlet_list'] = Outlet::select('id','code')->where('company_id',Auth::user()->company_id)->get();
-		$this->data['bay_status_list'] = Status::select('id','name')->where('company_id',Auth::user()->company_id)->get();
-		$this->data['job_order_list'] = JobOrder::select('id','number')->where('company_id',Auth::user()->company_id)->get();
+		$this->data['outlet_list'] = collect(Outlet::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']);
+		
+		// $this->data['bay_status_list'] = collect(Config::select('id','name')->where('config_type_id',43)->get())->prepend(['id' => '', 'name' => 'Select Bay Status']);
+
+		// $this->data['bay_status_list'] = Status::select('id','name')->where('company_id',Auth::user()->company_id)->get();
+		// $this->data['job_order_list'] = JobOrder::select('id','number')->where('company_id',Auth::user()->company_id)->get();
 		
 		return response()->json($this->data);
 	}
@@ -45,14 +49,14 @@ class BayController extends Controller
 				'bays.id',
 				'bays.name',
 				'outlets.code as outlet',
-				'statuses.name as bay_status',
-				'job_orders.number as job_order',
+				'configs.name as bay_status',
+				// 'job_orders.number as job_order',
 				
 				DB::raw('IF(bays.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->leftJoin('outlets', 'outlets.id', 'bays.outlet_id')
-			->leftJoin('statuses', 'statuses.id', 'bays.status_id')
-			->leftJoin('job_orders', 'job_orders.id', 'bays.job_order_id')
+			->leftJoin('configs', 'configs.id', 'bays.status_id')
+			// ->leftJoin('job_orders', 'job_orders.id', 'bays.job_order_id')
 			
 			->where(function ($query) use ($request) {
 				if (!empty($request->short_name)) {
@@ -67,16 +71,6 @@ class BayController extends Controller
 			->where(function ($query) use ($request) {
 				if (!empty($request->outlet)) {
 					$query->where('bays.outlet_id', 'LIKE', '%' . $request->outlet . '%');
-				}
-			})
-			->where(function ($query) use ($request) {
-				if (!empty($request->bay_status)) {
-					$query->where('bays.status_id', 'LIKE', '%' . $request->bay_status . '%');
-				}
-			})
-			->where(function ($query) use ($request) {
-				if (!empty($request->job_order)) {
-					$query->where('bays.job_order_id', 'LIKE', '%' . $request->job_order . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
@@ -121,11 +115,11 @@ class BayController extends Controller
 			$action = 'Edit';
 		}
 		$this->data['extras'] = [
-			'outlet_list' => Outlet::select('id','code')->where('company_id',Auth::user()->company_id)->get(),
-			'bay_status_list' => Status::select('id','name')->where('company_id',Auth::user()->company_id)->get(),
-			'job_order_list' => JobOrder::select('id','number')->where('company_id',Auth::user()->company_id)->get(),
+			'outlet_list' => collect(Outlet::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']),
+			// 'bay_status_list' => collect(Config::select('id','name')->where('config_type_id',43)->get())->prepend(['id' => '', 'name' => 'Select Bay Status']),
+			// 'job_order_list' => JobOrder::select('id','number')->where('company_id',Auth::user()->company_id)->get(),
 			];
-		
+
 		$this->data['bay'] = $bay;
 		$this->data['action'] = $action;
 		return response()->json($this->data);
@@ -138,14 +132,11 @@ class BayController extends Controller
 				'short_name.unique' => 'Short Name is already taken',
 				'short_name.min' => 'Short Name is Minimum 3 Charachers',
 				'short_name.max' => 'Short Name is Maximum 32 Charachers',
-				'name.required' => 'Name is Required',
+				// 'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 128 Charachers',
 				'outlet_id.required' => 'Outlet is Required',
-				'status_id.required' => 'Bay Status is Required',
-				'job_order_id.unique' => 'Job Order is already taken',
-				// 'job_order_id.required' => 'Job Order is Required',
 			];
 			$validator = Validator::make($request->all(), [
 				'short_name' => [
@@ -155,18 +146,18 @@ class BayController extends Controller
 					'unique:bays,short_name,' . $request->id . ',id,outlet_id,' . Auth::user()->outlet_id,
 				],
 				'name' => [
-					'required:true',
+					// 'required:true',
 					'min:3',
 					'max:128',
-					// 'publish_at' => 'nullable',
+					'nullable',
 					'unique:bays,name,' . $request->id . ',id,outlet_id,' . Auth::user()->outlet_id,
 				],
 				'outlet_id' => 'required',
-				'status_id' => 'required',
-				'job_order_id' => [
-					'publish_at' => 'nullable',
-					'unique:job_orders,number,' . $request->id,
-				],
+				// 'status_id' => 'required',
+				// 'job_order_id' => [
+				// 	'nullable',
+				// 	'unique:job_orders,number,' . $request->id,
+				// ],
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
@@ -175,6 +166,8 @@ class BayController extends Controller
 			DB::beginTransaction();
 			if (!$request->id) {
 				$bay = new Bay;
+				// $bay->fill($request->all());
+				$bay->status_id = 8240;
 				$bay->created_by_id = Auth::user()->id;
 				$bay->created_at = Carbon::now();
 				$bay->updated_at = NULL;
@@ -184,7 +177,6 @@ class BayController extends Controller
 				$bay->updated_at = Carbon::now();
 			}
 			$bay->fill($request->all());
-			// $bay->company_id = Auth::user()->company_id;
 			if ($request->status == 'Inactive') {
 				$bay->deleted_at = Carbon::now();
 				$bay->deleted_by_id = Auth::user()->id;

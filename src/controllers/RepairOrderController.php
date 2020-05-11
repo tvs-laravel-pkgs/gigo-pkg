@@ -7,6 +7,7 @@ use Abs\GigoPkg\RepairOrderType;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\TaxCode;
 use Abs\EmployeePkg\SkillLevel;
+use Abs\UomPkg\Uom;
 use App\Config;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -31,9 +32,9 @@ class RepairOrderController extends Controller {
 				['id' => '0', 'name' => 'Inactive'],
 			],
 		];
-		$this->data['repair_order_type'] = RepairOrderType::select('id','short_name')->where('company_id',Auth::user()->company_id)->get();
-		$this->data['skill_level'] = SkillLevel::select('id','name')->where('company_id',Auth::user()->company_id)->get();
-		$this->data['tax_code'] = TaxCode::select('id','code')->where('company_id',Auth::user()->company_id)->get();
+		$this->data['repair_order_type'] = collect(RepairOrderType::select('id','short_name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'short_name' => 'Select Repair Order Type']);
+		$this->data['skill_level'] = collect(SkillLevel::select('id','name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Skill Level']);
+		$this->data['tax_code'] = collect(TaxCode::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Tax Code']);
 		return response()->json($this->data);
 	}
 
@@ -73,12 +74,12 @@ class RepairOrderController extends Controller {
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->type)) {
-					$query->where('repair_orders.type_id', 'LIKE', '%' . $request->type . '%');
+					$query->where('repair_orders.type_id',$request->type);
 				}
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->skill_level)) {
-					$query->where('repair_orders.skill_level_id', 'LIKE', '%' . $request->skill_level . '%');
+					$query->where('repair_orders.skill_level_id',$request->skill_level);
 				}
 			})
 			->where(function ($query) use ($request) {
@@ -138,9 +139,10 @@ class RepairOrderController extends Controller {
 			$repair_order = RepairOrder::withTrashed()->find($id);
 			$action = 'Edit';
 		}
-		$this->data['repair_order_type'] = RepairOrderType::select('id','short_name')->where('company_id',Auth::user()->company_id)->get();
-		$this->data['skill_level'] = SkillLevel::select('id','name')->where('company_id',Auth::user()->company_id)->get();
-		$this->data['tax_code'] = TaxCode::select('id','code')->where('company_id',Auth::user()->company_id)->get();
+		$this->data['repair_order_type'] = collect(RepairOrderType::select('id','short_name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'short_name' => 'Select Repair Order Type']);
+		$this->data['skill_level'] = collect(SkillLevel::select('id','name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Skill Level']);
+		$this->data['tax_code'] = collect(TaxCode::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Tax Code']);
+		$this->data['uom_code'] = collect(Uom::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Uom Code']);
 		$this->data['repair_order'] = $repair_order;
 		$this->data['action'] = $action;
 		return response()->json($this->data);
@@ -153,44 +155,39 @@ class RepairOrderController extends Controller {
 				'code.required' => 'DBM Code is Required',
 				'code.unique' => 'DBM Code is already taken',
 				'code.min' => 'DBM Code is Minimum 3 Charachers',
-				'code.max' => 'DBM Code is Maximum 6 Charachers',
-				'alt_code.required' => 'DMS Code is Required',
+				'code.max' => 'DBM Code is Maximum 36 Charachers',
 				'alt_code.unique' => 'DMS Code is already taken',
 				'alt_code.min' => 'DMS Code is Minimum 3 Charachers',
-				'alt_code.max' => 'DMS Code is Maximum 6 Charachers',
+				'alt_code.max' => 'DMS Code is Maximum 36 Charachers',
 				'name.required' => 'Name is Required',
-				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
-				'name.max' => 'Name is Maximum 64 Charachers',
-				'skill_level_id.required' => 'Skill Level is Required',
+				'name.max' => 'Name is Maximum 128 Charachers',
 				'hours.required' => 'Hours is Required',
 				'amount.required' => 'Amount is Required',
-				'tax_code_id.required' => 'Tax Code is Required',
 			];
 			$validator = Validator::make($request->all(), [
 				'type_id' => 'required',
 				'code' => [
 					'required:true',
 					'min:3',
-					'max:6',
+					'max:36',
 					'unique:repair_orders,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'alt_code' => [
-					'required:true',
+					'publish_at' => 'nullable',
 					'min:3',
-					'max:6',
+					'max:36',
 					'unique:repair_orders,alt_code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'name' => [
 					'required:true',
 					'min:3',
-					'max:64',
-					'unique:repair_orders,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					'max:128',
 				],
-				'skill_level_id' => 'required',
+				//'skill_level_id' => 'required',
 				'hours' => 'required',
 				'amount' => 'required',
-				'tax_code_id' => 'required',
+				//'tax_code_id' => 'required',
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);

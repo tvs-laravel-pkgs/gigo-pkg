@@ -61,9 +61,8 @@ Content Wrap -->
                                             <div class="input-text form-group">
                                                 <label>
                                                     Name
-                                                    <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.bay.name" name="name" placeholder="Enter Name" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.bay.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -71,7 +70,7 @@ Content Wrap -->
                                                 <label>Outlet<sup class="mandatory">*</sup></label>
                                                 <md-select ng-model="$ctrl.bay.outlet_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Outlet">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Outlet" class="demo-header-searchbox md-text">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Outlet" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
                                                     <md-optgroup>
                                                         <md-option ng-value="outlet.id" ng-repeat="outlet in $ctrl.extras.outlet_list | filter:searchTerm">{{outlet.code}}</md-option>
@@ -80,21 +79,23 @@ Content Wrap -->
                                                 <input type="hidden" class="form-control required" name="outlet_id" id="outlet_id" value="{{$ctrl.bay.outlet_id}}">
                                             </div><!-- Field -->
                                         </div><!-- Column -->
-                                        <div class="col-md-3">
+                                        <!-- <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>Bay Status<sup class="mandatory">*</sup></label>
                                                 <md-select ng-model="$ctrl.bay.status_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Bay Status">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Bay Status" class="demo-header-searchbox md-text">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Bay Status" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
                                                     <md-optgroup>
                                                         <md-option ng-value="bay_status.id" ng-repeat="bay_status in $ctrl.extras.bay_status_list | filter:searchTerm">{{bay_status.name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
                                                 <input type="hidden" class="form-control required" name="status_id" id="status_id" value="{{$ctrl.bay.status_id}}">
-                                            </div><!-- Field -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
+                                            </div> -->
+                                        <!-- Field -->
+                                        <!-- </div> -->
+                                        <!-- Column -->
+                                        <!-- <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>Job Order<sup class="mandatory">*</sup></label>
                                                 <md-select ng-model="$ctrl.bay.job_order_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Job Order">
@@ -105,10 +106,10 @@ Content Wrap -->
                                                         <md-option ng-value="job_order.id" ng-repeat="job_order in $ctrl.extras.job_order_list | filter:searchTerm">{{job_order.number}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
-                                                <input type="hidden" class="form-control required" name="job_order_id" id="job_order_id" value="{{$ctrl.bay.job_order_id}}">
-                                            </div>
-                                            <!-- Field  -->
-                                        </div>
+                                                <input type="hidden" class="form-control required" name="job_order_id" id="job_order_id" value="{{$ctrl.bay.job_order_id}}"> -->
+                                        <!-- </div> -->
+                                        <!-- Field  -->
+                                        <!-- </div> -->
                                         <!-- Column  -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
