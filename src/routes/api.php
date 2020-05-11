@@ -36,6 +36,9 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::get('get-road-test-observation-form-data/{id}', 'VehicleInwardController@getRoadTestObservationFormData');
 		Route::post('save-road-test-observation', 'VehicleInwardController@saveRoadTestObservation');
 
+		//DMS CHECKLIST SAVE
+		Route::post('save-dms-checklist', 'VehicleInwardController@saveDmsCheckList');
+
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/{id}', 'VehicleInwardController@getState');
 		//GTE CITY BASED STATE
