@@ -1,6 +1,6 @@
 <?php
 Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], function () {
-	Route::group(['prefix' => 'gigo-pkg/api'], function () {
+	Route::group(['prefix' => 'api/gigo-pkg'], function () {
 		//Route::post('punch/status', 'PunchController@status');
 
 		//SAVE GATE IN ENTRY
@@ -27,6 +27,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 
 		//VEHICLE INSPECTION GET FORM DATA AND SAVE
 		Route::get('get-vehicle-inspection-form-data/{id}', 'VehicleInwardController@getVehicleInspectiongeFormData');
+		Route::post('save-vehicle-inspection', 'VehicleInwardController@saveVehicleInspection');
 
 		//VOC GET FORM DATA AND SAVE
 		Route::get('get-voc-form-data/{id}', 'VehicleInwardController@getVocFormData');
@@ -35,6 +36,13 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//ROAD TEST OBSERVATION GET FORM DATA AND SAVE
 		Route::get('get-road-test-observation-form-data/{id}', 'VehicleInwardController@getRoadTestObservationFormData');
 		Route::post('save-road-test-observation', 'VehicleInwardController@saveRoadTestObservation');
+		
+		//DMS CHECKLIST SAVE
+		Route::post('save-dms-checklist', 'VehicleInwardController@saveDmsCheckList');
+
+		//EXPERT DIAGNOSIS REPORT GET FORM DATA AND SAVE
+		Route::get('get-expert-diagnosis-report-form-data/{id}', 'VehicleInwardController@getExpertDiagnosisReportFormData');
+		Route::post('save-expert-diagnosis-report', 'VehicleInwardController@saveExpertDiagnosisReport');
 
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/{id}', 'VehicleInwardController@getState');

@@ -2,6 +2,7 @@
 
 namespace Abs\GigoPkg\Api;
 
+use Abs\GigoPkg\ServiceOrderType;
 use App\Address;
 use App\Attachment;
 use App\Config;
@@ -11,24 +12,23 @@ use App\CustomerDetails;
 use App\CustomerVoice;
 use App\GateLog;
 use App\Http\Controllers\Controller;
+use App\JobOrder;
+use App\QuoteType;
+use App\ServiceType;
 use App\State;
 use App\User;
 use App\Vehicle;
 use App\VehicleInspectionItemGroup;
+use App\VehicleInventoryItem;
 use App\VehicleModel;
 use App\VehicleOwner;
-use App\VehicleInventoryItem;
-use App\JobOrder;
-use App\QuoteType;
-use Abs\GigoPkg\ServiceOrderType;
-use App\ServiceType;
 use Auth;
 use Carbon\Carbon;
 use DB;
-use Illuminate\Http\Request;
-use Validator;
-use Storage;
 use File;
+use Illuminate\Http\Request;
+use Storage;
+use Validator;
 
 class VehicleInwardController extends Controller {
 	public $successStatus = 200;
@@ -94,23 +94,23 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
-	//JOB ORDER 
-	public function getJobOrderFormData($id){
-			try {
-				$gate_log = GateLog::find($id);
-				if (!$gate_log) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Gate Log Not Found!',
-					]);
-				}
+	//JOB ORDER
+	public function getJobOrderFormData($id) {
+		try {
+			$gate_log = GateLog::find($id);
+			if (!$gate_log) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Gate Log Not Found!',
+				]);
+			}
 
-				$extras = [
-					'job_order_types' => ServiceOrderType::getList(),
-					'quote_types' => QuoteType::getList(),
-					'service_types' => ServiceType::getList(),
-					'reading_types' => Config::getConfigTypeList(33,'name','',true,'Select Reading type'),//Reading types
-				];
+			$extras = [
+				'job_order_types' => ServiceOrderType::getList(),
+				'quote_types' => QuoteType::getList(),
+				'service_types' => ServiceType::getList(),
+				'reading_types' => Config::getConfigTypeList(33, 'name', '', true, 'Select Reading type'), //Reading types
+			];
 
 			//Job card details need to get future
 			return response()->json([
@@ -119,8 +119,7 @@ class VehicleInwardController extends Controller {
 				'extras' => $extras,
 			]);
 
-
-			}catch (Exception $e) {
+		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
 				'errors' => ['Exception Error' => $e->getMessage()],
@@ -136,7 +135,7 @@ class VehicleInwardController extends Controller {
 				'gate_log_id' => [
 					'required',
 					'integer',
-					'exists:gate_logs,id'
+					'exists:gate_logs,id',
 				],
 				'driver_name' => [
 					'required',
@@ -215,19 +214,19 @@ class VehicleInwardController extends Controller {
 			}
 
 			DB::beginTransaction();
-			
+
 			//GATE LOG UPDATE
-			$gate_log=GateLog::find($request->gate_log_id);
-			if(!$gate_log){
+			$gate_log = GateLog::find($request->gate_log_id);
+			if (!$gate_log) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Gate Log Not Found!',
 				]);
 			}
-			$gate_log->driver_name=$request->driver_name;
-			$gate_log->contact_number=$request->mobile_number;
-			$gate_log->km_reading=$request->km_reading;
-			$gate_log->reading_type_id=$request->reading_type_id;
+			$gate_log->driver_name = $request->driver_name;
+			$gate_log->contact_number = $request->mobile_number;
+			$gate_log->km_reading = $request->km_reading;
+			$gate_log->reading_type_id = $request->reading_type_id;
 			$gate_log->save();
 
 			//JOB ORDER SAVE
@@ -255,7 +254,7 @@ class VehicleInwardController extends Controller {
 				$remove_previous_attachment = Attachment::where([
 					'entity_id' => $job_order->id,
 					'attachment_of_id' => 227, //Job Order
-					'attachment_type_id' => 251,//Driver License
+					'attachment_type_id' => 251, //Driver License
 				])->first();
 				if (!empty($remove_previous_attachment)) {
 					$img_path = $attachement_path . $remove_previous_attachment->name;
@@ -285,7 +284,7 @@ class VehicleInwardController extends Controller {
 				$remove_previous_attachment = Attachment::where([
 					'entity_id' => $job_order->id,
 					'attachment_of_id' => 227, //Job Order
-					'attachment_type_id' => 252,//Vehicle Insurance
+					'attachment_type_id' => 252, //Vehicle Insurance
 				])->first();
 				if (!empty($remove_previous_attachment)) {
 					$img_path = $attachement_path . $remove_previous_attachment->name;
@@ -293,7 +292,7 @@ class VehicleInwardController extends Controller {
 						File::delete($img_path);
 					}
 					$remove = $remove_previous_attachment->forceDelete();
-				} 
+				}
 				$file_name_with_extension = $request->insuarance_attachment->getClientOriginalName();
 				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
 				$extension = $request->insuarance_attachment->getClientOriginalExtension();
@@ -314,7 +313,7 @@ class VehicleInwardController extends Controller {
 				$remove_previous_attachment = Attachment::where([
 					'entity_id' => $job_order->id,
 					'attachment_of_id' => 227, //Job Order
-					'attachment_type_id' => 250,//RC Book
+					'attachment_type_id' => 250, //RC Book
 				])->first();
 				if (!empty($remove_previous_attachment)) {
 					$img_path = $attachement_path . $remove_previous_attachment->name;
@@ -322,7 +321,7 @@ class VehicleInwardController extends Controller {
 						File::delete($img_path);
 					}
 					$remove = $remove_previous_attachment->forceDelete();
-				} 
+				}
 				$file_name_with_extension = $request->rc_book_attachment->getClientOriginalName();
 				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
 				$extension = $request->rc_book_attachment->getClientOriginalExtension();
@@ -355,19 +354,19 @@ class VehicleInwardController extends Controller {
 	}
 
 	//INVENTORY
-	public function getInventoryFormData($id){
-			try {
-				$gate_log = GateLog::find($id);
-				if (!$gate_log) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Gate Log Not Found!',
-					]);
-				}
+	public function getInventoryFormData($id) {
+		try {
+			$gate_log = GateLog::find($id);
+			if (!$gate_log) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Gate Log Not Found!',
+				]);
+			}
 
-				$extras = [
-					'inventory_type_list' => VehicleInventoryItem::getInventoryList(),
-				];
+			$extras = [
+				'inventory_type_list' => VehicleInventoryItem::getInventoryList(),
+			];
 
 			return response()->json([
 				'success' => true,
@@ -375,8 +374,7 @@ class VehicleInwardController extends Controller {
 				'extras' => $extras,
 			]);
 
-
-			}catch (Exception $e) {
+		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
 				'errors' => ['Exception Error' => $e->getMessage()],
@@ -391,7 +389,7 @@ class VehicleInwardController extends Controller {
 				'job_order_id' => [
 					'required',
 					'integer',
-					'exists:job_orders,id'
+					'exists:job_orders,id',
 				],
 			]);
 
@@ -406,7 +404,7 @@ class VehicleInwardController extends Controller {
 				'inventory_item_id.*' => [
 					'required:true',
 					'numeric',
-					'exists:vehicle_inventory_items,id'
+					'exists:vehicle_inventory_items,id',
 				],
 				'is_available.*' => [
 					'required',
@@ -416,7 +414,7 @@ class VehicleInwardController extends Controller {
 					'nullable',
 					'string',
 				],
-				
+
 			]);
 			if ($items_validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $items_validator->errors()->all()]);
@@ -438,15 +436,15 @@ class VehicleInwardController extends Controller {
 				foreach ($request->vehicle_inventory_items as $key => $vehicle_inventory_item) {
 
 					$job_order->vehicleInventoryItem()
-					->attach($vehicle_inventory_item['inventory_item_id'],
-						 [
-						 	'is_available' => $vehicle_inventory_item['is_available'],
-						 	'remarks'=>$vehicle_inventory_item['remarks']
-						 ]
-					);
+						->attach($vehicle_inventory_item['inventory_item_id'],
+							[
+								'is_available' => $vehicle_inventory_item['is_available'],
+								'remarks' => $vehicle_inventory_item['remarks'],
+							]
+						);
 				}
 
-			} 
+			}
 			DB::commit();
 			return response()->json([
 				'success' => true,
@@ -460,10 +458,102 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
+	//DMS CHECKLIST SAVE
+	public function saveDmsCheckList(Request $request) {
+		 //dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id'
+				],
+				'warranty_expiry_date' => [
+					'nullable',
+					'date_format:"d-m-Y'
+				],
+				'ewp_expiry_date' => [
+					'nullable',
+					'date_format:"d-m-Y'
+				],
+				'warranty_expiry_attachment' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+				'ewp_expiry_attachment' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+				'membership_attachment' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+				'is_verified' => [
+					'nullable',
+					'numeric',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+			
+
+			DB::beginTransaction();
+			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->warranty_expiry_date=$request->warranty_expiry_date;
+			$job_order->ewp_expiry_date=$request->ewp_expiry_date;
+			$job_order->save();
+			//CREATE DIRECTORY TO STORAGE PATH
+			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
+			Storage::makeDirectory($attachment_path, 0777);
+			//SAVE WARRANTY EXPIRY PHOTO ATTACHMENT
+			if (!empty($request->warranty_expiry_attachment)) {
+				$attachment=$request->warranty_expiry_attachment;
+				$entity_id=$job_order->id;
+				$attachment_of_id=227;//Job order
+				$attachment_type_id=256;//Warranty Policy
+				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
+			}
+			if (!empty($request->ewp_expiry_attachment)) {
+				$attachment=$request->ewp_expiry_attachment;
+				$entity_id=$job_order->id;
+				$attachment_of_id=227;//Job order
+				$attachment_type_id=257;//EWP
+				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
+			}
+			if (!empty($request->membership_attachment)) {
+				$attachment=$request->membership_attachment;
+				$entity_id=$job_order->id;
+				$attachment_of_id=227;//Job order
+				$attachment_type_id=258;//AMC
+				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
+			}			 
+			DB::commit();
+			return response()->json([
+				'success' => true,
+				'message' => 'Vehicle DMS checklist added successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//VEHICLE GET FORM DATA
+
 	public function getVehicleFormData($id) {
 		// dd($id);
 		try {
-			$gate_log = GateLog::find($id);
+			$gate_log_validate = GateLog::find($id);
 			if (!$gate_log_validate) {
 				return response()->json([
 					'success' => false,
@@ -504,9 +594,9 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//VEHICLE SAVE
 	public function saveVehicle(Request $request) {
 		// dd($request->all());
-
 		try {
 			//REMOVE WHITE SPACE BETWEEN REGISTRATION NUMBER
 			$request->registration_number = str_replace(' ', '', $request->registration_number);
@@ -612,6 +702,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//CUSTOMER GET FORM DATA
 	public function getCustomerFormData($id) {
 		try {
 
@@ -651,18 +742,21 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//GET STATE BASED COUNTRY
 	public function getState($country_id) {
 		$this->data = Country::getState($country_id);
 		$this->data['success'] = true;
 		return response()->json($this->data);
 	}
 
+	//GET CITY BASED STATE
 	public function getcity($state_id) {
 		$this->data = State::getCity($state_id);
 		$this->data['success'] = true;
 		return response()->json($this->data);
 	}
 
+	//CUSTOMER SAVE
 	public function saveCustomer(Request $request) {
 		// dd($request->all());
 		try {
@@ -748,6 +842,7 @@ class VehicleInwardController extends Controller {
 			])
 				->find($request->gate_log_id);
 			// dd($gate_log);
+			// dd($gate_log->vehicleDetail->VehicleOwner->vehicle_id);
 			if (!$gate_log->vehicleDetail->VehicleOwner) {
 				$customer = new Customer;
 				$customer_details = new CustomerDetails;
@@ -756,7 +851,7 @@ class VehicleInwardController extends Controller {
 				$customer->created_by_id = Auth::user()->id;
 			} else {
 				$customer = Customer::find($gate_log->vehicleDetail->VehicleOwner->customer_id);
-				$vehicle_owner = VehicleOwner::find($gate_log->vehicleDetail->VehicleOwner->vehicle_id);
+				$vehicle_owner = VehicleOwner::where('vehicle_id', $gate_log->vehicleDetail->VehicleOwner->vehicle_id)->first();
 				$customer->updated_by_id = Auth::user()->id;
 				$address = Address::where('address_of_id', 24)->where('entity_id', $gate_log->vehicleDetail->VehicleOwner->customer_id)->first();
 			}
@@ -801,37 +896,8 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
-	//PENDING REQUIREMENT PENDING START
-	public function getVehicleInspectiongeFormData($id) {
-		try {
-			$gate_log_validate = GateLog::find($id);
-			if (!$gate_log_validate) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Gate Log Not Found!',
-				]);
-			}
 
-			$vehicle_inspection_group = VehicleInspectionItemGroup::with([
-				'VehicleInspectionItems',
-			])
-				->where('company_id', Auth::user()->company_id)
-				->get();
-
-			return response()->json([
-				'success' => true,
-				'vehicle_inspection_group' => $vehicle_inspection_group,
-			]);
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
-	//PENDING REQUIREMENT PENDING END
-
+	//VOICE OF CUSTOMER(VOC) GET FORM DATA
 	public function getVocFormData($id) {
 		try {
 			$gate_log_detail = GateLog::with([
@@ -864,6 +930,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//VOICE OF CUSTOMER(VOC) SAVE
 	public function saveVoc(Request $request) {
 		// dd($request->all());
 		try {
@@ -888,10 +955,14 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			DB::beginTransaction();
+
 			$job_order = JobOrder::find($request->job_order_id);
 
 			$job_order->customerVoice()->sync([]);
 			$job_order->customerVoice()->sync($request->customer_voice_id);
+
+			DB::commit();
 
 			return response()->json([
 				'success' => true,
@@ -906,6 +977,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//ROAD TEST OBSERVATION GET FORM DATA
 	public function getRoadTestObservationFormData($id) {
 		try {
 			$gate_log_detail = GateLog::with([
@@ -921,7 +993,7 @@ class VehicleInwardController extends Controller {
 			}
 			$extras = [
 				'road_test_by' => Config::getConfigTypeList(36, 'name', '', false, ''),
-				'employee_list' => User::getList(),
+				'user_list' => User::getList(),
 			];
 
 			return response()->json([
@@ -938,6 +1010,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//ROAD TEST OBSERVATION SAVE
 	public function saveRoadTestObservation(Request $request) {
 		// dd($request->all());
 		try {
@@ -964,6 +1037,11 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'max:1',
 				],
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
 				'road_test_done_by_id' => [
 					'required',
 					'exists:configs,id',
@@ -983,6 +1061,8 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			DB::beginTransaction();
+
 			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->is_road_test_required = $request->is_road_test_required;
 			$job_order->road_test_done_by_id = $request->road_test_done_by_id;
@@ -991,7 +1071,11 @@ class VehicleInwardController extends Controller {
 				$job_order->road_test_performed_by_id = $request->road_test_performed_by_id;
 			}
 			$job_order->road_test_report = $request->road_test_report;
+			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->updated_at = Carbon::now();
 			$job_order->save();
+
+			DB::commit();
 
 			return response()->json([
 				'success' => true,
@@ -1006,4 +1090,181 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//EXPERT DIAGNOSIS REPORT GET FORM DATA
+	public function getExpertDiagnosisReportFormData($id) {
+		try {
+			$gate_log_detail = GateLog::with([
+				'jobOrder',
+			])
+				->find($id);
+
+			if (!$gate_log_detail) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Gate Log Not Found!',
+				]);
+			}
+			$extras = [
+				'user_list' => User::getList(),
+			];
+
+			return response()->json([
+				'success' => true,
+				'gate_log_detail' => $gate_log_detail,
+				'extras' => $extras,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//EXPERT DIAGNOSIS REPORT SAVE
+	public function saveExpertDiagnosisReport(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
+				'expert_diagnosis_report_by_id' => [
+					'required',
+					'exists:users,id',
+					'integer',
+				],
+				'expert_diagnosis_report' => [
+					'required',
+					'string',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->expert_diagnosis_report = $request->expert_diagnosis_report;
+			$job_order->expert_diagnosis_report_by_id = $request->expert_diagnosis_report_by_id;
+			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->updated_at = Carbon::now();
+			$job_order->save();
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Expert Diagnosis Report Added Successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//VEHICLE INSPECTION GET FORM DATA
+	public function getVehicleInspectiongeFormData($id) {
+		try {
+			$gate_log_validate = GateLog::find($id);
+			if (!$gate_log_validate) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Gate Log Not Found!',
+				]);
+			}
+
+			$vehicle_inspection_item_group = VehicleInspectionItemGroup::with([
+				'VehicleInspectionItems',
+			])
+				->where('company_id', Auth::user()->company_id)
+				->get();
+
+			$extras = [
+				'vehicle_inspection_result_status' => Config::getConfigTypeList(32, 'id', '', false, ''),
+			];
+
+			return response()->json([
+				'success' => true,
+				'vehicle_inspection_item_group' => $vehicle_inspection_item_group,
+				'extras' => $extras,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//VEHICLE INSPECTION SAVE
+	public function saveVehicleInspection(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
+				'vehicle_inspection_groups.*.vehicle_inspection_item_id' => [
+					'required',
+					'exists:vehicle_inspection_items,id',
+					'integer',
+				],
+				'vehicle_inspection_groups.*.vehicle_inspection_result_status_id' => [
+					'required',
+					'exists:configs,id',
+					'integer',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$job_order = jobOrder::find($request->job_order_id);
+			if ($request->vehicle_inspection_groups) {
+				$job_order->jobOrderVehicleInspectionItem()->sync([]);
+				foreach ($request->vehicle_inspection_groups as $key => $vehicle_inspection_group) {
+					// dd($vehicle_inspection_group['vehicle_inspection_item_id']);
+					$job_order->jobOrderVehicleInspectionItem()->attach($vehicle_inspection_group['vehicle_inspection_item_id'],
+						['status_id' => $vehicle_inspection_group['vehicle_inspection_result_status_id'],
+						]);
+				}
+			}
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Vehicle Inspection Added Successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
 }
