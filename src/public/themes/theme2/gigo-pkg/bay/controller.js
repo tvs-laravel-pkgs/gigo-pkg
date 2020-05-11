@@ -11,7 +11,7 @@ app.component('bayList', {
             window.location = "#!/permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('bays');
+        self.add_permission = self.hasPermission('add-bay');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
         var dataTable = $('#bays_list').DataTable({
@@ -51,8 +51,8 @@ app.component('bayList', {
                     d.short_name = $('#short_name').val();
                     d.name = $('#name').val();
                     d.outlet = $('#outlet').val();
-                    d.bay_status = $('#bay_status').val();
-                    d.job_order = $('#job_order').val();
+                    // d.bay_status = $('#bay_status').val();
+                    // d.job_order = $('#job_order').val();
                     d.status = $("#status").val();
                 },
             },
@@ -62,8 +62,8 @@ app.component('bayList', {
                 { data: 'short_name', name: 'bays.short_name', searchable: true },
                 { data: 'name', name: 'bays.name', searchable: true },
                 { data: 'outlet', name: 'outlets.code', searchable: true },
-                { data: 'bay_status', name: 'statuses.name', searchable: true },
-                { data: 'job_order', name: 'job_orders.number', searchable: true },
+                { data: 'bay_status', name: 'configs.name', searchable: true },
+                // { data: 'job_order', name: 'job_orders.number', searchable: true },
                 { data: 'status', name: '' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -117,22 +117,22 @@ app.component('bayList', {
             self.extras = response.data.extras;
             self.bay = response.data.bay;
             self.outlet_list = response.data.outlet_list;
-            self.bay_status_list = response.data.bay_status_list;
-            self.job_order_list = response.data.job_order_list;
+            // self.bay_status_list = response.data.bay_status_list;
+            // self.job_order_list = response.data.job_order_list;
             self.outlet_selected = '';
             self.bay_status_selected = '';
-            self.job_order_selected = '';
+            // self.job_order_selected = '';
         });
 
         $scope.onSelectedOutlet = function(outlet_selected) {
             $('#outlet').val(outlet_selected);
         }
-        $scope.onSelectedBayStatus = function(bay_status_selected) {
-            $('#bay_status').val(bay_status_selected);
-        }
-        $scope.onSelectedJobOrder = function(job_order_selected) {
-            $('#job_order').val(job_order_selected);
-        }
+        // $scope.onSelectedBayStatus = function(bay_status_selected) {
+        //     $('#bay_status').val(bay_status_selected);
+        // }
+        // $scope.onSelectedJobOrder = function(job_order_selected) {
+        //     $('#job_order').val(job_order_selected);
+        // }
 
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -158,8 +158,8 @@ app.component('bayList', {
             $("#short_name").val('');
             $("#name").val('');
             $("#outlet").val('');
-            $("#bay_status").val('');
-            $("#job_order").val('');
+            // $("#bay_status").val('');
+            // $("#job_order").val('');
             $("#status").val('');
         }
 
@@ -216,28 +216,24 @@ app.component('bayForm', {
                     minlength: 3,
                     maxlength: 32,
                 },
-                'name': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 128,
-                },
+                // 'name': {
+                //     required: true,
+                //     minlength: 3,
+                //     maxlength: 128,
+                // },
                 'outlet_id': {
                     required: true,
                 },
-                'status_id': {
-                    required: true,
-                },
-
             },
             messages: {
                 'short_name': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
-                'name': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
-                },
+                // 'name': {
+                //     minlength: 'Minimum 3 Characters',
+                //     maxlength: 'Maximum 128 Characters',
+                // },
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');

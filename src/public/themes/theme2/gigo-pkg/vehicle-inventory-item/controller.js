@@ -49,6 +49,7 @@ app.component('vehicleInventoryItemList', {
                 data: function(d) {
                     d.code = $("#code").val();
                     d.name = $("#name").val();
+                    d.field_type = $("#field_type").val();
                     d.status = $("#status").val();
                 },
             },
@@ -57,7 +58,8 @@ app.component('vehicleInventoryItemList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'code', name: 'vehicle_inventory_items.code' },
                 { data: 'name', name: 'vehicle_inventory_items.name' },
-                { data: 'status', name: '',searchable: false },
+                { data: 'field_type', name: 'field_types.name', searchable: true },
+                { data: 'status', name: '', searchable: false },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -110,10 +112,15 @@ app.component('vehicleInventoryItemList', {
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
+            self.vehicle_inventory_item = response.data.vehicle_inventory_item;
+            self.field_type_list = response.data.field_type_list;
+            self.field_type_selected = '';
         });
+
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
+
         $scope.clearSearchTerm = function() {
             $scope.searchTerm = '';
             $scope.searchTerm1 = '';
@@ -126,25 +133,25 @@ app.component('vehicleInventoryItemList', {
                 $mdSelect.hide();
             }
         });
-        $('#code').on('keyup', function() {
-            //dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            //dataTables.fnFilter();
-        });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-            //dataTables.fnFilter();
+
+        $scope.onSelectedFieldType = function(field_type_selected) {
+            $('#field_type').val(field_type_selected);
+        }
+
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
+            dataTables.fnFilter();
+            $('#vehicle-inventory-item-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
             $("#code").val('');
             $("#name").val('');
+            $("#field_type").val('');
             $("#status").val('');
-            //dataTables.fnFilter();
         }
-        $scope.apply_filter = function() {
-            dataTables.fnFilter();
-        }
+        // $scope.apply_filter = function() {
+        //     dataTables.fnFilter();
+        // }
 
         $rootScope.loading = false;
     }
@@ -171,6 +178,9 @@ app.component('vehicleInventoryItemForm', {
             }
         ).then(function(response) {
             self.vehicle_inventory_item = response.data.vehicle_inventory_item;
+            self.extras = response.data.extras;
+            // console.log(self.extras);
+            // return;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {

@@ -14,7 +14,7 @@ class VehicleInventoryItem extends Model {
 	protected $table = 'vehicle_inventory_items';
 	public $timestamps = true;
 	protected $fillable =
-		["id","company_id","code","name"]
+		["id","company_id","code","name","field_type_id"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
