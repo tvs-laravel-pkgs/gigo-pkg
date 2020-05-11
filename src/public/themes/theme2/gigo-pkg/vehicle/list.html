@@ -92,7 +92,7 @@
                                 <label>Model</label>
                                 <md-select ng-model="$ctrl.model_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedmodel($ctrl.model_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Model Type">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchTerm" type="search" placeholder="Search Model" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
                                         <md-option ng-value="model_list.id" ng-repeat="model_list in $ctrl.model_list | filter:searchTerm">{{model_list.model_name}}</md-option>
@@ -118,7 +118,7 @@
                                 <label>Status</label>
                                 <md-select ng-model="$ctrl.status" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchTerm3" type="search" placeholder="Search Status" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
                                         <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">{{status.name}}</md-option>

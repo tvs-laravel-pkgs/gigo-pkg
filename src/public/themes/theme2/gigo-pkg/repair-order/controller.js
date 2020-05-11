@@ -197,6 +197,7 @@ app.component('repairOrderForm', {
             self.repair_order_type = response.data.repair_order_type;
             self.skill_level = response.data.skill_level;
             self.tax_code = response.data.tax_code;
+            self.uom_code = response.data.uom_code;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
@@ -221,43 +222,42 @@ app.component('repairOrderForm', {
                 'code': {
                     required: true,
                     minlength: 3,
-                    maxlength: 6,
+                    maxlength: 36,
                 },
                 'alt_code': {
-                    required: true,
                     minlength: 3,
-                    maxlength: 6,
+                    maxlength: 36,
                 },
                 'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 64,
+                    maxlength: 128,
                 },
-                'skill_level_id':{
+                /*'skill_level_id':{
                     required:true,
-                },
+                },*/
                 'hours':{
                     required:true,
                 },
                 'amount':{
                     required:true,
                 },
-                'tax_code_id':{
+                /*'tax_code_id':{
                     required:true,
-                },
+                },*/
             },
             messages: {
                 'code': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 6 Characters',
+                    maxlength: 'Maximum 36 Characters',
                 },
                 'alt_code': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 6 Characters',
+                    maxlength: 'Maximum 36 Characters',
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 64 Characters',
+                    maxlength: 'Maximum 128 Characters',
                 },
             },
             invalidHandler: function(event, validator) {

@@ -97,26 +97,26 @@ class ServiceOrderTypeController extends Controller {
 		// dd($request->all());
 		try {
 			$error_messages = [
-				'code.required' => 'Short Name is Required',
-				'code.unique' => 'Short Name is already taken',
-				'code.min' => 'Short Name is Minimum 3 Charachers',
-				'code.max' => 'Short Name is Maximum 32 Charachers',
+				'code.required' => 'Code is Required',
+				'code.unique' => 'Code is already taken',
+				'code.min' => 'Code is Minimum 3 Charachers',
+				'code.max' => 'Code is Maximum 64 Charachers',
 				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
-				'name.max' => 'Name is Maximum 191 Charachers',
+				'name.max' => 'Name is Maximum 64 Charachers',
 			];
 			$validator = Validator::make($request->all(), [
 				'code' => [
 					'required:true',
 					'min:3',
-					'max:32',
+					'max:64',
 					'unique:service_order_types,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'name' => [
 					'required:true',
 					'min:3',
-					'max:191',
+					'max:64',
 					'unique:service_order_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 			], $error_messages);

@@ -189,9 +189,8 @@ app.component('quoteTypeForm', {
                     maxlength: 32,
                 },
                 'name': {
-                    required: true,
                     minlength: 3,
-                    maxlength: 128,
+                    maxlength: 191,
                 },
             },
             messages: {
@@ -201,7 +200,7 @@ app.component('quoteTypeForm', {
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
+                    maxlength: 'Maximum 191 Characters',
                 },
             },
             invalidHandler: function(event, validator) {

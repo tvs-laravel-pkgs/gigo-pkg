@@ -61,9 +61,9 @@
                                             <div class="input-text form-group">
                                                 <label>
                                                     DMS Code
-                                                    <sup class="mandatory">*</sup>
+                                                    <sup class="mandatory"></sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.alt_code" name="alt_code" placeholder="Enter DMS Code" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.repair_order.alt_code" name="alt_code" placeholder="Enter DMS Code" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -78,12 +78,12 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>Type<sup class="mandatory">*</sup></label>
-                                                <md-select ng-model="$ctrl.repair_order.type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Repair Order Type">
+                                                <md-select ng-model="$ctrl.repair_order.type_id" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Repair Order Type">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Verification Flow" class="demo-header-searchbox md-text">
+                                                        <input ng-model="searchType" type="search" placeholder="Search Repair Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
                                                     <md-optgroup>
-                                                        <md-option ng-value="repair_order_type.id" ng-repeat="repair_order_type in $ctrl.repair_order_type | filter:searchTerm">{{repair_order_type.short_name}}</md-option>
+                                                        <md-option ng-value="repair_order_type.id" ng-repeat="repair_order_type in $ctrl.repair_order_type | filter:searchType">{{repair_order_type.short_name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
                                                 <input type="hidden" class="form-control required" name="type_id" id="type_id" value="{{$ctrl.repair_order.type_id}}">
@@ -91,16 +91,16 @@
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
-                                                <label>Skill Level<sup class="mandatory">*</sup></label>
+                                                <label>Skill Level<sup class="mandatory"></sup></label>
                                                 <md-select ng-model="$ctrl.repair_order.skill_level_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Skil Level">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Verification Flow" class="demo-header-searchbox md-text">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search Skil Level" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
                                                     <md-optgroup>
                                                         <md-option ng-value="skill_level.id" ng-repeat="skill_level in $ctrl.skill_level | filter:searchTerm">{{skill_level.name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
-                                                <input type="hidden" class="form-control required" name="skill_level_id" id="skill_level_id" value="{{$ctrl.repair_order.skill_level_id}}">
+                                                <input type="hidden" class="form-control" name="skill_level_id" id="skill_level_id" value="{{$ctrl.repair_order.skill_level_id}}">
                                             </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -109,7 +109,7 @@
                                                     Hours
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.hours" name="hours" placeholder="Enter Repair Order Hours" />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.hours" name="hours" placeholder="Enter Repair Order Hours" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"  />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                          <div class="col-md-3">
@@ -118,21 +118,35 @@
                                                     Amount
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.amount" name="amount" placeholder="Enter Repair Order Amount" />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.repair_order.amount" name="amount" placeholder="Enter Repair Order Amount" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"  />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                          <div class="col-md-3">
                                             <div class="input-text form-group">
-                                                <label>Tax Code<sup class="mandatory">*</sup></label>
+                                                <label>Tax Code<sup class="mandatory"></sup></label>
                                                 <md-select ng-model="$ctrl.repair_order.tax_code_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Tax Code">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Verification Flow" class="demo-header-searchbox md-text">
+                                                        <input ng-model="searchTerm2" type="search" placeholder="Search Tax Code" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
                                                     <md-optgroup>
-                                                        <md-option ng-value="tax_code.id" ng-repeat="tax_code in $ctrl.tax_code | filter:searchTerm">{{tax_code.code}}</md-option>
+                                                        <md-option ng-value="tax_code.id" ng-repeat="tax_code in $ctrl.tax_code | filter:searchTerm2">{{tax_code.code}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
-                                                <input type="hidden" class="form-control required" name="tax_code_id" id="tax_code_id" value="{{$ctrl.repair_order.tax_code_id}}">
+                                                <input type="hidden" class="form-control" name="tax_code_id" id="tax_code_id" value="{{$ctrl.repair_order.tax_code_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
+                                         <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Uom Code<sup class="mandatory"></sup></label>
+                                                <md-select ng-model="$ctrl.repair_order.uom_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Uom Code">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchUom" type="search" placeholder="Search Uom Code" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="uom_code.id" ng-repeat="uom_code in $ctrl.uom_code | filter:searchUom">{{uom_code.code}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control" name="uom_id" id="uom_id" value="{{$ctrl.repair_order.uom_id}}">
                                             </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
