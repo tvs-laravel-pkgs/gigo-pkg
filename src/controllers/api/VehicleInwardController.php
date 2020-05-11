@@ -3,6 +3,7 @@
 namespace Abs\GigoPkg\Api;
 
 use Abs\GigoPkg\ServiceOrderType;
+use Abs\GigoPkg\RepairOrder;
 use App\Address;
 use App\Attachment;
 use App\Config;
@@ -13,6 +14,9 @@ use App\CustomerVoice;
 use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
+use App\JobOrderPart;
+use App\JobOrderRepairOrder;
+use App\Part;
 use App\QuoteType;
 use App\ServiceType;
 use App\State;
@@ -547,6 +551,164 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+	//ScheduleMaintenance Form Data
+
+public function scheduleMaintenanceGetList() {
+		// dd($id);
+		try {
+			$part_details = Part::with([
+				'uom',
+				'taxCode',
+			])->get();
+
+			$labour_details = RepairOrder::with([
+				'repairOrderType',
+				'uom',
+				'taxCode',
+				'skillLevel',
+			])->get();
+
+			return response()->json([
+				'success' => true,
+				'part_details' => $part_details,
+				'labour_details' => $labour_details,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+public function saveScheduleMaintenance(Request $request) {
+		 //dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
+				'job_order_parts.*.part_id' => [
+					'required:true',
+					'numeric',
+					'exists:parts,id',
+				],
+				'job_order_parts.*,qty' => [
+					'required',
+					'numeric',
+				],
+				'job_order_parts.*.split_order_type_id' => [
+					'nullable',
+					'numeric',
+					'exists:split_order_types,id',
+				],
+				'job_order_parts.*.rate' => [
+					'required',
+					'numeric',
+				],
+				'job_order_parts.*.amount' => [
+					'required',
+					'numeric',
+				],
+				'job_order_parts.*.status_id' => [
+					'required',
+					'numeric',
+					'exists:configs,id',
+				],
+				'job_order_parts.*.is_oem_recommended' => [
+					'nullable',
+					'numeric',
+				],
+				'job_order_repair_orders.*.repair_order_id' => [
+					'required:true',
+					'numeric',
+					'exists:repair_orders,id',
+				],
+				'job_order_repair_orders.*.qty' => [
+					'required',
+					'numeric',
+				],
+				'job_order_repair_orders.*.split_order_type_id' => [
+					'nullable',
+					'numeric',
+					'exists:split_order_types,id',
+				],
+				'job_order_repair_orders.*.amount' => [
+					'required',
+					'numeric',
+				],
+				'job_order_repair_orders.*.status_id' => [
+					'required',
+					'numeric',
+					'exists:configs,id',
+				],
+				'job_order_repair_orders.*.is_oem_recommended' => [
+					'nullable',
+					'numeric',
+				],
+				'job_order_repair_orders.*.failure_date' => [
+					'nullable',
+					'date_format:d-m-Y',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+			
+			DB::beginTransaction();
+			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
+				//Inserting Job order parts
+				//dd($request->job_order_parts);
+				foreach ($request->job_order_parts as $key => $part) {
+					//dd($part['part_id']);
+					$job_order_part=new JobOrderPart();
+					$job_order_part->fill($part);
+					$job_order_part->job_order_id=$request->job_order_id;
+					$job_order_part->split_order_type_id =NULL;
+					$job_order_part->amount =$part['qty']*$part['rate'];
+					$job_order_part->status_id  =8200;//Customer Approval Pending
+					$job_order_part->save();
+				}
+			}
+			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
+				//Inserting Job order repair orders
+				foreach ($request->job_order_repair_orders as $key => $repair) {
+
+					$job_order_repair_order=JobOrderRepairOrder::firstOrNew([
+									'repair_order_id' => $repair['repair_order_id'],
+									'job_order_id' => $request->job_order_id,
+						]);
+					$job_order_repair_order->fill($repair);
+					$job_order_repair_order->job_order_id=$request->job_order_id;
+					$job_order_repair_order->split_order_type_id =NULL;
+					$job_order_repair_order->is_recommended_by_oem=1;
+					$job_order_repair_order->is_customer_approved =0;
+					$job_order_repair_order->status_id  =8180;//Customer Approval Pending
+					$job_order_repair_order->save();
+				}
+			}
+			DB::commit();
+			return response()->json([
+				'success' => true,
+				'message' => 'Schedule Maintenance added successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
 
 	//VEHICLE GET FORM DATA
 

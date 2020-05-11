@@ -14,15 +14,15 @@ class JobOrderRepairOrder extends Model {
 	protected $table = 'job_order_repair_orders';
 	public $timestamps = true;
 	protected $fillable =
-		["id","job_order_id","repair_order_id","is_recommended_by_oem","is_customer_approved","split_order_type_id","qty","amount","failure_date","status_id"]
+		["id","job_order_id","repair_order_id","is_recommended_by_oem","is_customer_approved","split_order_type_id","qty","amount","failure_date","status_id","remarks","observation","action_taken"]
 	;
 
-	public function getDateOfJoinAttribute($value) {
+	public function getFailureDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 
-	public function setDateOfJoinAttribute($date) {
-		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	public function setFailureDateAttribute($date) {
+		return $this->attributes['failure_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
 	public static function createFromObject($record_data) {
