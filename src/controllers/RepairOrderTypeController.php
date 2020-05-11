@@ -114,8 +114,7 @@ class RepairOrderTypeController extends Controller {
 				'short_name.required' => 'Short Name is Required',
 				'short_name.unique' => 'Short Name is already taken',
 				'short_name.min' => 'Short Name is Minimum 3 Charachers',
-				'short_name.max' => 'Short Name is Maximum 24 Charachers',
-				'name.required' => 'Name is Required',
+				'short_name.max' => 'Short Name is Maximum 64 Charachers',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 64 Charachers',
@@ -124,11 +123,11 @@ class RepairOrderTypeController extends Controller {
 				'short_name' => [
 					'required:true',
 					'min:2',
-					'max:24',
+					'max:64',
 					'unique:repair_order_types,short_name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'name' => [
-					'required:true',
+					'publish_at' => 'nullable',
 					'min:3',
 					'max:64',
 					'unique:repair_order_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,

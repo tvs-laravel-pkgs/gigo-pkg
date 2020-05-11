@@ -68,10 +68,10 @@
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
-                                                <label>Model<sup class="mandatory">*</sup></label>
+                                                <label>Model<sup class="mandatory"></sup></label>
                                                 <md-select ng-model="$ctrl.vehicle.model_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Model">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Verification Flow" class="demo-header-searchbox md-text">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search Model" class="demo-header-searchbox md-text">
                                                     </md-select-header>
                                                     <md-optgroup>
                                                         <md-option ng-value="model_list.id" ng-repeat="model_list in $ctrl.model_list | filter:searchTerm">{{model_list.model_name}}</md-option>
@@ -95,7 +95,7 @@
                                             <div class="input-text form-group">
                                                 <label>
                                                     Registration Number
-                                                    <sup class="mandatory">*</sup>
+                                                    <sup class="mandatory"></sup>
                                                 </label>
                                                 <input type="text" class="form-control" ng-model="$ctrl.vehicle.registration_number" name="registration_number" placeholder="Enter Registration Number" />
                                             </div><!-- Feild -->
@@ -104,16 +104,16 @@
                                             <div class="input-text form-group">
                                                 <label>
                                                     Vin Number
-                                                    <sup class="mandatory">*</sup>
+                                                    <sup class="mandatory"></sup>
                                                 </label>
                                                 <input type="text" class="form-control" ng-model="$ctrl.vehicle.vin_number" name="vin_number" placeholder="Enter Vin Number" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                          <div class="col-md-3">
                                     <div class="form-group">
-                                        <label>Sold Date<sup class="mandatory">*</sup></label>
+                                        <label>Sold Date<sup class="mandatory"></sup></label>
                                         <div class="input-group date" data-provide="datepicker">
-                                            <input type="text" ng-model="$ctrl.sold_date" name="sold_date" class="form-control" placeholder="Select Invoice Date" />
+                                            <input type="text" ng-model="$ctrl.sold_date" name="sold_date" class="form-control" placeholder="Select  Date" />
                                             <div class="input-group-addon">
                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                             </div>

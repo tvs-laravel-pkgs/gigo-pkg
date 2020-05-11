@@ -99,11 +99,10 @@ class QuoteTypeController extends Controller {
 		// dd($request->all());
 		try {
 			$error_messages = [
-				'code.required' => 'Short Name is Required',
-				'code.unique' => 'Short Name is already taken',
-				'code.min' => 'Short Name is Minimum 3 Charachers',
-				'code.max' => 'Short Name is Maximum 32 Charachers',
-				'name.required' => 'Name is Required',
+				'code.required' => 'Code is Required',
+				'code.unique' => 'Code is already taken',
+				'code.min' => 'Code is Minimum 3 Charachers',
+				'code.max' => 'Code is Maximum 32 Charachers',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
@@ -116,7 +115,7 @@ class QuoteTypeController extends Controller {
 					'unique:quote_types,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'name' => [
-					'required:true',
+					'publish_at' => 'nullable',
 					'min:3',
 					'max:191',
 					'unique:quote_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,

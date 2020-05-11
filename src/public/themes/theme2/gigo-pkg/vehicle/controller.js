@@ -211,12 +211,12 @@ app.component('vehicleForm', {
                 'engine_number': {
                     required: true,
                     minlength: 10,
-                    maxlength: 32,
+                    maxlength: 64,
                 },
                 'chassis_number': {
                     required: true,
                     minlength: 10,
-                    maxlength: 128,
+                    maxlength: 64,
                 },
                 /*'model_id': {
                     required:true,
@@ -238,11 +238,11 @@ app.component('vehicleForm', {
             messages: {
                 'engine_number': {
                     minlength: 'Minimum 10 Characters',
-                    maxlength: 'Maximum 32 Characters',
+                    maxlength: 'Maximum 64 Characters',
                 },
                 'chassis_number': {
                     minlength: 'Minimum 10 Characters',
-                    maxlength: 'Maximum 32 Characters',
+                    maxlength: 'Maximum 64 Characters',
                 },
                 /*'registration_number': {
                     minlength: 'Minimum 10 Characters',
