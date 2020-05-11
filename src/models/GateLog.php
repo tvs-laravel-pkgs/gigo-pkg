@@ -205,8 +205,8 @@ class GateLog extends Model {
 			$gate_log->save();
 
 			//CREATE DIRECTORY TO STORAGE PATH
-			$attachement_path = storage_path('app/public/gigo/gate_in/attachments/');
-			Storage::makeDirectory($attachement_path, 0777);
+			$attachment_path = storage_path('app/public/gigo/gate_in/attachments/');
+			Storage::makeDirectory($attachment_path, 0777);
 
 			//SAVE VEHICLE PHOTO ATTACHMENT
 			if (!empty($request->vehicle_photo)) {
@@ -217,12 +217,12 @@ class GateLog extends Model {
 				$name = $gate_log->id . '_' . $file_name . '.' . $extension;
 
 				$request->vehicle_photo->move(storage_path('app/public/gigo/gate_in/attachments/'), $name);
-				$attachement = new Attachment;
-				$attachement->attachment_of_id = 225; //GATE LOG
-				$attachement->attachment_type_id = 247; //VEHICLE PHOTO
-				$attachement->entity_id = $gate_log->id;
-				$attachement->name = $name;
-				$attachement->save();
+				$attachment = new Attachment;
+				$attachment->attachment_of_id = 225; //GATE LOG
+				$attachment->attachment_type_id = 247; //VEHICLE PHOTO
+				$attachment->entity_id = $gate_log->id;
+				$attachment->name = $name;
+				$attachment->save();
 			}
 
 			//SAVE KM READING PHOTO
@@ -234,12 +234,12 @@ class GateLog extends Model {
 				$name = $gate_log->id . '_' . $file_name . '.' . $extension;
 
 				$request->km_reading_photo->move(storage_path('app/public/gigo/gate_in/attachments/'), $name);
-				$attachement = new Attachment;
-				$attachement->attachment_of_id = 225; //GATE LOG
-				$attachement->attachment_type_id = 248; //KM READING PHOTO
-				$attachement->entity_id = $gate_log->id;
-				$attachement->name = $name;
-				$attachement->save();
+				$attachment = new Attachment;
+				$attachment->attachment_of_id = 225; //GATE LOG
+				$attachment->attachment_type_id = 248; //KM READING PHOTO
+				$attachment->entity_id = $gate_log->id;
+				$attachment->name = $name;
+				$attachment->save();
 			}
 
 			//SAVE DRIVER PHOTO
@@ -251,12 +251,12 @@ class GateLog extends Model {
 				$name = $gate_log->id . '_' . $file_name . '.' . $extension;
 
 				$request->driver_photo->move(storage_path('app/public/gigo/gate_in/attachments/'), $name);
-				$attachement = new Attachment;
-				$attachement->attachment_of_id = 225; //GATE LOG
-				$attachement->attachment_type_id = 249; //DRIVER PHOTO
-				$attachement->entity_id = $gate_log->id;
-				$attachement->name = $name;
-				$attachement->save();
+				$attachment = new Attachment;
+				$attachment->attachment_of_id = 225; //GATE LOG
+				$attachment->attachment_type_id = 249; //DRIVER PHOTO
+				$attachment->entity_id = $gate_log->id;
+				$attachment->name = $name;
+				$attachment->save();
 			}
 
 			DB::commit();
