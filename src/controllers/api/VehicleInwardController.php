@@ -1117,10 +1117,14 @@ public function saveScheduleMaintenance(Request $request) {
 				]);
 			}
 
+			DB::beginTransaction();
+
 			$job_order = JobOrder::find($request->job_order_id);
 
 			$job_order->customerVoice()->sync([]);
 			$job_order->customerVoice()->sync($request->customer_voice_id);
+
+			DB::commit();
 
 			return response()->json([
 				'success' => true,
@@ -1219,6 +1223,8 @@ public function saveScheduleMaintenance(Request $request) {
 				]);
 			}
 
+			DB::beginTransaction();
+
 			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->is_road_test_required = $request->is_road_test_required;
 			$job_order->road_test_done_by_id = $request->road_test_done_by_id;
@@ -1230,6 +1236,8 @@ public function saveScheduleMaintenance(Request $request) {
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
+
+			DB::commit();
 
 			return response()->json([
 				'success' => true,
@@ -1305,12 +1313,16 @@ public function saveScheduleMaintenance(Request $request) {
 				]);
 			}
 
+			DB::beginTransaction();
+
 			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->expert_diagnosis_report = $request->expert_diagnosis_report;
 			$job_order->expert_diagnosis_report_by_id = $request->expert_diagnosis_report_by_id;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
+
+			DB::commit();
 
 			return response()->json([
 				'success' => true,
@@ -1362,7 +1374,7 @@ public function saveScheduleMaintenance(Request $request) {
 
 	//VEHICLE INSPECTION SAVE
 	public function saveVehicleInspection(Request $request) {
-		dd($request->all());
+		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -1370,14 +1382,15 @@ public function saveScheduleMaintenance(Request $request) {
 					'integer',
 					'exists:job_orders,id',
 				],
-				'expert_diagnosis_report_by_id' => [
+				'vehicle_inspection_groups.*.vehicle_inspection_item_id' => [
 					'required',
-					'exists:users,id',
+					'exists:vehicle_inspection_items,id',
 					'integer',
 				],
-				'expert_diagnosis_report' => [
+				'vehicle_inspection_groups.*.vehicle_inspection_result_status_id' => [
 					'required',
-					'string',
+					'exists:configs,id',
+					'integer',
 				],
 			]);
 
@@ -1389,16 +1402,24 @@ public function saveScheduleMaintenance(Request $request) {
 				]);
 			}
 
-			$job_order = JobOrder::find($request->job_order_id);
-			$job_order->expert_diagnosis_report = $request->expert_diagnosis_report;
-			$job_order->expert_diagnosis_report_by_id = $request->expert_diagnosis_report_by_id;
-			$job_order->updated_by_id = Auth::user()->id;
-			$job_order->updated_at = Carbon::now();
-			$job_order->save();
+			DB::beginTransaction();
+
+			$job_order = jobOrder::find($request->job_order_id);
+			if ($request->vehicle_inspection_groups) {
+				$job_order->jobOrderVehicleInspectionItem()->sync([]);
+				foreach ($request->vehicle_inspection_groups as $key => $vehicle_inspection_group) {
+					// dd($vehicle_inspection_group['vehicle_inspection_item_id']);
+					$job_order->jobOrderVehicleInspectionItem()->attach($vehicle_inspection_group['vehicle_inspection_item_id'],
+						['status_id' => $vehicle_inspection_group['vehicle_inspection_result_status_id'],
+						]);
+				}
+			}
+
+			DB::commit();
 
 			return response()->json([
 				'success' => true,
-				'message' => 'Expert Diagnosis Report Added Successfully',
+				'message' => 'Vehicle Inspection Added Successfully',
 			]);
 		} catch (Exception $e) {
 			return response()->json([

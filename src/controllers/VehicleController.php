@@ -26,8 +26,7 @@ class VehicleController extends Controller {
 				['id' => '0', 'name' => 'Inactive'],
 			],
 		];
-		$this->data['model_list'] = ModelType::select('id','model_name')->where('company_id',Auth::user()->company_id)->get();
-		
+		$this->data['model_list'] = collect(ModelType::select('id','model_name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'model_name' => 'Select Model Name']);
 		return response()->json($this->data);
 	}
 
@@ -58,7 +57,7 @@ class VehicleController extends Controller {
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->model_ids)) {
-					$query->where('vehicles.model_id', 'LIKE', '%' . $request->model_ids. '%');
+					$query->where('vehicles.model_id',$request->model_ids);
 				}
 			})
 			->where(function ($query) use ($request) {
@@ -116,7 +115,7 @@ class VehicleController extends Controller {
 			}
 			
 		}
-		$this->data['model_list'] = ModelType::select('id','model_name')->where('company_id',Auth::user()->company_id)->get();
+		$this->data['model_list'] = collect(ModelType::select('id','model_name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'model_name' => 'Select Model Name']);
 		$this->data['vehicle'] = $vehicle;
 		$this->data['action'] = $action;
 		return response()->json($this->data);
@@ -128,17 +127,14 @@ class VehicleController extends Controller {
 				'engine_number.required' => 'Engine Number is Required',
 				'engine_number.unique' => 'Engine Number is already taken',
 				'engine_number.min' => 'Engine Number is Minimum 10 Charachers',
-				'engine_number.max' => 'Engine Number is Maximum 32 Charachers',
+				'engine_number.max' => 'Engine Number is Maximum 64 Charachers',
 				'chassis_number.required' => 'Chassis Number is Required',
 				'chassis_number.unique' => 'Chassis Number is already taken',
 				'chassis_number.min' => 'Chassis Number is Minimum 10 Charachers',
-				'chassis_number.max' => 'Chassis Number is Maximum 32 Charachers',
-				'model_id.required' => 'Model is Required',
-				'registration_number.required' => 'Registration Number is Required',
+				'chassis_number.max' => 'Chassis Number is Maximum 64 Charachers',
 				'registration_number.unique' => 'Registration Number is already taken',
 				'registration_number.min' => 'Registration Number is Minimum 10 Charachers',
-				'registration_number.max' => 'Registration Number is Maximum 32 Charachers',
-				'registration_number.required' => 'Registration Number is Required',
+				'registration_number.max' => 'Registration Number is Maximum 10 Charachers',
 				'vin_number.unique' => 'Vin Number is already taken',
 				'vin_number.min' => 'Vin Number is Minimum 10 Charachers',
 				'vin_number.max' => 'Vin Number is Maximum 32 Charachers',
@@ -151,19 +147,19 @@ class VehicleController extends Controller {
 				'engine_number' => [
 					'required:true',
 					'min:10',
-					'max:32',
+					'max:64',
 					'unique:vehicles,engine_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'chassis_number' => [
 					'required:true',
 					'min:10',
-					'max:32',
+					'max:64',
 					'unique:vehicles,chassis_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'registration_number' => [
 					'publish_at' => 'nullable',
 					'min:10',
-					'max:32',
+					'max:10',
 					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'vin_number' => [

@@ -20,6 +20,7 @@ class RepairOrder extends Model {
 		'hours',
 		'amount',
 		'tax_code_id',
+		'uom_id',
 	];
 
 	public function repairOrderType()

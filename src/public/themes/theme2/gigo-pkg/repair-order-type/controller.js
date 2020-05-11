@@ -190,19 +190,18 @@ app.component('repairOrderTypeForm', {
             rules: {
                 'short_name': {
                     required: true,
-                    minlength: 2,
-                    maxlength: 24,
+                    minlength: 3,
+                    maxlength: 64,
                 },
                 'name': {
-                    required: true,
                     minlength: 3,
                     maxlength: 64,
                 },
             },
             messages: {
                 'short_name': {
-                    minlength: 'Minimum 2 Characters',
-                    maxlength: 'Maximum 24 Characters',
+                    minlength: 'Minimum 3 Characters',
+                    maxlength: 'Maximum 64 Characters',
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
