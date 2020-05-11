@@ -36,6 +36,9 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//ROAD TEST OBSERVATION GET FORM DATA AND SAVE
 		Route::get('get-road-test-observation-form-data/{id}', 'VehicleInwardController@getRoadTestObservationFormData');
 		Route::post('save-road-test-observation', 'VehicleInwardController@saveRoadTestObservation');
+		
+		//DMS CHECKLIST SAVE
+		Route::post('save-dms-checklist', 'VehicleInwardController@saveDmsCheckList');
 
 		//EXPERT DIAGNOSIS REPORT GET FORM DATA AND SAVE
 		Route::get('get-expert-diagnosis-report-form-data/{id}', 'VehicleInwardController@getExpertDiagnosisReportFormData');

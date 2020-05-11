@@ -459,7 +459,97 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//DMS CHECKLIST SAVE
+	public function saveDmsCheckList(Request $request) {
+		 //dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id'
+				],
+				'warranty_expiry_date' => [
+					'nullable',
+					'date_format:"d-m-Y'
+				],
+				'ewp_expiry_date' => [
+					'nullable',
+					'date_format:"d-m-Y'
+				],
+				'warranty_expiry_attachment' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+				'ewp_expiry_attachment' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+				'membership_attachment' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+				'is_verified' => [
+					'nullable',
+					'numeric',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+			
+
+			DB::beginTransaction();
+			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->warranty_expiry_date=$request->warranty_expiry_date;
+			$job_order->ewp_expiry_date=$request->ewp_expiry_date;
+			$job_order->save();
+			//CREATE DIRECTORY TO STORAGE PATH
+			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
+			Storage::makeDirectory($attachment_path, 0777);
+			//SAVE WARRANTY EXPIRY PHOTO ATTACHMENT
+			if (!empty($request->warranty_expiry_attachment)) {
+				$attachment=$request->warranty_expiry_attachment;
+				$entity_id=$job_order->id;
+				$attachment_of_id=227;//Job order
+				$attachment_type_id=256;//Warranty Policy
+				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
+			}
+			if (!empty($request->ewp_expiry_attachment)) {
+				$attachment=$request->ewp_expiry_attachment;
+				$entity_id=$job_order->id;
+				$attachment_of_id=227;//Job order
+				$attachment_type_id=257;//EWP
+				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
+			}
+			if (!empty($request->membership_attachment)) {
+				$attachment=$request->membership_attachment;
+				$entity_id=$job_order->id;
+				$attachment_of_id=227;//Job order
+				$attachment_type_id=258;//AMC
+				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
+			}			 
+			DB::commit();
+			return response()->json([
+				'success' => true,
+				'message' => 'Vehicle DMS checklist added successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
 	//VEHICLE GET FORM DATA
+
 	public function getVehicleFormData($id) {
 		// dd($id);
 		try {
