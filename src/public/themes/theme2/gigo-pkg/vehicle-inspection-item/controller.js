@@ -126,7 +126,7 @@ app.component('vehicleInspectionItemList', {
                 $mdSelect.hide();
             }
         });
-        
+
         //STATUS ID ASSIGN
         $scope.onSelectedStatus = function(id) {
             $('#status').val(id);
@@ -189,10 +189,10 @@ app.component('vehicleInspectionItemForm', {
         $("input:text:visible:first").focus();
 
         //FOR SEARCH DDL
-         $element.find('input').on('keydown', function(ev) {
+        $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
-         $scope.clearSearchTerm = function() {
+        $scope.clearSearchTerm = function() {
             $scope.searchTerm = '';
         };
 
@@ -207,12 +207,11 @@ app.component('vehicleInspectionItemForm', {
                     maxlength: 32,
                 },
                 'name': {
-                    required: true,
                     minlength: 3,
                     maxlength: 191,
                 },
                 'group_id': {
-                    required:true,
+                    required: true,
                 }
             },
             messages: {

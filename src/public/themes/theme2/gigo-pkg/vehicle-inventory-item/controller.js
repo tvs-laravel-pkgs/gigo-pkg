@@ -206,7 +206,6 @@ app.component('vehicleInventoryItemForm', {
                     maxlength: 32,
                 },
                 'name': {
-                    required: true,
                     minlength: 3,
                     maxlength: 191,
                 },
@@ -221,9 +220,9 @@ app.component('vehicleInventoryItemForm', {
                     maxlength: 'Maximum 191 Characters',
                 },
             },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
-            },
+            // invalidHandler: function(event, validator) {
+            //     custom_noty('error', 'You have errors, Please check all tabs');
+            // },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
