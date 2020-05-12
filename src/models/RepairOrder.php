@@ -2,6 +2,12 @@
 
 namespace Abs\GigoPkg;
 
+use Abs\ImportCronJobPkg\ImportCronJob;
+use Abs\UomPkg\Uom;
+use Abs\GigoPkg\TaxCode;
+use Abs\GigoPkg\RepairOrderType;
+use Abs\EmployeePkg\SkillLevel;
+use DB;
 use Abs\HelperPkg\Traits\SeederTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -82,9 +88,9 @@ class RepairOrder extends Model {
 						'company_id' => $job->company_id,
 						'code' => $record['Code'],
 					])->first();
-					if ($code) {
+					/*if ($code) {
 						$status['errors'][] = 'Code already taken';
-					}
+					}*/
 				}
 
 				if (empty($record['Alt Code'])) {
@@ -94,9 +100,9 @@ class RepairOrder extends Model {
 						'company_id' => $job->company_id,
 						'alt_code' => $record['Alt Code'],
 					])->first();
-					if ($alt_code) {
+					/*if ($alt_code) {
 						$status['errors'][] = 'Alt Code already taken';
-					}
+					}*/
 				}
 
 				if (empty($record['Name'])) {
@@ -106,9 +112,9 @@ class RepairOrder extends Model {
 						'company_id' => $job->company_id,
 						'name' => $record['Name'],
 					])->first();
-					if ($name) {
+					/*if ($name) {
 						$status['errors'][] = 'Name already taken';
-					}
+					}*/
 				}
 
 				if (empty($record['UOM'])) {
@@ -128,7 +134,7 @@ class RepairOrder extends Model {
 				} else {
 					$skill_level = SkillLevel::where([
 						'company_id' => $job->company_id,
-						'name' => $record['Skill Leve'],
+						'name' => $record['Skill Level'],
 					])->first();
 					if (!$skill_level) {
 						$status['errors'][] = 'Invalid Skill Leve';
@@ -167,6 +173,8 @@ class RepairOrder extends Model {
 				DB::beginTransaction();
 
 				$repair_order = RepairOrder::firstOrNew([
+					'type_id' => $type->id,
+					'code' => $record['Code'],
 					'company_id' => $job->company_id,
 				]);
 
