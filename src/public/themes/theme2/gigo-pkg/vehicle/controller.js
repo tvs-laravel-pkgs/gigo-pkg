@@ -265,9 +265,9 @@ app.component('vehicleForm', {
                     minlength: 10,
                     maxlength: 64,
                 },
-                'model_id': {
+                /*'model_id': {
                     required:true,
-                },
+                },*/
                 'registration_number':{
                     minlength: 10,
                     maxlength: 10,

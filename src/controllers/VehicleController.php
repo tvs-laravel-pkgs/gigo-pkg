@@ -143,7 +143,7 @@ class VehicleController extends Controller {
 				'chassis_number.unique' => 'Chassis Number is already taken',
 				'chassis_number.min' => 'Chassis Number is Minimum 10 Charachers',
 				'chassis_number.max' => 'Chassis Number is Maximum 64 Charachers',
-				'registration_number.unique' => 'Registration Number is already taken',
+				//'registration_number.unique' => 'Registration Number is already taken',
 				'registration_number.min' => 'Registration Number is Minimum 10 Charachers',
 				'registration_number.max' => 'Registration Number is Maximum 10 Charachers',
 				'vin_number.unique' => 'Vin Number is already taken',
@@ -170,8 +170,8 @@ class VehicleController extends Controller {
 				'registration_number' => [
 					'nullable',
 					'min:10',
-					'max:10',
-					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					'max:10',/*
+					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,*/
 				],
 				'vin_number' => [
 					'nullable',
@@ -205,7 +205,7 @@ class VehicleController extends Controller {
 				$vehicle->is_registered = 1;
 			} else {
 				$vehicle->is_registered = 0;
-				$vehicle->registration_number = '';
+				$vehicle->registration_number = NULL;
 			}
 			if ($request->status == 'Inactive') {
 				$vehicle->deleted_at = Carbon::now();
