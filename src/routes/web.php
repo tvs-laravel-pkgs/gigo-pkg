@@ -22,6 +22,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/vehicle/save', 'VehicleController@saveVehicle')->name('saveVehicle');
 	Route::get('/vehicle/delete', 'VehicleController@deleteVehicle')->name('deleteVehicle');
 	Route::get('/vehicle/get-filter-data', 'VehicleController@getVehicleFilterData')->name('getVehicleFilterData');
+	Route::post('/vehicle/get-model-list', 'VehicleController@getModelList')->name('getModelList');
 
 	//Vehicle Owner
 	Route::get('/vehicle-owner/get-list', 'VehicleOwnerController@getVehicleOwnerList')->name('getVehicleOwnerList');
