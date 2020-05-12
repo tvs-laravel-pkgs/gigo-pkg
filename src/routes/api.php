@@ -48,9 +48,13 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::get('get-expert-diagnosis-report-form-data/{id}', 'VehicleInwardController@getExpertDiagnosisReportFormData');
 		Route::post('save-expert-diagnosis-report', 'VehicleInwardController@saveExpertDiagnosisReport');
 
-		//EXPERT DIAGNOSIS REPORT GET FORM DATA AND SAVE
+		//ESTIMATE GET FORM DATA AND SAVE
 		Route::get('get-estimate-form-data/{id}', 'VehicleInwardController@getEstimateFormData');
 		Route::post('save-estimate', 'VehicleInwardController@saveEstimate');
+
+		//ESTIMATION DENIED GET FORM DATA AND SAVE
+		Route::get('get-estimation-denied-form-data/{id}', 'VehicleInwardController@getEstimationDeniedFormData');
+		Route::post('save-estimation-denied', 'VehicleInwardController@saveEstimateDenied');
 
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/{id}', 'VehicleInwardController@getState');

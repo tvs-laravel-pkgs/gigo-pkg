@@ -11,6 +11,7 @@ use App\Country;
 use App\Customer;
 use App\CustomerDetails;
 use App\CustomerVoice;
+use App\EstimationType;
 use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
@@ -709,7 +710,6 @@ class VehicleInwardController extends Controller {
 	}
 
 	//VEHICLE GET FORM DATA
-
 	public function getVehicleFormData($id) {
 		// dd($id);
 		try {
@@ -921,6 +921,11 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
+				'gate_log_id' => [
+					'required',
+					'exists:gate_logs,id',
+					'integer',
+				],
 				'name' => [
 					'required',
 					'min:3',
@@ -1001,24 +1006,32 @@ class VehicleInwardController extends Controller {
 				'vehicleDetail.vehicleOwner',
 			])
 				->find($request->gate_log_id);
- 			
+
+			if (empty($gate_log)) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Gate Log Not Found!',
+				]);
+			}
 			//issue : vijay : Need to check gate log exist validation
 
 			// dd($gate_log);
 			// dd($gate_log->vehicleDetail->VehicleOwner->vehicle_id);
-			if (!$gate_log->vehicleDetail->VehicleOwner) {
+			if (!$gate_log->vehicleDetail->vehicleOwner) {
 				$customer = new Customer;
 				$customer_details = new CustomerDetails;
 				$address = new Address;
 				$vehicle_owner = new VehicleOwner;
-			//issue : vijay : customer created_at save missing, vehicle owner created_at & created_by_id save missing
+				//issue : vijay : customer created_at save missing, vehicle owner created_at & created_by_id save missing
+				$customer->created_at = Carbon::now();
 				$customer->created_by_id = Auth::user()->id;
 			} else {
-				$customer = Customer::find($gate_log->vehicleDetail->VehicleOwner->customer_id);
-				$vehicle_owner = VehicleOwner::where('vehicle_id', $gate_log->vehicleDetail->VehicleOwner->vehicle_id)->first();
+				$customer = Customer::find($gate_log->vehicleDetail->vehicleOwner->customer_id);
+				$vehicle_owner = VehicleOwner::where('vehicle_id', $gate_log->vehicleDetail->vehicleOwner->vehicle_id)->first();
+				$customer->updated_at = Carbon::now();
 				$customer->updated_by_id = Auth::user()->id;
-			//issue : vijay : customer updated_at save missing, vehicle owner updated_at & updated_by_id save missing
-				$address = Address::where('address_of_id', 24)->where('entity_id', $gate_log->vehicleDetail->VehicleOwner->customer_id)->first();
+				//issue : vijay : customer updated_at save missing, vehicle owner updated_at & updated_by_id save missing
+				$address = Address::where('address_of_id', 24)->where('entity_id', $gate_log->vehicleDetail->vehicleOwner->customer_id)->first();
 			}
 			$customer->code = rand(1, 10000);
 			$customer->fill($request->all());
@@ -1545,6 +1558,87 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'message' => 'Estimate Details Added Successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	// ESTIMATION DENIED GET FORM DATA
+	public function getEstimationDeniedFormData($id) {
+		// dd($id);
+		try {
+			$gate_log_validate = GateLog::find($id);
+			if (!$gate_log_validate) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Gate Log Not Found!',
+				]);
+			}
+
+			$estimation_type = EstimationType::where('company_id', Auth::user()->company_id)
+				->get();
+
+			return response()->json([
+				'success' => true,
+				'estimation_type' => $estimation_type,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//ESTIMATION DENIED SAVE
+	public function saveEstimateDenied(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
+				'estimation_type_id' => [
+					'required',
+					'integer',
+					'exists:estimation_types,id',
+				],
+				'minimum_payable_amount' => [
+					'required',
+					'numeric',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$job_order = jobOrder::find($request->job_order_id);
+			$job_order->estimation_type_id = $request->estimation_type_id;
+			$job_order->minimum_payable_amount = $request->minimum_payable_amount;
+			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->updated_at = Carbon::now();
+			$job_order->save();
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Estimation Denied Details Added Successfully',
 			]);
 		} catch (Exception $e) {
 			return response()->json([
