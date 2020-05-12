@@ -111,6 +111,8 @@ class SplitOrderTypeController extends Controller {
 				'code.min' => 'Short Name is Minimum 3 Charachers',
 				'code.max' => 'Short Name is Maximum 32 Charachers',
 				'name.unique' => 'Name is already taken',
+				'name.min' => 'Name is Minimum 3 Charachers',
+				'name.max' => 'Name is Maximum 191 Charachers',
 			];
 			$validator = Validator::make($request->all(), [
 				'code' => [
@@ -127,21 +129,34 @@ class SplitOrderTypeController extends Controller {
 				],
 			], $error_messages);
 			if ($validator->fails()) {
-				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
+				return response()->json([
+					'success' => false,
+					'errors' => $validator->errors()->all()
+				]);
 			}
 
 			DB::beginTransaction();
 			if (!$request->id) {
 				$split_order_type = new SplitOrderType;
-				$split_order_type->company_id = Auth::user()->company_id;
+				$split_order_type->created_by_id = Auth::user()->id;
 			} else {
 				$split_order_type = SplitOrderType::withTrashed()->find($request->id);
+				$split_order_type->updated_by_id = Auth::user()->id;
 			}
+			$split_order_type->company_id = Auth::user()->company_id;
+			// if (!$request->id) {
+			// 	$split_order_type = new SplitOrderType;
+			// 	$split_order_type->company_id = Auth::user()->company_id;
+			// } else {
+			// 	$split_order_type = SplitOrderType::withTrashed()->find($request->id);
+			// }
 			$split_order_type->fill($request->all());
 			if ($request->status == 'Inactive') {
 				$split_order_type->deleted_at = Carbon::now();
+				$split_order_type->deleted_by_id = Auth::user()->id;
 			} else {
 				$split_order_type->deleted_at = NULL;
+				$split_order_type->deleted_by_id = NULL;
 			}
 			$split_order_type->save();
 

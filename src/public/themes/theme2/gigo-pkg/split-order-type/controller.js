@@ -189,26 +189,25 @@ app.component('splitOrderTypeForm', {
                     required: true,
                     minlength: 3,
                     maxlength: 32,
-                }
-                // 'name': {
-                //     required: true,
-                //     minlength: 3,
-                //     maxlength: 191,
-                // }
+                },
+                'name': {
+                    minlength: 3,
+                    maxlength: 191,
+                },
             },
             messages: {
                 'code': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 32 Characters',
-                }
-                // 'name': {
-                //     minlength: 'Minimum 3 Characters',
-                //     maxlength: 'Maximum 191 Characters',
-                // }
+                },
+                'name': {
+                    minlength: 'Minimum 3 Characters',
+                    maxlength: 'Maximum 191 Characters',
+                },
             },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
-            },
+            // invalidHandler: function(event, validator) {
+            //     custom_noty('error', 'You have errors, Please check all tabs');
+            // },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');

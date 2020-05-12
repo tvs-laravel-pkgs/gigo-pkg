@@ -63,8 +63,8 @@
                         <thead>
                             <tr>
                                 <th>Actions</th>
-                                <th>Name</th>
                                 <th>Code</th>
+                                <th>Name</th>
                                 <th>Field Type</th>
                                 <th>Status</th>
                             </tr>
@@ -123,7 +123,7 @@
                                 </label>
                                 <md-select ng-model="$ctrl.status" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status" ng-change="onSelectedStatus($ctrl.status)">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                     </md-select-header>
                                     <md-optgroup>
                                         <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">{{status.name}}</md-option>
