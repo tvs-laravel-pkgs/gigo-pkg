@@ -114,7 +114,7 @@ class ServiceTypeController extends Controller {
 					'unique:service_types,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'name' => [
-					'publish_at' => 'nullable',
+					'nullable',
 					'min:3',
 					'max:191',
 					'unique:service_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,

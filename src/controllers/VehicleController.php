@@ -4,6 +4,7 @@ namespace Abs\GigoPkg;
 use App\Http\Controllers\Controller;
 use Abs\GigoPkg\Vehicle;
 use Abs\GigoPkg\ModelType;
+use Abs\VehiclePkg\VehicleMake;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -26,6 +27,7 @@ class VehicleController extends Controller {
 				['id' => '0', 'name' => 'Inactive'],
 			],
 		];
+		$this->data['make_list'] = collect(VehicleMake::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Make Name']);
 		$this->data['model_list'] = collect(ModelType::select('id','model_name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'model_name' => 'Select Model Name']);
 		return response()->json($this->data);
 	}
@@ -113,11 +115,20 @@ class VehicleController extends Controller {
 			{
 				$this->data['sold_date'] = date('d-m-Y', strtotime($vehicle->sold_date));
 			}
+			$make_id = ModelType::select('vehicle_make_id')->where('id',$vehicle->model_id)->where('company_id',Auth::user()->company_id)->first();
+			$this->data['make_id'] = $make_id->vehicle_make_id;
+			$this->data['model_list'] = collect(ModelType::select('id','model_name')->where('vehicle_make_id',$make_id->vehicle_make_id)->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'model_name' => 'Select Model Name']);
 			
 		}
-		$this->data['model_list'] = collect(ModelType::select('id','model_name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'model_name' => 'Select Model Name']);
+		$this->data['make_list'] = collect(VehicleMake::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Make Name']);
 		$this->data['vehicle'] = $vehicle;
 		$this->data['action'] = $action;
+		return response()->json($this->data);
+	}
+
+	public function getModelList(Request $request)
+	{
+		$this->data['model_list'] = collect(ModelType::select('id','model_name')->where('vehicle_make_id',$request->key)->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'model_name' => 'Select Model Name']);
 		return response()->json($this->data);
 	}
 
@@ -157,13 +168,13 @@ class VehicleController extends Controller {
 					'unique:vehicles,chassis_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'registration_number' => [
-					'publish_at' => 'nullable',
+					'nullable',
 					'min:10',
 					'max:10',
 					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'vin_number' => [
-					'publish_at' => 'nullable',
+					'nullable',
 					'min:10',
 					'max:32',
 					'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
@@ -194,6 +205,7 @@ class VehicleController extends Controller {
 				$vehicle->is_registered = 1;
 			} else {
 				$vehicle->is_registered = 0;
+				$vehicle->registration_number = '';
 			}
 			if ($request->status == 'Inactive') {
 				$vehicle->deleted_at = Carbon::now();

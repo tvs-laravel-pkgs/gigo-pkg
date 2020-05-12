@@ -117,11 +117,29 @@ app.component('vehicleList', {
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
-            self.model_list = response.data.model_list;
+            self.make_list = response.data.make_list;
+            //self.model_list = response.data.model_list;
         });
 
         $scope.onSelectedmodel = function(model_selected) {
             $('#model_ids').val(model_selected);
+        }
+
+        $scope.SelectedMake = function(SelectedMake) {
+            if (SelectedMake) {
+                return new Promise(function(resolve, reject) {
+                    $http.post(
+                            laravel_routes['getModelList'], {
+                                key: SelectedMake,
+                            }
+                        )
+                        .then(function(response) {
+                            self.model_list = response.data.model_list;
+                        });
+                });
+            } else {
+                return [];
+            }
         }
 
         $element.find('input').on('keydown', function(ev) {
@@ -177,6 +195,8 @@ app.component('vehicleForm', {
             }
         ).then(function(response) {
             self.vehicle = response.data.vehicle;
+            self.make_id = response.data.make_id;
+            self.make_list = response.data.make_list;
             self.model_list = response.data.model_list;
             self.sold_date = response.data.sold_date;
             self.action = response.data.action;
@@ -192,16 +212,43 @@ app.component('vehicleForm', {
             } else {
                 self.switch_value = 'Active';
                 self.register_val = 'Yes';
+                self.show = 1;
             }
             if (self.action == 'Edit') {
                 if (self.vehicle.is_registered == 1) {
                     self.register_val = 'Yes';
+                    self.show = 1;
                 } else {
                     self.register_val = 'No';
+                    self.show = 2;
                 }
             } 
 
         });
+        
+        $scope.RegistrationChange = function(reg_selected) {
+            if(reg_selected == 'Yes')
+            self.show = 1;
+            else
+            self.show = 2;
+        }
+
+        $scope.SelectedMake = function(SelectedMake) {
+            if (SelectedMake) {
+                return new Promise(function(resolve, reject) {
+                    $http.post(
+                            laravel_routes['getModelList'], {
+                                key: SelectedMake,
+                            }
+                        )
+                        .then(function(response) {
+                            self.model_list = response.data.model_list;
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
 
         //Save Form Data 
         var form_id = '#vehicle_form';
@@ -218,20 +265,18 @@ app.component('vehicleForm', {
                     minlength: 10,
                     maxlength: 64,
                 },
-                /*'model_id': {
+                'model_id': {
                     required:true,
                 },
                 'registration_number':{
-                    required:true,
                     minlength: 10,
-                    maxlength: 32,
+                    maxlength: 10,
                 },
                 'vin_number':{
-                    required:true,
                     minlength: 10,
                     maxlength: 32,
                 },
-                'sold_date':{
+                /*'sold_date':{
                     required:true,
                 },*/
             },
@@ -244,14 +289,14 @@ app.component('vehicleForm', {
                     minlength: 'Minimum 10 Characters',
                     maxlength: 'Maximum 64 Characters',
                 },
-                /*'registration_number': {
+                'registration_number': {
                     minlength: 'Minimum 10 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
                 'vin_number': {
                     minlength: 'Minimum 10 Characters',
-                    maxlength: 'Maximum 32 Characters',
-                }*/
+                    maxlength: 'Maximum 10 Characters',
+                }
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
