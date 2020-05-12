@@ -40,6 +40,18 @@ class RepairOrder extends Model {
 		return $this->belongsTo('App\SkillLevel','skill_level_id');
 	}
 
+	public static function roList($id)
+	{
+		$list = Collect(Self::select([
+			'id',
+			'name',
+		])
+		->where('type_id',$id)
+		->orderBy('name')
+		->get());		
+		$list->prepend(['id' => '', 'name' => 'Select Rot']);
+		return $list;
+	}
 
 	public static function importFromExcel($job) {
 
@@ -210,6 +222,18 @@ class RepairOrder extends Model {
 			dump($job->error_details);
 		}
 
+	}
+	public static function getList($params = [], $add_default = true, $default_text = 'Select Repair Order') {
+		$list = Collect(Self::select([
+			'id',
+			'name',
+		])
+				->orderBy('name')
+				->get());
+		if ($add_default) {
+			$list->prepend(['id' => '', 'name' => $default_text]);
+		}
+		return $list;
 	}
 
 }

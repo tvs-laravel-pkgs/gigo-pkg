@@ -15,6 +15,7 @@ use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
 use App\JobOrderPart;
+use App\RepairOrderType;
 use App\JobOrderRepairOrder;
 use App\Part;
 use App\QuoteType;
@@ -681,7 +682,6 @@ public function saveScheduleMaintenance(Request $request) {
 			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
-
 					$job_order_repair_order=JobOrderRepairOrder::firstOrNew([
 									'repair_order_id' => $repair['repair_order_id'],
 									'job_order_id' => $request->job_order_id,
@@ -710,8 +710,346 @@ public function saveScheduleMaintenance(Request $request) {
 	}
 
 
-	//VEHICLE GET FORM DATA
+//Addtional Rot & Part GetList
 
+public function addtionalRotPartGetList($id) {
+		try {
+
+			$job_order = JobOrder::find($id);
+				if (!$job_order) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Job Order Not found!',
+					]);
+				}
+
+			$part_details = JobOrderPart::with([
+				'part',
+				'part.uom',
+				'part.taxCode',
+				'splitOrderType',
+				'status',
+			])
+			->where('job_order_id',$job_order->id)
+			->get();
+
+			$labour_details = JobOrderRepairOrder::with([
+				'repairOrder',
+				'repairOrder.repairOrderType',
+				'repairOrder.uom',
+				'repairOrder.taxCode',
+				'repairOrder.skillLevel',
+				'splitOrderType',
+				'status',
+			])
+			->where('job_order_id',$job_order->id)
+			->get();
+			$parts_amount=0;
+			$labour_amount=0;
+			$total_amount=0;
+			if($job_order->jobOrderRepairOrder)
+			{
+				foreach ($job_order->jobOrderRepairOrder as $key => $labour) {
+					$labour_amount += $labour->amount;
+					
+				}
+			}
+			if($job_order->jobOrderPart)
+			{
+				foreach ($job_order->jobOrderPart as $key => $part) {
+					$parts_amount += $part->amount;
+					
+				}
+			}
+			$total_amount=$parts_amount+$labour_amount;
+
+			return response()->json([
+				'success' => true,
+				'part_details' => $part_details,
+				'labour_details' => $labour_details,
+				'total_amount'=>$total_amount,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+public function saveAddtionalRotPart(Request $request) {
+		 //dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
+				'job_order_parts.*.part_id' => [
+					'required:true',
+					'numeric',
+					'exists:parts,id',
+				],
+				'job_order_parts.*,qty' => [
+					'required',
+					'numeric',
+				],
+				'job_order_parts.*.split_order_type_id' => [
+					'nullable',
+					'numeric',
+					'exists:split_order_types,id',
+				],
+				'job_order_parts.*.rate' => [
+					'required',
+					'numeric',
+				],
+				'job_order_parts.*.amount' => [
+					'required',
+					'numeric',
+				],
+				'job_order_parts.*.status_id' => [
+					'required',
+					'numeric',
+					'exists:configs,id',
+				],
+				'job_order_parts.*.is_oem_recommended' => [
+					'nullable',
+					'numeric',
+				],
+				'job_order_repair_orders.*.repair_order_id' => [
+					'required:true',
+					'numeric',
+					'exists:repair_orders,id',
+				],
+				'job_order_repair_orders.*.qty' => [
+					'required',
+					'numeric',
+				],
+				'job_order_repair_orders.*.split_order_type_id' => [
+					'nullable',
+					'numeric',
+					'exists:split_order_types,id',
+				],
+				'job_order_repair_orders.*.amount' => [
+					'required',
+					'numeric',
+				],
+				'job_order_repair_orders.*.status_id' => [
+					'required',
+					'numeric',
+					'exists:configs,id',
+				],
+				'job_order_repair_orders.*.is_oem_recommended' => [
+					'nullable',
+					'numeric',
+				],
+				'job_order_repair_orders.*.failure_date' => [
+					'nullable',
+					'date_format:d-m-Y',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+			
+			DB::beginTransaction();
+			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
+				//Inserting Job order parts
+				foreach ($request->job_order_parts as $key => $part) {
+					$job_order_part=new JobOrderPart();
+					$job_order_part->fill($part);
+					$job_order_part->job_order_id=$request->job_order_id;
+					$job_order_part->split_order_type_id =NULL;
+					$job_order_part->amount =$part['qty']*$part['rate'];
+					$job_order_part->status_id  =8200;//Customer Approval Pending
+					$job_order_part->save();
+				}
+			}
+			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
+				//Inserting Job order repair orders
+				foreach ($request->job_order_repair_orders as $key => $repair) {
+
+					$job_order_repair_order=JobOrderRepairOrder::firstOrNew([
+									'repair_order_id' => $repair['repair_order_id'],
+									'job_order_id' => $request->job_order_id,
+						]);
+					$job_order_repair_order->fill($repair);
+					$job_order_repair_order->job_order_id=$request->job_order_id;
+					$job_order_repair_order->split_order_type_id =NULL;
+					$job_order_repair_order->is_recommended_by_oem=0;
+					$job_order_repair_order->is_customer_approved =0;
+					$job_order_repair_order->status_id  =8180;//Customer Approval Pending
+					$job_order_repair_order->save();
+				}
+			}
+			DB::commit();
+			return response()->json([
+				'success' => true,
+				'message' => 'Schedule Maintenance added successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+	//Get Addtional Part Form Data 
+	public function getAddtionalPartFormData($id) {
+		try {
+			$job_order = JobOrder::find($id);
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Order Not Found!',
+				]);
+			}
+
+			$extras = [
+				'part_list' => Part::getList(),
+			];
+
+			return response()->json([
+				'success' => true,
+				'extras' => $extras,
+			]);
+		}catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+
+	}
+	//Get Addtional Rot Form Data 
+	public function getAddtionalRotFormData($id) {
+		try {
+			$job_order = JobOrder::find($id);
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Order Not Found!',
+				]);
+			}			
+			$extras = [
+				'rot_type_list' => RepairOrderType::getList(),
+			];
+			return response()->json([
+				'success' => true,
+				'extras' => $extras,
+			]);
+		}catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+
+	}
+	//Get Addtional Rot List
+	public function getAddtionalRotList($id) {
+		try {
+			$repair_order_type = RepairOrderType::find($id);
+			if (!$repair_order_type) {
+				return response()->json([
+					'success' => false,
+					'error' => ' Repair order type not found!',
+				]);
+			}
+			$rot_list=RepairOrder::roList($repair_order_type->id);
+			
+			$extras = [
+				'rot_list' => $rot_list,
+			];
+
+			return response()->json([
+				'success' => true,
+				'extras' => $extras,
+			]);
+		}catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+
+	}
+	//Get Addtional Rot
+	public function getAddtionalRot($id) {
+		try {
+			$repair_order = RepairOrder::find($id);
+			if (!$repair_order) {
+				return response()->json([
+					'success' => false,
+					'error' => ' Repair order not found!',
+				]);
+			}
+			
+			$repair_order_detail=RepairOrder::with([
+				'repairOrderType',
+				'uom',
+				'taxCode',
+				'skillLevel',			
+			])
+			->where('id',$id)
+			->get();
+
+			
+
+			return response()->json([
+				'success' => true,
+				'repair_order' => $repair_order_detail,
+			]);
+		}catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+
+	}
+	//Get Addtional Part
+	public function getAddtionalPart($id) {
+		try {
+			$part = Part::find($id);
+			if (!$part) {
+				return response()->json([
+					'success' => false,
+					'error' => ' Part not found!',
+				]);
+			}
+			$part_detail=Part::with([
+				'uom',
+				'taxCode',
+			])
+			->where('id',$id)
+			->get();
+			return response()->json([
+				'success' => true,
+				'part' => $part_detail,
+			]);
+		}catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+
+	}
+	//VEHICLE GET FORM DATA
 	public function getVehicleFormData($id) {
 		// dd($id);
 		try {
