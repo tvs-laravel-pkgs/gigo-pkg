@@ -461,21 +461,21 @@ class VehicleInwardController extends Controller {
 
 	//DMS CHECKLIST SAVE
 	public function saveDmsCheckList(Request $request) {
-		 //dd($request->all());
+		//dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
 					'required',
 					'integer',
-					'exists:job_orders,id'
+					'exists:job_orders,id',
 				],
 				'warranty_expiry_date' => [
 					'nullable',
-					'date_format:"d-m-Y'
+					'date_format:"d-m-Y',
 				],
 				'ewp_expiry_date' => [
 					'nullable',
-					'date_format:"d-m-Y'
+					'date_format:"d-m-Y',
 				],
 				'warranty_expiry_attachment' => [
 					'nullable',
@@ -502,38 +502,37 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-			
 
 			DB::beginTransaction();
 			$job_order = JobOrder::find($request->job_order_id);
-			$job_order->warranty_expiry_date=$request->warranty_expiry_date;
-			$job_order->ewp_expiry_date=$request->ewp_expiry_date;
+			$job_order->warranty_expiry_date = $request->warranty_expiry_date;
+			$job_order->ewp_expiry_date = $request->ewp_expiry_date;
 			$job_order->save();
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
 			Storage::makeDirectory($attachment_path, 0777);
 			//SAVE WARRANTY EXPIRY PHOTO ATTACHMENT
 			if (!empty($request->warranty_expiry_attachment)) {
-				$attachment=$request->warranty_expiry_attachment;
-				$entity_id=$job_order->id;
-				$attachment_of_id=227;//Job order
-				$attachment_type_id=256;//Warranty Policy
-				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
+				$attachment = $request->warranty_expiry_attachment;
+				$entity_id = $job_order->id;
+				$attachment_of_id = 227; //Job order
+				$attachment_type_id = 256; //Warranty Policy
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
 			if (!empty($request->ewp_expiry_attachment)) {
-				$attachment=$request->ewp_expiry_attachment;
-				$entity_id=$job_order->id;
-				$attachment_of_id=227;//Job order
-				$attachment_type_id=257;//EWP
-				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
+				$attachment = $request->ewp_expiry_attachment;
+				$entity_id = $job_order->id;
+				$attachment_of_id = 227; //Job order
+				$attachment_type_id = 257; //EWP
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
 			if (!empty($request->membership_attachment)) {
-				$attachment=$request->membership_attachment;
-				$entity_id=$job_order->id;
-				$attachment_of_id=227;//Job order
-				$attachment_type_id=258;//AMC
-				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
-			}			 
+				$attachment = $request->membership_attachment;
+				$entity_id = $job_order->id;
+				$attachment_of_id = 227; //Job order
+				$attachment_type_id = 258; //AMC
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+			}
 			DB::commit();
 			return response()->json([
 				'success' => true,
@@ -681,7 +680,7 @@ class VehicleInwardController extends Controller {
 				'registration_number' => $request->registration_number,
 			]);
 			$vehicle->fill($request->all());
-			$vehicle->status_id = 8141; //Customer Not Mapped
+			$vehicle->status_id = 8141; //CUSTOMER NOT MAPED
 			$vehicle->company_id = Auth::user()->company_id;
 			$vehicle->updated_by_id = Auth::user()->id;
 			$vehicle->save();
@@ -725,7 +724,7 @@ class VehicleInwardController extends Controller {
 
 			$extras = [
 				'country_list' => Country::getList(),
-				'ownership_list' => Config::getConfigTypeList(39, 'id', '', true, 'Select Ownership'),
+				'ownership_list' => Config::getConfigTypeList(39, 'id', '', true, 'Select Ownership'), //VEHICLE OWNERSHIP TYPES
 			];
 
 			return response()->json([
@@ -992,7 +991,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			$extras = [
-				'road_test_by' => Config::getConfigTypeList(36, 'name', '', false, ''),
+				'road_test_by' => Config::getConfigTypeList(36, 'name', '', false, ''), //ROAD TEST DONE BY
 				'user_list' => User::getList(),
 			];
 
@@ -1193,7 +1192,7 @@ class VehicleInwardController extends Controller {
 				->get();
 
 			$extras = [
-				'vehicle_inspection_result_status' => Config::getConfigTypeList(32, 'id', '', false, ''),
+				'vehicle_inspection_result_status' => Config::getConfigTypeList(32, 'id', '', false, ''), //VEHICLE INSPECTION RESULTS
 			];
 
 			return response()->json([
@@ -1258,6 +1257,128 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'message' => 'Vehicle Inspection Added Successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//ESTIMATE GET FORM DATA
+	public function getEstimateFormData($id) {
+		try {
+			$gate_log_detail = GateLog::with([
+				'jobOrder',
+				'jobOrder.getEomRecomentation',
+				'jobOrder.getAdditionalRotAndParts',
+			])
+				->find($id);
+
+			$oem_recomentaion_labour_amount = 0;
+			$additional_rot_and_parts_labour_amount = 0;
+			if ($gate_log_detail->jobOrder->getEomRecomentation) {
+				// dd($gate_log_detail->jobOrder->getEOMRecomentation);
+				foreach ($gate_log_detail->jobOrder->getEomRecomentation as $oemrecomentation_labour) {
+					if ($oemrecomentation_labour['is_recommended_by_oem'] == 1) {
+						//SCHEDULED MAINTANENCE
+						$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
+					}
+					if ($oemrecomentation_labour['is_recommended_by_oem'] == 0) {
+						//ADDITIONAL ROT AND PARTS
+						$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
+					}
+				}
+			}
+
+			$oem_recomentaion_part_amount = 0;
+			$additional_rot_and_parts_part_amount = 0;
+			if ($gate_log_detail->jobOrder->getAdditionalRotAndParts) {
+				foreach ($gate_log_detail->jobOrder->getAdditionalRotAndParts as $oemrecomentation_labour) {
+					if ($oemrecomentation_labour['is_oem_recommended'] == 1) {
+						//SCHEDULED MAINTANENCE
+						$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
+					}
+					if ($oemrecomentation_labour['is_oem_recommended'] == 0) {
+						//ADDITIONAL ROT AND PARTS
+						$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
+					}
+				}
+			}
+			//OEM RECOMENTATION LABOUR AND PARTS AND SUB TOTAL
+			$gate_log_detail->oem_recomentation_labour_amount = $oem_recomentaion_labour_amount;
+			$gate_log_detail->oem_recomentation_part_amount = $oem_recomentaion_part_amount;
+			$gate_log_detail->oem_recomentation_sub_total = $oem_recomentaion_labour_amount + $oem_recomentaion_part_amount;
+
+			//ADDITIONAL ROT & PARTS LABOUR AND PARTS AND SUB TOTAL
+			$gate_log_detail->additional_rot_parts_labour_amount = $additional_rot_and_parts_labour_amount;
+			$gate_log_detail->additional_rot_parts_part_amount = $additional_rot_and_parts_part_amount;
+			$gate_log_detail->additional_rot_parts_sub_total = $additional_rot_and_parts_labour_amount + $additional_rot_and_parts_part_amount;
+
+			//TOTAL ESTIMATE
+			$gate_log_detail->total_estimate_labour_amount = $oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount;
+			$gate_log_detail->total_estimate_parts_amount = $oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount;
+			$gate_log_detail->total_estimate_amount = (($oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount) + ($oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount));
+
+			return response()->json([
+				'success' => true,
+				'gate_log_detail' => $gate_log_detail,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//ESTIMATE SAVE
+	public function saveEstimate(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
+				'estimated_delivery_date' => [
+					'required',
+					// 'date_format:d/m/Y h:i A', //NOT ACCEPT THIS FORMAT
+					'date_format:d-m-Y h:i A',
+					'string',
+				],
+				//WAITING FOR CONFIRMATION -- NOT CONFIRMED
+				'is_customer_agreed' => [
+					'nullable',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$job_order = jobOrder::find($request->job_order_id);
+			$job_order->estimated_delivery_date = $date = date('Y-m-d H:i', strtotime(str_replace('/', '-', $request->estimated_delivery_date)));
+			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->updated_at = Carbon::now();
+			$job_order->save();
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Estimate Details Added Successfully',
 			]);
 		} catch (Exception $e) {
 			return response()->json([
