@@ -23,6 +23,24 @@ class RepairOrder extends Model {
 		'uom_id',
 	];
 
+	public function repairOrderType()
+	{
+		return $this->belongsTo('App\RepairOrderType','type_id');
+	}
+	public function uom()
+	{
+		return $this->belongsTo('App\Uom','uom_id');
+	}
+	public function taxCode()
+	{
+		return $this->belongsTo('Abs\TaxPkg\TaxCode','tax_code_id');
+	}
+	public function skillLevel()
+	{
+		return $this->belongsTo('App\SkillLevel','skill_level_id');
+	}
+
+
 	public static function importFromExcel($job) {
 
 		try {

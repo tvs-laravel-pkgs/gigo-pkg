@@ -68,10 +68,24 @@
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
+                                                <label>Make<sup class="mandatory"></sup></label>
+                                                <md-select ng-model="$ctrl.make_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Model" ng-change="SelectedMake($ctrl.make_id); $ctrl.vehicle.model_id=''; ">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search Model" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="make_list.id" ng-repeat="make_list in $ctrl.make_list | filter:searchTerm">{{make_list.code}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control" name="make_id" id="make_id" value="{{$ctrl.make_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
                                                 <label>Model<sup class="mandatory"></sup></label>
                                                 <md-select ng-model="$ctrl.vehicle.model_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Model">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search Model" class="demo-header-searchbox md-text">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search Model" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
                                                     <md-optgroup>
                                                         <md-option ng-value="model_list.id" ng-repeat="model_list in $ctrl.model_list | filter:searchTerm">{{model_list.model_name}}</md-option>
@@ -84,14 +98,14 @@
                                            <div class="input-text form-group">
                                             <label>Is Registered<sup class="mandatory">*</sup></label>
                                             <div class="tab-switch">
-                                                <md-switch ng-model="$ctrl.register_val" aria-label="Switch 3" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
+                                                <md-switch ng-model="$ctrl.register_val" aria-label="Switch 3" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2" ng-change="RegistrationChange($ctrl.register_val)">
                                                     {{ $ctrl.register_val }}
                                                 </md-switch>
                                                 <input type="hidden" name="register_val" value="{{$ctrl.register_val}}">
                                             </div>
                                         </div><!-- Form Group -->
                                     </div><!-- Column -->
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" ng-show="$ctrl.show == 1">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Registration Number

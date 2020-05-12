@@ -115,7 +115,7 @@ class QuoteTypeController extends Controller {
 					'unique:quote_types,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'name' => [
-					'publish_at' => 'nullable',
+					'nullable',
 					'min:3',
 					'max:191',
 					'unique:quote_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,

@@ -174,7 +174,7 @@ class RepairOrderController extends Controller {
 					'unique:repair_orders,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'alt_code' => [
-					'publish_at' => 'nullable',
+					'nullable',
 					'min:3',
 					'max:36',
 					'unique:repair_orders,alt_code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,

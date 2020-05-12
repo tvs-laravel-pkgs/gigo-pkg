@@ -40,6 +40,10 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//DMS CHECKLIST SAVE
 		Route::post('save-dms-checklist', 'VehicleInwardController@saveDmsCheckList');
 
+		//SCHEDULE MANINTENCE GET FORM DATA AND SAVE
+		Route::get('get-schedule-maintenance', 'VehicleInwardController@scheduleMaintenanceGetList');
+		Route::post('save-schedule-maintenance', 'VehicleInwardController@saveScheduleMaintenance');
+
 		//EXPERT DIAGNOSIS REPORT GET FORM DATA AND SAVE
 		Route::get('get-expert-diagnosis-report-form-data/{id}', 'VehicleInwardController@getExpertDiagnosisReportFormData');
 		Route::post('save-expert-diagnosis-report', 'VehicleInwardController@saveExpertDiagnosisReport');
