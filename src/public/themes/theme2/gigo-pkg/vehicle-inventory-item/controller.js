@@ -164,6 +164,7 @@ app.component('vehicleInventoryItemForm', {
     templateUrl: vehicle_inventory_item_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('add-vehicle-inventory-item') || !self.hasPermission('edit-vehicle-inventory-item')) {
             window.location = "#!/page-permission-denied";
