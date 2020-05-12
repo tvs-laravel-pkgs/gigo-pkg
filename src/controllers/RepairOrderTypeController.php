@@ -127,7 +127,7 @@ class RepairOrderTypeController extends Controller {
 					'unique:repair_order_types,short_name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'name' => [
-					'publish_at' => 'nullable',
+					'nullable',
 					'min:3',
 					'max:64',
 					'unique:repair_order_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
