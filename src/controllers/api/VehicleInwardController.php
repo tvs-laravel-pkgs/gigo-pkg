@@ -2,8 +2,8 @@
 
 namespace Abs\GigoPkg\Api;
 
-use Abs\GigoPkg\ServiceOrderType;
 use Abs\GigoPkg\RepairOrder;
+use Abs\GigoPkg\ServiceOrderType;
 use App\Address;
 use App\Attachment;
 use App\Config;
@@ -465,21 +465,21 @@ class VehicleInwardController extends Controller {
 
 	//DMS CHECKLIST SAVE
 	public function saveDmsCheckList(Request $request) {
-		 //dd($request->all());
+		//dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
 					'required',
 					'integer',
-					'exists:job_orders,id'
+					'exists:job_orders,id',
 				],
 				'warranty_expiry_date' => [
 					'nullable',
-					'date_format:"d-m-Y'
+					'date_format:"d-m-Y',
 				],
 				'ewp_expiry_date' => [
 					'nullable',
-					'date_format:"d-m-Y'
+					'date_format:"d-m-Y',
 				],
 				'warranty_expiry_attachment' => [
 					'nullable',
@@ -506,38 +506,37 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-			
 
 			DB::beginTransaction();
 			$job_order = JobOrder::find($request->job_order_id);
-			$job_order->warranty_expiry_date=$request->warranty_expiry_date;
-			$job_order->ewp_expiry_date=$request->ewp_expiry_date;
+			$job_order->warranty_expiry_date = $request->warranty_expiry_date;
+			$job_order->ewp_expiry_date = $request->ewp_expiry_date;
 			$job_order->save();
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
 			Storage::makeDirectory($attachment_path, 0777);
 			//SAVE WARRANTY EXPIRY PHOTO ATTACHMENT
 			if (!empty($request->warranty_expiry_attachment)) {
-				$attachment=$request->warranty_expiry_attachment;
-				$entity_id=$job_order->id;
-				$attachment_of_id=227;//Job order
-				$attachment_type_id=256;//Warranty Policy
-				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
+				$attachment = $request->warranty_expiry_attachment;
+				$entity_id = $job_order->id;
+				$attachment_of_id = 227; //Job order
+				$attachment_type_id = 256; //Warranty Policy
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
 			if (!empty($request->ewp_expiry_attachment)) {
-				$attachment=$request->ewp_expiry_attachment;
-				$entity_id=$job_order->id;
-				$attachment_of_id=227;//Job order
-				$attachment_type_id=257;//EWP
-				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
+				$attachment = $request->ewp_expiry_attachment;
+				$entity_id = $job_order->id;
+				$attachment_of_id = 227; //Job order
+				$attachment_type_id = 257; //EWP
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
 			if (!empty($request->membership_attachment)) {
-				$attachment=$request->membership_attachment;
-				$entity_id=$job_order->id;
-				$attachment_of_id=227;//Job order
-				$attachment_type_id=258;//AMC
-				saveAttachment($attachment_path,$attachment,$entity_id,$attachment_of_id,$attachment_type_id);
-			}			 
+				$attachment = $request->membership_attachment;
+				$entity_id = $job_order->id;
+				$attachment_of_id = 227; //Job order
+				$attachment_type_id = 258; //AMC
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+			}
 			DB::commit();
 			return response()->json([
 				'success' => true,
@@ -553,7 +552,7 @@ class VehicleInwardController extends Controller {
 	}
 	//ScheduleMaintenance Form Data
 
-public function scheduleMaintenanceGetList() {
+	public function scheduleMaintenanceGetList() {
 		// dd($id);
 		try {
 			$part_details = Part::with([
@@ -582,8 +581,8 @@ public function scheduleMaintenanceGetList() {
 		}
 	}
 
-public function saveScheduleMaintenance(Request $request) {
-		 //dd($request->all());
+	public function saveScheduleMaintenance(Request $request) {
+		//dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -662,19 +661,19 @@ public function saveScheduleMaintenance(Request $request) {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-			
+
 			DB::beginTransaction();
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
 				//dd($request->job_order_parts);
 				foreach ($request->job_order_parts as $key => $part) {
 					//dd($part['part_id']);
-					$job_order_part=new JobOrderPart();
+					$job_order_part = new JobOrderPart();
 					$job_order_part->fill($part);
-					$job_order_part->job_order_id=$request->job_order_id;
-					$job_order_part->split_order_type_id =NULL;
-					$job_order_part->amount =$part['qty']*$part['rate'];
-					$job_order_part->status_id  =8200;//Customer Approval Pending
+					$job_order_part->job_order_id = $request->job_order_id;
+					$job_order_part->split_order_type_id = NULL;
+					$job_order_part->amount = $part['qty'] * $part['rate'];
+					$job_order_part->status_id = 8200; //Customer Approval Pending
 					$job_order_part->save();
 				}
 			}
@@ -682,16 +681,16 @@ public function saveScheduleMaintenance(Request $request) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
 
-					$job_order_repair_order=JobOrderRepairOrder::firstOrNew([
-									'repair_order_id' => $repair['repair_order_id'],
-									'job_order_id' => $request->job_order_id,
-						]);
+					$job_order_repair_order = JobOrderRepairOrder::firstOrNew([
+						'repair_order_id' => $repair['repair_order_id'],
+						'job_order_id' => $request->job_order_id,
+					]);
 					$job_order_repair_order->fill($repair);
-					$job_order_repair_order->job_order_id=$request->job_order_id;
-					$job_order_repair_order->split_order_type_id =NULL;
-					$job_order_repair_order->is_recommended_by_oem=1;
-					$job_order_repair_order->is_customer_approved =0;
-					$job_order_repair_order->status_id  =8180;//Customer Approval Pending
+					$job_order_repair_order->job_order_id = $request->job_order_id;
+					$job_order_repair_order->split_order_type_id = NULL;
+					$job_order_repair_order->is_recommended_by_oem = 1;
+					$job_order_repair_order->is_customer_approved = 0;
+					$job_order_repair_order->status_id = 8180; //Customer Approval Pending
 					$job_order_repair_order->save();
 				}
 			}
@@ -708,7 +707,6 @@ public function saveScheduleMaintenance(Request $request) {
 			]);
 		}
 	}
-
 
 	//VEHICLE GET FORM DATA
 
@@ -1003,6 +1001,9 @@ public function saveScheduleMaintenance(Request $request) {
 				'vehicleDetail.vehicleOwner',
 			])
 				->find($request->gate_log_id);
+ 			
+			//issue : vijay : Need to check gate log exist validation
+
 			// dd($gate_log);
 			// dd($gate_log->vehicleDetail->VehicleOwner->vehicle_id);
 			if (!$gate_log->vehicleDetail->VehicleOwner) {
@@ -1010,11 +1011,13 @@ public function saveScheduleMaintenance(Request $request) {
 				$customer_details = new CustomerDetails;
 				$address = new Address;
 				$vehicle_owner = new VehicleOwner;
+			//issue : vijay : customer created_at save missing, vehicle owner created_at & created_by_id save missing
 				$customer->created_by_id = Auth::user()->id;
 			} else {
 				$customer = Customer::find($gate_log->vehicleDetail->VehicleOwner->customer_id);
 				$vehicle_owner = VehicleOwner::where('vehicle_id', $gate_log->vehicleDetail->VehicleOwner->vehicle_id)->first();
 				$customer->updated_by_id = Auth::user()->id;
+			//issue : vijay : customer updated_at save missing, vehicle owner updated_at & updated_by_id save missing
 				$address = Address::where('address_of_id', 24)->where('entity_id', $gate_log->vehicleDetail->VehicleOwner->customer_id)->first();
 			}
 			$customer->code = rand(1, 10000);
