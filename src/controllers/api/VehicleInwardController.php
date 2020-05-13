@@ -1266,12 +1266,12 @@ class VehicleInwardController extends Controller {
 
 			$gate_log_details = GateLog::with([
 				'vehicleDetail',
-				'vehicleDetail.vehicleOwner',
-				'vehicleDetail.vehicleOwner.CustomerDetail',
-				'vehicleDetail.vehicleOwner.CustomerDetail.primaryAddress',
-				'vehicleDetail.vehicleOwner.CustomerDetail.primaryAddress.country',
-				'vehicleDetail.vehicleOwner.CustomerDetail.primaryAddress.state',
-				'vehicleDetail.vehicleOwner.CustomerDetail.primaryAddress.city',
+				'vehicleDetail.vehicleCurrentOwner',
+				'vehicleDetail.vehicleCurrentOwner.CustomerDetail',
+				'vehicleDetail.vehicleCurrentOwner.CustomerDetail.primaryAddress',
+				'vehicleDetail.vehicleCurrentOwner.CustomerDetail.primaryAddress.country',
+				'vehicleDetail.vehicleCurrentOwner.CustomerDetail.primaryAddress.state',
+				'vehicleDetail.vehicleCurrentOwner.CustomerDetail.primaryAddress.city',
 			])->find($id);
 
 			if (!$gate_log_details) {
@@ -1465,7 +1465,7 @@ class VehicleInwardController extends Controller {
 				])
 					->get();
 				foreach ($vehicle_owner_check as $vehicle_owner_record) {
-					if (!empty($gate_log->vehicleDetail->id) || $gate_log->vehicleDetail->id != NULL) {
+					if (!empty($gate_log->vehicleDetail->id) && $gate_log->vehicleDetail->id != NULL) {
 						if (($gate_log->vehicleDetail->id == $vehicle_owner_record['vehicle_id']) && ($vehicle_owner_record['ownership_id'] == $request->ownership_id)) {
 							return response()->json([
 								'success' => false,
