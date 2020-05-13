@@ -2,6 +2,8 @@
 
 namespace Abs\GigoPkg\Api;
 use Abs\GigoPkg\JobCard;
+use Abs\GigoPkg\Bay;
+use Abs\StatusPkg\Status;
 use App\Attachment;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -100,6 +102,40 @@ class JobCardController extends Controller {
 			return response()->json([
 				'success' => false,
 				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//BAY
+	public function getBayFormData($job_card_id) {
+		try {
+			$job_card = JobCard::find($job_card_id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Card Not Found!',
+				]);
+			}
+
+			$bay_list = Bay::with([
+				'status',
+			])
+			->where('outlet_id', $job_card->outlet_id)
+			->get();
+			$extras = [
+				'bay_list' => $bay_list,
+			];
+
+			return response()->json([
+				'success' => true,
+				'job_card' => $job_card,
+				'extras' => $extras,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
 				'errors' => ['Exception Error' => $e->getMessage()],
 			]);
 		}
