@@ -30,6 +30,9 @@ class VehicleOwner extends Model {
 	public function CustomerDetail() {
 		return $this->belongsTo('App\Customer', 'customer_id');
 	}
+	public function ownerShipDetail() {
+		return $this->belongsTo('App\Config', 'ownership_id');
+	}
 
 	public static function createFromObject($record_data) {
 
