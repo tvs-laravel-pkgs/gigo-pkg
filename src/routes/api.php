@@ -8,6 +8,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 
 		//VEHICLE INWARD
 		Route::post('vehicle-inward-list/get', 'VehicleInwardController@getVehicleInwardList');
+		Route::get('get-vehicle-inward-view/{id}', 'VehicleInwardController@getVehicleInwardViewData');
 
 		//VEHICLE GET JOB ORDER FORM DATA AND SAVE
 		Route::get('get-job-order-form-data/{id}', 'VehicleInwardController@getJobOrderFormData');
@@ -40,6 +41,18 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//DMS CHECKLIST SAVE
 		Route::post('save-dms-checklist', 'VehicleInwardController@saveDmsCheckList');
 
+		//ADDTIONAL ROT AND PART GET FORM DATA AND SAVE
+		Route::get('get-addtional-rot-part/{id}', 'VehicleInwardController@addtionalRotPartGetList');
+		//ROT
+		Route::get('get-addtional-rot-form-data/{id}', 'VehicleInwardController@getAddtionalRotFormData');
+		Route::get('get-addtional-rot-list/{id}', 'VehicleInwardController@getAddtionalRotList');
+		Route::get('get-addtional-rot/{id}', 'VehicleInwardController@getAddtionalRot');
+		//PART
+		Route::get('get-addtional-part-form-data/{id}', 'VehicleInwardController@getAddtionalPartFormData');
+		Route::get('get-addtional-part/{id}', 'VehicleInwardController@getAddtionalPart'); 
+
+		Route::post('save-addtional-rot-part', 'VehicleInwardController@saveAddtionalRotPart');
+
 		//SCHEDULE MANINTENCE GET FORM DATA AND SAVE
 		Route::get('get-schedule-maintenance', 'VehicleInwardController@scheduleMaintenanceGetList');
 		Route::post('save-schedule-maintenance', 'VehicleInwardController@saveScheduleMaintenance');
@@ -55,6 +68,12 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//ESTIMATION DENIED GET FORM DATA AND SAVE
 		Route::get('get-estimation-denied-form-data/{id}', 'VehicleInwardController@getEstimationDeniedFormData');
 		Route::post('save-estimation-denied', 'VehicleInwardController@saveEstimateDenied');
+
+		//CUSTOMER CONFIRMATION SAVE AND GET DATA
+		Route::post('save-customer-confirmation', 'VehicleInwardController@saveCustomerConfirmation');
+
+		//INITIATE JOB SAVE
+		Route::post('save-initiate-job', 'VehicleInwardController@saveInitiateJob');
 
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/{id}', 'VehicleInwardController@getState');

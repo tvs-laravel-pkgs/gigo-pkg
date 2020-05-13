@@ -53,6 +53,12 @@ class JobOrder extends Model {
 		return $this->attributes['ewp_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
+	public function jobOrderPart() {
+		return $this->hasMany('App\JobOrderPart');
+	}
+	public function jobOrderRepairOrder() {
+		return $this->hasMany('App\JobOrderRepairOrder');
+	}
 	public function customerVoice() {
 		return $this->belongsToMany('App\CustomerVoice', 'job_order_customer_voice', 'job_order_id', 'customer_voice_id');
 	}
