@@ -100,6 +100,45 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+	//VEHICLE INWARD VIEW DATA
+	public function getVehicleInwardViewData($id) {
+		try {
+			//dd($id);
+			$gate_log = GateLog::find($id);
+			if (!$gate_log) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Gate Log Not Found!',
+				]);
+			}
+
+
+			$gate_log_detail = GateLog::with([
+				'status',
+				'driverAttachment',
+				'kmAttachment',
+				'vehicleAttachment',
+				'vehicleDetail',
+				'vehicleDetail.vehicleCurrentOwner.CustomerDetail',
+				'vehicleDetail.vehicleCurrentOwner.ownerShipDetail',
+			])
+			->find($id);
+			$gate_log_detail->attachement_path=url('storage/app/public/gigo/gate_in/attachments/');
+
+			//Job card details need to get future
+			return response()->json([
+				'success' => true,
+				'gate_log' => $gate_log_detail,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
 	//JOB ORDER
 	public function getJobOrderFormData($id) {
 		try {
@@ -569,10 +608,28 @@ class VehicleInwardController extends Controller {
 				'skillLevel',
 			])->get();
 
+			$parts_amount=0;
+			$labour_amount=0;
+			$total_amount=0;
+			if($labour_details)
+			{
+				foreach ($labour_details as $key => $labour) {
+					$labour_amount += $labour->amount;
+				}
+			}
+			if($part_details)
+			{
+				foreach ($part_details as $key => $part) {
+					$parts_amount += $part->amount;
+				}
+			}
+			$total_amount=$parts_amount+$labour_amount;
+
 			return response()->json([
 				'success' => true,
 				'part_details' => $part_details,
 				'labour_details' => $labour_details,
+				'total_amount' => $total_amount,
 			]);
 		} catch (Exception $e) {
 			return response()->json([
