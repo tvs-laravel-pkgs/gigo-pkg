@@ -188,9 +188,8 @@ app.component('customerVoiceForm', {
                     maxlength: 32,
                 },
                 'name': {
-                    required: true,
                     minlength: 3,
-                    maxlength: 128,
+                    maxlength: 191,
                 },
             },
             messages: {

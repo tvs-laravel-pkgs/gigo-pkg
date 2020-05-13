@@ -65,6 +65,14 @@ class JobOrder extends Model {
 		return $this->belongsToMany('App\VehicleInventoryItem', 'job_order_vehicle_inventory_item', 'job_order_id', 'vehicle_inventory_item_id')->withPivot(['is_available', 'remarks']);
 	}
 
+	public function getEomRecomentation() {
+		return $this->hasMany('App\JobOrderRepairOrder', 'job_order_id', 'id');
+	}
+
+	public function getAdditionalRotAndParts() {
+		return $this->hasMany('App\JobOrderPart', 'job_order_id', 'id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];

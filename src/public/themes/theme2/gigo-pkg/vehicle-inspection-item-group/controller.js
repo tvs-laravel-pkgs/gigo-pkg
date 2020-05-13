@@ -188,7 +188,6 @@ app.component('vehicleInspectionItemGroupForm', {
                     maxlength: 32,
                 },
                 'name': {
-                    required: true,
                     minlength: 3,
                     maxlength: 191,
                 },
