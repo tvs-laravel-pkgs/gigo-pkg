@@ -1,7 +1,8 @@
 <?php
 
 namespace Abs\GigoPkg;
-
+use Abs\GigoPkg\JobOrder;
+use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
@@ -25,6 +26,11 @@ class JobCard extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
+	public function jobOrder()
+	{
+		return $this->belongsTo('Abs\GigoPkg\JobOrder','job_order_id');
+	}
+	
 	public static function createFromObject($record_data) {
 
 		$errors = [];

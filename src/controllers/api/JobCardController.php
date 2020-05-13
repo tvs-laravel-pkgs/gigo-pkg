@@ -1,14 +1,20 @@
 <?php
 
 namespace Abs\GigoPkg\Api;
+
 use Abs\GigoPkg\JobCard;
 use Abs\GigoPkg\Bay;
 use Abs\StatusPkg\Status;
+use Abs\GigoPkg\JobOrder;
+use Abs\GigoPkg\JobOrderRepairOrder;
+use Abs\EmployeePkg\SkillLevel;
 use App\Attachment;
+use App\Employee;
 use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use File;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
@@ -51,6 +57,7 @@ class JobCardController extends Controller {
 				'job_order_id' => $request->job_order_id,
 			]);
 			$job_card->job_card_number = $request->job_card_number;
+			$job_card->outlet_id = 32;
 			$job_card->status_id = 8220;
 			$job_card->company_id = Auth::user()->company_id;
 			$job_card->created_by = Auth::user()->id;
@@ -131,11 +138,51 @@ class JobCardController extends Controller {
 				'success' => true,
 				'job_card' => $job_card,
 				'extras' => $extras,
+
+	public function LabourAssignmentFormData($jobcardid)
+	{
+		try {
+			//JOB Card 
+			$job_card = JobCard::with([
+					'jobOrder',
+					'jobOrder.JobOrderRepairOrders',
+				])->find($jobcardid);
+
+			if(!$job_card){
+				return response()->json([
+					'success' => false,
+					'error' => 'Invalid Job Order!',
+				]);
+			}
+
+			/*$get_employee_details = Employee::select('job_cards.job_order_id','employees.*','skill_levels.short_name as skill_level_name')
+				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.job_order_id', 'job_cards.job_order_id')
+				->leftJoin('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')
+				->leftJoin('skill_levels', 'skill_levels.id', 'repair_orders.skill_level_id')
+				->leftJoin('employees', 'employees.skill_level_id', 'skill_levels.id')
+				->where('job_cards.job_order_id', $id)
+				->where('employees.is_mechanic', 1)
+				->get();*/
+
+			$get_employee_details = Employee::select('job_cards.job_order_id','employees.*','skill_levels.short_name as skill_level_name')
+			    ->leftJoin('skill_levels', 'skill_levels.id', 'employees.skill_level_id')
+				->leftJoin('repair_orders', 'repair_orders.skill_level_id', 'skill_levels.id')
+				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')
+				->leftJoin('job_cards', 'job_cards.job_order_id', 'job_order_repair_orders.job_order_id')
+				->where('job_cards.id', $jobcardid)
+				->where('employees.is_mechanic', 1)
+				->get();
+
+			return response()->json([
+				'success' => true,
+				'job_order_view' => $job_card,
+				'employee_details' => $get_employee_details,
 			]);
 
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
+				'error' => 'Server Network Down!',
 				'errors' => ['Exception Error' => $e->getMessage()],
 			]);
 		}

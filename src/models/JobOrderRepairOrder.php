@@ -1,7 +1,7 @@
 <?php
 
 namespace Abs\GigoPkg;
-
+use Abs\GigoPkg\JobOrder;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
@@ -24,6 +24,17 @@ class JobOrderRepairOrder extends Model {
 	public function setFailureDateAttribute($date) {
 		return $this->attributes['failure_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
+	public function repairOrder() {
+		return $this->belongsTo('Abs\GigoPkg\RepairOrder','repair_order_id');
+	}
+	public function splitOrderType() {
+		return $this->belongsTo('App\SplitOrderType','split_order_type_id');
+	}
+	
+	public function status() {
+		return $this->belongsTo('App\Config','status_id');
+	}
+
 
 	public static function createFromObject($record_data) {
 

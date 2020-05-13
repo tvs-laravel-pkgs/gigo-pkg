@@ -1,7 +1,7 @@
 <?php
 
 namespace Abs\GigoPkg;
-
+use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
@@ -16,6 +16,12 @@ class JobOrder extends Model {
 	protected $fillable =
 		["company_id", "gate_log_id", "number", "type_id", "quote_type_id", "service_type_id", "outlet_id", "contact_number", "driver_license_expiry_date", "insurance_expiry_date", "voc", "is_road_test_required", "road_test_done_by_id", "road_test_performed_by_id", "road_test_report", "warranty_expiry_date", "ewp_expiry_date", "status_id", "estimated_delivery_date", "estimation_type_id", "minimum_payable_amount", "floor_advisor_id"]
 	;
+
+	public function JobOrderRepairOrders()
+	{
+		return $this->hasMany('Abs\GigoPkg\JobOrderRepairOrder','job_order_id');
+	}
+
 
 	public function getDriverLicenseExpiryDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -47,6 +53,12 @@ class JobOrder extends Model {
 		return $this->attributes['ewp_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
+	public function jobOrderPart() {
+		return $this->hasMany('App\JobOrderPart');
+	}
+	public function jobOrderRepairOrder() {
+		return $this->hasMany('App\JobOrderRepairOrder');
+	}
 	public function customerVoice() {
 		return $this->belongsToMany('App\CustomerVoice', 'job_order_customer_voice', 'job_order_id', 'customer_voice_id');
 	}
