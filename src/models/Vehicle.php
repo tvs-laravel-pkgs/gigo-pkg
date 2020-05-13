@@ -29,6 +29,10 @@ class Vehicle extends Model {
 		return $this->hasOne('App\VehicleOwner', 'vehicle_id');
 	}
 
+	public function vehicleModel() {
+		return $this->belongsTo('App\vehicleModel', 'vehicle_model_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
