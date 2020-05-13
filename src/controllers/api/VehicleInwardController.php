@@ -112,7 +112,6 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-
 			$gate_log_detail = GateLog::with([
 				'status',
 				'driverAttachment',
@@ -122,8 +121,8 @@ class VehicleInwardController extends Controller {
 				'vehicleDetail.vehicleCurrentOwner.CustomerDetail',
 				'vehicleDetail.vehicleCurrentOwner.ownerShipDetail',
 			])
-			->find($id);
-			$gate_log_detail->attachement_path=url('storage/app/public/gigo/gate_in/attachments/');
+				->find($id);
+			$gate_log_detail->attachement_path = url('storage/app/public/gigo/gate_in/attachments/');
 
 			//Job card details need to get future
 			return response()->json([
@@ -410,7 +409,7 @@ class VehicleInwardController extends Controller {
 					'error' => 'Gate Log Not Found!',
 				]);
 			}
-
+			// issue : saravanan - use one get list function. Field type id condition missing
 			$extras = [
 				'inventory_type_list' => VehicleInventoryItem::getInventoryList(),
 			];
@@ -447,6 +446,7 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
+			//issue: saravanan - validations syntax wrong
 			$items_validator = Validator::make($request->vehicle_inventory_items, [
 				'inventory_item_id.*' => [
 					'required:true',
@@ -610,22 +610,20 @@ class VehicleInwardController extends Controller {
 				'skillLevel',
 			])->get();
 
-			$parts_amount=0;
-			$labour_amount=0;
-			$total_amount=0;
-			if($labour_details)
-			{
+			$parts_amount = 0;
+			$labour_amount = 0;
+			$total_amount = 0;
+			if ($labour_details) {
 				foreach ($labour_details as $key => $labour) {
 					$labour_amount += $labour->amount;
 				}
 			}
-			if($part_details)
-			{
+			if ($part_details) {
 				foreach ($part_details as $key => $part) {
 					$parts_amount += $part->amount;
 				}
 			}
-			$total_amount=$parts_amount+$labour_amount;
+			$total_amount = $parts_amount + $labour_amount;
 
 			return response()->json([
 				'success' => true,
