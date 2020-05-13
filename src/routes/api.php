@@ -63,6 +63,9 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 
 		//Save Job Card
 		Route::post('save-job-card', 'JobCardController@saveJobCard');
+
+		//Jobcard View Labour Assignment
+		Route::get('get-job-card-labour-assignment-form-data/{jobcardid}', 'JobCardController@LabourAssignmentFormData');
 		
 	});
 });
