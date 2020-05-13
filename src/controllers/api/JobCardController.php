@@ -138,6 +138,15 @@ class JobCardController extends Controller {
 				'success' => true,
 				'job_card' => $job_card,
 				'extras' => $extras,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
 
 	public function LabourAssignmentFormData($jobcardid)
 	{
@@ -187,6 +196,5 @@ class JobCardController extends Controller {
 			]);
 		}
 	}
-
 	
 }
