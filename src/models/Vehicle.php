@@ -32,6 +32,10 @@ class Vehicle extends Model {
 		return $this->hasOne('App\VehicleOwner', 'vehicle_id')->orderBy('from_date','DESC')->limit(1);
 	}
 
+	public function vehicleModel() {
+		return $this->belongsTo('App\vehicleModel', 'vehicle_model_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];

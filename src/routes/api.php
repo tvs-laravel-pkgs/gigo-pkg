@@ -69,6 +69,12 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::get('get-estimation-denied-form-data/{id}', 'VehicleInwardController@getEstimationDeniedFormData');
 		Route::post('save-estimation-denied', 'VehicleInwardController@saveEstimateDenied');
 
+		//CUSTOMER CONFIRMATION SAVE AND GET DATA
+		Route::post('save-customer-confirmation', 'VehicleInwardController@saveCustomerConfirmation');
+
+		//INITIATE JOB SAVE
+		Route::post('save-initiate-job', 'VehicleInwardController@saveInitiateJob');
+
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/{id}', 'VehicleInwardController@getState');
 		//GTE CITY BASED STATE
@@ -76,6 +82,6 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 
 		//Save Job Card
 		Route::post('save-job-card', 'JobCardController@saveJobCard');
-		
+
 	});
 });

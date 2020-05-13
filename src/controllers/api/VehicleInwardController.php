@@ -1855,6 +1855,8 @@ public function saveAddtionalRotPart(Request $request) {
 	public function getEstimateFormData($id) {
 		try {
 			$gate_log_detail = GateLog::with([
+				'vehicleDetail',
+				'vehicleDetail.vehicleModel',
 				'jobOrder',
 				'jobOrder.getEomRecomentation',
 				'jobOrder.getAdditionalRotAndParts',
@@ -1954,6 +1956,7 @@ public function saveAddtionalRotPart(Request $request) {
 
 			$job_order = jobOrder::find($request->job_order_id);
 			$job_order->estimated_delivery_date = $date = date('Y-m-d H:i', strtotime(str_replace('/', '-', $request->estimated_delivery_date)));
+			$job_order->is_customer_agreed = $request->is_customer_agreed;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
@@ -2044,6 +2047,131 @@ public function saveAddtionalRotPart(Request $request) {
 			return response()->json([
 				'success' => true,
 				'message' => 'Estimation Denied Details Added Successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//CUSTOMER CONFIRMATION SAVE
+	public function saveCustomerConfirmation(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'gate_log_id' => [
+					'required',
+					'integer',
+					'exists:gate_logs,id',
+				],
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
+				'is_customer_agreed' => [
+					'required',
+					'boolean',
+				],
+				'customer_photo' => [
+					'required',
+					'mimes:jpeg,jpg,png',
+				],
+				'customer_e_sign' => [
+					'required',
+					'mimes:jpeg,jpg,png',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			//UPDATE JOB ORDER REPAIR ORDER STATUS UPDATE
+			$job_order_repair_order_status_update = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->update(['status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //MACHANIC NOT ASSIGNED
+
+			//UPDATE JOB ORDER PARTS STATUS UPDATE
+			$job_order_parts_status_update = JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //NOT ISSUED
+
+			// //UPDATE GATE LOG STATUS
+			// $gate_log = GateLog::where('id', $request->gate_log_id)->update(['status_id', 8122, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //VEHICLE INWARD COMPLETED
+
+			$attachment_path = storage_path('app/public/gigo/job_order/customer-confirmation/');
+			Storage::makeDirectory($attachment_path, 0777);
+			//SAVE WARRANTY EXPIRY PHOTO ATTACHMENT
+			if (!empty($request->customer_photo)) {
+				$attachment = $request->customer_photo;
+				$entity_id = $request->job_order_id;
+				$attachment_of_id = 227; //JOB ORDER
+				$attachment_type_id = 254; //CUSTOMER SIGN PHOTO
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+			}
+			if (!empty($request->customer_e_sign)) {
+				$attachment = $request->customer_e_sign;
+				$entity_id = $request->job_order_id;
+				$attachment_of_id = 227; //JOB ORDER
+				$attachment_type_id = 253; //CUSTOMER E SIGN
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+			}
+
+			//GET TOTAL AMOUNT IN PARTS AND LABOUR
+			$repair_order_and_parts_detils = self::getEstimateFormData($request->gate_log_id);
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Vehicle Inwarded Successfully',
+				'repair_order_and_parts_detils' => $repair_order_and_parts_detils,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//INITIATE NEW JOB
+	public function saveInitiateJob(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'gate_log_id' => [
+					'required',
+					'integer',
+					'exists:gate_logs,id',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			//UPDATE GATE LOG STATUS
+			$gate_log = GateLog::where('id', $request->gate_log_id)->update(['status_id' => 8122, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //VEHICLE INWARD COMPLETED
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'JOB Initiated Successfully',
 			]);
 		} catch (Exception $e) {
 			return response()->json([
