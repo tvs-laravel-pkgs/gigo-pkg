@@ -594,29 +594,27 @@ class VehicleInwardController extends Controller {
 				],
 				'job_order_parts.*.part_id' => [
 					'required:true',
-					'numeric',
+					'integer',
 					'exists:parts,id',
 				],
-				'job_order_parts.*,qty' => [
+				'job_order_parts.*.qty' => [
 					'required',
 					'numeric',
+					'regex:/^\d+(\.\d{1,2})?$/',
 				],
 				'job_order_parts.*.split_order_type_id' => [
 					'nullable',
-					'numeric',
+					'integer',
 					'exists:split_order_types,id',
 				],
 				'job_order_parts.*.rate' => [
 					'required',
 					'numeric',
-				],
-				'job_order_parts.*.amount' => [
-					'required',
-					'numeric',
+					'regex:/^\d+(\.\d{1,2})?$/',
 				],
 				'job_order_parts.*.status_id' => [
 					'required',
-					'numeric',
+					'integer',
 					'exists:configs,id',
 				],
 				'job_order_parts.*.is_oem_recommended' => [
@@ -625,25 +623,27 @@ class VehicleInwardController extends Controller {
 				],
 				'job_order_repair_orders.*.repair_order_id' => [
 					'required:true',
-					'numeric',
+					'integer',
 					'exists:repair_orders,id',
 				],
 				'job_order_repair_orders.*.qty' => [
 					'required',
 					'numeric',
+					'regex:/^\d+(\.\d{1,2})?$/',
 				],
 				'job_order_repair_orders.*.split_order_type_id' => [
 					'nullable',
-					'numeric',
+					'integer',
 					'exists:split_order_types,id',
 				],
 				'job_order_repair_orders.*.amount' => [
 					'required',
 					'numeric',
+					'regex:/^\d+(\.\d{1,2})?$/',
 				],
 				'job_order_repair_orders.*.status_id' => [
 					'required',
-					'numeric',
+					'integer',
 					'exists:configs,id',
 				],
 				'job_order_repair_orders.*.is_oem_recommended' => [
@@ -670,7 +670,10 @@ class VehicleInwardController extends Controller {
 				//dd($request->job_order_parts);
 				foreach ($request->job_order_parts as $key => $part) {
 					//dd($part['part_id']);
-					$job_order_part = new JobOrderPart();
+					$job_order_part=JobOrderPart::firstOrNew([
+									'part_id' => $part['part_id'],
+									'job_order_id' => $request->job_order_id,
+						]);
 					$job_order_part->fill($part);
 					$job_order_part->job_order_id = $request->job_order_id;
 					$job_order_part->split_order_type_id = NULL;
@@ -790,29 +793,27 @@ public function saveAddtionalRotPart(Request $request) {
 				],
 				'job_order_parts.*.part_id' => [
 					'required:true',
-					'numeric',
+					'integer',
 					'exists:parts,id',
 				],
-				'job_order_parts.*,qty' => [
+				'job_order_parts.*.qty' => [
 					'required',
 					'numeric',
+					'regex:/^\d+(\.\d{1,2})?$/',
 				],
 				'job_order_parts.*.split_order_type_id' => [
 					'nullable',
-					'numeric',
+					'integer',
 					'exists:split_order_types,id',
 				],
 				'job_order_parts.*.rate' => [
 					'required',
 					'numeric',
-				],
-				'job_order_parts.*.amount' => [
-					'required',
-					'numeric',
+					'regex:/^\d+(\.\d{1,2})?$/',
 				],
 				'job_order_parts.*.status_id' => [
 					'required',
-					'numeric',
+					'integer',
 					'exists:configs,id',
 				],
 				'job_order_parts.*.is_oem_recommended' => [
@@ -821,25 +822,27 @@ public function saveAddtionalRotPart(Request $request) {
 				],
 				'job_order_repair_orders.*.repair_order_id' => [
 					'required:true',
-					'numeric',
+					'integer',
 					'exists:repair_orders,id',
 				],
 				'job_order_repair_orders.*.qty' => [
 					'required',
 					'numeric',
+					'regex:/^\d+(\.\d{1,2})?$/',
 				],
 				'job_order_repair_orders.*.split_order_type_id' => [
 					'nullable',
-					'numeric',
+					'integer',
 					'exists:split_order_types,id',
 				],
 				'job_order_repair_orders.*.amount' => [
 					'required',
 					'numeric',
+					'regex:/^\d+(\.\d{1,2})?$/',
 				],
 				'job_order_repair_orders.*.status_id' => [
 					'required',
-					'numeric',
+					'integer',
 					'exists:configs,id',
 				],
 				'job_order_repair_orders.*.is_oem_recommended' => [
@@ -864,7 +867,10 @@ public function saveAddtionalRotPart(Request $request) {
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
 				foreach ($request->job_order_parts as $key => $part) {
-					$job_order_part=new JobOrderPart();
+					$job_order_part=JobOrderPart::firstOrNew([
+									'part_id' => $part['part_id'],
+									'job_order_id' => $request->job_order_id,
+						]);
 					$job_order_part->fill($part);
 					$job_order_part->job_order_id=$request->job_order_id;
 					$job_order_part->split_order_type_id =NULL;
@@ -893,7 +899,7 @@ public function saveAddtionalRotPart(Request $request) {
 			DB::commit();
 			return response()->json([
 				'success' => true,
-				'message' => 'Schedule Maintenance added successfully',
+				'message' => 'Addtional Rot and Part added successfully',
 			]);
 		} catch (Exception $e) {
 			return response()->json([
