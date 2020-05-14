@@ -14,7 +14,7 @@ class RepairOrderMechanic extends Model {
 	protected $table = 'repair_order_mechanics';
 	public $timestamps = true;
 	protected $fillable =
-		["id","job_order_repair_order_id","mechanic_id"]
+		["job_order_repair_order_id", "mechanic_id"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
@@ -25,6 +25,14 @@ class RepairOrderMechanic extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
+	public function mechanic(){
+		return $this->belongsTo('App\User', 'mechanic_id');
+	}
+
+	public function status() {
+		return $this->belongsTo('App\Config','status_id');
+	}
+	
 	public static function createFromObject($record_data) {
 
 		$errors = [];
