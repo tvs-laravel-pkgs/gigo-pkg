@@ -1626,6 +1626,7 @@ class VehicleInwardController extends Controller {
 	public function saveRoadTestObservation(Request $request) {
 		// dd($request->all());
 		try {
+			//issue: Vijay - No need for another validation for road_test_performed_by_id field.
 			if ($request->road_test_done_by_id == 8101) {
 				// EMPLOYEE
 				$validator_road_test = Validator::make($request->all(), [
