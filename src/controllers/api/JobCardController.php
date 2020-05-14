@@ -7,9 +7,11 @@ use Abs\GigoPkg\Bay;
 use Abs\StatusPkg\Status;
 use Abs\GigoPkg\JobOrder;
 use Abs\GigoPkg\JobOrderRepairOrder;
+use Abs\GigoPkg\RepairOrderMechanic;
 use Abs\EmployeePkg\SkillLevel;
 use App\Attachment;
 use App\Employee;
+use App\Vendor;
 use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
@@ -57,7 +59,7 @@ class JobCardController extends Controller {
 				'job_order_id' => $request->job_order_id,
 			]);
 			$job_card->job_card_number = $request->job_card_number;
-			$job_card->outlet_id = 32;
+			//$job_card->outlet_id = 32;
 			$job_card->status_id = 8220;
 			$job_card->company_id = Auth::user()->company_id;
 			$job_card->created_by = Auth::user()->id;
@@ -148,14 +150,14 @@ class JobCardController extends Controller {
 		}
 	}
 
-	public function LabourAssignmentFormData($jobcardid)
+	public function LabourAssignmentFormData($jobcard_id)
 	{
 		try {
 			//JOB Card 
 			$job_card = JobCard::with([
 					'jobOrder',
 					'jobOrder.JobOrderRepairOrders',
-				])->find($jobcardid);
+				])->find($jobcard_id);
 
 			if(!$job_card){
 				return response()->json([
@@ -164,28 +166,143 @@ class JobCardController extends Controller {
 				]);
 			}
 
-			/*$get_employee_details = Employee::select('job_cards.job_order_id','employees.*','skill_levels.short_name as skill_level_name')
-				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.job_order_id', 'job_cards.job_order_id')
-				->leftJoin('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')
-				->leftJoin('skill_levels', 'skill_levels.id', 'repair_orders.skill_level_id')
-				->leftJoin('employees', 'employees.skill_level_id', 'skill_levels.id')
-				->where('job_cards.job_order_id', $id)
-				->where('employees.is_mechanic', 1)
-				->get();*/
-
-			$get_employee_details = Employee::select('job_cards.job_order_id','employees.*','skill_levels.short_name as skill_level_name')
+			$employee_details = Employee::select('job_cards.job_order_id','employees.*','skill_levels.short_name as skill_level_name','attendance_logs.user_id as user_status')
+			    ->leftJoin('attendance_logs', 'attendance_logs.user_id', 'employees.id')
 			    ->leftJoin('skill_levels', 'skill_levels.id', 'employees.skill_level_id')
 				->leftJoin('repair_orders', 'repair_orders.skill_level_id', 'skill_levels.id')
 				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')
 				->leftJoin('job_cards', 'job_cards.job_order_id', 'job_order_repair_orders.job_order_id')
-				->where('job_cards.id', $jobcardid)
+				/*->leftJoin('employees', 'employees.deputed_outlet_id', 'job_cards.outlet_id')*/
+				->where('job_cards.id', $jobcard_id)
 				->where('employees.is_mechanic', 1)
+				//->whereDate('attendance_logs.date', '=', Carbon::today())
 				->get();
 
 			return response()->json([
 				'success' => true,
 				'job_order_view' => $job_card,
-				'employee_details' => $get_employee_details,
+				'employee_details' => $employee_details,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+
+	public function LabourAssignmentFormSave(Request $request) {
+		try {
+			$items_validator = Validator::make($request->labour_details[0], [
+				'job_order_repair_order_id' => [
+					'required',
+					'integer',
+				],
+			]);
+			
+			if ($items_validator->fails()) {
+				return response()->json(['success' => false, 'errors' => $items_validator->errors()->all()]);
+			}
+            
+            DB::beginTransaction();
+
+			foreach($request->labour_details as $key=>$repair_orders)
+			{
+				$job_order_repair_order = JobOrderRepairOrder::find($repair_orders['job_order_repair_order_id']);
+					if (!$job_order_repair_order) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Job order Repair Order Not found!',
+					]);
+				    }
+				    foreach ($repair_orders as $key => $mechanic) {
+				    	if(is_array($mechanic))
+				    	{
+					      $repair_order_mechanic = RepairOrderMechanic::firstOrNew([
+						'job_order_repair_order_id' => $repair_orders['job_order_repair_order_id'],
+						'mechanic_id' => $mechanic['mechanic_id'],
+					      ]);
+			             $repair_order_mechanic->job_order_repair_order_id = $repair_orders['job_order_repair_order_id'];
+			             $repair_order_mechanic->mechanic_id = $mechanic['mechanic_id'];
+			             $repair_order_mechanic->status_id = 8060;
+			             $repair_order_mechanic->created_by_id = Auth::user()->id;
+			             if ($repair_order_mechanic->exists) {
+			             	$repair_order_mechanic->updated_by_id = Auth::user()->id;
+			             }
+			             $repair_order_mechanic->save();
+				    	}
+				    }
+				   
+			}
+			DB::commit();
+			return response()->json([
+				'success' => true,
+				'message' => 'Repair Order Mechanic added successfully!!',
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+
+	public function VendorList(Request $request) {
+		try {
+			$validator = Validator::make($request->all(), [
+				'vendor_code' => [
+					'required',
+				],
+			]);
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+            DB::beginTransaction();
+
+            $VendorList = Vendor::where('code','LIKE', '%' . $request->vendor_code . '%')
+            ->where(function ($query) {
+						$query->where('type_id',121)
+							->orWhere('type_id',122);
+				})->get();
+			
+			DB::commit();
+			return response()->json([
+				'success' => true,
+				'Vendor_list' => $VendorList,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function VendorDetails($vendor_id)
+	{
+		try {
+			$vendor_details = Vendor::find($vendor_id);
+
+			if(!$vendor_details){
+				return response()->json([
+					'success' => false,
+					'error' => 'Vendor Details Not found!',
+				]);
+			} 
+			return response()->json([
+				'success' => true,
+				'vendor_details' => $vendor_details,
 			]);
 
 		} catch (Exception $e) {
