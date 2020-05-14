@@ -275,7 +275,7 @@ class JobCardController extends Controller {
 		}
 	}
 
-	public function LabourAssignmentFormData($jobcardid) {
+	public function LabourAssignmentFormData($jobcard_id) {
 		try {
 			//JOB Card
 			$job_card = JobCard::with([
