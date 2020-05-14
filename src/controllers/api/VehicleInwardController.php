@@ -54,7 +54,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$gate_log_ids = [];
+			/*$gate_log_ids = [];
 			$gate_logs = GateLog::
 				where('gate_logs.company_id', Auth::user()->company_id)
 				->get();
@@ -63,29 +63,31 @@ class VehicleInwardController extends Controller {
 					//Gate In Completed
 					$gate_log_ids[] = $gate_log->id;
 				} else {
-// Others
+				// Others
 					if ($gate_log->floor_adviser_id == $request->employee_id) {
 						$gate_log_ids[] = $gate_log->id;
 					}
 				}
-			}
+			}*/
 
 			$vehicle_inward_list = GateLog::select('gate_logs.*')
 				->with([
 					'vehicleDetail',
-					'vehicleDetail.vehicleOwner',
-					'vehicleDetail.vehicleOwner.CustomerDetail',
+					'vehicleDetail.vehicleCurrentOwner',
+					'vehicleDetail.vehicleCurrentOwner.CustomerDetail',
 				])
 				->leftJoin('vehicles', 'gate_logs.vehicle_id', 'vehicles.id')
 				->leftJoin('vehicle_owners', 'vehicles.id', 'vehicle_owners.vehicle_id')
 				->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
-				->whereIn('gate_logs.id', $gate_log_ids)
+				//->whereIn('gate_logs.id', $gate_log_ids)
 				->where(function ($query) use ($request) {
 					if (isset($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
 					}
 				})
+				->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '".$request->employee_id."')")
+				->groupBy('gate_logs.id')
 				->get();
 
 			return response()->json([

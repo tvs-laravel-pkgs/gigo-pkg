@@ -38,44 +38,33 @@ class JobCardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-
-			$jobcard_ids = [];
-			$jobcards = Jobcard::
-				where('jobcards.company_id', Auth::user()->company_id)
-				->get();
-			foreach ($jobcards as $key => $jobcard) {
-				if ($jobcard->status_id == 8120) {
-					//Gate In Completed
-					$jobcard_ids[] = $jobcard->id;
-				} else {
-// Others
-					if ($jobcard->floor_adviser_id == $request->employee_id) {
-						$jobcard_ids[] = $jobcard->id;
-					}
-				}
-			}
-
-			$job_card_list = Jobcard::select('jobcards.*')
+			$job_card_list = Jobcard::select('job_cards.*','job_cards.status_id')
 				->with([
-					'vehicleDetail',
-					'vehicleDetail.vehicleOwner',
-					'vehicleDetail.vehicleOwner.CustomerDetail',
+					'jobOrder',
+					'jobOrder.gateLog',
+					'jobOrder.gateLog.vehicleDetail',
+					'jobOrder.gateLog.vehicleDetail.vehicleCurrentOwner',
+					'jobOrder.gateLog.vehicleDetail.vehicleCurrentOwner.CustomerDetail',
 				])
-				->leftJoin('vehicles', 'jobcards.vehicle_id', 'vehicles.id')
+				->leftJoin('job_orders','job_orders.id','job_cards.job_order_id')
+				->leftJoin('gate_logs','gate_logs.id','job_orders.gate_log_id')
+				->leftJoin('vehicles', 'gate_logs.vehicle_id', 'vehicles.id')
 				->leftJoin('vehicle_owners', 'vehicles.id', 'vehicle_owners.vehicle_id')
-				->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
-				->whereIn('jobcards.id', $jobcard_ids)
+				->join('customers', 'vehicle_owners.customer_id', 'customers.id')
+				//->whereIn('job_cards.id', $jobcard_ids)
 				->where(function ($query) use ($request) {
 					if (isset($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
 					}
 				})
+				->whereRaw("IF (`job_cards`.`status_id` = '8220', `job_cards`.`floor_supervisor_id` IS  NULL, `job_cards`.`floor_supervisor_id` = '".$request->employee_id."')")
+				->groupBy('job_cards.id')
 				->get();
 
 			return response()->json([
 				'success' => true,
-				'vehicle_inward_list' => $vehicle_inward_list,
+				'job_card_list' =>$job_card_list,
 			]);
 		} catch (Exception $e) {
 			return response()->json([

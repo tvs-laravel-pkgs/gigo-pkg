@@ -7,7 +7,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::post('save-vehicle-gate-in-entry', 'VehicleGatePassController@saveVehicleGateInEntry');
 
 		//VEHICLE INWARD
-		Route::post('vehicle-inward-list/get', 'VehicleInwardController@getVehicleInwardList');
+		Route::post('get-vehicle-inward-list', 'VehicleInwardController@getVehicleInwardList');
 		Route::get('get-vehicle-inward-view/{id}', 'VehicleInwardController@getVehicleInwardViewData');
 
 		//VEHICLE GET JOB ORDER FORM DATA AND SAVE
@@ -104,6 +104,9 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 
 		//Material-GatePass Vendor Details
 		Route::get('get-vendor-details/{vendor_id}', 'JobCardController@VendorDetails');
+
+		// JOB CARD LIST
+		Route::post('get-job-card-list', 'JobCardController@getJobCardList');
 
 		// JOB CARD VIEW
 		Route::post('get-job-card-view', 'JobCardController@getJobCardViewData');
