@@ -49,7 +49,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::get('get-addtional-rot/{id}', 'VehicleInwardController@getAddtionalRot');
 		//PART
 		Route::get('get-addtional-part-form-data/{id}', 'VehicleInwardController@getAddtionalPartFormData');
-		Route::get('get-addtional-part/{id}', 'VehicleInwardController@getAddtionalPart'); 
+		Route::get('get-addtional-part/{id}', 'VehicleInwardController@getAddtionalPart');
 
 		Route::post('save-addtional-rot-part', 'VehicleInwardController@saveAddtionalRotPart');
 
@@ -77,7 +77,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/{id}', 'VehicleInwardController@getState');
-		
+
 		//GET CITY BASED STATE
 		Route::get('get-city/{id}', 'VehicleInwardController@getcity');
 
@@ -96,5 +96,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		// JOB CARD VIEW
 		Route::post('get-job-card-view', 'JobCardController@getJobCardViewData');
 		
+		//VIEW JOB CARD
+		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
 	});
 });

@@ -1,7 +1,6 @@
 <?php
 
 namespace Abs\GigoPkg;
-use Abs\GigoPkg\JobOrder;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
@@ -14,7 +13,7 @@ class JobOrderRepairOrder extends Model {
 	protected $table = 'job_order_repair_orders';
 	public $timestamps = true;
 	protected $fillable =
-		["id","job_order_id","repair_order_id","is_recommended_by_oem","is_customer_approved","split_order_type_id","qty","amount","failure_date","status_id","remarks","observation","action_taken"]
+		["job_order_id", "repair_order_id", "is_recommended_by_oem", "is_customer_approved", "split_order_type_id", "qty", "amount", "failure_date", "status_id", "remarks", "observation", "action_taken"]
 	;
 
 	public function getFailureDateAttribute($value) {
@@ -25,7 +24,7 @@ class JobOrderRepairOrder extends Model {
 		return $this->attributes['failure_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 	public function repairOrder() {
-		return $this->belongsTo('Abs\GigoPkg\RepairOrder','repair_order_id');
+		return $this->belongsTo('Abs\GigoPkg\RepairOrder', 'repair_order_id');
 	}
 
 	public function repairOrderMechanics() {
@@ -33,11 +32,14 @@ class JobOrderRepairOrder extends Model {
 	}
 	
 	public function splitOrderType() {
-		return $this->belongsTo('App\SplitOrderType','split_order_type_id');
+		return $this->belongsTo('App\SplitOrderType', 'split_order_type_id');
 	}
-	
+	public function repairOrderMechanic() {
+		return $this->belongsTo('App\RepairOrderMechanic', 'job_order_repair_order_id');
+	}
+
 	public function status() {
-		return $this->belongsTo('App\Config','status_id');
+		return $this->belongsTo('App\Config', 'status_id');
 	}
 
 	public static function createFromObject($record_data) {
