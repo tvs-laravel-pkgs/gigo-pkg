@@ -84,11 +84,17 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Save Job Card
 		Route::post('save-job-card', 'JobCardController@saveJobCard');
 
-		//GET BAY FORM DATA
+		//GET BAY ASSIGNMENT FORM DATA
 		Route::get('get-bay-form-data/{job_card_id}', 'JobCardController@getBayFormData');
+
+		//SAVE BAY ASSIGNMENT 
+		Route::post('save-bay', 'JobCardController@saveBay');
 
 		//Jobcard View Labour Assignment
 		Route::get('get-job-card-labour-assignment-form-data/{jobcardid}', 'JobCardController@LabourAssignmentFormData');
+
+		// JOB CARD VIEW
+		Route::post('get-job-card-view', 'JobCardController@getJobCardViewData');
 		
 	});
 });

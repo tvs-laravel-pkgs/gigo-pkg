@@ -25,6 +25,14 @@ class RepairOrderMechanic extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
+	public function mechanic(){
+		return $this->belongsTo('App\User', 'mechanic_id');
+	}
+
+	public function status() {
+		return $this->belongsTo('App\Config','status_id');
+	}
+	
 	public static function createFromObject($record_data) {
 
 		$errors = [];

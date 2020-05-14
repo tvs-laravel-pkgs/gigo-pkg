@@ -167,7 +167,7 @@ class BayController extends Controller
 			if (!$request->id) {
 				$bay = new Bay;
 				// $bay->fill($request->all());
-				$bay->status_id = 8240;
+				$bay->status_id = 8240; //Free
 				$bay->created_by_id = Auth::user()->id;
 				$bay->created_at = Carbon::now();
 				$bay->updated_at = NULL;

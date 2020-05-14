@@ -7,6 +7,7 @@ use Abs\GigoPkg\Bay;
 use Abs\StatusPkg\Status;
 use Abs\GigoPkg\JobOrder;
 use Abs\GigoPkg\JobOrderRepairOrder;
+use Abs\GigoPkg\RepairOrderMechanic;
 use Abs\EmployeePkg\SkillLevel;
 use App\Attachment;
 use App\Employee;
@@ -114,7 +115,7 @@ class JobCardController extends Controller {
 		}
 	}
 
-	//BAY
+	//BAY ASSIGNMENT
 	public function getBayFormData($job_card_id) {
 		try {
 			$job_card = JobCard::find($job_card_id);
@@ -139,6 +140,70 @@ class JobCardController extends Controller {
 				'job_card' => $job_card,
 				'extras' => $extras,
 			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function saveBay(Request $request) {
+		//dd($request->all());
+		try {
+
+			$validator = Validator::make($request->all(), [
+				'job_card_id' => [
+					'required',
+					'integer',
+					'exists:job_cards,id',
+				],
+				'bay_id' => [
+					'required',
+					'integer',
+					'exists:bays,id',
+				],
+				'floor_supervisor_id' => [
+					'required',
+					'integer',
+					'exists:users,id',
+				],
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+			DB::beginTransaction();
+			
+			$job_card = JobCard::find($request->job_card_id);
+			if (!$job_card->jobOrder) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Order Not Found!',
+				]);
+			}
+			$job_card->floor_supervisor_id = $request->floor_supervisor_id;
+			$job_card->save();
+
+			$bay = Bay::find($request->bay_id);
+			$bay->job_order_id = $job_card->job_order_id;
+			$bay->status_id = 8241;//Assigned
+			$bay->save();
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Bay assignment saved successfully!!',
+			]);
+
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
@@ -196,5 +261,46 @@ class JobCardController extends Controller {
 			]);
 		}
 	}
-	
+
+	// JOB CARD VIEW DATA
+	public function getJobCardViewData(Request $request) {
+		try {
+			// dd($job_card_id);
+			$job_card = JobCard::find($request->job_card_id);
+
+			if(!$job_card){
+				return response()->json([
+					'success' => false,
+					'error' => 'Invalid Job Order!',
+				]);
+			}
+
+			$job_order_repair_order_ids = RepairOrderMechanic::where('mechanic_id', $request->mechanic_id)
+			->pluck('job_order_repair_order_id')
+			->toArray();
+
+			$job_order_repair_orders = JobOrderRepairOrder::with([
+				'repairOrderMechanics',
+				'repairOrderMechanics.mechanic',
+				'repairOrderMechanics.status',
+			])
+			->where('job_order_id', $job_card->job_order_id)
+			->whereIn('id', $job_order_repair_order_ids)
+			->get();
+
+			// dd($job_order_repair_orders);
+			return response()->json([
+				'success' => true,
+				'job_card' => $job_card,
+				'job_order_repair_orders' => $job_order_repair_orders,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
 }
