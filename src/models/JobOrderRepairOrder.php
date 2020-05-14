@@ -1,7 +1,7 @@
 <?php
 
 namespace Abs\GigoPkg;
-
+use Abs\GigoPkg\JobOrder;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
@@ -34,6 +34,7 @@ class JobOrderRepairOrder extends Model {
 	public function status() {
 		return $this->belongsTo('App\Config','status_id');
 	}
+
 
 	public static function createFromObject($record_data) {
 

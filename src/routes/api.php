@@ -77,11 +77,18 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/{id}', 'VehicleInwardController@getState');
-		//GTE CITY BASED STATE
+		
+		//GET CITY BASED STATE
 		Route::get('get-city/{id}', 'VehicleInwardController@getcity');
 
 		//Save Job Card
 		Route::post('save-job-card', 'JobCardController@saveJobCard');
 
+		//GET BAY FORM DATA
+		Route::get('get-bay-form-data/{job_card_id}', 'JobCardController@getBayFormData');
+
+		//Jobcard View Labour Assignment
+		Route::get('get-job-card-labour-assignment-form-data/{jobcardid}', 'JobCardController@LabourAssignmentFormData');
+		
 	});
 });

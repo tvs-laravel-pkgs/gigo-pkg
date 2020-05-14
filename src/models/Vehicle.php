@@ -26,7 +26,7 @@ class Vehicle extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 	public function vehicleOwner() {
-		return $this->hasOne('App\VehicleOwner', 'vehicle_id');
+		return $this->hasMany('App\VehicleOwner', 'vehicle_id', 'id');
 	}
 	public function vehicleCurrentOwner() {
 		return $this->hasMany('App\VehicleOwner', 'vehicle_id')->orderBy('from_date','DESC')->limit(1);
