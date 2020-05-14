@@ -272,6 +272,7 @@ class VehicleInwardController extends Controller {
 			$gate_log->reading_type_id = $request->reading_type_id;
 			$gate_log->save();
 
+			//issue : saravanan - created_by_id not saved
 			//JOB ORDER SAVE
 			$job_order = JobOrder::firstOrNew([
 				'gate_log_id' => $request->gate_log_id,
@@ -557,6 +558,8 @@ class VehicleInwardController extends Controller {
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
 			Storage::makeDirectory($attachment_path, 0777);
+
+			//issue : saravanan - created_at, created_by, updated_by & updated_at missing while save attachment
 			//SAVE WARRANTY EXPIRY PHOTO ATTACHMENT
 			if (!empty($request->warranty_expiry_attachment)) {
 				$attachment = $request->warranty_expiry_attachment;
