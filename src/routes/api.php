@@ -87,6 +87,9 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//GET BAY FORM DATA
 		Route::get('get-bay-form-data/{job_card_id}', 'JobCardController@getBayFormData');
 
+		//MY JOB CARD
+		Route::post('get-my-job-card-list', 'MyJobCardController@getMyJobCardList');
+
 		//Jobcard View Labour Assignment
 		Route::get('get-job-card-labour-assignment-form-data/{jobcardid}', 'JobCardController@LabourAssignmentFormData');
 

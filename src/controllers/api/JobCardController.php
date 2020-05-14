@@ -291,7 +291,7 @@ class JobCardController extends Controller {
 				'jobOrder.getEomRecomentation',
 				'jobOrder.getAdditionalRotAndParts',
 				'jobOrder.jobOrderRepairOrder.repairOrderMechanic',
-				'jobOrder.jobOrderRepairOrder.repairOrderMechanic.machanic',
+				'jobOrder.jobOrderRepairOrder.repairOrderMechanic.mechanic',
 				'jobOrder.jobOrderRepairOrder.repairOrderMechanic.status',
 				'jobOrder.gateLog',
 				'jobOrder.gateLog.vehicleDetail',
@@ -310,7 +310,7 @@ class JobCardController extends Controller {
 			//GET OEM RECOMENTATION AND ADDITIONAL ROT & PARTS
 			$oem_recomentaion_labour_amount = 0;
 			$additional_rot_and_parts_labour_amount = 0;
-			if ($job_card_detail->jobOrder->getEomRecomentation) {
+			if (!empty($job_card_detail->jobOrder->getEomRecomentation)) {
 				// dd($job_card_detail->jobOrder->getEOMRecomentation);
 				foreach ($job_card_detail->jobOrder->getEomRecomentation as $oemrecomentation_labour) {
 					if ($oemrecomentation_labour['is_recommended_by_oem'] == 1) {
@@ -326,7 +326,7 @@ class JobCardController extends Controller {
 
 			$oem_recomentaion_part_amount = 0;
 			$additional_rot_and_parts_part_amount = 0;
-			if ($job_card_detail->jobOrder->getAdditionalRotAndParts) {
+			if (!empty($job_card_detail->jobOrder->getAdditionalRotAndParts)) {
 				foreach ($job_card_detail->jobOrder->getAdditionalRotAndParts as $oemrecomentation_labour) {
 					if ($oemrecomentation_labour['is_oem_recommended'] == 1) {
 						//SCHEDULED MAINTANENCE

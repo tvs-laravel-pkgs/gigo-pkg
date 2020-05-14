@@ -25,7 +25,7 @@ class RepairOrderMechanic extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
-	public function machanic() {
+	public function mechanic() {
 		$this->belongsTo('App\User', 'machanic_id');
 	}
 
