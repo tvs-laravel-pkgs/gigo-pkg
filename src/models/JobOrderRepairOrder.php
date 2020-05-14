@@ -26,6 +26,11 @@ class JobOrderRepairOrder extends Model {
 	public function repairOrder() {
 		return $this->belongsTo('Abs\GigoPkg\RepairOrder', 'repair_order_id');
 	}
+
+	public function repairOrderMechanics() {
+		return $this->hasMany('Abs\GigoPkg\RepairOrderMechanic','job_order_repair_order_id');
+	}
+	
 	public function splitOrderType() {
 		return $this->belongsTo('App\SplitOrderType', 'split_order_type_id');
 	}

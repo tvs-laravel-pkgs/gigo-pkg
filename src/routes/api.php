@@ -84,16 +84,32 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Save Job Card
 		Route::post('save-job-card', 'JobCardController@saveJobCard');
 
-		//GET BAY FORM DATA
+		//GET BAY ASSIGNMENT FORM DATA
 		Route::get('get-bay-form-data/{job_card_id}', 'JobCardController@getBayFormData');
 
 		//MY JOB CARD
 		Route::post('get-my-job-card-list', 'MyJobCardController@getMyJobCardList');
 
+		//SAVE BAY ASSIGNMENT
+		Route::post('save-bay', 'JobCardController@saveBay');
+
 		//Jobcard View Labour Assignment
-		Route::get('get-job-card-labour-assignment-form-data/{jobcardid}', 'JobCardController@LabourAssignmentFormData');
+		Route::get('get-labour-assignment-form-data/{jobcard_id}', 'JobCardController@LabourAssignmentFormData');
+
+		//JobOrder Repair order form save
+		Route::post('labour-assignment-form-save', 'JobCardController@LabourAssignmentFormSave');
+
+		//Material-GatePass Vendor list
+		Route::post('get-vendor-list', 'JobCardController@VendorList');
+
+		//Material-GatePass Vendor Details
+		Route::get('get-vendor-details/{vendor_id}', 'JobCardController@VendorDetails');
+
+		// JOB CARD VIEW
+		Route::post('get-job-card-view', 'JobCardController@getJobCardViewData');
 
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
+
 	});
 });

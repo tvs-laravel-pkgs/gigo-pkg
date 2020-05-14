@@ -23,4 +23,5 @@ class Bay extends Model
 	{
 		return $this->belongsTo('Abs\StatusPkg\Status', 'status_id');
 	}
+
 }

@@ -26,11 +26,11 @@ class RepairOrderMechanic extends Model {
 	}
 
 	public function mechanic() {
-		$this->belongsTo('App\User', 'machanic_id');
+		return $this->belongsTo('App\User', 'mechanic_id');
 	}
 
 	public function status() {
-		$this->belongsTo('App\Config', 'status_id');
+		return $this->belongsTo('App\Config', 'status_id');
 	}
 
 	public static function createFromObject($record_data) {
