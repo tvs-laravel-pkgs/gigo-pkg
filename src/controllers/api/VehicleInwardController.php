@@ -645,6 +645,7 @@ class VehicleInwardController extends Controller {
 	public function saveScheduleMaintenance(Request $request) {
 		//dd($request->all());
 		try {
+			//issue : saravanan - split_order_type_id, is_oem_recommended, status_id not required in job order parts requests. split_order_type_id, is_oem_recommended, status_id, failure_date not required in job order repair orders requests. also remove in validations
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
 					'required',
@@ -727,6 +728,7 @@ class VehicleInwardController extends Controller {
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
 				//dd($request->job_order_parts);
+				//issue: saravanan - is_recommended_by_oem save missing. save default 1.
 				foreach ($request->job_order_parts as $key => $part) {
 					//dd($part['part_id']);
 					$job_order_part = JobOrderPart::firstOrNew([
@@ -840,6 +842,7 @@ class VehicleInwardController extends Controller {
 	public function saveAddtionalRotPart(Request $request) {
 		//dd($request->all());
 		try {
+			//issue : saravanan - split_order_type_id, is_oem_recommended, status_id not required in job order parts requests. split_order_type_id, is_oem_recommended, status_id, failure_date not required in job order repair orders requests. also remove in validations
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
 					'required',
@@ -921,6 +924,7 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
+				//issue: saravanan - is_recommended_by_oem save missing. save default 0.
 				foreach ($request->job_order_parts as $key => $part) {
 					$job_order_part = JobOrderPart::firstOrNew([
 						'part_id' => $part['part_id'],
