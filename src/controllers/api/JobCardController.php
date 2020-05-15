@@ -488,6 +488,101 @@ class JobCardController extends Controller {
 		}
 	}
 
+	public function getLabourReviewData($id)
+	{
+		try{
+			$job_card = JobCard::find($id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Card Not Found!',
+				]);
+			}
+
+			$labour_review_data=JobCard::with([
+				'jobOrder',
+				'jobOrder.JobOrderRepairOrders',
+				'jobOrder.JobOrderRepairOrders.status',
+				'jobOrder.JobOrderRepairOrders.repairOrderMechanics',
+				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanic',
+				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.status',
+				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanicTimeLogs'
+				/*=>function($q){
+					$q->select(DB::raw('
+						DATEDIFF(mechanic_time_logs.start_date_time,mechanic_time_logs.end_date_time) as duration'));
+				}*/
+				,
+				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanicTimeLogs.status',
+
+			])
+			->find($job_card->id);
+
+			$job_card_repair_order_details=$labour_review_data->jobOrder->JobOrderRepairOrders;
+			//dd($job_card_repair_order_details);
+			$total_duration=0;
+			if($job_card_repair_order_details){
+				foreach ($job_card_repair_order_details as $key => $job_card_repair_order) {
+					$duration=[];
+					//$total_duration=0;
+					if($job_card_repair_order->repairOrderMechanics){
+						foreach($job_card_repair_order->repairOrderMechanics as $key1 =>$repair_order_mechanic){
+							if($repair_order_mechanic->mechanicTimeLogs){
+								foreach ($repair_order_mechanic->mechanicTimeLogs as $key2 => $mechanic_time_log) {
+									$time1 = strtotime($mechanic_time_log->start_date_time);
+									$time2 = strtotime($mechanic_time_log->end_date_time);
+									if ($time2 < $time1) {
+									$time2 += 86400;
+									}
+									$duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
+								}	
+							}
+						}
+					$total_duration=$this->sum_mechanic_duration($duration);
+					//dd($total_duration);
+					$total_duration=date("H:i:s",strtotime($total_duration));
+					$format_change=explode(':', $total_duration);
+					$hour=$format_change[0].'h';
+					$minutes=$format_change[1].'m';
+					$seconds=$format_change[2].'s';
+					$job_card_repair_order['total_duration']=$hour.' '.$minutes.' '.$seconds;
+					unset($duration);
+					}else{
+						$job_card_repair_order['total_duration']='';
+					}
+				}
+			}
+			//dd($labour_review_data);
+			return response()->json([
+				'success' => true,
+				'labour_review_data' => $labour_review_data,
+			]);
+
+		}catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+	public function sum_mechanic_duration($times = array()) {
+		$seconds = 0;
+		foreach ($times as $time) {
+			if ($time) {
+				list($hour, $minute, $second) = explode(':', $time);
+				$seconds += $hour * 3600;
+				$seconds += $minute * 60;
+				$seconds += $second;
+			}
+		}
+		$hours = floor($seconds / 3600);
+		$seconds -= $hours * 3600;
+		$minutes = floor($seconds / 60);
+		$seconds -= $minutes * 60;
+
+		return sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+	}
 	public function viewJobCard($job_card_id) {
 		try {
 			$job_card = JobCard::find($job_card_id);
