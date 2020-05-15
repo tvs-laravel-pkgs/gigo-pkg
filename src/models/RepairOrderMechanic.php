@@ -29,6 +29,10 @@ class RepairOrderMechanic extends Model {
 		return $this->belongsTo('App\User', 'mechanic_id');
 	}
 
+	public function mechanicTimeLogs() {
+		return $this->hasMany('App\MechanicTimeLog', 'repair_order_mechanic_id');
+	}
+
 	public function status() {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
