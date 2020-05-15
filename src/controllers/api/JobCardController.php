@@ -12,13 +12,13 @@ use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
+use Abs\GigoPkg\JobCardReturnableItem;
 use App\Attachment;
 use App\Employee;
 use App\Config;
 use App\Http\Controllers\Controller;
 use App\Vendor;
 use Auth;
-use Carbon\Carbon;
 use DB;
 use File;
 use Illuminate\Http\Request;
@@ -51,37 +51,21 @@ class JobCardController extends Controller {
 					'jobOrder.gateLog',
 					'jobOrder.gateLog.vehicleDetail',
 					'jobOrder.gateLog.vehicleDetail.vehicleCurrentOwner',
-					'jobOrder.gateLog.vehicleDetail.vehicleCurrentOwner.CustomerDetail' => function ($query) use ($request) {
-						if (!empty($request->search_key)) {
-							//dd($request->search_key);
-							$query->Where('customers.name', 'LIKE', '%' . $request->search_key . '%');
-						}
-					},
+					'jobOrder.gateLog.vehicleDetail.vehicleCurrentOwner.CustomerDetail',
 				])
 				->leftJoin('job_orders', 'job_orders.id', 'job_cards.job_order_id')
 				->leftJoin('gate_logs', 'gate_logs.id', 'job_orders.gate_log_id')
 				->leftJoin('vehicles', 'gate_logs.vehicle_id', 'vehicles.id')
 				->leftJoin('vehicle_owners', 'vehicles.id', 'vehicle_owners.vehicle_id')
-				->join('customers', 'vehicle_owners.customer_id', 'customers.id')
-			// ->leftJoin('customers as cus', function ($query) {
-			// $query->on('cus.id', 'vehicle_owners.customer_id')
-			// 	->orderBy('vehicle_owners.from_date','DESC')
-			// 	->limit(1);
-			// })
-
-			/*->leftJoin('customers', function($join) {
-					$join->on('vehicle_owners.customer_id', '=', 'customers.id')
-					->orderBy('vehicle_owners1.from_date','DESC')
-					->limit(1);
-				})*/
-			//->whereIn('job_cards.id', $jobcard_ids)
+				->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
+				//->whereIn('job_cards.id', $jobcard_ids)
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
 					}
 				})
-			//Floor Supervisor not Assigned =>8220
+				//Floor Supervisor not Assigned =>8220
 				->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')")
 				->groupBy('job_cards.id')
 				->get();
@@ -594,14 +578,14 @@ class JobCardController extends Controller {
 
 	}
 
-	public function saveAddtionalRotPart(Request $request) {
+	public function ReturnableItemSave(Request $request) {
 		//dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_card_id' => [
 					'required',
 					'integer',
-					'exists:job_orders,id',
+					'exists:job_cards,id',
 				],
 				'job_card_returnable_items.*.item_description' => [
 					'required',
@@ -621,7 +605,7 @@ class JobCardController extends Controller {
 				'job_card_returnable_items.*.item_serial_no' => [
 					'nullable',
 					'string',	
-					'unique:job_card_returnable_items,item_serial_no,' . $request->id . ',id,job_card_id,' .  $request->job_card_id,	
+					// 'unique:job_card_returnable_items,item_serial_no,' . $request->id . ',id,job_card_id,' .  $request->job_card_id,	
 				],
 				'job_card_returnable_items.*.qty' => [
 					'required',
@@ -644,28 +628,78 @@ class JobCardController extends Controller {
 				]);
 			}
 
+			$job_card_returnable_items_count=count($request->job_card_returnable_items);
+			$job_card_returnable_unique_items_count=count(array_unique(array_column($request->job_card_returnable_items, 'item_serial_no')));
+			if($job_card_returnable_items_count!=$job_card_returnable_unique_items_count){
+				return response()->json([
+					'success'=>false,
+					'error'=>'Validation Error',
+					'message'=>'Returnable items serial numbers are not unique'
+				]);
+			}
 			DB::beginTransaction();
 			if (isset($request->job_card_returnable_items) && count($request->job_card_returnable_items) > 0) {
-				//Inserting Job order parts
-				//issue: saravanan - is_recommended_by_oem save missing. save default 0.
+				//Inserting Job card returnable items
 				foreach ($request->job_card_returnable_items as $key => $job_card_returnable_item) {
-					$job_order_part = JobOrderPart::firstOrNew([
-						'part_id' => $part['part_id'],
-						'job_order_id' => $request->job_order_id,
+					$returnable_item = JobCardReturnableItem::firstOrNew([
+						'item_serial_no' => $job_card_returnable_item['item_serial_no'],
+						'job_card_id' => $request->job_card_id,
 					]);
-					$job_order_part->fill($part);
-					$job_order_part->job_order_id = $request->job_order_id;
-					$job_order_part->split_order_type_id = NULL;
-					$job_order_part->amount = $part['qty'] * $part['rate'];
-					$job_order_part->status_id = 8200; //Customer Approval Pending
-					$job_order_part->save();
+					$returnable_item->fill($job_card_returnable_item);
+					$returnable_item->job_card_id = $request->job_card_id;
+					if ($returnable_item->exists) {
+						//FIRST
+						$returnable_item->updated_at = Carbon::now();
+						$returnable_item->updated_by_id = Auth::user()->id;
+					}else{//NEW
+						$returnable_item->created_at = Carbon::now();
+						$returnable_item->created_by_id = Auth::user()->id;
+					}
+					$returnable_item->save();
+					//Attachment Save
+					$attachment_path = storage_path('app/public/gigo/job_card/returnable_items/');
+					Storage::makeDirectory($attachment_path, 0777);
+
+					//SAVE RETURNABLE ITEMS PHOTO ATTACHMENT
+					if (!empty($job_card_returnable_item['attachments']) && count($job_card_returnable_item['attachments']) > 0) {
+						//REMOVE OLD ATTACHEMNTS 
+						$remove_previous_attachments = Attachment::where([
+								'entity_id' => $returnable_item->id,
+								'attachment_of_id' => 232, //Job Card Returnable Item
+								'attachment_type_id' => 239, //Job Card Returnable Item
+							])->get();
+							if (!empty($remove_previous_attachments)) {
+								foreach ($remove_previous_attachments as $key => $remove_previous_attachment) {
+									$img_path = $attachment_path . $remove_previous_attachment->name;
+									if (File::exists($img_path)) {
+										File::delete($img_path);
+									}
+									$remove = $remove_previous_attachment->forceDelete();
+								}	
+							}
+						foreach ($job_card_returnable_item['attachments'] as $key => $returnable_item_attachment) {
+							//dump('save');
+							$file_name_with_extension = $returnable_item_attachment->getClientOriginalName();
+							$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+							$extension = $returnable_item_attachment->getClientOriginalExtension();
+							$name = $returnable_item->id . '_' . $file_name . '.' . $extension;
+							$returnable_item_attachment->move($attachment_path, $name);
+							$attachement = new Attachment;
+							$attachement->attachment_of_id = 232; //Job Card Returnable Item
+							$attachement->attachment_type_id = 239; //Job Card Returnable Item
+							$attachement->name = $name;
+							$attachement->entity_id = $returnable_item->id;
+							$attachement->created_by = Auth::user()->id;
+							$attachement->save();
+						}
+					}
 				}
 			}
 			
 			DB::commit();
 			return response()->json([
 				'success' => true,
-				'message' => 'Returnable items added successfully',
+				'message' => 'Returnable items added successfully!!',
 			]);
 		} catch (Exception $e) {
 			return response()->json([

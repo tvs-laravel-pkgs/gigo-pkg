@@ -52,24 +52,8 @@ class VehicleInwardController extends Controller {
 					'success' => false,
 					'errors' => $validator->errors()->all(),
 				]);
-			}
-
-			/*$gate_log_ids = [];
-				$gate_logs = GateLog::
-					where('gate_logs.company_id', Auth::user()->company_id)
-					->get();
-				foreach ($gate_logs as $key => $gate_log) {
-					if ($gate_log->status_id == 8120) {
-						//Gate In Completed
-						$gate_log_ids[] = $gate_log->id;
-					} else {
-					// Others
-						if ($gate_log->floor_adviser_id == $request->employee_id) {
-							$gate_log_ids[] = $gate_log->id;
-						}
-					}
-			*/
-
+			}	
+			
 			$vehicle_inward_list = GateLog::select('gate_logs.*')
 				->with([
 					'vehicleDetail',
