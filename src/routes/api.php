@@ -108,11 +108,17 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		// JOB CARD LIST
 		Route::post('get-job-card-list', 'JobCardController@getJobCardList');
 
+		// JOB CARD TIME LOG
+		Route::get('get-job-card-time-log/{job_card_id}', 'JobCardController@getJobCardTimeLog');
+
 		// JOB CARD VIEW
 		Route::post('get-job-card-view', 'JobCardController@getJobCardViewData');
 
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
+
+		//JOB CARD LABOUR REVIEW
+		Route::get('get-labour-review/{id}', 'JobCardController@getLabourReviewData');
 
 	});
 });
