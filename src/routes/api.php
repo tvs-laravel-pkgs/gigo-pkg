@@ -117,14 +117,17 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
 
+
+		Route::post('save-job-card-view', 'JobCardController@saveJobCardView');
+
 		//JOB CARD LABOUR REVIEW
 		Route::get('get-labour-review/{id}', 'JobCardController@getLabourReviewData');
 
 		//Material-GatePass Details Save
-		Route::post('save-material-gate-pass-details', 'JobCardController@saveMaterialGatePassDetail');
+		Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');
 
 		//Material-GatePass Items Save
-		Route::post('save-material-gate-pass-items', 'JobCardController@saveMaterialGatePassItem');
+		Route::post('save-material-gate-pass-item', 'JobCardController@saveMaterialGatePassItem');
 
 	});
 });

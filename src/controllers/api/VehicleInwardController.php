@@ -55,20 +55,20 @@ class VehicleInwardController extends Controller {
 			}
 
 			/*$gate_log_ids = [];
-			$gate_logs = GateLog::
-				where('gate_logs.company_id', Auth::user()->company_id)
-				->get();
-			foreach ($gate_logs as $key => $gate_log) {
-				if ($gate_log->status_id == 8120) {
-					//Gate In Completed
-					$gate_log_ids[] = $gate_log->id;
-				} else {
-				// Others
-					if ($gate_log->floor_adviser_id == $request->employee_id) {
+				$gate_logs = GateLog::
+					where('gate_logs.company_id', Auth::user()->company_id)
+					->get();
+				foreach ($gate_logs as $key => $gate_log) {
+					if ($gate_log->status_id == 8120) {
+						//Gate In Completed
 						$gate_log_ids[] = $gate_log->id;
+					} else {
+					// Others
+						if ($gate_log->floor_adviser_id == $request->employee_id) {
+							$gate_log_ids[] = $gate_log->id;
+						}
 					}
-				}
-			}*/
+			*/
 
 			$vehicle_inward_list = GateLog::select('gate_logs.*')
 				->with([
@@ -79,15 +79,15 @@ class VehicleInwardController extends Controller {
 				->leftJoin('vehicles', 'gate_logs.vehicle_id', 'vehicles.id')
 				->leftJoin('vehicle_owners', 'vehicles.id', 'vehicle_owners.vehicle_id')
 				->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
-				//->whereIn('gate_logs.id', $gate_log_ids)
+			//->whereIn('gate_logs.id', $gate_log_ids)
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
 					}
 				})
-				//Gate In Completed =>8120
-				->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '".$request->floor_adviser_id."')")
+			//Gate In Completed =>8120
+				->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '" . $request->floor_adviser_id . "')")
 				->groupBy('gate_logs.id')
 				->get();
 
