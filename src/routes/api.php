@@ -111,14 +111,20 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		// JOB CARD TIME LOG
 		Route::get('get-job-card-time-log/{job_card_id}', 'JobCardController@getJobCardTimeLog');
 
+		// JOB CARD MATRIAL GATE PASS VIEW
+		Route::get('view-material-gate-pass/{job_card_id}', 'JobCardController@viewMetirialGatePass');
+
 		// JOB CARD VIEW
 		Route::post('get-job-card-view', 'JobCardController@getJobCardViewData');
 
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
 
+		Route::post('save-job-card-view', 'JobCardController@saveJobCardView');
+
 		//JOB CARD LABOUR REVIEW
 		Route::get('get-labour-review/{id}', 'JobCardController@getLabourReviewData');
+
 
 		//JOB CARD RETURNABLE ITEM SAVE
 		Route::post('labour-review-save', 'JobCardController@LabourReviewSave');
@@ -126,6 +132,12 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 
 		//JOB CARD RETURNABLE ITEM SAVE
 		Route::post('job-card-returnable-item-save', 'JobCardController@ReturnableItemSave');
+
+		//Material-GatePass Details Save
+		Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');
+
+		//Material-GatePass Items Save
+		Route::post('save-material-gate-pass-item', 'JobCardController@saveMaterialGatePassItem');
 
 	});
 });
