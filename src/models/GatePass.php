@@ -14,7 +14,7 @@ class GatePass extends Model {
 	protected $table = 'gate_passes';
 	public $timestamps = true;
 	protected $fillable =
-		["id","company_id","type_id","name"]
+		["company_id", "type_id", "name"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
@@ -23,6 +23,14 @@ class GatePass extends Model {
 
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+
+	public function type() {
+		return $this->belongsTo('App\Config', 'type_id');
+	}
+
+	public function gatePassDetail() {
+		return $this->hasOne('App\Config', 'type_id');
 	}
 
 	public static function createFromObject($record_data) {
