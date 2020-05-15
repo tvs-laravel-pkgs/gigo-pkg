@@ -41,7 +41,7 @@ class VehicleInwardController extends Controller {
 	public function getVehicleInwardList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [
-				'employee_id' => [
+				'floor_adviser_id' => [
 					'required',
 					'exists:employees,id',
 					'integer',
@@ -55,20 +55,20 @@ class VehicleInwardController extends Controller {
 			}
 
 			/*$gate_log_ids = [];
-			$gate_logs = GateLog::
-				where('gate_logs.company_id', Auth::user()->company_id)
-				->get();
-			foreach ($gate_logs as $key => $gate_log) {
-				if ($gate_log->status_id == 8120) {
-					//Gate In Completed
-					$gate_log_ids[] = $gate_log->id;
-				} else {
-				// Others
-					if ($gate_log->floor_adviser_id == $request->employee_id) {
+				$gate_logs = GateLog::
+					where('gate_logs.company_id', Auth::user()->company_id)
+					->get();
+				foreach ($gate_logs as $key => $gate_log) {
+					if ($gate_log->status_id == 8120) {
+						//Gate In Completed
 						$gate_log_ids[] = $gate_log->id;
+					} else {
+					// Others
+						if ($gate_log->floor_adviser_id == $request->employee_id) {
+							$gate_log_ids[] = $gate_log->id;
+						}
 					}
-				}
-			}*/
+			*/
 
 			$vehicle_inward_list = GateLog::select('gate_logs.*')
 				->with([
@@ -79,14 +79,15 @@ class VehicleInwardController extends Controller {
 				->leftJoin('vehicles', 'gate_logs.vehicle_id', 'vehicles.id')
 				->leftJoin('vehicle_owners', 'vehicles.id', 'vehicle_owners.vehicle_id')
 				->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
-				//->whereIn('gate_logs.id', $gate_log_ids)
+			//->whereIn('gate_logs.id', $gate_log_ids)
 				->where(function ($query) use ($request) {
-					if (isset($request->search_key)) {
+					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
 					}
 				})
-				->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '".$request->employee_id."')")
+			//Gate In Completed =>8120
+				->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '" . $request->floor_adviser_id . "')")
 				->groupBy('gate_logs.id')
 				->get();
 
@@ -647,6 +648,7 @@ class VehicleInwardController extends Controller {
 	public function saveScheduleMaintenance(Request $request) {
 		//dd($request->all());
 		try {
+			//issue : saravanan - split_order_type_id, is_oem_recommended, status_id not required in job order parts requests. split_order_type_id, is_oem_recommended, status_id, failure_date not required in job order repair orders requests. also remove in validations
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
 					'required',
@@ -729,6 +731,7 @@ class VehicleInwardController extends Controller {
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
 				//dd($request->job_order_parts);
+				//issue: saravanan - is_recommended_by_oem save missing. save default 1.
 				foreach ($request->job_order_parts as $key => $part) {
 					//dd($part['part_id']);
 					$job_order_part = JobOrderPart::firstOrNew([
@@ -842,6 +845,7 @@ class VehicleInwardController extends Controller {
 	public function saveAddtionalRotPart(Request $request) {
 		//dd($request->all());
 		try {
+			//issue : saravanan - split_order_type_id, is_oem_recommended, status_id not required in job order parts requests. split_order_type_id, is_oem_recommended, status_id, failure_date not required in job order repair orders requests. also remove in validations
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
 					'required',
@@ -923,6 +927,7 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
+				//issue: saravanan - is_recommended_by_oem save missing. save default 0.
 				foreach ($request->job_order_parts as $key => $part) {
 					$job_order_part = JobOrderPart::firstOrNew([
 						'part_id' => $part['part_id'],
