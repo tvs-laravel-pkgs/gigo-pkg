@@ -63,6 +63,10 @@ class JobCard extends Model {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
 
+	public function gatePasses() {
+		return $this->hasMany('App\GatePass', 'job_card_id', 'id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
