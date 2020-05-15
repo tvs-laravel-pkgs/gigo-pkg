@@ -120,5 +120,11 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//JOB CARD LABOUR REVIEW
 		Route::get('get-labour-review/{id}', 'JobCardController@getLabourReviewData');
 
+		//Material-GatePass Details Save
+		Route::post('save-material-gate-pass-details', 'JobCardController@saveMaterialGatePassDetail');
+
+		//Material-GatePass Items Save
+		Route::post('save-material-gate-pass-items', 'JobCardController@saveMaterialGatePassItem');
+
 	});
 });
