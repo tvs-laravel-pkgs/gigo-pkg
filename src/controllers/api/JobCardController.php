@@ -886,6 +886,34 @@ class JobCardController extends Controller {
 					'integer',
 					'exists:gate_passes,id',
 				],
+				'item_details.*.item_description' => [
+					'required',
+					'min:3',
+					'max:191',
+				],
+				'item_details.*.item_make' => [
+					'required',
+					'min:3',
+					'max:191',
+				],
+				'item_details.*.item_model' => [
+					'required',
+					'min:3',
+					'max:191',
+				],
+				'item_details.*.item_serial_no' => [
+					'required',
+					'min:3',
+					'max:191',
+				],
+				'item_details.*.qty' => [
+					'required',
+				],
+				'item_details.*.remarks' => [
+					'required',
+					'min:3',
+					'max:191',
+				],
 				
 			]);
 
