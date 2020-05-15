@@ -30,7 +30,15 @@ class GatePass extends Model {
 	}
 
 	public function gatePassDetail() {
-		return $this->hasOne('App\Config', 'type_id');
+		return $this->hasOne('App\GatePassDetail', 'gate_pass_id');
+	}
+
+	public function status() {
+		return $this->belongsTo('App\Config', 'type_id');
+	}
+
+	public function gatePassItems() {
+		return $this->hasMany('App\GatePassItem', 'gate_pass_id');
 	}
 
 	public static function createFromObject($record_data) {

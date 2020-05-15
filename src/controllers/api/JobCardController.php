@@ -3,24 +3,23 @@
 namespace Abs\GigoPkg\Api;
 
 use Abs\GigoPkg\Bay;
-use Abs\GigoPkg\JobCard;
-use Abs\GigoPkg\JobOrder;
-use Abs\GigoPkg\JobOrderRepairOrder;
-use Abs\GigoPkg\RepairOrderMechanic;
 use Abs\GigoPkg\GatePass;
 use Abs\GigoPkg\GatePassDetail;
 use Abs\GigoPkg\GatePassItem;
-use Abs\EmployeePkg\SkillLevel;
+use Abs\GigoPkg\JobCard;
+use Abs\GigoPkg\JobOrder;
+use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\RepairOrder;
+use Abs\GigoPkg\RepairOrderMechanic;
 use App\Attachment;
 use App\Employee;
 use App\Http\Controllers\Controller;
 use App\Vendor;
 use Auth;
+use Carbon\Carbon;
 use DB;
 use File;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
@@ -681,6 +680,7 @@ class JobCardController extends Controller {
 		}
 	}
 
+	//TIME LOG
 	public function getJobCardTimeLog($job_card_id) {
 		try {
 			$job_card_time_log = JobCard::with([
@@ -789,6 +789,60 @@ class JobCardController extends Controller {
 		}
 	}
 
+	//JOB CARD GATE PASS VIEW
+	public function viewMetirialGatePass($job_card_id) {
+		// dd($job_card_id);
+		try {
+			$view_metrial_gate_pass = JobCard::with([
+				'status',
+				'gatePasses' => function ($query) {
+					$query->where('gate_passes.type_id', 8281); //MATRIAL GATE PASS
+				},
+				'gatePasses.type',
+				'gatePasses.status',
+				'gatePasses.gatePassDetail',
+				'gatePasses.gatePassDetail.vendorType',
+				'gatePasses.gatePassDetail.vendor',
+				'gatePasses.gatePassDetail.vendor.addresses',
+				'gatePasses.gatePassDetail.vendor.addresses.country',
+				'gatePasses.gatePassDetail.vendor.addresses.state',
+				'gatePasses.gatePassDetail.vendor.addresses.city',
+				'gatePasses.gatePassItems',
+			])
+				->find($job_card_id);
+
+			if (!$view_metrial_gate_pass) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Card Not found!',
+				]);
+			}
+
+			//GET ITEM COUNT
+			if (!empty($view_metrial_gate_pass->gatePasses)) {
+				foreach ($view_metrial_gate_pass->gatePasses as $gate_pass) {
+					if (!empty($gate_pass->gatePassItems)) {
+						$view_metrial_gate_pass->no_of_items = count($gate_pass->gatePassItems);
+					} else {
+						$view_metrial_gate_pass->no_of_items = 0;
+					}
+				}
+			}
+
+			return response()->json([
+				'success' => true,
+				'view_metrial_gate_pass' => $view_metrial_gate_pass,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
 	//Material GatePass Detail Save
 	public function saveMaterialGatePassDetail(Request $request) {
 		// dd($request->all());
@@ -830,7 +884,7 @@ class JobCardController extends Controller {
 				]);
 			}
 			DB::beginTransaction();
-			
+
 			$job_card = JobCard::find($request->job_card_id);
 			if (!$job_card) {
 				return response()->json([
@@ -842,7 +896,7 @@ class JobCardController extends Controller {
 			$gate_pass = GatePass::firstOrNew([
 				'job_card_id' => $request->job_card_id,
 			]);
-			$gate_pass->type_id = 8281;//Material Gate Pass
+			$gate_pass->type_id = 8281; //Material Gate Pass
 			// $gate_pass->company_id = Auth::user()->company_id;
 			// $gate_pass->created_by = Auth::user()->id;
 			$gate_pass->fill($request->all());
@@ -858,13 +912,13 @@ class JobCardController extends Controller {
 			$gate_pass_detail->work_order_description = $request->work_order_description;
 			// $gate_pass_detail->created_by = Auth::user()->id;
 			$gate_pass_detail->save();
-			
-		DB::commit();
 
-		return response()->json([
-			'success' => true,
-			'message' => 'Material Gate Pass Details Saved Successfully!!',
-		]);
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Material Gate Pass Details Saved Successfully!!',
+			]);
 
 		} catch (Exception $e) {
 			return response()->json([
@@ -886,7 +940,7 @@ class JobCardController extends Controller {
 					'integer',
 					'exists:gate_passes,id',
 				],
-				
+
 			]);
 
 			if ($validator->fails()) {
@@ -900,14 +954,14 @@ class JobCardController extends Controller {
 			}
 			DB::beginTransaction();
 
-			foreach($request->item_details as $key => $item_detail){
+			foreach ($request->item_details as $key => $item_detail) {
 				$gate_pass_item = GatePassItem::firstOrNew([
 					'gate_pass_id' => $request->gate_pass_id,
 					'item_serial_no' => $item_detail['item_serial_no'],
 				]);
 				$gate_pass_item->fill($item_detail);
 				$gate_pass_item->save();
-			}			
+			}
 
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
@@ -915,14 +969,14 @@ class JobCardController extends Controller {
 
 			//SAVE MATERIAL OUTWARD ATTACHMENT
 			if (!empty($request->material_outward_attachments)) {
-				foreach($request->material_outward_attachments as $material_outward_attachment){
+				foreach ($request->material_outward_attachments as $material_outward_attachment) {
 					// $attachment = $request->material_outward_attachment;
 					$attachment = $material_outward_attachment;
 					$entity_id = $gate_pass_item_id->id;
 					$attachment_of_id = 231; //Material Gate Pass
 					$attachment_type_id = 238; //Material Gate Pass
 					saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
-				}				
+				}
 			}
 
 			DB::commit();
@@ -962,7 +1016,7 @@ class JobCardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-			$repair_order_mechanic = RepairOrderMechanic::where('job_order_repair_order_id',$request->job_repair_order_id)->where('mechanic_id',$request->machanic_id)->first();
+			$repair_order_mechanic = RepairOrderMechanic::where('job_order_repair_order_id', $request->job_repair_order_id)->where('mechanic_id', $request->machanic_id)->first();
 
 			if (!$repair_order_mechanic) {
 				return response()->json([
@@ -970,72 +1024,72 @@ class JobCardController extends Controller {
 					'error' => 'Job Order Repair Order Mechanic Not Found!',
 				]);
 			}
-            DB::beginTransaction();
+			DB::beginTransaction();
 
-            if($request->status_id == 8261 || $request->status_id == 8264)
-              {
-            	$mechanic_time_log = new MechanicTimeLog;
-            	$mechanic_time_log->start_date_time = Carbon::now();
-            	$mechanic_time_log->repair_order_mechanic_id = $repair_order_mechanic->id;
-	            $mechanic_time_log->status_id = $request->status_id;
+			if ($request->status_id == 8261 || $request->status_id == 8264) {
+				$mechanic_time_log = new MechanicTimeLog;
+				$mechanic_time_log->start_date_time = Carbon::now();
+				$mechanic_time_log->repair_order_mechanic_id = $repair_order_mechanic->id;
+				$mechanic_time_log->status_id = $request->status_id;
 				$mechanic_time_log->created_by_id = Auth::user()->id;
 				$mechanic_time_log->save();
-               }
-            else
-            	{
-            	$mechanic_time_log = MechanicTimeLog::where('repair_order_mechanic_id',$repair_order_mechanic->id)->whereNull('end_date_time')->update(['end_date_time' => Carbon::now(), 'status_id' => $request->status_id]);
-            	}
-             
-             //Update Status
-            $update_repair_order_mechanic = RepairOrderMechanic::where('id',$repair_order_mechanic->id)->where('mechanic_id',$request->machanic_id)->update(['status_id' => $request->status_id]);
+			} else {
+				$mechanic_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->whereNull('end_date_time')->update(['end_date_time' => Carbon::now(), 'status_id' => $request->status_id]);
+			}
 
+			//Update Status
+			$update_repair_order_mechanic = RepairOrderMechanic::where('id', $repair_order_mechanic->id)->where('mechanic_id', $request->machanic_id)->update(['status_id' => $request->status_id]);
 
-            //Update all mechanic work in joborder repair order
-            $mechanic_work =  RepairOrderMechanic::where('job_order_repair_order_id',$request->job_repair_order_id)->select('status_id')->get()->toArray();
-            $mechanic_status = 0; $jobcard_status = 0;
-            foreach ($mechanic_work as $key => $mechanic_work_status) {
-            	if($mechanic_work_status['status_id'] != 8263)
-            	{
-            		$mechanic_status = $mechanic_status+1;
-            	}
-            	if($mechanic_work_status['status_id'] == 8261)
-            	{
-            		$jobcard_status = $jobcard_status+1;
-            	}
-            }
-            if($mechanic_status == 0)
-            $update_job_repair_order = JobOrderRepairOrder::where('id',$request->job_repair_order_id)->update(['status_id' => 8185]); //Work Complet
-            else
-            $update_job_repair_order = JobOrderRepairOrder::where('id',$request->job_repair_order_id)->update(['status_id' => 8183]); // Work inpro
+			//Update all mechanic work in joborder repair order
+			$mechanic_work = RepairOrderMechanic::where('job_order_repair_order_id', $request->job_repair_order_id)->select('status_id')->get()->toArray();
+			$mechanic_status = 0;
+			$jobcard_status = 0;
+			foreach ($mechanic_work as $key => $mechanic_work_status) {
+				if ($mechanic_work_status['status_id'] != 8263) {
+					$mechanic_status = $mechanic_status + 1;
+				}
+				if ($mechanic_work_status['status_id'] == 8261) {
+					$jobcard_status = $jobcard_status + 1;
+				}
+			}
+			if ($mechanic_status == 0) {
+				$update_job_repair_order = JobOrderRepairOrder::where('id', $request->job_repair_order_id)->update(['status_id' => 8185]);
+			}
+			//Work Complet
+			else {
+				$update_job_repair_order = JobOrderRepairOrder::where('id', $request->job_repair_order_id)->update(['status_id' => 8183]);
+			}
+			// Work inpro
 
-            //Update JobCard
-            $job_order_repair_order_details = JobOrderRepairOrder::select('job_order_id')->where('id',$request->job_repair_order_id)->first();
-            if($jobcard_status != 0)
-            $update_job_card = Jobcard::where('job_order_id',$job_order_repair_order_details->job_order_id)->update(['status_id' => 8221]);
+			//Update JobCard
+			$job_order_repair_order_details = JobOrderRepairOrder::select('job_order_id')->where('id', $request->job_repair_order_id)->first();
+			if ($jobcard_status != 0) {
+				$update_job_card = Jobcard::where('job_order_id', $job_order_repair_order_details->job_order_id)->update(['status_id' => 8221]);
+			}
 
-            //Mechanic Log Activity
-            $machanic_time_log_activity = MechanicTimeLog::where('repair_order_mechanic_id',$repair_order_mechanic->id)->get()->toArray();
+			//Mechanic Log Activity
+			$machanic_time_log_activity = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->get()->toArray();
 
-            //Stat Date and time and end date and time
-            $work_start_date_time = MechanicTimeLog::where('repair_order_mechanic_id',$repair_order_mechanic->id)->select('start_date_time')->orderby('id','ASC')->get()->toArray();
-            $work_end_date_time = MechanicTimeLog::where('repair_order_mechanic_id',$repair_order_mechanic->id)->select('end_date_time')->orderby('id','DESC')->get()->toArray();
-             
-             //Estimation Working Hours
-            $estimation_work_hours = RepairOrder::select('hours')
-            ->leftJoin('job_order_repair_orders','job_order_repair_orders.repair_order_id','repair_orders.id')
-            ->where('job_order_repair_orders.id',$request->job_repair_order_id)->get()->toArray();
-            
-            //Total Working hours of mechanic
-            $mechanic_time_log_check = MechanicTimeLog::select('start_date_time','end_date_time')->where('repair_order_mechanic_id',$repair_order_mechanic->id)->get()->toArray();
+			//Stat Date and time and end date and time
+			$work_start_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->select('start_date_time')->orderby('id', 'ASC')->get()->toArray();
+			$work_end_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->select('end_date_time')->orderby('id', 'DESC')->get()->toArray();
 
-               $total_hours = 0;
-             foreach ($mechanic_time_log_check as $key => $mechanic_time_log_check){
-             	$date1 = $mechanic_time_log_check['start_date_time'];
-             	$date2 = $mechanic_time_log_check['end_date_time'];
-             	$seconds = strtotime($date2) - strtotime($date1);
-                $hours = $seconds / 60 / 60;
-                $total_hours = $hours+$total_hours;
-                 }
+			//Estimation Working Hours
+			$estimation_work_hours = RepairOrder::select('hours')
+				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')
+				->where('job_order_repair_orders.id', $request->job_repair_order_id)->get()->toArray();
+
+			//Total Working hours of mechanic
+			$mechanic_time_log_check = MechanicTimeLog::select('start_date_time', 'end_date_time')->where('repair_order_mechanic_id', $repair_order_mechanic->id)->get()->toArray();
+
+			$total_hours = 0;
+			foreach ($mechanic_time_log_check as $key => $mechanic_time_log_check) {
+				$date1 = $mechanic_time_log_check['start_date_time'];
+				$date2 = $mechanic_time_log_check['end_date_time'];
+				$seconds = strtotime($date2) - strtotime($date1);
+				$hours = $seconds / 60 / 60;
+				$total_hours = $hours + $total_hours;
+			}
 
 			DB::commit();
 			return response()->json([
