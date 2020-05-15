@@ -704,6 +704,7 @@ class JobCardController extends Controller {
 			if (!empty($job_card_time_log->jobOrder->JobOrderRepairOrders)) {
 				foreach ($job_card_time_log->jobOrder->JobOrderRepairOrders as $key => $job_card_repair_order) {
 					$duration = [];
+					$job_card_repair_order->assigned_to_employee_count = count($job_card_repair_order->repairOrderMechanics);
 					if ($job_card_repair_order->repairOrderMechanics) {
 						foreach ($job_card_repair_order->repairOrderMechanics as $key1 => $repair_order_mechanic) {
 							if ($repair_order_mechanic->mechanicTimeLogs) {
@@ -714,14 +715,18 @@ class JobCardController extends Controller {
 									if ($time2 < $time1) {
 										$time2 += 86400;
 									}
+									//PERTICULAR MECHANIC DATE
 									$mechanic_time_log->date = date('d/m/Y', strtotime($mechanic_time_log->start_date_time));
+
 									//PERTICULAR MECHANIC STATR TIME
 									$mechanic_time_log->start_time = date('h:i:s a', strtotime($mechanic_time_log->start_date_time));
+
 									//PERTICULAR MECHANIC END TIME
 									$mechanic_time_log->end_time = date('h:i:s a', strtotime($mechanic_time_log->end_date_time));
 
 									//TIME DURATION DIFFERENCE PERTICULAR MECHANIC DURATION
 									$duration_difference[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
 									//TOTAL DURATION FOR PARTICLUAR EMPLOEE
 									$duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
 
