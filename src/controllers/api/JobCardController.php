@@ -8,7 +8,6 @@ use Abs\GigoPkg\JobOrder;
 use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
 use Abs\EmployeePkg\SkillLevel;
-use Abs\GigoPkg\JobCard;
 use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\RepairOrder;
 use App\Attachment;
