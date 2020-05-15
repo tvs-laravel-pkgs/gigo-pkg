@@ -9,6 +9,7 @@ use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
 use App\Attachment;
 use App\Employee;
+use App\Config;
 use App\Http\Controllers\Controller;
 use App\Vendor;
 use Auth;
@@ -17,6 +18,7 @@ use File;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
+use Carbon\Carbon;
 
 class JobCardController extends Controller {
 	public $successStatus = 200;
@@ -498,12 +500,7 @@ class JobCardController extends Controller {
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanic',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.status',
-				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanicTimeLogs'
-				/*=>function($q){
-					$q->select(DB::raw('
-						DATEDIFF(mechanic_time_logs.start_date_time,mechanic_time_logs.end_date_time) as duration'));
-				}*/
-				,
+				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanicTimeLogs',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanicTimeLogs.status',
 
 			])
@@ -545,11 +542,125 @@ class JobCardController extends Controller {
 				}
 			}
 			//dd($labour_review_data);
+
+			$status_ids=Config::where('config_type_id',40)
+			->where('id','!=',8185)
+			->pluck('id')->toArray();
+			if($job_card_repair_order_details){
+				$save_enabled= true;
+				foreach ($job_card_repair_order_details as $key => $job_card_repair_order) {
+					if (in_array($job_card_repair_order->status_id, $status_ids)) {
+						$save_enabled= false;
+					}
+				}	
+			}
+
 			return response()->json([
 				'success' => true,
 				'labour_review_data' => $labour_review_data,
+				'save_enabled' =>$save_enabled,
 			]);
 
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function LabourReviewSave(Request $request){
+		$job_card = JobCard::find($request->job_card_id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Card Not Found!',
+				]);
+			}
+			//UPDATE JOB CARD STATUS 
+			$job_card = JobCard::where('id', $job_card->id)->update(['status_id' => 8223, 'updated_by' => Auth::user()->id, 'updated_at' => Carbon::now()]); //Ready for Billing	
+
+			return response()->json([
+				'success' => true,
+				'message' =>'Job Card Updated successfully!!',
+			]);	
+
+	}
+
+	public function saveAddtionalRotPart(Request $request) {
+		//dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_card_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
+				'job_card_returnable_items.*.item_description' => [
+					'required',
+					'string',
+					'max:191',
+				],
+				'job_card_returnable_items.*.item_make' => [
+					'nullable',
+					'string',
+					'max:191',
+				],
+				'job_card_returnable_items.*.item_model' => [
+					'nullable',
+					'string',
+					'max:191',
+				],
+				'job_card_returnable_items.*.item_serial_no' => [
+					'nullable',
+					'string',	
+					'unique:job_card_returnable_items,item_serial_no,' . $request->id . ',id,job_card_id,' .  $request->job_card_id,	
+				],
+				'job_card_returnable_items.*.qty' => [
+					'required',
+					'integer',
+					'regex:/^\d+(\.\d{1,2})?$/',
+				],
+				'job_card_returnable_items.*.remarks' => [
+					'nullable',
+					'string',
+					'max:191',
+				],
+				
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+			if (isset($request->job_card_returnable_items) && count($request->job_card_returnable_items) > 0) {
+				//Inserting Job order parts
+				//issue: saravanan - is_recommended_by_oem save missing. save default 0.
+				foreach ($request->job_card_returnable_items as $key => $job_card_returnable_item) {
+					$job_order_part = JobOrderPart::firstOrNew([
+						'part_id' => $part['part_id'],
+						'job_order_id' => $request->job_order_id,
+					]);
+					$job_order_part->fill($part);
+					$job_order_part->job_order_id = $request->job_order_id;
+					$job_order_part->split_order_type_id = NULL;
+					$job_order_part->amount = $part['qty'] * $part['rate'];
+					$job_order_part->status_id = 8200; //Customer Approval Pending
+					$job_order_part->save();
+				}
+			}
+			
+			DB::commit();
+			return response()->json([
+				'success' => true,
+				'message' => 'Returnable items added successfully',
+			]);
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,

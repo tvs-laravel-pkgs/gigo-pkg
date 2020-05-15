@@ -120,5 +120,12 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//JOB CARD LABOUR REVIEW
 		Route::get('get-labour-review/{id}', 'JobCardController@getLabourReviewData');
 
+		//JOB CARD RETURNABLE ITEM SAVE
+		Route::post('labour-review-save', 'JobCardController@LabourReviewSave');
+
+
+		//JOB CARD RETURNABLE ITEM SAVE
+		Route::post('job-card-returnable-item-save', 'JobCardController@ReturnableItemSave');
+
 	});
 });
