@@ -41,7 +41,7 @@ class VehicleInwardController extends Controller {
 	public function getVehicleInwardList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [
-				'employee_id' => [
+				'floor_adviser_id' => [
 					'required',
 					'exists:employees,id',
 					'integer',
@@ -81,12 +81,13 @@ class VehicleInwardController extends Controller {
 				->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
 				//->whereIn('gate_logs.id', $gate_log_ids)
 				->where(function ($query) use ($request) {
-					if (isset($request->search_key)) {
+					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
 					}
 				})
-				->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '".$request->employee_id."')")
+				//Gate In Completed =>8120
+				->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '".$request->floor_adviser_id."')")
 				->groupBy('gate_logs.id')
 				->get();
 

@@ -117,5 +117,8 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
 
+		//JOB CARD LABOUR REVIEW
+		Route::get('get-labour-review/{id}', 'JobCardController@getLabourReviewData');
+
 	});
 });
