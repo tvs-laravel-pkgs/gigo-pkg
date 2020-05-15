@@ -114,5 +114,8 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
 
+		//Save Job Card View
+		Route::post('save-job-card-view', 'JobCardController@saveJobCardView');
+
 	});
 });
