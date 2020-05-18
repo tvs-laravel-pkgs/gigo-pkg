@@ -2,6 +2,14 @@
 
 Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'prefix' => 'gigo-pkg'], function () {
 
+
+	//Pause Work Reason
+	Route::get('/pause-work-reason/get-list', 'PauseWorkReasonController@getPauseWorkReasonList')->name('getPauseWorkReasonList');
+	Route::get('/pause-work-reason/get-form-data', 'PauseWorkReasonController@getPauseWorkReasonFormData')->name('getPauseWorkReasonFormData');
+	Route::post('/pause-work-reason/save', 'PauseWorkReasonController@savePauseWorkReason')->name('savePauseWorkReason');
+	Route::get('/pause-work-reason/delete', 'PauseWorkReasonController@deletePauseWorkReason')->name('deletePauseWorkReason');
+	Route::get('/pause-work-reason/get-filter-data', 'PauseWorkReasonController@getPauseWorkReasonFilterData')->name('getPauseWorkReasonFilterData');
+
 	//Service Type
 	Route::get('/service-type/get-list', 'ServiceTypeController@getServiceTypeList')->name('getServiceTypeList');
 	Route::get('/service-type/get-form-data', 'ServiceTypeController@getServiceTypeFormData')->name('getServiceTypeFormData');

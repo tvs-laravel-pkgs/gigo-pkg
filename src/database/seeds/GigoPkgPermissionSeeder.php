@@ -13,6 +13,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 	public function run() {
 		$permissions = [
 
+			//Pause Work Reason
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'pause-work-reasons',
+				'display_name' => 'Pause Work Reason',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'pause-work-reasons',
+				'name' => 'add-pause-work-reason',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'pause-work-reasons',
+				'name' => 'edit-pause-work-reason',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'pause-work-reasons',
+				'name' => 'delete-pause-work-reason',
+				'display_name' => 'Delete',
+			],
+
 			//Service Types
 			[
 				'display_order' => 99,

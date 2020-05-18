@@ -1,20 +1,20 @@
-app.component('gateLogList', {
-    templateUrl: gate_log_list_template_url,
+app.component('pauseWorkReasonList', {
+    templateUrl: pause_work_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_gate_log').focus();
+        $('#pause_work_reason_list').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('gate-logs')) {
-            window.location = "#!/permission-denied";
+        if (!self.hasPermission('pause-work-reasons')) {
+            window.location = "#!/page-permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-gate-log');
+        self.add_permission = self.hasPermission('pause-work-reasons');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#gate_logs_list').DataTable({
+        var dataTable = $('#pause_work_reason_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -33,7 +33,7 @@ app.component('gateLogList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_gate_log').val(state_save_val.search.search);
+                    $('#search_pause_wrk_reason').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -43,24 +43,19 @@ app.component('gateLogList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getGateLogList'],
+                url: laravel_routes['getPauseWorkReasonList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
-                    d.name = $("#name").val();
-                    d.description = $("#description").val();
+                    d.name = $('#name').val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'gate_logs.short_name' },
-                { data: 'name', name: 'gate_logs.name' },
-                { data: 'description', name: 'gate_logs.description' },
+                { data: 'name', name: 'pause_work_reasons.name' ,searchable: true },
                 { data: 'status', name: '' },
-
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -73,53 +68,49 @@ app.component('gateLogList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_gate_log').val('');
-            $('#gate_logs_list').DataTable().search('').draw();
+            $('#search_pause_wrk_reason').val('');
+            $('#pause_work_reason_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#gate_logs_list').DataTable().ajax.reload();
+            $('#pause_work_reason_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#gate_logs_list').dataTable();
-        $("#search_gate_log").keyup(function() {
+        var dataTables = $('#pause_work_reason_list').dataTable();
+        $("#search_pause_wrk_reason").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
-        $scope.deleteGateLog = function($id) {
-            $('#gate_log_id').val($id);
+        $scope.deletePauseWorkReason = function($id) {
+            $('#pause_work_reason_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#gate_log_id').val();
+            $id = $('#pause_work_reason_id').val();
             $http.get(
-                laravel_routes['deleteGateLog'], {
+                laravel_routes['deletePauseWorkReason'], {
                     params: {
                         id: $id,
                     }
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Gate Log Deleted Successfully');
-                    $('#gate_logs_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/gate-log/list');
+                    custom_noty('success', 'Pause Work Reason Deleted Successfully');
+                    $('#pause_work_reason_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/gigo-pkg/pasuse-work-reason/list');
                 }
             });
         }
 
-        // FOR FILTER
+        //FOR FILTER
         $http.get(
-            laravel_routes['getGateLogFilter']
+            laravel_routes['getPauseWorkReasonFilterData']
         ).then(function(response) {
-            // console.log(response);
             self.extras = response.data.extras;
         });
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
         $scope.clearSearchTerm = function() {
-            $scope.searchTerm = '';
-            $scope.searchTerm1 = '';
-            $scope.searchTerm2 = '';
             $scope.searchTerm3 = '';
         };
         /* Modal Md Select Hide */
@@ -128,143 +119,79 @@ app.component('gateLogList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+       
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
             dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-            dataTables.fnFilter();
+            $('#pause_work_reason-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
-            dataTables.fnFilter();
         }
+
         $rootScope.loading = false;
     }
 });
-
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-
-app.component('gateLogForm', {
-    templateUrl: gate_log_form_template_url,
+app.component('pauseWorkReasonForm', {
+    templateUrl: pause_work_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         $("input:text:visible:first").focus();
-        // self.hasPermission = HelperService.hasPermission;
-        // if (!self.hasPermission('add-gate-log') && !self.hasPermission('edit-gate-log')) {
-        //     window.location = "#!/permission-denied";
-        //     return false;
-        // }
-        $scope.hasPerm = HelperService.hasPerm;
-        self.user = $scope.user = HelperService.getLoggedUser();
-
-        if (!HelperService.isLoggedIn()) {
-            $location.path('/');
-            return;
+        self.hasPermission = HelperService.hasPermission;
+        if (!self.hasPermission('add-pause-work-reason') || !self.hasPermission('edit-pause-work-reason')) {
+            window.location = "#!/page-permission-denied";
+            return false;
         }
         self.angular_routes = angular_routes;
-
         $http.get(
-            laravel_routes['getGateLogFormData'], {
+            laravel_routes['getPauseWorkReasonFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
             }
         ).then(function(response) {
-            self.gate_log = response.data.gate_log;
-            self.extras = response.data.extras;
+            self.pause_work_reason = response.data.pause_work_reason;
             self.action = response.data.action;
             $rootScope.loading = false;
-            // if (self.action == 'Edit') {
-            //     if (self.gate_log.deleted_at) {
-            //         self.switch_value = 'Inactive';
-            //     } else {
-            //         self.switch_value = 'Active';
-            //     }
-            // } else {
-            //     self.switch_value = 'Active';
-            // }
+            if (self.action == 'Edit') {
+                if (self.pause_work_reason.deleted_at) {
+                    self.switch_value = 'Inactive';
+                } else {
+                    self.switch_value = 'Active';
+                }
+            } else {
+                self.switch_value = 'Active';
+            }
         });
 
-        //Save Form Data             
-        var form_id = '#gate_log_form';
+        //Save Form Data 
+        var form_id = '#pause_work_reason';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'number': {
+                'name': {
                     required: true,
                     minlength: 3,
                     maxlength: 191,
                 },
-                'gate_in_date': {
-                    required: true,
-                },
-                'driver_name': {
-                    // 'nullable',
-                    minlength: 3,
-                    maxlength: 191,
-                },
-                'contact_number': {
-                    number: true,
-                    minlength: 10,
-                    maxlength: 10,
-                },
-                'vehicle_id': {
-                    // 'nullable',
-                    required: true,
-                },
-                'km_reading': {
-                    required: true,
-                    max: 10,
-                    // regex: /^-?[0-9]+(?:\.[0-9]{1,2})?$/,
-                },
-                'reading_type_id': {
-                    // 'nullable',
-                },
-                'gate_in_remarks': {
-                    minlength: 3,
-                    maxlength: 191,
-                    // 'nullable',
-                }
             },
             messages: {
-                'number': {
+                'name': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 191 Characters',
                 },
-                'driver_name': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 191 Characters',
-                },
-                'contact number': {
-                    minlength: 'Minimum 10 Number',
-                    maxlength: 'Maximum 10 Number',
-                },
-                'km_reading': {
-                    // minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 10 Number',
-                },
-                'gate_in_remarks': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 191 Characters',
-                }
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
             },
-
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: base_url + '/api/gigo-pkg/save-vehicle-gate-in-entry',
-                        // laravel_routes['saveGateLog'],
+                        url: laravel_routes['savePauseWorkReason'],
                         method: "POST",
                         data: formData,
                         processData: false,
@@ -273,8 +200,7 @@ app.component('gateLogForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            // $location.path('/gigo-pkg/gate-log/list');
-                            $location.reload(true);
+                            $location.path('/gigo-pkg/pasuse-work-reason/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -286,8 +212,7 @@ app.component('gateLogForm', {
                                 custom_noty('error', errors);
                             } else {
                                 $('.submit').button('reset');
-                                // $location.path('/gigo-pkg/gate-log/list');
-                                $location.reload(true);
+                                $location.path('/gigo-pkg/pasuse-work-reason/list');
                                 $scope.$apply();
                             }
                         }

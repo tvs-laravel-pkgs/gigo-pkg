@@ -6,7 +6,9 @@ use App\GateLog;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use App\Config;
 use Entrust;
+use Abs\GigoPkg\Vehicle;
 use Illuminate\Http\Request;
 use Validator;
 use Yajra\Datatables\Datatables;
@@ -75,6 +77,10 @@ class GateLogController extends Controller {
 			$gate_log = GateLog::withTrashed()->find($id);
 			$action = 'Edit';
 		}
+		$this->data['extras'] = [
+			'vehicle_list' => collect(Vehicle::select('id','registration_number')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'registration_number' => 'Select Registration Number']),
+			'reading_type_list' => collect(Config::select('id','name')->where('config_type_id',43)->get())->prepend(['id' => '', 'name' => 'Select Reading Type']),
+			];
 		$this->data['success'] = true;
 		$this->data['gate_log'] = $gate_log;
 		$this->data['action'] = $action;

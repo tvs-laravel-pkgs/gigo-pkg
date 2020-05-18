@@ -114,6 +114,10 @@ class JobOrder extends Model {
 		return $this->belongsTo('App\Employee', 'floor_adviser_id')->where('company_id', Auth::user()->company_id);
 	}
 
+	public function jobCard() {
+		return $this->hasOne('App\JobCard', 'job_order_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
