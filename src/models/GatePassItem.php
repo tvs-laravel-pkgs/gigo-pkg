@@ -14,4 +14,8 @@ class GatePassItem extends Model {
 	protected $fillable =
 		["gate_pass_id", "item_description", "item_make", "item_model", "item_serial_no", "qty", "remarks"]
 	;
+
+	public function attachments() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 231)->where('attachment_type_id', 238);
+	}
 }

@@ -139,5 +139,19 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Material-GatePass Items Save
 		Route::post('save-material-gate-pass-item', 'JobCardController@saveMaterialGatePassItem');
 
+		//Material-GatePass Details List
+		Route::post('get-material-gate-pass-list', 'MaterialGatePassController@getMaterialGatePass');
+
+		//Material-GatePass Details List
+		Route::get('get-material-gate-pass-detail/{id}', 'MaterialGatePassController@getMaterialGatePassViewData');
+
+		//Material-GatePass Gate in and out 
+		Route::post('save-gate-in-out-material-gate-pass', 'MaterialGatePassController@materialGateInAndOut');
+		//Save Material Gate Out Confirm
+		Route::post('save-gate-out-confirm-material-gate-pass', 'MaterialGatePassController@materialGateOutConfirm');
+		//Resend OTP for Material Gate Pass
+		Route::get('material-gate-out-confirm/{id}', 'MaterialGatePassController@materialCustomerOtp');
+
+
 	});
 });
