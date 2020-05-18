@@ -29,11 +29,11 @@ class Vehicle extends Model {
 		return $this->hasMany('App\VehicleOwner', 'vehicle_id', 'id');
 	}
 	public function vehicleCurrentOwner() {
-		return $this->hasMany('App\VehicleOwner', 'vehicle_id')->orderBy('from_date','DESC')->limit(1);
+		return $this->hasMany('App\VehicleOwner', 'vehicle_id')->orderBy('from_date', 'DESC')->limit(1);
 	}
 
 	public function vehicleModel() {
-		return $this->belongsTo('App\vehicleModel', 'vehicle_model_id');
+		return $this->belongsTo('App\vehicleModel', 'model_id');
 	}
 
 	public static function createFromObject($record_data) {
