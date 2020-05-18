@@ -67,6 +67,10 @@ class JobCard extends Model {
 		return $this->hasMany('App\GatePass', 'job_card_id', 'id');
 	}
 
+	public function jobCardReturnableItems() {
+		return $this->hasMany('Abs\GigoPkg\JobCardReturnableItem');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];

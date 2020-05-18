@@ -1180,7 +1180,7 @@ class JobCardController extends Controller {
 	}
 
 	// JOB CARD VIEW Save
-	public function saveJobCardView(Request $request) {
+	public function saveMyJobCard(Request $request) {
 		//dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
@@ -1218,7 +1218,8 @@ class JobCardController extends Controller {
 				$mechanic_time_log->created_by_id = Auth::user()->id;
 				$mechanic_time_log->save();
 			} else {
-				$mechanic_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->whereNull('end_date_time')->update(['end_date_time' => Carbon::now(), 'status_id' => $request->status_id]);
+				$reason_id = $request->status_id == 8263 ? $request->reason_id : '';
+				$mechanic_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->whereNull('end_date_time')->update(['end_date_time' => Carbon::now(), 'reason_id'=>$reason_id,'status_id' => $request->status_id]);
 			}
 
 			//Update Status
