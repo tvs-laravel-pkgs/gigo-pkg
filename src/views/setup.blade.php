@@ -87,6 +87,20 @@
 	        title: 'Edit Quote Type',
 	    }).
 
+	    //Pause Work Reason Master
+	     when('/gigo-pkg/pasuse-work-reason/list', {
+	        template: '<pause-work-reason-list></pause-work-reason-list>',
+	        title: 'Pause Work',
+	    }).
+	    when('/gigo-pkg/pause-work-reason/add', {
+	        template: '<pause-work-reason-form></pause-work-reason-form>',
+	        title: 'Add Pause Work',
+	    }).
+	    when('/gigo-pkg/pause-work-reason/edit/:id', {
+	        template: '<pause-work-reason-form></pause-work-reason-form>',
+	        title: 'Edit Pause Work',
+	    }).
+
 	    //Vehicle Master
 	     when('/gigo-pkg/vehicle/list', {
 	        template: '<vehicle-list></vehicle-list>',
@@ -100,6 +114,8 @@
 	        template: '<vehicle-form></vehicle-form>',
 	        title: 'Edit Vehicle',
 	    });
+
+
 
 	}]);
 
@@ -129,6 +145,10 @@
     var vehicle_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/list.html')}}";
     var vehicle_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/form.html')}}";
 
+    //Pause Work Reason 
+    var pause_work_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/list.html')}}";
+    var pause_work_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/form.html')}}";
+
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/controller.js')}}"></script>
@@ -136,6 +156,7 @@
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-order-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/controller.js')}}"></script>
 
 
 <script type='text/javascript'>

@@ -120,7 +120,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
 
-		Route::post('save-job-card-view', 'JobCardController@saveJobCardView');
+		Route::post('save-my-job-card', 'JobCardController@saveMyJobCard');
 
 		//JOB CARD LABOUR REVIEW
 		Route::get('get-labour-review/{id}', 'JobCardController@getLabourReviewData');
