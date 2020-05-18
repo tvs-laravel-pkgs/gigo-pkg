@@ -13,6 +13,8 @@ use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
 use Abs\GigoPkg\JobCardReturnableItem;
+use Abs\GigoPkg\PauseWorkReason;
+use Abs\StatusPkg\Status;
 use App\Attachment;
 use App\Employee;
 use App\Config;
@@ -432,7 +434,7 @@ class JobCardController extends Controller {
 	}
 
 	// JOB CARD VIEW DATA
-	public function getJobCardViewData(Request $request) {
+	public function getMyJobCardData(Request $request) {
 		try {
 			// dd($job_card_id);
 			$job_card = JobCard::find($request->job_card_id);
@@ -443,6 +445,9 @@ class JobCardController extends Controller {
 					'error' => 'Invalid Job Order!',
 				]);
 			}
+
+			$pass_work_reasons = PauseWorkReason::where('company_id', Auth::user()->company_id)
+				->get();
 
 			$job_order_repair_order_ids = RepairOrderMechanic::where('mechanic_id', $request->mechanic_id)
 				->pluck('job_order_repair_order_id')
@@ -462,6 +467,7 @@ class JobCardController extends Controller {
 				'success' => true,
 				'job_card' => $job_card,
 				'job_order_repair_orders' => $job_order_repair_orders,
+				'pass_work_reasons' => $pass_work_reasons
 			]);
 
 		} catch (Exception $e) {
@@ -990,7 +996,7 @@ class JobCardController extends Controller {
 
 	//Material GatePass Detail Save
 	public function saveMaterialGatePassDetail(Request $request) {
-		// dd($request->all());
+		 // dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -1038,12 +1044,18 @@ class JobCardController extends Controller {
 				]);
 			}
 
+			$status = Status::where('type_id', 8451)->where('name', 'Gate Out Pending')->first();
+			if($status){
+				return response()->json([
+					'success' => false,
+					'error' => 'Gate Out Pending Status Not Found!',
+				]);
+			}
 			$gate_pass = GatePass::firstOrNew([
 				'job_card_id' => $request->job_card_id,
 			]);
 			$gate_pass->type_id = 8281; //Material Gate Pass
-			// $gate_pass->company_id = Auth::user()->company_id;
-			// $gate_pass->created_by = Auth::user()->id;
+            $gate_pass->status_id = $status->id; //Gate Out Pending
 			$gate_pass->fill($request->all());
 			$gate_pass->save();
 

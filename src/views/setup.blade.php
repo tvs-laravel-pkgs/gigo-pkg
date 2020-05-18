@@ -1,4 +1,3 @@
-
 @if(config('gigo-pkg.DEV'))
     <?php $gigo_pkg_prefix = '/packages/abs/gigo-pkg/src';?>
 @else
@@ -631,7 +630,7 @@
     var gate_log_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-log/card-list.html')}}';
     var gate_log_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/gate-log-modal-form.html')}}';
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-log/controller.js')}}'></script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-log/controller.js')}}"></script>
 
 
 <script type='text/javascript'>

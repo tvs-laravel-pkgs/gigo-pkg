@@ -4,7 +4,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Route::post('punch/status', 'PunchController@status');
 
 		//SAVE GATE IN ENTRY
-		Route::post('save-vehicle-gate-in-entry', 'VehicleGatePassController@saveVehicleGateInEntry');
+		Route::post('save-vehicle-gate-in-entry', 'VehicleGatePassController@saveVehicleGateInEntry')->middleware('auth:api');
 
 		//VEHICLE INWARD
 		Route::post('get-vehicle-inward-list', 'VehicleInwardController@getVehicleInwardList');
@@ -114,8 +114,8 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		// JOB CARD MATRIAL GATE PASS VIEW
 		Route::get('view-material-gate-pass/{job_card_id}', 'JobCardController@viewMetirialGatePass');
 
-		// JOB CARD VIEW
-		Route::post('get-job-card-view', 'JobCardController@getJobCardViewData');
+		// MY JOB CARD DATA
+		Route::post('get-my-job-card-data', 'JobCardController@getMyJobCardData');
 
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');

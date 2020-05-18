@@ -1,21 +1,21 @@
-<!-- Content Wrap -->
+Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-inner">
             <div class="page-header-content-left">
-                <div class="page-header-content button-block">
+                <!-- <div class="page-header-content button-block">
                     <a href="#!/gigo-pkg/gate-log/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
-                    </a>
-                </div><!-- Page Header Content -->
+                    </a> -->
+                <!-- </div>Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Gate Log</b></h1>
+                    <h1 class="title"><b>{{$ctrl.action}} Gate In Vehicle</b></h1>
                     <p class="subtitle">
                         Masters /
-                        <a href="#!/gigo-pkg/gate-log/list">
+                        <!-- <a href="#!/gigo-pkg/gate-log/list">
                             Gate Logs
-                        </a> /
+                        </a> / -->
                         {{$ctrl.action}}
                     </p>
                 </div><!-- Page Header Content -->
@@ -51,27 +51,90 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Short Name
+                                                    Number
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.gate_log.short_name" name="short_name" placeholder="Enter Short Name" autofocus />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.gate_log.number" name="number" placeholder="Enter Number" autofocus />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>
+                                                    Gate in date
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <div class="input-group date" data-provide="datepicker">
+                                                    <input type="text" class="form-control required" placeholder="Select Date" name="gate_in_date" value="{{$ctrl.gate_in_date}}" />
+                                                    <div class="input-group-addon">
+                                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                    </div>
+                                                </div><!-- Input Group -->
+                                            </div><!-- Field -->
+                                        </div><!-- column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Driver Name
+                                                </label>
+                                                <input type="text" class="form-control" ng-model="$ctrl.gate_log.driver_name" name="driver_name" placeholder="Enter Driver Name" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>
+                                                    Mobile Number
+                                                </label>
+                                                <input type="text" name="contact_number" ng-model='$ctrl.gate_log.contact_number' class="form-control " placeholder="Enter Mobile Number" autocomplete="off">
+                                                <!-- <div class="contact_number_error"></div> -->
+                                            </div><!-- Field -->
+                                        </div><!-- column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Vehicle Registration Number
+                                                    <sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.gate_log.vehicle_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Vehicle Registration Number">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Vehicle Registration Number" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="vehicle.id" ng-repeat="vehicle in $ctrl.extras.vehicle_list | filter:searchTerm">{{vehicle.registration_number}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" name="vehicle_id" id="vehicle_id" value="{{$ctrl.gate_log.vehicle_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    KM Reading
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <input type="text" class="form-control required" ng-model="$ctrl.gate_log.km_reading" name="km_reading" placeholder="Enter Kilometer Reading" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Name
-                                                    <sup class="mandatory">*</sup>
+                                                    KM Reading Type
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.gate_log.name" name="name" placeholder="Enter Name" />
-                                            </div><!-- Feild -->
+                                                <md-select ng-model="$ctrl.gate_log.reading_type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Reading Type">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Reading Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="reading_type.id" ng-repeat="reading_type in $ctrl.extras.reading_type_list | filter:searchTerm">{{reading_type.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control" name="reading_type_id" id="reading_type_id" value="{{$ctrl.gate_log.reading_type_id}}">
+                                            </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Description
+                                                    Gate In Remarks
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.gate_log.description" name="description" placeholder="Enter Name" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.gate_log.gate_in_remarks" name="gate_in_remarks" placeholder="Enter Gate In Remarks" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -105,4 +168,4 @@
             </div><!-- Page Form -->
         </form>
     </div><!-- Page Main Content -->
-</div><!-- Content Wrap -->
+</div><!-- Content Wrap

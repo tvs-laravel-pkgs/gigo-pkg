@@ -8,7 +8,7 @@ app.component('gateLogList', {
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('gate-logs')) {
-            window.location = "#!/page-permission-denied";
+            window.location = "#!/permission-denied";
             return false;
         }
         self.add_permission = self.hasPermission('add-gate-log');
@@ -155,12 +155,21 @@ app.component('gateLogForm', {
     templateUrl: gate_log_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
-        self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-gate-log') || !self.hasPermission('edit-gate-log')) {
-            window.location = "#!/page-permission-denied";
-            return false;
+        $("input:text:visible:first").focus();
+        // self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-gate-log') && !self.hasPermission('edit-gate-log')) {
+        //     window.location = "#!/permission-denied";
+        //     return false;
+        // }
+        $scope.hasPerm = HelperService.hasPerm;
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        if (!HelperService.isLoggedIn()) {
+            $location.path('/');
+            return;
         }
         self.angular_routes = angular_routes;
+
         $http.get(
             laravel_routes['getGateLogFormData'], {
                 params: {
@@ -169,61 +178,93 @@ app.component('gateLogForm', {
             }
         ).then(function(response) {
             self.gate_log = response.data.gate_log;
+            self.extras = response.data.extras;
             self.action = response.data.action;
             $rootScope.loading = false;
-            if (self.action == 'Edit') {
-                if (self.gate_log.deleted_at) {
-                    self.switch_value = 'Inactive';
-                } else {
-                    self.switch_value = 'Active';
-                }
-            } else {
-                self.switch_value = 'Active';
-            }
+            // if (self.action == 'Edit') {
+            //     if (self.gate_log.deleted_at) {
+            //         self.switch_value = 'Inactive';
+            //     } else {
+            //         self.switch_value = 'Active';
+            //     }
+            // } else {
+            //     self.switch_value = 'Active';
+            // }
         });
 
-        //Save Form Data 
+        //Save Form Data             
         var form_id = '#gate_log_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
+                'number': {
                     required: true,
                     minlength: 3,
-                    maxlength: 32,
+                    maxlength: 191,
                 },
-                'name': {
+                'gate_in_date': {
                     required: true,
-                    minlength: 3,
-                    maxlength: 128,
                 },
-                'description': {
+                'driver_name': {
+                    // 'nullable',
                     minlength: 3,
-                    maxlength: 255,
+                    maxlength: 191,
+                },
+                'contact_number': {
+                    number: true,
+                    minlength: 10,
+                    maxlength: 10,
+                },
+                'vehicle_id': {
+                    // 'nullable',
+                    required: true,
+                },
+                'km_reading': {
+                    required: true,
+                    max: 10,
+                    // regex: /^-?[0-9]+(?:\.[0-9]{1,2})?$/,
+                },
+                'reading_type_id': {
+                    // 'nullable',
+                },
+                'gate_in_remarks': {
+                    minlength: 3,
+                    maxlength: 191,
+                    // 'nullable',
                 }
             },
             messages: {
-                'short_name': {
+                'number': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 32 Characters',
+                    maxlength: 'Maximum 191 Characters',
                 },
-                'name': {
+                'driver_name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
+                    maxlength: 'Maximum 191 Characters',
                 },
-                'description': {
+                'contact number': {
+                    minlength: 'Minimum 10 Number',
+                    maxlength: 'Maximum 10 Number',
+                },
+                'km_reading': {
+                    // minlength: 'Minimum 3 Characters',
+                    maxlength: 'Maximum 10 Number',
+                },
+                'gate_in_remarks': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
+                    maxlength: 'Maximum 191 Characters',
                 }
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
             },
+
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveGateLog'],
+                        url: base_url + '/api/gigo-pkg/save-vehicle-gate-in-entry',
+                        // laravel_routes['saveGateLog'],
                         method: "POST",
                         data: formData,
                         processData: false,
@@ -232,7 +273,8 @@ app.component('gateLogForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/gate-log/list');
+                            // $location.path('/gigo-pkg/gate-log/list');
+                            $location.reload(true);
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -244,7 +286,8 @@ app.component('gateLogForm', {
                                 custom_noty('error', errors);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/gigo-pkg/gate-log/list');
+                                // $location.path('/gigo-pkg/gate-log/list');
+                                $location.reload(true);
                                 $scope.$apply();
                             }
                         }
