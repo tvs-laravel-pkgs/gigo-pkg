@@ -4,8 +4,8 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Route::post('punch/status', 'PunchController@status');
 
 		//SAVE GATE IN ENTRY
-		Route::post('save-vehicle-gate-in-entry', 'VehicleGatePassController@saveVehicleGateInEntry')->middleware('auth:api');
-		Route::post('gate-in-vehicle/save', 'VehicleGatePassController@saveVehicleGateInEntry');
+		Route::post('save-vehicle-gate-in-entry', 'VehicleGatePassController@saveVehicleGateInEntry');
+		Route::post('gate-log/save', 'VehicleGatePassController@saveVehicleGateInEntry');
 
 		//VEHICLE GATE PASS LIST
 		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');
@@ -154,7 +154,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Save Material Gate Out Confirm
 		Route::post('save-gate-out-confirm-material-gate-pass', 'MaterialGatePassController@materialGateOutConfirm');
 		//Resend OTP for Material Gate Pass
-		Route::get('material-gate-out-confirm/{id}', 'MaterialGatePassController@materialCustomerOtp');
+		Route::get('material-gate-out-otp-resend/{id}', 'MaterialGatePassController@materialCustomerOtp');
 
 
 	});
