@@ -36,11 +36,17 @@ class GatePass extends Model {
 	public function status() {
 		return $this->belongsTo('App\Config', 'type_id');
 	}
+	public function jobCard() {
+		return $this->belongsTo('App\JobCard');
+	}
 
 	public function gatePassItems() {
 		return $this->hasMany('App\GatePassItem', 'gate_pass_id');
 	}
-
+	/*public function gatePassItemsCount() {
+		return $this->hasMany('App\GatePassItem', 'gate_pass_id')->count();
+	}*/
+	
 	public static function createFromObject($record_data) {
 
 		$errors = [];
