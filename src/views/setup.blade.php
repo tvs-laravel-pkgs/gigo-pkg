@@ -112,6 +112,10 @@
 	    when('/gigo-pkg/vehicle/edit/:id', {
 	        template: '<vehicle-form></vehicle-form>',
 	        title: 'Edit Vehicle',
+	    }).
+	    when('/gigo-pkg/vehicle/view/:id', {
+	        template: '<vehicle-data-view></vehicle-data-view>',
+	        title: 'View Vehicle',
 	    });
 
 
@@ -143,6 +147,7 @@
      //Vehicle
     var vehicle_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/list.html')}}";
     var vehicle_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/form.html')}}";
+    var vehicle_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/view.html')}}";
 
     //Pause Work Reason 
     var pause_work_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/list.html')}}";

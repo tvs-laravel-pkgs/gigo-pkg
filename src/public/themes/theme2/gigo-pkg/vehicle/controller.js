@@ -341,3 +341,26 @@ app.component('vehicleForm', {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
+app.component('vehicleDataView', {
+    templateUrl: vehicle_view_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+       
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+       /* if (self.hasPermission('view-vehicle')) {
+            window.location = "#!/page-permission-denied";
+            return false;
+        }*/
+        self.angular_routes = angular_routes;
+        $http.get(
+            laravel_routes['getVehicles'], {
+                params: {
+                    id: $routeParams.id,
+                }
+            }
+        ).then(function(response) {
+            self.vehicles_details = response.data.vehicles_details;
+            self.action = response.data.action;
+        });
+    }
+});
