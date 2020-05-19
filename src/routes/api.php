@@ -154,7 +154,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Save Material Gate Out Confirm
 		Route::post('save-gate-out-confirm-material-gate-pass', 'MaterialGatePassController@materialGateOutConfirm');
 		//Resend OTP for Material Gate Pass
-		Route::get('material-gate-out-confirm/{id}', 'MaterialGatePassController@materialCustomerOtp');
+		Route::get('material-gate-out-otp-resend/{id}', 'MaterialGatePassController@materialCustomerOtp');
 
 
 	});
