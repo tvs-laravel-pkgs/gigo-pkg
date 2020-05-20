@@ -192,6 +192,7 @@ class VehicleGatePassController extends Controller {
 				'job_cards.job_card_number',
 				'gate_passes.number as gate_pass_no',
 				'configs.name as status',
+				'gate_logs.status_id',
 				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y %h:%s %p") as gate_in_date_time'),
 			])
 				->join('vehicles', 'vehicles.id', 'gate_logs.vehicle_id')
@@ -211,7 +212,7 @@ class VehicleGatePassController extends Controller {
 						;
 					}
 				})
-				->where('gate_logs.status_id', 8123) //GATE OUT PENDING
+				->whereIn('gate_logs.status_id', [8123, 8124]) //GATE OUT PENDING, GATE OUT COMPLETED
 				->get()
 			;
 
@@ -219,7 +220,8 @@ class VehicleGatePassController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'vehicle_gate_pass_list' => $vehicle_gate_pass_list,
+				'data' => $vehicle_gate_pass_list, //NAME CHANGED FOR WEB DATATABLE LIST
+				// 'vehicle_gate_pass_list' => $vehicle_gate_pass_list,
 				'available_gate_passes' => $available_gate_passes,
 			]);
 		} catch (Exception $e) {
@@ -245,11 +247,13 @@ class VehicleGatePassController extends Controller {
 				'jobOrder',
 				'jobOrder.jobCard',
 				'jobOrder.jobCard.jobCardReturnableItems',
+				'jobOrder.jobCard.jobCardReturnableItems.attachment',
 			])
 				->find($gate_log_id)
 			;
 
-			$view_vehicle_gate_pass->attachement_path = url('storage/app/public/gigo/gate_in/attachments/');
+			$view_vehicle_gate_pass->gate_in_attachement_path = url('storage/app/public/gigo/gate_in/attachments/');
+			$view_vehicle_gate_pass->returnable_item_attachement_path = url('storage/app/public/gigo/job_card/returnable_items/');
 
 			if (!$view_vehicle_gate_pass) {
 				return response()->json([
