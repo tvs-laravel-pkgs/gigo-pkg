@@ -23,25 +23,29 @@ class MaterialGatePassController extends Controller {
 		try {
 			
 			$material_gate_pass_details = GatePass::select([
+				'gate_passes.id as gate_pass_id',
 				'job_cards.job_card_number',
 				'gate_pass_details.work_order_no',
+				'gate_pass_details.vendor_contact_no',
 				'gate_passes.number as gate_pass_no',
 				'vendors.name',
 				'vendors.code',
+				'configs.name as status',
 				DB::raw('DATE_FORMAT(gate_passes.gate_in_date,"%d/%m/%Y %h:%s %p") as gate_in_date_time'),
 				DB::raw('COUNT(gate_pass_items.id) as items')
 			])
 				->join('job_cards', 'gate_passes.job_card_id', 'job_cards.id')
 				->join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')
+				->join('configs', 'configs.id', 'gate_passes.status_id')
 				->join('vendors', 'gate_pass_details.vendor_id', 'vendors.id')
 				->join('gate_pass_items', 'gate_pass_items.gate_pass_id', 'gate_passes.id')
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
 						$query->where('gate_passes.number', 'LIKE', '%' . $request->search_key . '%')
 						->orWhere('gate_pass_details.work_order_no', 'LIKE', '%' . $request->search_key . '%')
-							->orWhere('job_cards.job_card_number', 'LIKE', '%' . $request->search_key . '%')
-							->orWhere('vendors.name', 'LIKE', '%' . $request->search_key . '%')
-							->orWhere('vendors.code', 'LIKE', '%' . $request->search_key . '%')
+						->orWhere('job_cards.job_card_number', 'LIKE', '%' . $request->search_key . '%')
+						->orWhere('vendors.name', 'LIKE', '%' . $request->search_key . '%')
+						->orWhere('vendors.code', 'LIKE', '%' . $request->search_key . '%')
 						;
 					}
 				})
@@ -51,7 +55,7 @@ class MaterialGatePassController extends Controller {
 			;
 			return response()->json([
 				'success' => true,
-				'material_gate_pass_details' => $material_gate_pass_details,
+				'data' => $material_gate_pass_details, //Name Changed For Web List
 			]);
 		} catch (Exception $e) {
 			return response()->json([

@@ -146,7 +146,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Material-GatePass Details List
 		Route::post('get-material-gate-pass-list', 'MaterialGatePassController@getMaterialGatePass');
 
-		//Material-GatePass Details List
+		//Material-GatePass Detail 
 		Route::get('get-material-gate-pass-detail/{id}', 'MaterialGatePassController@getMaterialGatePassViewData');
 
 		//Material-GatePass Gate in and out 
