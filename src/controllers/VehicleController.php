@@ -91,12 +91,19 @@ class VehicleController extends Controller {
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
+
+				$view_hover_img = asset("public/theme/img/table/view-hover.svg");
+				$view_img = asset("/public/theme/img/table/view.svg");
+
 				$output = '';
 				if (Entrust::can('edit-vehicle')) {
 					$output .= '<a href="#!/gigo-pkg/vehicle/edit/' . $vehicle->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
 				if (Entrust::can('delete-vehicle')) {
 					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#vehicle-delete-modal" onclick="angular.element(this).scope().deleteVehicle(' . $vehicle->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+				}
+				if (Entrust::can('view-vehicle')) {
+					$output .= '<a href="#!/gigo-pkg/vehicle/view/' . $vehicle->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_hover_img . '" onmouseout=this.src="' . $view_img . '"></a>';
 				}
 				return $output;
 			})
@@ -116,8 +123,17 @@ class VehicleController extends Controller {
 				$this->data['sold_date'] = date('d-m-Y', strtotime($vehicle->sold_date));
 			}
 			$make_id = ModelType::select('vehicle_make_id')->where('id',$vehicle->model_id)->where('company_id',Auth::user()->company_id)->first();
-			$this->data['make_id'] = $make_id->vehicle_make_id;
-			$this->data['model_list'] = collect(ModelType::select('id','model_name')->where('vehicle_make_id',$make_id->vehicle_make_id)->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'model_name' => 'Select Model Name']);
+			if(isset($make_id))
+			{
+				$this->data['make_id'] = $make_id->vehicle_make_id;
+				$make = $make_id->vehicle_make_id;
+			}
+		    else
+		     {
+		     	 $this->data['make_id'] = '';
+		     	 $make = '';
+		     }
+			$this->data['model_list'] = collect(ModelType::select('id','model_name')->where('vehicle_make_id',$make)->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'model_name' => 'Select Model Name']);
 			
 		}
 		$this->data['make_list'] = collect(VehicleMake::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Make Name']);
@@ -254,23 +270,23 @@ class VehicleController extends Controller {
 	}
 
 	public function getVehicles(Request $request) {
-		$vehicles = Vehicle::withTrashed()
-			->with([
-				'vehicles',
-				'vehicles.user',
-			])
+		$this->data['vehicles_details'] = Vehicle::withTrashed()
 			->select([
 				'vehicles.id',
-				'vehicles.name',
-				'vehicles.code',
+				'vehicles.engine_number',
+				'vehicles.chassis_number',
+				'models.model_name',
+				'vehicles.registration_number',
+				'vehicles.vin_number',
+				'vehicles.sold_date',
 				DB::raw('IF(vehicles.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
+			->leftJoin('models', 'models.id', 'vehicles.model_id')
 			->where('vehicles.company_id', Auth::user()->company_id)
-			->get();
+			->where('vehicles.id',$request->id)
+			->first();
 
-		return response()->json([
-			'success' => true,
-			'vehicles' => $vehicles,
-		]);
+		$this->data['action'] = 'View';
+		return response()->json($this->data);
 	}
 }

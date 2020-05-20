@@ -116,6 +116,12 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'delete-vehicle',
 				'display_name' => 'Delete',
 			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicles',
+				'name' => 'view-vehicle',
+				'display_name' => 'View',
+			],
 
 			//Vehicle Owners
 			[

@@ -100,6 +100,20 @@
 	        title: 'Edit Pause Work',
 	    }).
 
+	    //Material Gate Pass
+	     when('/gigo-pkg/material-gate-pass/list', {
+	        template: '<material-gate-pass-list></material-gate-pass-list>',
+	        title: 'Material Gate Pass',
+	    }).
+	    when('/gigo-pkg/material-gate-pass/add', {
+	        template: '<material-gate-pass-form></material-gate-pass-form>',
+	        title: 'Add Material Gate Pass',
+	    }).
+	    when('/gigo-pkg/material-gate-pass/edit/:id', {
+	        template: '<material-gate-pass-form></material-gate-pass-form>',
+	        title: 'Edit Material Gate Pass',
+	    }).
+
 	    //Vehicle Master
 	     when('/gigo-pkg/vehicle/list', {
 	        template: '<vehicle-list></vehicle-list>',
@@ -112,6 +126,10 @@
 	    when('/gigo-pkg/vehicle/edit/:id', {
 	        template: '<vehicle-form></vehicle-form>',
 	        title: 'Edit Vehicle',
+	    }).
+	    when('/gigo-pkg/vehicle/view/:id', {
+	        template: '<vehicle-data-view></vehicle-data-view>',
+	        title: 'View Vehicle',
 	    });
 
 
@@ -143,10 +161,15 @@
      //Vehicle
     var vehicle_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/list.html')}}";
     var vehicle_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/form.html')}}";
+    var vehicle_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/view.html')}}";
 
     //Pause Work Reason
     var pause_work_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/list.html')}}";
     var pause_work_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/form.html')}}";
+
+    //Material Gate pass 
+    var material_gate_pass_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/list.html')}}";
+    var material_gate_pass_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/form.html')}}";
 
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
@@ -156,6 +179,7 @@
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-order-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
@@ -639,8 +663,9 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	}]);
 
 	//Gate Logs
+
     var gate_log_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-log/list.html')}}';
-    var gate_log_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-log/form.html')}}';
+    var gate_log_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-log/form.html')}}";
     var gate_log_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-log/card-list.html')}}';
     var gate_log_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/gate-log-modal-form.html')}}';
 </script>

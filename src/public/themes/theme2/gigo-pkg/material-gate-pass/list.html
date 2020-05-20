@@ -1,0 +1,185 @@
+<div class="content-wrap cndn-wrap">
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content title-block">
+                    <h1 class="title type-2">Material Gate Passes<span class="badge badge-secondary">04</span></h1>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content reset-block">
+                    <div class="reset-wrap">
+                        <button class="btn-reset reset-tooltip">
+                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
+                        </button>
+                    </div>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content search-block">
+                    <div class="search_filter">
+                        <label>
+                            <input type="search" id="search_box" class="form-control" placeholder="Search" />
+                            <button class="btn-clear">Clear</button>
+                        </label>
+                    </div><!-- Search Filter -->
+                </div><!-- Page Header Content -->
+                <div class="page-header-content button-block">
+                    <button class="btn btn-bordered" data-toggle="modal" data-target="#filter"><i class="icon ion-md-funnel"></i>Filter</button>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+            <div class="page-header-content-right">
+                <div class="page-header-content tab-block">
+                    <div class="list-card-icon-wrap">
+                        <div class="list-icon in">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="card-icon">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div><!-- List Card Wrap -->
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Right -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <div class="list-card-tab-wrap">
+        <div class="list-tab-content in">
+            <div class="page-main-content list-page-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table" id="material_gate_pass_list" style="width: 100% !important;">
+                                <thead>
+                                    <tr>
+                                        <th class="action width-100">Action</th>
+                                        <th>Date & Time</th>
+                                        <th>Material GP No.</th>
+                                        <th>Job Card No</th>
+                                        <th>Work Order No</th>
+                                        <th>Vendor Code</th>
+                                        <th>Vendor Name</th>
+                                        <th>Items</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Container -->
+            </div><!-- Page Main Content -->
+        </div><!-- List Tab Content -->
+        <div class="card-tab-content">
+            <div class="page-card-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="card-list">
+                                <li>
+                                    <div class="card-box" ng-repeat="gate_pass in $ctrl.material_gate_pass_list">
+                                        <div class="card-box-body">
+                                            <p class="card-top-info">Created on : {{gate_pass.gate_in_date_time ? gate_pass.gate_in_date_time : ''}}</p>
+                                            <div class="box-list">
+                                                <div class="box-left">
+                                                    <div class="box-color yellow">
+                                                        <div class="box-color-title">JC NO : {{gate_pass.job_card_number ? gate_pass.job_card_number : '' }}</div>
+                                                        <div class="box-color-subtitle">Work Oder No : {{gate_pass.work_order_no ? gate_pass.work_order_no : ''}}</div>
+                                                    </div>
+                                                </div><!-- Box Left -->
+                                                <div class="box-right">
+                                                    <div class="box-info">
+                                                        <div class="box-info-head">M Gate Pass No</div>
+                                                        <div class="box-info-body">
+                                                            <div class="box-info-body-title">{{gate_pass.gate_pass_no ? gate_pass.gate_pass_no : ''}}</div>
+                                                        </div>
+                                                    </div><!-- Box Info -->
+                                                </div><!-- Box Right -->
+                                            </div><!-- Box List -->
+                                            <div class="card-box-content mb-8">
+                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <span class="card-box-content-value"><b>{{gate_pass.name ? gate_pass.name : ''}}</b></span>
+                                                <span class="card-box-content-value info">Vendor Code :  {{gate_pass.code ? gate_pass.code : '' }}</span>
+                                                <span class="card-box-content-value info"> {{gate_pass.vendor_contact_no ? gate_pass.vendor_contact_no : ''}}</span>
+                                            </div>
+                                            <div class="card-box-content">
+                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <span class="card-box-content-value">Items : {{gate_pass.items ? gate_pass.items : 0 }}</span>
+                                            </div>
+                                        </div><!-- Card Box Body -->
+                                        <div class="card-box-footer">
+                                            <div class="card-box-footer-left">
+                                                <div class="card-box-footer-info">
+                                                    <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                    <span class="card-box-footer-value">{{gate_pass.status ? gate_pass.status : '' }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="card-box-footer-right">
+                                                <button class="btn btn-square btn-md btn-red">View</button>
+                                                <button class="btn btn-square btn-md btn-secondary-dark">Gate Out</button>
+                                            </div>
+                                        </div><!-- Card Box Footer -->
+                                    </div><!-- Card Box -->
+                                <li ng-if="$ctrl.material_gate_pass_list.length == 0" class="alert alert-warning" style="padding: 0 15px;margin-bottom: 0;">
+                                    No Material Gate Pass 
+                                </li>
+                            </ul><!-- Card List -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Container -->
+            </div><!-- Page Card Content -->
+        </div><!-- Card Tab Content -->
+    </div><!-- List & Card Tab Wrap -->
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal fade filter" id="filter" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog filter-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="modal-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Vendor<span class="mandatory">*</span></label>
+                                <input type="text" class="form-control" placeholder="Enter" aria-invalid="false" />
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Outlet<span class="mandatory">*</span></label>
+                                <input type="text" class="form-control" placeholder="Enter" aria-invalid="false" />
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="input-text form-group">
+                                <label>Invoice Date<span class="mandatory">*</span></label>
+                                <div class="input-group date" data-provide="datepicker">
+                                    <input type="text" class="form-control" placeholder="Select Date" aria-invalid="false">
+                                    <div class="input-group-addon">
+                                        <img src="./public/theme/img/content/calender-gray-icon.svg" class="img-responsive">
+                                    </div>
+                                </div><!-- Input Group -->
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Form -->
+            </div><!-- Modal Body -->
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="reset-link">Reset Filter</button>
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-primary btn-md">Apply</button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Footer -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->

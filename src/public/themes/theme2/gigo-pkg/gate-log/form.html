@@ -1,171 +1,158 @@
 Content Wrap -->
-<div class="content-wrap cndn-wrap">
+<div class="content-wrap">
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-inner">
             <div class="page-header-content-left">
-                <!-- <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/gate-log/list" type="button" class="btn-back btn-img">
-                        <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
-                    </a> -->
-                <!-- </div>Page Header Content -->
+                <div class="page-header-content button-block">
+                    <a href="#!/static/procurement/payment/customer-search" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Gate In Vehicle</b></h1>
-                    <p class="subtitle">
-                        Masters /
-                        <!-- <a href="#!/gigo-pkg/gate-log/list">
-                            Gate Logs
-                        </a> / -->
-                        {{$ctrl.action}}
-                    </p>
-                </div><!-- Page Header Content -->
-            </div><!-- Page Header Content Left -->
+                    <h1 class="title">New Gate In Vehicle</h1>
+                    <p class="subtitle">Gate In Vehicle / Add</p>
+                </div>
+            </div>
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
     <!-- Page Main Content -->
-    <div class="page-main-content form-content type2">
-        <form id="gate_log_form" autocomplete="off">
-            <input type="hidden" name="id" value="{{$ctrl.gate_log.id}}">
-            <div class="page-tab-form pb-70">
-                <div class="tab-form-wrap">
-                    <div class="tab-form-header">
-                        <div class="tab-header">
-                            <!-- Filters -->
-                            <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
-                                <ul class="nav nav-pills cndn-tabs">
-                                    <li class="active">
-                                        <a class="filter active" data-target="#general-information" data-toggle="tab" aria-expanded="true">
-                                            General Info
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div><!-- Filters -->
-                        </div><!-- Tab Header -->
-                    </div><!-- Tab Form Header -->
-                    <div class="tab-form-body">
-                        <div class="tab-content">
-                            <!-- TAB PANEL -->
-                            <div class="tab-pane fade in active" id="general-information" data-animation="fadeInUp" data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Number
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.gate_log.number" name="number" placeholder="Enter Number" autofocus />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>
-                                                    Gate in date
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <div class="input-group date" data-provide="datepicker">
-                                                    <input type="text" class="form-control required" placeholder="Select Date" name="gate_in_date" value="{{$ctrl.gate_in_date}}" />
-                                                    <div class="input-group-addon">
-                                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
-                                                    </div>
-                                                </div><!-- Input Group -->
-                                            </div><!-- Field -->
-                                        </div><!-- column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Driver Name
-                                                </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.gate_log.driver_name" name="driver_name" placeholder="Enter Driver Name" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>
-                                                    Mobile Number
-                                                </label>
-                                                <input type="text" name="contact_number" ng-model='$ctrl.gate_log.contact_number' class="form-control " placeholder="Enter Mobile Number" autocomplete="off">
-                                                <!-- <div class="contact_number_error"></div> -->
-                                            </div><!-- Field -->
-                                        </div><!-- column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Vehicle Registration Number
-                                                    <sup class="mandatory">*</sup></label>
-                                                <md-select ng-model="$ctrl.gate_log.vehicle_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Vehicle Registration Number">
-                                                    <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Vehicle Registration Number" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                    </md-select-header>
-                                                    <md-optgroup>
-                                                        <md-option ng-value="vehicle.id" ng-repeat="vehicle in $ctrl.extras.vehicle_list | filter:searchTerm">{{vehicle.registration_number}}</md-option>
-                                                    </md-optgroup>
-                                                </md-select>
-                                                <input type="hidden" class="form-control required" name="vehicle_id" id="vehicle_id" value="{{$ctrl.gate_log.vehicle_id}}">
-                                            </div><!-- Field -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    KM Reading
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.gate_log.km_reading" name="km_reading" placeholder="Enter Kilometer Reading" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    KM Reading Type
-                                                </label>
-                                                <md-select ng-model="$ctrl.gate_log.reading_type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Reading Type">
-                                                    <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Reading Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                    </md-select-header>
-                                                    <md-optgroup>
-                                                        <md-option ng-value="reading_type.id" ng-repeat="reading_type in $ctrl.extras.reading_type_list | filter:searchTerm">{{reading_type.name}}</md-option>
-                                                    </md-optgroup>
-                                                </md-select>
-                                                <input type="hidden" class="form-control" name="reading_type_id" id="reading_type_id" value="{{$ctrl.gate_log.reading_type_id}}">
-                                            </div><!-- Field -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Gate In Remarks
-                                                </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.gate_log.gate_in_remarks" name="gate_in_remarks" placeholder="Enter Gate In Remarks" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Active Status
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <div class="tab-switch">
-                                                    <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
-                                                        {{ $ctrl.switch_value }}
-                                                    </md-switch>
-                                                    <input type="hidden" name="status" value="{{$ctrl.switch_value}}">
-                                                </div>
-                                            </div><!-- Form Group -->
-                                        </div><!-- Column -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
-                            <div class="tab-pane-footer">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <a href="#!/gigo-pkg/gate-log/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
-                                        <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
-                                    </div>
-                                </div>
-                            </div><!-- Tab Footer -->
-                        </div><!-- Tab Content -->
-                    </div><!-- Tab Form Body -->
-                </div><!-- Tab Form Wrap -->
-            </div><!-- Page Form -->
-        </form>
-    </div><!-- Page Main Content -->
-</div><!-- Content Wrap
+    <form id="gate_in_vehicle_form" autocomplete="off">
+        <div class="page-main-content form-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h6 class="mb-20"><b>
+                                            Photos
+                                        </b></h6>
+                                    <div class="input-text">
+                                        <ul class="gatein-img-list">
+                                            <li class="gatein-img-list-item vehicle-img">
+                                                <input type="file" name="vehicle_photo" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple />
+                                            </li>
+                                            <li class="gatein-img-list-item km-img">
+                                                <input type="file" name="km_reading_photo" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple />
+                                            </li>
+                                            <li class="gatein-img-list-item driver-img">
+                                                <input type="file" name="driver_photo" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple />
+                                            </li>
+                                        </ul>
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                            <div class="row">
+                                <div class="col-md-4 col-lg-3">
+                                    <div class="input-text form-group">
+                                        <label>
+                                            Registration Type
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-radio-group ng-model="gate_log.vehicle.is_registered">
+                                            <md-radio-button value="1" class="md-primary">
+                                                Registered
+                                            </md-radio-button>
+                                            <md-radio-button value="0">
+                                                Un Registered
+                                            </md-radio-button>
+                                        </md-radio-group>
+                                        <input type="hidden" class="form-control" value="{{gate_log.vehicle.is_registered}}" name="is_registered">
+                                    </div> <!-- Form Group -->
+                                </div><!-- Column -->
+                                <div class="col-md-4 col-lg-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Vehicle Registration Number
+                                            <sup class="mandatory">*</sup></label>
+                                        <input type="text" class="form-control" placeholder="Enter Vehicle Registration Number" value="" autocomplete="off" name="registration_number" />
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-4 col-lg-3">
+                                    <div class="form-group">
+                                        <label>
+                                            KM Reading
+                                            <sup class="mandatory">*</sup></label>
+                                        <input type="text" class="form-control" placeholder="Enter KM Reading" value="" autocomplete="off" name="km_reading" />
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-4 col-lg-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Driver Name
+                                            <!-- <sup class="mandatory">*</sup> -->
+                                        </label>
+                                        <input type="text" class="form-control" placeholder="Enter Driver Name" value="" autocomplete="off" name="driver_name" />
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-4 col-lg-3">
+                                    <div class="input-text form-group">
+                                        <label>
+                                            Driver Mobile
+                                            <!-- <sup class="mandatory">*</sup> -->
+                                        </label>
+                                        <input type="text" class="form-control" placeholder="Enter Driver Name" value="" autocomplete="off" name="contact_number" />
+                                    </div><!-- Form Group -->
+                                </div><!-- Column -->
+                                <div class="col-md-8 col-lg-9">
+                                    <div class="form-group">
+                                        <label>
+                                            Remarks
+                                            <!-- <sup class="mandatory">*</sup> -->
+                                        </label>
+                                        <input type="text" class="form-control" placeholder="Enter Remarks" autocomplete="off" name="gate_in_remarks" />
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Page Form -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <div class="page-form-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- <a href="/" class="btn btn-secondary btn-prev my-tooltip">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">
+                                Save
+                            </button> -->
+                            <a href="/" class="btn btn-bordered btn-grey btn-min-wdth">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-secondary-dark btn-min-wdth">
+                                Save
+                            </button>
+                        </div>
+                    </div><!-- Row -->
+                </div><!-- Page Form Footer -->
+            </div><!-- Container -->
+        </div><!-- Page Main Content -->
+    </form>
+</div><!-- Content Wrap -->
+<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
+<!-- Submit Alert Modal -->
+<div class="modal modal-success alert-modal fade" id="confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
+                <h6 class="title"><b>Gate In Success</b></h6>
+                <p class="info data">Vehicle successfully gated In</p>
+                <p class="info">Gate In No :
+                    <span id="number">
+                        <!-- {{$ctrl.gate_log.number}} -->
+                    </span>
+                </p>
+                <p class="info">Reg No :
+                    <span id="registration_number">
+                        <!-- {{$ctrl.gate_log.registration_number}} -->
+                    </span>
+                </p>
+                <div class="mt-30 mb-30">
+                    <button type="button" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></button>
+                </div><!-- Button -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
