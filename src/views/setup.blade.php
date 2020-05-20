@@ -105,13 +105,10 @@
 	        template: '<material-gate-pass-list></material-gate-pass-list>',
 	        title: 'Material Gate Pass',
 	    }).
-	    when('/gigo-pkg/material-gate-pass/add', {
-	        template: '<material-gate-pass-form></material-gate-pass-form>',
-	        title: 'Add Material Gate Pass',
-	    }).
-	    when('/gigo-pkg/material-gate-pass/edit/:id', {
-	        template: '<material-gate-pass-form></material-gate-pass-form>',
-	        title: 'Edit Material Gate Pass',
+	    
+	    when('/gigo-pkg/material-gate-pass/view/:id', {
+	        template: '<material-gate-pass-view></material-gate-pass-view>',
+	        title: 'View Material Gate Pass',
 	    }).
 
 	    //Vehicle Master
@@ -170,6 +167,7 @@
     //Material Gate pass 
     var material_gate_pass_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/list.html')}}";
     var material_gate_pass_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/form.html')}}";
+    var material_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/view.html')}}";
 
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>

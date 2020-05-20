@@ -17,8 +17,14 @@ class GatePass extends Model {
 		["company_id", "type_id", "name"]
 	;
 
-	public function getDateOfJoinAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	public function getCreatedAtAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y H:i a', strtotime($value));
+	}
+	public function getGateInDateAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y H:i a', strtotime($value));
+	}
+	public function getGateOutDateAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y H:i a', strtotime($value));
 	}
 
 	public function setDateOfJoinAttribute($date) {
@@ -43,9 +49,9 @@ class GatePass extends Model {
 	public function gatePassItems() {
 		return $this->hasMany('App\GatePassItem', 'gate_pass_id');
 	}
-	/*public function gatePassItemsCount() {
+	public function gatePassItemsCount() {
 		return $this->hasMany('App\GatePassItem', 'gate_pass_id')->count();
-	}*/
+	}
 	
 	public static function createFromObject($record_data) {
 

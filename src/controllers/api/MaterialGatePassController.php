@@ -86,9 +86,11 @@ class MaterialGatePassController extends Controller {
 				'gatePassDetail',
 				'gatePassDetail.vendor',
 				'gatePassItems',
+				//'gatePassItemsCount',
 				'gatePassItems.attachments'
 			])
 				->find($id);
+			$material_gate_pass_detail->items=count($material_gate_pass_detail->gatePassItems);
 			$material_gate_pass_detail->attachement_path = url('storage/app/public/gigo/gate_pass/attachments/');
 			//material attachment path need to change 
 			return response()->json([
