@@ -52,8 +52,8 @@ class VehicleInwardController extends Controller {
 					'success' => false,
 					'errors' => $validator->errors()->all(),
 				]);
-			}	
-			
+			}
+
 			$vehicle_inward_list = GateLog::select('gate_logs.*')
 				->with([
 					'vehicleDetail',
@@ -1176,10 +1176,11 @@ class VehicleInwardController extends Controller {
 					'integer',
 				],
 				'registration_number' => [
-					'required',
-					'min:6',
-					'string',
+					'required_if:is_registered,==,1',
+					// 'min:6', //HIDDED FOR REQUIRED_IF
+					// 'string',//HIDDED FOR REQUIRED_IF
 					'max:10',
+					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'model_id' => [
 					'required',

@@ -252,8 +252,8 @@ class VehicleGatePassController extends Controller {
 				->find($gate_log_id)
 			;
 
-			$view_vehicle_gate_pass->gate_in_attachement_path = url('storage/app/public/gigo/gate_in/attachments/');
-			$view_vehicle_gate_pass->returnable_item_attachement_path = url('storage/app/public/gigo/job_card/returnable_items/');
+			$view_vehicle_gate_pass->gate_in_attachment_path = url('storage/app/public/gigo/gate_in/attachments/');
+			$view_vehicle_gate_pass->returnable_item_attachment_path = url('storage/app/public/gigo/job_card/returnable_items/');
 
 			if (!$view_vehicle_gate_pass) {
 				return response()->json([

@@ -4,7 +4,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Route::post('punch/status', 'PunchController@status');
 
 		//SAVE GATE IN ENTRY
-		Route::post('save-vehicle-gate-in-entry', 'VehicleGatePassController@saveVehicleGateInEntry');
+		// Route::post('save-vehicle-gate-in-entry', 'VehicleGatePassController@saveVehicleGateInEntry');
 		Route::post('gate-log/save', 'VehicleGatePassController@saveVehicleGateInEntry');
 
 		//VEHICLE GATE PASS LIST
@@ -29,19 +29,19 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::post('save-vehicle', 'VehicleInwardController@saveVehicle');
 
 		//VEHICLE GET FORM DATA AND SAVE
-		Route::get('get-customer-form-data/{id}', 'VehicleInwardController@getCustomerFormData');
+		Route::get('get-customer-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getCustomerFormData');
 		Route::post('save-customer', 'VehicleInwardController@saveCustomer');
 
 		//VEHICLE INSPECTION GET FORM DATA AND SAVE
-		Route::get('get-vehicle-inspection-form-data/{id}', 'VehicleInwardController@getVehicleInspectiongeFormData');
+		Route::get('get-vehicle-inspection-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getVehicleInspectiongeFormData');
 		Route::post('save-vehicle-inspection', 'VehicleInwardController@saveVehicleInspection');
 
 		//VOC GET FORM DATA AND SAVE
-		Route::get('get-voc-form-data/{id}', 'VehicleInwardController@getVocFormData');
+		Route::get('get-voc-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getVocFormData');
 		Route::post('save-voc', 'VehicleInwardController@saveVoc');
 
 		//ROAD TEST OBSERVATION GET FORM DATA AND SAVE
-		Route::get('get-road-test-observation-form-data/{id}', 'VehicleInwardController@getRoadTestObservationFormData');
+		Route::get('get-road-test-observation-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getRoadTestObservationFormData');
 		Route::post('save-road-test-observation', 'VehicleInwardController@saveRoadTestObservation');
 
 		//DMS CHECKLIST SAVE
@@ -64,7 +64,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::post('save-schedule-maintenance', 'VehicleInwardController@saveScheduleMaintenance');
 
 		//EXPERT DIAGNOSIS REPORT GET FORM DATA AND SAVE
-		Route::get('get-expert-diagnosis-report-form-data/{id}', 'VehicleInwardController@getExpertDiagnosisReportFormData');
+		Route::get('get-expert-diagnosis-report-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getExpertDiagnosisReportFormData');
 		Route::post('save-expert-diagnosis-report', 'VehicleInwardController@saveExpertDiagnosisReport');
 
 		//ESTIMATE GET FORM DATA AND SAVE
@@ -82,10 +82,10 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::post('save-initiate-job', 'VehicleInwardController@saveInitiateJob');
 
 		//GTE STATE BASED COUNTRY
-		Route::get('get-state/{id}', 'VehicleInwardController@getState');
+		Route::get('get-state/country-id/{country_id}', 'VehicleInwardController@getState');
 
 		//GET CITY BASED STATE
-		Route::get('get-city/{id}', 'VehicleInwardController@getcity');
+		Route::get('get-city/state-id/{state_id}', 'VehicleInwardController@getcity');
 
 		//Save Job Card
 		Route::post('save-job-card', 'JobCardController@saveJobCard');
@@ -146,16 +146,15 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Material-GatePass Details List
 		Route::post('get-material-gate-pass-list', 'MaterialGatePassController@getMaterialGatePass');
 
-		//Material-GatePass Detail 
+		//Material-GatePass Detail
 		Route::get('get-material-gate-pass-detail/{id}', 'MaterialGatePassController@getMaterialGatePassViewData');
 
-		//Material-GatePass Gate in and out 
+		//Material-GatePass Gate in and out
 		Route::post('save-gate-in-out-material-gate-pass', 'MaterialGatePassController@materialGateInAndOut');
 		//Save Material Gate Out Confirm
 		Route::post('save-gate-out-confirm-material-gate-pass', 'MaterialGatePassController@materialGateOutConfirm');
 		//Resend OTP for Material Gate Pass
 		Route::get('material-gate-out-otp-resend/{id}', 'MaterialGatePassController@materialCustomerOtp');
-
 
 	});
 });
