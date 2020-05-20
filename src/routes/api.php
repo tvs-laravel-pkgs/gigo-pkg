@@ -4,8 +4,8 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Route::post('punch/status', 'PunchController@status');
 
 		//SAVE GATE IN ENTRY
-		Route::post('save-vehicle-gate-in-entry', 'VehicleGatePassController@saveVehicleGateInEntry')->middleware('auth:api');
-		Route::post('gate-in-vehicle/save', 'VehicleGatePassController@saveVehicleGateInEntry');
+		Route::post('save-vehicle-gate-in-entry', 'VehicleGatePassController@saveVehicleGateInEntry');
+		Route::post('gate-log/save', 'VehicleGatePassController@saveVehicleGateInEntry');
 
 		//VEHICLE GATE PASS LIST
 		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');
