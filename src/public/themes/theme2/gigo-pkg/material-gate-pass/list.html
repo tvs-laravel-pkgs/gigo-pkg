@@ -3,11 +3,11 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Material Gate Passes<span class="badge badge-secondary">04</span></h1>
+                    <h1 class="title type-2">Material Gate Passes<span class="badge badge-secondary" id="table_infos"></span></h1>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
-                        <button class="btn-reset reset-tooltip">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
                             <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
                         </button>
                     </div>
@@ -15,8 +15,8 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_box" class="form-control" placeholder="Search" />
-                            <button class="btn-clear">Clear</button>
+                            <input type="search" id="search_material_gate_pass" class="form-control" placeholder="Search" />
+                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
                 </div><!-- Page Header Content -->
@@ -78,8 +78,8 @@
                     <div class="row">
                         <div class="col-md-12">
                             <ul class="card-list">
-                                <li>
-                                    <div class="card-box" ng-repeat="gate_pass in $ctrl.material_gate_pass_list">
+                                <li ng-repeat="gate_pass in $ctrl.material_gate_pass_list">
+                                    <div class="card-box">
                                         <div class="card-box-body">
                                             <p class="card-top-info">Created on : {{gate_pass.gate_in_date_time ? gate_pass.gate_in_date_time : ''}}</p>
                                             <div class="box-list">
@@ -101,7 +101,7 @@
                                             <div class="card-box-content mb-8">
                                                 <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
                                                 <span class="card-box-content-value"><b>{{gate_pass.name ? gate_pass.name : ''}}</b></span>
-                                                <span class="card-box-content-value info">Vendor Code :  {{gate_pass.code ? gate_pass.code : '' }}</span>
+                                                <span class="card-box-content-value info">Vendor Code : {{gate_pass.code ? gate_pass.code : '' }}</span>
                                                 <span class="card-box-content-value info"> {{gate_pass.vendor_contact_no ? gate_pass.vendor_contact_no : ''}}</span>
                                             </div>
                                             <div class="card-box-content">
@@ -123,7 +123,7 @@
                                         </div><!-- Card Box Footer -->
                                     </div><!-- Card Box -->
                                 <li ng-if="$ctrl.material_gate_pass_list.length == 0" class="alert alert-warning" style="padding: 0 15px;margin-bottom: 0;">
-                                    No Material Gate Pass 
+                                    No Material Gate Pass
                                 </li>
                             </ul><!-- Card List -->
                         </div><!-- Column -->
@@ -180,6 +180,62 @@
                     </div><!-- Column -->
                 </div><!-- Row -->
             </div><!-- Modal Footer -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<!-- Submit Alert Modal -->
+<div class="modal modal-success alert-modal fade" id="gate_in_confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
+                <h6 class="title"><b>Material Gate In Success</b></h6>
+                <p class="info data">Material successfully gated In</p>
+                <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
+                <div class="mt-30 mb-30">
+                    <button type="button" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></button>
+                </div><!-- Button -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
+<!-- Submit Alert Modal -->
+<div class="modal modal-success alert-modal fade" id="gate_out_confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
+                <h6 class="title"><b>Material Gate Out Success</b></h6>
+                <p class="info data">Material successfully gated Out</p>
+                <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
+                <div class="mt-30 mb-30">
+                    <button type="button" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></button>
+                </div><!-- Button -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
+<!-- Modal -->
+<div class="modal modal-otp alert-modal fade" id="otp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="material_gate_out_confirm">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <h6 class="title">ENTER OTP</h6>
+                    <p class="info">Received in Customer Mobile +91 {{$ctrl.customer_detail.mobile_no ? $ctrl.customer_detail.mobile_no : ''}}</p>
+                    <div class="form-group">
+                        <input type="text" name="otp_no" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
+                        <input type="hidden" name="gate_pass_id" id="" value="" />
+                    </div><!-- Feild -->
+                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block">SUBMIT</button>
+                    <button class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
+                </div><!-- Modal Body -->
+            </form>
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
