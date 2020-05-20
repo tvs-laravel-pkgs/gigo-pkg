@@ -13,7 +13,7 @@ class JobCardReturnableItem extends Model {
 	use SoftDeletes;
 	protected $table = 'job_card_returnable_items';
 	public $timestamps = true;
-	protected $fillable =[
+	protected $fillable = [
 		"job_card_id",
 		"item_description",
 		"item_make",
@@ -29,6 +29,10 @@ class JobCardReturnableItem extends Model {
 
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+
+	public function attachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 232)->where('attachment_type_id', 239);
 	}
 
 	public static function createFromObject($record_data) {

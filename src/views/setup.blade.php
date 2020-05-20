@@ -160,7 +160,7 @@
     var vehicle_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/form.html')}}";
     var vehicle_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/view.html')}}";
 
-    //Pause Work Reason 
+    //Pause Work Reason
     var pause_work_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/list.html')}}";
     var pause_work_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/form.html')}}";
 
@@ -617,32 +617,25 @@
 <script type='text/javascript'>
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
-	    //Gate Pass
-	    when('/gigo-pkg/gate-pass/list', {
-	        template: '<gate-pass-list></gate-pass-list>',
-	        title: 'Gate Passes',
+	    //Vehicle Gate Pass
+	    when('/gigo-pkg/vehicle-gate-pass/list', {
+	        template: '<vehicle-gate-pass-list></vehicle-gate-pass-list>',
+	        title: 'Vehicle Gate Passes',
 	    }).
-	    when('/gigo-pkg/gate-pass/add', {
-	        template: '<gate-pass-form></gate-pass-form>',
-	        title: 'Add Gate Pass',
-	    }).
-	    when('/gigo-pkg/gate-pass/edit/:id', {
-	        template: '<gate-pass-form></gate-pass-form>',
-	        title: 'Edit Gate Pass',
-	    }).
-	    when('/gigo-pkg/gate-pass/card-list', {
-	        template: '<gate-pass-card-list></gate-pass-card-list>',
-	        title: 'Gate Pass Card List',
+	    when('/gigo-pkg/vehicle-gate-pass/view/:id', {
+	        template: '<vehicle-gate-pass-view></vehicle-gate-pass-view>',
+	        title: 'View Vehicle Gate Pass',
 	    });
 	}]);
 
-	//Gate Passes
-    var gate_pass_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/list.html')}}';
-    var gate_pass_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/form.html')}}';
-    var gate_pass_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/card-list.html')}}';
-    var gate_pass_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/gate-pass-modal-form.html')}}';
+	var view_img = './public/theme/img/table/cndn/view.svg';
+	var gate_out_img = './public/theme/img/table/cndn/gateout.svg';
+
+	//Vehicle Gate Passes
+var vehicle_gate_pass_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/list.html')}}";
+var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/view.html')}}";
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/gate-pass/controller.js')}}'></script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
