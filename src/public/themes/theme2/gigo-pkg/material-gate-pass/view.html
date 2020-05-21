@@ -139,8 +139,8 @@
                     <div class="row">
                         <div class="col-md-12">
                             <a href="#!/gigo-pkg/material-gate-pass/list" class="btn btn-bordered btn-grey">Cancel</a>
-                            <button class="btn btn-secondary-dark" ng-show="$ctrl.material_gate_pass.status_id==8301" type="submit" data-toggle="modal" data-target="#confirm_notification1" class="submit">Confirm Gate In</button>
-                            <button class="btn btn-secondary-dark" ng-show="$ctrl.material_gate_pass.status_id==8300" type="submit" data-toggle="modal" data-target="#confirm_notification1" class="submit">Confirm Gate Out</button>
+                            <button class="btn btn-secondary-dark submit" ng-show="$ctrl.material_gate_pass.status_id==8301" type="submit" data-toggle="modal" data-target="#confirm_notification1">Confirm Gate In</button>
+                            <button class="btn btn-secondary-dark submit" ng-show="$ctrl.material_gate_pass.status_id==8300" type="submit" data-toggle="modal" data-target="#confirm_notification1">Confirm Gate Out</button>
                         </div>
                     </div>
                 </div><!-- Page Form Footer -->
@@ -156,7 +156,7 @@
                 <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
                 <h6 class="title"><b>Material Gate In Success</b></h6>
                 <p class="info data">Material successfully gated In</p>
-                <p class="info data"><b>Material Gate Pass No : {{$ctrl.material_gate_pass.number ? $ctrl.material_gate_pass.number : ''}}</b></p>
+                <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
                 <div class="mt-30 mb-30">
                     <button type="button" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></button>
                 </div><!-- Button -->
@@ -173,7 +173,7 @@
                 <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
                 <h6 class="title"><b>Material Gate Out Success</b></h6>
                 <p class="info data">Material successfully gated Out</p>
-                <p class="info data"><b>Material Gate Pass No : {{$ctrl.material_gate_pass.number ? $ctrl.material_gate_pass.number : ''}}</b></p>
+                <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
                 <div class="mt-30 mb-30">
                     <button type="button" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></button>
                 </div><!-- Button -->
@@ -192,13 +192,13 @@
                 </div><!-- Modal Header -->
                 <div class="modal-body">
                     <h6 class="title">ENTER OTP</h6>
-                    <p class="info">Received in Customer Mobile +91 {{$ctrl.customer_detail.mobile_no ? $ctrl.customer_detail.mobile_no : ''}}</p>
+                    <p class="info">Received in Customer Mobile +91<span class="customer_mobile_no"></span></p>
                     <div class="form-group">
-                        <input type="text" name="otp_no" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
-                        <input type="hidden" name="gate_pass_id" id="" value="" />
+                        <input type="text" autofocus name="otp_no" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
+                        <input type="hidden" name="gate_pass_id" id="gate_pass_id" value="" />
                     </div><!-- Feild -->
-                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block">SUBMIT</button>
-                    <button class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
+                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm">SUBMIT</button>
+                    <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
                 </div><!-- Modal Body -->
             </form>
         </div><!-- Modal Content -->

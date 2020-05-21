@@ -32,7 +32,7 @@ class MaterialGatePassController extends Controller {
 				'vendors.name',
 				'vendors.code',
 				'configs.name as status',
-				DB::raw('DATE_FORMAT(gate_passes.gate_in_date,"%d/%m/%Y %h:%s %p") as gate_in_date_time'),
+				DB::raw('DATE_FORMAT(gate_passes.created_at,"%d/%m/%Y %h:%s %p") as date_and_time'),
 				DB::raw('COUNT(gate_pass_items.id) as items')
 			])
 				->join('job_cards', 'gate_passes.job_card_id', 'job_cards.id')
@@ -90,7 +90,11 @@ class MaterialGatePassController extends Controller {
 				'gatePassItems.attachments'
 			])
 				->find($id);
-			$material_gate_pass_detail->items=count($material_gate_pass_detail->gatePassItems);
+				if($material_gate_pass_detail->gatePassItems){
+				$material_gate_pass_detail->items=count($material_gate_pass_detail->gatePassItems);
+				}else{
+					$material_gate_pass_detail->items=0;
+				}
 			$material_gate_pass_detail->attachement_path = url('storage/app/public/gigo/gate_pass/attachments/');
 			//material attachment path need to change
 			$customer_detail=Customer::select('name','mobile_no')
@@ -149,41 +153,30 @@ public function materialGateInAndOut(Request $request) {
 				]);
 			}
 
-			DB::beginTransaction();
+			
 
 			$gate_pass = GatePass::find($request->gate_pass_id);
 				if($request->type=='In'){
+					DB::beginTransaction();
 					$gate_pass_update = GatePass::where('id', $gate_pass->id)
 						->update([
+							'status_id' =>8302,//Gate In Success
 							'gate_in_date' => Carbon::now(),
 							'gate_in_remarks' => $request->remarks ? $request->remarks : NULL,
 							'updated_by_id' => Auth::user()->id,
 							'updated_at' => Carbon::now(),
 						]);
+					DB::commit();
+				return response()->json([
+					'success' => true,
+					'gate_pass' => $gate_pass,
+					'type' => $request->type,
+					'message' => 'Material Gate '.$request->type.' successfully completed !!',
+				]);
 				}else{
-					$otp=$this->materialCustomerOtp($gate_pass->id);
-					
-				 	return $otp;
-					//dd(json_encode($otp));
-					// $a = json_decode($otp);  
-					// dd($a);
-					/*if(!$otp->success){
-						dd('false');
-					}else{
-						dd('true');
-					}*/
+					$otp_response=$this->materialCustomerOtp($gate_pass->id);
+				 	return $otp_response;
 				}
-				
-			DB::commit();
-
-			//$gate_pass_data['gate_pass_no'] = !empty($gate_pass->number) ? $gate_pass->number : NULL;
-
-			return response()->json([
-				'success' => true,
-				'gate_pass' => $gate_pass,
-				'type' => $request->type,
-				'message' => 'Material Gate '.$request->type.' successfully completed !!',
-			]);
 
 		} catch (Exception $e) {
 			return response()->json([
@@ -239,6 +232,7 @@ public function materialGateInAndOut(Request $request) {
 				
 			$gate_pass_update = GatePass::where('id', $gate_pass->id)
 				->update([
+					'status_id' =>8301,//Gate In Pending
 					'gate_out_date' => Carbon::now(),
 					'gate_out_remarks' => $request->remarks ? $request->remarks : NULL,
 					'updated_by_id' => Auth::user()->id,
@@ -257,7 +251,7 @@ public function materialGateInAndOut(Request $request) {
 
 			return response()->json([
 				'success' => true,
-				'gate_out_data' => $gate_out_data,
+				'gate_pass' => $gate_pass,
 				'message' => 'Material Gate Out successfully completed!!',
 			]);
 
@@ -280,7 +274,7 @@ public function materialGateInAndOut(Request $request) {
 					'error' => 'Gate Pass Not Found!',
 				]);
 			}
-			$customer_details=Customer::select('name','mobile_no')
+			$customer_detail=Customer::select('name','mobile_no')
 			->join('vehicle_owners','vehicle_owners.customer_id','customers.id')
 			->join('vehicles','vehicle_owners.vehicle_id','vehicles.id')
 			->join('gate_logs','gate_logs.vehicle_id','vehicles.id')
@@ -291,7 +285,7 @@ public function materialGateInAndOut(Request $request) {
 			->orderBy('vehicle_owners.from_date','DESC')
 			 ->first();
 			//dd($customer_details);
-			if(!$customer_details){
+			if(!$customer_detail){
 				return response()->json([
 					'success' => false,
 					'error' => 'Customer Details Not Found!',
@@ -300,7 +294,7 @@ public function materialGateInAndOut(Request $request) {
 			DB::beginTransaction();
 			$material_gate_pass_otp_update = GatePass::where('id', $material_gate_pass->id)
 						->update([
-							'otp_no' => mt_rand(11111,99999),
+							'otp_no' => mt_rand(111111,999999),
 							'updated_by_id' => Auth::user()->id,
 							'updated_at' => Carbon::now(),
 						]);
@@ -313,7 +307,7 @@ public function materialGateInAndOut(Request $request) {
 				]);
 			}
 			$otp=$material_gate_pass->otp_no;
-			$mobile_number=$customer_details->mobile_no;
+			$mobile_number=$customer_detail->mobile_no;
 			$mobile_number='8838118082'; //saravanan mobile for testing
 			//dd($mobile_number);
 			$message='OTP is '.$otp.' for material gate out. Please enter OTP to verify your material gate out';
@@ -325,6 +319,7 @@ public function materialGateInAndOut(Request $request) {
 			}
 			$msg=sendSMSNotification($mobile_number,$message);
 			//dd($msg);
+			//Enable After Sms Issue Resloved
 			/*if(!$msg){
 				return response()->json([
 					'success' => false,
@@ -333,7 +328,9 @@ public function materialGateInAndOut(Request $request) {
 			}*/
 			return response()->json([
 				'success' => true,
-				'material_gate_pass' => $material_gate_pass,
+				'gate_pass' => $material_gate_pass,
+				'customer_detail' => $customer_detail,
+				'type'=>'Out',
 				'message' => 'OTP Sent successfully!!',
 			]);
 	}

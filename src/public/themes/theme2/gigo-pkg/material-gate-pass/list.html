@@ -117,8 +117,9 @@
                                                 </div>
                                             </div>
                                             <div class="card-box-footer-right">
-                                                <button class="btn btn-square btn-md btn-red">View</button>
-                                                <button class="btn btn-square btn-md btn-secondary-dark">Gate Out</button>
+                                                <a href="#!/gigo-pkg/material-gate-pass/view/{{gate_pass.gate_pass_id}}" class="btn btn-square btn-md btn-red">View</a>
+                                                <button class="btn btn-square btn-md btn-secondary-dark confirm_gate_out_{{gate_pass.gate_pass_id}}" ng-show="gate_pass.status_id==8300" ng-click="materialGateOut(gate_pass.gate_pass_id)">Gate Out</button>
+                                                <button class="btn btn-square btn-md btn-secondary-dark confirm_gate_in_{{gate_pass.gate_pass_id}}" ng-show="gate_pass.status_id==8301" ng-click="materialGateIn(gate_pass.gate_pass_id)">Gate In</button>
                                             </div>
                                         </div><!-- Card Box Footer -->
                                     </div><!-- Card Box -->
@@ -227,13 +228,13 @@
                 </div><!-- Modal Header -->
                 <div class="modal-body">
                     <h6 class="title">ENTER OTP</h6>
-                    <p class="info">Received in Customer Mobile +91 {{$ctrl.customer_detail.mobile_no ? $ctrl.customer_detail.mobile_no : ''}}</p>
+                    <p class="info">Received in Customer Mobile +91 <span class="customer_mobile_no"></span></p>
                     <div class="form-group">
-                        <input type="text" name="otp_no" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
-                        <input type="hidden" name="gate_pass_id" id="" value="" />
+                        <input type="text" autofocus name="otp_no" id="otp_no" class="form-control text-center" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter OTP" autocomplete="off" />
+                        <input type="hidden" name="gate_pass_id" id="gate_pass_id" value="" />
                     </div><!-- Feild -->
-                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block">SUBMIT</button>
-                    <button class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
+                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm">SUBMIT</button>
+                    <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
                 </div><!-- Modal Body -->
             </form>
         </div><!-- Modal Content -->
