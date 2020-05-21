@@ -106,7 +106,7 @@ app.component('vehicleList', {
                 if (response.data.success) {
                     custom_noty('success', 'Vehicle Deleted Successfully');
                     $('#vehicles_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/vehicle/list');
+                    $location.path('/gigo-pkg/material-gate-pass/list');
                 }
             });
         }
@@ -222,15 +222,15 @@ app.component('vehicleForm', {
                     self.register_val = 'No';
                     self.show = 2;
                 }
-            } 
+            }
 
         });
-        
+
         $scope.RegistrationChange = function(reg_selected) {
-            if(reg_selected == 'Yes')
-            self.show = 1;
+            if (reg_selected == 'Yes')
+                self.show = 1;
             else
-            self.show = 2;
+                self.show = 2;
         }
 
         $scope.SelectedMake = function(SelectedMake) {
@@ -268,11 +268,11 @@ app.component('vehicleForm', {
                 /*'model_id': {
                     required:true,
                 },*/
-                'registration_number':{
+                'registration_number': {
                     minlength: 10,
                     maxlength: 10,
                 },
-                'vin_number':{
+                'vin_number': {
                     minlength: 10,
                     maxlength: 32,
                 },
@@ -344,13 +344,13 @@ app.component('vehicleForm', {
 app.component('vehicleDataView', {
     templateUrl: vehicle_view_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
-       
+
         var self = this;
         self.hasPermission = HelperService.hasPermission;
-       /* if (self.hasPermission('view-vehicle')) {
-            window.location = "#!/page-permission-denied";
-            return false;
-        }*/
+        /* if (self.hasPermission('view-vehicle')) {
+             window.location = "#!/page-permission-denied";
+             return false;
+         }*/
         self.angular_routes = angular_routes;
         $http.get(
             laravel_routes['getVehicles'], {
