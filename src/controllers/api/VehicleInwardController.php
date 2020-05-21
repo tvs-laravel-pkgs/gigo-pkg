@@ -1135,19 +1135,27 @@ class VehicleInwardController extends Controller {
 			$request->registration_number = str_replace(' ', '', $request->registration_number);
 
 			//REGISTRATION NUMBER VALIDATION
+			$error = '';
 			if ($request->registration_number) {
-				$error = '';
-				$first_two_string = substr($request->registration_number, 0, 2);
-				$next_two_number = substr($request->registration_number, 2, 2);
-				$last_two_number = substr($request->registration_number, -2);
-				if (!preg_match('/^[A-Z]+$/', $first_two_string) && !preg_match('/^[0-9]+$/', $next_two_number) && !preg_match('/^[0-9]+$/', $last_two_number)) {
-					$error = "Please enter valid registration number!";
-				}
-				if ($error) {
+				$registration_no_count = strlen($request->registration_number);
+				if ($registration_no_count < 8) {
 					return response()->json([
 						'success' => false,
-						'error' => $error,
+						'error' => 'The registration number must be at least 8 characters.',
 					]);
+				} else {
+					$first_two_string = substr($request->registration_number, 0, 2);
+					$next_two_number = substr($request->registration_number, 2, 2);
+					$last_two_number = substr($request->registration_number, -2);
+					if (!preg_match('/^[A-Z]+$/', $first_two_string) || !preg_match('/^[0-9]+$/', $next_two_number) || !preg_match('/^[0-9]+$/', $last_two_number)) {
+						$error = "Please enter valid registration number!";
+					}
+					if ($error) {
+						return response()->json([
+							'success' => false,
+							'error' => $error,
+						]);
+					}
 				}
 			}
 
@@ -1158,8 +1166,8 @@ class VehicleInwardController extends Controller {
 				],
 				'registration_number' => [
 					'required_if:is_registered,==,1',
-					// 'min:6', //HIDDED FOR REQUIRED_IF
-					// 'string',//HIDDED FOR REQUIRED_IF
+					// 'min:8',
+					// 'string',
 					'max:10',
 					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
@@ -1387,45 +1395,45 @@ class VehicleInwardController extends Controller {
 					'error' => 'Gate Log Not Found!',
 				]);
 			}
-			//issue : vijay : Need to check gate log exist validation
 
-			// dd($gate_log);
-			// dd($gate_log->vehicleDetail);
+			//OWNERSHIP ALREADY EXIST OR NOT
+			$vehicle_owners_exist = VehicleOwner::where([
+				'vehicle_id' => $gate_log->vehicleDetail->id,
+				'ownership_id' => $request->ownership_id,
+			])
+				->first();
 
-			if (!$gate_log->vehicleDetail->vehicleOwner) {
-				$customer = new Customer;
-				// $customer_details = new CustomerDetails;
-				$address = new Address;
-				$vehicle_owner = new VehicleOwner;
-				//issue : vijay : customer created_at save missing, vehicle owner created_at & created_by_id save missing
+			if ($vehicle_owners_exist) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Ownership Alreay Taken in this Vehicle!',
+				]);
+			}
+
+			$customer = Customer::firstOrNew([
+				'name' => $request->name,
+				'mobile_no' => $request->mobile_no,
+			]);
+			if ($customer->exists) {
+				//FIRST
+				$customer->updated_at = Carbon::now();
+				$customer->updated_by_id = Auth::user()->id;
+
+				$address = Address::where('address_of_id', 24)->where('entity_id', $customer->id)->first();
+				$vehicle_owner = VehicleOwner::where([
+					'vehicle_id' => $gate_log->vehicleDetail->id,
+					'customer_id' => $customer->id,
+				])
+					->first();
+				// dd($vehicle_owner);
+			} else {
+				//NEW
 				$customer->created_at = Carbon::now();
 				$customer->created_by_id = Auth::user()->id;
-			} else {
-				// $customer = Customer::find($gate_log->vehicleDetail->vehicleOwner->customer_id);
-				$customer = Customer::firstOrNew([
-					'name' => $request->name,
-					'mobile_no' => $request->mobile_no,
-				]);
-				if ($customer->exists) {
-					//FIRST
-					$customer->updated_at = Carbon::now();
-					$customer->updated_by_id = Auth::user()->id;
-
-					$vehicle_owner = VehicleOwner::where([
-						'vehicle_id' => $gate_log->vehicleDetail->id,
-						'customer_id' => $customer->id,
-					])
-						->first();
-					// dd($vehicle_owner);
-				} else {
-					//NEW
-					$customer->created_at = Carbon::now();
-					$customer->created_by_id = Auth::user()->id;
-					$vehicle_owner = new VehicleOwner;
-				}
-				//issue : vijay : customer updated_at save missing, vehicle owner updated_at & updated_by_id save missing
-				$address = Address::where('address_of_id', 24)->where('entity_id', $customer->id)->first();
+				$vehicle_owner = new VehicleOwner;
+				$address = new Address;
 			}
+			//issue : vijay : customer updated_at save missing, vehicle owner updated_at & updated_by_id save missing
 			$customer->code = mt_rand(1, 1000);
 			$customer->fill($request->all());
 			$customer->company_id = Auth::user()->company_id;
@@ -1433,24 +1441,6 @@ class VehicleInwardController extends Controller {
 			$customer->save();
 			$customer->code = 'CUS' . $customer->id;
 			$customer->save();
-
-			//SAVE VEHICLE OWNER
-			if (!$vehicle_owner) {
-				$vehicle_owner_check = VehicleOwner::where([
-					'vehicle_id' => $gate_log->vehicleDetail->id,
-				])
-					->get();
-				foreach ($vehicle_owner_check as $vehicle_owner_record) {
-					if (!empty($gate_log->vehicleDetail->id) && $gate_log->vehicleDetail->id != NULL) {
-						if (($gate_log->vehicleDetail->id == $vehicle_owner_record['vehicle_id']) && ($vehicle_owner_record['ownership_id'] == $request->ownership_id)) {
-							return response()->json([
-								'success' => false,
-								'error' => 'Ownership Alreay Taken in this Vehicle!',
-							]);
-						}
-					}
-				}
-			}
 
 			$vehicle_owner->vehicle_id = $gate_log->vehicleDetail->id;
 			$vehicle_owner->customer_id = $customer->id;

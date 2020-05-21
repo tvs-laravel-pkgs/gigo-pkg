@@ -409,7 +409,6 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
-
 			//Estimation Types
 			[
 				'display_order' => 99,
@@ -486,6 +485,26 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'parent' => 'gate-logs',
 				'name' => 'delete-gate-log',
 				'display_name' => 'Delete',
+			],
+
+			//VEHICLE GATE PASS
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'vehicle-gate-passes',
+				'display_name' => 'Vehicle Gate Passes',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'vehicle-gate-passes',
+				'name' => 'view-vehicle-gate-pass',
+				'display_name' => 'View',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'vehicle-gate-passes',
+				'name' => 'gate-out-vehicle-gate-pass',
+				'display_name' => 'Gate Out',
 			],
 
 			//Repair Order
