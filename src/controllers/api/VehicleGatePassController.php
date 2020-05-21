@@ -10,7 +10,6 @@ use Auth;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Storage;
 use Validator;
 
@@ -24,19 +23,27 @@ class VehicleGatePassController extends Controller {
 			$request->registration_number = str_replace(' ', '', $request->registration_number);
 
 			//REGISTRATION NUMBER VALIDATION
+			$error = '';
 			if ($request->registration_number) {
-				$error = '';
-				$first_two_string = substr($request->registration_number, 0, 2);
-				$next_two_number = substr($request->registration_number, 2, 2);
-				$last_two_number = substr($request->registration_number, -2);
-				if (!preg_match('/^[A-Z]+$/', $first_two_string) && !preg_match('/^[0-9]+$/', $next_two_number) && !preg_match('/^[0-9]+$/', $last_two_number)) {
-					$error = "Please enter valid registration number!";
-				}
-				if ($error) {
+				$registration_no_count = strlen($request->registration_number);
+				if ($registration_no_count < 8) {
 					return response()->json([
 						'success' => false,
-						'errors' => $error,
+						'error' => 'The registration number must be at least 8 characters.',
 					]);
+				} else {
+					$first_two_string = substr($request->registration_number, 0, 2);
+					$next_two_number = substr($request->registration_number, 2, 2);
+					$last_two_number = substr($request->registration_number, -2);
+					if (!preg_match('/^[A-Z]+$/', $first_two_string) || !preg_match('/^[0-9]+$/', $next_two_number) || !preg_match('/^[0-9]+$/', $last_two_number)) {
+						$error = "Please enter valid registration number!";
+					}
+					if ($error) {
+						return response()->json([
+							'success' => false,
+							'error' => $error,
+						]);
+					}
 				}
 			}
 
@@ -61,10 +68,11 @@ class VehicleGatePassController extends Controller {
 					'integer',
 				],
 				'registration_number' => [
-					'required' => Rule::requiredIf($request->is_registered == 1),
-					// 'min:6',
+					'required_if:is_registered,==,1',
+					// 'min:8',
 					// 'string',
 					'max:10',
+					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'km_reading' => [
 					'required',
