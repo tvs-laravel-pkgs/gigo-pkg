@@ -32,6 +32,8 @@ app.component('vehicleGatePassList', {
             processData: false,
             contentType: false,
             paging: true,
+            "bRetrieve": true,
+            "bDestroy": true,
             //scrollY: table_scroll + "px",
             //scrollCollapse: true,
             ajax: {
@@ -83,40 +85,44 @@ app.component('vehicleGatePassList', {
 
         $('.refresh_table').on("click", function() {
             $('#vehicle-gate-pass-list').DataTable().ajax.reload();
+            $scope.fetchData();
         });
 
         $scope.clear_search = function() {
             $('#search_gate_pass').val('');
             $('#vehicle-gate-pass-list').DataTable().search('').draw();
+            $scope.fetchData('');
         }
 
         var dataTables = $('#vehicle-gate-pass-list').dataTable();
-        $("#search_gate_pass").keyup(function() {
-            dataTables.fnFilter(this.value);
-        });
 
-        $("#search_box").keyup(function() {
-            dataTable.fnFilter(this.value);
-        });
+        $scope.searchKey = function(event) {
+            dataTables.fnFilter(event.target.value);
+            $scope.fetchData(event.target.value);
+        }
 
-        //CARD LIST
-        $.ajax({
-            url: base_url + '/api/gigo-pkg/get-vehicle-gate-pass-list',
-            type: "POST",
-            dataType: "json",
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-            },
-            success: function(response) {
-                // console.log(response);
-                self.vehicle_gate_pass_list = response.data;
-                $scope.$apply();
-                // Success = true; //doesn't go here
-            },
-            error: function(textStatus, errorThrown) {
-                custom_noty('error', 'Something went wrong at server');
-            }
-        });
+        $scope.fetchData = function(search_key) {
+            //CARD LIST
+            $.ajax({
+                url: base_url + '/api/gigo-pkg/get-vehicle-gate-pass-list',
+                type: "POST",
+                dataType: "json",
+                data: { 'search_key': search_key },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+                success: function(response) {
+                    // console.log(response);
+                    self.vehicle_gate_pass_list = response.data;
+                    $scope.$apply();
+                    // Success = true; //doesn't go here
+                },
+                error: function(textStatus, errorThrown) {
+                    custom_noty('error', 'Something went wrong at server');
+                }
+            });
+        }
+        $scope.fetchData();
 
         //GATE OUT VEHICLE
         $scope.vehicleGateOut = function(id) {
@@ -140,6 +146,13 @@ app.component('vehicleGatePassList', {
                     custom_noty('error', 'Something went wrong at server');
                 }
             });
+        }
+
+        $scope.reloadPage = function() {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            $scope.fetchData();
+            // $route.reload();
         }
     }
 });

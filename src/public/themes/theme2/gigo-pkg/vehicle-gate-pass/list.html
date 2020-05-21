@@ -15,7 +15,7 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_gate_pass" class="form-control" placeholder="Search"/>
+                            <input type="search" ng-keyup="searchKey($event)" id="search_gate_pass" class="form-control" placeholder="Search"/>
                             <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
@@ -188,7 +188,7 @@
                 <p class="info">Gate Pass No : <span id="gate_pass"></span></p>
                 <p class="info">Reg No : <span id="registration_number"></p>
                 <div class="mt-30 mb-30">
-                    <a href="#" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></a>
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" ng-click="reloadPage()" data-dismiss="modal"><b>Done</b></a>
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->
