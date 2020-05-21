@@ -7,6 +7,7 @@ use App\Company;
 use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Auth;
 
 class RepairOrderType extends Model {
 	use SeederTrait;
@@ -66,6 +67,7 @@ class RepairOrderType extends Model {
 			'name',
 		])
 				->orderBy('name')
+				->where('company_id',Auth::user()->company_id)
 				->get());
 		if ($add_default) {
 			$list->prepend(['id' => '', 'name' => $default_text]);

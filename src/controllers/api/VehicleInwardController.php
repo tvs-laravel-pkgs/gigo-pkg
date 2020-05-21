@@ -46,6 +46,8 @@ class VehicleInwardController extends Controller {
 					'exists:employees,id',
 					'integer',
 				],
+				'offset' => 'nullable|numeric',
+				//'limit' => 'nullable|numeric',
 			]);
 			if ($validator->fails()) {
 				return response()->json([
@@ -54,9 +56,11 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$vehicle_inward_list = GateLog::select('gate_logs.*')
+			$vehicle_inward_list_get = GateLog::select('gate_logs.*')
 				->with([
+					'status',
 					'vehicleDetail',
+					'vehicleDetail.status',
 					'vehicleDetail.vehicleCurrentOwner',
 					'vehicleDetail.vehicleCurrentOwner.CustomerDetail',
 				])
@@ -72,9 +76,19 @@ class VehicleInwardController extends Controller {
 				})
 			//Gate In Completed =>8120
 				->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '" . $request->floor_adviser_id . "')")
-				->groupBy('gate_logs.id')
-				->get();
+				->groupBy('gate_logs.id');
+				//->get();
 
+				if (!empty($request->offset) && !empty($request->limit)) {
+				$vehicle_inward_list_get->offset($request->offset);
+				}
+				if (!empty($request->limit)) {
+				$vehicle_inward_list_get->limit($request->limit);
+				}
+
+				$vehicle_inward_list = $vehicle_inward_list_get->get();
+
+				$vehicle_inward_list['total_vehicle_inward_count'] = $vehicle_inward_list_get->get()->count();
 			return response()->json([
 				'success' => true,
 				'vehicle_inward_list' => $vehicle_inward_list,
@@ -158,7 +172,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveJobOrder(Request $request) {
-		// dd($request->all());
+		 //dd($request->all());
 		try {
 			//issue : saravanan - Add max 10 rule for mobile number
 			$validator = Validator::make($request->all(), [
@@ -175,6 +189,7 @@ class VehicleInwardController extends Controller {
 				'mobile_number' => [
 					'required',
 					'min:10',
+					'max:10',
 					'string',
 				],
 				'km_reading' => [
@@ -263,12 +278,19 @@ class VehicleInwardController extends Controller {
 			//JOB ORDER SAVE
 			$job_order = JobOrder::firstOrNew([
 				'gate_log_id' => $request->gate_log_id,
+				'company_id'=>Auth::user()->company_id,
 			]);
 			$job_order->number = mt_rand(1, 10000);
 			$job_order->fill($request->all());
 			$job_order->company_id = Auth::user()->company_id;
-			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->save();
+			if($job_order->exists){
+				$job_order->updated_by_id = Auth::user()->id;
+				$job_order->updated_at = Carbon::now();
+			}else{
+				$job_order->created_by_id = Auth::user()->id;
+				$job_order->created_at = Carbon::now();
+			}
 			//dump($job_order->id);
 			//Number Update
 			$number = sprintf('%03' . 's', $job_order->id);
@@ -278,96 +300,32 @@ class VehicleInwardController extends Controller {
 			//issue : saravanan - save attachment code optimisation
 
 			//CREATE DIRECTORY TO STORAGE PATH
-			$attachement_path = storage_path('app/public/gigo/job_order/attachments/');
-			Storage::makeDirectory($attachement_path, 0777);
+			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
+			Storage::makeDirectory($attachment_path, 0777);
 
 			//SAVE DRIVER PHOTO ATTACHMENT
 			if (!empty($request->driver_license_attachment)) {
-				//REMOVE OLD ATTACHMENT
-				$remove_previous_attachment = Attachment::where([
-					'entity_id' => $job_order->id,
-					'attachment_of_id' => 227, //Job Order
-					'attachment_type_id' => 251, //Driver License
-				])->first();
-				if (!empty($remove_previous_attachment)) {
-					$img_path = $attachement_path . $remove_previous_attachment->name;
-					if (File::exists($img_path)) {
-						File::delete($img_path);
-					}
-					$remove = $remove_previous_attachment->forceDelete();
-				}
-
-				$file_name_with_extension = $request->driver_license_attachment->getClientOriginalName();
-				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
-				$extension = $request->driver_license_attachment->getClientOriginalExtension();
-
-				$name = $job_order->id . '_' . $file_name . '.' . $extension;
-
-				$request->driver_license_attachment->move($attachement_path, $name);
-				$attachement = new Attachment;
-				$attachement->attachment_of_id = 227; //Job Order
-				$attachement->attachment_type_id = 251; //Driver License
-				$attachement->entity_id = $job_order->id;
-				$attachement->name = $name;
-				$attachement->save();
+				$attachment = $request->driver_license_attachment;
+				$entity_id = $job_order->id;
+				$attachment_of_id = 227; //Job order
+				$attachment_type_id = 251; //Driver License
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
 			//SAVE INSURANCE PHOTO ATTACHMENT
 			if (!empty($request->insuarance_attachment)) {
-				//REMOVE OLD ATTACHMENT
-				$remove_previous_attachment = Attachment::where([
-					'entity_id' => $job_order->id,
-					'attachment_of_id' => 227, //Job Order
-					'attachment_type_id' => 252, //Vehicle Insurance
-				])->first();
-				if (!empty($remove_previous_attachment)) {
-					$img_path = $attachement_path . $remove_previous_attachment->name;
-					if (File::exists($img_path)) {
-						File::delete($img_path);
-					}
-					$remove = $remove_previous_attachment->forceDelete();
-				}
-				$file_name_with_extension = $request->insuarance_attachment->getClientOriginalName();
-				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
-				$extension = $request->insuarance_attachment->getClientOriginalExtension();
-
-				$name = $job_order->id . '_' . $file_name . '.' . $extension;
-
-				$request->insuarance_attachment->move($attachement_path, $name);
-				$attachement = new Attachment;
-				$attachement->attachment_of_id = 227; //Job Order
-				$attachement->attachment_type_id = 252; //Vehicle Insurance
-				$attachement->entity_id = $job_order->id;
-				$attachement->name = $name;
-				$attachement->save();
+				$attachment = $request->insuarance_attachment;
+				$entity_id = $job_order->id;
+				$attachment_of_id = 227; //Job order
+				$attachment_type_id = 252; //Vehicle Insurance
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
 			//SAVE INSURANCE PHOTO ATTACHMENT
 			if (!empty($request->rc_book_attachment)) {
-				//REMOVE OLD ATTACHMENT
-				$remove_previous_attachment = Attachment::where([
-					'entity_id' => $job_order->id,
-					'attachment_of_id' => 227, //Job Order
-					'attachment_type_id' => 250, //RC Book
-				])->first();
-				if (!empty($remove_previous_attachment)) {
-					$img_path = $attachement_path . $remove_previous_attachment->name;
-					if (File::exists($img_path)) {
-						File::delete($img_path);
-					}
-					$remove = $remove_previous_attachment->forceDelete();
-				}
-				$file_name_with_extension = $request->rc_book_attachment->getClientOriginalName();
-				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
-				$extension = $request->rc_book_attachment->getClientOriginalExtension();
-
-				$name = $job_order->id . '_' . $file_name . '.' . $extension;
-
-				$request->rc_book_attachment->move($attachement_path, $name);
-				$attachement = new Attachment;
-				$attachement->attachment_of_id = 227; //Job Order
-				$attachement->attachment_type_id = 250; //RC Book
-				$attachement->entity_id = $job_order->id;
-				$attachement->name = $name;
-				$attachement->save();
+				$attachment = $request->rc_book_attachment;
+				$entity_id = $job_order->id;
+				$attachment_of_id = 227; //Job order
+				$attachment_type_id = 250; //RC Book
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
 
 			DB::commit();
@@ -424,6 +382,19 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:job_orders,id',
 				],
+				'vehicle_inventory_items.*.inventory_item_id' => [
+					'required',
+					'numeric',
+					'exists:vehicle_inventory_items,id',
+				],
+				'vehicle_inventory_items.*.is_available' => [
+					'required',
+					'numeric',
+				],
+				'vehicle_inventory_items.*.remarks' => [
+					'nullable',
+					'string',
+				],
 			]);
 
 			if ($validator->fails()) {
@@ -433,10 +404,20 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
+			$vehicle_inventory_items_count=count($request->vehicle_inventory_items);
+			$vehicle_inventory_unique_items_count=count(array_unique(array_column($request->vehicle_inventory_items, 'inventory_item_id')));
+			if($vehicle_inventory_items_count!=$vehicle_inventory_unique_items_count){
+				return response()->json([
+					'success'=>false,
+					'error'=>'Validation Error',
+					'message'=>'Inventory items are not unique'
+				]);
+			}
+
 			//issue: saravanan - validations syntax wrong
-			$items_validator = Validator::make($request->vehicle_inventory_items, [
+			/*$items_validator = Validator::make($request->vehicle_inventory_items, [
 				'inventory_item_id.*' => [
-					'required:true',
+					'required',
 					'numeric',
 					'exists:vehicle_inventory_items,id',
 				],
@@ -452,7 +433,7 @@ class VehicleInwardController extends Controller {
 			]);
 			if ($items_validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $items_validator->errors()->all()]);
-			}
+			}*/
 
 			$job_order = JobOrder::find($request->job_order_id);
 			if (!$job_order) {
@@ -464,16 +445,16 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 			if (isset($request->vehicle_inventory_items) && count($request->vehicle_inventory_items) > 0) {
-
+				//dd($request->vehicle_inventory_items);
 				$job_order->vehicleInventoryItem()->detach();
 				//Inserting Inventory Items
 				foreach ($request->vehicle_inventory_items as $key => $vehicle_inventory_item) {
-
 					$job_order->vehicleInventoryItem()
-						->attach($vehicle_inventory_item['inventory_item_id'],
+						->attach(
+							$vehicle_inventory_item['inventory_item_id'],
 							[
-								'is_available' => $vehicle_inventory_item['is_available'],
-								'remarks' => $vehicle_inventory_item['remarks'],
+							'is_available' => $vehicle_inventory_item['is_available'],
+							'remarks' => $vehicle_inventory_item['remarks'],
 							]
 						);
 				}
@@ -584,7 +565,7 @@ class VehicleInwardController extends Controller {
 	}
 	//ScheduleMaintenance Form Data
 
-	public function scheduleMaintenanceGetList() {
+	public function getScheduleMaintenanceFormData() {
 		// dd($id);
 		try {
 			$part_details = Part::with([
@@ -599,7 +580,7 @@ class VehicleInwardController extends Controller {
 				'skillLevel',
 			])->get();
 
-			$parts_amount = 0;
+			$parts_rate = 0;
 			$labour_amount = 0;
 			$total_amount = 0;
 			if ($labour_details) {
@@ -609,16 +590,16 @@ class VehicleInwardController extends Controller {
 			}
 			if ($part_details) {
 				foreach ($part_details as $key => $part) {
-					$parts_amount += $part->amount;
+					$parts_rate += $part->rate;
 				}
 			}
-			$total_amount = $parts_amount + $labour_amount;
+			$total_amount =$parts_rate + $labour_amount;
 
 			return response()->json([
 				'success' => true,
 				'part_details' => $part_details,
 				'labour_details' => $labour_details,
-				'total_amount' => $total_amount,
+				'total_amount' =>number_format($total_amount,2),
 			]);
 		} catch (Exception $e) {
 			return response()->json([

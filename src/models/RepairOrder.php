@@ -11,6 +11,7 @@ use DB;
 use Abs\HelperPkg\Traits\SeederTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Auth;
 
 class RepairOrder extends Model {
 	use SeederTrait;
@@ -53,6 +54,7 @@ class RepairOrder extends Model {
 			'name',
 		])
 		->where('type_id',$id)
+		->where('company_id',Auth::user()->company_id)
 		->orderBy('name')
 		->get());		
 		$list->prepend(['id' => '', 'name' => 'Select Rot']);

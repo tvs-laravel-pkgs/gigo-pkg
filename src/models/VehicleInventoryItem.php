@@ -7,6 +7,7 @@ use App\Company;
 use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Auth;
 
 class VehicleInventoryItem extends Model {
 	use SeederTrait;
@@ -79,6 +80,7 @@ class VehicleInventoryItem extends Model {
 			'name',
 		])
 				//->where('field_type_id',1)//Need to change checked box item value
+				->where('company_id',Auth::user()->company_id)
 				->orderBy('name')
 				->get());
 		if ($add_default) {

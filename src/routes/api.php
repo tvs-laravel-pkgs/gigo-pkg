@@ -13,15 +13,15 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::post('gate-out-vehicle/save', 'VehicleGatePassController@saveVehicleGateOutEntry');
 
 		//VEHICLE INWARD
-		Route::post('get-vehicle-inward-list', 'VehicleInwardController@getVehicleInwardList');
+		Route::post('vehicle-inward/get-list', 'VehicleInwardController@getVehicleInwardList');
 		Route::get('get-vehicle-inward-view/{id}', 'VehicleInwardController@getVehicleInwardViewData');
 
 		//VEHICLE GET JOB ORDER FORM DATA AND SAVE
-		Route::get('get-job-order-form-data/{id}', 'VehicleInwardController@getJobOrderFormData');
+		Route::get('get-job-order-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getJobOrderFormData');
 		Route::post('save-job-order', 'VehicleInwardController@saveJobOrder');
 
 		//VEHICLE GET INVENTORY FORM DATA AND SAVE
-		Route::get('get-inventory-form-data/{id}', 'VehicleInwardController@getInventoryFormData');
+		Route::get('get-inventory-form-data/gate-log/{id}', 'VehicleInwardController@getInventoryFormData');
 		Route::post('save-inventory-item', 'VehicleInwardController@saveInventoryItem');
 
 		//VEHICLE GET FORM DATA AND SAVE
@@ -50,7 +50,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//ADDTIONAL ROT AND PART GET FORM DATA AND SAVE
 		Route::get('get-addtional-rot-part/{id}', 'VehicleInwardController@addtionalRotPartGetList');
 		//ROT
-		Route::get('get-addtional-rot-form-data/{id}', 'VehicleInwardController@getAddtionalRotFormData');
+		Route::get('get-repair-order-type-list/{id}', 'VehicleInwardController@getAddtionalRotFormData');
 		Route::get('get-addtional-rot-list/{id}', 'VehicleInwardController@getAddtionalRotList');
 		Route::get('get-addtional-rot/{id}', 'VehicleInwardController@getAddtionalRot');
 		//PART
@@ -60,7 +60,7 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::post('save-addtional-rot-part', 'VehicleInwardController@saveAddtionalRotPart');
 
 		//SCHEDULE MANINTENCE GET FORM DATA AND SAVE
-		Route::get('get-schedule-maintenance', 'VehicleInwardController@scheduleMaintenanceGetList');
+		Route::get('get-schedule-maintenance-form-data', 'VehicleInwardController@getScheduleMaintenanceFormData');
 		Route::post('save-schedule-maintenance', 'VehicleInwardController@saveScheduleMaintenance');
 
 		//EXPERT DIAGNOSIS REPORT GET FORM DATA AND SAVE

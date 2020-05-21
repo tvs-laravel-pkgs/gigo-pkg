@@ -36,6 +36,9 @@ class Vehicle extends Model {
 		return $this->belongsTo('App\vehicleModel', 'model_id');
 	}
 
+	public function status() {
+		return $this->belongsTo('App\Config', 'status_id');
+	}
 	public static function createFromObject($record_data) {
 
 		$errors = [];
