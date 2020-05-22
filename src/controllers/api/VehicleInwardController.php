@@ -123,6 +123,7 @@ class VehicleInwardController extends Controller {
 			$gate_log = GateLog::with([
 				'vehicle',
 				'vehicle.model',
+				'vehicle.status',
 				'vehicle.currentOwner.customer',
 				'vehicle.currentOwner.ownerShipDetail',
 				'status',
