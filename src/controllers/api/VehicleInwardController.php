@@ -664,24 +664,10 @@ class VehicleInwardController extends Controller {
 					'numeric',
 					'regex:/^\d+(\.\d{1,2})?$/',
 				],
-				'job_order_parts.*.split_order_type_id' => [
-					'nullable',
-					'integer',
-					'exists:split_order_types,id',
-				],
 				'job_order_parts.*.rate' => [
 					'required',
 					'numeric',
 					'regex:/^\d+(\.\d{1,2})?$/',
-				],
-				'job_order_parts.*.status_id' => [
-					'required',
-					'integer',
-					'exists:configs,id',
-				],
-				'job_order_parts.*.is_oem_recommended' => [
-					'nullable',
-					'numeric',
 				],
 				'job_order_repair_orders.*.repair_order_id' => [
 					'required:true',
@@ -693,28 +679,10 @@ class VehicleInwardController extends Controller {
 					'numeric',
 					'regex:/^\d+(\.\d{1,2})?$/',
 				],
-				'job_order_repair_orders.*.split_order_type_id' => [
-					'nullable',
-					'integer',
-					'exists:split_order_types,id',
-				],
 				'job_order_repair_orders.*.amount' => [
 					'required',
 					'numeric',
 					'regex:/^\d+(\.\d{1,2})?$/',
-				],
-				'job_order_repair_orders.*.status_id' => [
-					'required',
-					'integer',
-					'exists:configs,id',
-				],
-				'job_order_repair_orders.*.is_oem_recommended' => [
-					'nullable',
-					'numeric',
-				],
-				'job_order_repair_orders.*.failure_date' => [
-					'nullable',
-					'date_format:d-m-Y',
 				],
 			]);
 
@@ -740,6 +708,7 @@ class VehicleInwardController extends Controller {
 					$job_order_part->fill($part);
 					$job_order_part->job_order_id = $request->job_order_id;
 					$job_order_part->split_order_type_id = NULL;
+					$job_order_part->is_oem_recommended = 1;
 					$job_order_part->amount = $part['qty'] * $part['rate'];
 					$job_order_part->status_id = 8200; //Customer Approval Pending
 					$job_order_part->save();
@@ -971,7 +940,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 	//Get Addtional Part Form Data
-	public function getAddtionalPartFormData($id) {
+	public function getPartList($id) {
 		try {
 			$job_order = JobOrder::find($id);
 			if (!$job_order) {
@@ -1054,7 +1023,7 @@ class VehicleInwardController extends Controller {
 
 	}
 	//Get Addtional Rot
-	public function getAddtionalRot($id) {
+	public function getRepairOrderData($id) {
 		try {
 			$repair_order = RepairOrder::find($id);
 			if (!$repair_order) {
@@ -1087,7 +1056,7 @@ class VehicleInwardController extends Controller {
 
 	}
 	//Get Addtional Part
-	public function getAddtionalPart($id) {
+	public function getPartData($id) {
 		try {
 			$part = Part::find($id);
 			if (!$part) {

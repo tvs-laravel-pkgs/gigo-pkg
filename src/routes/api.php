@@ -50,11 +50,11 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		Route::get('get-addtional-rot-part/{id}', 'VehicleInwardController@addtionalRotPartGetList');
 		//ROT
 		Route::get('get-repair-order-type-list/{id}', 'VehicleInwardController@getAddtionalRotFormData');
-		Route::get('get-addtional-rot-list/{id}', 'VehicleInwardController@getAddtionalRotList');
-		Route::get('get-addtional-rot/{id}', 'VehicleInwardController@getAddtionalRot');
+		Route::get('get-repair-order-list/repair-order-type-id/{repair_order_type_id}', 'VehicleInwardController@getAddtionalRotList');
+		Route::get('get-repair-order-data/{id}', 'VehicleInwardController@getRepairOrderData');
 		//PART
-		Route::get('get-addtional-part-form-data/{id}', 'VehicleInwardController@getAddtionalPartFormData');
-		Route::get('get-addtional-part/{id}', 'VehicleInwardController@getAddtionalPart');
+		Route::get('get-part-list/{id}', 'VehicleInwardController@getPartList');
+		Route::get('get-part-data/{id}', 'VehicleInwardController@getPartData');
 
 		Route::post('save-addtional-rot-part', 'VehicleInwardController@saveAddtionalRotPart');
 
