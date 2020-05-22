@@ -128,7 +128,7 @@
                 <div class="page-form-footer">
                     <div class="row">
                         <div class="col-md-12">
-                            <a href="#!/gigo-pkg/vehicle-gate-pass/list" class="btn btn-bordered btn-grey btn-md my-tooltip" ng-shortcut="'meta+shift+up'" ng-shortcut-click data-title="ctrl+shift+up">Back</a>
+                            <!-- <a href="#!/gigo-pkg/vehicle-gate-pass/list" class="btn btn-bordered btn-grey btn-md my-tooltip" ng-shortcut="'meta+shift+up'" ng-shortcut-click data-title="ctrl+shift+up">Back</a> -->
                             <a href="#!/gigo-pkg/vehicle-gate-pass/list" class="btn btn-bordered btn-grey my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">Cancel</a>
                             <button type="submit" class="btn btn-secondary-dark submit" ng-show="$ctrl.vehicle_gate_pass.status_id == 8123">Confirm Gate Out</button>
                         </div>
@@ -149,7 +149,8 @@
                 <p class="info">Gate Pass No : <span id="gate_pass"></span></p>
                 <p class="info">Reg No : <span id="registration_number"></p>
                 <div class="mt-30 mb-30">
-                    <a href="#!/gigo-pkg/vehicle-gate-pass/list" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></a>
+                    <!-- <a href="#!/gigo-pkg/vehicle-gate-pass/list" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></a> -->
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></a>
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->

@@ -234,5 +234,11 @@ app.component('vehicleGatePassView', {
                     });
             }
         });
+        $scope.reloadPage = function() {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            $route.reload();
+        }
+        
     }
 });
