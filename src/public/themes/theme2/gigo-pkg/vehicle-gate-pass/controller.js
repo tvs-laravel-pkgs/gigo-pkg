@@ -4,6 +4,9 @@ app.component('vehicleGatePassList', {
         $scope.loading = true;
         var self = this;
         $('#search_gate_pass').focus();
+        $('li').removeClass('active');
+        $('.vehicle_gate_passes').addClass('active').trigger('click');
+        
         $scope.hasPerm = HelperService.hasPerm;
         self.user = $scope.user = HelperService.getLoggedUser();
 
@@ -234,5 +237,11 @@ app.component('vehicleGatePassView', {
                     });
             }
         });
+        $scope.reloadPage = function() {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            $route.reload();
+        }
+        
     }
 });

@@ -127,9 +127,18 @@
 	    when('/gigo-pkg/vehicle/view/:id', {
 	        template: '<vehicle-data-view></vehicle-data-view>',
 	        title: 'View Vehicle',
+	    }).
+
+	    //Kanban App
+	     when('/gigo-pkg/kanban-app', {
+	        template: '<kanban-app></kanban-app>',
+	        title: 'Kanban App',
+	    }).
+	     //Kanban Attendance Scan Qr
+	     when('/gigo-pkg/kanban-app/attendance/scan-qr', {
+	        template: '<kanban-app-attendance-scan-qr></kanban-app-attendance-scan-qr>',
+	        title: 'Attendance - Scan Qr',
 	    });
-
-
 
 	}]);
 
@@ -168,6 +177,9 @@
     var material_gate_pass_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/list.html')}}";
     var material_gate_pass_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/form.html')}}";
     var material_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/view.html')}}";
+    //Kanban App
+     var kanban_app_dashboard_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/dashboard.html')}}";
+     var kanban_app_attendance_sacn_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/attendance-qr.html')}}";
 
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
@@ -178,6 +190,8 @@
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/controller.js')}}"></script>
+
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
@@ -630,6 +644,7 @@
 
 	var view_img = './public/theme/img/table/cndn/view.svg';
 	var gate_out_img = './public/theme/img/table/cndn/gateout.svg';
+
 
 	//Vehicle Gate Passes
 var vehicle_gate_pass_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/list.html')}}";
