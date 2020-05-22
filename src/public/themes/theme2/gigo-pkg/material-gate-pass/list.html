@@ -15,7 +15,7 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_material_gate_pass" class="form-control" placeholder="Search" />
+                            <input type="search" ng-keyup="searchKey($event)" id="search_material_gate_pass" class="form-control" placeholder="Search" />
                             <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
@@ -194,7 +194,8 @@
                 <p class="info data">Material successfully gated In</p>
                 <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
                 <div class="mt-30 mb-30">
-                    <button type="button" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></button>
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></a>
+                    <!--  <button type="button" class="btn btn-success btn-square btn-block" ng-click="reloadPage()" data-dismiss="modal"><b>Done</b></button> -->
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->
@@ -211,7 +212,9 @@
                 <p class="info data">Material successfully gated Out</p>
                 <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
                 <div class="mt-30 mb-30">
-                    <button type="button" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></button>
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></a>
+                    
+                   <!-- <button type="button" class="btn btn-success btn-square btn-block" ng-click="reloadPage()" data-dismiss="modal"><b>Done</b></button> -->
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->

@@ -158,7 +158,8 @@
                 <p class="info data">Material successfully gated In</p>
                 <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
                 <div class="mt-30 mb-30">
-                    <button type="button" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></button>
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></a>
+                    <!-- <button type="button" ng-click="reloadPage()" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></button> -->
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->
@@ -175,7 +176,7 @@
                 <p class="info data">Material successfully gated Out</p>
                 <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
                 <div class="mt-30 mb-30">
-                    <button type="button" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></button>
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></a>
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->
@@ -196,6 +197,7 @@
                     <div class="form-group">
                         <input type="text" autofocus name="otp_no" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
                         <input type="hidden" name="gate_pass_id" id="gate_pass_id" value="" />
+                        <!-- <input type="hidden" name="remarks" id="remarks" value="" /> -->
                     </div><!-- Feild -->
                     <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm">SUBMIT</button>
                     <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
