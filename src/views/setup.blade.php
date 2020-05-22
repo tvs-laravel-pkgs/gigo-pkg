@@ -105,7 +105,7 @@
 	        template: '<material-gate-pass-list></material-gate-pass-list>',
 	        title: 'Material Gate Pass',
 	    }).
-	    
+
 	    when('/gigo-pkg/material-gate-pass/view/:id', {
 	        template: '<material-gate-pass-view></material-gate-pass-view>',
 	        title: 'View Material Gate Pass',
@@ -164,7 +164,7 @@
     var pause_work_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/list.html')}}";
     var pause_work_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/pause-work-reason/form.html')}}";
 
-    //Material Gate pass 
+    //Material Gate pass
     var material_gate_pass_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/list.html')}}";
     var material_gate_pass_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/form.html')}}";
     var material_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/view.html')}}";
@@ -648,7 +648,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    }).
 	    when('/gigo-pkg/gate-log/add', {
 	        template: '<gate-log-form></gate-log-form>',
-	        title: 'Add Gate Log',
+	        title: 'Gate In Vehicle',
 	    }).
 	    when('/gigo-pkg/gate-log/edit/:id', {
 	        template: '<gate-log-form></gate-log-form>',

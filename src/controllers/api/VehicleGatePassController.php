@@ -35,9 +35,13 @@ class VehicleGatePassController extends Controller {
 					$first_two_string = substr($request->registration_number, 0, 2);
 					$next_two_number = substr($request->registration_number, 2, 2);
 					$last_two_number = substr($request->registration_number, -2);
-					if (!preg_match('/^[A-Z]+$/', $first_two_string) || !preg_match('/^[0-9]+$/', $next_two_number) || !preg_match('/^[0-9]+$/', $last_two_number)) {
+					if (!preg_match('/^[A-Z]+$/', $first_two_string) && !preg_match('/^[0-9]+$/', $next_two_number) && !preg_match('/^[0-9]+$/', $last_two_number)) {
 						$error = "Please enter valid registration number!";
 					}
+					//issue : Vijay : wrong logic
+					// if (!preg_match('/^[A-Z]+$/', $first_two_string) || !preg_match('/^[0-9]+$/', $next_two_number) || !preg_match('/^[0-9]+$/', $last_two_number)) {
+					// 	$error = "Please enter valid registration number!";
+					// }
 					if ($error) {
 						return response()->json([
 							'success' => false,
