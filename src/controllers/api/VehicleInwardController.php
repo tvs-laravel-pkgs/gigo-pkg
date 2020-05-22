@@ -5,7 +5,6 @@ namespace Abs\GigoPkg\Api;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\ServiceOrderType;
 use App\Address;
-use App\Attachment;
 use App\Config;
 use App\Country;
 use App\Customer;
@@ -30,7 +29,6 @@ use App\VehicleOwner;
 use Auth;
 use Carbon\Carbon;
 use DB;
-use File;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
@@ -77,18 +75,18 @@ class VehicleInwardController extends Controller {
 			//Gate In Completed =>8120
 				->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '" . $request->floor_adviser_id . "')")
 				->groupBy('gate_logs.id');
-				//->get();
+			//->get();
 
-				if (!empty($request->offset) && !empty($request->limit)) {
+			if (!empty($request->offset) && !empty($request->limit)) {
 				$vehicle_inward_list_get->offset($request->offset);
-				}
-				if (!empty($request->limit)) {
+			}
+			if (!empty($request->limit)) {
 				$vehicle_inward_list_get->limit($request->limit);
-				}
+			}
 
-				$vehicle_inward_list = $vehicle_inward_list_get->get();
+			$vehicle_inward_list = $vehicle_inward_list_get->get();
 
-				$vehicle_inward_list['total_vehicle_inward_count'] = $vehicle_inward_list_get->get()->count();
+			$vehicle_inward_list['total_vehicle_inward_count'] = $vehicle_inward_list_get->get()->count();
 			return response()->json([
 				'success' => true,
 				'vehicle_inward_list' => $vehicle_inward_list,
@@ -172,7 +170,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveJobOrder(Request $request) {
-		 //dd($request->all());
+		//dd($request->all());
 		try {
 			//issue : saravanan - Add max 10 rule for mobile number
 			$validator = Validator::make($request->all(), [
@@ -278,16 +276,16 @@ class VehicleInwardController extends Controller {
 			//JOB ORDER SAVE
 			$job_order = JobOrder::firstOrNew([
 				'gate_log_id' => $request->gate_log_id,
-				'company_id'=>Auth::user()->company_id,
+				'company_id' => Auth::user()->company_id,
 			]);
 			$job_order->number = mt_rand(1, 10000);
 			$job_order->fill($request->all());
 			$job_order->company_id = Auth::user()->company_id;
 			$job_order->save();
-			if($job_order->exists){
+			if ($job_order->exists) {
 				$job_order->updated_by_id = Auth::user()->id;
 				$job_order->updated_at = Carbon::now();
-			}else{
+			} else {
 				$job_order->created_by_id = Auth::user()->id;
 				$job_order->created_at = Carbon::now();
 			}
@@ -404,13 +402,13 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-			$vehicle_inventory_items_count=count($request->vehicle_inventory_items);
-			$vehicle_inventory_unique_items_count=count(array_unique(array_column($request->vehicle_inventory_items, 'inventory_item_id')));
-			if($vehicle_inventory_items_count!=$vehicle_inventory_unique_items_count){
+			$vehicle_inventory_items_count = count($request->vehicle_inventory_items);
+			$vehicle_inventory_unique_items_count = count(array_unique(array_column($request->vehicle_inventory_items, 'inventory_item_id')));
+			if ($vehicle_inventory_items_count != $vehicle_inventory_unique_items_count) {
 				return response()->json([
-					'success'=>false,
-					'error'=>'Validation Error',
-					'message'=>'Inventory items are not unique'
+					'success' => false,
+					'error' => 'Validation Error',
+					'message' => 'Inventory items are not unique',
 				]);
 			}
 
@@ -453,8 +451,8 @@ class VehicleInwardController extends Controller {
 						->attach(
 							$vehicle_inventory_item['inventory_item_id'],
 							[
-							'is_available' => $vehicle_inventory_item['is_available'],
-							'remarks' => $vehicle_inventory_item['remarks'],
+								'is_available' => $vehicle_inventory_item['is_available'],
+								'remarks' => $vehicle_inventory_item['remarks'],
 							]
 						);
 				}
@@ -593,13 +591,13 @@ class VehicleInwardController extends Controller {
 					$parts_rate += $part->rate;
 				}
 			}
-			$total_amount =$parts_rate + $labour_amount;
+			$total_amount = $parts_rate + $labour_amount;
 
 			return response()->json([
 				'success' => true,
 				'part_details' => $part_details,
 				'labour_details' => $labour_details,
-				'total_amount' =>number_format($total_amount,2),
+				'total_amount' => number_format($total_amount, 2),
 			]);
 		} catch (Exception $e) {
 			return response()->json([
@@ -1147,7 +1145,7 @@ class VehicleInwardController extends Controller {
 					$first_two_string = substr($request->registration_number, 0, 2);
 					$next_two_number = substr($request->registration_number, 2, 2);
 					$last_two_number = substr($request->registration_number, -2);
-					if (!preg_match('/^[A-Z]+$/', $first_two_string) || !preg_match('/^[0-9]+$/', $next_two_number) || !preg_match('/^[0-9]+$/', $last_two_number)) {
+					if (!preg_match('/^[A-Z]+$/', $first_two_string) && !preg_match('/^[0-9]+$/', $next_two_number) && !preg_match('/^[0-9]+$/', $last_two_number)) {
 						$error = "Please enter valid registration number!";
 					}
 					if ($error) {
