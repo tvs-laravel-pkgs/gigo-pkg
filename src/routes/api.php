@@ -4,17 +4,16 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//Route::post('punch/status', 'PunchController@status');
 
 		//SAVE GATE IN ENTRY
-		// Route::post('save-vehicle-gate-in-entry', 'VehicleGatePassController@saveVehicleGateInEntry');
 		Route::post('gate-log/save', 'VehicleGatePassController@saveVehicleGateInEntry');
+
+		//VEHICLE INWARD
+		Route::post('vehicle-inward/get-list', 'VehicleInwardController@getVehicleInwardList');
+		Route::post('get-vehicle-inward-view', 'VehicleInwardController@getVehicleInwardViewData');
 
 		//VEHICLE GATE PASS LIST
 		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');
 		Route::get('view-vehicle-gate-pass/{gate_log_id}', 'VehicleGatePassController@viewVehicleGatePass');
 		Route::post('gate-out-vehicle/save', 'VehicleGatePassController@saveVehicleGateOutEntry');
-
-		//VEHICLE INWARD
-		Route::post('vehicle-inward/get-list', 'VehicleInwardController@getVehicleInwardList');
-		Route::get('get-vehicle-inward-view/{id}', 'VehicleInwardController@getVehicleInwardViewData');
 
 		//VEHICLE GET JOB ORDER FORM DATA AND SAVE
 		Route::get('get-job-order-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getJobOrderFormData');

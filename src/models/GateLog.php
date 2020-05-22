@@ -25,9 +25,14 @@ class GateLog extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
-	public function vehicleDetail() {
+	public function vehicle() {
 		return $this->belongsTo('App\Vehicle', 'vehicle_id');
 	}
+
+	//issue : naming
+	// public function vehicleDetail() {
+	// 	return $this->belongsTo('App\Vehicle', 'vehicle_id');
+	// }
 
 	public function gatePass() {
 		return $this->belongsTo('App\GatePass', 'gate_pass_id');

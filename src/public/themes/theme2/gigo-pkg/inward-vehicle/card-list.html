@@ -1,0 +1,181 @@
+<div class="content-wrap cndn-wrap">
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content title-block">
+                    <h1 class="title type-2">Vehicle Inward<span class="badge badge-secondary">999</span></h1>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content reset-block">
+                    <div class="reset-wrap">
+                        <button class="btn-reset reset-tooltip">
+                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
+                        </button>
+                    </div>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content search-block">
+                    <div class="search_filter">
+                        <label>
+                            <input type="search" id="search_box" class="form-control" placeholder="Search" />
+                            <button class="btn-clear">Clear</button>
+                        </label>
+                    </div><!-- Search Filter -->
+                </div><!-- Page Header Content -->
+                <div class="page-header-content button-block">
+                    <button class="btn btn-bordered" data-toggle="modal" data-target="#filter"><i class="icon ion-md-funnel"></i>Filter</button>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+            <div class="page-header-content-right">
+                <div class="page-header-content tab-block">
+                    <div class="list-card-icon-wrap">
+                        <div class="list-icon">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="card-icon in">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div><!-- List Card Wrap -->
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Right -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <div class="list-card-tab-wrap">
+        <div class="card-tab-content in">
+            <div class="page-card-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="card-list">
+                                <li ng-repeat="(key, gate_log) in gate_logs">
+                                    <div class="card-box">
+                                        <div class="card-box-head">
+                                            <div class="card-box-head-title">
+                                                {{gate_log.registration_type}}
+                                            </div>
+                                        </div><!-- Card Box Head -->
+                                        <div class="card-box-body">
+                                            <div class="box-list">
+                                                <div class="box-left">
+                                                    <div class="box-transparent">
+                                                        <div class="box-transparent-title">
+                                                            {{gate_log.registration_number}}
+                                                        </div>
+                                                        <div class="box-transparent-subtitle">
+                                                            {{gate_log.model_number}}
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Box Left -->
+                                                <div class="box-right">
+                                                    <div class="box-info">
+                                                        <div class="box-info-head">
+                                                            Gate In # : {{gate_log.number}}
+                                                        </div>
+                                                        <div class="box-info-body">
+                                                            <div class="box-info-body-text">
+                                                                {{gate_log.date}}
+                                                            </div>
+                                                            <div class="box-info-body-text">
+                                                                {{gate_log.time}}
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- Box Info -->
+                                                </div><!-- Box Right -->
+                                            </div><!-- Box List -->
+                                            <div class="card-box-content mb-8" ng-if="gate_log.driver_name">
+                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <span class="card-box-content-value">
+                                                    <b>
+                                                        {{gate_log.driver_name}}
+                                                    </b>
+                                                </span>
+                                            </div>
+                                            <div class="card-box-content" ng-if="gate_log.amc_policies">
+                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <span class="card-box-content-value">
+                                                    {{gate_log.amc_policies}}
+                                                </span>
+                                            </div>
+                                        </div><!-- Card Box Body -->
+                                        <div class="card-box-footer">
+                                            <div class="card-box-footer-left">
+                                                <div class="card-box-footer-info">
+                                                    <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                    <span class="card-box-footer-value">
+                                                        {{gate_log.status_name}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="card-box-footer-right">
+                                                <a href="" class="btn btn-square btn-md btn-red">
+                                                    View
+                                                </a>
+                                                <a href=".#!/gigo-pkg/job-order/view/{{gate_log.id}}" class="btn btn-square btn-md btn-secondary-dark">
+                                                    Initiate
+                                                </a>
+                                            </div>
+                                        </div><!-- Card Box Footer -->
+                                    </div><!-- Card Box -->
+                                </li>
+                            </ul><!-- Card List -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Container -->
+            </div><!-- Page Card Content -->
+        </div><!-- Card Tab Content -->
+    </div><!-- List & Card Tab Wrap -->
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal fade filter" id="filter" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog filter-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="modal-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Vendor<span class="mandatory">*</span></label>
+                                <input type="text" class="form-control" placeholder="Enter" aria-invalid="false" />
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Outlet<span class="mandatory">*</span></label>
+                                <input type="text" class="form-control" placeholder="Enter" aria-invalid="false" />
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="input-text form-group">
+                                <label>Invoice Date<span class="mandatory">*</span></label>
+                                <div class="input-group date" data-provide="datepicker">
+                                    <input type="text" class="form-control" placeholder="Select Date" aria-invalid="false">
+                                    <div class="input-group-addon">
+                                        <img src="./public/theme/img/content/calender-gray-icon.svg" class="img-responsive">
+                                    </div>
+                                </div><!-- Input Group -->
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Form -->
+            </div><!-- Modal Body -->
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="reset-link">Reset Filter</button>
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-primary btn-md">Apply</button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Footer -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->

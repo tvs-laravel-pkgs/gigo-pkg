@@ -137,6 +137,8 @@ class VehicleGatePassController extends Controller {
 			$gate_log->gate_in_date = Carbon::now();
 			$gate_log->status_id = 8120; //GATE IN COMPLETED
 			$gate_log->vehicle_id = $vehicle->id;
+			//issue : logic missing : vijay
+			$gate_log->outlet_id = Auth::user()->employee->outlet_id;
 			$gate_log->save();
 
 			$gate_log->number = 'GI' . $gate_log->id;
