@@ -63,18 +63,66 @@
                                         Vehicle Details
                                     </a>
                                 </li>
-                                <li><a data-target="#customer_details" data-toggle="tab" aria-expanded="true" class="filter">Customer Details</a></li>
-                                <li><a data-target="#order_details" data-toggle="tab" aria-expanded="true" class="filter">Order Details</a></li>
-                                <li><a data-target="#inventory_details" data-toggle="tab" aria-expanded="true" class="filter">Inventory</a></li>
-                                <li><a data-target="#voc_details" data-toggle="tab" aria-expanded="true" class="filter">Capture VOC</a></li>
-                                <li><a data-target="#road_test_details" data-toggle="tab" aria-expanded="true" class="filter">Road Test Observations</a></li>
-                                <li><a data-target="#expert_diagnosis_details" data-toggle="tab" aria-expanded="true" class="filter">Expert Diagnosis Report</a></li>
-                                <li><a data-target="#vehicle_inspection_details" data-toggle="tab" aria-expanded="true" class="filter">Vehicle Inspection Report</a></li>
-                                <li><a data-target="#dms_details" data-toggle="tab" aria-expanded="true" class="filter">DMS Checklist</a></li>
-                                <li><a data-target="#maintenance_details" data-toggle="tab" aria-expanded="true" class="filter">Scheduled Maintenance</a></li>
-                                <li><a data-target="#payable_details" data-toggle="tab" aria-expanded="true" class="filter">Payable Labour & Parts</a></li>
-                                <li><a data-target="#estimate_details" data-toggle="tab" aria-expanded="true" class="filter">Estimate</a></li>
-                                <li><a data-target="#status_details" data-toggle="tab" aria-expanded="true" class="filter">Estimation Status</a></li>
+                                <li>
+                                    <a data-target="#customer_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Customer Details
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#order_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Order Details
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#inventory_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Inventory
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#voc_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Capture VOC
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#road_test_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Road Test Observations
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#expert_diagnosis_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Expert Diagnosis Report
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#vehicle_inspection_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Vehicle Inspection Report
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#dms_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        DMS Checklist
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#maintenance_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Scheduled Maintenance
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#payable_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Payable Labour & Parts
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#estimate_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Estimate
+                                    </a>
+                                </li>
+                                <li>
+                                    <a data-target="#status_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                        Estimation Status
+                                    </a>
+                                </li>
                             </ul>
                         </div><!-- Filters -->
                     </div><!-- Tab Header -->
@@ -84,98 +132,160 @@
                         <!-- TAB PANEL -->
                         <div class="tab-pane fade in active" id="vehicle_details" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5 class="color-primary mb-10"><b>Vehicle Details</b></h5>
-                                        <ul class="view-row mb-no">
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">Registration Type</span>
-                                                <span class="view-data-list-value"><b>Registered</b></span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">Registration No</span>
-                                                <span class="view-col-value"><b>TN47 BV 1283</b></span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">Vehicle Model</span>
-                                                <span class="view-col-value"><b>AL502</b></span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">VIN Number</span>
-                                                <span class="view-col-value">VIN7878888788MN</span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">Engine Number</span>
-                                                <span class="view-col-value">EI898998998K</span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">Chasis Number</span>
-                                                <span class="view-data-list-value"><b>CH899899888999</b></span>
-                                            </li>
-                                        </ul>
-                                        <button class="btn btn-secondary-dark btn-md btn-square">Edit</button>
-                                        <div class="mb-30"></div><!-- Spacing -->
-                                        <h5 class="color-primary"><b>Edit Vehicle Details</b></h5>
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label>Registration Type <sup class="mandatory">*</sup></label>
-                                                    <div class="common-radio-button type-4">
-                                                        <input type="radio" id="radio_yes" name="radio-group" checked="">
-                                                        <label for="radio_yes">Registered</label>
-                                                        <input type="radio" id="radio_no" name="radio-group">
-                                                        <label for="radio_no">Un Registered</label>
-                                                    </div>
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label>Registration Number <sup class="mandatory">*</sup></label>
-                                                    <input type="text" class="form-control" placeholder="Enter Registration No" autocomplete="off" />
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label>Vehicle Model <sup class="mandatory">*</sup></label>
-                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
-                                                        <md-select-header class="demo-select-header">
-                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
-                                                        </md-select-header>
-                                                        <md-optgroup label="drinks">
-                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
-                                                        </md-optgroup>
-                                                    </md-select>
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label>VIN Number <sup class="mandatory">*</sup></label>
-                                                    <input type="text" class="form-control" placeholder="Enter VIN No" autocomplete="off" />
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label>Engine Number <sup class="mandatory">*</sup></label>
-                                                    <input type="text" class="form-control" placeholder="Enter Engine No" autocomplete="off" />
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <label>Chasis Number <sup class="mandatory">*</sup></label>
-                                                    <input type="text" class="form-control" placeholder="Enter Chasis No" autocomplete="off" />
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                        </div><!-- Row -->
-                                    </div><!-- Column -->
-                                    <div class="tab-pane-footer">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <a class="btn btn-red">Save & Close</a>
-                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                <form id="vehicle-form">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Vehicle Details
+                                                </b>
+                                            </h5>
+                                            <ul class="view-row mb-no" ng-if="gate_log.vehicle.status_id == 8141">
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Registration Type
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b ng-if="gate_log.vehicle.is_registered == 1">
+                                                            Registered Vehicle
+                                                        </b>
+                                                        <b ng-if="gate_log.vehicle.is_registered != 1">
+                                                            Un-Registered Vehicle
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3" ng-if="gate_log.vehicle.is_registered == 1">
+                                                    <span class="view-col-label">
+                                                        Registration No
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{gate_log.vehicle.registration_number}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Vehicle Model
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{gate_log.vehicle.model.model_code}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        VIN Number
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{gate_log.vehicle.vin_number}}
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Engine Number
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{gate_log.vehicle.engine_number}}
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Chassis Number
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{gate_log.vehicle.chassis_number}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                            <button class="btn btn-secondary-dark btn-md btn-square" ng-if="gate_log.vehicle.status_id == 8141">
+                                                Edit
+                                            </button>
+                                            <div class="row" ng-if="gate_log.vehicle.status_id == 8140">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Registration Type <sup class="mandatory">*</sup></label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="radio_yes" name="radio-group" ng-model="gate_log.vehicle.is_registered">
+                                                            <label for="radio_yes">Registered</label>
+                                                            <input type="radio" id="radio_no" name="radio-group" ng-model="gate_log.vehicle.is_registered">
+                                                            <label for="radio_no">Un Registered</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Registration Number
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control" placeholder="Enter Registration No" autocomplete="off" ng-model="gate_log.vehicle.registration_number" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Vehicle Model
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-select ng-model="gate_log.vehicle.model" placeholder="Select Model">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchModel" type="search" placeholder="Search for a model.." class="md-text">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="model" ng-repeat="model in extras.model_list | filter:searchModel">
+                                                                    {{model.model_code}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            VIN Number
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control" placeholder="Enter VIN No" autocomplete="off" ng-model="gate_log.vehicle.vin_number" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Engine Number
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control" placeholder="Enter Engine No" autocomplete="off" ng-model="gate_log.vehicle.engine_number" name="engine_number" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Chassis Number
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control" placeholder="Enter Chasis No" autocomplete="off" ng-model="gate_log.vehicle.chassis_number" name="chassis_number" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <button type="submit" class="btn btn-red">
+                                                        Save & Close
+                                                    </button>
+                                                    <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        Next
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div><!-- Tab Footer -->
-                                </div><!-- Row -->
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </form>
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
                         <div class="tab-pane fade" id="customer_details" data-animation="fadeInUp" data-animation-delay="300">
