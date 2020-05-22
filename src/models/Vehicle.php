@@ -14,9 +14,23 @@ class Vehicle extends Model {
 	use SoftDeletes;
 	protected $table = 'vehicles';
 	public $timestamps = true;
-	protected $fillable =
-		["company_id", "engine_number", "chassis_number", "model_id", "is_registered", "registration_number", "vin_number", "sold_date", "warranty_member_id", "ewp_expiry_date"]
-	;
+
+	//issue : readability
+	protected $fillable = [
+		"company_id",
+		"engine_number",
+		"chassis_number",
+		"model_id",
+		"is_registered",
+		"registration_number",
+		"vin_number",
+		"sold_date",
+		"warranty_member_id",
+		"ewp_expiry_date",
+	];
+	// protected $fillable =
+	// 	["company_id", "engine_number", "chassis_number", "model_id", "is_registered", "registration_number", "vin_number", "sold_date", "warranty_member_id", "ewp_expiry_date"]
+	// ;
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -28,12 +42,24 @@ class Vehicle extends Model {
 	public function vehicleOwner() {
 		return $this->hasMany('App\VehicleOwner', 'vehicle_id', 'id');
 	}
-	public function vehicleCurrentOwner() {
-		return $this->hasMany('App\VehicleOwner', 'vehicle_id')->orderBy('from_date', 'DESC')->limit(1);
+
+	//issue : naming
+	public function currentOwner() {
+		//issue : wrong relationship
+		return $this->hasOne('App\VehicleOwner', 'vehicle_id')->orderBy('from_date', 'DESC');
 	}
 
-	public function vehicleModel() {
-		return $this->belongsTo('App\vehicleModel', 'model_id');
+	// public function vehicleCurrentOwner() {
+	// 	return $this->hasMany('App\VehicleOwner', 'vehicle_id')->orderBy('from_date', 'DESC')->limit(1);
+	// }
+
+	//issue : naming & model name
+	// public function vehicleModel() {
+	// 	return $this->belongsTo('App\vehicleModel', 'model_id');
+	// }
+
+	public function model() {
+		return $this->belongsTo('App\VehicleModel', 'model_id');
 	}
 
 	public function status() {

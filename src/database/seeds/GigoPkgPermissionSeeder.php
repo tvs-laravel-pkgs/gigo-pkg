@@ -559,29 +559,29 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
-			//Job Orders
+			//Vehicle Inward
 			[
 				'display_order' => 99,
 				'parent' => null,
-				'name' => 'job-orders',
-				'display_name' => 'Job Orders',
+				'name' => 'inward-vehicle',
+				'display_name' => 'Inward Vehicle',
 			],
 			[
 				'display_order' => 1,
-				'parent' => 'job-orders',
-				'name' => 'add-job-order',
+				'parent' => 'inward-vehicle',
+				'name' => 'add-vehicle-inward',
 				'display_name' => 'Add',
 			],
 			[
 				'display_order' => 2,
-				'parent' => 'job-orders',
-				'name' => 'edit-job-order',
+				'parent' => 'inward-vehicle',
+				'name' => 'edit-vehicle-inward',
 				'display_name' => 'Edit',
 			],
 			[
 				'display_order' => 3,
-				'parent' => 'job-orders',
-				'name' => 'delete-job-order',
+				'parent' => 'inward-vehicle',
+				'name' => 'delete-vehicle-inward',
 				'display_name' => 'Delete',
 			],
 

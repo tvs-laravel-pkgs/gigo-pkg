@@ -39,13 +39,14 @@ class VehicleInwardController extends Controller {
 	public function getVehicleInwardList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [
-				'floor_adviser_id' => [
-					'required',
-					'exists:employees,id',
-					'integer',
-				],
+				//issue : vijay : business logic
+				// 'floor_adviser_id' => [
+				// 	'required',
+				// 	'exists:employees,id',
+				// 	'integer',
+				// ],
 				'offset' => 'nullable|numeric',
-				//'limit' => 'nullable|numeric',
+				'limit' => 'nullable|numeric',
 			]);
 			if ($validator->fails()) {
 				return response()->json([
@@ -54,18 +55,33 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$vehicle_inward_list_get = GateLog::select('gate_logs.*')
-				->with([
-					'status',
-					'vehicleDetail',
-					'vehicleDetail.status',
-					'vehicleDetail.vehicleCurrentOwner',
-					'vehicleDetail.vehicleCurrentOwner.CustomerDetail',
+			$vehicle_inward_list_get = GateLog::
+				//issue : not optimized
+				// ->with([
+				// 	'status',
+				// 	'vehicle',
+				// 	'vehicle.status',
+				// 	'vehicle.currentOwner',
+				// 	'vehicle.currentOwner.customer',
+				// ])
+				leftJoin('vehicles', 'gate_logs.vehicle_id', 'vehicles.id')
+				->leftJoin('models', 'models.id', 'vehicles.model_id')
+				->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
+				->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.id')
+				->join('configs as status', 'status.id', 'gate_logs.status_id')
+				->select([
+					'gate_logs.id',
+					DB::raw('IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle") as registration_type'),
+					'vehicles.registration_number',
+					'models.model_number',
+					'gate_logs.number',
+					DB::raw('DATE_FORMAT(gate_logs.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(gate_logs.created_at,"%h:%i %p") as time'),
+					'gate_logs.driver_name',
+					'gate_logs.contact_number as driver_contact_number',
+					DB::raw('GROUP_CONCAT(amc_policies.name) as amc_policies'),
+					'status.name as status_name',
 				])
-				->leftJoin('vehicles', 'gate_logs.vehicle_id', 'vehicles.id')
-				->leftJoin('vehicle_owners', 'vehicles.id', 'vehicle_owners.vehicle_id')
-				->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
-			//->whereIn('gate_logs.id', $gate_log_ids)
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
@@ -73,23 +89,26 @@ class VehicleInwardController extends Controller {
 					}
 				})
 			//Gate In Completed =>8120
-				->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '" . $request->floor_adviser_id . "')")
+				->where('gate_logs.status_id', 8120)
+			// ->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '" . $request->floor_adviser_id . "')")
 				->groupBy('gate_logs.id');
 			//->get();
 
-			if (!empty($request->offset) && !empty($request->limit)) {
+			$total_records = $vehicle_inward_list_get->get()->count();
+
+			if ($request->offset) {
 				$vehicle_inward_list_get->offset($request->offset);
 			}
-			if (!empty($request->limit)) {
+			if ($request->limit) {
 				$vehicle_inward_list_get->limit($request->limit);
 			}
 
-			$vehicle_inward_list = $vehicle_inward_list_get->get();
+			$gate_logs = $vehicle_inward_list_get->get();
 
-			$vehicle_inward_list['total_vehicle_inward_count'] = $vehicle_inward_list_get->get()->count();
 			return response()->json([
 				'success' => true,
-				'vehicle_inward_list' => $vehicle_inward_list,
+				'gate_logs' => $gate_logs,
+				'total_records' => $total_records,
 			]);
 		} catch (Exception $e) {
 			return response()->json([
@@ -99,10 +118,25 @@ class VehicleInwardController extends Controller {
 		}
 	}
 	//VEHICLE INWARD VIEW DATA
-	public function getVehicleInwardViewData($id) {
+	public function getVehicleInwardViewData(Request $r) {
 		try {
-			//dd($id);
-			$gate_log = GateLog::find($id);
+			$gate_log = GateLog::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.currentOwner.customer',
+				'vehicle.currentOwner.ownerShipDetail',
+				'status',
+				'driverAttachment',
+				'kmAttachment',
+				'vehicleAttachment',
+			])
+				->select([
+					'gate_logs.*',
+					DB::raw('DATE_FORMAT(gate_logs.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(gate_logs.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
 			if (!$gate_log) {
 				return response()->json([
 					'success' => false,
@@ -110,22 +144,24 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$gate_log_detail = GateLog::with([
-				'status',
-				'driverAttachment',
-				'kmAttachment',
-				'vehicleAttachment',
-				'vehicleDetail',
-				'vehicleDetail.vehicleCurrentOwner.CustomerDetail',
-				'vehicleDetail.vehicleCurrentOwner.ownerShipDetail',
-			])
-				->find($id);
-			$gate_log_detail->attachement_path = url('storage/app/public/gigo/gate_in/attachments/');
+			//issue : repeated query and naming
+			// $gate_log_detail = GateLog::with([
+			// $gate_log = GateLog::with([
+			// 	'status',
+			// 	'driverAttachment',
+			// 	'kmAttachment',
+			// 	'vehicleAttachment',
+			// 	'vehicle',
+			// 	'vehicle.currentOwner.customer',
+			// 	'vehicle.currentOwner.ownerShipDetail',
+			// ])
+			// 	->find($r->id);
 
 			//Job card details need to get future
 			return response()->json([
 				'success' => true,
-				'gate_log' => $gate_log_detail,
+				'gate_log' => $gate_log,
+				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
 
 		} catch (Exception $e) {

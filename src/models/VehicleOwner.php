@@ -27,9 +27,16 @@ class VehicleOwner extends Model {
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
-	public function CustomerDetail() {
+
+	public function customer() {
 		return $this->belongsTo('App\Customer', 'customer_id');
 	}
+
+	//issue : naming
+	// public function CustomerDetail() {
+	// 	return $this->belongsTo('App\Customer', 'customer_id');
+	// }
+
 	public function ownerShipDetail() {
 		return $this->belongsTo('App\Config', 'ownership_id');
 	}

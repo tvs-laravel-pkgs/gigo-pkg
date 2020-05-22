@@ -1,8 +1,104 @@
-app.component('jobOrderList', {
-    templateUrl: job_order_list_template_url,
+app.component('inwardVehicleCardList', {
+    templateUrl: inward_vehicle_card_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_job_order').focus();
+        $('#search').focus();
+        var self = this;
+
+        $('li').removeClass('active');
+        $('.master_link').addClass('active').trigger('click');
+
+        self.hasPermission = HelperService.hasPermission;
+        if (!self.hasPermission('inward-vehicle')) {
+            window.location = "#!/page-permission-denied";
+            return false;
+        }
+
+        $scope.clear_search = function() {
+            $('#search').val('');
+        }
+
+        HelperService.isLoggedIn()
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        $scope.clearSearchTerm = function() {
+            $scope.searchTerm = '';
+            $scope.searchTerm1 = '';
+            $scope.searchTerm2 = '';
+            $scope.searchTerm3 = '';
+        };
+
+        $scope.reset_filter = function() {
+            $("#short_name").val('');
+            $("#name").val('');
+            $("#status").val('');
+            dataTables.fnFilter();
+        }
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/gigo-pkg/vehicle-inward/get-list',
+                    method: "POST",
+                    data: {
+
+                    },
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.gate_logs = res.gate_logs;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //DELETE
+        $scope.deleteJobOrder = function($id) {
+            $('#inward_vehicle_id').val($id);
+        }
+        $scope.deleteConfirm = function() {
+            $id = $('#inward_vehicle_id').val();
+            $http.get(
+                laravel_routes['deleteJobOrder'], {
+                    params: {
+                        id: $id,
+                    }
+                }
+            ).then(function(response) {
+                if (response.data.success) {
+                    custom_noty('success', 'Job Order Deleted Successfully');
+                    $('#inward_vehicles_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/gigo-pkg/job-order/list');
+                }
+            });
+        }
+        $rootScope.loading = false;
+    }
+});
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+
+app.component('inwardVehicleList', {
+    templateUrl: inward_vehicle_list_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+        $scope.loading = true;
+        $('#search_inward_vehicle').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
@@ -14,7 +110,7 @@ app.component('jobOrderList', {
         self.add_permission = self.hasPermission('add-job-order');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#job_orders_list').DataTable({
+        var dataTable = $('#inward_vehicles_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -33,7 +129,7 @@ app.component('jobOrderList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_job_order').val(state_save_val.search.search);
+                    $('#search_inward_vehicle').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -56,9 +152,9 @@ app.component('jobOrderList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'job_orders.short_name' },
-                { data: 'name', name: 'job_orders.name' },
-                { data: 'description', name: 'job_orders.description' },
+                { data: 'short_name', name: 'inward_vehicles.short_name' },
+                { data: 'name', name: 'inward_vehicles.name' },
+                { data: 'description', name: 'inward_vehicles.description' },
                 { data: 'status', name: '' },
 
             ],
@@ -73,24 +169,24 @@ app.component('jobOrderList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_job_order').val('');
-            $('#job_orders_list').DataTable().search('').draw();
+            $('#search_inward_vehicle').val('');
+            $('#inward_vehicles_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#job_orders_list').DataTable().ajax.reload();
+            $('#inward_vehicles_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#job_orders_list').dataTable();
-        $("#search_job_order").keyup(function() {
+        var dataTables = $('#inward_vehicles_list').dataTable();
+        $("#search_inward_vehicle").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
         $scope.deleteJobOrder = function($id) {
-            $('#job_order_id').val($id);
+            $('#inward_vehicle_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#job_order_id').val();
+            $id = $('#inward_vehicle_id').val();
             $http.get(
                 laravel_routes['deleteJobOrder'], {
                     params: {
@@ -100,7 +196,7 @@ app.component('jobOrderList', {
             ).then(function(response) {
                 if (response.data.success) {
                     custom_noty('success', 'Job Order Deleted Successfully');
-                    $('#job_orders_list').DataTable().ajax.reload(function(json) {});
+                    $('#inward_vehicles_list').DataTable().ajax.reload(function(json) {});
                     $location.path('/gigo-pkg/job-order/list');
                 }
             });
@@ -151,8 +247,8 @@ app.component('jobOrderList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.component('jobOrderForm', {
-    templateUrl: job_order_form_template_url,
+app.component('jobOrderView', {
+    templateUrl: job_order_view_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
@@ -161,29 +257,38 @@ app.component('jobOrderForm', {
             return false;
         }
         self.angular_routes = angular_routes;
-        $http.get(
-            laravel_routes['getJobOrderFormData'], {
-                params: {
-                    id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
-                }
-            }
-        ).then(function(response) {
-            self.job_order = response.data.job_order;
-            self.action = response.data.action;
-            $rootScope.loading = false;
-            if (self.action == 'Edit') {
-                if (self.job_order.deleted_at) {
-                    self.switch_value = 'Inactive';
-                } else {
-                    self.switch_value = 'Active';
-                }
-            } else {
-                self.switch_value = 'Active';
-            }
-        });
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/gigo-pkg/get-vehicle-inward-view',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.gate_log_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.gate_log = res.gate_log;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
 
         //Save Form Data 
-        var form_id = '#job_order_form';
+        var form_id = '#inward_vehicle_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {

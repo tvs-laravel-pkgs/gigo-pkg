@@ -673,32 +673,31 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 <script type='text/javascript'>
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
-	    //Job Order
-	    when('/gigo-pkg/job-order/list', {
-	        template: '<job-order-list></job-order-list>',
-	        title: 'Job Orders',
+	    //Inward Vehicle
+	    when('/gigo-pkg/inward-vehicle/card-list', {
+	        template: '<inward-vehicle-card-list></inward-vehicle-card-list>',
+	        title: 'Inward Vehicle - Card List',
 	    }).
-	    when('/gigo-pkg/job-order/add', {
-	        template: '<job-order-form></job-order-form>',
-	        title: 'Add Job Order',
+	   	when('/gigo-pkg/inward-vehicle/table-list', {
+	        template: '<inward-vehicle-table-list></inward-vehicle-table-list>',
+	        title: 'Inward Vehicle - Table List',
 	    }).
-	    when('/gigo-pkg/job-order/edit/:id', {
-	        template: '<job-order-form></job-order-form>',
-	        title: 'Edit Job Order',
+	    when('/gigo-pkg/job-order/view/:gate_log_id', {
+	        template: '<job-order-view></job-order-view>',
+	        title: 'Job Order - View',
 	    }).
-	    when('/gigo-pkg/job-order/card-list', {
-	        template: '<job-order-card-list></job-order-card-list>',
-	        title: 'Job Order Card List',
+	    when('/gigo-pkg/inward-vehicle/edit/:id', {
+	        template: '<inward-vehicle-form></inward-vehicle-form>',
+	        title: 'Edit Inward Vehicle',
 	    });
 	}]);
 
 	//Job Orders
-    var job_order_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-order/list.html')}}';
-    var job_order_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-order/form.html')}}';
-    var job_order_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-order/card-list.html')}}';
-    var job_order_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-modal-form.html')}}';
+    var inward_vehicle_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/card-list.html')}}';
+    var inward_vehicle_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/list.html')}}';
+    var job_order_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/view.html')}}';
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-order/controller.js')}}'></script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/controller.js')}}'></script>
 
 
 <script type='text/javascript'>
