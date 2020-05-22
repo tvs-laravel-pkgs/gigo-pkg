@@ -93,6 +93,7 @@ class VehicleInwardController extends Controller {
 			// ->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '" . $request->floor_adviser_id . "')")
 				->groupBy('gate_logs.id');
 			//->get();
+
 			$total_records = $vehicle_inward_list_get->get()->count();
 
 			if ($request->offset) {
@@ -1180,7 +1181,7 @@ class VehicleInwardController extends Controller {
 					$first_two_string = substr($request->registration_number, 0, 2);
 					$next_two_number = substr($request->registration_number, 2, 2);
 					$last_two_number = substr($request->registration_number, -2);
-					if (!preg_match('/^[A-Z]+$/', $first_two_string) || !preg_match('/^[0-9]+$/', $next_two_number) || !preg_match('/^[0-9]+$/', $last_two_number)) {
+					if (!preg_match('/^[A-Z]+$/', $first_two_string) && !preg_match('/^[0-9]+$/', $next_two_number) && !preg_match('/^[0-9]+$/', $last_two_number)) {
 						$error = "Please enter valid registration number!";
 					}
 					if ($error) {
