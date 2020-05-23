@@ -91,38 +91,6 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
-			//Vehicles
-			[
-				'display_order' => 99,
-				'parent' => null,
-				'name' => 'vehicles',
-				'display_name' => 'Vehicles',
-			],
-			[
-				'display_order' => 1,
-				'parent' => 'vehicles',
-				'name' => 'add-vehicle',
-				'display_name' => 'Add',
-			],
-			[
-				'display_order' => 2,
-				'parent' => 'vehicles',
-				'name' => 'edit-vehicle',
-				'display_name' => 'Edit',
-			],
-			[
-				'display_order' => 3,
-				'parent' => 'vehicles',
-				'name' => 'delete-vehicle',
-				'display_name' => 'Delete',
-			],
-			[
-				'display_order' => 3,
-				'parent' => 'vehicles',
-				'name' => 'view-vehicle',
-				'display_name' => 'View',
-			],
-
 			//Vehicle Owners
 			[
 				'display_order' => 99,

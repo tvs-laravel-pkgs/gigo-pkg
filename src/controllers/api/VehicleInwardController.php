@@ -5,6 +5,7 @@ namespace Abs\GigoPkg\Api;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\ServiceOrderType;
 use App\Address;
+use App\City;
 use App\Config;
 use App\Country;
 use App\Customer;
@@ -21,7 +22,6 @@ use App\RepairOrderType;
 use App\ServiceType;
 use App\State;
 use App\User;
-use App\Vehicle;
 use App\VehicleInspectionItemGroup;
 use App\VehicleInventoryItem;
 use App\VehicleModel;
@@ -36,7 +36,7 @@ use Validator;
 class VehicleInwardController extends Controller {
 	public $successStatus = 200;
 
-	public function getVehicleInwardList(Request $request) {
+	public function getGateInList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [
 				//issue : vijay : business logic
@@ -55,7 +55,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$vehicle_inward_list_get = GateLog::
+			$vehicle_inward_list_get = JobOrder::
 				//issue : not optimized
 				// ->with([
 				// 	'status',
@@ -64,21 +64,22 @@ class VehicleInwardController extends Controller {
 				// 	'vehicle.currentOwner',
 				// 	'vehicle.currentOwner.customer',
 				// ])
-				leftJoin('vehicles', 'gate_logs.vehicle_id', 'vehicles.id')
+				join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
+				->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
 				->leftJoin('models', 'models.id', 'vehicles.model_id')
 				->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
 				->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.id')
 				->join('configs as status', 'status.id', 'gate_logs.status_id')
 				->select([
-					'gate_logs.id',
+					'job_orders.id',
 					DB::raw('IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle") as registration_type'),
 					'vehicles.registration_number',
 					'models.model_number',
 					'gate_logs.number',
 					DB::raw('DATE_FORMAT(gate_logs.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(gate_logs.created_at,"%h:%i %p") as time'),
-					'gate_logs.driver_name',
-					'gate_logs.contact_number as driver_contact_number',
+					'job_orders.driver_name',
+					'job_orders.driver_mobile_number as driver_mobile_number',
 					DB::raw('GROUP_CONCAT(amc_policies.name) as amc_policies'),
 					'status.name as status_name',
 				])
@@ -117,6 +118,7 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
 	//VEHICLE INWARD VIEW DATA
 	public function getVehicleInwardViewData(Request $r) {
 		try {
@@ -145,6 +147,45 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			//Job card details need to get future
+			return response()->json([
+				'success' => true,
+				'gate_log' => $gate_log,
+				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//VEHICLE DETAILS
+	public function getVehicleDetail(Request $r) {
+		try {
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'gateLog',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Order Not Found!',
+				]);
+			}
+
 			//issue : repeated query and naming
 			// $gate_log_detail = GateLog::with([
 			// $gate_log = GateLog::with([
@@ -161,8 +202,54 @@ class VehicleInwardController extends Controller {
 			//Job card details need to get future
 			return response()->json([
 				'success' => true,
-				'gate_log' => $gate_log,
+				'job_order' => $job_order,
+				'extras' => [
+					'model_list' => VehicleModel::getList(),
+				],
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//CUSTOMER DETAILS
+	public function getCustomerDetail(Request $r) {
+		try {
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'vehicle.currentOwner.customer',
+				'vehicle.currentOwner.ownerShipDetail',
+				'status',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Order Not Found!',
+				]);
+			}
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+				'extras' => [
+					'country_list' => Country::getList(),
+					'state_list' => State::getList(),
+					'city_list' => City::getList(),
+				],
 			]);
 
 		} catch (Exception $e) {
@@ -1084,208 +1171,6 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 
-	}
-
-	//VEHICLE GET FORM DATA
-	public function getVehicleFormData($id) {
-		// dd($id);
-		try {
-			$gate_log_validate = GateLog::find($id);
-			if (!$gate_log_validate) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Gate Log Not Found!',
-				]);
-			}
-
-			//UPDATE GATE LOG
-			$gate_log = GateLog::where('id', $id)
-				->update([
-					'status_id' => 8121, //VEHICLE INWARD INPROGRESS
-					'floor_adviser_id' => Auth::user()->entity_id,
-					'updated_by_id' => Auth::user()->id,
-				]);
-
-			$gate_log_detail = GateLog::with(['vehicleDetail'])->find($id);
-
-			$extras = [
-				'registration_types' => [
-					['id' => 0, 'name' => 'Unregistred'],
-					['id' => 1, 'name' => 'Registred'],
-				],
-				'vehicle_models' => VehicleModel::getList(),
-			];
-
-			return response()->json([
-				'success' => true,
-				'gate_log_detail' => $gate_log_detail,
-				'extras' => $extras,
-			]);
-			// return VehicleInward::saveVehicleGateInEntry($request);
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
-
-	//VEHICLE SAVE
-	public function saveVehicle(Request $request) {
-		// dd($request->all());
-		try {
-			//REMOVE WHITE SPACE BETWEEN REGISTRATION NUMBER
-			$request->registration_number = str_replace(' ', '', $request->registration_number);
-
-			//REGISTRATION NUMBER VALIDATION
-			$error = '';
-			if ($request->registration_number) {
-				$registration_no_count = strlen($request->registration_number);
-				if ($registration_no_count < 8) {
-					return response()->json([
-						'success' => false,
-						'error' => 'The registration number must be at least 8 characters.',
-					]);
-				} else {
-					$first_two_string = substr($request->registration_number, 0, 2);
-					$next_two_number = substr($request->registration_number, 2, 2);
-					$last_two_number = substr($request->registration_number, -2);
-					if (!preg_match('/^[A-Z]+$/', $first_two_string) && !preg_match('/^[0-9]+$/', $next_two_number) && !preg_match('/^[0-9]+$/', $last_two_number)) {
-						$error = "Please enter valid registration number!";
-					}
-					if ($error) {
-						return response()->json([
-							'success' => false,
-							'error' => $error,
-						]);
-					}
-				}
-			}
-
-			$validator = Validator::make($request->all(), [
-				'is_registered' => [
-					'required',
-					'integer',
-				],
-				'registration_number' => [
-					'required_if:is_registered,==,1',
-					// 'min:8',
-					// 'string',
-					'max:10',
-					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
-				'model_id' => [
-					'required',
-					'exists:models,id',
-					'integer',
-				],
-				'engine_number' => [
-					'required',
-					'min:7',
-					'max:64',
-					'string',
-					'unique:vehicles,engine_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
-				'chassis_number' => [
-					'required',
-					'min:10',
-					'max:64',
-					'string',
-					'unique:vehicles,chassis_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
-				'vin_number' => [
-					'required',
-					'min:17',
-					'max:32',
-					'string',
-					'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
-			]);
-
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
-				]);
-			}
-
-			DB::beginTransaction();
-			//VEHICLE GATE ENTRY DETAILS
-			// UNREGISTRED VEHICLE DIFFERENT FLOW WAITING FOR REQUIREMENT
-			if ($request->is_registered != 1) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Unregistred Vehile Not allow!!',
-				]);
-			}
-
-			//ONLY FOR REGISTRED VEHICLE
-			$vehicle = Vehicle::firstOrNew([
-				'company_id' => Auth::user()->company_id,
-				'registration_number' => $request->registration_number,
-			]);
-			$vehicle->fill($request->all());
-			$vehicle->status_id = 8141; //CUSTOMER NOT MAPED
-			$vehicle->company_id = Auth::user()->company_id;
-			$vehicle->updated_by_id = Auth::user()->id;
-			$vehicle->save();
-
-			DB::commit();
-
-			return response()->json([
-				'success' => true,
-				'message' => 'Vehicle detail updated Successfully!!',
-			]);
-
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
-
-	//CUSTOMER GET FORM DATA
-	public function getCustomerFormData($id) {
-		try {
-
-			$gate_log_details = GateLog::with([
-				'vehicleDetail',
-				'vehicleDetail.vehicleCurrentOwner',
-				'vehicleDetail.vehicleCurrentOwner.CustomerDetail',
-				'vehicleDetail.vehicleCurrentOwner.CustomerDetail.primaryAddress',
-				'vehicleDetail.vehicleCurrentOwner.CustomerDetail.primaryAddress.country',
-				'vehicleDetail.vehicleCurrentOwner.CustomerDetail.primaryAddress.state',
-				'vehicleDetail.vehicleCurrentOwner.CustomerDetail.primaryAddress.city',
-			])->find($id);
-
-			if (!$gate_log_details) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Gate Log Not Found!',
-				]);
-			}
-
-			$extras = [
-				'country_list' => Country::getList(),
-				'ownership_list' => Config::getConfigTypeList(39, 'id', '', true, 'Select Ownership'), //VEHICLE OWNERSHIP TYPES
-			];
-
-			return response()->json([
-				'success' => true,
-				'gate_log_details' => $gate_log_details,
-				'extras' => $extras,
-			]);
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
 	}
 
 	//GET STATE BASED COUNTRY

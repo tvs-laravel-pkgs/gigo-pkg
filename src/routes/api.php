@@ -1,14 +1,17 @@
 <?php
-Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], function () {
-	Route::group(['prefix' => 'api/gigo-pkg'], function () {
+Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:api']], function () {
+	Route::group(['prefix' => 'api'], function () {
 		//Route::post('punch/status', 'PunchController@status');
 
 		//SAVE GATE IN ENTRY
-		Route::post('gate-log/save', 'VehicleGatePassController@saveVehicleGateInEntry');
+		Route::post('gate-in-entry/create', 'GateInController@createGateInEntry');
 
 		//VEHICLE INWARD
-		Route::post('vehicle-inward/get-list', 'VehicleInwardController@getVehicleInwardList');
-		Route::post('get-vehicle-inward-view', 'VehicleInwardController@getVehicleInwardViewData');
+		Route::post('vehicle-inward/get', 'VehicleInwardController@getGateInList');
+		Route::get('vehicle-inward/view', 'VehicleInwardController@getVehicleInwardViewData');
+		Route::post('vehicle-inward/get-vehicle-detail', 'VehicleInwardController@getVehicleDetail');
+		Route::post('vehicle-inward/get-customer-detail', 'VehicleInwardController@getCustomerDetail');
+		Route::post('vehicle-inward/save-customer-detail', 'VehicleInwardController@getCustomerDetail');
 
 		//VEHICLE GATE PASS LIST
 		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');
@@ -22,14 +25,6 @@ Route::group(['namespace' => 'Abs\GigoPkg\Api', 'middleware' => ['auth:api']], f
 		//VEHICLE GET INVENTORY FORM DATA AND SAVE
 		Route::get('get-inventory-form-data/gate-log/{id}', 'VehicleInwardController@getInventoryFormData');
 		Route::post('save-inventory-item', 'VehicleInwardController@saveInventoryItem');
-
-		//VEHICLE GET FORM DATA AND SAVE
-		Route::get('get-vehicle-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getVehicleFormData');
-		Route::post('save-vehicle', 'VehicleInwardController@saveVehicle');
-
-		//VEHICLE GET FORM DATA AND SAVE
-		Route::get('get-customer-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getCustomerFormData');
-		Route::post('save-customer', 'VehicleInwardController@saveCustomer');
 
 		//VEHICLE INSPECTION GET FORM DATA AND SAVE
 		Route::get('get-vehicle-inspection-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getVehicleInspectiongeFormData');

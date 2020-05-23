@@ -173,28 +173,6 @@ app.component('gateLogForm', {
         self.angular_routes = angular_routes;
         self.gate_log = {};
 
-        // $http.get(
-        //     laravel_routes['getGateLogFormData'], {
-        //         params: {
-        //             id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
-        //         }
-        //     }
-        // ).then(function(response) {
-        //     self.gate_log = response.data.gate_log;
-        //     // self.extras = response.data.extras;
-        //     self.action = response.data.action;
-        //     $rootScope.loading = false;
-        //     // if (self.action == 'Edit') {
-        //     //     if (self.gate_log.deleted_at) {
-        //     //         self.switch_value = 'Inactive';
-        //     //     } else {
-        //     //         self.switch_value = 'Active';
-        //     //     }
-        //     // } else {
-        //     //     self.switch_value = 'Active';
-        //     // }
-        // });
-
         //Save Form Data             
         var form_id = '#gate_in_vehicle_form';
         var v = jQuery(form_id).validate({
@@ -222,7 +200,7 @@ app.component('gateLogForm', {
                     minlength: 3,
                     maxlength: 191,
                 },
-                'contact_number': {
+                'driver_mobile_number': {
                     number: true,
                     minlength: 10,
                     maxlength: 10,
@@ -269,8 +247,7 @@ app.component('gateLogForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: base_url + '/api/gigo-pkg/gate-log/save',
-                        // laravel_routes['saveGateLog'],
+                        url: base_url + '/api/gigo-pkg/create-gate-in-entry',
                         method: "POST",
                         data: formData,
                         processData: false,

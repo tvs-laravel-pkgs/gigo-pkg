@@ -13,9 +13,16 @@ class GateLog extends Model {
 	use SoftDeletes;
 	protected $table = 'gate_logs';
 	public $timestamps = true;
-	protected $fillable =
-		["company_id", "number", "date", "driver_name", "contact_number", "vehicle_id", "km_reading", "reading_type_id", "gate_in_remarks", "gate_out_date", "gate_out_remarks", "gate_pass_id", "status_id"]
-	;
+	protected $fillable = [
+		"company_id",
+		"number",
+		"date",
+		"gate_in_remarks",
+		"gate_out_date",
+		"gate_out_remarks",
+		"gate_pass_id",
+		"status_id",
+	];
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -23,10 +30,6 @@ class GateLog extends Model {
 
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
-	}
-
-	public function vehicle() {
-		return $this->belongsTo('App\Vehicle', 'vehicle_id');
 	}
 
 	//issue : naming

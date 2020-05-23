@@ -14,9 +14,35 @@ class JobOrder extends Model {
 	use SoftDeletes;
 	protected $table = 'job_orders';
 	public $timestamps = true;
-	protected $fillable =
-		["company_id", "gate_log_id", "number", "type_id", "quote_type_id", "service_type_id", "outlet_id", "contact_number", "driver_license_expiry_date", "insurance_expiry_date", "voc", "is_road_test_required", "road_test_done_by_id", "road_test_performed_by_id", "road_test_report", "warranty_expiry_date", "ewp_expiry_date", "status_id", "estimated_delivery_date", "estimation_type_id", "minimum_payable_amount", "floor_advisor_id"]
-	;
+	protected $fillable = [
+		"company_id",
+		"number",
+		"vehicle_id",
+		"km_reading",
+		"km_reading_type_id",
+		"type_id",
+		"quote_type_id",
+		"service_type_id",
+		"outlet_id",
+		"driver_name",
+		"driver_mobile_number",
+		"contact_number",
+		"driver_license_expiry_date",
+		"insurance_expiry_date",
+		"voc",
+		"is_road_test_required",
+		"road_test_done_by_id",
+		"road_test_performed_by_id",
+		"road_test_report",
+		"warranty_expiry_date",
+		"ewp_expiry_date",
+		"status_id",
+		"estimated_delivery_date",
+		"estimation_type_id",
+		"minimum_payable_amount",
+		"service_advisor_id",
+		"floor_supervisor_id",
+	];
 
 	public function JobOrderRepairOrders() {
 		return $this->hasMany('Abs\GigoPkg\JobOrderRepairOrder', 'job_order_id');
@@ -79,7 +105,11 @@ class JobOrder extends Model {
 	}
 
 	public function gateLog() {
-		return $this->belongsTo('App\GateLog', 'gate_log_id');
+		return $this->hasOne('App\GateLog');
+	}
+
+	public function vehicle() {
+		return $this->belongsTo('App\Vehicle', 'vehicle_id');
 	}
 
 	public function status() {
