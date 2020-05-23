@@ -1,7 +1,6 @@
 <?php
 
 namespace Abs\GigoPkg;
-use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
@@ -44,10 +43,6 @@ class JobOrder extends Model {
 		"floor_supervisor_id",
 	];
 
-	public function JobOrderRepairOrders() {
-		return $this->hasMany('Abs\GigoPkg\JobOrderRepairOrder', 'job_order_id');
-	}
-
 	public function getDriverLicenseExpiryDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
@@ -78,12 +73,6 @@ class JobOrder extends Model {
 		return $this->attributes['ewp_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
-	public function jobOrderPart() {
-		return $this->hasMany('App\JobOrderPart');
-	}
-	public function jobOrderRepairOrder() {
-		return $this->hasMany('App\JobOrderRepairOrder');
-	}
 	public function customerVoice() {
 		return $this->belongsToMany('App\CustomerVoice', 'job_order_customer_voice', 'job_order_id', 'customer_voice_id');
 	}
@@ -96,12 +85,30 @@ class JobOrder extends Model {
 		return $this->belongsToMany('App\VehicleInventoryItem', 'job_order_vehicle_inventory_item', 'job_order_id', 'vehicle_inventory_item_id')->withPivot(['is_available', 'remarks']);
 	}
 
-	public function getEomRecomentation() {
-		return $this->hasMany('App\JobOrderRepairOrder', 'job_order_id', 'id');
+	//issue: naming
+	// public function jobOrderPart() {
+	// 	return $this->hasMany('App\JobOrderPart');
+	// }
+	//issue: naming
+	// public function jobOrderRepairOrder() {
+	// 	return $this->hasMany('App\JobOrderRepairOrder');
+	// }
+
+	//issue: naming
+	// public function getEomRecomentation() {
+	// 	return $this->hasMany('App\JobOrderRepairOrder', 'job_order_id', 'id');
+	// }
+	//issue: naming
+	// public function getAdditionalRotAndParts() {
+	// 	return $this->hasMany('App\JobOrderPart', 'job_order_id', 'id');
+	// }
+
+	public function jobOrderRepairOrders() {
+		return $this->hasMany('App\JobOrderRepairOrder', 'job_order_id');
 	}
 
-	public function getAdditionalRotAndParts() {
-		return $this->hasMany('App\JobOrderPart', 'job_order_id', 'id');
+	public function jobOrderParts() {
+		return $this->hasMany('App\JobOrderPart', 'job_order_id');
 	}
 
 	public function gateLog() {

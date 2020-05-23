@@ -3,6 +3,9 @@ app.component('materialGatePassList', {
     controller: function($http, $location, HelperService, $scope, $rootScope, $route) {
         $scope.loading = true;
         var self = this;
+        $('#search_material_gate_pass').focus();
+        $('li').removeClass('active');
+        $('.material_gate_passes').addClass('active').trigger('click');
         $scope.hasPerm = HelperService.hasPerm;
         self.user = $scope.user = HelperService.getLoggedUser();
         $rootScope.loading = false;
@@ -95,27 +98,35 @@ app.component('materialGatePassList', {
         $scope.clear_search = function() {
             $('#search_material_gate_pass').val('');
             $('#material_gate_pass_list').DataTable().search('').draw();
+            $scope.fetchData();
         }
 
-        //CARD LIST
-        $.ajax({
-            url: base_url + '/api/gigo-pkg/get-material-gate-pass-list',
-            type: "POST",
-            dataType: "json",
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-            },
-            success: function(response) {
-                // console.log(response);
-                self.material_gate_pass_list = response.data;
-                $scope.$apply();
-                // Success = true; //doesn't go here
-            },
-            error: function(textStatus, errorThrown) {
-                custom_noty('error', 'Something went wrong at server');
-            }
-        });
-
+        $scope.searchKey = function(event) {
+            dataTable.fnFilter(event.target.value);
+            $scope.fetchData(event.target.value);
+        }
+        $scope.fetchData = function(search_key) {
+            //CARD LIST
+            $.ajax({
+                url: base_url + '/api/gigo-pkg/get-material-gate-pass-list',
+                type: "POST",
+                data: { 'search_key': search_key },
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+                success: function(response) {
+                    // console.log(response);
+                    self.material_gate_pass_list = response.data;
+                    $scope.$apply();
+                    // Success = true; //doesn't go here
+                },
+                error: function(textStatus, errorThrown) {
+                    custom_noty('error', 'Something went wrong at server');
+                }
+            });
+        }
+        $scope.fetchData();
         //GATE OUT 
         $scope.materialGateOut = function(id) {
             console.log(id);
@@ -135,8 +146,6 @@ app.component('materialGatePassList', {
                 success: function(response) {
                     console.log(response);
                     $(".gate_pass_no").text(response.gate_pass.number);
-                    //$("#registration_number").text(response.gate_out_data.registration_number);
-                    // $('#otp').modal('show');
                     if (response.type == 'Out') {
                         $('#otp').modal('show');
                         $('#otp_no').val('');
@@ -150,8 +159,6 @@ app.component('materialGatePassList', {
                         $('#gate_in_confirm_notification').modal('show');
                     }
                     $(button_class).button('reset');
-                    //$('.submit').button('reset');
-                    // $('#vehicle-gate-pass-list').DataTable().ajax.reload();
                 },
                 error: function(textStatus, errorThrown) {
                     $(button_class).button('reset');
@@ -212,17 +219,13 @@ app.component('materialGatePassList', {
                         }
                         console.log(res);
                         $('.submit_confirm').button('reset');
-                        custom_noty('success', res.message);
+                        //custom_noty('success', res.message);
                         $('#otp_no').val('');
                         $('#otp').modal('hide');
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
+                        $('#gate_out_confirm_notification').modal('show');
                         $('#material_gate_pass_list').DataTable().ajax.reload();
-                        //$location.reload();
-                        //$route.reload();
-                        //$location.path('/gigo-pkg/vehicle/list');
-                        $scope.$apply();
-                        //reloadPage();
                     })
                     .fail(function(xhr) {
                         console.log(xhr);
@@ -253,10 +256,9 @@ app.component('materialGatePassList', {
                     console.log(response);
                     $(button_class).button('reset');
                     $(".gate_pass_no").text(response.gate_pass.number);
-                    //$("#registration_number").text(response.gate_out_data.registration_number);
                     $('#gate_in_confirm_notification').modal('show');
                     $('#material_gate_pass_list').DataTable().ajax.reload();
-                    $location.path('/gigo-pkg/vehicle/list');
+                    //$location.path('/gigo-pkg/vehicle/list');
                 },
                 error: function(textStatus, errorThrown) {
                     $(button_class).button('reset');
@@ -285,6 +287,12 @@ app.component('materialGatePassList', {
                     custom_noty('error', 'Something went wrong at server');
                 }
             });
+        }
+        $scope.reloadPage = function() {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            $scope.fetchData();
+            // $route.reload();
         }
 
     }
@@ -332,7 +340,7 @@ app.component('materialGatePassView', {
                 custom_noty('error', 'Something went wrong at server');
             }
         });
-
+        var gate_out_remarks = '';
         //GATE OUT
         var form_id = '#material_gate_pass';
         var v = jQuery(form_id).validate({
@@ -369,7 +377,7 @@ app.component('materialGatePassView', {
                             $('.submit').button('reset');
                             return;
                         }
-                        console.log(res);
+                        console.log(res.gate_pass.otp_no);
                         $(".gate_pass_no").text(res.gate_pass.number);
                         if (res.type == 'Out') {
                             $('#otp_no').val('');
@@ -377,14 +385,14 @@ app.component('materialGatePassView', {
                             $('#otp').on('shown.bs.modal', function() {
                                 $(this).find('[autofocus]').focus();
                             });
+                            $('#gate_out_remarks').val($('#remarks').val());
+                            //console.log(gate_out_remarks);
                             $('#gate_pass_id').val(res.gate_pass.id);
                             $('.customer_mobile_no').html(res.customer_detail.mobile_no);
 
                         } else {
                             $('#gate_in_confirm_notification').modal('show');
-                            //custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/vehicle/list');
-
+                            $('.submit').button('reset');
                         }
                         $('.submit').button('reset');
                     })
@@ -407,10 +415,10 @@ app.component('materialGatePassView', {
                     minlength: 6,
                     maxlength: 6,
                 },
-                'remarks': {
+                /*'remarks': {
                     minlength: 3,
                     maxlength: 191,
-                },
+                },*/
             },
             messages: {
                 'otp_no': {
@@ -419,10 +427,10 @@ app.component('materialGatePassView', {
                     minlength: 'OTP Minimum 6 Characters',
                     maxlength: 'OTP Maximum 6 Characters',
                 },
-                'remarks': {
+                /*'remarks': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 191 Characters',
-                },
+                },*/
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_gate_out_confirm)[0]);
@@ -441,26 +449,22 @@ app.component('materialGatePassView', {
                         console.log(res);
                         if (!res.success) {
                             showErrorNoty(res);
+                            $('#otp_no').val('');
+                            $('#otp_no').focus();
                             $('.submit_confirm').button('reset');
                             return;
                         }
                         console.log(res);
                         $('.submit_confirm').button('reset');
-                        //$('#otp_no').focus();
-                        //$('#otp_no').val('');
-                        custom_noty('success', res.message);
                         $('#otp_no').val('');
                         $('#otp').modal('hide');
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
-                        $('#material_gate_pass_list').DataTable().ajax.reload();
-                        $location.path('/gigo-pkg/vehicle/list');
-                        $scope.$apply();
-                        //reloadPage();
+                        $('.submit').button('reset');
+                        $('#gate_out_confirm_notification').modal('show');
                     })
                     .fail(function(xhr) {
                         console.log(xhr);
-
                         $('.submit_confirm').button('reset');
                         $('#otp_no').val('');
                         $('#otp_no').focus();
@@ -490,9 +494,14 @@ app.component('materialGatePassView', {
                 }
             });
         }
+        $scope.refresh = function() {
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+            $location.path('/gigo-pkg/material-gate-pass/list');
+            $('#material_gate_pass_list').DataTable().ajax.reload();
+        }
+
         $scope.reloadPage = function() {
-            // $location.reload(true);
-            //$('#confirm_notification').modal('hide');
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
             $route.reload();

@@ -153,8 +153,6 @@ public function materialGateInAndOut(Request $request) {
 				]);
 			}
 
-			
-
 			$gate_pass = GatePass::find($request->gate_pass_id);
 				if($request->type=='In'){
 					DB::beginTransaction();
@@ -176,6 +174,10 @@ public function materialGateInAndOut(Request $request) {
 				}else{
 					$otp_response=$this->materialCustomerOtp($gate_pass->id);
 				 	return $otp_response;
+				 	/*$arr = array('res'=>$otp_response,
+                        'gate_out_remarks'=>$request->remarks,
+                        );
+                        return response()->json($arr);*/
 				}
 
 		} catch (Exception $e) {
@@ -306,10 +308,16 @@ public function materialGateInAndOut(Request $request) {
 					'error' => 'Gate Pass OTP Update Failed',
 				]);
 			}
+			//Get material Gate pass After Otp Update
+			$material_gate_pass = GatePass::where('id',$id)
+			->where('type_id',8281) //Material Gate pass
+			->first();
+
 			$otp=$material_gate_pass->otp_no;
 			$mobile_number=$customer_detail->mobile_no;
 			$mobile_number='8838118082'; //saravanan mobile for testing
 			//dd($mobile_number);
+			//dd($otp,$material_gate_pass->otp_no);
 			$message='OTP is '.$otp.' for material gate out. Please enter OTP to verify your material gate out';
 			if(!$mobile_number){
 			return response()->json([

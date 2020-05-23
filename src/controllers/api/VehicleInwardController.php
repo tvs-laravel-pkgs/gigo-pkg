@@ -249,6 +249,7 @@ class VehicleInwardController extends Controller {
 					'country_list' => Country::getList(),
 					'state_list' => State::getList(),
 					'city_list' => City::getList(),
+					'ownership_list' => Config::getConfigTypeList(39, 'id', '', true, 'Select Ownership'), //VEHICLE OWNERSHIP TYPES
 				],
 			]);
 
@@ -869,12 +870,15 @@ class VehicleInwardController extends Controller {
 			$parts_amount = 0;
 			$labour_amount = 0;
 			$total_amount = 0;
+
+			//issue: relations naming
 			if ($job_order->jobOrderRepairOrder) {
 				foreach ($job_order->jobOrderRepairOrder as $key => $labour) {
 					$labour_amount += $labour->amount;
 
 				}
 			}
+			//issue: relations naming
 			if ($job_order->jobOrderPart) {
 				foreach ($job_order->jobOrderPart as $key => $part) {
 					$parts_amount += $part->amount;
@@ -1190,6 +1194,7 @@ class VehicleInwardController extends Controller {
 	//CUSTOMER SAVE
 	public function saveCustomer(Request $request) {
 		// dd($request->all());
+		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
 				'gate_log_id' => [
@@ -1270,11 +1275,10 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			DB::beginTransaction();
-
+			//issue: relation naming
 			$gate_log = GateLog::with([
-				'vehicleDetail',
-				'vehicleDetail.vehicleOwner',
+				'vehicle',
+				'vehicle.vehicleOwner',
 			])
 				->find($request->gate_log_id);
 
@@ -1284,10 +1288,10 @@ class VehicleInwardController extends Controller {
 					'error' => 'Gate Log Not Found!',
 				]);
 			}
-
+			//issue: relation naming
 			//OWNERSHIP ALREADY EXIST OR NOT
 			$vehicle_owners_exist = VehicleOwner::where([
-				'vehicle_id' => $gate_log->vehicleDetail->id,
+				'vehicle_id' => $gate_log->vehicle->id,
 				'ownership_id' => $request->ownership_id,
 			])
 				->first();
@@ -1309,8 +1313,9 @@ class VehicleInwardController extends Controller {
 				$customer->updated_by_id = Auth::user()->id;
 
 				$address = Address::where('address_of_id', 24)->where('entity_id', $customer->id)->first();
+				//issue: relation naming
 				$vehicle_owner = VehicleOwner::where([
-					'vehicle_id' => $gate_log->vehicleDetail->id,
+					'vehicle_id' => $gate_log->vehicle->id,
 					'customer_id' => $customer->id,
 				])
 					->first();
@@ -1331,7 +1336,8 @@ class VehicleInwardController extends Controller {
 			$customer->code = 'CUS' . $customer->id;
 			$customer->save();
 
-			$vehicle_owner->vehicle_id = $gate_log->vehicleDetail->id;
+			//issue: relation naming
+			$vehicle_owner->vehicle_id = $gate_log->vehicle->id;
 			$vehicle_owner->customer_id = $customer->id;
 			$vehicle_owner->from_date = Carbon::now();
 			$vehicle_owner->ownership_id = $request->ownership_id;
@@ -1356,6 +1362,7 @@ class VehicleInwardController extends Controller {
 			]);
 
 		} catch (Exception $e) {
+			DB::rollBack();
 			return response()->json([
 				'success' => false,
 				'error' => 'Server Network Down!',
@@ -1681,6 +1688,7 @@ class VehicleInwardController extends Controller {
 	//VEHICLE INSPECTION SAVE
 	public function saveVehicleInspection(Request $request) {
 		// dd($request->all());
+		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -1707,8 +1715,6 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-
-			DB::beginTransaction();
 
 			$job_order = jobOrder::find($request->job_order_id);
 			if ($request->vehicle_inspection_groups) {
@@ -1739,9 +1745,10 @@ class VehicleInwardController extends Controller {
 	//ESTIMATE GET FORM DATA
 	public function getEstimateFormData($id) {
 		try {
+			//issue: relation naming
 			$gate_log_detail = GateLog::with([
-				'vehicleDetail',
-				'vehicleDetail.vehicleModel',
+				'vehicle',
+				'vehicle.model',
 				'jobOrder',
 				'jobOrder.getEomRecomentation',
 				'jobOrder.getAdditionalRotAndParts',
@@ -1750,8 +1757,8 @@ class VehicleInwardController extends Controller {
 
 			$oem_recomentaion_labour_amount = 0;
 			$additional_rot_and_parts_labour_amount = 0;
+			//issue: relation naming
 			if ($gate_log_detail->jobOrder->getEomRecomentation) {
-				// dd($gate_log_detail->jobOrder->getEOMRecomentation);
 				foreach ($gate_log_detail->jobOrder->getEomRecomentation as $oemrecomentation_labour) {
 					if ($oemrecomentation_labour['is_recommended_by_oem'] == 1) {
 						//SCHEDULED MAINTANENCE
@@ -1766,6 +1773,7 @@ class VehicleInwardController extends Controller {
 
 			$oem_recomentaion_part_amount = 0;
 			$additional_rot_and_parts_part_amount = 0;
+			//issue: relation naming
 			if ($gate_log_detail->jobOrder->getAdditionalRotAndParts) {
 				foreach ($gate_log_detail->jobOrder->getAdditionalRotAndParts as $oemrecomentation_labour) {
 					if ($oemrecomentation_labour['is_oem_recommended'] == 1) {
@@ -1810,6 +1818,7 @@ class VehicleInwardController extends Controller {
 	//ESTIMATE SAVE
 	public function saveEstimate(Request $request) {
 		// dd($request->all());
+		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -1824,6 +1833,7 @@ class VehicleInwardController extends Controller {
 					'string',
 				],
 				//WAITING FOR CONFIRMATION -- NOT CONFIRMED
+				//issue: is_customer_agreed - required
 				'is_customer_agreed' => [
 					'nullable',
 				],
@@ -1836,8 +1846,6 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-
-			DB::beginTransaction();
 
 			$job_order = jobOrder::find($request->job_order_id);
 			$job_order->estimated_delivery_date = $date = date('Y-m-d H:i', strtotime(str_replace('/', '-', $request->estimated_delivery_date)));
@@ -1872,7 +1880,7 @@ class VehicleInwardController extends Controller {
 					'error' => 'Gate Log Not Found!',
 				]);
 			}
-
+			//issue: select name & id - query optimisation.
 			$estimation_type = EstimationType::where('company_id', Auth::user()->company_id)
 				->get();
 
@@ -1892,6 +1900,7 @@ class VehicleInwardController extends Controller {
 	//ESTIMATION DENIED SAVE
 	public function saveEstimateDenied(Request $request) {
 		// dd($request->all());
+		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -1917,8 +1926,6 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-
-			DB::beginTransaction();
 
 			$job_order = jobOrder::find($request->job_order_id);
 			$job_order->estimation_type_id = $request->estimation_type_id;
@@ -1957,10 +1964,13 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:job_orders,id',
 				],
+
+				//issue: is_customer_agreed - no need
 				'is_customer_agreed' => [
 					'required',
 					'boolean',
 				],
+
 				'customer_photo' => [
 					'required',
 					'mimes:jpeg,jpg,png',
@@ -1982,9 +1992,11 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 
 			//UPDATE JOB ORDER REPAIR ORDER STATUS UPDATE
+			//issue: readability
 			$job_order_repair_order_status_update = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->update(['status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //MACHANIC NOT ASSIGNED
 
 			//UPDATE JOB ORDER PARTS STATUS UPDATE
+			//issue: readability
 			$job_order_parts_status_update = JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //NOT ISSUED
 
 			// //UPDATE GATE LOG STATUS
@@ -2009,7 +2021,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			//GET TOTAL AMOUNT IN PARTS AND LABOUR
-			$repair_order_and_parts_detils = self::getEstimateFormData($request->gate_log_id);
+			$repair_order_and_parts_detils = $this->getEstimateFormData($request->gate_log_id);
 
 			DB::commit();
 
@@ -2030,6 +2042,7 @@ class VehicleInwardController extends Controller {
 	//INITIATE NEW JOB
 	public function saveInitiateJob(Request $request) {
 		// dd($request->all());
+		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
 				'gate_log_id' => [
@@ -2047,9 +2060,8 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			DB::beginTransaction();
-
 			//UPDATE GATE LOG STATUS
+			//issue: readability
 			$gate_log = GateLog::where('id', $request->gate_log_id)->update(['status_id' => 8122, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //VEHICLE INWARD COMPLETED
 
 			DB::commit();

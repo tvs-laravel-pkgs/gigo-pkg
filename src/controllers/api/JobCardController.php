@@ -7,26 +7,26 @@ use Abs\GigoPkg\GatePass;
 use Abs\GigoPkg\GatePassDetail;
 use Abs\GigoPkg\GatePassItem;
 use Abs\GigoPkg\JobCard;
+use Abs\GigoPkg\JobCardReturnableItem;
 use Abs\GigoPkg\JobOrder;
 use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\MechanicTimeLog;
+use Abs\GigoPkg\PauseWorkReason;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
-use Abs\GigoPkg\JobCardReturnableItem;
-use Abs\GigoPkg\PauseWorkReason;
 use Abs\StatusPkg\Status;
 use App\Attachment;
-use App\Employee;
 use App\Config;
+use App\Employee;
 use App\Http\Controllers\Controller;
 use App\Vendor;
 use Auth;
+use Carbon\Carbon;
 use DB;
 use File;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
-use Carbon\Carbon;
 
 class JobCardController extends Controller {
 	public $successStatus = 200;
@@ -46,7 +46,7 @@ class JobCardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-
+			//issue: query optimisation
 			$job_card_list = Jobcard::select('job_cards.*', 'job_cards.status_id')
 				->with([
 					'jobOrder',
@@ -60,14 +60,14 @@ class JobCardController extends Controller {
 				->leftJoin('vehicles', 'gate_logs.vehicle_id', 'vehicles.id')
 				->leftJoin('vehicle_owners', 'vehicles.id', 'vehicle_owners.vehicle_id')
 				->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
-				//->whereIn('job_cards.id', $jobcard_ids)
+			//->whereIn('job_cards.id', $jobcard_ids)
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
 					}
 				})
-				//Floor Supervisor not Assigned =>8220
+			//Floor Supervisor not Assigned =>8220
 				->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')")
 				->groupBy('job_cards.id')
 				->get();
@@ -89,6 +89,7 @@ class JobCardController extends Controller {
 		try {
 
 			$validator = Validator::make($request->all(), [
+				//issue: exist rule missing
 				'job_order_id' => [
 					'required',
 					'integer',
@@ -130,6 +131,7 @@ class JobCardController extends Controller {
 			Storage::makeDirectory($attachement_path, 0777);
 
 			//SAVE Job Card ATTACHMENT
+			//issue: attachment save - code optimisation
 			if (!empty($request->job_card_photo)) {
 				//REMOVE OLD ATTACHMENT
 				$remove_previous_attachment = Attachment::where([
@@ -189,6 +191,7 @@ class JobCardController extends Controller {
 
 			$bay_list = Bay::with([
 				'status',
+				'jobOrder',
 			])
 				->where('outlet_id', $job_card->outlet_id)
 				->get();
@@ -467,7 +470,7 @@ class JobCardController extends Controller {
 				'success' => true,
 				'job_card' => $job_card,
 				'job_order_repair_orders' => $job_order_repair_orders,
-				'pass_work_reasons' => $pass_work_reasons
+				'pass_work_reasons' => $pass_work_reasons,
 			]);
 
 		} catch (Exception $e) {
@@ -539,22 +542,22 @@ class JobCardController extends Controller {
 			}
 			//dd($labour_review_data);
 
-			$status_ids=Config::where('config_type_id',40)
-			->where('id','!=',8185)
-			->pluck('id')->toArray();
-			if($job_card_repair_order_details){
-				$save_enabled= true;
+			$status_ids = Config::where('config_type_id', 40)
+				->where('id', '!=', 8185)
+				->pluck('id')->toArray();
+			if ($job_card_repair_order_details) {
+				$save_enabled = true;
 				foreach ($job_card_repair_order_details as $key => $job_card_repair_order) {
 					if (in_array($job_card_repair_order->status_id, $status_ids)) {
-						$save_enabled= false;
+						$save_enabled = false;
 					}
-				}	
+				}
 			}
 
 			return response()->json([
 				'success' => true,
 				'labour_review_data' => $labour_review_data,
-				'save_enabled' =>$save_enabled,
+				'save_enabled' => $save_enabled,
 			]);
 
 		} catch (Exception $e) {
@@ -566,21 +569,21 @@ class JobCardController extends Controller {
 		}
 	}
 
-	public function LabourReviewSave(Request $request){
+	public function LabourReviewSave(Request $request) {
 		$job_card = JobCard::find($request->job_card_id);
-			if (!$job_card) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Job Card Not Found!',
-				]);
-			}
-			//UPDATE JOB CARD STATUS 
-			$job_card = JobCard::where('id', $job_card->id)->update(['status_id' => 8223, 'updated_by' => Auth::user()->id, 'updated_at' => Carbon::now()]); //Ready for Billing	
-
+		if (!$job_card) {
 			return response()->json([
-				'success' => true,
-				'message' =>'Job Card Updated successfully!!',
-			]);	
+				'success' => false,
+				'error' => 'Job Card Not Found!',
+			]);
+		}
+		//UPDATE JOB CARD STATUS
+		$job_card = JobCard::where('id', $job_card->id)->update(['status_id' => 8223, 'updated_by' => Auth::user()->id, 'updated_at' => Carbon::now()]); //Ready for Billing
+
+		return response()->json([
+			'success' => true,
+			'message' => 'Job Card Updated successfully!!',
+		]);
 
 	}
 
@@ -610,8 +613,8 @@ class JobCardController extends Controller {
 				],
 				'job_card_returnable_items.*.item_serial_no' => [
 					'nullable',
-					'string',	
-					// 'unique:job_card_returnable_items,item_serial_no,' . $request->id . ',id,job_card_id,' .  $request->job_card_id,	
+					'string',
+					// 'unique:job_card_returnable_items,item_serial_no,' . $request->id . ',id,job_card_id,' .  $request->job_card_id,
 				],
 				'job_card_returnable_items.*.qty' => [
 					'required',
@@ -623,7 +626,7 @@ class JobCardController extends Controller {
 					'string',
 					'max:191',
 				],
-				
+
 			]);
 
 			if ($validator->fails()) {
@@ -634,13 +637,13 @@ class JobCardController extends Controller {
 				]);
 			}
 
-			$job_card_returnable_items_count=count($request->job_card_returnable_items);
-			$job_card_returnable_unique_items_count=count(array_unique(array_column($request->job_card_returnable_items, 'item_serial_no')));
-			if($job_card_returnable_items_count!=$job_card_returnable_unique_items_count){
+			$job_card_returnable_items_count = count($request->job_card_returnable_items);
+			$job_card_returnable_unique_items_count = count(array_unique(array_column($request->job_card_returnable_items, 'item_serial_no')));
+			if ($job_card_returnable_items_count != $job_card_returnable_unique_items_count) {
 				return response()->json([
-					'success'=>false,
-					'error'=>'Validation Error',
-					'message'=>'Returnable items serial numbers are not unique'
+					'success' => false,
+					'error' => 'Validation Error',
+					'message' => 'Returnable items serial numbers are not unique',
 				]);
 			}
 			DB::beginTransaction();
@@ -657,7 +660,8 @@ class JobCardController extends Controller {
 						//FIRST
 						$returnable_item->updated_at = Carbon::now();
 						$returnable_item->updated_by_id = Auth::user()->id;
-					}else{//NEW
+					} else {
+//NEW
 						$returnable_item->created_at = Carbon::now();
 						$returnable_item->created_by_id = Auth::user()->id;
 					}
@@ -668,21 +672,21 @@ class JobCardController extends Controller {
 
 					//SAVE RETURNABLE ITEMS PHOTO ATTACHMENT
 					if (!empty($job_card_returnable_item['attachments']) && count($job_card_returnable_item['attachments']) > 0) {
-						//REMOVE OLD ATTACHEMNTS 
+						//REMOVE OLD ATTACHEMNTS
 						$remove_previous_attachments = Attachment::where([
-								'entity_id' => $returnable_item->id,
-								'attachment_of_id' => 232, //Job Card Returnable Item
-								'attachment_type_id' => 239, //Job Card Returnable Item
-							])->get();
-							if (!empty($remove_previous_attachments)) {
-								foreach ($remove_previous_attachments as $key => $remove_previous_attachment) {
-									$img_path = $attachment_path . $remove_previous_attachment->name;
-									if (File::exists($img_path)) {
-										File::delete($img_path);
-									}
-									$remove = $remove_previous_attachment->forceDelete();
-								}	
+							'entity_id' => $returnable_item->id,
+							'attachment_of_id' => 232, //Job Card Returnable Item
+							'attachment_type_id' => 239, //Job Card Returnable Item
+						])->get();
+						if (!empty($remove_previous_attachments)) {
+							foreach ($remove_previous_attachments as $key => $remove_previous_attachment) {
+								$img_path = $attachment_path . $remove_previous_attachment->name;
+								if (File::exists($img_path)) {
+									File::delete($img_path);
+								}
+								$remove = $remove_previous_attachment->forceDelete();
 							}
+						}
 						foreach ($job_card_returnable_item['attachments'] as $key => $returnable_item_attachment) {
 							//dump('save');
 							$file_name_with_extension = $returnable_item_attachment->getClientOriginalName();
@@ -701,7 +705,7 @@ class JobCardController extends Controller {
 					}
 				}
 			}
-			
+
 			DB::commit();
 			return response()->json([
 				'success' => true,
@@ -725,7 +729,7 @@ class JobCardController extends Controller {
 					'error' => 'Job Card Not Found!',
 				]);
 			}
-
+			//issue: relations naming & repeated query
 			$job_card_detail = JobCard::with([
 				//JOB CARD RELATION
 				'bay',
@@ -996,7 +1000,7 @@ class JobCardController extends Controller {
 
 	//Material GatePass Detail Save
 	public function saveMaterialGatePassDetail(Request $request) {
-		 // dd($request->all());
+		// dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -1045,7 +1049,7 @@ class JobCardController extends Controller {
 			}
 
 			$status = Status::where('type_id', 8451)->where('name', 'Gate Out Pending')->first();
-			if($status){
+			if ($status) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Gate Out Pending Status Not Found!',
@@ -1055,7 +1059,7 @@ class JobCardController extends Controller {
 				'job_card_id' => $request->job_card_id,
 			]);
 			$gate_pass->type_id = 8281; //Material Gate Pass
-            $gate_pass->status_id = $status->id; //Gate Out Pending
+			$gate_pass->status_id = $status->id; //Gate Out Pending
 			$gate_pass->fill($request->all());
 			$gate_pass->save();
 
@@ -1219,7 +1223,7 @@ class JobCardController extends Controller {
 				$mechanic_time_log->save();
 			} else {
 				$reason_id = $request->status_id == 8263 ? $request->reason_id : '';
-				$mechanic_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->whereNull('end_date_time')->update(['end_date_time' => Carbon::now(), 'reason_id'=>$reason_id,'status_id' => $request->status_id]);
+				$mechanic_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->whereNull('end_date_time')->update(['end_date_time' => Carbon::now(), 'reason_id' => $reason_id, 'status_id' => $request->status_id]);
 			}
 
 			//Update Status
