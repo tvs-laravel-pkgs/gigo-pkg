@@ -1,7 +1,6 @@
 <?php
 Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:api']], function () {
 	Route::group(['prefix' => 'api'], function () {
-		//Route::post('punch/status', 'PunchController@status');
 
 		//SAVE GATE IN ENTRY
 		Route::post('gate-in-entry/create', 'GateInController@createGateInEntry');

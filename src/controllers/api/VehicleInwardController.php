@@ -204,7 +204,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'job_order' => $job_order,
 				'extras' => [
-					'model_list' => VehicleModel::getList(),
+					'model_list' => VehicleModel::getDropDownList(),
 				],
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
@@ -246,10 +246,10 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'job_order' => $job_order,
 				'extras' => [
-					'country_list' => Country::getList(),
-					'state_list' => State::getList(),
-					'city_list' => City::getList(),
-					'ownership_list' => Config::getConfigTypeList(39, 'id', '', true, 'Select Ownership'), //VEHICLE OWNERSHIP TYPES
+					'country_list' => Country::getDropDownList(),
+					'state_list' => State::getDropDownList(),
+					'city_list' => City::getDropDownList(),
+					'ownership_list' => Config::getDropDownList(['config_type_id' => 39]),
 				],
 			]);
 

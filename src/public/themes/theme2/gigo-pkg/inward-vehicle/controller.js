@@ -646,9 +646,32 @@ app.component('inwardVehicleCustomerDetail', {
             }
         });
 
-        $scope.showVehicleForm = function() {
-            $scope.show_vehicle_detail = false;
-            $scope.show_vehicle_form = true;
+        $scope.showCustomerForm = function() {
+            $scope.show_customer_detail = false;
+            $scope.show_customer_form = true;
+        }
+
+        $scope.countryChanged = function() {
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/save-customer-detail',
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        $('.submit').button('reset');
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $location.path('/inward-vehicle/job-order-form/4');
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $('.submit').button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                });
         }
     }
 });
