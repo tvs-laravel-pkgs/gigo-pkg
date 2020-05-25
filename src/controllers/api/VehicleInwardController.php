@@ -114,7 +114,7 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -143,7 +143,7 @@ class VehicleInwardController extends Controller {
 			if (!$gate_log) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Gate Log Not Found!',
+					'message' => 'Gate Log Not Found!',
 				]);
 			}
 
@@ -157,7 +157,7 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -182,7 +182,7 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Order Not Found!',
+					'message' => 'Job Order Not Found!',
 				]);
 			}
 
@@ -212,7 +212,7 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -238,7 +238,7 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Order Not Found!',
+					'message' => 'Job Order Not Found!',
 				]);
 			}
 
@@ -249,18 +249,53 @@ class VehicleInwardController extends Controller {
 					'country_list' => Country::getDropDownList(),
 					'state_list' => State::getDropDownList(),
 					'city_list' => City::getDropDownList(),
-					'ownership_list' => Config::getDropDownList(['config_type_id' => 39]),
+					'ownership_type_list' => Config::getDropDownList(['config_type_id' => 39]),
 				],
 			]);
 
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
 
+	public function saveCustomerDetail(Request $request) {
+		try {
+
+			$validator = Validator::make($request->all(), [
+
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$customer = Customer::saveCustomer($r->all());
+			$customer->saveAddress($r->all());
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Customer detail saved Successfully!!',
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
+			]);
+		}
+	}
 	//JOB ORDER
 	public function getJobOrderFormData($id) {
 		try {
@@ -268,7 +303,7 @@ class VehicleInwardController extends Controller {
 			if (!$gate_log) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Gate Log Not Found!',
+					'message' => 'Gate Log Not Found!',
 				]);
 			}
 
@@ -289,7 +324,7 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -376,7 +411,7 @@ class VehicleInwardController extends Controller {
 				$success = false;
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -388,7 +423,7 @@ class VehicleInwardController extends Controller {
 			if (!$gate_log) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Gate Log Not Found!',
+					'message' => 'Gate Log Not Found!',
 				]);
 			}
 			$gate_log->driver_name = $request->driver_name;
@@ -461,8 +496,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -474,7 +509,7 @@ class VehicleInwardController extends Controller {
 			if (!$gate_log) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Gate Log Not Found!',
+					'message' => 'Gate Log Not Found!',
 				]);
 			}
 			// issue : saravanan - use one get list function. Field type id condition missing
@@ -491,7 +526,7 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -523,7 +558,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -532,7 +567,7 @@ class VehicleInwardController extends Controller {
 			if ($vehicle_inventory_items_count != $vehicle_inventory_unique_items_count) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'message' => 'Inventory items are not unique',
 				]);
 			}
@@ -562,7 +597,7 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job order Not found!',
+					'message' => 'Job order Not found!',
 				]);
 			}
 
@@ -591,8 +626,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -636,7 +671,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -681,8 +716,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -727,8 +762,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -778,7 +813,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -827,8 +862,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -842,7 +877,7 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Order Not found!',
+					'message' => 'Job Order Not found!',
 				]);
 			}
 
@@ -896,8 +931,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -979,7 +1014,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1026,8 +1061,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1038,7 +1073,7 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Order Not Found!',
+					'message' => 'Job Order Not Found!',
 				]);
 			}
 
@@ -1053,8 +1088,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 
@@ -1066,7 +1101,7 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Order Not Found!',
+					'message' => 'Job Order Not Found!',
 				]);
 			}
 			$extras = [
@@ -1079,8 +1114,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 
@@ -1092,7 +1127,7 @@ class VehicleInwardController extends Controller {
 			if (!$repair_order_type) {
 				return response()->json([
 					'success' => false,
-					'error' => ' Repair order type not found!',
+					'message' => ' Repair order type not found!',
 				]);
 			}
 			$rot_list = RepairOrder::roList($repair_order_type->id);
@@ -1108,8 +1143,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 
@@ -1121,7 +1156,7 @@ class VehicleInwardController extends Controller {
 			if (!$repair_order) {
 				return response()->json([
 					'success' => false,
-					'error' => ' Repair order not found!',
+					'message' => ' Repair order not found!',
 				]);
 			}
 
@@ -1141,8 +1176,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 
@@ -1154,7 +1189,7 @@ class VehicleInwardController extends Controller {
 			if (!$part) {
 				return response()->json([
 					'success' => false,
-					'error' => ' Part not found!',
+					'message' => ' Part not found!',
 				]);
 			}
 			$part_detail = Part::with([
@@ -1170,8 +1205,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 
@@ -1270,7 +1305,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1285,7 +1320,7 @@ class VehicleInwardController extends Controller {
 			if (empty($gate_log)) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Gate Log Not Found!',
+					'message' => 'Gate Log Not Found!',
 				]);
 			}
 			//issue: relation naming
@@ -1365,8 +1400,8 @@ class VehicleInwardController extends Controller {
 			DB::rollBack();
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1383,7 +1418,7 @@ class VehicleInwardController extends Controller {
 			if (!$gate_log_detail) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Gate Log Not Found!',
+					'message' => 'Gate Log Not Found!',
 				]);
 			}
 
@@ -1398,8 +1433,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1424,7 +1459,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1445,8 +1480,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1462,7 +1497,7 @@ class VehicleInwardController extends Controller {
 			if (!$gate_log_detail) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Gate Log Not Found!',
+					'message' => 'Gate Log Not Found!',
 				]);
 			}
 			$extras = [
@@ -1478,8 +1513,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1501,7 +1536,7 @@ class VehicleInwardController extends Controller {
 				if ($validator_road_test->fails()) {
 					return response()->json([
 						'success' => false,
-						'error' => 'Validation Error',
+						'message' => 'Validation Error',
 						'errors' => $validator_road_test->errors()->all(),
 					]);
 				}
@@ -1531,7 +1566,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1559,8 +1594,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1576,7 +1611,7 @@ class VehicleInwardController extends Controller {
 			if (!$gate_log_detail) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Gate Log Not Found!',
+					'message' => 'Gate Log Not Found!',
 				]);
 			}
 			$extras = [
@@ -1591,8 +1626,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1621,7 +1656,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1644,8 +1679,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1657,7 +1692,7 @@ class VehicleInwardController extends Controller {
 			if (!$gate_log_validate) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Gate Log Not Found!',
+					'message' => 'Gate Log Not Found!',
 				]);
 			}
 
@@ -1679,8 +1714,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1711,7 +1746,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1736,8 +1771,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1809,8 +1844,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1842,7 +1877,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1863,8 +1898,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1877,7 +1912,7 @@ class VehicleInwardController extends Controller {
 			if (!$gate_log_validate) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Gate Log Not Found!',
+					'message' => 'Gate Log Not Found!',
 				]);
 			}
 			//issue: select name & id - query optimisation.
@@ -1891,8 +1926,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1922,7 +1957,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1943,8 +1978,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -1984,7 +2019,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -2033,8 +2068,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
@@ -2055,7 +2090,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Validation Error',
+					'message' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -2073,8 +2108,8 @@ class VehicleInwardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'message' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
 			]);
 		}
 	}

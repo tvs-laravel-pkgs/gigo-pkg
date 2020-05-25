@@ -1,7 +1,7 @@
 app.component('inwardVehicleCardList', {
     templateUrl: inward_vehicle_card_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
-        $scope.loading = true;
+        $rootScope.loading = true;
         $('#search').focus();
         var self = this;
 
@@ -522,6 +522,7 @@ app.component('inwardVehicleCustomerDetail', {
 
         //FETCH DATA
         $scope.fetchData = function() {
+            $rootScope.loading = true;
             $.ajax({
                     url: base_url + '/api/vehicle-inward/get-customer-detail',
                     method: "POST",
@@ -530,6 +531,7 @@ app.component('inwardVehicleCustomerDetail', {
                     },
                 })
                 .done(function(res) {
+                    $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -547,104 +549,110 @@ app.component('inwardVehicleCustomerDetail', {
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
+                    $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
 
         //Save Form Data 
-        var form_id = '#form';
-        var v = jQuery(form_id).validate({
-            ignore: '',
-            rules: {
-                'name': {
-                    required: true,
+        $scope.saveCustomer = function() {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'name': {
+                        required: true,
+                    },
+                    'mobile_no': {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 10,
+                    },
+                    'email': {
+                        email: true,
+                    },
+                    'address_line1': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 32,
+                    },
+                    'address_line2': {
+                        minlength: 3,
+                        maxlength: 64,
+                    },
+                    'country_id': {
+                        required: true,
+                    },
+                    'state_id': {
+                        required: true,
+                    },
+                    'city_id': {
+                        required: true,
+                    },
+                    'pincode': {
+                        required: true,
+                        minlength: 6,
+                        maxlength: 6,
+                    },
+                    'gst_number': {
+                        minlength: 6,
+                        maxlength: 32,
+                    },
+                    'pan_number': {
+                        minlength: 6,
+                        maxlength: 32,
+                    },
+                    'ownership_id': {
+                        required: true,
+                    },
                 },
-                'mobile_no': {
-                    required: true,
-                    minlength: 10,
-                    maxlength: 10,
+                messages: {
+                    'short_name': {
+                        minlength: 'Minimum 3 Characters',
+                        maxlength: 'Maximum 32 Characters',
+                    },
+                    'name': {
+                        minlength: 'Minimum 3 Characters',
+                        maxlength: 'Maximum 128 Characters',
+                    },
+                    'description': {
+                        minlength: 'Minimum 3 Characters',
+                        maxlength: 'Maximum 255 Characters',
+                    }
                 },
-                'email': {
-                    email: true,
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                'address_line1': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 32,
-                },
-                'address_line2': {
-                    minlength: 3,
-                    maxlength: 64,
-                },
-                'country_id': {
-                    required: true,
-                },
-                'state_id': {
-                    required: true,
-                },
-                'city_id': {
-                    required: true,
-                },
-                'pincode': {
-                    required: true,
-                    minlength: 6,
-                    maxlength: 6,
-                },
-                'gst_number': {
-                    minlength: 6,
-                    maxlength: 32,
-                },
-                'pan_number': {
-                    minlength: 6,
-                    maxlength: 32,
-                },
-                'ownership_id': {
-                    required: true,
-                },
-            },
-            messages: {
-                'short_name': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 32 Characters',
-                },
-                'name': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
-                },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
-                }
-            },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
-            },
-            submitHandler: function(form) {
-                let formData = new FormData($(form_id)[0]);
-                $('.submit').button('loading');
-                $.ajax({
-                        url: base_url + '/api/vehicle-inward/save-customer-detail',
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $rootScope.loading = true;
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/save-customer-detail',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $rootScope.loading = false;
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $location.path('/inward-vehicle/job-order-form/4');
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $rootScope.loading = false;
                             $('.submit').button('reset');
-                            showErrorNoty(res);
-                            return;
-                        }
-                        $location.path('/inward-vehicle/job-order-form/4');
-                        $scope.$apply();
-                    })
-                    .fail(function(xhr) {
-                        $('.submit').button('reset');
-                        custom_noty('error', 'Something went wrong at server');
-                    });
-            }
-        });
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
 
         $scope.showCustomerForm = function() {
             $scope.show_customer_detail = false;
@@ -652,24 +660,47 @@ app.component('inwardVehicleCustomerDetail', {
         }
 
         $scope.countryChanged = function() {
+            $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/save-customer-detail',
+                    url: base_url + '/api/state/get-drop-down-List',
                     method: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
+                    data: {
+                        country_id: $scope.job_order.vehicle.current_owner.address.country.id,
+                    },
                 })
                 .done(function(res) {
+                    $rootScope.loading = false;
                     if (!res.success) {
-                        $('.submit').button('reset');
                         showErrorNoty(res);
                         return;
                     }
-                    $location.path('/inward-vehicle/job-order-form/4');
-                    $scope.$apply();
+                    $scope.extras.state_list = res.state_list;
                 })
                 .fail(function(xhr) {
-                    $('.submit').button('reset');
+                    $rootScope.loading = false;
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        $scope.stateChanged = function() {
+            $rootScope.loading = true;
+            $.ajax({
+                    url: base_url + '/api/city/get-drop-down-List',
+                    method: "POST",
+                    data: {
+                        state_id: $scope.job_order.vehicle.current_owner.address.state.id,
+                    },
+                })
+                .done(function(res) {
+                    $rootScope.loading = false;
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.extras.city_list = res.city_list;
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
         }

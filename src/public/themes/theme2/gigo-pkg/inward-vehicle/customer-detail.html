@@ -101,15 +101,17 @@
                                                     </span>
                                                 </li>
                                             </ul>
-                                            <button class="btn btn-secondary-dark btn-md btn-square">
+                                            <button ng-click="addCustomerForm()" class="btn btn-secondary-dark btn-md btn-square">
                                                 Edit
                                             </button>
-                                            <button class="btn btn-bordered btn-dark btn-md btn-square">
+                                            <button ng-click="addNewOwner()" class="btn btn-bordered btn-dark btn-md btn-square">
                                                 Add New Owner
                                             </button>
                                             <div class="mb-30"></div><!-- Spacing -->
                                         </div> <!-- customer-detail -->
-                                        <div id="customer-form" ng-if="show_customer_form">
+                                        <form id="form" ng-if="show_customer_form">
+                                            <input type="hidden" name="id" value="{{job_order.vehicle.current_owner.id}}">
+                                            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
@@ -126,7 +128,7 @@
                                                             Mobile Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Mobile No" autocomplete="off" ng-model="job_order.vehicle.current_owner.name" name="name" />
+                                                        <input type="text" class="form-control" placeholder="Enter Mobile No" autocomplete="off" ng-model="job_order.vehicle.current_owner.mobile_no" name="mobile_no" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -134,7 +136,7 @@
                                                         <label>
                                                             Email
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Email" autocomplete="off" ng-model="job_order.vehicle.current_owner.name" name="name" />
+                                                        <input type="text" class="form-control" placeholder="Enter Email" autocomplete="off" ng-model="job_order.vehicle.current_owner.email" name="email" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -143,7 +145,7 @@
                                                             Address Line 1
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Address" autocomplete="off" ng-model="job_order.vehicle.current_owner.name" name="name" />
+                                                        <input type="text" class="form-control" placeholder="Enter Address" autocomplete="off" ng-model="job_order.vehicle.current_owner.address.address_line1" name="address_line1" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -151,7 +153,7 @@
                                                         <label>
                                                             Address Line 2
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Address" autocomplete="off" ng-model="job_order.vehicle.current_owner.name" name="name" />
+                                                        <input type="text" class="form-control" placeholder="Enter Address" autocomplete="off" ng-model="job_order.vehicle.current_owner.address.address_line2" name="address_line2" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -170,7 +172,7 @@
                                                                 </md-option>
                                                             </md-optgroup>
                                                         </md-select>
-                                                        <input type="hidden" name="county_id" value="{{job_order.vehicle.current_owner.address.country.id}}">
+                                                        <input type="hidden" name="country_id" value="{{job_order.vehicle.current_owner.address.country.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -179,12 +181,12 @@
                                                             State
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="job_order.vehicle.current_owner.address.state" placeholder="Select State" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                                        <md-select ng-model="job_order.vehicle.current_owner.address.state" placeholder="Select State" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="stateChanged()">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchState" type="search" placeholder="Search for a state.." class="demo-header-searchbox md-text">
                                                             </md-select-header>
                                                             <md-optgroup>
-                                                                <md-option ng-value="state" ng-repeat="model in extras.state_list | filter:searchState">
+                                                                <md-option ng-value="state" ng-repeat="state in extras.state_list | filter:searchState">
                                                                     {{state.name}}
                                                                 </md-option>
                                                             </md-optgroup>
@@ -203,7 +205,7 @@
                                                                 <input ng-model="searchCity" type="search" placeholder="Search for a city.." class="demo-header-searchbox md-text">
                                                             </md-select-header>
                                                             <md-optgroup>
-                                                                <md-option ng-value="city" ng-repeat="model in extras.city_list | filter:searchCity">
+                                                                <md-option ng-value="city" ng-repeat="city in extras.city_list | filter:searchCity">
                                                                     {{city.name}}
                                                                 </md-option>
                                                             </md-optgroup>
@@ -252,26 +254,26 @@
                                                                 </md-option>
                                                             </md-optgroup>
                                                         </md-select>
-                                                        <input type="hidden" name="ownership_id" value="{{job_order.vehicle.current_owner.ownership_type.id}}">
+                                                        <input type="hidden" name="ownership_type_id" value="{{job_order.vehicle.current_owner.ownership_type.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
                                             <div class="tab-pane-footer1">
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        <button type="submit" class="btn btn-red">
+                                                        <button type="button" ng-click="saveCustomer()" class="btn btn-red">
                                                             Save & Close
                                                         </button>
-                                                        <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
+                                                        <button type="submit" ng-click="saveCustomer()" class="btn btn-secondary-dark btn-prev">
                                                             Previous
-                                                        </a>
-                                                        <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        </button>
+                                                        <button type="submit" ng-click="saveCustomer()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                             Next
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div><!-- Tab Footer -->
-                                        </div> <!-- customer-form -->
+                                        </form> <!-- customer-form -->
                                     </div><!-- Column -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->

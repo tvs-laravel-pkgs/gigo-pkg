@@ -10,7 +10,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::get('vehicle-inward/view', 'VehicleInwardController@getVehicleInwardViewData');
 		Route::post('vehicle-inward/get-vehicle-detail', 'VehicleInwardController@getVehicleDetail');
 		Route::post('vehicle-inward/get-customer-detail', 'VehicleInwardController@getCustomerDetail');
-		Route::post('vehicle-inward/save-customer-detail', 'VehicleInwardController@getCustomerDetail');
+		Route::post('vehicle-inward/save-customer-detail', 'VehicleInwardController@saveCustomerDetail');
 
 		//VEHICLE GATE PASS LIST
 		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');
