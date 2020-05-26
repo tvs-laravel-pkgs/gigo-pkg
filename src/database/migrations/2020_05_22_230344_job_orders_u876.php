@@ -14,6 +14,7 @@ class JobOrdersU876 extends Migration {
 
 		Schema::table('job_orders', function (Blueprint $table) {
 			$table->dropForeign("job_orders_gate_log_id_foreign");
+			$table->dropUnique('job_orders_company_id_gate_log_id_unique');
 			$table->dropColumn("gate_log_id");
 
 			$table->string('driver_name', 64)->nullable()->after("outlet_id");
@@ -40,18 +41,22 @@ class JobOrdersU876 extends Migration {
 	 */
 	public function down() {
 		Schema::table('job_orders', function (Blueprint $table) {
-			$table->unsignedInteger('gate_log_id');
+			$table->unsignedInteger('gate_log_id')->after('company_id');
 			$table->foreign("gate_log_id")->references("id")->on("gate_logs")->onDelete("CASCADE")->onUpdate("CASCADE");
 
 			$table->dropForeign("job_orders_vehicle_id_foreign");
 			$table->dropForeign("job_orders_km_reading_type_id_foreign");
+			$table->dropForeign("job_orders_service_advisor_id_foreign");
 
 			$table->dropColumn("driver_name");
 			$table->dropColumn("driver_mobile_number");
 			$table->dropColumn("vehicle_id");
 			$table->dropColumn("km_reading");
 			$table->dropColumn("km_reading_type_id");
+			$table->dropColumn("service_advisor_id");
+			$table->renameColumn('floor_supervisor_id', 'floor_advisor_id');
 
+			$table->unique(["company_id", "gate_log_id"]);
 		});
 	}
 }

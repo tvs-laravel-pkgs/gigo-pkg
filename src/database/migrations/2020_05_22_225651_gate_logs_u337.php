@@ -23,7 +23,7 @@ class GateLogsU337 extends Migration {
 			$table->dropForeign("gate_logs_floor_adviser_id_foreign");
 			$table->dropColumn("floor_adviser_id");
 
-			$table->unsignedInteger('job_order_id')->after("company_id");
+			$table->unsignedInteger('job_order_id')->nullable()->after("company_id");
 
 			$table->foreign("job_order_id")->references("id")->on("job_orders")->onDelete("CASCADE")->onUpdate("CASCADE");
 
