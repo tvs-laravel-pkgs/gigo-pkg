@@ -3,6 +3,16 @@
 Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'prefix' => 'gigo-pkg'], function () {
 
 
+	//Parts Indent
+	Route::get('/parts-indent/get-list', 'PartsIndentController@getPartsindentList')->name('getPartsindentList');
+	Route::get('/parts-indent/get-filter-data', 'PartsIndentController@getPartsIndentFilter')->name('getPartsIndentFilter');
+	Route::get('/parts-indent/data', 'PartsIndentController@getPartsIndentData')->name('getPartsIndentData');
+	Route::post('/parts/parts-details', 'PartsIndentController@getPartDetails')->name('getPartDetails');
+	Route::post('/parts-indent/save', 'PartsIndentController@savePartsindent')->name('savePartsindent');
+	Route::get('/parts-indent/issued-parts-details', 'PartsIndentController@getIssedParts')->name('getIssedParts');
+	Route::get('/parts-indent/delete', 'PartsIndentController@deleteIssedPart')->name('deleteIssedPart');
+
+
 	//Pause Work Reason
 	Route::get('/pause-work-reason/get-list', 'PauseWorkReasonController@getPauseWorkReasonList')->name('getPauseWorkReasonList');
 	Route::get('/pause-work-reason/get-form-data', 'PauseWorkReasonController@getPauseWorkReasonFormData')->name('getPauseWorkReasonFormData');

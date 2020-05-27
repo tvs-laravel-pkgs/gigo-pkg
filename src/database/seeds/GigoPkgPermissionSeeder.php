@@ -13,6 +13,22 @@ class GigoPkgPermissionSeeder extends Seeder {
 	public function run() {
 		$permissions = [
 
+
+			//Parts Indent
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'parts-indent',
+				'display_name' => 'Parts Indent',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'parts-indent',
+				'name' => 'view-parts-indent',
+				'display_name' => 'View',
+			],
+			
+
 			//Pause Work Reason
 			[
 				'display_order' => 99,

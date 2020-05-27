@@ -37,9 +37,15 @@ class VehicleOwner extends Model {
 	// 	return $this->belongsTo('App\Customer', 'customer_id');
 	// }
 
-	public function ownerShipDetail() {
+	public function ownershipType() {
+		//issue : wrong relationship
 		return $this->belongsTo('App\Config', 'ownership_id');
 	}
+
+	//issue : naming
+	// public function ownerShipDetail() {
+	// 	return $this->belongsTo('App\Config', 'ownership_id');
+	// }
 
 	public static function createFromObject($record_data) {
 

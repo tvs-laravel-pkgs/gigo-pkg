@@ -225,7 +225,11 @@ class VehicleInwardController extends Controller {
 				'vehicle.model',
 				'vehicle.status',
 				'vehicle.currentOwner.customer',
-				'vehicle.currentOwner.ownerShipDetail',
+				'vehicle.currentOwner.customer.address',
+				'vehicle.currentOwner.customer.address.country',
+				'vehicle.currentOwner.customer.address.state',
+				'vehicle.currentOwner.customer.address.city',
+				'vehicle.currentOwner.ownershipType',
 				'status',
 			])
 				->select([
@@ -278,8 +282,30 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
-			$customer = Customer::saveCustomer($r->all());
-			$customer->saveAddress($r->all());
+			$customer = Customer::saveCustomer($request->all());
+			$customer->saveAddress($request->all());
+
+			$job_order = JobOrder::find($request->job_order_id);
+			$vehicle = $job_order->vehicle;
+
+			if (!$request->id) {
+				//NEW OWNER
+				$vehicle_owner = new VehicleOwner;
+				$vehicle_owner->created_by_id = Auth::id();
+				$vehicle_owner->vehicle_id = $vehicle->id;
+				$vehicle_owner->from_date = date('Y-m-d');
+			} else {
+				//NEW OWNER
+				$vehicle_owner = VehicleOwner::where([
+					'vehicle_id' => $vehicle->id,
+					'customer_id' => $customer->id,
+				])->first();
+				$vehicle_owner->updated_by_id = Auth::id();
+			}
+
+			$vehicle_owner->customer_id = $customer->id;
+			$vehicle_owner->ownership_id = $request->ownership_type_id;
+			$vehicle_owner->save();
 
 			DB::commit();
 
