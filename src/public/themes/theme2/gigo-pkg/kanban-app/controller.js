@@ -1,3 +1,4 @@
+angular.module('app').requires.push('qrScanner');
 app.component('kanbanApp', {
     templateUrl: kanban_app_dashboard_template_url,
     controller: function($http, $location, HelperService, $scope, $rootScope, $route, $routeParams) {
