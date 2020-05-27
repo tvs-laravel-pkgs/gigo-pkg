@@ -225,7 +225,11 @@ class VehicleInwardController extends Controller {
 				'vehicle.model',
 				'vehicle.status',
 				'vehicle.currentOwner.customer',
-				'vehicle.currentOwner.ownerShipDetail',
+				'vehicle.currentOwner.customer.address',
+				'vehicle.currentOwner.customer.address.country',
+				'vehicle.currentOwner.customer.address.state',
+				'vehicle.currentOwner.customer.address.city',
+				'vehicle.currentOwner.ownershipType',
 				'status',
 			])
 				->select([

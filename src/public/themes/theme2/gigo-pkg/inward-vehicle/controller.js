@@ -654,9 +654,17 @@ app.component('inwardVehicleCustomerDetail', {
             });
         }
 
-        $scope.showCustomerForm = function() {
+        $scope.showOwnerForm = function() {
             $scope.show_customer_detail = false;
             $scope.show_customer_form = true;
+        }
+
+        $scope.addNewOwner = function() {
+            $scope.show_customer_detail = false;
+            $scope.show_customer_form = true;
+            $scope.job_order.vehicle.current_owner = {
+
+            };
         }
 
         $scope.countryChanged = function() {

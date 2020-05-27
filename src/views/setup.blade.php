@@ -138,7 +138,7 @@
 	        template: '<parts-indent-view></parts-indent-view>',
 	        title: 'View Parts Indent',
 	    }).
-	   
+
 
 	    //Kanban App
 	     when('/gigo-pkg/kanban-app', {
@@ -721,6 +721,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Inward Vehicle - Vehicle Detail',
 	    }).
 	    when('/inward-vehicle/customer-detail/:job_order_id', {
+	        template: '<inward-vehicle-customer-detail></inward-vehicle-customer-detail>',
+	        title: 'Inward Vehicle - Customer Detail',
+	    }).
+	    when('/inward-vehicle/order-detail/:job_order_id', {
 	        template: '<inward-vehicle-customer-detail></inward-vehicle-customer-detail>',
 	        title: 'Inward Vehicle - Customer Detail',
 	    });
