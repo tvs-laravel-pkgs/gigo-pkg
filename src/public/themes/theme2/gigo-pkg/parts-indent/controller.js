@@ -158,7 +158,9 @@ app.component('partsIndentView', {
             self.parts_details = response.data.parts_details;
             self.part_list = response.data.part_list;
             self.mechanic_list = response.data.mechanic_list;
+            self.issued_mode = response.data.issued_mode;
             self.issued_parts_details = response.data.issued_parts_details;
+            self.gate_pass_details = response.data.gate_pass_details;
             self.customer_voice_details = response.data.customer_voice_details;
             $rootScope.loading = false;
         });
@@ -195,6 +197,9 @@ app.component('partsIndentView', {
 
         $scope.onSelectedmech = function(machanic_id_selected) {
             $('#machanic_id').val(machanic_id_selected);
+        }
+        $scope.onSelectedmode = function(issue_modeselected) {
+            $('#issued_mode').val(issue_modeselected);
         }
 
         //Buttons to navigate between tabs
@@ -242,6 +247,10 @@ app.component('partsIndentView', {
                 'issued_to_id': {
                     required: true,
                 },
+                'issued_mode': {
+                    required: true,
+                },
+
             },
             messages: {
                

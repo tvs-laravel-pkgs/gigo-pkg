@@ -137,7 +137,7 @@ Content Wrap -->
                                                                     <td>{{$ctrl.customer_details.mobile_no}}</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td class="title">Membership</td>
+                                                                    <td class="title">Owner Type</td>
                                                                     <td class="separator">:</td>
                                                                     <td>{{$ctrl.customer_details.name}}</td>
                                                                 </tr>
@@ -297,7 +297,7 @@ Content Wrap -->
                                                                     <td>{{$ctrl.customer_details.mobile_no}}</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td class="title">Membership</td>
+                                                                    <td class="title">Owner Type</td>
                                                                     <td class="separator">:</td>
                                                                     <td>{{$ctrl.customer_details.name}}</td>
                                                                 </tr>
@@ -383,49 +383,49 @@ Content Wrap -->
                                                 <p class="color-grey">by {{$ctrl.customer_voice_details[0].name}}</p>
                                             </div>
                                         </div><!-- Panel -->
-                                        <!-- <div class="panel panel-default without-collapse">
+                                        <div class="panel panel-default without-collapse">
                                             <div class="panel-heading">DMS Check List</div>
                                             <div class="panel-body">
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <div class="img-caption-wrap">
                                                             <div class="img-wrap">
-                                                                <img class="img-responsive" src="./public/theme/img/avatar.jpg" alt="Screenshot" />
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{$ctrl.gate_pass_details.warrenty_policy_attachment[0].name}}" alt="Screenshot" />
                                                             </div>
                                                             <div class="caption-wrap">
                                                                 <h6 class="caption-title">Warranty</h6>
                                                                 <div class="font-sm font-bold">Valid Upto</div>
-                                                                <div class="font-xs ">24/01/2030</div>
+                                                                <div class="font-xs ">{{$ctrl.gate_pass_details.warranty_expiry_date}}</div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="img-caption-wrap">
                                                             <div class="img-wrap">
-                                                                <img class="img-responsive" src="./public/theme/img/avatar.jpg" alt="Screenshot" />
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{$ctrl.gate_pass_details.a_m_c_attachment[0].name}}" alt="Screenshot" />
                                                             </div>
-                                                            <div class="caption-wrap">
+                                                            <!-- <div class="caption-wrap">
                                                                 <h6 class="caption-title">Warranty</h6>
                                                                 <div class="font-sm font-bold">Valid Upto</div>
                                                                 <div class="font-xs ">24/01/2030</div>
-                                                            </div>
+                                                            </div> -->
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="img-caption-wrap">
                                                             <div class="img-wrap">
-                                                                <img class="img-responsive" src="./public/theme/img/avatar.jpg" alt="Screenshot" />
+                                                               <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{$ctrl.gate_pass_details.e_w_p_attachment[0].name}}" alt="Screenshot" />
                                                             </div>
                                                             <div class="caption-wrap">
                                                                 <h6 class="caption-title">Warranty</h6>
                                                                 <div class="font-sm font-bold">Valid Upto</div>
-                                                                <div class="font-xs ">24/01/2030</div>
+                                                                <div class="font-xs ">{{$ctrl.gate_pass_details.ewp_expiry_date}}</div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div> -->
+                                        </div>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
@@ -474,19 +474,20 @@ Content Wrap -->
                                                             <input name="issued_qty" class="form-control required" id="issued_qty" placeholder="Enter Issuing Quantity" autocomplete="off" />
                                                         </div><!-- Form Group -->
                                                     </div><!-- Column -->
-                                                    <!-- <div class="col-md-4">
+                                                    <div class="col-md-4">
                                                         <div class="input-text form-group">
                                                             <label>Issue Mode <sup class="mandatory">*</sup></label>
-                                                            <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
-                                                                <md-select-header class="demo-select-header">
-                                                                    <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
-                                                                </md-select-header>
-                                                                <md-optgroup label="drinks">
-                                                                    <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
-                                                                </md-optgroup>
-                                                            </md-select>
+                                                    <md-select ng-model="$ctrl.issue_modeselected" md-on-close="clearSearchType()" ng-change="onSelectedmode($ctrl.issue_modeselected)"data-md-container-class="selectdemoSelectHeader" placeholder="Select Issue Mode">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchType" type="search" placeholder="Search Repair Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="issued_mode.id" ng-repeat="issued_mode in $ctrl.issued_mode | filter:searchType">{{issued_mode.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" id="issued_mode" name="issued_mode_id" value=""/>
                                                         </div>
-                                                    </div> -->
+                                                    </div>
                                                     <div class="col-md-4">
                                                         <div class="input-text form-group">
                                                             <label>Issued To <sup class="mandatory">*</sup></label>
@@ -550,6 +551,7 @@ Content Wrap -->
                                                                 <th>Part No.</th>
                                                                 <th>Requested Qty.</th>
                                                                 <th>Issued Qty.</th>
+                                                                <th>Issued Mode</th>
                                                                 <th>Issued To</th>
                                                             </tr>
                                                         </thead>
@@ -568,6 +570,7 @@ Content Wrap -->
                                                                 <td>{{issued_parts_details.code}}</td>
                                                                 <td>{{issued_parts_details.qty}} nos</td>
                                                                 <td>{{issued_parts_details.issued_qty}} nos</td>
+                                                                <td>{{issued_parts_details.config_name}}</td>
                                                                 <td>{{issued_parts_details.issued_to}}</td>
                                                             </tr>
                                                             

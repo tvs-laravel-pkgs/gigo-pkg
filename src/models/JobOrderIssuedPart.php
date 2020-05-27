@@ -14,7 +14,7 @@ class JobOrderIssuedPart extends Model {
 	protected $table = 'job_order_issued_parts';
 	public $timestamps = true;
 	protected $fillable =
-		["id","job_order_part_id","issued_qty","issued_to_id"]
+		["id","job_order_part_id","issued_qty","issued_mode_id","issued_to_id"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
