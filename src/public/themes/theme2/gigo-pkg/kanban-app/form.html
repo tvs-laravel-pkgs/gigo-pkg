@@ -1,0 +1,67 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+   
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-form pb-60">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="flex-row ">
+                                    <li class="flex-col-4 mb-20">
+                                        <div class="white-box-wrap">
+                                            <div class="img-wrap">
+                                                <img class="img-responsive profile" src="./public/theme/img/content/profile.jpg" alt="Profile" />
+                                            </div><!-- Img Wrap -->
+                                            <div class="right-wrap">
+                                                <h4 class="title">Sasikumar</h4>
+                                                <span class="info">Employee code : C1235323</span>
+                                                <span class="grey-box">Mechanic</span>
+                                                <span class="location"><img class="img-responsive map-marker-sm" src="./public/theme/img/content/map-marker.svg" alt="Location" />Coimbatore</span>
+                                            </div><!-- Right Wrap -->                                    
+                                        </div><!-- White Box Wrap -->
+                                    </li> 
+                                    <li class="flex-col-8 mb-20">
+                                        <div class="white-box-wrap">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="input-text form-group">
+                                                        <label>Check-Out Type <sup class="mandatory">*</sup></label>
+                                                        <md-select ng-model="selectedDrinks" placeholder="Select Check-Out Type" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchDrink" type="search" placeholder="Search Check-Out Type" class="demo-header-searchbox md-text">
+                                                            </md-select-header>
+                                                            <md-optgroup label="drinks">
+                                                                <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                                <!-- <md-option value="water">Water</md-option>
+                                                                <md-option value="juice">Juice</md-option>
+                                                                <md-option value="milk">Milk</md-option>
+                                                                <md-option value="wine">Wine</md-option>
+                                                                <md-option value="mead">Mead</md-option> -->
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                    </div><!-- Form Group -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-12">
+                                                    <label>Remarks <sup class="mandatory">*</sup></label>
+                                                    <input type="text" class="form-control" placeholder="Enter Remarks" autocomplete="off" />
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- White Box Wrap -->
+                                    </li>
+                                </ul>
+                            </div><!-- Column -->                                                     
+                            <div class="col-md-12">
+                                <div class="button-lg">
+                                    <button class="btn btn-secondary-dark btn-square">SUBMIT</button>
+                                </div>
+                            </div><!-- Column -->
+                        </div><!-- Row -->                       
+                    </div><!-- Page Form -->                    
+                </div><!-- Column -->
+           </div><!-- Row -->          
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

@@ -1,5 +1,5 @@
-<!-- Content Wrap -->
-<div class="content-wrap">
+<!--Content Wrap -->
+<div class="content-wrap scan_qr" ng-show="showQrScan">
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-inner">
@@ -32,17 +32,22 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content">
+        <form id="attendance_form">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
                     <div class="page-form pb-60">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="qr-bg">
+                                  <div class="qr-bg1">
+                                <qr-scanner width="400" height="300" ng-success="onSuccess(data)" ng-error="onError(error)" />
+                              
                                     <p class="info">Show QR Code</p>
-                                </div>
+                                 </div>
                             </div><!-- Column -->
+
                             <div class="col-md-12">
+                                <input type="text" name="encrypted_id" value="" id="encrypted_id" ng-model="encrypted_id">
                                 <div class="text-center pt-80">
                                     <button class="btn btn-red btn-min-wdth">Back</button>
                                 </div>
@@ -52,5 +57,190 @@
                 </div><!-- Column -->
             </div><!-- Row -->
         </div><!-- Container -->
+    </form>
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap-->
+
+<!--Check In Success ---->
+
+<!-- Content Wrap -->
+<div class="content-wrap check_in_success" ng-show="showCheckInSuccess" >
+   
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-form pb-60">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="flex-row ">
+                                    <li class="flex-col-4 mb-20">
+                                        <div class="white-box-wrap">
+                                            <div class="img-wrap">
+                                                <img class="img-responsive profile" src="./public/theme/img/content/profile.jpg" alt="Profile" />
+                                            </div><!-- Img Wrap -->
+                                            <div class="right-wrap">
+                                                <h4 class="title">{{user.employee.name}}</h4>
+                                                <span class="info">Employee code : {{user.employee.code}}</span>
+                                                <span class="grey-box">Mechanic</span>
+                                                <span class="location"><img class="img-responsive map-marker-sm" src="./public/theme/img/content/map-marker.svg" alt="Location" />Coimbatore</span>
+                                            </div><!-- Right Wrap -->                                    
+                                        </div><!-- White Box Wrap -->
+                                    </li>        
+                                    <li class="flex-col-4 mb-20">
+                                        <div class="white-box-wrap">
+                                            <img class="img-responsive mt-30 img-center" src="./public/theme/img/content/icons/check.svg" alt="Check" />                                    
+                                            <h4 class="title text-center mb-0">Check-In Success</h4>                                                                      
+                                        </div><!-- White Box Wrap -->
+                                    </li>
+                                    <li class="flex-col-4 mb-20">
+                                        <div class="white-box-wrap">
+                                            <ul class="shift-time-list">
+                                                <li class="shift-time-list-item">Shift Start Time : 09:00 am</li>
+                                            </ul>
+                                            <h4 class="date text-center">{{date |date:'dd/MM/yyyy'}} - {{date |date:'EEEE'}}</h4>
+                                            <span class="time text-center">Check In Time - {{time |date:'shortTime'}}</span>
+                                        </div><!-- White Box Wrap -->
+                                    </li>
+                                </ul>
+                            </div><!-- Column -->
+                            <div class="col-md-12">
+                                <div class="button-lg">
+                               <!--      <a href="#!/gigo-pkg/kanban-app/attendance/scan-qr" class="btn btn-secondary-dark btn-square">DONE</a> -->
+                                 <button class="btn btn-secondary-dark btn-square" ng-click="reloadPage()">DONE</button>
+                                </div>
+                            </div><!-- Column -->
+                        </div><!-- Row -->                       
+                    </div><!-- Page Form -->                    
+                </div><!-- Column -->
+           </div><!-- Row -->          
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+
+<!--Check Out Success ---->
+
+<!-- Content Wrap -->
+<div class="content-wrap check_out_success" ng-show="showCheckOutConfirmation">
+   
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-form pb-60">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="flex-row ">
+                                    <li class="flex-col-4 mb-20">
+                                        <div class="white-box-wrap">
+                                            <div class="img-wrap">
+                                                <img class="img-responsive profile" src="./public/theme/img/content/profile.jpg" alt="Profile" />
+                                            </div><!-- Img Wrap -->
+                                            <div class="right-wrap">
+                                                 <h4 class="title">{{user.employee.name}}</h4>
+                                                <span class="info">Employee code : {{user.employee.code}}</span>
+                                                <span class="grey-box">Mechanic</span>
+                                                <span class="location"><img class="img-responsive map-marker-sm" src="./public/theme/img/content/map-marker.svg" alt="Location" />{{user.employee.outlet.name}}</span>
+                                            </div><!-- Right Wrap -->                                    
+                                        </div><!-- White Box Wrap -->
+                                    </li>        
+                                    <li class="flex-col-4 mb-20">
+                                        <div class="white-box-wrap">
+                                            <img class="img-responsive mt-30 img-center" src="./public/theme/img/content/icons/check.svg" alt="Check" />                                    
+                                            <h4 class="title text-center mb-0">Check-Out Success</h4>                                                                      
+                                        </div><!-- White Box Wrap -->
+                                    </li>
+                                    <li class="flex-col-4 mb-20">
+                                        <div class="white-box-wrap">
+                                            <ul class="shift-time-list">
+                                                <li class="shift-time-list-item">Check In Time - 09:20 am</li>
+                                                <li class="shift-time-list-item">Total Hours Worked : 8 hrs</li>
+                                                <li class="shift-time-list-item">Shift End Time - 06:00 pm</li>
+                                            </ul>
+                                            <h4 class="date text-center">20/04/2020 - Monday</h4>
+                                            <span class="time text-center">Check Out Time - 06:20 pm</span>
+                                        </div><!-- White Box Wrap -->
+                                    </li>
+                                </ul>
+                            </div><!-- Column -->
+                            <div class="col-md-12">
+                                <div class="button-lg">
+                                    <!-- <a href="#!/gigo-pkg/kanban-app/attendance/scan-qr" class="btn btn-secondary-dark btn-square">DONE</a> -->
+                                    <button class="btn btn-secondary-dark btn-square" ng-click="reloadPage()">DONE</button>
+                                </div>
+                            </div><!-- Column -->
+                        </div><!-- Row -->                       
+                    </div><!-- Page Form -->                    
+                </div><!-- Column -->
+           </div><!-- Row -->          
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+
+<!-- Content Wrap -->
+<div class="content-wrap check_out_confirm" ng-show="showCheckOut">
+   
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <form id="punch_out_form">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <ul class="flex-row ">
+                                        <li class="flex-col-4 mb-20">
+                                            <div class="white-box-wrap">
+                                                <div class="img-wrap">
+                                                    <img class="img-responsive profile" src="./public/theme/img/content/profile.jpg" alt="Profile" />
+                                                </div><!-- Img Wrap -->
+                                                <div class="right-wrap">
+                                                    <h4 class="title">Sasikumar</h4>
+                                                    <span class="info">Employee code : C1235323</span>
+                                                    <span class="grey-box">Mechanic</span>
+                                                    <span class="location"><img class="img-responsive map-marker-sm" src="./public/theme/img/content/map-marker.svg" alt="Location" />Coimbatore</span>
+                                                </div><!-- Right Wrap -->                                    
+                                            </div><!-- White Box Wrap -->
+                                        </li> 
+                                        <li class="flex-col-8 mb-20">
+                                            <div class="white-box-wrap">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="input-text form-group">
+                                                            <label>Check-Out Type <sup class="mandatory">*</sup></label>
+                                                            <md-select ng-model="punch_out_method.id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Check-Out Type">
+                                                        <md-select-header class="demo-select-header">
+                                                            <input ng-model="searchTerm" type="search" placeholder="Search for a Check-Out Type" class="demo-header-searchbox md-text">
+                                                        </md-select-header>
+                                                        <md-optgroup>
+                                                            <md-option ng-value="punch_out_method.id" ng-repeat="punch_out_method in punch_out_method_list | filter:searchTerm">{{punch_out_method.name}}</md-option>
+                                                        </md-optgroup>
+                                                    </md-select>
+                                                    <input type="hidden" class="form-control type-sm" name="punch_out_method_id" id="punch_out_method_id" value="{{punch_out_method.id}}">
+                                                        </div><!-- Form Group -->
+                                                    </div><!-- Column -->
+                                                    <div class="col-md-12">
+                                                        <label>Remarks <sup class="mandatory">*</sup></label>
+                                                        <input type="text" name="remarks" class="form-control" placeholder="Enter Remarks" autocomplete="off" />
+                                                    </div><!-- Column -->
+                                                </div><!-- Row -->
+                                            </div><!-- White Box Wrap -->
+                                        </li>
+                                    </ul>
+                                </div><!-- Column -->                                                     
+                                <div class="col-md-12">
+                                    <div class="button-lg">
+                                        <button type="submit" ng-click="savePunchOut()" class="btn btn-secondary-dark btn-square">SUBMIT</button>
+                                    </div>
+                                </div><!-- Column -->
+                            </div><!-- Row -->                       
+                        </div><!-- Page Form -->                    
+                    </div><!-- Column -->
+               </div><!-- Row -->          
+            </div><!-- Container -->
+        </form>
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
