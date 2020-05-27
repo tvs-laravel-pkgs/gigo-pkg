@@ -5,9 +5,9 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
+use Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Auth;
 
 class QuoteType extends Model {
 	use SeederTrait;
@@ -15,7 +15,7 @@ class QuoteType extends Model {
 	protected $table = 'quote_types';
 	public $timestamps = true;
 	protected $fillable =
-		["id","company_id","code","name"]
+		["id", "company_id", "code", "name"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
@@ -61,13 +61,13 @@ class QuoteType extends Model {
 		return $record;
 	}
 
-	public static function getList($params = [], $add_default = true, $default_text = 'Select Quote Type') {
+	public static function getDropDownList($params = [], $add_default = true, $default_text = 'Select Quote Type') {
 		$list = Collect(Self::select([
 			'id',
 			'name',
 		])
 				->orderBy('name')
-				->where('company_id',Auth::user()->company_id)
+				->where('company_id', Auth::user()->company_id)
 				->get());
 		if ($add_default) {
 			$list->prepend(['id' => '', 'name' => $default_text]);

@@ -5,7 +5,6 @@ namespace Abs\GigoPkg\Api;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\ServiceOrderType;
 use App\Address;
-use App\City;
 use App\Config;
 use App\Country;
 use App\Customer;
@@ -55,16 +54,16 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$vehicle_inward_list_get = JobOrder::
-				//issue : not optimized
-				// ->with([
-				// 	'status',
-				// 	'vehicle',
-				// 	'vehicle.status',
-				// 	'vehicle.currentOwner',
-				// 	'vehicle.currentOwner.customer',
-				// ])
-				join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
+			$vehicle_inward_list_get = JobOrder::company('job_orders')
+			//issue : not optimized
+			// ->with([
+			// 	'status',
+			// 	'vehicle',
+			// 	'vehicle.status',
+			// 	'vehicle.currentOwner',
+			// 	'vehicle.currentOwner.customer',
+			// ])
+				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
 				->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
 				->leftJoin('models', 'models.id', 'vehicles.model_id')
 				->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
@@ -111,10 +110,12 @@ class VehicleInwardController extends Controller {
 				'gate_logs' => $gate_logs,
 				'total_records' => $total_records,
 			]);
-		} catch (Exception $e) {
+			//issue : exception will not be handled
+			// } catch (\Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => [$e->getMessage()],
+				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 			]);
 		}
 	}
@@ -122,7 +123,7 @@ class VehicleInwardController extends Controller {
 	//VEHICLE INWARD VIEW DATA
 	public function getVehicleInwardViewData(Request $r) {
 		try {
-			$gate_log = GateLog::with([
+			$gate_log = GateLog::company()->with([
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
@@ -154,10 +155,10 @@ class VehicleInwardController extends Controller {
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => [$e->getMessage()],
+				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 			]);
 		}
 	}
@@ -165,7 +166,7 @@ class VehicleInwardController extends Controller {
 	//VEHICLE DETAILS
 	public function getVehicleDetail(Request $r) {
 		try {
-			$job_order = JobOrder::with([
+			$job_order = JobOrder::company()->with([
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
@@ -209,10 +210,10 @@ class VehicleInwardController extends Controller {
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => [$e->getMessage()],
+				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 			]);
 		}
 	}
@@ -220,7 +221,7 @@ class VehicleInwardController extends Controller {
 	//CUSTOMER DETAILS
 	public function getCustomerDetail(Request $r) {
 		try {
-			$job_order = JobOrder::with([
+			$job_order = JobOrder::company()->with([
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
@@ -251,16 +252,16 @@ class VehicleInwardController extends Controller {
 				'job_order' => $job_order,
 				'extras' => [
 					'country_list' => Country::getDropDownList(),
-					'state_list' => State::getDropDownList(),
-					'city_list' => City::getDropDownList(),
+					'state_list' => [], State::getDropDownList(),
+					'city_list' => [], //City::getDropDownList(),
 					'ownership_type_list' => Config::getDropDownList(['config_type_id' => 39]),
 				],
 			]);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => [$e->getMessage()],
+				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 			]);
 		}
 	}
@@ -285,7 +286,7 @@ class VehicleInwardController extends Controller {
 			$customer = Customer::saveCustomer($request->all());
 			$customer->saveAddress($request->all());
 
-			$job_order = JobOrder::find($request->job_order_id);
+			$job_order = JobOrder::company()->find($request->job_order_id);
 			$vehicle = $job_order->vehicle;
 
 			if (!$request->id) {
@@ -314,43 +315,60 @@ class VehicleInwardController extends Controller {
 				'message' => 'Customer detail saved Successfully!!',
 			]);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 			]);
 		}
 	}
+
 	//JOB ORDER
-	public function getJobOrderFormData($id) {
+	public function getOrderFormData(Request $r) {
 		try {
-			$gate_log = GateLog::find($id);
-			if (!$gate_log) {
+			$job_order = JobOrder::company()
+				->with([
+					'vehicle',
+					'vehicle.model',
+					'vehicle.status',
+					'vehicle.lastJobOrder',
+					'vehicle.lastJobOrder.jobCard',
+					'type',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'message' => 'Order Not Found!',
 				]);
 			}
 
 			$extras = [
-				'job_order_types' => ServiceOrderType::getList(),
-				'quote_types' => QuoteType::getList(),
-				'service_types' => ServiceType::getList(),
-				'reading_types' => Config::getConfigTypeList(33, 'name', '', true, 'Select Reading type'), //Reading types
+				'job_order_type_list' => ServiceOrderType::getDropDownList(),
+				'quote_type_list' => QuoteType::getDropDownList(),
+				'service_type_list' => ServiceType::getDropDownList(),
+				'reading_type_list' => Config::getDropDownList([
+					'config_type_id' => 33,
+					'default_text' => 'Select Reading type',
+				]),
 			];
 
 			//Job card details need to get future
 			return response()->json([
 				'success' => true,
-				'gate_log' => $gate_log,
+				'job_order' => $job_order,
 				'extras' => $extras,
 			]);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => [$e->getMessage()],
+				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 			]);
 		}
 	}
@@ -519,7 +537,7 @@ class VehicleInwardController extends Controller {
 				'message' => 'Job order saved successfully!!',
 			]);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -549,7 +567,7 @@ class VehicleInwardController extends Controller {
 				'extras' => $extras,
 			]);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'errors' => [$e->getMessage()],
@@ -649,7 +667,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'Vehicle inventory items added successfully',
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -739,7 +757,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'Vehicle DMS checklist added successfully',
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -785,7 +803,7 @@ class VehicleInwardController extends Controller {
 				'labour_details' => $labour_details,
 				'total_amount' => number_format($total_amount, 2),
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -885,7 +903,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'Schedule Maintenance added successfully',
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -954,7 +972,7 @@ class VehicleInwardController extends Controller {
 				'labour_details' => $labour_details,
 				'total_amount' => $total_amount,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1084,7 +1102,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'Addtional Rot and Part added successfully',
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1111,7 +1129,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'extras' => $extras,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1137,7 +1155,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'extras' => $extras,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1166,7 +1184,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'extras' => $extras,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1199,7 +1217,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'repair_order' => $repair_order_detail,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1228,7 +1246,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'part' => $part_detail,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1422,7 +1440,7 @@ class VehicleInwardController extends Controller {
 				'message' => 'Vehicle Mapped with customer Successfully!!',
 			]);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			DB::rollBack();
 			return response()->json([
 				'success' => false,
@@ -1456,7 +1474,7 @@ class VehicleInwardController extends Controller {
 				'VOC_list' => $VOC_list,
 				'gate_log_detail' => $gate_log_detail,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1503,7 +1521,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'VOC Added Successfully',
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1536,7 +1554,7 @@ class VehicleInwardController extends Controller {
 				'gate_log_detail' => $gate_log_detail,
 				'extras' => $extras,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1617,7 +1635,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'Road Test Observation Added Successfully',
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1649,7 +1667,7 @@ class VehicleInwardController extends Controller {
 				'gate_log_detail' => $gate_log_detail,
 				'extras' => $extras,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1702,7 +1720,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'Expert Diagnosis Report Added Successfully',
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1737,7 +1755,7 @@ class VehicleInwardController extends Controller {
 				'vehicle_inspection_item_group' => $vehicle_inspection_item_group,
 				'extras' => $extras,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1794,7 +1812,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'Vehicle Inspection Added Successfully',
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1867,7 +1885,7 @@ class VehicleInwardController extends Controller {
 				'gate_log_detail' => $gate_log_detail,
 			]);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1921,7 +1939,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'Estimate Details Added Successfully',
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -1949,7 +1967,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'estimation_type' => $estimation_type,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -2001,7 +2019,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'Estimation Denied Details Added Successfully',
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -2091,7 +2109,7 @@ class VehicleInwardController extends Controller {
 				'message' => 'Vehicle Inwarded Successfully',
 				'repair_order_and_parts_detils' => $repair_order_and_parts_detils,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',
@@ -2131,7 +2149,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'JOB Initiated Successfully',
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Network Down!',

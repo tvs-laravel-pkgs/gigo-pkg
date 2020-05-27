@@ -11,6 +11,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/get-vehicle-detail', 'VehicleInwardController@getVehicleDetail');
 		Route::post('vehicle-inward/get-customer-detail', 'VehicleInwardController@getCustomerDetail');
 		Route::post('vehicle-inward/save-customer-detail', 'VehicleInwardController@saveCustomerDetail');
+		Route::post('vehicle-inward/order-detail/get-form-data', 'VehicleInwardController@getOrderFormData');
+		Route::post('vehicle-inward/order-detail/save', 'VehicleInwardController@saveOrderDetail');
+		Route::post('vehicle-inward/order-detail/get', 'VehicleInwardController@getOrderDetail');
 
 		//VEHICLE GATE PASS LIST
 		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');

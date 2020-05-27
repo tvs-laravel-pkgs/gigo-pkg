@@ -4,7 +4,6 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
-use Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -123,16 +122,25 @@ class JobOrder extends Model {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
 
-	public function serviceOrederType() {
-		return $this->belongsTo('Abs\GigoPkg\ServiceOrderType', 'type_id')->where('company_id', Auth::user()->company_id);
+	public function type() {
+		return $this->belongsTo('App\ServiceOrderType', 'type_id');
 	}
 
+	//issue : company condition not required
+	// public function serviceOrederType() {
+	// 	return $this->belongsTo('App\ServiceOrderType', 'type_id')->where('company_id', Auth::user()->company_id);
+	// }
+
 	public function quoteType() {
-		return $this->belongsTo('App\QuoteType', 'quote_type_id')->where('company_id', Auth::user()->company_id);
+		return $this->belongsTo('App\QuoteType', 'quote_type_id')
+		// ->where('company_id', Auth::user()->company_id)
+		;
 	}
 
 	public function serviceType() {
-		return $this->belongsTo('App\ServiceType', 'service_type_id')->where('company_id', Auth::user()->company_id);
+		return $this->belongsTo('App\ServiceType', 'service_type_id')
+		// ->where('company_id', Auth::user()->company_id)
+		;
 	}
 
 	public function roadTestDoneBy() {
@@ -140,15 +148,21 @@ class JobOrder extends Model {
 	}
 
 	public function roadTestPreferedBy() {
-		return $this->belongsTo('App\User', 'road_test_performed_by_id')->where('company_id', Auth::user()->company_id);
+		return $this->belongsTo('App\User', 'road_test_performed_by_id')
+		// ->where('company_id', Auth::user()->company_id)
+		;
 	}
 
 	public function expertDiagnosisReportBy() {
-		return $this->belongsTo('App\User', 'expert_diagnosis_report_by_id')->where('company_id', Auth::user()->company_id);
+		return $this->belongsTo('App\User', 'expert_diagnosis_report_by_id')
+		// ->where('company_id', Auth::user()->company_id)
+		;
 	}
 
 	public function floorAdviser() {
-		return $this->belongsTo('App\Employee', 'floor_adviser_id')->where('company_id', Auth::user()->company_id);
+		return $this->belongsTo('App\Employee', 'floor_adviser_id')
+		// ->where('company_id', Auth::user()->company_id)
+		;
 	}
 
 	public function jobCard() {
