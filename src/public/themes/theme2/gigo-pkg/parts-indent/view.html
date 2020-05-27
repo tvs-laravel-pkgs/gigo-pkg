@@ -1,0 +1,616 @@
+Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/gigo-pkg/parts-indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Parts Indent - JC{{$ctrl.job_cards.job_card_number}} / {{$ctrl.job_cards.date_time}}</b></h1>
+                    <p class="subtitle">GIGO / Parts Indent / View</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+            <div class="page-header-content-right">
+                <div class="page-header-content text-block">
+                    <h2 class="title-right"><b>Status : <span class="text-blue">{{$ctrl.job_cards.work_status}}</span></b></h2>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Right -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <div class="tab-form-wrap">
+                <div class="tab-form-header">
+                    <div class="tab-header">
+                            <!-- Filters -->
+                        <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
+                            <ul class="nav nav-pills cndn-tabs">
+                                <li class="active"><a class="filter active" data-target="#labour_details" data-toggle="tab" aria-expanded="true">Labour Details</a></li>
+                                <li><a data-target="#parts_details" data-toggle="tab" aria-expanded="true" class="filter">Parts Details</a></li>
+                                <li><a data-target="#additional_info" data-toggle="tab" aria-expanded="true" class="filter">Additional Info</a></li>
+                                <li><a data-target="#parts_indent" data-toggle="tab" aria-expanded="true" class="filter">Parts Indent</a></li>
+                            </ul>
+                        </div><!-- Filters -->  
+                    </div><!-- Tab Header -->
+                </div><!-- Tab Form Header -->
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="labour_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <ul class="flex-row type-2">
+                                            <li class="flex-col-4 mb-20">
+                                                <div class="finance-view-box-wrap">
+                                                    <div class="finance-view-heading">
+                                                        <span class="title">Vehicle Info</span>
+                                                    </div><!-- Finance Heading -->
+                                                    <div class="finance-view-body">
+                                                        <table class="finance-view-grey-table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="title">Make</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.vehicle_info.make_name}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Model</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.vehicle_info.model_name}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Reg. No</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.vehicle_info.registration_number}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Engine No</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.vehicle_info.engine_number}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Chasis No</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.vehicle_info.chassis_number}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Finance-body -->
+                                                </div><!-- Finance Wrap -->
+                                            </li>
+                
+                                            <li class="flex-col-4 mb-20">
+                                                <div class="finance-view-box-wrap">
+                                                    <div class="finance-view-heading">
+                                                        <span class="title">Gate In Info</span>
+                                                    </div><!-- Finance Heading -->
+                                                    <div class="finance-view-body">
+                                                        <table class="finance-view-grey-table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="title">Gate In No</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.gate_log.number}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Gate In Date</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.gate_log.gate_in_date}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Driver Name</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.gate_log.driver_mobile_number}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Driver Mobile</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.gate_log.driver_name}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Finance-body -->
+                                                </div><!-- Finance Wrap -->
+                                            </li>
+
+                                            <li class="flex-col-4 mb-20">
+                                                <div class="finance-view-box-wrap">
+                                                    <div class="finance-view-heading">
+                                                        <span class="title">Customer Details</span>
+                                                    </div><!-- Finance Heading -->
+                                                    <div class="finance-view-body">
+                                                        <table class="finance-view-grey-table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="title">Customer Name</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.customer_details.customer_name}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Customer Mobile</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.customer_details.mobile_no}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Membership</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.customer_details.name}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Finance-body -->
+                                                </div><!-- Finance Wrap -->
+                                            </li>
+                                        </ul><!-- Flex Row -->
+
+                                        <ul class="grey-list mb-20">
+                                            <li>
+                                                <div class="grey-box">
+                                                    <div class="grey-box-header">Floor Supervisor : <b>{{$ctrl.job_cards.floor_supervisor}}</b></div>
+                                                </div>
+                                            </li>
+                                            <!-- <li>
+                                                <div class="grey-box">
+                                                    <div class="grey-box-header">Floor Advisor : <b>Maaran</b></div>
+                                                </div>
+                                            </li> -->
+                                        </ul><!-- Grey List -->
+
+                                        <h6 class=""><b>Labour Details</b></h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-border-2">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Code</th>
+                                                        <th>Name</th>
+                                                        <th>Split Type</th>
+                                                        <th>HSN/SAC Code</th>
+                                                        <th>Rate</th>
+                                                        <th>Quantity</th>
+                                                        <th>Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="(index, labour_details) in $ctrl.labour_details">
+                                                        <td>{{labour_details.code}}</td>
+                                                        <td>{{labour_details.name}}</td>
+                                                        <td>{{labour_details.split_name}}</td> 
+                                                        <td>{{labour_details.tax_code}}</td>
+                                                        <td>{{labour_details.rate}}</td>
+                                                        <td>{{labour_details.qty}}</td>
+                                                        <td>{{labour_details.amount}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- Table Responsive -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-primary btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+
+                        <div class="tab-pane fade" id="parts_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <ul class="flex-row type-2">
+                                            <li class="flex-col-4 mb-20">
+                                                <div class="finance-view-box-wrap">
+                                                    <div class="finance-view-heading">
+                                                        <span class="title">Vehicle Info</span>
+                                                    </div><!-- Finance Heading -->
+                                                    <div class="finance-view-body">
+                                                        <table class="finance-view-grey-table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="title">Make</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.vehicle_info.make_name}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Model</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.vehicle_info.model_name}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Reg. No</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.vehicle_info.registration_number}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Engine No</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.vehicle_info.engine_number}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Chasis No</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.vehicle_info.chassis_number}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Finance-body -->
+                                                </div><!-- Finance Wrap -->
+                                            </li>
+                
+                                            <li class="flex-col-4 mb-20">
+                                                <div class="finance-view-box-wrap">
+                                                    <div class="finance-view-heading">
+                                                        <span class="title">Gate In Info</span>
+                                                    </div><!-- Finance Heading -->
+                                                    <div class="finance-view-body">
+                                                        <table class="finance-view-grey-table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="title">Gate In No</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.gate_log.number}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Gate In Date</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.gate_log.gate_in_date}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Driver Name</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.gate_log.driver_mobile_number}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Driver Mobile</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.gate_log.driver_name}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Finance-body -->
+                                                </div><!-- Finance Wrap -->
+                                            </li>
+
+                                            <li class="flex-col-4 mb-20">
+                                                <div class="finance-view-box-wrap">
+                                                    <div class="finance-view-heading">
+                                                        <span class="title">Customer Details</span>
+                                                    </div><!-- Finance Heading -->
+                                                    <div class="finance-view-body">
+                                                        <table class="finance-view-grey-table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="title">Customer Name</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.customer_details.customer_name}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Customer Mobile</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.customer_details.mobile_no}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="title">Membership</td>
+                                                                    <td class="separator">:</td>
+                                                                    <td>{{$ctrl.customer_details.name}}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Finance-body -->
+                                                </div><!-- Finance Wrap -->
+                                            </li>
+                                        </ul><!-- Flex Row -->
+
+                                        <ul class="grey-list mb-20">
+                                            <li>
+                                                <div class="grey-box">
+                                                    <div class="grey-box-header">Floor Supervisor : <b>{{$ctrl.job_cards.floor_supervisor}}</b></div>
+                                                </div>
+                                            </li>
+                                            <!-- <li>
+                                                <div class="grey-box">
+                                                    <div class="grey-box-header">Floor Advisor : <b>Maaran</b></div>
+                                                </div>
+                                            </li> -->
+                                        </ul><!-- Grey List -->
+
+                                        <h6 class=""><b>Parts Details</b></h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-border-2">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Part Code</th>
+                                                        <th>Description</th>
+                                                        <th>Split Type</th>
+                                                        <th>HSN/SAC Code</th>
+                                                        <th>Rate</th>
+                                                        <th>Quantity</th>
+                                                        <th>Amount</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                   <tbody>
+                                                    <tr ng-repeat="(index, parts_details) in $ctrl.parts_details">
+                                                        <td>{{parts_details.code}}</td>
+                                                        <td>{{parts_details.name}}</td>
+                                                        <td>{{parts_details.split_name}}</td> 
+                                                        <td>{{parts_details.tax_code}}</td>
+                                                        <td>{{parts_details.rate}}</td>
+                                                        <td>{{parts_details.qty}}</td>
+                                                        <td>{{parts_details.amount}}</td>
+                                                    </tr>
+                                                </tbody>
+                                                </tbody>
+                                            </table>
+                                        </div><!-- Table Responsive -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary btn-prev">Previous</a>
+                                                <a class="btn btn-primary btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+
+                        <div class="tab-pane fade" id="additional_info" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="panel panel-default without-collapse">
+                                            <div class="panel-heading">Voice Of Customer</div>
+                                            <div class="panel-body">
+                                                <p class="color-grey light-font">{{$ctrl.customer_voice_details[0].road_test_report}}</p>
+                                                <hr class="md" />
+                                                <h6><b>Maintenance - Sheduled</b></h6>
+                                                <h6><b>Road Test by {{$ctrl.customer_voice_details[0].name}}</b></h6>
+                                            </div>
+                                        </div><!-- Panel -->
+                                        <div class="panel panel-default without-collapse">
+                                            <div class="panel-heading">Observations</div>
+                                            <div class="panel-body">
+                                                <p class="color-grey light-font">{{$ctrl.customer_voice_details[0].expert_diagnosis_report}}</p>
+                                                <p class="color-grey">by {{$ctrl.customer_voice_details[0].name}}</p>
+                                            </div>
+                                        </div><!-- Panel -->
+                                        <!-- <div class="panel panel-default without-collapse">
+                                            <div class="panel-heading">DMS Check List</div>
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="img-caption-wrap">
+                                                            <div class="img-wrap">
+                                                                <img class="img-responsive" src="./public/theme/img/avatar.jpg" alt="Screenshot" />
+                                                            </div>
+                                                            <div class="caption-wrap">
+                                                                <h6 class="caption-title">Warranty</h6>
+                                                                <div class="font-sm font-bold">Valid Upto</div>
+                                                                <div class="font-xs ">24/01/2030</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="img-caption-wrap">
+                                                            <div class="img-wrap">
+                                                                <img class="img-responsive" src="./public/theme/img/avatar.jpg" alt="Screenshot" />
+                                                            </div>
+                                                            <div class="caption-wrap">
+                                                                <h6 class="caption-title">Warranty</h6>
+                                                                <div class="font-sm font-bold">Valid Upto</div>
+                                                                <div class="font-xs ">24/01/2030</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="img-caption-wrap">
+                                                            <div class="img-wrap">
+                                                                <img class="img-responsive" src="./public/theme/img/avatar.jpg" alt="Screenshot" />
+                                                            </div>
+                                                            <div class="caption-wrap">
+                                                                <h6 class="caption-title">Warranty</h6>
+                                                                <div class="font-sm font-bold">Valid Upto</div>
+                                                                <div class="font-xs ">24/01/2030</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary btn-prev">Previous</a>
+                                                <a class="btn btn-primary btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+
+                        <div class="tab-pane fade" id="parts_indent" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                               
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <form id="part_add" autocomplete="off"> 
+                                                <input type="hidden" name="job_order_part_id" id="job_order_part_id" />
+                                            <input type="hidden" name="bal_qty" id="bal_qty" />
+                                            <div class="col-lg-8">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="input-text form-group">
+                                                                    <label>Part No <sup class="mandatory">*</sup></label>
+                                                    <md-select ng-model="$ctrl.part_code_selected" md-on-close="clearSearchType()" ng-change="onSelectedpartcode($ctrl.part_code_selected)"data-md-container-class="selectdemoSelectHeader" placeholder="Select Part No">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchType" type="search" placeholder="Search Repair Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="part_list.id" ng-repeat="part_list in $ctrl.part_list | filter:searchType">{{part_list.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" name="part_code" id="part_code" value="">
+                                                                </div><!-- Form Group -->
+                                                            </div><!-- Column -->
+                                                        </div><!-- Row -->
+                                                    </div><!-- Column -->
+                                                    <div class="col-md-4">
+                                                        <div class="input-text form-group">
+                                                            <label>Issuing Quantity <sup class="mandatory">*</sup></label>
+                                                            <input name="issued_qty" class="form-control required" id="issued_qty" placeholder="Enter Issuing Quantity" autocomplete="off" />
+                                                        </div><!-- Form Group -->
+                                                    </div><!-- Column -->
+                                                    <!-- <div class="col-md-4">
+                                                        <div class="input-text form-group">
+                                                            <label>Issue Mode <sup class="mandatory">*</sup></label>
+                                                            <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                                <md-select-header class="demo-select-header">
+                                                                    <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                                </md-select-header>
+                                                                <md-optgroup label="drinks">
+                                                                    <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                                </md-optgroup>
+                                                            </md-select>
+                                                        </div>
+                                                    </div> -->
+                                                    <div class="col-md-4">
+                                                        <div class="input-text form-group">
+                                                            <label>Issued To <sup class="mandatory">*</sup></label>
+                                                             <md-select ng-model="$ctrl.machanic_id_selected" md-on-close="clearSearchType()" ng-change="onSelectedmech($ctrl.machanic_id_selected)"data-md-container-class="selectdemoSelectHeader" placeholder="Select Part No">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchType" type="search" placeholder="Search Repair Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="mechanic_list.id" ng-repeat="mechanic_list in $ctrl.mechanic_list | filter:searchType">{{mechanic_list.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" name="issued_to_id" id="machanic_id" value="">
+                                                        </div><!-- Form Group -->
+                                                    </div><!-- Column -->
+                                                    <div class="col-md-12">
+                                                        <button type="submit" class="btn btn-red btn-square btn-sm submit" ng-click="$ctrl.part_code_selected='';$ctrl.machanic_id_selected='';">Add</button>
+                                                    </div>
+                                                </div><!-- Row -->
+                                            </div><!-- Column -->
+                                        </form>
+                                            <div class="col-lg-4">
+                                                <div class="dark-wrap">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="text-wrap mb-20">
+                                                                <span class="text-label">Description</span>
+                                                                <span class="text-value">Parts Indent</span>
+                                                            </div>
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-6">
+                                                            <div class="text-wrap mb-20">
+                                                                <span class="text-label">Req. Qty.</span>
+                                                                <span class="text-value" id="req_qty"></span>
+                                                            </div>
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-6">
+                                                            <div class="text-wrap mb-20">
+                                                                <span class="text-label">Issued. Qty.</span>
+                                                                <span class="text-value" id="issue_qty"></span>
+                                                            </div>
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-12">
+                                                            <div class="text-wrap">
+                                                                <span class="text-label">Balance. Qty.</span>
+                                                                <span class="text-value" id="balance_qty"></span>
+                                                            </div>
+                                                        </div><!-- Column -->
+                                                    </div><!-- Row -->
+                                                </div><!-- Dark Wrap -->
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h6 class=""><b>Parts Details</b></h6>
+                                                <div class="table-responsive">
+                                                    <table class="table white-space-unset table-border-2">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="action width-100">Action</th>
+                                                                <th>Date</th>
+                                                                <th>Part No.</th>
+                                                                <th>Requested Qty.</th>
+                                                                <th>Issued Qty.</th>
+                                                                <th>Issued To</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                             <tr ng-repeat="(index, issued_parts_details) in $ctrl.issued_parts_details">
+
+                                                                <td class="action width-100">
+                                                                    <!-- <a href="#!" class="">
+                                                                        <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
+                                                                    </a> -->
+                                                                    <a href="javascript:;" data-toggle="modal" data-target="#delete_parts_issued" ng-click="$ctrl.removeIssedParts(issued_parts_details.id)" class="">
+                                                                        <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
+                                                                    </a>
+                                                                </td>
+                                                                <td>{{issued_parts_details.date}}</td>
+                                                                <td>{{issued_parts_details.code}}</td>
+                                                                <td>{{issued_parts_details.qty}} nos</td>
+                                                                <td>{{issued_parts_details.issued_qty}} nos</td>
+                                                                <td>{{issued_parts_details.issued_to}}</td>
+                                                            </tr>
+                                                            
+                                                        </tbody>
+                                                    </table>
+                                                </div><!-- Table Responsive -->
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary btn-prev">Previous</a>
+                                                <!-- <button type="button" class="btn btn-primary">Submit</button> -->
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->   
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<!-- Drag & Drop File Upload Plugins--->
+
+
+<div class="modal fade alert-modal failure" id="delete_parts_issued" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
+            </div>
+            <div class="modal-body">
+                <h5>Delete</h5>
+                <p>You can’t retrive the data again, Are you sure you want to delete? </p>
+                <input type="hidden" name="delete_issued_part_id" id="delete_issued_part_id" value="">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->

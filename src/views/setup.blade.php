@@ -112,7 +112,7 @@
 	    }).
 
 	    //Vehicle Master
-	     when('/gigo-pkg/vehicle/list', {
+	    when('/gigo-pkg/vehicle/list', {
 	        template: '<vehicle-list></vehicle-list>',
 	        title: 'Vehicles',
 	    }).
@@ -128,6 +128,17 @@
 	        template: '<vehicle-data-view></vehicle-data-view>',
 	        title: 'View Vehicle',
 	    }).
+
+	    //Parts Indent
+	    when('/gigo-pkg/parts-indent/list', {
+	        template: '<parts-indent-list></parts-indent-list>',
+	        title: 'Parts Indent',
+	    }).
+	    when('/gigo-pkg/parts-indent/view/:id', {
+	        template: '<parts-indent-view></parts-indent-view>',
+	        title: 'View Parts Indent',
+	    }).
+	   
 
 	    //Kanban App
 	     when('/gigo-pkg/kanban-app', {
@@ -180,6 +191,9 @@
     //Kanban App
      var kanban_app_dashboard_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/dashboard.html')}}";
      var kanban_app_attendance_sacn_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/attendance-qr.html')}}";
+     //Parts Indent
+     var parts_indent_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/list.html')}}";
+     var parts_indent_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/view.html')}}";
 
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
@@ -192,6 +206,7 @@
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/controller.js')}}"></script>
 
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
