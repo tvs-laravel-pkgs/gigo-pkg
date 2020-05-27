@@ -148,21 +148,24 @@ class PartsIndentController extends Controller {
 		    ->leftJoin('customer_voices','customer_voices.id','job_order_customer_voice.customer_voice_id')
 		    ->where('job_orders.id',$job_card->job_order_id)->get();  
 
-		$this->data['gate_pass_details'] = GateLog::
+		$this->data['gate_pass_details'] = JobOrder::
 				with([
-				'vehicleAttachment',
-				'kmAttachment',
-				'driverAttachment',
-			])->find($gate_log->id);
+				'warrentyPolicyAttachment',
+				'EWPAttachment',
+				'AMCAttachment',
+			])->find($job_card->job_order_id);
 
 		 $this->data['part_list'] = collect(Part::select('id','name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Repair Order Type']); 
 
 		 $this->data['mechanic_list'] = collect(JobOrderRepairOrder::select('users.id','users.name')->leftJoin('repair_order_mechanics','repair_order_mechanics.job_order_repair_order_id','job_order_repair_orders.id')->leftJoin('users','users.id','repair_order_mechanics.mechanic_id')->where('job_order_repair_orders.job_order_id',$job_card->job_order_id)->distinct()->get())->prepend(['id' => '', 'name' => 'Select Mechanic']);
-		 
-		 $this->data['issued_parts_details'] = JobOrderIssuedPart::select('job_order_issued_parts.id','parts.code','job_order_parts.id','job_order_parts.qty','job_order_issued_parts.issued_qty',DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'),'users.name as issued_to')
+
+		 $this->data['issued_mode'] = collect(Config::select('id','name')->where('config_type_id',109)->get())->prepend(['id' => '', 'name' => 'Select Issue Mode']);
+
+		 $this->data['issued_parts_details'] = JobOrderIssuedPart::select('job_order_issued_parts.id','parts.code','job_order_parts.id','job_order_parts.qty','job_order_issued_parts.issued_qty',DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'),'users.name as issued_to','configs.name as config_name')
 		    ->leftJoin('job_order_parts','job_order_parts.id','job_order_issued_parts.job_order_part_id')
 	        ->leftJoin('parts','parts.id','job_order_parts.part_id')	
 	        ->leftJoin('users','users.id','job_order_issued_parts.issued_to_id')
+	        ->leftJoin('configs','configs.id','job_order_issued_parts.issued_mode_id')
 	        ->where('job_order_parts.job_order_id',$job_card->job_order_id)->groupBy('job_order_issued_parts.id')->get();
 
 		return response()->json($this->data);
@@ -233,11 +236,12 @@ class PartsIndentController extends Controller {
 	public function getIssedParts(Request $request)
 	{
 	  $job_card = JobCard::select('job_order_id')->where('id',$request->id)->first();	
-	$this->data['issued_parts_details'] = JobOrderIssuedPart::select('job_order_issued_parts.id','parts.code','job_order_parts.id','job_order_parts.qty','job_order_issued_parts.issued_qty',DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'),'users.name as issued_to')
-		 ->leftJoin('job_order_parts','job_order_parts.id','job_order_issued_parts.job_order_part_id')
-	   ->leftJoin('parts','parts.id','job_order_parts.part_id')	
-	   ->leftJoin('users','users.id','job_order_issued_parts.issued_to_id')
-	   ->where('job_order_parts.job_order_id',$job_card->job_order_id)->groupBy('job_order_issued_parts.id')->get();
+	 $this->data['issued_parts_details'] = JobOrderIssuedPart::select('job_order_issued_parts.id','parts.code','job_order_parts.id','job_order_parts.qty','job_order_issued_parts.issued_qty',DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'),'users.name as issued_to','configs.name as config_name')
+		    ->leftJoin('job_order_parts','job_order_parts.id','job_order_issued_parts.job_order_part_id')
+	        ->leftJoin('parts','parts.id','job_order_parts.part_id')	
+	        ->leftJoin('users','users.id','job_order_issued_parts.issued_to_id')
+	        ->leftJoin('configs','configs.id','job_order_issued_parts.issued_mode_id')
+	        ->where('job_order_parts.job_order_id',$job_card->job_order_id)->groupBy('job_order_issued_parts.id')->get();
 	return response()->json($this->data);
 	}
 

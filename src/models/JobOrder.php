@@ -155,6 +155,18 @@ class JobOrder extends Model {
 		return $this->hasOne('App\JobCard', 'job_order_id');
 	}
 
+	public function warrentyPolicyAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 256);
+	}
+
+	public function EWPAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 257);
+	}
+
+	public function AMCAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 258);
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
