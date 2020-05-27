@@ -278,8 +278,8 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
-			$customer = Customer::saveCustomer($r->all());
-			$customer->saveAddress($r->all());
+			$customer = Customer::saveCustomer($request->all());
+			$customer->saveAddress($request->all());
 
 			DB::commit();
 

@@ -247,7 +247,7 @@ app.component('gateLogForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: base_url + '/api/gigo-pkg/create-gate-in-entry',
+                        url: base_url + '/api/gate-in-entry/create',
                         method: "POST",
                         data: formData,
                         processData: false,
