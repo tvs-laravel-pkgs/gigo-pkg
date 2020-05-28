@@ -1453,8 +1453,9 @@ class VehicleInwardController extends Controller {
 	//VOICE OF CUSTOMER(VOC) GET FORM DATA
 	public function getVocFormData(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->job_order_id);
-
+			$job_order = JobOrder::with([
+				'customerVoices',
+			])->find($r->job_order_id);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -1519,10 +1520,10 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = JobOrder::find($request->job_order_id);
-			$job_order->customerVoice()->sync([]);
+			$job_order->customerVoices()->sync([]);
 			if (!empty($request->customer_voices)) {
 				foreach ($request->customer_voices as $key => $voice) {
-					$job_order->customerVoice()->attach($voice['id'], [
+					$job_order->customerVoices()->attach($voice['id'], [
 						'details' => isset($voice['details']) ? $voice['details'] : NULL,
 					]);
 				}
@@ -1747,7 +1748,9 @@ class VehicleInwardController extends Controller {
 	//VEHICLE INSPECTION GET FORM DATA
 	public function getVehicleInspectiongetFormData(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->job_order_id);
+			$job_order = JobOrder::with([
+				'vehicleInspectionItems',
+			])->find($r->job_order_id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -1821,11 +1824,11 @@ class VehicleInwardController extends Controller {
 
 			$job_order = jobOrder::find($request->job_order_id);
 			if ($request->vehicle_inspection_groups) {
-				$job_order->jobOrderVehicleInspectionItem()->sync([]);
+				$job_order->vehicleInspectionItems()->sync([]);
 				foreach ($request->vehicle_inspection_groups as $key => $vehicle_inspection_group) {
-					// dd($vehicle_inspection_group['vehicle_inspection_item_id']);
-					$job_order->jobOrderVehicleInspectionItem()->attach($vehicle_inspection_group['vehicle_inspection_item_id'],
-						['status_id' => $vehicle_inspection_group['vehicle_inspection_result_status_id'],
+					$job_order->vehicleInspectionItems()->attach($vehicle_inspection_group['vehicle_inspection_item_id'],
+						[
+							'status_id' => $vehicle_inspection_group['vehicle_inspection_result_status_id'],
 						]);
 				}
 			}

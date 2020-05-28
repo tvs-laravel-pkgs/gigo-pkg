@@ -72,11 +72,11 @@ class JobOrder extends Model {
 		return $this->attributes['ewp_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
-	public function customerVoice() {
+	public function customerVoices() {
 		return $this->belongsToMany('App\CustomerVoice', 'job_order_customer_voice', 'job_order_id', 'customer_voice_id')->withPivot(['details']);
 	}
 
-	public function jobOrderVehicleInspectionItem() {
+	public function vehicleInspectionItems() {
 		return $this->belongsToMany('App\VehicleInspectionItem', 'job_order_vehicle_inspection_item', 'job_order_id', 'vehicle_inspection_item_id')->withPivot(['status_id']);
 	}
 
