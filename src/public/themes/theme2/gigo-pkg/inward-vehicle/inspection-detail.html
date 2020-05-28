@@ -8,8 +8,8 @@
                     <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>Expert Diagnosis Details</b></h1>
-                    <p class="subtitle">Expert Diagnosis Details</p>
+                    <h1 class="title"><b>Vehicle Inspection Report</b></h1>
+                    <p class="subtitle">Inward Vehicle / Vehicle Inspection Report</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -19,49 +19,72 @@
         <div class="page-tab-form pb-70">
             <job-order-header></job-order-header>
             <div class="tab-form-wrap type-2">
-                <inward-tabs ng-init="active_tab = 'expert-diagnosis-detail'"></inward-tabs>
+                <inward-tabs ng-init="active_tab = 'inspection-detail'"></inward-tabs>
                 <div class="tab-form-body">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
-                        <div class="tab-pane fade in active" id="expert_diagnosis_details" data-animation="fadeInUp" data-animation-delay="300">
-                             <div class="tab-pane-wrap">
+                     <div class="tab-pane fade in active" id="vehicle_inspection_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
                                 <div class="row">
                                     <form id="form">
+                                <input type="hidden" name="job_order_id" value="{{job_order.id}}"> 
                                     <div class="col-md-12">
-                                        <h5 class="color-primary mb-10"><b>Expert Diagnosis Report</b></h5>
-                                        <hr class="hr-15">
-                                         <input type="hidden" name="job_order_id" value="{{job_order.id}}"> 
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Expert Diagnosis Outcome <sup class="mandatory">*</sup></label>
-                                                    <textarea class="form-control" name="expert_diagnosis_report"  rows="4" placeholder="Enter Observations">{{job_order.expert_diagnosis_report}}</textarea>
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Diagnosed by <sup class="mandatory">*</sup></label>
-                                                   <md-select ng-model="job_order.expert_diagnosis_report_by_id" placeholder="Select Expert Diagnosis" data-md-container-class="selectdemoSelectHeader">
-                                                            <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchExpertDiagnosis" type="search" placeholder="Search for a Expert Diagnosis.." class="demo-header-searchbox md-text">
-                                                            </md-select-header>
-                                                    <md-optgroup>
-                                                       <md-optgroup>
-                                                                <md-option ng-value="model.id" ng-repeat="model in extras.user_list | filter:searchModel">
-                                                                    {{model.name}}
-                                                                </md-option>
-                                                            </md-optgroup>
-                                                    </md-optgroup>
-                                                </md-select>
-                                                        <input type="hidden" name="expert_diagnosis_report_by_id" value="{{job_order.expert_diagnosis_report_by_id}}">
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                        </div><!-- Row -->
+                                        <h5 class="color-primary mb-10"><b>Vehicle Inspection Report</b></h5>
+                                        <hr class="hr-15"><!-- Separater -->
+                                        <div class="panel-group" id="accordion_1">
+
+                                            <div class="panel panel-default type-3" ng-repeat="(index, vehicle_inspection_item_groups) in vehicle_inspection_item_groups">
+                                                <div class="panel-heading">
+                                                    <a class="panel-title in" data-toggle="collapse" data-parent="#accordion_1" data-target="#collapse_1">
+                                                        {{vehicle_inspection_item_groups.name}}
+                                                        <span class="arrow"></span>
+                                                    </a> 
+                                                </div>
+                                                <div id="collapse_1" class="panel-collapse collapse in">
+                                                    <div class="panel-body">
+                                                        <div class="row">
+                                                    <div class="col-md-6" ng-repeat="(key, vehicle_inspection_items) in vehicle_inspection_item_groups.vehicle_inspection_items">
+                                                    <div class="form-group">
+                                                    <label>{{vehicle_inspection_items.name}}</label>
+
+                                                <input type="text" name="vehicle_inspection_groups[][vehicle_inspection_item_id]" value="{{vehicle_inspection_items.id}}">
+                                                  <div class="color-radio-group">
+
+                                                  <div class="color-radio-itemg">
+
+                                                  <input type="radio" id="radio_good{{vehicle_inspection_items.id}}" value="{{extras.inspection_results[0].id}}" name="vehicle_inspection_groups[{{key}}][vehicle_inspection_result_status_id]"/>
+
+                                                 <!--  <label for="radio_good" class="radio-good"></label> -->
+                                                 </div>
+                                                 <div class="color-radio-itemg">
+
+                                                <input type="radio" id="radio_average" value="{{extras.inspection_results[1].id}}" name="vehicle_inspection_groups[{{key}}][vehicle_inspection_result_status_id]" />
+<!-- 
+                                                <label for="radio_average" class="radio-average"></label> -->
+                                                </div>
+
+                                                <div class="color-radio-itemg">
+
+                                                <input type="radio" id="radio_bad" value="{{extras.inspection_results[2].id}}" name="vehicle_inspection_groups[{{key}}][vehicle_inspection_result_status_id]" />
+
+
+                                                                          <!--   <label for="radio_bad" class="radio-bad"></label> -->
+                                                                        </div>
+                                                                    </div>
+                                                                </div><!-- Feild -->
+                                                            </div><!-- Column -->
+                                                        </div><!-- Row -->                                                    
+                                                    </div><!-- Panel Body -->
+                                                </div><!-- Panel Collapse -->
+                                            </div><!-- Panel -->
+
+
+                                        </div><!-- Panel Group -->
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                 <button type="submit" class="btn btn-red">
+                                                <button type="submit" class="btn btn-red">
                                                             Save & Close
                                                         </button>
                                                 <a class="btn btn-secondary-dark btn-prev">Previous</a>

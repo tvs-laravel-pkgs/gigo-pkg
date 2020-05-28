@@ -1773,7 +1773,7 @@ class VehicleInwardController extends Controller {
 
 	//VEHICLE INSPECTION SAVE
 	public function saveVehicleInspection(Request $request) {
-		// dd($request->all());
+		//dd($request->all());
 		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
