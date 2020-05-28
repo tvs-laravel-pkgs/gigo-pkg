@@ -741,6 +741,7 @@ app.component('inwardVehicleOrderDetailForm', {
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 
+
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
         $scope.fetchData = function() {
@@ -775,49 +776,45 @@ app.component('inwardVehicleOrderDetailForm', {
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    'name': {
+                    'driver_name': {
                         required: true,
                     },
-                    'mobile_no': {
+                    'driver_mobile_number': {
                         required: true,
                         minlength: 10,
                         maxlength: 10,
                     },
-                    'email': {
-                        email: true,
-                    },
-                    'address_line1': {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 32,
-                    },
-                    'address_line2': {
-                        minlength: 3,
-                        maxlength: 64,
-                    },
-                    'country_id': {
+                    'type_id': {
                         required: true,
                     },
-                    'state_id': {
+                    'quote_type_id': {
                         required: true,
                     },
-                    'city_id': {
+                    'service_type_id': {
                         required: true,
                     },
-                    'pincode': {
+                    'km_reading': {
                         required: true,
-                        minlength: 6,
-                        maxlength: 6,
                     },
-                    'gst_number': {
-                        minlength: 6,
-                        maxlength: 32,
+                    'km_reading_type_id': {
+                        required: true,
                     },
-                    'pan_number': {
-                        minlength: 6,
-                        maxlength: 32,
+                    'contact_number': {
+                        required: true,
                     },
-                    'ownership_id': {
+                    'driver_license_attachment': {
+                        required: true,
+                    },
+                    'insuarance_attachment': {
+                        required: true,
+                    },
+                    'rc_book_attachment': {
+                        required: true,
+                    },
+                    'driver_license_expiry_date': {
+                        required: true,
+                    },
+                    'insurance_expiry_date': {
                         required: true,
                     },
                 },
@@ -843,7 +840,7 @@ app.component('inwardVehicleOrderDetailForm', {
                     $rootScope.loading = true;
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/save-customer-detail',
+                            url: base_url + '/api/vehicle-inward/order-detail/save',
                             method: "POST",
                             data: formData,
                             processData: false,
@@ -868,64 +865,15 @@ app.component('inwardVehicleOrderDetailForm', {
             });
         }
 
-        $scope.showOwnerForm = function() {
-            $scope.show_customer_detail = false;
-            $scope.show_customer_form = true;
-        }
+        /* Dropdown Arrow Function */
+        arrowDropdown();
 
-        $scope.addNewOwner = function() {
-            $scope.show_customer_detail = false;
-            $scope.show_customer_form = true;
-            $scope.job_order.vehicle.current_owner = {
+        /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
 
-            };
-        }
+        /* Range Slider Function */
+        rangeSliderChange();
 
-        $scope.countryChanged = function() {
-            $rootScope.loading = true;
-            $.ajax({
-                    url: base_url + '/api/state/get-drop-down-List',
-                    method: "POST",
-                    data: {
-                        country_id: $scope.job_order.vehicle.current_owner.address.country.id,
-                    },
-                })
-                .done(function(res) {
-                    $rootScope.loading = false;
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.extras.state_list = res.state_list;
-                })
-                .fail(function(xhr) {
-                    $rootScope.loading = false;
-                    custom_noty('error', 'Something went wrong at server');
-                });
-        }
-
-        $scope.stateChanged = function() {
-            $rootScope.loading = true;
-            $.ajax({
-                    url: base_url + '/api/city/get-drop-down-List',
-                    method: "POST",
-                    data: {
-                        state_id: $scope.job_order.vehicle.current_owner.address.state.id,
-                    },
-                })
-                .done(function(res) {
-                    $rootScope.loading = false;
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.extras.city_list = res.city_list;
-                })
-                .fail(function(xhr) {
-                    $rootScope.loading = false;
-                    custom_noty('error', 'Something went wrong at server');
-                });
-        }
     }
 });
 //------------------------------------------------------------------------------------------------------------------------
