@@ -13,7 +13,6 @@ class GigoPkgPermissionSeeder extends Seeder {
 	public function run() {
 		$permissions = [
 
-
 			//Parts Indent
 			[
 				'display_order' => 99,
@@ -27,7 +26,6 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'view-parts-indent',
 				'display_name' => 'View',
 			],
-			
 
 			//Pause Work Reason
 			[
@@ -489,6 +487,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'parent' => 'vehicle-gate-passes',
 				'name' => 'gate-out-vehicle-gate-pass',
 				'display_name' => 'Gate Out',
+			],
+
+			//MATERIAl GATE PASS
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'material-gate-passes',
+				'display_name' => 'Material Gate Passes',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'material-gate-passes',
+				'name' => 'view-material-gate-pass',
+				'display_name' => 'View',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'material-gate-passes',
+				'name' => 'gate-out-material-gate-pass',
+				'display_name' => 'Gate Out',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'material-gate-passes',
+				'name' => 'gate-in-material-gate-pass',
+				'display_name' => 'Gate In',
 			],
 
 			//Repair Order

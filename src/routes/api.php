@@ -60,8 +60,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('save-schedule-maintenance', 'VehicleInwardController@saveScheduleMaintenance');
 
 		//EXPERT DIAGNOSIS REPORT GET FORM DATA AND SAVE
-		Route::get('get-expert-diagnosis-report-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getExpertDiagnosisReportFormData');
-		Route::post('save-expert-diagnosis-report', 'VehicleInwardController@saveExpertDiagnosisReport');
+		Route::get('vehicle-inward/expert-diagnosis-report/get-form-data', 'VehicleInwardController@getExpertDiagnosisReportFormData');
+		Route::post('vehicle-inward/expert-diagnosis-report/save', 'VehicleInwardController@saveExpertDiagnosisReport');
 
 		//ESTIMATE GET FORM DATA AND SAVE
 		//issue: Route naming
