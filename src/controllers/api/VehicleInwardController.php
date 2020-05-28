@@ -1588,24 +1588,6 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		DB::beginTransaction();
 		try {
-			//issue: Vijay - No need for another validation for road_test_performed_by_id field.
-			if ($request->road_test_done_by_id == 8101) {
-				// EMPLOYEE
-				$validator_road_test = Validator::make($request->all(), [
-					'road_test_performed_by_id' => [
-						'required',
-						'exists:users,id',
-						'integer',
-					],
-				]);
-				if ($validator_road_test->fails()) {
-					return response()->json([
-						'success' => false,
-						'message' => 'Validation Error',
-						'errors' => $validator_road_test->errors()->all(),
-					]);
-				}
-			}
 			$validator = Validator::make($request->all(), [
 				'is_road_test_required' => [
 					'required',
@@ -1622,6 +1604,11 @@ class VehicleInwardController extends Controller {
 					'exists:configs,id',
 					'integer',
 				],
+				'road_test_performed_by_id' => [
+					'nullable',
+					'integer',
+					'exists:users,id',
+				],
 				'road_test_report' => [
 					'required',
 					'string',
@@ -1634,6 +1621,18 @@ class VehicleInwardController extends Controller {
 					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
+			}
+			//EMPLOYEE
+			if ($request->road_test_done_by_id == 8101) {
+				if (!$request->road_test_performed_by_id) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'The road test performed by id field is required.',
+						],
+					]);
+				}
 			}
 
 			$job_order = JobOrder::find($request->job_order_id);
