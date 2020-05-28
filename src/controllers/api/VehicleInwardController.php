@@ -243,7 +243,10 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Job Order Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
 				]);
 			}
 
@@ -252,7 +255,7 @@ class VehicleInwardController extends Controller {
 				'job_order' => $job_order,
 				'extras' => [
 					'country_list' => Country::getDropDownList(),
-					'state_list' => [], State::getDropDownList(),
+					'state_list' => [], //State::getDropDownList(),
 					'city_list' => [], //City::getDropDownList(),
 					'ownership_type_list' => Config::getDropDownList(['config_type_id' => 39]),
 				],
@@ -261,7 +264,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -373,22 +379,22 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-	public function saveJobOrder(Request $request) {
+	public function saveOrderDetail(Request $request) {
 		//dd($request->all());
 		try {
-			//issue : saravanan - Add max 10 rule for mobile number
 			$validator = Validator::make($request->all(), [
-				'gate_log_id' => [
+				'job_order_id' => [
 					'required',
 					'integer',
-					'exists:gate_logs,id',
+					'exists:job_orders,id',
 				],
 				'driver_name' => [
 					'required',
 					'string',
 					'max:191',
 				],
-				'mobile_number' => [
+				//issue : saravanan - Add max 10 rule for mobile number
+				'driver_mobile_number' => [
 					'required',
 					'min:10',
 					'max:10',
@@ -398,7 +404,7 @@ class VehicleInwardController extends Controller {
 					'required',
 					'numeric',
 				],
-				'reading_type_id' => [
+				'km_reading_type_id' => [
 					'required',
 					'integer',
 					'exists:configs,id',
@@ -418,23 +424,10 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:service_types,id',
 				],
-				'outlet_id' => [
-					'required',
-					'integer',
-					'exists:outlets,id',
-				],
 				'contact_number' => [
 					'nullable',
 					'min:10',
 					'max:10',
-				],
-				'driver_license_expiry_date' => [
-					'nullable',
-					'date',
-				],
-				'insurance_expiry_date' => [
-					'nullable',
-					'date',
 				],
 				'driver_license_attachment' => [
 					'nullable',
@@ -447,6 +440,14 @@ class VehicleInwardController extends Controller {
 				'rc_book_attachment' => [
 					'nullable',
 					'mimes:jpeg,jpg,png',
+				],
+				'driver_license_expiry_date' => [
+					'nullable',
+					'date',
+				],
+				'insurance_expiry_date' => [
+					'nullable',
+					'date',
 				],
 			]);
 
@@ -463,18 +464,15 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 
 			//GATE LOG UPDATE
-			$gate_log = GateLog::find($request->gate_log_id);
-			if (!$gate_log) {
+			$job_order = JobOrder::company()->find($request->job_order_id);
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'message' => 'Job Order Not Found!',
 				]);
 			}
-			$gate_log->driver_name = $request->driver_name;
-			$gate_log->contact_number = $request->mobile_number;
-			$gate_log->km_reading = $request->km_reading;
-			$gate_log->reading_type_id = $request->reading_type_id;
-			$gate_log->save();
+			$job_order->fill($request->all());
+			$job_order->save();
 
 			//issue : saravanan - created_by_id not saved
 			//JOB ORDER SAVE
@@ -1444,43 +1442,48 @@ class VehicleInwardController extends Controller {
 			DB::rollBack();
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
 
 	//VOICE OF CUSTOMER(VOC) GET FORM DATA
-	public function getVocFormData($id) {
+	public function getVocFormData(Request $r) {
 		try {
-			$gate_log_detail = GateLog::with([
-				// 'vehicle',
-				// 'vehicle.model',
-				'jobOrder',
-				'jobOrder.customerVoice',
-			])
-				->find($id);
-
-			if (!$gate_log_detail) {
+			$job_order = JobOrder::with([
+				'customerVoices',
+			])->find($r->job_order_id);
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
 				]);
 			}
 
-			$VOC_list = CustomerVoice::where('company_id', Auth::user()->company_id)
+			$customer_voice_list = CustomerVoice::where('company_id', Auth::user()->company_id)
 				->get();
+			$extras = [
+				'customer_voice_list' => $customer_voice_list,
+			];
 
 			return response()->json([
 				'success' => true,
-				'VOC_list' => $VOC_list,
-				'gate_log_detail' => $gate_log_detail,
+				'extras' => $extras,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1488,6 +1491,7 @@ class VehicleInwardController extends Controller {
 	//VOICE OF CUSTOMER(VOC) SAVE
 	public function saveVoc(Request $request) {
 		// dd($request->all());
+		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -1495,27 +1499,35 @@ class VehicleInwardController extends Controller {
 					'exists:job_orders,id',
 					'integer',
 				],
-				'customer_voice_id.*' => [
+				'customer_voices.*.id' => [
+					'required',
 					'integer',
 					'exists:customer_voices,id',
 					'distinct',
+				],
+				'customer_voices.*.details' => [
+					'nullable',
+					'string',
 				],
 			]);
 
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
 
-			DB::beginTransaction();
-
 			$job_order = JobOrder::find($request->job_order_id);
-
-			$job_order->customerVoice()->sync([]);
-			$job_order->customerVoice()->sync($request->customer_voice_id);
+			$job_order->customerVoices()->sync([]);
+			if (!empty($request->customer_voices)) {
+				foreach ($request->customer_voices as $key => $voice) {
+					$job_order->customerVoices()->attach($voice['id'], [
+						'details' => isset($voice['details']) ? $voice['details'] : NULL,
+					]);
+				}
+			}
 
 			DB::commit();
 
@@ -1526,8 +1538,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1647,17 +1661,17 @@ class VehicleInwardController extends Controller {
 	}
 
 	//EXPERT DIAGNOSIS REPORT GET FORM DATA
-	public function getExpertDiagnosisReportFormData($id) {
+	public function getExpertDiagnosisReportFormData(Request $r) {
 		try {
-			$gate_log_detail = GateLog::with([
-				'jobOrder',
-			])
-				->find($id);
+			$job_order = JobOrder::find($r->job_order_id);
 
-			if (!$gate_log_detail) {
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
 				]);
 			}
 			$extras = [
@@ -1666,13 +1680,13 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'gate_log_detail' => $gate_log_detail,
 				'extras' => $extras,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
+				'error' => 'Server Network Down!',
 				'errors' => [$e->getMessage()],
 			]);
 		}
@@ -1702,7 +1716,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1725,43 +1739,54 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
+				'error' => 'Server Network Down!',
 				'errors' => [$e->getMessage()],
 			]);
 		}
 	}
 
 	//VEHICLE INSPECTION GET FORM DATA
-	public function getVehicleInspectiongeFormData($id) {
+	public function getVehicleInspectiongetFormData(Request $r) {
 		try {
-			$gate_log_validate = GateLog::find($id);
-			if (!$gate_log_validate) {
+			$job_order = JobOrder::with([
+				'vehicleInspectionItems',
+			])->find($r->job_order_id);
+
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
 				]);
 			}
 
-			$vehicle_inspection_item_group = VehicleInspectionItemGroup::with([
+			$vehicle_inspection_item_groups = VehicleInspectionItemGroup::with([
 				'VehicleInspectionItems',
 			])
 				->where('company_id', Auth::user()->company_id)
 				->get();
 
+			$params['config_type_id'] = 32;
+			$params['add_default'] = false;
 			$extras = [
-				'vehicle_inspection_result_status' => Config::getConfigTypeList(32, 'id', '', false, ''), //VEHICLE INSPECTION RESULTS
+				'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
 			];
 
 			return response()->json([
 				'success' => true,
-				'vehicle_inspection_item_group' => $vehicle_inspection_item_group,
 				'extras' => $extras,
+				'vehicle_inspection_item_groups' => $vehicle_inspection_item_groups,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1799,11 +1824,11 @@ class VehicleInwardController extends Controller {
 
 			$job_order = jobOrder::find($request->job_order_id);
 			if ($request->vehicle_inspection_groups) {
-				$job_order->jobOrderVehicleInspectionItem()->sync([]);
+				$job_order->vehicleInspectionItems()->sync([]);
 				foreach ($request->vehicle_inspection_groups as $key => $vehicle_inspection_group) {
-					// dd($vehicle_inspection_group['vehicle_inspection_item_id']);
-					$job_order->jobOrderVehicleInspectionItem()->attach($vehicle_inspection_group['vehicle_inspection_item_id'],
-						['status_id' => $vehicle_inspection_group['vehicle_inspection_result_status_id'],
+					$job_order->vehicleInspectionItems()->attach($vehicle_inspection_group['vehicle_inspection_item_id'],
+						[
+							'status_id' => $vehicle_inspection_group['vehicle_inspection_result_status_id'],
 						]);
 				}
 			}
