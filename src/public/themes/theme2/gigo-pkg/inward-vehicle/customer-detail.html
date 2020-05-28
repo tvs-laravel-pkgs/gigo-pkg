@@ -176,7 +176,7 @@
                                                         </label>
                                                         <md-select ng-model="job_order.vehicle.current_owner.customer.address.country" placeholder="Select Country" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged()">
                                                             <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchCountry" type="search" placeholder="Search for a country.." class="demo-header-searchbox md-text">
+                                                                <input ng-model="searchCountry" type="search" placeholder="Search for a country.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
                                                             <md-optgroup>
                                                                 <md-option ng-value="country" ng-repeat="country in extras.country_list | filter:searchCountry">
@@ -195,7 +195,7 @@
                                                         </label>
                                                         <md-select ng-model="job_order.vehicle.current_owner.customer.address.state" placeholder="Select State" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="stateChanged()">
                                                             <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchState" type="search" placeholder="Search for a state.." class="demo-header-searchbox md-text">
+                                                                <input ng-model="searchState" type="search" placeholder="Search for a state.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
                                                             <md-optgroup>
                                                                 <md-option ng-value="state" ng-repeat="state in extras.state_list | filter:searchState">
@@ -214,7 +214,7 @@
                                                         </label>
                                                         <md-select ng-model="job_order.vehicle.current_owner.customer.address.city" placeholder="Select City" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                                             <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchCity" type="search" placeholder="Search for a city.." class="demo-header-searchbox md-text">
+                                                                <input ng-model="searchCity" type="search" placeholder="Search for a city.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
                                                             <md-optgroup>
                                                                 <md-option ng-value="city" ng-repeat="city in extras.city_list | filter:searchCity">
@@ -258,7 +258,7 @@
                                                         </label>
                                                         <md-select ng-model="job_order.vehicle.current_owner.ownership_type" placeholder="Select Ownership" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                                             <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchOwnership" type="search" placeholder="Search for a ownership.." class="demo-header-searchbox md-text">
+                                                                <input ng-model="searchOwnership" type="search" placeholder="Search for a ownership.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
                                                             <md-optgroup>
                                                                 <md-option ng-value="ownership_type" ng-repeat="ownership_type in extras.ownership_type_list | filter:searchOwnershipType">

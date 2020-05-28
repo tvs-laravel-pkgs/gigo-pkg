@@ -292,7 +292,7 @@ class VehicleInwardController extends Controller {
 			if (!$request->id) {
 				//NEW OWNER
 				$vehicle_owner = new VehicleOwner;
-				$vehicle_owner->created_by_id = Auth::id();
+				// $vehicle_owner->created_by_id = Auth::id();
 				$vehicle_owner->vehicle_id = $vehicle->id;
 				$vehicle_owner->from_date = date('Y-m-d');
 			} else {
@@ -1454,6 +1454,8 @@ class VehicleInwardController extends Controller {
 	public function getVocFormData($id) {
 		try {
 			$gate_log_detail = GateLog::with([
+				// 'vehicle',
+				// 'vehicle.model',
 				'jobOrder',
 				'jobOrder.customerVoice',
 			])

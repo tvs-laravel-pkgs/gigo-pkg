@@ -23,12 +23,12 @@
                         Inventory
                     </a>
                 </li>
-                <li>
+                <li ng-class="{active:active_tab == 'voc-detail'}">
                     <a href=".#!/inward-vehicle/voc-detail/{{job_order_id}}" class="filter">
                         Capture VOC
                     </a>
                 </li>
-                <li>
+                <li ng-class="{active:active_tab == 'road-test-detail'}">
                     <a href=".#!/inward-vehicle/road-test-detail/{{job_order_id}}" class="filter">
                         Road Test Observations
                     </a>

@@ -731,6 +731,14 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    when('/inward-vehicle/order-detail/view/:job_order_id', {
 	        template: '<inward-vehicle-order-detail-view></inward-vehicle-order-detail-view>',
 	        title: 'Inward Vehicle - Order Detail',
+	    }).
+	    when('/inward-vehicle/voc-detail/:job_order_id',{
+	    	template: '<inward-vehicle-voc-detail></inward-vehicle-voc-detail>',
+	        title: 'Inward Vehicle - Voc Detail',
+	    }).
+	    when('/inward-vehicle/road-test-detail/:job_order_id',{
+	    	template: '<inward-vehicle-road-test-detail></inward-vehicle-road-test-detail>',
+	        title: 'Inward Vehicle - Road Test Detail',
 	    });
 	}]);
 
@@ -742,13 +750,15 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_customer_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail.html')}}';
     var inward_vehicle_order_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/order-detail-form.html')}}';
     var inward_vehicle_order_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/order-detail-view.html')}}';
+    var inward_vehicle_voc_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/voc-detail.html')}}';
+    var inward_vehicle_road_test_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/road-test-detail.html')}}';
 
     //PARTIALS
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';
     var inward_tabs_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/inward-tabs.html')}}';
 
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/controller.js')}}'></script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
