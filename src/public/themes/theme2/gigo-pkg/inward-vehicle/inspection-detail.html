@@ -1,0 +1,141 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Vehicle Inspection Report</b></h1>
+                    <p class="subtitle">Inward Vehicle / Vehicle Inspection Report</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <job-order-header></job-order-header>
+            <div class="tab-form-wrap type-2">
+                <inward-tabs ng-init="active_tab = 'inspection-detail'"></inward-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                     <div class="tab-pane fade in active" id="vehicle_inspection_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <form id="form">
+                                <input type="hidden" name="job_order_id" value="{{job_order.id}}"> 
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Vehicle Inspection Report</b></h5>
+                                        <hr class="hr-15"><!-- Separater -->
+                                        <div class="panel-group" id="accordion_1">
+
+                                            <div class="panel panel-default type-3" ng-repeat="(index, vehicle_inspection_item_groups) in vehicle_inspection_item_groups">
+                                                <div class="panel-heading">
+                                                    <a class="panel-title in" data-toggle="collapse" data-parent="#accordion_1" data-target="#collapse_1">
+                                                        {{vehicle_inspection_item_groups.name}}
+                                                        <span class="arrow"></span>
+                                                    </a> 
+                                                </div>
+                                                <div id="collapse_1" class="panel-collapse collapse in">
+                                                    <div class="panel-body">
+                                                        <div class="row">
+                                                    <div class="col-md-6" ng-repeat="(key, vehicle_inspection_items) in vehicle_inspection_item_groups.vehicle_inspection_items">
+                                                    <div class="form-group">
+                                                    <label>{{vehicle_inspection_items.name}}</label>
+
+                                                <input type="text" name="vehicle_inspection_groups[][vehicle_inspection_item_id]" value="{{vehicle_inspection_items.id}}">
+                                                  <div class="color-radio-group">
+
+                                                  <div class="color-radio-itemg">
+
+                                                  <input type="radio" id="radio_good{{vehicle_inspection_items.id}}" value="{{extras.inspection_results[0].id}}" name="vehicle_inspection_groups[{{key}}][vehicle_inspection_result_status_id]"/>
+
+                                                 <!--  <label for="radio_good" class="radio-good"></label> -->
+                                                 </div>
+                                                 <div class="color-radio-itemg">
+
+                                                <input type="radio" id="radio_average" value="{{extras.inspection_results[1].id}}" name="vehicle_inspection_groups[{{key}}][vehicle_inspection_result_status_id]" />
+<!-- 
+                                                <label for="radio_average" class="radio-average"></label> -->
+                                                </div>
+
+                                                <div class="color-radio-itemg">
+
+                                                <input type="radio" id="radio_bad" value="{{extras.inspection_results[2].id}}" name="vehicle_inspection_groups[{{key}}][vehicle_inspection_result_status_id]" />
+
+
+                                                                          <!--   <label for="radio_bad" class="radio-bad"></label> -->
+                                                                        </div>
+                                                                    </div>
+                                                                </div><!-- Feild -->
+                                                            </div><!-- Column -->
+                                                        </div><!-- Row -->                                                    
+                                                    </div><!-- Panel Body -->
+                                                </div><!-- Panel Collapse -->
+                                            </div><!-- Panel -->
+
+
+                                        </div><!-- Panel Group -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="submit" class="btn btn-red">
+                                                            Save & Close
+                                                        </button>
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </form>
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xs" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title">Search Vehicle</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Registration Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Customer Code <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>VIN Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
