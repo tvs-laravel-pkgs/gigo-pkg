@@ -73,7 +73,7 @@ class JobOrder extends Model {
 	}
 
 	public function customerVoice() {
-		return $this->belongsToMany('App\CustomerVoice', 'job_order_customer_voice', 'job_order_id', 'customer_voice_id');
+		return $this->belongsToMany('App\CustomerVoice', 'job_order_customer_voice', 'job_order_id', 'customer_voice_id')->withPivot(['details']);
 	}
 
 	public function jobOrderVehicleInspectionItem() {
