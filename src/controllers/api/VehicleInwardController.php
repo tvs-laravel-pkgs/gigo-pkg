@@ -1644,7 +1644,7 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => [
 						'Job Order Not Found',
 					],
@@ -1662,7 +1662,7 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
+				'error' => 'Server Network Down!',
 				'errors' => [$e->getMessage()],
 			]);
 		}
@@ -1692,7 +1692,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1715,7 +1715,7 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
+				'error' => 'Server Network Down!',
 				'errors' => [$e->getMessage()],
 			]);
 		}
