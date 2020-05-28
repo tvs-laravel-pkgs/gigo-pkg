@@ -28,10 +28,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::get('get-inventory-form-data/gate-log/{id}', 'VehicleInwardController@getInventoryFormData');
 		Route::post('save-inventory-item', 'VehicleInwardController@saveInventoryItem');
 
-		//VEHICLE INSPECTION GET FORM DATA AND SAVE
-		Route::get('get-vehicle-inspection-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getVehicleInspectiongeFormData');
-		Route::post('save-vehicle-inspection', 'VehicleInwardController@saveVehicleInspection');
-
 		//VOC GET FORM DATA AND SAVE
 		Route::get('get-voc-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getVocFormData');
 		Route::post('save-voc', 'VehicleInwardController@saveVoc');
@@ -62,6 +58,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//EXPERT DIAGNOSIS REPORT GET FORM DATA AND SAVE
 		Route::post('vehicle-inward/expert-diagnosis-report/get-form-data', 'VehicleInwardController@getExpertDiagnosisReportFormData');
 		Route::post('vehicle-inward/expert-diagnosis-report/save', 'VehicleInwardController@saveExpertDiagnosisReport');
+
+		//VEHICLE INSPECTION GET FORM DATA AND SAVE
+		Route::post('vehicle-inward/vehicle-inspection/get-form-data', 'VehicleInwardController@getVehicleInspectiongetFormData');
+		Route::post('vehicle-inward/vehicle-inspection/save', 'VehicleInwardController@saveVehicleInspection');
 
 		//ESTIMATE GET FORM DATA AND SAVE
 		//issue: Route naming
