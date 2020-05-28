@@ -83,7 +83,9 @@
                                         <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">{{status.name}}</md-option>
+                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">
+                                            {{status.name}}
+                                        </md-option>
                                     </md-optgroup>
                                 </md-select>
                                 <input type="hidden" class="form-control type-sm" name="status" id="status" value="">

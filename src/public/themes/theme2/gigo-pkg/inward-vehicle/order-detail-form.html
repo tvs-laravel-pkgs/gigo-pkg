@@ -1,0 +1,740 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title">
+                        <b>
+                            Inward Vehicle
+                        </b>
+                    </h1>
+                    <p class="subtitle">
+                        Inward Vehicle / Order Detail
+                    </p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <job-order-header></job-order-header>
+            <div class="tab-form-wrap type-2">
+                <inward-tabs ng-init="active_tab = 'order-detail'"></inward-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="order_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <form id="form">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="panel-group" id="accordion">
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
+                                                            Driver Details
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse1" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <div class="row">
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Driver Name
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <input type="text" class="form-control" placeholder="Enter Driver Name" autocomplete="off" ng-model="job_order.driver_name" name="driver_name" />
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Mobile Number
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <input type="text" class="form-control" placeholder="Enter Mobile No" autocomplete="off" ng-model="job_order.driver_mobile_number" name="driver_mobile_number" />
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                            </div><!-- Row -->
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                                                            Job Order Details
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse2" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div class="row">
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Job Order Type
+                                                                            <sup class="mandatory">
+                                                                                *
+                                                                            </sup>
+                                                                        </label>
+                                                                        <md-select ng-model="job_order.type" placeholder="Select Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                                                            <md-select-header class="demo-select-header">
+                                                                                <input ng-model="searchType" type="search" placeholder="Search for a Order Type.." class="demo-header-searchbox md-text">
+                                                                            </md-select-header>
+                                                                            <md-optgroup>
+                                                                                <md-option ng-value="option" ng-repeat="option in extras.job_order_type_list | filter:searchType">
+                                                                                    {{option.name}}
+                                                                                </md-option>
+                                                                            </md-optgroup>
+                                                                        </md-select>
+                                                                        <input type="hidden" name="type_id" value="{{job_order.type.id}}">
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>Quote Type <sup class="mandatory">*</sup></label>
+                                                                        <md-select ng-model="job_order.quote_type" placeholder="Select Quote Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                                                            <md-select-header class="demo-select-header">
+                                                                                <input ng-model="searchQuoteType" type="search" placeholder="Search for a Quote Type.." class="demo-header-searchbox md-text">
+                                                                            </md-select-header>
+                                                                            <md-optgroup>
+                                                                                <md-option ng-value="option" ng-repeat="option in extras.quote_type_list | filter:searchQuoteType">
+                                                                                    {{option.name}}
+                                                                                </md-option>
+                                                                            </md-optgroup>
+                                                                        </md-select>
+                                                                        <input type="hidden" name="quote_type_id" value="{{job_order.quote_type.id}}">
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Service Type
+                                                                            <sup class="mandatory">
+                                                                                *
+                                                                            </sup>
+                                                                        </label>
+                                                                        <md-select ng-model="job_order.service_type" placeholder="Select Service Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                                                            <md-select-header class="demo-select-header">
+                                                                                <input ng-model="searchServiceType" type="search" placeholder="Search for a Service Type.." class="demo-header-searchbox md-text">
+                                                                            </md-select-header>
+                                                                            <md-optgroup>
+                                                                                <md-option ng-value="option" ng-repeat="option in extras.service_type_list | filter:searchServiceType">
+                                                                                    {{option.name}}
+                                                                                </md-option>
+                                                                            </md-optgroup>
+                                                                        </md-select>
+                                                                        <input type="hidden" name="service_type_id" value="{{job_order.service_type.id}}">
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            KM Reading
+                                                                            <sup class="mandatory">
+                                                                                *
+                                                                            </sup>
+                                                                            <small class="float-right text-grey">
+                                                                                LR : 100008
+                                                                            </small>
+                                                                        </label>
+                                                                        <input type="text" class="form-control" placeholder="Enter KM Reading" autocomplete="off" ng-model="job_order.km_reading" name="km_reading" />
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Reading Type
+                                                                            <sup class="mandatory">
+                                                                                *
+                                                                            </sup>
+                                                                        </label>
+                                                                        <md-select ng-model="job_order.km_reading_type" placeholder="Select KM Reading Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                                                            <md-select-header class="demo-select-header">
+                                                                                <input ng-model="searchKMReadingType" type="search" placeholder="Search for a KM Reading Type.." class="demo-header-searchbox md-text">
+                                                                            </md-select-header>
+                                                                            <md-optgroup>
+                                                                                <md-option ng-value="option" ng-repeat="option in extras.reading_type_list | filter:searchKMReadingType">
+                                                                                    {{option.name}}
+                                                                                </md-option>
+                                                                            </md-optgroup>
+                                                                        </md-select>
+                                                                        <input type="hidden" name="km_reading_type_id" value="{{job_order.km_reading_type.id}}">
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Service Contact No
+                                                                            <sup class="mandatory">
+                                                                                *
+                                                                            </sup>
+                                                                        </label>
+                                                                        <input type="text" class="form-control" placeholder="Enter Service Contact No" autocomplete="off" ng-model="job_order.contact_number" name="contact_number" />
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                            </div><!-- Row -->
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
+                                                            Previous Job Card Details
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse3" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div class="view-details mb-no" ng-if="job_order.vehicle.last_job_order">
+                                                                <ul class="view-row pb-none">
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Job Card No
+                                                                        </span>
+                                                                        <span class="view-data-list-value">
+                                                                            <b>
+                                                                                {{job_order.vehicle.last_job_order.job_card.number}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Date & Time
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.vehicle.last_job_order.created_at}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            KM Reading
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.vehicle.last_job_order.km_reading}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label"></span>
+                                                                        <span class="view-col-value"><b></b></span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div><!-- View Data -->
+                                                            <a href=".#!/job-card/view/{{job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a>
+                                                            <a href=".#!/vehicle/view/{{job_order.vehicle.id}}" class="btn btn-secondary-dark btn-md btn-square">
+                                                                View History
+                                                            </a>
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse4">
+                                                            Documents
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse4" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="input-text form-group">
+                                                                        <ul class="gatein-img-list">
+                                                                            <li class="gatein-img-list-item driver-licence-img">
+                                                                                <label>
+                                                                                    Driver Licence
+                                                                                </label>
+                                                                                <input type="file" class="image_uploadify" accept="image/*" name="driving_license_image" />
+                                                                            </li>
+                                                                            <li class="gatein-img-list-item insurance-img">
+                                                                                <label>
+                                                                                    Insurance
+                                                                                </label>
+                                                                                <input type="file" class="image_uploadify" accept="image/*" name="insurance_image" />
+                                                                            </li>
+                                                                            <li class="gatein-img-list-item rc-book-img">
+                                                                                <label>
+                                                                                    RC Book
+                                                                                </label>
+                                                                                <input type="file" class="image_uploadify" accept="image/*" name="rc_book_image" />
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div><!-- Field -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Licence Expiry Date
+                                                                            <sup class="mandatory">
+                                                                                *
+                                                                            </sup>
+                                                                        </label>
+                                                                        <div class="input-group date" data-provide="datepicker">
+                                                                            <input type="text" class="form-control" placeholder="Select Licence Expiry Date" ng-model="job_order.driver_license_expiry_date" name="driver_license_expiry_date" />
+                                                                            <div class="input-group-addon">
+                                                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                                            </div>
+                                                                        </div><!-- Input Group -->
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Insurance Expiry Date
+                                                                            <sup class="mandatory">
+                                                                                *
+                                                                            </sup>
+                                                                        </label>
+                                                                        <div class="input-group date" data-provide="datepicker">
+                                                                            <input type="text" class="form-control" placeholder="Select Insurance Expiry Date" ng-model="job_order.insurance_expiry_date" name="insurance_expiry_date" />
+                                                                            <div class="input-group-addon">
+                                                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                                            </div>
+                                                                        </div><!-- Input Group -->
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                            </div><!-- Row -->
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                            </div><!-- Panel Group -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <button ng-click="saveOrderDetailForm()" class="btn btn-red">
+                                                        Save & Close
+                                                    </button>
+                                                    <a href=".#!/inward-vehicle/customer-detail/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <button ng-click="saveOrderDetailForm()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        Next
+                                                    </button>
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </form>
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="inventory_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Inventory Details</b></h5>
+                                        <div class="checklist-form-wrap">
+                                            <ul class="checklist-form-ul">
+                                                <li>
+                                                    <div class="checklist-form-item-wrap">
+                                                        <div class="checklist-form-item">
+                                                            <input type="checkbox" id="checkbox_1" />
+                                                            <label for="checkbox_1">Registration Certificate</label>
+                                                            <input type="text" class="checklist-form-item-control" placeholder="Enter Remarks if any" autocomplete="off" />
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="checklist-form-item-wrap">
+                                                        <div class="checklist-form-item">
+                                                            <input type="checkbox" id="checkbox_2" />
+                                                            <label for="checkbox_2">Indiacator</label>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="checklist-form-item-wrap">
+                                                        <div class="checklist-form-item">
+                                                            <input type="checkbox" id="checkbox_3" />
+                                                            <label for="checkbox_3">Rear Lamps</label>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="checklist-form-item-wrap">
+                                                        <div class="checklist-form-item">
+                                                            <input type="checkbox" id="checkbox_4" />
+                                                            <label for="checkbox_4">Insurance</label>
+                                                            <input type="text" class="checklist-form-item-control" placeholder="Enter Remarks if any" autocomplete="off" />
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="checklist-form-item-wrap">
+                                                        <div class="checklist-form-item">
+                                                            <input type="checkbox" id="checkbox_5" />
+                                                            <label for="checkbox_5">Battery</label>
+                                                            <input type="text" class="checklist-form-item-control" placeholder="Enter Remarks if any" autocomplete="off" />
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="checklist-form-item-wrap">
+                                                        <div class="checklist-form-item">
+                                                            <input type="checkbox" id="checkbox_6" />
+                                                            <label for="checkbox_6">Road Tax</label>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="checklist-form-item-wrap">
+                                                        <div class="checklist-form-item">
+                                                            <input type="checkbox" id="checkbox_7" />
+                                                            <label for="checkbox_7">Stephney</label>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="checklist-form-item-wrap">
+                                                        <div class="checklist-form-item">
+                                                            <input type="checkbox" id="checkbox_8" />
+                                                            <label for="checkbox_8">Valid Driving Licence</label>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="checklist-form-item-wrap">
+                                                        <div class="checklist-form-item">
+                                                            <input type="checkbox" id="checkbox_9" />
+                                                            <label for="checkbox_9">Wheel Jack</label>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="checklist-form-item-wrap">
+                                                        <div class="checklist-form-item">
+                                                            <input type="checkbox" id="checkbox_10" />
+                                                            <label for="checkbox_10">Head Lamps</label>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="mb-30"></div><!-- Space -->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Fuel Level</label>
+                                                    <input type="text" class="form-control" placeholder="Enter PAN No" autocomplete="off" />
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-red">Save & Close</a>
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="voc_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Voice of Customer</b></h5>
+                                        <div class="mb-20"></div><!-- Spacing -->
+                                        <div class="row custom-row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select-header class="demo-select-header">
+                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                        </md-select-header>
+                                                        <md-optgroup label="drinks">
+                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                        </md-optgroup>
+                                                    </md-select>
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                            <div class="col-md-6">
+                                                <button class="img-btn">
+                                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-dark.svg" alt="Delete" />
+                                                </button>
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                        <div class="row custom-row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select-header class="demo-select-header">
+                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                        </md-select-header>
+                                                        <md-optgroup label="drinks">
+                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                        </md-optgroup>
+                                                    </md-select>
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                            <div class="col-md-6">
+                                                <button class="img-btn">
+                                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-dark.svg" alt="Delete" />
+                                                </button>
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                        <div class="row custom-row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select-header class="demo-select-header">
+                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                        </md-select-header>
+                                                        <md-optgroup label="drinks">
+                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                        </md-optgroup>
+                                                    </md-select>
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                            <div class="col-md-6">
+                                                <button class="img-btn">
+                                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-dark.svg" alt="Delete" />
+                                                </button>
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                        <div class="row custom-row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select-header class="demo-select-header">
+                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                        </md-select-header>
+                                                        <md-optgroup label="drinks">
+                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                        </md-optgroup>
+                                                    </md-select>
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                            <div class="col-md-6">
+                                                <button class="img-btn">
+                                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-dark.svg" alt="Delete" />
+                                                </button>
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                        <div class="row custom-row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select-header class="demo-select-header">
+                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                        </md-select-header>
+                                                        <md-optgroup label="drinks">
+                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                        </md-optgroup>
+                                                    </md-select>
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                            <div class="col-md-6">
+                                                <button class="img-btn">
+                                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-dark.svg" alt="Delete" />
+                                                </button>
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <textarea class="form-control" rows="4" placeholder="Enter Details"></textarea>
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                            <div class="col-md-12">
+                                                <button class="btn btn-md type2 btn-green btn-square">Add More</button>
+                                            </div>
+                                        </div><!-- Row -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-red">Save & Close</a>
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="road_test_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="expert_diagnosis_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="vehicle_inspection_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="dms_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="maintenance_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="payable_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="estimate_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                        <div class="tab-pane fade" id="status_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <button type="button" class="btn btn-primary">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xs" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title">Search Vehicle</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Registration Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Customer Code <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>VIN Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
+<!-- Drag & Drop File Upload Plugins -->
+<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
