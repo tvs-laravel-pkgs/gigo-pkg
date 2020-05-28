@@ -123,7 +123,7 @@ class JobOrder extends Model {
 	}
 
 	public function type() {
-		return $this->belongsTo('App\ServiceOrderType', 'type_id');
+		return $this->belongsTo('Abs\GigoPkg\ServiceOrderType', 'type_id');
 	}
 
 	//issue : company condition not required
@@ -141,6 +141,10 @@ class JobOrder extends Model {
 		return $this->belongsTo('App\ServiceType', 'service_type_id')
 		// ->where('company_id', Auth::user()->company_id)
 		;
+	}
+
+	public function kmReadingType() {
+		return $this->belongsTo('App\Config', 'km_reading_type_id');
 	}
 
 	public function roadTestDoneBy() {

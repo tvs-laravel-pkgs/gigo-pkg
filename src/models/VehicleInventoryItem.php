@@ -62,31 +62,38 @@ class VehicleInventoryItem extends Model {
 	}
 
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Vehicle Inventory Item') {
-		$list = Collect(Self::select([
+		$list = Self::select([
 			'id',
 			'name',
 		])
-				->orderBy('name')
-				->get());
-		if ($add_default) {
-			$list->prepend(['id' => '', 'name' => $default_text]);
-		}
+			->where('company_id',Auth::user()->company_id)
+			->orderBy('name');
+			if(count($params) > 0){
+				foreach ($params as $key => $value) {
+					$list->where($key,$value);
+				}
+			}
+		$list=collect($list->get());
+
 		return $list;
 	}
 
-	public static function getInventoryList($params = [], $add_default = true, $default_text = 'Select Vehicle Inventory Item') {
-		$list = Collect(Self::select([
+	/*public static function getInventoryList($params = [], $add_default = true, $default_text = '') {
+		//dd($params[0]);
+		$list = Self::select([
 			'id',
 			'name',
 		])
-				//->where('field_type_id',1)//Need to change checked box item value
-				->where('company_id',Auth::user()->company_id)
-				->orderBy('name')
-				->get());
-		if ($add_default) {
-			$list->prepend(['id' => '', 'name' => $default_text]);
-		}
+			->where('company_id',Auth::user()->company_id)
+			->orderBy('name');
+			if(count($params) > 0){
+				foreach ($params as $key => $value) {
+					$list->where($key,$value);
+				}
+			}
+			$list=collect($list->get());
+			//dd($list);
 		return $list;
-	}
+	}*/
 
 }

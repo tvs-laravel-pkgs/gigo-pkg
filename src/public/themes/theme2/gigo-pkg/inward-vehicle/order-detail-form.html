@@ -30,7 +30,8 @@
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="order_details" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
-                                <form id="form">
+                                <form id="order_detail_form">
+                                    <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="panel-group" id="accordion">
@@ -59,7 +60,7 @@
                                                                             Mobile Number
                                                                             <sup class="mandatory">*</sup>
                                                                         </label>
-                                                                        <input type="text" class="form-control" placeholder="Enter Mobile No" autocomplete="off" ng-model="job_order.driver_mobile_number" name="driver_mobile_number" />
+                                                                        <input type="text" class="form-control" placeholder="Enter Mobile No" autocomplete="off" ng-model="job_order.driver_mobile_number" name="driver_mobile_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
                                                                     </div><!-- Feild -->
                                                                 </div><!-- Column -->
                                                             </div><!-- Row -->
@@ -94,7 +95,7 @@
                                                                                 </md-option>
                                                                             </md-optgroup>
                                                                         </md-select>
-                                                                        <input type="hidden" name="type_id" value="{{job_order.type.id}}">
+                                                                        <input type="hidden" name="type_id" value="{{job_order.type_id}}">
                                                                     </div><!-- Feild -->
                                                                 </div><!-- Column -->
                                                                 <div class="col-md-3">
@@ -145,7 +146,7 @@
                                                                                 LR : 100008
                                                                             </small>
                                                                         </label>
-                                                                        <input type="text" class="form-control" placeholder="Enter KM Reading" autocomplete="off" ng-model="job_order.km_reading" name="km_reading" />
+                                                                        <input type="text" class="form-control" placeholder="Enter KM Reading" autocomplete="off" ng-model="job_order.km_reading" name="km_reading" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
                                                                     </div><!-- Feild -->
                                                                 </div><!-- Column -->
                                                                 <div class="col-md-3">
@@ -177,7 +178,7 @@
                                                                                 *
                                                                             </sup>
                                                                         </label>
-                                                                        <input type="text" class="form-control" placeholder="Enter Service Contact No" autocomplete="off" ng-model="job_order.contact_number" name="contact_number" />
+                                                                        <input type="text" class="form-control" placeholder="Enter Service Contact No" autocomplete="off" ng-model="job_order.contact_number" name="contact_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
                                                                     </div><!-- Feild -->
                                                                 </div><!-- Column -->
                                                             </div><!-- Row -->
@@ -313,7 +314,7 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button ng-click="saveOrderDetailForm()" class="btn btn-red">
+                                                    <button ng-click="saveOrderDetailForm()" class="btn btn-red submit">
                                                         Save & Close
                                                     </button>
                                                     <a href=".#!/inward-vehicle/customer-detail/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
