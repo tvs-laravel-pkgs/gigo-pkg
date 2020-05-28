@@ -373,22 +373,22 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-	public function saveJobOrder(Request $request) {
+	public function saveOrderDetail(Request $request) {
 		//dd($request->all());
 		try {
-			//issue : saravanan - Add max 10 rule for mobile number
 			$validator = Validator::make($request->all(), [
-				'gate_log_id' => [
+				'job_order_id' => [
 					'required',
 					'integer',
-					'exists:gate_logs,id',
+					'exists:job_orders,id',
 				],
 				'driver_name' => [
 					'required',
 					'string',
 					'max:191',
 				],
-				'mobile_number' => [
+				//issue : saravanan - Add max 10 rule for mobile number
+				'driver_mobile_number' => [
 					'required',
 					'min:10',
 					'max:10',
@@ -398,7 +398,7 @@ class VehicleInwardController extends Controller {
 					'required',
 					'numeric',
 				],
-				'reading_type_id' => [
+				'km_reading_type_id' => [
 					'required',
 					'integer',
 					'exists:configs,id',
@@ -418,23 +418,10 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:service_types,id',
 				],
-				'outlet_id' => [
-					'required',
-					'integer',
-					'exists:outlets,id',
-				],
 				'contact_number' => [
 					'nullable',
 					'min:10',
 					'max:10',
-				],
-				'driver_license_expiry_date' => [
-					'nullable',
-					'date',
-				],
-				'insurance_expiry_date' => [
-					'nullable',
-					'date',
 				],
 				'driver_license_attachment' => [
 					'nullable',
@@ -447,6 +434,14 @@ class VehicleInwardController extends Controller {
 				'rc_book_attachment' => [
 					'nullable',
 					'mimes:jpeg,jpg,png',
+				],
+				'driver_license_expiry_date' => [
+					'nullable',
+					'date',
+				],
+				'insurance_expiry_date' => [
+					'nullable',
+					'date',
 				],
 			]);
 
@@ -463,18 +458,15 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 
 			//GATE LOG UPDATE
-			$gate_log = GateLog::find($request->gate_log_id);
-			if (!$gate_log) {
+			$job_order = JobOrder::company()->find($request->job_order_id);
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'message' => 'Job Order Not Found!',
 				]);
 			}
-			$gate_log->driver_name = $request->driver_name;
-			$gate_log->contact_number = $request->mobile_number;
-			$gate_log->km_reading = $request->km_reading;
-			$gate_log->reading_type_id = $request->reading_type_id;
-			$gate_log->save();
+			$job_order->fill($request->all());
+			$job_order->save();
 
 			//issue : saravanan - created_by_id not saved
 			//JOB ORDER SAVE
