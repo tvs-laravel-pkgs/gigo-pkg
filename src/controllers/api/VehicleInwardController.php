@@ -243,7 +243,10 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Job Order Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
 				]);
 			}
 
@@ -252,7 +255,7 @@ class VehicleInwardController extends Controller {
 				'job_order' => $job_order,
 				'extras' => [
 					'country_list' => Country::getDropDownList(),
-					'state_list' => [], State::getDropDownList(),
+					'state_list' => [], //State::getDropDownList(),
 					'city_list' => [], //City::getDropDownList(),
 					'ownership_type_list' => Config::getDropDownList(['config_type_id' => 39]),
 				],
@@ -261,7 +264,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
