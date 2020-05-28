@@ -724,6 +724,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-customer-detail></inward-vehicle-customer-detail>',
 	        title: 'Inward Vehicle - Customer Detail',
 	    }).
+	    when('/inward-vehicle/expert-diagnosis-detail/:job_order_id', {
+	        template: '<inward-vehicle-export-diagnosis-details></inward-vehicle-export-diagnosis-details>',
+	        title: 'Inward Vehicle - Export Diagnosis Detail',
+	    }).
 	    when('/inward-vehicle/order-detail/form/:job_order_id', {
 	        template: '<inward-vehicle-order-detail-form></inward-vehicle-order-detail-form>',
 	        title: 'Inward Vehicle - Order Detail Form',
@@ -742,6 +746,8 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_customer_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail.html')}}';
     var inward_vehicle_order_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/order-detail-form.html')}}';
     var inward_vehicle_order_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/order-detail-view.html')}}';
+
+    var inward_vehicle_export_diagnosis_details_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/expert-diagnosis-detail.html')}}';
 
     //PARTIALS
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';
