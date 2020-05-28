@@ -298,7 +298,7 @@ class VehicleInwardController extends Controller {
 			if (!$request->id) {
 				//NEW OWNER
 				$vehicle_owner = new VehicleOwner;
-				$vehicle_owner->created_by_id = Auth::id();
+				// $vehicle_owner->created_by_id = Auth::id();
 				$vehicle_owner->vehicle_id = $vehicle->id;
 				$vehicle_owner->from_date = date('Y-m-d');
 			} else {
@@ -1442,41 +1442,48 @@ class VehicleInwardController extends Controller {
 			DB::rollBack();
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
 
 	//VOICE OF CUSTOMER(VOC) GET FORM DATA
-	public function getVocFormData($id) {
+	public function getVocFormData(Request $r) {
 		try {
-			$gate_log_detail = GateLog::with([
-				'jobOrder',
-				'jobOrder.customerVoice',
-			])
-				->find($id);
-
-			if (!$gate_log_detail) {
+			$job_order = JobOrder::with([
+				'customerVoices',
+			])->find($r->job_order_id);
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
 				]);
 			}
 
-			$VOC_list = CustomerVoice::where('company_id', Auth::user()->company_id)
+			$customer_voice_list = CustomerVoice::where('company_id', Auth::user()->company_id)
 				->get();
+			$extras = [
+				'customer_voice_list' => $customer_voice_list,
+			];
 
 			return response()->json([
 				'success' => true,
-				'VOC_list' => $VOC_list,
-				'gate_log_detail' => $gate_log_detail,
+				'extras' => $extras,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1484,6 +1491,7 @@ class VehicleInwardController extends Controller {
 	//VOICE OF CUSTOMER(VOC) SAVE
 	public function saveVoc(Request $request) {
 		// dd($request->all());
+		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -1491,27 +1499,35 @@ class VehicleInwardController extends Controller {
 					'exists:job_orders,id',
 					'integer',
 				],
-				'customer_voice_id.*' => [
+				'customer_voices.*.id' => [
+					'required',
 					'integer',
 					'exists:customer_voices,id',
 					'distinct',
+				],
+				'customer_voices.*.details' => [
+					'nullable',
+					'string',
 				],
 			]);
 
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
 
-			DB::beginTransaction();
-
 			$job_order = JobOrder::find($request->job_order_id);
-
-			$job_order->customerVoice()->sync([]);
-			$job_order->customerVoice()->sync($request->customer_voice_id);
+			$job_order->customerVoices()->sync([]);
+			if (!empty($request->customer_voices)) {
+				foreach ($request->customer_voices as $key => $voice) {
+					$job_order->customerVoices()->attach($voice['id'], [
+						'details' => isset($voice['details']) ? $voice['details'] : NULL,
+					]);
+				}
+			}
 
 			DB::commit();
 
@@ -1522,41 +1538,47 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
 
 	//ROAD TEST OBSERVATION GET FORM DATA
-	public function getRoadTestObservationFormData($id) {
+	public function getRoadTestObservationFormData(Request $r) {
 		try {
-			$gate_log_detail = GateLog::with([
-				'jobOrder',
-			])
-				->find($id);
-
-			if (!$gate_log_detail) {
+			$job_order = JobOrder::find($r->job_order_id);
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
 				]);
 			}
+
+			$params['config_type_id'] = 36;
+			$params['add_default'] = false;
 			$extras = [
-				'road_test_by' => Config::getConfigTypeList(36, 'name', '', false, ''), //ROAD TEST DONE BY
+				'road_test_by' => Config::getDropDownList($params), //ROAD TEST DONE BY
 				'user_list' => User::getUserEmployeeList(),
 			];
 
 			return response()->json([
 				'success' => true,
-				'gate_log_detail' => $gate_log_detail,
 				'extras' => $extras,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1564,6 +1586,7 @@ class VehicleInwardController extends Controller {
 	//ROAD TEST OBSERVATION SAVE
 	public function saveRoadTestObservation(Request $request) {
 		// dd($request->all());
+		DB::beginTransaction();
 		try {
 			//issue: Vijay - No need for another validation for road_test_performed_by_id field.
 			if ($request->road_test_done_by_id == 8101) {
@@ -1608,12 +1631,10 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-
-			DB::beginTransaction();
 
 			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->is_road_test_required = $request->is_road_test_required;
@@ -1628,16 +1649,18 @@ class VehicleInwardController extends Controller {
 			$job_order->save();
 
 			DB::commit();
-
 			return response()->json([
 				'success' => true,
 				'message' => 'Road Test Observation Added Successfully',
 			]);
 		} catch (\Exception $e) {
+			DB::rollBack();
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1730,7 +1753,9 @@ class VehicleInwardController extends Controller {
 	//VEHICLE INSPECTION GET FORM DATA
 	public function getVehicleInspectiongetFormData(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->job_order_id);
+			$job_order = JobOrder::with([
+				'vehicleInspectionItems',
+			])->find($r->job_order_id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -1804,11 +1829,11 @@ class VehicleInwardController extends Controller {
 
 			$job_order = jobOrder::find($request->job_order_id);
 			if ($request->vehicle_inspection_groups) {
-				$job_order->jobOrderVehicleInspectionItem()->sync([]);
+				$job_order->vehicleInspectionItems()->sync([]);
 				foreach ($request->vehicle_inspection_groups as $key => $vehicle_inspection_group) {
-					// dd($vehicle_inspection_group['vehicle_inspection_item_id']);
-					$job_order->jobOrderVehicleInspectionItem()->attach($vehicle_inspection_group['vehicle_inspection_item_id'],
-						['status_id' => $vehicle_inspection_group['vehicle_inspection_result_status_id'],
+					$job_order->vehicleInspectionItems()->attach($vehicle_inspection_group['vehicle_inspection_item_id'],
+						[
+							'status_id' => $vehicle_inspection_group['vehicle_inspection_result_status_id'],
 						]);
 				}
 			}

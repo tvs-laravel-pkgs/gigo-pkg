@@ -14,6 +14,17 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/order-detail/get-form-data', 'VehicleInwardController@getOrderFormData');
 		Route::post('vehicle-inward/order-detail/save', 'VehicleInwardController@saveOrderDetail');
 		Route::post('vehicle-inward/order-detail/get', 'VehicleInwardController@getOrderDetail');
+		//VOC GET FORM DATA AND SAVE
+		Route::post('vehicle-inward/voc/get-form-data', 'VehicleInwardController@getVocFormData');
+		Route::post('vehicle-inward/voc/save', 'VehicleInwardController@saveVoc');
+
+		//VOC GET FORM DATA AND SAVE
+		// Route::get('vehicle-inward/get-voc-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getVocFormData');
+		// Route::post('vehicle-inward/save-voc', 'VehicleInwardController@saveVoc');
+
+		//ROAD TEST OBSERVATION GET FORM DATA AND SAVE
+		Route::get('vehicle-inward/get-road-test-observation-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getRoadTestObservationFormData');
+		Route::post('vehicle-inward/save-road-test-observation', 'VehicleInwardController@saveRoadTestObservation');
 
 		//VEHICLE GATE PASS LIST
 		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');
@@ -27,14 +38,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//VEHICLE GET INVENTORY FORM DATA AND SAVE
 		Route::get('get-inventory-form-data/gate-log/{id}', 'VehicleInwardController@getInventoryFormData');
 		Route::post('save-inventory-item', 'VehicleInwardController@saveInventoryItem');
-
-		//VOC GET FORM DATA AND SAVE
-		Route::get('get-voc-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getVocFormData');
-		Route::post('save-voc', 'VehicleInwardController@saveVoc');
-
+		
 		//ROAD TEST OBSERVATION GET FORM DATA AND SAVE
-		Route::get('get-road-test-observation-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getRoadTestObservationFormData');
-		Route::post('save-road-test-observation', 'VehicleInwardController@saveRoadTestObservation');
+		Route::post('vehicle-inward/road-test-observation/get-form-data', 'VehicleInwardController@getRoadTestObservationFormData');
+		Route::post('vehicle-inward/road-test-observation/save', 'VehicleInwardController@saveRoadTestObservation');
 
 		//DMS CHECKLIST SAVE
 		Route::post('save-dms-checklist', 'VehicleInwardController@saveDmsCheckList');
