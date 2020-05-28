@@ -143,6 +143,10 @@ class JobOrder extends Model {
 		;
 	}
 
+	public function kmReadingType() {
+		return $this->belongsTo('App\Config', 'km_reading_type_id');
+	}
+
 	public function roadTestDoneBy() {
 		return $this->belongsTo('App\Config', 'road_test_done_by_id');
 	}

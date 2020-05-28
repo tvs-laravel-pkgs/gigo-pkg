@@ -8,8 +8,14 @@
                     <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>Inward Vehicle</b></h1>
-                    <p class="subtitle">Inward Vehicle / Vehicle Detail</p>
+                    <h1 class="title">
+                        <b>
+                            Inward Vehicle
+                        </b>
+                    </h1>
+                    <p class="subtitle">
+                        Inward Vehicle / Road Test Observations
+                    </p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -19,23 +25,46 @@
         <div class="page-tab-form pb-70">
             <job-order-header></job-order-header>
             <div class="tab-form-wrap type-2">
-                <inward-tabs ng-init="active_tab = 'voc-detail'"></inward-tabs>
+                <inward-tabs ng-init="active_tab = 'road-test-detail'"></inward-tabs>
                 <div class="tab-form-body">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
-                        <div class="tab-pane fade in active" id="voc_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="road_test_details" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h5 class="color-primary mb-10">
                                             <b>
-                                                Voice of Customer
+                                                Road Test Observations
                                             </b>
                                         </h5>
-                                        <hr class="hr-15"><!-- Separater -->
-                                        <div class="row custom-row">
-                                            <div class="col-md-6">
-                                                <div class="form-group mb-no">
+                                        <hr class="hr-15">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Road Test Required ?</label>
+                                                    <div class="common-radio-button type-4">
+                                                        <input type="radio" id="radio_yes" name="road-test-required-group" checked="">
+                                                        <label for="radio_yes">Registered</label>
+                                                        <input type="radio" id="radio_no" name="road-test-required-group">
+                                                        <label for="radio_no">Un Registered</label>
+                                                    </div>
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Road Test by</label>
+                                                    <div class="common-radio-button type-4">
+                                                        <input type="radio" id="radio_yes" name="road-test-group" checked="">
+                                                        <label for="radio_yes">Registered</label>
+                                                        <input type="radio" id="radio_no" name="road-test-group">
+                                                        <label for="radio_no">Un Registered</label>
+                                                    </div>
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Select Driver For Road Test <sup class="mandatory">*</sup></label>
                                                     <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
                                                         <md-select-header class="demo-select-header">
                                                             <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
@@ -47,20 +76,11 @@
                                                 </div><!-- Feild -->
                                             </div><!-- Column -->
                                             <div class="col-md-6">
-                                                <button class="img-btn">
-                                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-dark.svg" alt="Delete" />
-                                                </button>
-                                            </div><!-- Column -->
-                                        </div><!-- Row -->
-                                        <div class="row">
-                                            <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <textarea class="form-control" rows="4" placeholder="Enter Details"></textarea>
+                                                    <label>Road Test Observations <sup class="mandatory">*</sup></label>
+                                                    <textarea class="form-control" rows="4" placeholder="Enter Observations"></textarea>
                                                 </div><!-- Feild -->
                                             </div><!-- Column -->
-                                            <div class="col-md-12">
-                                                <button class="btn btn-md type2 btn-green btn-square">Add More</button>
-                                            </div>
                                         </div><!-- Row -->
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">

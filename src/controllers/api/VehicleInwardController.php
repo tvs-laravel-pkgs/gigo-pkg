@@ -340,6 +340,9 @@ class VehicleInwardController extends Controller {
 					'vehicle.lastJobOrder',
 					'vehicle.lastJobOrder.jobCard',
 					'type',
+					'quoteType',
+					'serviceType',
+					'kmReadingType',
 				])
 				->select([
 					'job_orders.*',
@@ -476,26 +479,26 @@ class VehicleInwardController extends Controller {
 
 			//issue : saravanan - created_by_id not saved
 			//JOB ORDER SAVE
-			$job_order = JobOrder::firstOrNew([
-				'gate_log_id' => $request->gate_log_id,
-				'company_id' => Auth::user()->company_id,
-			]);
-			$job_order->number = mt_rand(1, 10000);
-			$job_order->fill($request->all());
-			$job_order->company_id = Auth::user()->company_id;
-			$job_order->save();
-			if ($job_order->exists) {
-				$job_order->updated_by_id = Auth::user()->id;
-				$job_order->updated_at = Carbon::now();
-			} else {
-				$job_order->created_by_id = Auth::user()->id;
-				$job_order->created_at = Carbon::now();
-			}
+			// $job_order = JobOrder::firstOrNew([
+			// 	'gate_log_id' => $request->gate_log_id,
+			// 	'company_id' => Auth::user()->company_id,
+			// ]);
+			// $job_order->number = mt_rand(1, 10000);
+			// $job_order->fill($request->all());
+			// $job_order->company_id = Auth::user()->company_id;
+			// $job_order->save();
+			// if ($job_order->exists) {
+			// 	$job_order->updated_by_id = Auth::user()->id;
+			// 	$job_order->updated_at = Carbon::now();
+			// } else {
+			// 	$job_order->created_by_id = Auth::user()->id;
+			// 	$job_order->created_at = Carbon::now();
+			// }
 			//dump($job_order->id);
 			//Number Update
-			$number = sprintf('%03' . 's', $job_order->id);
-			$job_order->number = "JO-" . $number;
-			$job_order->save();
+			// $number = sprintf('%03' . 's', $job_order->id);
+			// $job_order->number = "JO-" . $number;
+			// $job_order->save();
 
 			//issue : saravanan - save attachment code optimisation
 
@@ -532,14 +535,13 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'message' => 'Job order saved successfully!!',
+				'message' => 'Order Detail saved successfully!!',
 			]);
 
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 			]);
 		}
 	}
