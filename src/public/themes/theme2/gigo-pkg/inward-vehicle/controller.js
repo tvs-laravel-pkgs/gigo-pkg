@@ -5,6 +5,11 @@ app.component('inwardVehicleCardList', {
         $('#search').focus();
         var self = this;
 
+        if (!HelperService.isLoggedIn()) {
+            $location.path('/login');
+            return;
+        }
+
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
 
@@ -18,9 +23,7 @@ app.component('inwardVehicleCardList', {
             $('#search').val('');
         }
 
-        HelperService.isLoggedIn()
         self.user = $scope.user = HelperService.getLoggedUser();
-
 
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -47,9 +50,9 @@ app.component('inwardVehicleCardList', {
                     data: {
 
                     },
-                    // beforeSend: function(xhr) {
-                    //     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    // },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
                 })
                 .done(function(res) {
                     if (!res.success) {

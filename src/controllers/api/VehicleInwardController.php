@@ -1645,26 +1645,14 @@ class VehicleInwardController extends Controller {
 	}
 
 	//EXPERT DIAGNOSIS REPORT GET FORM DATA
-	public function getExpertDiagnosisReportFormData($id) {
+	public function getExpertDiagnosisReportFormData() {
 		try {
-			$gate_log_detail = GateLog::with([
-				'jobOrder',
-			])
-				->find($id);
-
-			if (!$gate_log_detail) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Gate Log Not Found!',
-				]);
-			}
 			$extras = [
 				'user_list' => User::getUserEmployeeList(),
 			];
 
 			return response()->json([
 				'success' => true,
-				'gate_log_detail' => $gate_log_detail,
 				'extras' => $extras,
 			]);
 		} catch (\Exception $e) {
