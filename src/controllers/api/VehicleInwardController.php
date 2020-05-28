@@ -1547,34 +1547,38 @@ class VehicleInwardController extends Controller {
 	}
 
 	//ROAD TEST OBSERVATION GET FORM DATA
-	public function getRoadTestObservationFormData($id) {
+	public function getRoadTestObservationFormData(Request $r) {
 		try {
-			$gate_log_detail = GateLog::with([
-				'jobOrder',
-			])
-				->find($id);
-
-			if (!$gate_log_detail) {
+			$job_order = JobOrder::find($r->job_order_id);
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
 				]);
 			}
+
+			$params['config_type_id'] = 36;
+			$params['add_default'] = false;
 			$extras = [
-				'road_test_by' => Config::getConfigTypeList(36, 'name', '', false, ''), //ROAD TEST DONE BY
+				'road_test_by' => Config::getDropDownList($params), //ROAD TEST DONE BY
 				'user_list' => User::getUserEmployeeList(),
 			];
 
 			return response()->json([
 				'success' => true,
-				'gate_log_detail' => $gate_log_detail,
 				'extras' => $extras,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1582,6 +1586,7 @@ class VehicleInwardController extends Controller {
 	//ROAD TEST OBSERVATION SAVE
 	public function saveRoadTestObservation(Request $request) {
 		// dd($request->all());
+		DB::beginTransaction();
 		try {
 			//issue: Vijay - No need for another validation for road_test_performed_by_id field.
 			if ($request->road_test_done_by_id == 8101) {
@@ -1626,12 +1631,10 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-
-			DB::beginTransaction();
 
 			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->is_road_test_required = $request->is_road_test_required;
@@ -1646,16 +1649,18 @@ class VehicleInwardController extends Controller {
 			$job_order->save();
 
 			DB::commit();
-
 			return response()->json([
 				'success' => true,
 				'message' => 'Road Test Observation Added Successfully',
 			]);
 		} catch (\Exception $e) {
+			DB::rollBack();
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}

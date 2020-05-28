@@ -40,8 +40,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('save-inventory-item', 'VehicleInwardController@saveInventoryItem');
 		
 		//ROAD TEST OBSERVATION GET FORM DATA AND SAVE
-		Route::get('get-road-test-observation-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getRoadTestObservationFormData');
-		Route::post('save-road-test-observation', 'VehicleInwardController@saveRoadTestObservation');
+		Route::post('vehicle-inward/road-test-observation/get-form-data', 'VehicleInwardController@getRoadTestObservationFormData');
+		Route::post('vehicle-inward/road-test-observation/save', 'VehicleInwardController@saveRoadTestObservation');
 
 		//DMS CHECKLIST SAVE
 		Route::post('save-dms-checklist', 'VehicleInwardController@saveDmsCheckList');
