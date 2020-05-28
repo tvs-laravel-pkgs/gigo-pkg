@@ -1728,36 +1728,45 @@ class VehicleInwardController extends Controller {
 	}
 
 	//VEHICLE INSPECTION GET FORM DATA
-	public function getVehicleInspectiongeFormData($id) {
+	public function getVehicleInspectiongetFormData(Request $r) {
 		try {
-			$gate_log_validate = GateLog::find($id);
-			if (!$gate_log_validate) {
+			$job_order = JobOrder::find($r->job_order_id);
+
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
 				]);
 			}
 
-			$vehicle_inspection_item_group = VehicleInspectionItemGroup::with([
+			$vehicle_inspection_item_groups = VehicleInspectionItemGroup::with([
 				'VehicleInspectionItems',
 			])
 				->where('company_id', Auth::user()->company_id)
 				->get();
 
+			$params['config_type_id'] = 32;
+			$params['add_default'] = false;
 			$extras = [
-				'vehicle_inspection_result_status' => Config::getConfigTypeList(32, 'id', '', false, ''), //VEHICLE INSPECTION RESULTS
+				'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
 			];
 
 			return response()->json([
 				'success' => true,
-				'vehicle_inspection_item_group' => $vehicle_inspection_item_group,
 				'extras' => $extras,
+				'vehicle_inspection_item_groups' => $vehicle_inspection_item_groups,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
