@@ -1637,8 +1637,19 @@ class VehicleInwardController extends Controller {
 	}
 
 	//EXPERT DIAGNOSIS REPORT GET FORM DATA
-	public function getExpertDiagnosisReportFormData() {
+	public function getExpertDiagnosisReportFormData(Request $r) {
 		try {
+			$job_order = JobOrder::find($r->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
+				]);
+			}
 			$extras = [
 				'user_list' => User::getUserEmployeeList(),
 			];
@@ -1646,6 +1657,7 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'extras' => $extras,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
