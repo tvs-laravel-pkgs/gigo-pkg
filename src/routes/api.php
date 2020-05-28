@@ -7,7 +7,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//VEHICLE INWARD
 		Route::post('vehicle-inward/get', 'VehicleInwardController@getGateInList');
-		Route::get('vehicle-inward/view', 'VehicleInwardController@getVehicleInwardViewData');
+		Route::post('vehicle-inward/view', 'VehicleInwardController@getVehicleInwardViewData');
 		Route::post('vehicle-inward/get-vehicle-detail', 'VehicleInwardController@getVehicleDetail');
 		Route::post('vehicle-inward/get-customer-detail', 'VehicleInwardController@getCustomerDetail');
 		Route::post('vehicle-inward/save-customer-detail', 'VehicleInwardController@saveCustomerDetail');
@@ -60,7 +60,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('save-schedule-maintenance', 'VehicleInwardController@saveScheduleMaintenance');
 
 		//EXPERT DIAGNOSIS REPORT GET FORM DATA AND SAVE
-		Route::get('vehicle-inward/expert-diagnosis-report/get-form-data', 'VehicleInwardController@getExpertDiagnosisReportFormData');
+		Route::post('vehicle-inward/expert-diagnosis-report/get-form-data', 'VehicleInwardController@getExpertDiagnosisReportFormData');
 		Route::post('vehicle-inward/expert-diagnosis-report/save', 'VehicleInwardController@saveExpertDiagnosisReport');
 
 		//ESTIMATE GET FORM DATA AND SAVE
