@@ -55,16 +55,14 @@ class VehicleInwardController extends Controller {
 			}
 
 			$vehicle_inward_list_get = JobOrder::company('job_orders')
-			//issue : not optimized
-			// ->with([
-			// 	'status',
-			// 	'vehicle',
-			// 	'vehicle.status',
-			// 	'vehicle.currentOwner',
-			// 	'vehicle.currentOwner.customer',
-			// ])
 				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
 				->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
+				->leftJoin('vehicle_owners', function ($join) {
+					$join->on('vehicle_owners.vehicle_id', 'vehicles.id')
+						->orderBy('from_date', 'DESC')
+						->limit(1);
+				})
+				->leftJoin('customers', 'customers.id', 'vehicle_owners.customer_id')
 				->leftJoin('models', 'models.id', 'vehicles.model_id')
 				->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
 				->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.id')
@@ -81,6 +79,7 @@ class VehicleInwardController extends Controller {
 					'job_orders.driver_mobile_number as driver_mobile_number',
 					DB::raw('GROUP_CONCAT(amc_policies.name) as amc_policies'),
 					'status.name as status_name',
+					'customers.name as customer_name',
 				])
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
@@ -88,11 +87,9 @@ class VehicleInwardController extends Controller {
 							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
 					}
 				})
-			//Gate In Completed =>8120
-				->where('gate_logs.status_id', 8120)
+				->where('gate_logs.status_id', 8120) //Gate In Completed
 			// ->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '" . $request->floor_adviser_id . "')")
 				->groupBy('gate_logs.id');
-			//->get();
 
 			$total_records = $vehicle_inward_list_get->get()->count();
 
@@ -110,8 +107,6 @@ class VehicleInwardController extends Controller {
 				'gate_logs' => $gate_logs,
 				'total_records' => $total_records,
 			]);
-			//issue : exception will not be handled
-			// } catch (\Exception $e) {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
