@@ -1,4 +1,4 @@
-<!-- Content Wrap -->
+Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -48,11 +48,11 @@
                                                             Road Test Required ?
                                                         </label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="registered" name="road-test-required-group" checked="">
+                                                            <input type="radio" id="registered" name="road-test-required-group" value="1" checked="">
                                                             <label for="registered">
                                                                 Registered
                                                             </label>
-                                                            <input type="radio" id="unregistered" name="road-test-required-group">
+                                                            <input type="radio" id="unregistered" name="road-test-required-group" value="0">
                                                             <label for="unregistered">
                                                                 Un Registered
                                                             </label>
@@ -65,11 +65,13 @@
                                                             Road Test by
                                                         </label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="radio_yes" name="road-test-group" checked="">
-                                                            <label for="radio_yes">
+                                                            <input type="radio" id="employee" name="road_test_done_by_id" ng-checked="{{job_order.road_test_done_by_id==8101}}" value="8101">
+                                                            <label for="employee">
+                                                                Employee
                                                             </label>
-                                                            <input type="radio" id="radio_no" name="road-test-group">
-                                                            <label for="radio_no">
+                                                            <input type="radio" id="customer" name="road_test_done_by_id" ng-checked="{{job_order.road_test_done_by_id==8100}}" value="8100">
+                                                            <label for="customer">
+                                                                Customer
                                                             </label>
                                                         </div>
                                                     </div><!-- Feild -->
@@ -80,17 +82,17 @@
                                                             Select Driver For Road Test
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="job_order" placeholder="Select driver" md-on-close="clearSearchDriver()" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select ng-model="job_order.employee" placeholder="Select employee" md-on-close="clearSearchDriver()" data-md-container-class="selectdemoSelectHeader">
                                                             <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchDriver" type="search" placeholder="Search for a driver.." class="demo-header-searchbox md-text">
+                                                                <input ng-model="searchDriver" type="search" placeholder="Search for a employee.." class="demo-header-searchbox md-text">
                                                             </md-select-header>
                                                             <md-optgroup>
-                                                                <md-option ng-value="driver_name" ng-repeat="driver_name in job_order.driver_name | filter:searchDriver">
-                                                                    {{driver_name}}
+                                                                <md-option ng-value="employee" ng-repeat="employee in extras.user_list | filter:searchDriver">
+                                                                    {{employee.name}}
                                                                 </md-option>
                                                             </md-optgroup>
                                                         </md-select>
-                                                        <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                                        <input type="hidden" name="employee_id" value="{{job_order.employee}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-6" id="road_test_observation">
@@ -129,4 +131,4 @@
             </div><!-- Tab Form Wrap -->
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
-</div><!-- Content Wrap -->
+</div><!-- Content Wrap
