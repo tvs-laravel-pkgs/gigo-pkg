@@ -1282,8 +1282,32 @@ app.component('inwardVehicleInventoryDetailForm', {
         }
         $scope.fetchData();
 
+        /*$scope.checkData = function() {
+            console.log('test');
+            $(".inventory_items").each(function() {
+                if ($(this).is(':checked')) {
+                    $(this).closest(".remarks").show();
+                }
+            });
+        }
+        $scope.checkData();
+        $scope.refreshData = function(inventory) {
+            if (inventory.checked) {
+                var dis_id = 'chkselct_' + inventory.id;
+                console.log(dis_id);
+                $('.show_2').css({ 'display': 'block' });
+                // $("#chkselct_" + inventory.id).show();
+                //$(dis_class).display('block');
+                //$scope.chkselct[inventory.id] = true;
+                //$scope.chkselct[inventory.id] = true;
+            }
+        }*/
+
+
         //Save Form Data 
         $scope.saveInventoryForm = function() {
+            $('#slide_val').val($('#range_val').text());
+            console.log($('#slide_val').val());
             var form_id = '#inventory_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -1321,7 +1345,7 @@ app.component('inwardVehicleInventoryDetailForm', {
                             }
                             $('.submit').button('reset');
                             custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/inventory-detail/form/' + $scope.job_order_id);
+                            $location.path('/inward-vehicle/voc-detail/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {

@@ -549,9 +549,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			// issue : saravanan - use one get list function. Field type id condition missing
-			$params['field_type_id'] = 11;
+			$params['field_type_id'] = [11,12];
 			$extras = [
-				'inventory_type_list' => VehicleInventoryItem::getList($params),
+				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order->id,$params),
 			];
 
 			return response()->json([
