@@ -1,4 +1,4 @@
-<!-- Content Wrap -->
+Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -35,6 +35,21 @@
                                         <hr class="hr-15"><!-- Separater -->
                                         <div class="row custom-row">
                                             <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <md-select ng-model="job_order.customer_voices.code" placeholder="Select any one" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged()">
+                                                        <md-select-header class="demo-select-header">
+                                                            <input ng-model="searchCountry" type="search" placeholder="Search for a .." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                        </md-select-header>
+                                                        <md-optgroup>
+                                                            <md-option ng-value="country" ng-repeat="customer_voice in extras.customer_voice_list | filter:searchCountry">
+                                                                {{customer_voice.code}}
+                                                            </md-option>
+                                                        </md-optgroup>
+                                                    </md-select>
+                                                    <input type="hidden" name="voc" value="{{job_order.voc}}">
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                            <!--  <div class="col-md-6">
                                                 <div class="form-group mb-no">
                                                     <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
                                                         <md-select-header class="demo-select-header">
@@ -44,8 +59,8 @@
                                                             <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
                                                         </md-optgroup>
                                                     </md-select>
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
+                                                </div>
+                                            </div> -->
                                             <div class="col-md-6">
                                                 <button class="img-btn">
                                                     <img class="img-responsive radius-50" src="./public/theme/img/content/delete-dark.svg" alt="Delete" />
@@ -80,4 +95,4 @@
             </div><!-- Tab Form Wrap -->
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
-</div><!-- Content Wrap -->
+</div><!-- Content Wrap

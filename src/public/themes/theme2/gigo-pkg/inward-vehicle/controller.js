@@ -917,12 +917,13 @@ app.component('inwardVehicleVocDetail', {
         $scope.fetchData = function() {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/get-voc-form-data/gate-log/' + $routeParams.job_order_id,
-                    method: "GET",
-                    // data: {
-                    //     // id: $routeParams.job_order_id
-                    //     id: $routeParams.gate_log_id
-                    // },
+                    // url: base_url + '/api/vehicle-inward/get-voc-form-data/gate-log/' + $routeParams.job_order_id,
+                    url: base_url + '/api/vehicle-inward/voc/get-form-data',
+                    method: "POST",
+                    data: {
+                        job_order_id: $routeParams.job_order_id
+                        // id: $routeParams.gate_log_id
+                    },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
@@ -933,17 +934,8 @@ app.component('inwardVehicleVocDetail', {
                         showErrorNoty(res);
                         return;
                     }
-                    // $scope.job_order = res.job_order;
-
-                    // if (!$scope.job_order.vehicle.current_owner) {
-                    //     $scope.show_customer_detail = false;
-                    //     $scope.show_customer_form = true;
-                    // } else {
-                    //     $scope.show_customer_detail = true;
-                    //     $scope.show_customer_form = false;
-                    // }
-                    $scope.VOC_list = res.VOC_list;
-                    $scope.gate_log_detail = res.gate_log_detail;
+                    $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
