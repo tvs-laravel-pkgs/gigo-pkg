@@ -1472,8 +1472,7 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
-
-			if ($job_order->customerVoices) {
+			if ($job_order->customerVoices->count() > 0) {
 				$action = 'edit';
 			} else {
 				$action = 'add';
@@ -1532,7 +1531,7 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-
+			
 			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->customerVoices()->sync([]);
 			if (!empty($request->customer_voices)) {

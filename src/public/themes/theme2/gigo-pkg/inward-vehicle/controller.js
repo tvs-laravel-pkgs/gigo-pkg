@@ -1355,7 +1355,7 @@ app.component('inwardVehicleVocDetailForm', {
         });
 
         var self = this;
-
+        $('#voc_details').hide();
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
         //     window.location = "#!/page-permission-denied";
@@ -1365,19 +1365,22 @@ app.component('inwardVehicleVocDetailForm', {
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
-
+        $scope.onSelectedVoc = function(id) {
+            if (id == 6)
+                $('#voc_details').show();
+            else
+                $('#voc_details').hide();
+        }
         $scope.job_order_id = $routeParams.job_order_id;
-        // $scope.gate_log_id = $routeParams.gate_log_id;
+
         //FETCH DATA
         $scope.fetchData = function() {
             $rootScope.loading = true;
             $.ajax({
-                    // url: base_url + '/api/vehicle-inward/get-voc-form-data/gate-log/' + $routeParams.job_order_id,
                     url: base_url + '/api/vehicle-inward/voc/get-form-data',
                     method: "POST",
                     data: {
-                        job_order_id: $routeParams.job_order_id
-                        // id: $routeParams.gate_log_id
+                        id: $routeParams.job_order_id
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -1389,8 +1392,12 @@ app.component('inwardVehicleVocDetailForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    $scope.job_order = res.job_order;
+                    self.job_order = $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
+                    if (res.action == "Add") {
+                        self.addNewCustomerVoice();
+                    }
+                    $scope.action = res.action;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1401,90 +1408,25 @@ app.component('inwardVehicleVocDetailForm', {
         $scope.fetchData();
 
         //Save Form Data 
-        $scope.saveVocDetail = function() {
-            var form_id = '#form';
-            var v = jQuery(form_id).validate({
+        $scope.saveVocDetailForm = function() {
+            var voc_form_id = '#voc_form';
+            console.log('test');
+            var v = jQuery(voc_form_id).validate({
                 ignore: '',
-                rules: {
-                    'name': {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 255,
-                    },
-                    'mobile_no': {
-                        required: true,
-                        minlength: 10,
-                        maxlength: 10,
-                    },
-                    'email': {
-                        email: true,
-                    },
-                    'address_line1': {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 32,
-                    },
-                    'address_line2': {
-                        minlength: 3,
-                        maxlength: 64,
-                    },
-                    'country_id': {
-                        required: true,
-                    },
-                    'state_id': {
-                        required: true,
-                    },
-                    'city_id': {
-                        required: true,
-                    },
-                    'pincode': {
-                        required: true,
-                        minlength: 6,
-                        maxlength: 6,
-                    },
-                    'gst_number': {
-                        minlength: 6,
-                        maxlength: 32,
-                    },
-                    'pan_number': {
-                        minlength: 6,
-                        maxlength: 32,
-                    },
-                    'ownership_id': {
-                        required: true,
-                    },
-                },
-                messages: {
-                    'name': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 255 Characters',
-                    },
-                    'mobile_no': {
-                        minlength: 'Minimum 10 Numbers',
-                        maxlength: 'Maximum 10 Numbers',
-                    },
-                    'address_line1': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 32 Characters',
-                    },
-                    'address_line2': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 32 Characters',
-                    },
-                    'pincode': {
-                        minlength: 'Minimum 6 Numbers',
-                        maxlength: 'Maximum 6 Numbers',
-                    },
-                },
+                // rules: {
+                // },
+                // messages: {
+                // },
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
                 submitHandler: function(form) {
-                    let formData = new FormData($(form_id)[0]);
+                    let formData = new FormData($(voc_form_id)[0]);
+                    console.log('submit');
                     $rootScope.loading = true;
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/save-voc',
+                            url: base_url + '/api/vehicle-inward/voc/save',
                             method: "POST",
                             data: formData,
                             processData: false,
@@ -1497,7 +1439,7 @@ app.component('inwardVehicleVocDetailForm', {
                                 showErrorNoty(res);
                                 return;
                             }
-                            $location.path('/inward-vehicle/order-detail/form/' + $routeParams.job_order_id);
+                            $location.path('/inward-vehicle/road-test-detail/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -1508,6 +1450,19 @@ app.component('inwardVehicleVocDetailForm', {
                 }
             });
         }
+
+        self.addNewCustomerVoice = function() {
+            self.job_order.customer_voices.push({
+                id: '',
+            });
+        }
+
+        self.removeCustomerVoice = function(index) {
+            self.job_order.customer_voices.splice(index, 1);
+        }
+
+        /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
 
     }
 });
@@ -1538,11 +1493,11 @@ app.component('inwardVehicleRoadTestDetailForm', {
         $scope.fetchData = function() {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/get-road-test-observation-form-data/gate-log/' + $routeParams.job_order_id,
+                    url: base_url + '/api/vehicle-inward/road-test-observation/get-form-data',
                     method: "POST",
-                    // data: {
-                    //     id: $routeParams.gate_log_id
-                    // },
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
