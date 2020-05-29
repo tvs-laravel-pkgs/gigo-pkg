@@ -203,11 +203,15 @@
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <button type="submit" class="btn btn-red">
+                                                <button type="submit" ng-click="saveSchedule()" class="btn btn-red">
                                                             Save & Close
                                                         </button>
-                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
+                                                        Previous
+                                                    </a>
+                                                    <button ng-click="saveDms()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        Next
+                                                    </button>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->

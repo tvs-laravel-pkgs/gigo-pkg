@@ -297,6 +297,7 @@ app.component('inwardVehicleExportDiagnosisDetailForm', {
         $scope.fetchData();
 
         //Save Form Data 
+        $scope.saveExportDiagonis = function() {
         var form_id = '#form';
         var v = jQuery(form_id).validate({
             ignore: '',
@@ -334,7 +335,7 @@ app.component('inwardVehicleExportDiagnosisDetailForm', {
                             return;
                         }
                         custom_noty('success', res.message);
-                        $location.path('/inward-vehicle/expert-diagnosis-detail/' + $scope.job_order.id);
+                        $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order.id);
                         $scope.$apply();
                     })
                     .fail(function(xhr) {
@@ -343,6 +344,7 @@ app.component('inwardVehicleExportDiagnosisDetailForm', {
                     });
             }
         });
+    }
 
         $scope.showVehicleForm = function() {
             $scope.show_vehicle_detail = false;
@@ -483,7 +485,7 @@ app.component('inwardVehicleDmsCheckListForm', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/expert-diagnosis-report/get-form-data',
+                    url: base_url + '/api/vehicle-inward/dms-checklist/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
@@ -497,8 +499,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    $scope.job_order = res.job_order;
-                    $scope.extras = res.extras;
+                    $scope.attachment = res.attachment;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -517,6 +518,7 @@ app.component('inwardVehicleDmsCheckListForm', {
         }
 
         //Save Form Data 
+        $scope.saveDms = function() {
         var form_id = '#form';
         var v = jQuery(form_id).validate({
             ignore: '',
@@ -563,7 +565,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                             return;
                         }
                         custom_noty('success', res.message);
-                        $location.path('/inward-vehicle/dms-checklist/' + $scope.job_order.id);
+                        $location.path('/inward-vehicle/dms-checklist/form/' + $scope.job_order.id);
                         $scope.$apply();
                     })
                     .fail(function(xhr) {
@@ -572,7 +574,8 @@ app.component('inwardVehicleDmsCheckListForm', {
                     });
             }
         });
-
+    }
+       
 
         $scope.showVehicleForm = function() {
             $scope.show_vehicle_detail = false;
@@ -685,6 +688,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         }
 
         //Save Form Data 
+        $scope.saveSchedule = function() {
         var form_id = '#form';
         var v = jQuery(form_id).validate({
             ignore: '',
@@ -731,7 +735,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                             return;
                         }
                         custom_noty('success', res.message);
-                        $location.path('/inward-vehicle/scheduled-maintenance/' + $scope.job_order.id);
+                        $location.path('/inward-vehicle/scheduled-maintenance/form/' + $scope.job_order.id);
                         $scope.$apply();
                     })
                     .fail(function(xhr) {
@@ -740,6 +744,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     });
             }
         });
+    }
 
 
         $scope.showVehicleForm = function() {
