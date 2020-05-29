@@ -1,0 +1,269 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>DMS Check List</b></h1>
+                    <p class="subtitle">Inward Vehicle / DMS Check List</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <job-order-header></job-order-header>
+            <div class="tab-form-wrap type-2">
+                <inward-tabs ng-init="active_tab = 'estimate_details'"></inward-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                    <div class="tab-pane fade in active" id="estimate_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <form id="form" >
+                                        <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Estimate</b></h5>
+                                        <hr class="hr-15"><!-- Separater -->
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <ul class="flex-list pad-9">
+                                                    <li class="flex-12 flex-md-4">
+                                                        <div class="dark-box">
+                                                            <div class="dark-box-header opacity-light">
+                                                                Scheduled Maintenance
+                                                            </div><!-- Dark Box Header -->
+                                                            <div class="dark-box-body">
+                                                                <ul class="three-box-list">
+                                                                    <li class="wid-50">
+                                                                        <div class="three-box-content text-center">
+                                                                            <span class="three-box-label">
+                                                                                Labour
+                                                                            </span>
+                                                                            <span class="three-box-value">
+                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                {{job_order.oem_recomentation_labour_amount}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li class="wid-50">
+                                                                        <div class="three-box-content text-center">
+                                                                            <span class="three-box-label">
+                                                                                Parts
+                                                                            </span>
+                                                                            <span class="three-box-value">
+                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                {{job_order.oem_recomentation_part_amount}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li class="wid-100">
+                                                                        <div class="three-box-content bg-grey text-center">
+                                                                            <span class="three-box-label">
+                                                                                TOTAL
+                                                                            </span>
+                                                                            <span class="three-box-value">
+                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                {{job_order.oem_recomentation_sub_total}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                                <div class="text-center">
+                                                                    <a href="" class="btn-link color-secondary-dark font-sm">
+                                                                        Edit
+                                                                    </a>
+                                                                </div>
+                                                            </div><!-- Dark Box Body -->
+                                                        </div><!-- Dark Box Wrap -->
+                                                    </li>
+                                                    <li class="flex-12 flex-md-4">
+                                                        <div class="dark-box">
+                                                            <div class="dark-box-header opacity-light">
+                                                                Payable Labour & Parts
+                                                            </div><!-- Dark Box Header -->
+                                                            <div class="dark-box-body">
+                                                                <ul class="three-box-list">
+                                                                    <li class="wid-50">
+                                                                        <div class="three-box-content text-center">
+                                                                            <span class="three-box-label">
+                                                                                Labour
+                                                                            </span>
+                                                                            <span class="three-box-value">
+                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                {{job_order.additional_rot_parts_labour_amount}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li class="wid-50">
+                                                                        <div class="three-box-content text-center">
+                                                                            <span class="three-box-label">
+                                                                                Parts
+                                                                            </span>
+                                                                            <span class="three-box-value">
+                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                {{job_order.additional_rot_parts_part_amount}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li class="wid-100">
+                                                                        <div class="three-box-content bg-grey text-center">
+                                                                            <span class="three-box-label">
+                                                                                TOTAL
+                                                                            </span>
+                                                                            <span class="three-box-value">
+                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                {{job_order.additional_rot_parts_sub_total}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                                <div class="text-center">
+                                                                    <a href="" class="btn-link color-secondary-dark font-sm">
+                                                                        Edit
+                                                                    </a>
+                                                                </div>
+                                                            </div><!-- Dark Box Body -->
+                                                        </div><!-- Dark Box Wrap -->
+                                                    </li>
+                                                    <li class="flex-12 flex-md-4">
+                                                        <div class="dark-box">
+                                                            <div class="dark-box-header">
+                                                                Total Estimate
+                                                            </div><!-- Dark Box Header -->
+                                                            <div class="dark-box-body">
+                                                                <ul class="three-box-list">
+                                                                    <li class="wid-50">
+                                                                        <div class="three-box-content text-center">
+                                                                            <span class="three-box-label">
+                                                                                Labour
+                                                                            </span>
+                                                                            <span class="three-box-value">
+                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                {{job_order.total_estimate_labour_amount}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li class="wid-50">
+                                                                        <div class="three-box-content text-center">
+                                                                            <span class="three-box-label">
+                                                                                Parts
+                                                                            </span>
+                                                                            <span class="three-box-value">
+                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                {{job_order.total_estimate_parts_amount}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                    <li class="wid-100">
+                                                                        <div class="three-box-content bg-red text-center">
+                                                                            <span class="three-box-label">
+                                                                                TOTAL
+                                                                            </span>
+                                                                            <span class="three-box-value">
+                                                                                <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-white.svg" alt="Rupee" />
+                                                                                {{job_order.total_estimate_amount}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                                <div class="text-center">
+                                                                    <a href="" class="btn-link font-sm">
+                                                                        Amount Exclusive of Taxes
+                                                                    </a>
+                                                                </div>
+                                                            </div><!-- Dark Box Body -->
+                                                        </div><!-- Dark Box Wrap -->
+                                                    </li>
+                                                </ul><!-- Flex List -->
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Estimated Delivery Date & Time <sup class="mandatory">*</sup></label>
+                                                    <div class="input-group date" moment-picker="ctrl.component" format="DD-MM-YYYY LT">
+                                                        <input name="estimated_delivery_date" class="form-control time-picker-form-contol" placeholder="Select a Date & time" ng-model="ctrl.component">
+                                                        <span class="input-group-addon">
+                                                            <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                        </span>
+                                                    </div><!-- Input Group -->
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <div class="common-checkbox type-2">
+                                                        <input type="checkbox" id="check_agree" ng-click="$ctrl.checkbox()" />
+                                                        <label for="check_agree">Customer Agreed?</label>
+                                                        <input type="hidden" name="is_customer_agreed" id="is_customer_agreed"/>
+                                                    </div>
+                                                </div><!-- Feild -->
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                               <button type="submit" class="btn btn-red">
+                                                            Save & Close
+                                                        </button>
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </form>
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xs" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title">Search Vehicle</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Registration Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Customer Code <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>VIN Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
