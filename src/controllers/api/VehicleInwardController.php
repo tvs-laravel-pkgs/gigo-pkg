@@ -774,7 +774,9 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
-
+			$job_order_parts = JobOrderPart::where('job_order_id',$r->id)->first();
+			$job_order_repair_orders = JobOrderRepairOrder::where('job_order_id',$r->id)->first();
+            if (!$job_order_parts) {
 			$part_details = Part::with([
 				'uom',
 				'taxCode',
@@ -786,10 +788,22 @@ class VehicleInwardController extends Controller {
 				'taxCode',
 				'skillLevel',
 			])->get();
+		    }
+		    else
+		    {
+		    $part_details = JobOrderPart::select('parts.id as id','parts.name','parts.code','job_order_parts.rate','job_order_parts.qty','job_order_parts.amount')
+		    ->leftJoin('parts','parts.id','job_order_parts.part_id','job_order_parts.id as del_part_id')->where('job_order_parts.job_order_id',$r->id)->get();
+
+		    $labour_details = JobOrderRepairOrder::select('repair_orders.id','job_order_repair_orders.amount','repair_orders.hours','repair_orders.code','repair_orders.name as repair_order_name','repair_order_types.short_name','repair_order_types.name','job_order_repair_orders.remarks','job_order_repair_orders.observation','job_order_repair_orders.action_taken','job_order_repair_orders.id as job_repair_order_id')
+		    ->leftJoin('repair_orders','repair_orders.id','job_order_repair_orders.repair_order_id')
+		    ->leftJoin('repair_order_types','repair_order_types.id','repair_orders.type_id')
+		    ->where('job_order_repair_orders.job_order_id',$r->id)->get();
+		    }
 
 			$parts_rate = 0;
 			$labour_amount = 0;
 			$total_amount = 0;
+
 			if ($labour_details) {
 				foreach ($labour_details as $key => $labour) {
 					$labour_amount += $labour->amount;
@@ -804,10 +818,14 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
+				'job_order_id' => $r->id,
 				'part_details' => $part_details,
 				'labour_details' => $labour_details,
 				'total_amount' => number_format($total_amount, 2),
+				'labour_amount' => number_format($labour_amount, 2),
+				'parts_rate' => number_format($parts_rate, 2),
 			]);
+
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
@@ -849,11 +867,11 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:repair_orders,id',
 				],
-				'job_order_repair_orders.*.qty' => [
+				/*'job_order_repair_orders.*.qty' => [
 					'required',
 					'numeric',
 					'regex:/^\d+(\.\d{1,2})?$/',
-				],
+				],*/
 				'job_order_repair_orders.*.amount' => [
 					'required',
 					'numeric',
@@ -870,12 +888,19 @@ class VehicleInwardController extends Controller {
 			}
 
 			DB::beginTransaction();
+            
+
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
 				//dd($request->job_order_parts);
 				//issue: saravanan - is_recommended_by_oem save missing. save default 1.
 				foreach ($request->job_order_parts as $key => $part) {
 					//dd($part['part_id']);
+					if(isset($repair['del_part_id']))
+                   {
+                   	JobOrderPart::where('id', '!=', $repair['del_part_id'])->delete();
+                   }
+
 					$job_order_part = JobOrderPart::firstOrNew([
 						'part_id' => $part['part_id'],
 						'job_order_id' => $request->job_order_id,
@@ -892,6 +917,10 @@ class VehicleInwardController extends Controller {
 			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
+                   if(isset($repair['delete_job_repair_order_id']))
+                   {
+                   	JobOrderRepairOrder::where('id', '!=', $repair['delete_job_repair_order_id'])->delete();
+                   }
 					$job_order_repair_order = JobOrderRepairOrder::firstOrNew([
 						'repair_order_id' => $repair['repair_order_id'],
 						'job_order_id' => $request->job_order_id,
@@ -1938,15 +1967,15 @@ class VehicleInwardController extends Controller {
 
 	//ESTIMATE SAVE
 	public function saveEstimate(Request $request) {
-		// dd($request->all());
+		//dd($request->all());
 		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
-				'job_order_id' => [
+				/*'job_order_id' => [
 					'required',
 					'integer',
 					'exists:job_orders,id',
-				],
+				],*/
 				'estimated_delivery_date' => [
 					'required',
 					// 'date_format:d/m/Y h:i A', //NOT ACCEPT THIS FORMAT
@@ -1968,7 +1997,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$job_order = jobOrder::find($request->job_order_id);
+			$job_order = jobOrder::find(4);
 			$job_order->estimated_delivery_date = $date = date('Y-m-d H:i', strtotime(str_replace('/', '-', $request->estimated_delivery_date)));
 			$job_order->is_customer_agreed = $request->is_customer_agreed;
 			$job_order->updated_by_id = Auth::user()->id;
