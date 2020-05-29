@@ -489,7 +489,7 @@ class VehicleInwardController extends Controller {
 			}
 			$job_order->fill($request->all());
 			$job_order->save();
-	
+
 			//issue : saravanan - save attachment code optimisation
 
 			//CREATE DIRECTORY TO STORAGE PATH
@@ -549,7 +549,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			// issue : saravanan - use one get list function. Field type id condition missing
-			$params['field_type_id']=11;
+			$params['field_type_id'] = 11;
 			$extras = [
 				'inventory_type_list' => VehicleInventoryItem::getList($params),
 			];
@@ -761,9 +761,20 @@ class VehicleInwardController extends Controller {
 	}
 	//ScheduleMaintenance Form Data
 
-	public function getScheduleMaintenanceFormData() {
+	public function getScheduleMaintenanceFormData(Request $r) {
 		// dd($id);
 		try {
+			$job_order = JobOrder::find($r->id);
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
+				]);
+			}
+
 			$part_details = Part::with([
 				'uom',
 				'taxCode',
@@ -800,8 +811,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -851,7 +864,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -900,8 +913,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1451,7 +1466,7 @@ class VehicleInwardController extends Controller {
 		try {
 			$job_order = JobOrder::with([
 				'customerVoices',
-			])->find($r->job_order_id);
+			])->find($r->id);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -1460,6 +1475,12 @@ class VehicleInwardController extends Controller {
 						'Job Order Not Found',
 					],
 				]);
+			}
+
+			if ($job_order->customerVoices) {
+				$action = 'edit';
+			} else {
+				$action = 'add';
 			}
 
 			$customer_voice_list = CustomerVoice::where('company_id', Auth::user()->company_id)
@@ -1471,6 +1492,7 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'extras' => $extras,
+				'action' => $action,
 				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
@@ -1545,7 +1567,7 @@ class VehicleInwardController extends Controller {
 	//ROAD TEST OBSERVATION GET FORM DATA
 	public function getRoadTestObservationFormData(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->job_order_id);
+			$job_order = JobOrder::find($r->id);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -1663,7 +1685,7 @@ class VehicleInwardController extends Controller {
 	//EXPERT DIAGNOSIS REPORT GET FORM DATA
 	public function getExpertDiagnosisReportFormData(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->job_order_id);
+			$job_order = JobOrder::find($r->id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -1750,7 +1772,7 @@ class VehicleInwardController extends Controller {
 		try {
 			$job_order = JobOrder::with([
 				'vehicleInspectionItems',
-			])->find($r->job_order_id);
+			])->find($r->id);
 
 			if (!$job_order) {
 				return response()->json([
