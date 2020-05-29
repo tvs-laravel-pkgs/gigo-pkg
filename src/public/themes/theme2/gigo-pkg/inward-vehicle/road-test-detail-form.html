@@ -31,68 +31,97 @@
                         <!-- TAB PANEL -->
                         <div class="tab-pane fade in active" id="road_test_details" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5 class="color-primary mb-10">
-                                            <b>
-                                                Road Test Observations
-                                            </b>
-                                        </h5>
-                                        <hr class="hr-15">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Road Test Required ?</label>
-                                                    <div class="common-radio-button type-4">
-                                                        <input type="radio" id="radio_yes" name="road-test-required-group" checked="">
-                                                        <label for="radio_yes">Registered</label>
-                                                        <input type="radio" id="radio_no" name="road-test-required-group">
-                                                        <label for="radio_no">Un Registered</label>
-                                                    </div>
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Road Test by</label>
-                                                    <div class="common-radio-button type-4">
-                                                        <input type="radio" id="radio_yes" name="road-test-group" checked="">
-                                                        <label for="radio_yes">Registered</label>
-                                                        <input type="radio" id="radio_no" name="road-test-group">
-                                                        <label for="radio_no">Un Registered</label>
-                                                    </div>
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Select Driver For Road Test <sup class="mandatory">*</sup></label>
-                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
-                                                        <md-select-header class="demo-select-header">
-                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
-                                                        </md-select-header>
-                                                        <md-optgroup label="drinks">
-                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
-                                                        </md-optgroup>
-                                                    </md-select>
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Road Test Observations <sup class="mandatory">*</sup></label>
-                                                    <textarea class="form-control" rows="4" placeholder="Enter Observations"></textarea>
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                        </div><!-- Row -->
-                                    </div><!-- Column -->
-                                    <div class="tab-pane-footer">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <a class="btn btn-red">Save & Close</a>
-                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                <form id="road_test_form">
+                                    <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Road Test Observations
+                                                </b>
+                                            </h5>
+                                            <hr class="hr-15">
+                                            <div class="row">
+                                                <div class="col-md-4" id="road_test_required">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Road Test Required ?
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="registered" name="road-test-required-group" checked="">
+                                                            <label for="registered">
+                                                                Registered
+                                                            </label>
+                                                            <input type="radio" id="unregistered" name="road-test-required-group">
+                                                            <label for="unregistered">
+                                                                Un Registered
+                                                            </label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" id="road_test_by">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Road Test by
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="radio_yes" name="road-test-group" checked="">
+                                                            <label for="radio_yes">
+                                                            </label>
+                                                            <input type="radio" id="radio_no" name="road-test-group">
+                                                            <label for="radio_no">
+                                                            </label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" id="road_test_driver">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Select Driver For Road Test
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-select ng-model="job_order" placeholder="Select driver" md-on-close="clearSearchDriver()" data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchDriver" type="search" placeholder="Search for a driver.." class="demo-header-searchbox md-text">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="driver_name" ng-repeat="driver_name in job_order.driver_name | filter:searchDriver">
+                                                                    {{driver_name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-6" id="road_test_observation">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Road Test Observations
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <textarea class="form-control" rows="4" placeholder="Enter Observations">
+                                                        </textarea>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <button ng-click="saveRoadTestDetailForm()" class="btn btn-red submit">
+                                                        Save & Close
+                                                    </button>
+                                                    <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
+                                                        Previous
+                                                    </a>
+                                                    <button ng-click="saveRoadTestDetailForm()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        Next
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div><!-- Tab Footer -->
-                                </div><!-- Row -->
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </form>
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
                     </div><!-- Tab Content -->
