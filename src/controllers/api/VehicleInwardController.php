@@ -55,19 +55,17 @@ class VehicleInwardController extends Controller {
 			}
 
 			$vehicle_inward_list_get = JobOrder::company('job_orders')
-			//issue : not optimized
-			// ->with([
-			// 	'status',
-			// 	'vehicle',
-			// 	'vehicle.status',
-			// 	'vehicle.currentOwner',
-			// 	'vehicle.currentOwner.customer',
-			// ])
 				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
 				->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
+				->leftJoin('vehicle_owners', function ($join) {
+					$join->on('vehicle_owners.vehicle_id', 'vehicles.id')
+						->orderBy('vehicle_owners.from_date', 'DESC')
+						->limit(1);
+				})
+				->leftJoin('customers', 'customers.id', 'vehicle_owners.customer_id')
 				->leftJoin('models', 'models.id', 'vehicles.model_id')
 				->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
-				->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.id')
+				->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.policy_id')
 				->join('configs as status', 'status.id', 'gate_logs.status_id')
 				->select([
 					'job_orders.id',
@@ -81,6 +79,7 @@ class VehicleInwardController extends Controller {
 					'job_orders.driver_mobile_number as driver_mobile_number',
 					DB::raw('GROUP_CONCAT(amc_policies.name) as amc_policies'),
 					'status.name as status_name',
+					'customers.name as customer_name',
 				])
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
@@ -88,11 +87,10 @@ class VehicleInwardController extends Controller {
 							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
 					}
 				})
-			//Gate In Completed =>8120
-				->where('gate_logs.status_id', 8120)
+				->where('gate_logs.status_id', 8120) //Gate In Completed
 			// ->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '" . $request->floor_adviser_id . "')")
+			// ->groupBy('amc_policies.id')
 				->groupBy('gate_logs.id');
-			//->get();
 
 			$total_records = $vehicle_inward_list_get->get()->count();
 
@@ -110,8 +108,6 @@ class VehicleInwardController extends Controller {
 				'gate_logs' => $gate_logs,
 				'total_records' => $total_records,
 			]);
-			//issue : exception will not be handled
-			// } catch (\Exception $e) {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
@@ -489,7 +485,7 @@ class VehicleInwardController extends Controller {
 			}
 			$job_order->fill($request->all());
 			$job_order->save();
-	
+
 			//issue : saravanan - save attachment code optimisation
 
 			//CREATE DIRECTORY TO STORAGE PATH
@@ -549,7 +545,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			// issue : saravanan - use one get list function. Field type id condition missing
-			$params['field_type_id']=11;
+			$params['field_type_id'] = 11;
 			$extras = [
 				'inventory_type_list' => VehicleInventoryItem::getList($params),
 			];
@@ -1505,6 +1501,11 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
+			if ($job_order->customerVoices->count() > 0) {
+				$action = 'edit';
+			} else {
+				$action = 'add';
+			}
 
 			$customer_voice_list = CustomerVoice::where('company_id', Auth::user()->company_id)
 				->get();
@@ -1515,6 +1516,7 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'extras' => $extras,
+				'action' => $action,
 				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
@@ -1558,7 +1560,7 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-
+			
 			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->customerVoices()->sync([]);
 			if (!empty($request->customer_voices)) {
@@ -1861,7 +1863,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1886,24 +1888,43 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
 
 	//ESTIMATE GET FORM DATA
-	public function getEstimateFormData($id) {
+	public function getEstimateFormData(Request $r) {
 		try {
-			//issue: relation naming
-			$gate_log_detail = GateLog::with([
+			$job_order = JobOrder::with([
 				'vehicle',
 				'vehicle.model',
-				'jobOrder',
-				'jobOrder.getEomRecomentation',
-				'jobOrder.getAdditionalRotAndParts',
-			])
-				->find($id);
+				'jobOrderRepairOrders',
+				'jobOrderParts',
+			])->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
+				]);
+			}
+
+			// //issue: relation naming
+			// $gate_log_detail = GateLog::with([
+			// 	'vehicle',
+			// 	'vehicle.model',
+			// 	'jobOrder',
+			// 	'jobOrder.getEomRecomentation',
+			// 	'jobOrder.getAdditionalRotAndParts',
+			// ])
+			// 	->find($id);
 
 			$oem_recomentaion_labour_amount = 0;
 			$additional_rot_and_parts_labour_amount = 0;
@@ -1959,8 +1980,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
