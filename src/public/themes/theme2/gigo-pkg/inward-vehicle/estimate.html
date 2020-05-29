@@ -19,7 +19,7 @@
         <div class="page-tab-form pb-70">
             <job-order-header></job-order-header>
             <div class="tab-form-wrap type-2">
-                <inward-tabs ng-init="active_tab = 'estimate_details'"></inward-tabs>
+                <inward-tabs ng-init="active_tab = 'estimate-details'"></inward-tabs>
                 <div class="tab-form-body">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
@@ -189,7 +189,7 @@
                                                 <div class="form-group">
                                                     <label>Estimated Delivery Date & Time <sup class="mandatory">*</sup></label>
                                                     <div class="input-group date" moment-picker="ctrl.component" format="DD-MM-YYYY LT">
-                                                        <input name="estimated_delivery_date" class="form-control time-picker-form-contol" placeholder="Select a Date & time" ng-model="ctrl.component">
+                                                        <input name="estimated_delivery_date" value="{{job_order.estimated_delivery_date}}" class="form-control time-picker-form-contol" placeholder="Select a Date & time" ng-model="ctrl.component">
                                                         <span class="input-group-addon">
                                                             <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                         </span>

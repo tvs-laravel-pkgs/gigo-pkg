@@ -42,6 +42,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//DMS CHECKLIST SAVE
 		Route::post('vehicle-inward/dms-checklist/save', 'VehicleInwardController@saveDmsCheckList');
+		Route::post('vehicle-inward/dms-checklist/get-form-data', 'VehicleInwardController@getDmsCheckListFormData');
 
 		//SCHEDULE MANINTENCE GET FORM DATA AND SAVE
 		Route::post('vehicle-inward/schedule-maintenance/get-form-data', 'VehicleInwardController@getScheduleMaintenanceFormData');

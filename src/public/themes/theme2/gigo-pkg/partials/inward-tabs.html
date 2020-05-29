@@ -33,22 +33,22 @@
                         Road Test Observations
                     </a>
                 </li>
-                <li>
+                <li ng-class="{active:active_tab == 'expert-diagnosis-detail'}">
                     <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_order_id}}" class="filter">
                         Expert Diagnosis Report
                     </a>
                 </li>
-                <li>
+                <li ng-class="{active:active_tab == 'inspection-detail'}">
                     <a href=".#!/inward-vehicle/inspection-detail/form/{{job_order_id}}" class="filter">
                         Vehicle Inspection Report
                     </a>
                 </li>
-                <li>
+                <li ng-class="{active:active_tab == 'dms-checklist'}">
                     <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="filter">
                         DMS Checklist
                     </a>
                 </li>
-                <li>
+                <li ng-class="{active:active_tab == 'scheduled-maintenance'}">
                     <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="filter">
                         Scheduled Maintenance
                     </a>
@@ -58,7 +58,7 @@
                         Payable Labour & Parts
                     </a>
                 </li>
-                <li>
+                <li ng-class="{active:active_tab == 'estimate-details'}">
                     <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="filter">
                         Estimate
                     </a>

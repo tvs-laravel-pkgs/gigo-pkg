@@ -1,4 +1,4 @@
-<!-- Content Wrap -->
+Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -27,7 +27,7 @@
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                      <form id="form">
-                                        <input type="hidden" name="job_order_id" value="4"> 
+                                        <input type="hidden" name="job_order_id" value="{{attachment.job_order_id}}"> 
                                     <div class="col-md-12">
                                         <h5 class="color-primary mb-10"><b>DMS Check list</b></h5>
                                         <hr class="hr-15"><!-- Separater -->
@@ -46,7 +46,7 @@
                                                         <div class="form-group">
                                                             <label>Eligible Upto</label>
                                                             <div class="input-group date" data-provide="datepicker">
-                                                                <input type="text" name="warranty_expiry_date" class="form-control" placeholder="Select Invoice Date" />
+                                                                <input type="text" value="{{attachment.ewp_expiry_date}}" name="warranty_expiry_date" class="form-control" placeholder="Select Invoice Date" />
                                                                 <div class="input-group-addon">
                                                                     <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                                 </div>
@@ -69,7 +69,7 @@
                                                         <div class="form-group">
                                                             <label>Eligible Upto</label>
                                                             <div class="input-group date" data-provide="datepicker">
-                                                                <input type="text" name="ewp_expiry_date" class="form-control" placeholder="Select Invoice Date" />
+                                                                <input type="text" name="ewp_expiry_date" value="{{attachment.warranty_expiry_date}}"class="form-control" placeholder="Select Invoice Date" />
                                                                 <div class="input-group-addon">
                                                                     <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                                 </div>
@@ -220,11 +220,19 @@
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <button type="submit" class="btn btn-red">
+                                                <button type="submit" ng-click="saveDms()" class="btn btn-red">
                                                             Save & Close
                                                         </button>
-                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+
+                                                         <a href=".#!/inward-vehicle/inspection-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
+                                                        Previous
+                                                    </a>
+                                                    <button ng-click="saveDms()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        Next
+                                                    </button>
+
+                                               <!--  <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a> -->
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->
@@ -274,4 +282,4 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->
-<!-- Modal -->
+<!-- Modal

@@ -666,6 +666,32 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	
+
+	//DMS GET FORM DATA
+	public function getDmsCheckListFormData(Request $r) {
+		try {
+			
+			$attachment = JobOrder::
+				with([
+				'warrentyPolicyAttachment',
+				'EWPAttachment',
+				'AMCAttachment',
+			])->find($r->id);
+
+			return response()->json([
+				'success' => true,
+				'attachment' => $attachment,
+			]);
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => [$e->getMessage()],
+			]);
+		}
+	}
+
 	//DMS CHECKLIST SAVE
 	public function saveDmsCheckList(Request $request) {
 		//dd($request->all());
@@ -2023,7 +2049,7 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-			
+
 			$job_order = jobOrder::find($request->job_order_id);
 			$job_order->estimated_delivery_date = $date = date('Y-m-d H:i', strtotime(str_replace('/', '-', $request->estimated_delivery_date)));
 			$job_order->is_customer_agreed = $request->is_customer_agreed;
