@@ -340,6 +340,9 @@ class VehicleInwardController extends Controller {
 					'vehicle.lastJobOrder',
 					'vehicle.lastJobOrder.jobCard',
 					'type',
+					'quoteType',
+					'serviceType',
+					'kmReadingType',
 				])
 				->select([
 					'job_orders.*',
@@ -476,26 +479,26 @@ class VehicleInwardController extends Controller {
 
 			//issue : saravanan - created_by_id not saved
 			//JOB ORDER SAVE
-			$job_order = JobOrder::firstOrNew([
-				'gate_log_id' => $request->gate_log_id,
-				'company_id' => Auth::user()->company_id,
-			]);
-			$job_order->number = mt_rand(1, 10000);
-			$job_order->fill($request->all());
-			$job_order->company_id = Auth::user()->company_id;
-			$job_order->save();
-			if ($job_order->exists) {
-				$job_order->updated_by_id = Auth::user()->id;
-				$job_order->updated_at = Carbon::now();
-			} else {
-				$job_order->created_by_id = Auth::user()->id;
-				$job_order->created_at = Carbon::now();
-			}
+			// $job_order = JobOrder::firstOrNew([
+			// 	'gate_log_id' => $request->gate_log_id,
+			// 	'company_id' => Auth::user()->company_id,
+			// ]);
+			// $job_order->number = mt_rand(1, 10000);
+			// $job_order->fill($request->all());
+			// $job_order->company_id = Auth::user()->company_id;
+			// $job_order->save();
+			// if ($job_order->exists) {
+			// 	$job_order->updated_by_id = Auth::user()->id;
+			// 	$job_order->updated_at = Carbon::now();
+			// } else {
+			// 	$job_order->created_by_id = Auth::user()->id;
+			// 	$job_order->created_at = Carbon::now();
+			// }
 			//dump($job_order->id);
 			//Number Update
-			$number = sprintf('%03' . 's', $job_order->id);
-			$job_order->number = "JO-" . $number;
-			$job_order->save();
+			// $number = sprintf('%03' . 's', $job_order->id);
+			// $job_order->number = "JO-" . $number;
+			// $job_order->save();
 
 			//issue : saravanan - save attachment code optimisation
 
@@ -532,14 +535,13 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'message' => 'Job order saved successfully!!',
+				'message' => 'Order Detail saved successfully!!',
 			]);
 
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 			]);
 		}
 	}
@@ -1588,24 +1590,6 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		DB::beginTransaction();
 		try {
-			//issue: Vijay - No need for another validation for road_test_performed_by_id field.
-			if ($request->road_test_done_by_id == 8101) {
-				// EMPLOYEE
-				$validator_road_test = Validator::make($request->all(), [
-					'road_test_performed_by_id' => [
-						'required',
-						'exists:users,id',
-						'integer',
-					],
-				]);
-				if ($validator_road_test->fails()) {
-					return response()->json([
-						'success' => false,
-						'message' => 'Validation Error',
-						'errors' => $validator_road_test->errors()->all(),
-					]);
-				}
-			}
 			$validator = Validator::make($request->all(), [
 				'is_road_test_required' => [
 					'required',
@@ -1622,6 +1606,11 @@ class VehicleInwardController extends Controller {
 					'exists:configs,id',
 					'integer',
 				],
+				'road_test_performed_by_id' => [
+					'nullable',
+					'integer',
+					'exists:users,id',
+				],
 				'road_test_report' => [
 					'required',
 					'string',
@@ -1634,6 +1623,18 @@ class VehicleInwardController extends Controller {
 					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
+			}
+			//EMPLOYEE
+			if ($request->road_test_done_by_id == 8101) {
+				if (!$request->road_test_performed_by_id) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'The road test performed by id field is required.',
+						],
+					]);
+				}
 			}
 
 			$job_order = JobOrder::find($request->job_order_id);
@@ -1798,7 +1799,7 @@ class VehicleInwardController extends Controller {
 
 	//VEHICLE INSPECTION SAVE
 	public function saveVehicleInspection(Request $request) {
-		// dd($request->all());
+		//dd($request->all());
 		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [

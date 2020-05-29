@@ -19,10 +19,13 @@ app.component('inwardVehicleCardList', {
             return false;
         }
 
+
+
         $scope.clear_search = function() {
             $('#search').val('');
         }
 
+        //HelperService.isLoggedIn()
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $element.find('input').on('keydown', function(ev) {
@@ -244,6 +247,340 @@ app.component('inwardVehicleList', {
         $rootScope.loading = false;
     }
 });
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+//Vehicle Diagonis Details
+app.component('inwardVehicleExportDiagnosisDetails', {
+    templateUrl: inward_vehicle_export_diagnosis_details_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/expert-diagnosis-report/get-form-data',
+                    method: "POST",
+                    data: {
+                        job_order_id: $routeParams.job_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Save Form Data 
+        var form_id = '#form';
+        var v = jQuery(form_id).validate({
+            ignore: '',
+            rules: {
+                'expert_diagnosis_report': {
+                    required: true,
+                },
+                'expert_diagnosis_report_by_id': {
+                    required: true,
+                },
+            },
+            messages: {
+
+            },
+            invalidHandler: function(event, validator) {
+                custom_noty('error', 'You have errors, Please check all tabs');
+            },
+            submitHandler: function(form) {
+                let formData = new FormData($(form_id)[0]);
+                $('.submit').button('loading');
+                $.ajax({
+                        url: base_url + '/api/vehicle-inward/expert-diagnosis-report/save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            $('.submit').button('reset');
+                            showErrorNoty(res);
+                            return;
+                        }
+                        custom_noty('success', res.message);
+                        $location.path('/inward-vehicle/expert-diagnosis-detail/' + $scope.job_order.id);
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        $('.submit').button('reset');
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
+        });
+
+        $scope.showVehicleForm = function() {
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
+        }
+    }
+});
+
+
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+//Vehicle Inspection Details
+app.component('inwardVehicleInspectionDetail', {
+    templateUrl: inward_vehicle_inspection_detail_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/vehicle-inspection/get-form-data',
+                    method: "POST",
+                    data: {
+                        job_order_id: $routeParams.job_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Save Form Data 
+        var form_id = '#form';
+        var v = jQuery(form_id).validate({
+            ignore: '',
+            rules: {
+                'expert_diagnosis_report': {
+                    required: true,
+                },
+                'expert_diagnosis_report_by_id': {
+                    required: true,
+                },
+            },
+            messages: {
+
+            },
+            invalidHandler: function(event, validator) {
+                custom_noty('error', 'You have errors, Please check all tabs');
+            },
+            submitHandler: function(form) {
+                let formData = new FormData($(form_id)[0]);
+                $('.submit').button('loading');
+                $.ajax({
+                        url: base_url + '/api/vehicle-inward/vehicle-inspection/save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            $('.submit').button('reset');
+                            showErrorNoty(res);
+                            return;
+                        }
+                        custom_noty('success', res.message);
+                        $location.path('/inward-vehicle/inspection-detail/' + $scope.job_order.id);
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        $('.submit').button('reset');
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
+        });
+
+        $scope.showVehicleForm = function() {
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
+        }
+    }
+});
+
+
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+//DMS Check list
+app.component('inwardVehicleDmsCheckList', {
+    templateUrl: inward_vehicle_dms_checklist_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/expert-diagnosis-report/get-form-data',
+                    method: "POST",
+                    data: {
+                        job_order_id: $routeParams.job_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        self.checkbox = function() {
+            if ($("#check_verify").prop('checked')) {
+                $('#check_val').val(1);
+            } else {
+                $('#check_val').val(0);
+            }
+
+        }
+
+        //Save Form Data 
+        var form_id = '#form';
+        var v = jQuery(form_id).validate({
+            ignore: '',
+            rules: {
+                'warranty_expiry_date': {
+                    required: true,
+                },
+                'ewp_expiry_date': {
+                    required: true,
+                },
+                'warranty_expiry_attachment': {
+                    required: true,
+                },
+                'ewp_expiry_attachment': {
+                    required: true,
+                },
+                'membership_attachment': {
+                    required: true,
+                },
+            },
+            messages: {
+
+            },
+            invalidHandler: function(event, validator) {
+                custom_noty('error', 'You have errors, Please check all tabs');
+            },
+            submitHandler: function(form) {
+                let formData = new FormData($(form_id)[0]);
+                $('.submit').button('loading');
+                $.ajax({
+                        url: base_url + '/api/save-dms-checklist',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            $('.submit').button('reset');
+                            showErrorNoty(res);
+                            return;
+                        }
+                        custom_noty('success', res.message);
+                        $location.path('/inward-vehicle/dms-checklist/' + $scope.job_order.id);
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        $('.submit').button('reset');
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
+        });
+
+
+        $scope.showVehicleForm = function() {
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
+        }
+    }
+});
+
 
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
@@ -891,8 +1228,163 @@ app.component('inwardVehicleOrderDetailForm', {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.component('inwardVehicleVocDetail', {
-    templateUrl: inward_vehicle_voc_detail_template_url,
+app.component('inwardVehicleInventoryDetailForm', {
+    templateUrl: inward_vehicle_inventory_detail_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        //for md-select search
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $rootScope.loading = true;
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/inventory-detail/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                })
+                .done(function(res) {
+                    $rootScope.loading = false;
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Save Form Data 
+        $scope.saveInventoryDetailForm = function() {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'driver_name': {
+                        required: true,
+                    },
+                    'driver_mobile_number': {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 10,
+                    },
+                    'type_id': {
+                        required: true,
+                    },
+                    'quote_type_id': {
+                        required: true,
+                    },
+                    'service_type_id': {
+                        required: true,
+                    },
+                    'km_reading': {
+                        required: true,
+                    },
+                    'km_reading_type_id': {
+                        required: true,
+                    },
+                    'contact_number': {
+                        required: true,
+                    },
+                    'driver_license_attachment': {
+                        required: true,
+                    },
+                    'insuarance_attachment': {
+                        required: true,
+                    },
+                    'rc_book_attachment': {
+                        required: true,
+                    },
+                    'driver_license_expiry_date': {
+                        required: true,
+                    },
+                    'insurance_expiry_date': {
+                        required: true,
+                    },
+                },
+                messages: {
+                    'short_name': {
+                        minlength: 'Minimum 3 Characters',
+                        maxlength: 'Maximum 32 Characters',
+                    },
+                    'name': {
+                        minlength: 'Minimum 3 Characters',
+                        maxlength: 'Maximum 128 Characters',
+                    },
+                    'description': {
+                        minlength: 'Minimum 3 Characters',
+                        maxlength: 'Maximum 255 Characters',
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $rootScope.loading = true;
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/inventory-detail/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $rootScope.loading = false;
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $location.path('/inward-vehicle/job-order-form/4');
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $rootScope.loading = false;
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        /* Dropdown Arrow Function */
+        arrowDropdown();
+
+        /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
+
+        /* Range Slider Function */
+        rangeSliderChange();
+
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.component('inwardVehicleVocDetailForm', {
+    templateUrl: inward_vehicle_voc_detail_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         //for md-select search
         $element.find('input').on('keydown', function(ev) {
@@ -1059,8 +1551,8 @@ app.component('inwardVehicleVocDetail', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.component('inwardVehicleRoadTestDetail', {
-    templateUrl: inward_vehicle_road_test_detail_template_url,
+app.component('inwardVehicleRoadTestDetailForm', {
+    templateUrl: inward_vehicle_road_test_detail_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         //for md-select search
         $element.find('input').on('keydown', function(ev) {
