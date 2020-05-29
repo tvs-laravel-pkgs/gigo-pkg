@@ -20,11 +20,11 @@ class VehicleOwner extends Model {
 		["vehicle_id", "customer_id", "from_date", "ownership_id"]
 	;
 
-	public function getDateOfJoinAttribute($value) {
+	public function getFromDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 
-	public function setDateOfJoinAttribute($date) {
+	public function setFromDateAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
