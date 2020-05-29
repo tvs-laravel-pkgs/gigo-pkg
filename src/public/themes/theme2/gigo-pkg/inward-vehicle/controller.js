@@ -774,7 +774,7 @@ app.component('inwardVehicleEstimateForm', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/expert-diagnosis-report/get-form-data',
+                    url: base_url + '/api/vehicle-inward/estimate/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
@@ -789,7 +789,6 @@ app.component('inwardVehicleEstimateForm', {
                         return;
                     }
                     $scope.job_order = res.job_order;
-                    $scope.extras = res.extras;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -826,7 +825,7 @@ app.component('inwardVehicleEstimateForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: base_url + '/api/save-estimate',
+                        url: base_url + '/api/vehicle-inward/estimate/save',
                         method: "POST",
                         data: formData,
                         beforeSend: function(xhr) {

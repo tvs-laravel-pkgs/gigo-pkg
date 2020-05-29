@@ -27,6 +27,7 @@
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <form id="form" >
+                                        <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                                     <div class="col-md-12">
                                         <h5 class="color-primary mb-10"><b>Estimate</b></h5>
                                         <hr class="hr-15"><!-- Separater -->
@@ -47,7 +48,7 @@
                                                                             </span>
                                                                             <span class="three-box-value">
                                                                                 <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                1000
+                                                                                {{job_order.oem_recomentation_labour_amount}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
@@ -58,7 +59,7 @@
                                                                             </span>
                                                                             <span class="three-box-value">
                                                                                 <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                3000
+                                                                                {{job_order.oem_recomentation_part_amount}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
@@ -69,7 +70,7 @@
                                                                             </span>
                                                                             <span class="three-box-value">
                                                                                 <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                4000
+                                                                                {{job_order.oem_recomentation_sub_total}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
@@ -96,7 +97,7 @@
                                                                             </span>
                                                                             <span class="three-box-value">
                                                                                 <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                1000
+                                                                                {{job_order.additional_rot_parts_labour_amount}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
@@ -107,7 +108,7 @@
                                                                             </span>
                                                                             <span class="three-box-value">
                                                                                 <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                3000
+                                                                                {{job_order.additional_rot_parts_part_amount}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
@@ -118,7 +119,7 @@
                                                                             </span>
                                                                             <span class="three-box-value">
                                                                                 <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                4000
+                                                                                {{job_order.additional_rot_parts_sub_total}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
@@ -145,7 +146,7 @@
                                                                             </span>
                                                                             <span class="three-box-value">
                                                                                 <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                1000
+                                                                                {{job_order.total_estimate_labour_amount}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
@@ -156,7 +157,7 @@
                                                                             </span>
                                                                             <span class="three-box-value">
                                                                                 <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                3000
+                                                                                {{job_order.total_estimate_parts_amount}}
                                                                             </span>
                                                                         </div>
                                                                     </li>
@@ -167,7 +168,7 @@
                                                                             </span>
                                                                             <span class="three-box-value">
                                                                                 <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-white.svg" alt="Rupee" />
-                                                                                4000
+                                                                                {{job_order.total_estimate_amount}}
                                                                             </span>
                                                                         </div>
                                                                     </li>

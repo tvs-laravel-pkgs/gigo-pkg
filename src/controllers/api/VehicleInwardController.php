@@ -1929,8 +1929,10 @@ class VehicleInwardController extends Controller {
 			$oem_recomentaion_labour_amount = 0;
 			$additional_rot_and_parts_labour_amount = 0;
 			//issue: relation naming
-			if ($gate_log_detail->jobOrder->getEomRecomentation) {
-				foreach ($gate_log_detail->jobOrder->getEomRecomentation as $oemrecomentation_labour) {
+			/*if ($job_order->jobOrder->getEomRecomentation) {*/
+
+				foreach ($job_order->jobOrderRepairOrders as $oemrecomentation_labour) {
+
 					if ($oemrecomentation_labour['is_recommended_by_oem'] == 1) {
 						//SCHEDULED MAINTANENCE
 						$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
@@ -1940,13 +1942,14 @@ class VehicleInwardController extends Controller {
 						$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
 					}
 				}
-			}
+			/*}*/
+            
 
 			$oem_recomentaion_part_amount = 0;
 			$additional_rot_and_parts_part_amount = 0;
 			//issue: relation naming
-			if ($gate_log_detail->jobOrder->getAdditionalRotAndParts) {
-				foreach ($gate_log_detail->jobOrder->getAdditionalRotAndParts as $oemrecomentation_labour) {
+			/*if ($gate_log_detail->jobOrder->getAdditionalRotAndParts) {*/
+				foreach ($job_order->jobOrderParts as $oemrecomentation_labour) {
 					if ($oemrecomentation_labour['is_oem_recommended'] == 1) {
 						//SCHEDULED MAINTANENCE
 						$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
@@ -1956,25 +1959,26 @@ class VehicleInwardController extends Controller {
 						$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
 					}
 				}
-			}
+			/*}*/
+
 			//OEM RECOMENTATION LABOUR AND PARTS AND SUB TOTAL
-			$gate_log_detail->oem_recomentation_labour_amount = $oem_recomentaion_labour_amount;
-			$gate_log_detail->oem_recomentation_part_amount = $oem_recomentaion_part_amount;
-			$gate_log_detail->oem_recomentation_sub_total = $oem_recomentaion_labour_amount + $oem_recomentaion_part_amount;
+			$job_order->oem_recomentation_labour_amount = $oem_recomentaion_labour_amount;
+			$job_order->oem_recomentation_part_amount = $oem_recomentaion_part_amount;
+			$job_order->oem_recomentation_sub_total = $oem_recomentaion_labour_amount + $oem_recomentaion_part_amount;
 
 			//ADDITIONAL ROT & PARTS LABOUR AND PARTS AND SUB TOTAL
-			$gate_log_detail->additional_rot_parts_labour_amount = $additional_rot_and_parts_labour_amount;
-			$gate_log_detail->additional_rot_parts_part_amount = $additional_rot_and_parts_part_amount;
-			$gate_log_detail->additional_rot_parts_sub_total = $additional_rot_and_parts_labour_amount + $additional_rot_and_parts_part_amount;
+			$job_order->additional_rot_parts_labour_amount = $additional_rot_and_parts_labour_amount;
+			$job_order->additional_rot_parts_part_amount = $additional_rot_and_parts_part_amount;
+			$job_order->additional_rot_parts_sub_total = $additional_rot_and_parts_labour_amount + $additional_rot_and_parts_part_amount;
 
 			//TOTAL ESTIMATE
-			$gate_log_detail->total_estimate_labour_amount = $oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount;
-			$gate_log_detail->total_estimate_parts_amount = $oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount;
-			$gate_log_detail->total_estimate_amount = (($oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount) + ($oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount));
+			$job_order->total_estimate_labour_amount = $oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount;
+			$job_order->total_estimate_parts_amount = $oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount;
+			$job_order->total_estimate_amount = (($oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount) + ($oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount));
 
 			return response()->json([
 				'success' => true,
-				'gate_log_detail' => $gate_log_detail,
+				'job_order' => $job_order,
 			]);
 
 		} catch (\Exception $e) {
@@ -1994,15 +1998,15 @@ class VehicleInwardController extends Controller {
 		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
-				/*'job_order_id' => [
+				'job_order_id' => [
 					'required',
 					'integer',
 					'exists:job_orders,id',
-				],*/
+				],
 				'estimated_delivery_date' => [
 					'required',
 					// 'date_format:d/m/Y h:i A', //NOT ACCEPT THIS FORMAT
-					'date_format:d-m-Y h:i A',
+					//'date_format:d-m-Y h:i A',
 					'string',
 				],
 				//WAITING FOR CONFIRMATION -- NOT CONFIRMED
@@ -2019,8 +2023,8 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-
-			$job_order = jobOrder::find(4);
+			
+			$job_order = jobOrder::find($request->job_order_id);
 			$job_order->estimated_delivery_date = $date = date('Y-m-d H:i', strtotime(str_replace('/', '-', $request->estimated_delivery_date)));
 			$job_order->is_customer_agreed = $request->is_customer_agreed;
 			$job_order->updated_by_id = Auth::user()->id;
