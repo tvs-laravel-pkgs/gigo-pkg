@@ -2282,4 +2282,44 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
+	//GATE IN DETAIL
+	// public function getGateInDetail(Request $r) {
+	// 	try {
+	// 		$gate_log = GateLog::company()->with([
+	// 			'driverAttachment',
+	// 			'kmAttachment',
+	// 			'vehicleAttachment',
+	// 			'outlet',
+	// 		])
+	// 			->select([
+	// 				'gate_logs.*',
+	// 				DB::raw('DATE_FORMAT(gate_logs.created_at,"%d/%m/%Y") as date'),
+	// 				DB::raw('DATE_FORMAT(gate_logs.created_at,"%h:%i %p") as time'),
+	// 			])
+	// 			->find($r->id);
+
+	// 		if (!$gate_log) {
+	// 			return response()->json([
+	// 				'success' => false,
+	// 				'message' => 'Gate Log Not Found!',
+	// 			]);
+	// 		}
+
+	// 		//Job card details need to get future
+	// 		return response()->json([
+	// 			'success' => true,
+	// 			'gate_log' => $gate_log,
+	// 			'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
+	// 		]);
+
+	// 	} catch (\Exception $e) {
+	// 		return response()->json([
+	// 			'success' => false,
+	// 			'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+	// 		]);
+	// 	}
+	// }
 }
+
+	

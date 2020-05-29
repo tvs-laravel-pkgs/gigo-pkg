@@ -5,6 +5,7 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
+use App\Outlet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -46,6 +47,10 @@ class GateLog extends Model {
 	}
 	public function status() {
 		return $this->belongsTo('App\Config', 'status_id');
+	}
+
+	public function outlet() {
+		return $this->belongsTo('App\Outlet', 'outlet_id');
 	}
 
 	public function driverAttachment() {

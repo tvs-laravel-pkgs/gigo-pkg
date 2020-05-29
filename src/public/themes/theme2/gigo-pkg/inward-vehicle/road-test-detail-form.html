@@ -48,11 +48,11 @@ Content Wrap -->
                                                             Road Test Required ?
                                                         </label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="registered" name="road-test-required-group" value="1" checked="">
+                                                            <input type="radio" id="registered" name="is_road_test_required" value="1" checked="" ng-click="$ctrl.selectRegistered(1)">
                                                             <label for="registered">
                                                                 Registered
                                                             </label>
-                                                            <input type="radio" id="unregistered" name="road-test-required-group" value="0">
+                                                            <input type="radio" id="unregistered" name="is_road_test_required" value="0" ng-click="$ctrl.selectRegistered(0)">
                                                             <label for="unregistered">
                                                                 Un Registered
                                                             </label>
@@ -65,11 +65,11 @@ Content Wrap -->
                                                             Road Test by
                                                         </label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="employee" name="road_test_done_by_id" ng-checked="{{job_order.road_test_done_by_id==8101}}" value="8101">
+                                                            <input type="radio" id="employee" name="road_test_done_by_id" ng-checked="{{job_order.road_test_done_by_id==8101}}" value="8101" ng-click="$ctrl.selectRoadTestBy(8101)">
                                                             <label for="employee">
                                                                 Employee
                                                             </label>
-                                                            <input type="radio" id="customer" name="road_test_done_by_id" ng-checked="{{job_order.road_test_done_by_id==8100}}" value="8100">
+                                                            <input type="radio" id="customer" name="road_test_done_by_id" ng-checked="{{job_order.road_test_done_by_id==8100}}" value="8100" ng-click="$ctrl.selectRoadTestBy(8100)">
                                                             <label for="customer">
                                                                 Customer
                                                             </label>
@@ -82,17 +82,17 @@ Content Wrap -->
                                                             Select Driver For Road Test
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="job_order.employee" placeholder="Select employee" md-on-close="clearSearchDriver()" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select ng-model="job_order.employee.id" placeholder="Select employee" md-on-close="clearSearchDriver()" data-md-container-class="selectdemoSelectHeader">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchDriver" type="search" placeholder="Search for a employee.." class="demo-header-searchbox md-text">
                                                             </md-select-header>
                                                             <md-optgroup>
-                                                                <md-option ng-value="employee" ng-repeat="employee in extras.user_list | filter:searchDriver">
+                                                                <md-option ng-value="employee.id" ng-repeat="employee in extras.user_list | filter:searchDriver">
                                                                     {{employee.name}}
                                                                 </md-option>
                                                             </md-optgroup>
                                                         </md-select>
-                                                        <input type="hidden" name="employee_id" value="{{job_order.employee}}">
+                                                        <input type="text" name="road_test_performed_by_id" value="{{job_order.employee.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-6" id="road_test_observation">
@@ -101,7 +101,7 @@ Content Wrap -->
                                                             Road Test Observations
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <textarea class="form-control" rows="4" placeholder="Enter Observations">
+                                                        <textarea class="form-control" rows="4" placeholder="Enter Observations" name="road_test_report">
                                                         </textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
@@ -110,7 +110,7 @@ Content Wrap -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button ng-click="saveRoadTestDetailForm()" class="btn btn-red submit">
+                                                    <button type="submit" ng-click="saveRoadTestDetailForm()" class="btn btn-red submit">
                                                         Save & Close
                                                     </button>
                                                     <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
