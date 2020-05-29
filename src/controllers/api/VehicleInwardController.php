@@ -59,13 +59,13 @@ class VehicleInwardController extends Controller {
 				->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
 				->leftJoin('vehicle_owners', function ($join) {
 					$join->on('vehicle_owners.vehicle_id', 'vehicles.id')
-						->orderBy('from_date', 'DESC')
+						->orderBy('vehicle_owners.from_date', 'DESC')
 						->limit(1);
 				})
 				->leftJoin('customers', 'customers.id', 'vehicle_owners.customer_id')
 				->leftJoin('models', 'models.id', 'vehicles.model_id')
 				->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
-				->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.id')
+				->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.policy_id')
 				->join('configs as status', 'status.id', 'gate_logs.status_id')
 				->select([
 					'job_orders.id',
@@ -89,6 +89,7 @@ class VehicleInwardController extends Controller {
 				})
 				->where('gate_logs.status_id', 8120) //Gate In Completed
 			// ->whereRaw("IF (`gate_logs`.`status_id` = '8120', `gate_logs`.`floor_adviser_id` IS  NULL, `gate_logs`.`floor_adviser_id` = '" . $request->floor_adviser_id . "')")
+			// ->groupBy('amc_policies.id')
 				->groupBy('gate_logs.id');
 
 			$total_records = $vehicle_inward_list_get->get()->count();
@@ -1834,7 +1835,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1859,24 +1860,43 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
 
 	//ESTIMATE GET FORM DATA
-	public function getEstimateFormData($id) {
+	public function getEstimateFormData(Request $r) {
 		try {
-			//issue: relation naming
-			$gate_log_detail = GateLog::with([
+			$job_order = JobOrder::with([
 				'vehicle',
 				'vehicle.model',
-				'jobOrder',
-				'jobOrder.getEomRecomentation',
-				'jobOrder.getAdditionalRotAndParts',
-			])
-				->find($id);
+				'jobOrderRepairOrders',
+				'jobOrderParts',
+			])->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
+				]);
+			}
+
+			// //issue: relation naming
+			// $gate_log_detail = GateLog::with([
+			// 	'vehicle',
+			// 	'vehicle.model',
+			// 	'jobOrder',
+			// 	'jobOrder.getEomRecomentation',
+			// 	'jobOrder.getAdditionalRotAndParts',
+			// ])
+			// 	->find($id);
 
 			$oem_recomentaion_labour_amount = 0;
 			$additional_rot_and_parts_labour_amount = 0;
@@ -1932,8 +1952,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}

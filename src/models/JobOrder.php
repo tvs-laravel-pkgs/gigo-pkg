@@ -111,7 +111,7 @@ class JobOrder extends Model {
 	}
 
 	public function gateLog() {
-		return $this->hasOne('App\GateLog');
+		return $this->hasOne('App\GateLog', 'job_order_id');
 	}
 
 	public function vehicle() {
