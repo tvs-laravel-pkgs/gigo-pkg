@@ -251,7 +251,7 @@ app.component('inwardVehicleList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 //Vehicle Diagonis Details
-app.component('inwardVehicleExportDiagnosisDetails', {
+app.component('inwardVehicleExportDiagnosisDetailForm', {
     templateUrl: inward_vehicle_export_diagnosis_details_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         $element.find('input').on('keydown', function(ev) {
@@ -356,7 +356,7 @@ app.component('inwardVehicleExportDiagnosisDetails', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 //Vehicle Inspection Details
-app.component('inwardVehicleInspectionDetail', {
+app.component('inwardVehicleInspectionDetailForm', {
     templateUrl: inward_vehicle_inspection_detail_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         $element.find('input').on('keydown', function(ev) {
@@ -462,7 +462,7 @@ app.component('inwardVehicleInspectionDetail', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 //DMS Check list
-app.component('inwardVehicleDmsCheckList', {
+app.component('inwardVehicleDmsCheckListForm', {
     templateUrl: inward_vehicle_dms_checklist_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         $element.find('input').on('keydown', function(ev) {
@@ -485,6 +485,129 @@ app.component('inwardVehicleDmsCheckList', {
             $.ajax({
                     url: base_url + '/api/vehicle-inward/expert-diagnosis-report/get-form-data',
                     method: "POST",
+                    data: {
+                        job_order_id: $routeParams.job_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        self.checkbox = function() {
+            if ($("#check_verify").prop('checked')) {
+                $('#check_val').val(1);
+            } else {
+                $('#check_val').val(0);
+            }
+
+        }
+
+        //Save Form Data 
+        var form_id = '#form';
+        var v = jQuery(form_id).validate({
+            ignore: '',
+            rules: {
+                'warranty_expiry_date': {
+                    required: true,
+                },
+                'ewp_expiry_date': {
+                    required: true,
+                },
+                'warranty_expiry_attachment': {
+                    required: true,
+                },
+                'ewp_expiry_attachment': {
+                    required: true,
+                },
+                'membership_attachment': {
+                    required: true,
+                },
+            },
+            messages: {
+
+            },
+            invalidHandler: function(event, validator) {
+                custom_noty('error', 'You have errors, Please check all tabs');
+            },
+            submitHandler: function(form) {
+                let formData = new FormData($(form_id)[0]);
+                $('.submit').button('loading');
+                $.ajax({
+                        url: base_url + '/api/save-dms-checklist',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            $('.submit').button('reset');
+                            showErrorNoty(res);
+                            return;
+                        }
+                        custom_noty('success', res.message);
+                        $location.path('/inward-vehicle/dms-checklist/' + $scope.job_order.id);
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        $('.submit').button('reset');
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
+        });
+
+
+        $scope.showVehicleForm = function() {
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
+        }
+    }
+});
+
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+//Schedule Maintenance
+app.component('inwardVehicleScheduledMaintenanceForm', {
+    templateUrl: inward_vehicle_schedule_maintenance_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/get-schedule-maintenance-form-data',
+                    method: "GET",
                     data: {
                         job_order_id: $routeParams.job_order_id
                     },
