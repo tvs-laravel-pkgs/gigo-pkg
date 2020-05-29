@@ -21,8 +21,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/order-detail/save', 'VehicleInwardController@saveOrderDetail');
 
 		//VEHICLE GET INVENTORY FORM DATA AND SAVE
-		Route::get('get-inventory-form-data/gate-log/{id}', 'VehicleInwardController@getInventoryFormData');
-		Route::post('save-inventory-item', 'VehicleInwardController@saveInventoryItem');
+		Route::post('vehicle-inward/inventory/get-form-data', 'VehicleInwardController@getInventoryFormData');
+		Route::post('vehicle-inward/inventory/save', 'VehicleInwardController@saveInventoryItem');
 
 		//VOC GET FORM DATA AND SAVE
 		Route::post('vehicle-inward/voc/get-form-data', 'VehicleInwardController@getVocFormData');

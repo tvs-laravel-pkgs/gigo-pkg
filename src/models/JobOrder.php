@@ -123,7 +123,7 @@ class JobOrder extends Model {
 	}
 
 	public function type() {
-		return $this->belongsTo('App\ServiceOrderType', 'type_id');
+		return $this->belongsTo('Abs\GigoPkg\ServiceOrderType', 'type_id');
 	}
 
 	//issue : company condition not required

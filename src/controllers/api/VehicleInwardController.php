@@ -427,22 +427,17 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:service_types,id',
 				],
+
+				/*'outlet_id' => [
+					'required',
+					'integer',
+					'exists:outlets,id',
+				],*/
+
 				'contact_number' => [
 					'nullable',
 					'min:10',
 					'max:10',
-				],
-				'driver_license_attachment' => [
-					'nullable',
-					'mimes:jpeg,jpg,png',
-				],
-				'insuarance_attachment' => [
-					'nullable',
-					'mimes:jpeg,jpg,png',
-				],
-				'rc_book_attachment' => [
-					'nullable',
-					'mimes:jpeg,jpg,png',
 				],
 				'driver_license_expiry_date' => [
 					'nullable',
@@ -452,6 +447,19 @@ class VehicleInwardController extends Controller {
 					'nullable',
 					'date',
 				],
+				'driving_license_image' => [
+
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+				'insurance_image' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+				'rc_book_image' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
 			]);
 
 			if ($validator->fails()) {
@@ -460,46 +468,28 @@ class VehicleInwardController extends Controller {
 				return response()->json([
 					'success' => false,
 					'message' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
+					'errors' => [$validator->errors()->all()],
 				]);
 			}
 
 			DB::beginTransaction();
 
-			//GATE LOG UPDATE
-			$job_order = JobOrder::company()->find($request->job_order_id);
-			if (!$job_order) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Job Order Not Found!',
-				]);
+			//JOB ORDER SAVE
+			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->number = mt_rand(1, 10000);
+			$job_order->fill($request->all());
+			$job_order->company_id = Auth::user()->company_id;
+			$job_order->save();
+			if ($job_order->exists) {
+				$job_order->updated_by_id = Auth::user()->id;
+				$job_order->updated_at = Carbon::now();
+			} else {
+				$job_order->created_by_id = Auth::user()->id;
+				$job_order->created_at = Carbon::now();
 			}
 			$job_order->fill($request->all());
 			$job_order->save();
-
-			//issue : saravanan - created_by_id not saved
-			//JOB ORDER SAVE
-			// $job_order = JobOrder::firstOrNew([
-			// 	'gate_log_id' => $request->gate_log_id,
-			// 	'company_id' => Auth::user()->company_id,
-			// ]);
-			// $job_order->number = mt_rand(1, 10000);
-			// $job_order->fill($request->all());
-			// $job_order->company_id = Auth::user()->company_id;
-			// $job_order->save();
-			// if ($job_order->exists) {
-			// 	$job_order->updated_by_id = Auth::user()->id;
-			// 	$job_order->updated_at = Carbon::now();
-			// } else {
-			// 	$job_order->created_by_id = Auth::user()->id;
-			// 	$job_order->created_at = Carbon::now();
-			// }
-			//dump($job_order->id);
-			//Number Update
-			// $number = sprintf('%03' . 's', $job_order->id);
-			// $job_order->number = "JO-" . $number;
-			// $job_order->save();
-
+	
 			//issue : saravanan - save attachment code optimisation
 
 			//CREATE DIRECTORY TO STORAGE PATH
@@ -507,24 +497,24 @@ class VehicleInwardController extends Controller {
 			Storage::makeDirectory($attachment_path, 0777);
 
 			//SAVE DRIVER PHOTO ATTACHMENT
-			if (!empty($request->driver_license_attachment)) {
-				$attachment = $request->driver_license_attachment;
+			if (!empty($request->driving_license_image)) {
+				$attachment = $request->driving_license_image;
 				$entity_id = $job_order->id;
 				$attachment_of_id = 227; //Job order
 				$attachment_type_id = 251; //Driver License
 				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
 			//SAVE INSURANCE PHOTO ATTACHMENT
-			if (!empty($request->insuarance_attachment)) {
-				$attachment = $request->insuarance_attachment;
+			if (!empty($request->insurance_image)) {
+				$attachment = $request->insurance_image;
 				$entity_id = $job_order->id;
 				$attachment_of_id = 227; //Job order
 				$attachment_type_id = 252; //Vehicle Insurance
 				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
-			//SAVE INSURANCE PHOTO ATTACHMENT
-			if (!empty($request->rc_book_attachment)) {
-				$attachment = $request->rc_book_attachment;
+			//SAVE RC BOOK PHOTO ATTACHMENT
+			if (!empty($request->rc_book_image)) {
+				$attachment = $request->rc_book_image;
 				$entity_id = $job_order->id;
 				$attachment_of_id = 227; //Job order
 				$attachment_type_id = 250; //RC Book
@@ -547,23 +537,26 @@ class VehicleInwardController extends Controller {
 	}
 
 	//INVENTORY
-	public function getInventoryFormData($id) {
+	public function getInventoryFormData(Request $r) {
+		//dd($r->all());
 		try {
-			$gate_log = GateLog::find($id);
-			if (!$gate_log) {
+			$job_order = JobOrder::find($r->id);
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
 				]);
 			}
 			// issue : saravanan - use one get list function. Field type id condition missing
+			$params['field_type_id']=11;
 			$extras = [
-				'inventory_type_list' => VehicleInventoryItem::getInventoryList(),
+				'inventory_type_list' => VehicleInventoryItem::getList($params),
 			];
 
 			return response()->json([
 				'success' => true,
-				'gate_log' => $gate_log,
+				'job_order' => $job_order,
 				'extras' => $extras,
 			]);
 
@@ -576,7 +569,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveInventoryItem(Request $request) {
-		// dd($request->all());
+		//dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -602,7 +595,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -611,8 +604,8 @@ class VehicleInwardController extends Controller {
 			if ($vehicle_inventory_items_count != $vehicle_inventory_unique_items_count) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
-					'message' => 'Inventory items are not unique',
+					'error' => 'Validation Error',
+					'errors' => ['Inventory items are not unique'],
 				]);
 			}
 
@@ -641,7 +634,8 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Job order Not found!',
+					'error' => 'Validation Error',
+					'errors' => ['Job order Not found!'],
 				]);
 			}
 
@@ -670,7 +664,7 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Network Down!',
+				'error' => 'Server Network Down!',
 				'errors' => [$e->getMessage()],
 			]);
 		}
