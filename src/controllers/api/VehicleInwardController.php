@@ -489,7 +489,7 @@ class VehicleInwardController extends Controller {
 			}
 			$job_order->fill($request->all());
 			$job_order->save();
-	
+
 			//issue : saravanan - save attachment code optimisation
 
 			//CREATE DIRECTORY TO STORAGE PATH
@@ -549,7 +549,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			// issue : saravanan - use one get list function. Field type id condition missing
-			$params['field_type_id']=11;
+			$params['field_type_id'] = 11;
 			$extras = [
 				'inventory_type_list' => VehicleInventoryItem::getList($params),
 			];
@@ -1477,6 +1477,12 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			if ($job_order->customerVoices) {
+				$action = 'edit';
+			} else {
+				$action = 'add';
+			}
+
 			$customer_voice_list = CustomerVoice::where('company_id', Auth::user()->company_id)
 				->get();
 			$extras = [
@@ -1486,6 +1492,7 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'extras' => $extras,
+				'action' => $action,
 				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
