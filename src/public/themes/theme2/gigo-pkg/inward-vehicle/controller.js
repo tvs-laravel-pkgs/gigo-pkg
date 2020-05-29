@@ -1214,7 +1214,6 @@ app.component('inwardVehicleOrderDetailForm', {
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 
-
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
         $scope.fetchData = function() {
@@ -1245,7 +1244,7 @@ app.component('inwardVehicleOrderDetailForm', {
 
         //Save Form Data 
         $scope.saveOrderDetailForm = function() {
-            var form_id = '#form';
+            var form_id = '#order_detail_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
@@ -1268,30 +1267,34 @@ app.component('inwardVehicleOrderDetailForm', {
                     },
                     'km_reading': {
                         required: true,
+                        number: true,
                     },
                     'km_reading_type_id': {
                         required: true,
                     },
                     'contact_number': {
                         required: true,
+                        minlength: 10,
+                        maxlength: 10,
                     },
-                    'driver_license_attachment': {
-                        required: true,
+                    'driving_license_image': {
+                        // required: true,
                     },
-                    'insuarance_attachment': {
-                        required: true,
+                    'insurance_image': {
+                        //required: true,
                     },
-                    'rc_book_attachment': {
-                        required: true,
+                    'rc_book_image': {
+                        //required: true,
                     },
                     'driver_license_expiry_date': {
                         required: true,
+
                     },
                     'insurance_expiry_date': {
                         required: true,
                     },
                 },
-                messages: {
+                /*messages: {
                     'short_name': {
                         minlength: 'Minimum 3 Characters',
                         maxlength: 'Maximum 32 Characters',
@@ -1304,9 +1307,9 @@ app.component('inwardVehicleOrderDetailForm', {
                         minlength: 'Minimum 3 Characters',
                         maxlength: 'Maximum 255 Characters',
                     }
-                },
+                },*/
                 invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check all tabs');
+                    custom_noty('error', 'You have errors, Please check all sections');
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
@@ -1326,7 +1329,9 @@ app.component('inwardVehicleOrderDetailForm', {
                                 showErrorNoty(res);
                                 return;
                             }
-                            $location.path('/inward-vehicle/job-order-form/4');
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
+                            $location.path('/inward-vehicle/inventory-detail/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -1349,6 +1354,7 @@ app.component('inwardVehicleOrderDetailForm', {
 
     }
 });
+
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 app.component('inwardVehicleInventoryDetailForm', {
@@ -1375,7 +1381,7 @@ app.component('inwardVehicleInventoryDetailForm', {
         $scope.fetchData = function() {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/inventory-detail/get-form-data',
+                    url: base_url + '/api/vehicle-inward/inventory/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
@@ -1388,6 +1394,7 @@ app.component('inwardVehicleInventoryDetailForm', {
                         return;
                     }
                     $scope.job_order = res.job_order;
+                    console.log('job_order' + res.job_order.id);
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
@@ -1399,50 +1406,12 @@ app.component('inwardVehicleInventoryDetailForm', {
         $scope.fetchData();
 
         //Save Form Data 
-        $scope.saveInventoryDetailForm = function() {
-            var form_id = '#form';
+        $scope.saveInventoryForm = function() {
+            var form_id = '#inventory_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
-                rules: {
+                /*rules: {
                     'driver_name': {
-                        required: true,
-                    },
-                    'driver_mobile_number': {
-                        required: true,
-                        minlength: 10,
-                        maxlength: 10,
-                    },
-                    'type_id': {
-                        required: true,
-                    },
-                    'quote_type_id': {
-                        required: true,
-                    },
-                    'service_type_id': {
-                        required: true,
-                    },
-                    'km_reading': {
-                        required: true,
-                    },
-                    'km_reading_type_id': {
-                        required: true,
-                    },
-                    'contact_number': {
-                        required: true,
-                    },
-                    'driver_license_attachment': {
-                        required: true,
-                    },
-                    'insuarance_attachment': {
-                        required: true,
-                    },
-                    'rc_book_attachment': {
-                        required: true,
-                    },
-                    'driver_license_expiry_date': {
-                        required: true,
-                    },
-                    'insurance_expiry_date': {
                         required: true,
                     },
                 },
@@ -1451,24 +1420,16 @@ app.component('inwardVehicleInventoryDetailForm', {
                         minlength: 'Minimum 3 Characters',
                         maxlength: 'Maximum 32 Characters',
                     },
-                    'name': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 128 Characters',
-                    },
-                    'description': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 255 Characters',
-                    }
-                },
+                },*/
                 invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check all tabs');
+                    custom_noty('error', 'You have errors, Please check all sections');
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
                     $rootScope.loading = true;
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/inventory-detail/save',
+                            url: base_url + '/api/vehicle-inward/inventory/save',
                             method: "POST",
                             data: formData,
                             processData: false,
@@ -1481,7 +1442,9 @@ app.component('inwardVehicleInventoryDetailForm', {
                                 showErrorNoty(res);
                                 return;
                             }
-                            $location.path('/inward-vehicle/job-order-form/4');
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
+                            $location.path('/inward-vehicle/inventory-detail/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {

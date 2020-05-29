@@ -20,37 +20,32 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/order-detail/get-form-data', 'VehicleInwardController@getOrderFormData');
 		Route::post('vehicle-inward/order-detail/save', 'VehicleInwardController@saveOrderDetail');
 
+		//VEHICLE GET INVENTORY FORM DATA AND SAVE
+		Route::post('vehicle-inward/inventory/get-form-data', 'VehicleInwardController@getInventoryFormData');
+		Route::post('vehicle-inward/inventory/save', 'VehicleInwardController@saveInventoryItem');
+
 		//VOC GET FORM DATA AND SAVE
 		Route::post('vehicle-inward/voc/get-form-data', 'VehicleInwardController@getVocFormData');
 		Route::post('vehicle-inward/voc/save', 'VehicleInwardController@saveVoc');
-
-		//VOC GET FORM DATA AND SAVE
-		// Route::get('vehicle-inward/get-voc-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getVocFormData');
-		// Route::post('vehicle-inward/save-voc', 'VehicleInwardController@saveVoc');
-
-		//ROAD TEST OBSERVATION GET FORM DATA AND SAVE
-		Route::get('vehicle-inward/get-road-test-observation-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getRoadTestObservationFormData');
-		Route::post('vehicle-inward/save-road-test-observation', 'VehicleInwardController@saveRoadTestObservation');
-
-		//VEHICLE GATE PASS LIST
-		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');
-		Route::get('view-vehicle-gate-pass/{gate_log_id}', 'VehicleGatePassController@viewVehicleGatePass');
-		Route::post('gate-out-vehicle/save', 'VehicleGatePassController@saveVehicleGateOutEntry');
-
-		//VEHICLE GET JOB ORDER FORM DATA AND SAVE
-		Route::get('get-job-order-form-data/gate-log/{gate_log_id}', 'VehicleInwardController@getJobOrderFormData');
-		Route::post('save-job-order', 'VehicleInwardController@saveJobOrder');
-
-		//VEHICLE GET INVENTORY FORM DATA AND SAVE
-		Route::get('get-inventory-form-data/gate-log/{id}', 'VehicleInwardController@getInventoryFormData');
-		Route::post('save-inventory-item', 'VehicleInwardController@saveInventoryItem');
 
 		//ROAD TEST OBSERVATION GET FORM DATA AND SAVE
 		Route::post('vehicle-inward/road-test-observation/get-form-data', 'VehicleInwardController@getRoadTestObservationFormData');
 		Route::post('vehicle-inward/road-test-observation/save', 'VehicleInwardController@saveRoadTestObservation');
 
+		//EXPERT DIAGNOSIS REPORT GET FORM DATA AND SAVE
+		Route::post('vehicle-inward/expert-diagnosis-report/get-form-data', 'VehicleInwardController@getExpertDiagnosisReportFormData');
+		Route::post('vehicle-inward/expert-diagnosis-report/save', 'VehicleInwardController@saveExpertDiagnosisReport');
+
+		//VEHICLE INSPECTION GET FORM DATA AND SAVE
+		Route::post('vehicle-inward/vehicle-inspection/get-form-data', 'VehicleInwardController@getVehicleInspectiongetFormData');
+		Route::post('vehicle-inward/vehicle-inspection/save', 'VehicleInwardController@saveVehicleInspection');
+
 		//DMS CHECKLIST SAVE
-		Route::post('save-dms-checklist', 'VehicleInwardController@saveDmsCheckList');
+		Route::post('vehicle-inward/dms-checklist/save', 'VehicleInwardController@saveDmsCheckList');
+
+		//SCHEDULE MANINTENCE GET FORM DATA AND SAVE
+		Route::post('vehicle-inward/schedule-maintenance/get-form-data', 'VehicleInwardController@getScheduleMaintenanceFormData');
+		Route::post('vehicle-inward/schedule-maintenance/save', 'VehicleInwardController@saveScheduleMaintenance');
 
 		//ADDTIONAL ROT AND PART GET FORM DATA AND SAVE
 		Route::get('get-addtional-rot-part/{id}', 'VehicleInwardController@addtionalRotPartGetList');
@@ -63,18 +58,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::get('get-part-data/{id}', 'VehicleInwardController@getPartData');
 
 		Route::post('save-addtional-rot-part', 'VehicleInwardController@saveAddtionalRotPart');
-
-		//SCHEDULE MANINTENCE GET FORM DATA AND SAVE
-		Route::get('get-schedule-maintenance-form-data', 'VehicleInwardController@getScheduleMaintenanceFormData');
-		Route::post('save-schedule-maintenance', 'VehicleInwardController@saveScheduleMaintenance');
-
-		//EXPERT DIAGNOSIS REPORT GET FORM DATA AND SAVE
-		Route::post('vehicle-inward/expert-diagnosis-report/get-form-data', 'VehicleInwardController@getExpertDiagnosisReportFormData');
-		Route::post('vehicle-inward/expert-diagnosis-report/save', 'VehicleInwardController@saveExpertDiagnosisReport');
-
-		//VEHICLE INSPECTION GET FORM DATA AND SAVE
-		Route::post('vehicle-inward/vehicle-inspection/get-form-data', 'VehicleInwardController@getVehicleInspectiongetFormData');
-		Route::post('vehicle-inward/vehicle-inspection/save', 'VehicleInwardController@saveVehicleInspection');
 
 		//ESTIMATE GET FORM DATA AND SAVE
 		//issue: Route naming
@@ -167,6 +150,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('save-gate-out-confirm-material-gate-pass', 'MaterialGatePassController@materialGateOutConfirm');
 		//Resend OTP for Material Gate Pass
 		Route::get('material-gate-out-otp-resend/{id}', 'MaterialGatePassController@materialCustomerOtp');
+
+		//VEHICLE GATE PASS LIST
+		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');
+		Route::get('view-vehicle-gate-pass/{gate_log_id}', 'VehicleGatePassController@viewVehicleGatePass');
+		Route::post('gate-out-vehicle/save', 'VehicleGatePassController@saveVehicleGateOutEntry');
 
 	});
 });
