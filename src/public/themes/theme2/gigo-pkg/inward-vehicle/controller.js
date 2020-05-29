@@ -1651,6 +1651,332 @@ app.component('inwardVehicleInventoryDetailForm', {
 
     }
 });
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.component('inwardVehiclePayableLabourPartForm', {
+    templateUrl: inward_vehicle_payable_labour_part_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        //for md-select search
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $rootScope.loading = true;
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/addtional-rot-part/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                })
+                .done(function(res) {
+                    $rootScope.loading = false;
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+                    $scope.part_details = res.part_details;
+                    $scope.labour_details = res.labour_details;
+                    $scope.total_amount = res.total_amount;
+                    $scope.parts_total_amount = res.parts_total_amount;
+                    $scope.labour_total_amount = res.labour_total_amount;
+                    $scope.extras = res.extras;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Save Form Data 
+        $scope.saveInventoryForm = function() {
+            $('#slide_val').val($('#range_val').text());
+            console.log($('#slide_val').val());
+            var form_id = '#inventory_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all sections');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $rootScope.loading = true;
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/inventory/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $rootScope.loading = false;
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
+                            $location.path('/inward-vehicle/voc-detail/form/' + $scope.job_order_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $rootScope.loading = false;
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        /* Dropdown Arrow Function */
+        arrowDropdown();
+
+        /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
+
+    }
+});
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.component('inwardVehiclePayableAddPartForm', {
+    templateUrl: inward_vehicle_payable_labour_part_add_part_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        //for md-select search
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $rootScope.loading = true;
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/part-list/get',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                })
+                .done(function(res) {
+                    $rootScope.loading = false;
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Save Form Data 
+        $scope.saveInventoryForm = function() {
+            $('#slide_val').val($('#range_val').text());
+            console.log($('#slide_val').val());
+            var form_id = '#inventory_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                /*rules: {
+                    'driver_name': {
+                        required: true,
+                    },
+                },
+                messages: {
+                    'short_name': {
+                        minlength: 'Minimum 3 Characters',
+                        maxlength: 'Maximum 32 Characters',
+                    },
+                },*/
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all sections');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $rootScope.loading = true;
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/inventory/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $rootScope.loading = false;
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
+                            $location.path('/inward-vehicle/voc-detail/form/' + $scope.job_order_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $rootScope.loading = false;
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        /* Dropdown Arrow Function */
+        arrowDropdown();
+
+    }
+});
+
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.component('inwardVehiclePayableAddLabourForm', {
+    templateUrl: inward_vehicle_payable_labour_part_add_labour_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        //for md-select search
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $rootScope.loading = true;
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/repair-order-type-list/get',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                })
+                .done(function(res) {
+                    $rootScope.loading = false;
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Save Form Data 
+        $scope.saveInventoryForm = function() {
+            $('#slide_val').val($('#range_val').text());
+            console.log($('#slide_val').val());
+            var form_id = '#inventory_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                /*rules: {
+                    'driver_name': {
+                        required: true,
+                    },
+                },
+                messages: {
+                    'short_name': {
+                        minlength: 'Minimum 3 Characters',
+                        maxlength: 'Maximum 32 Characters',
+                    },
+                },*/
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all sections');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $rootScope.loading = true;
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/inventory/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $rootScope.loading = false;
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
+                            $location.path('/inward-vehicle/voc-detail/form/' + $scope.job_order_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $rootScope.loading = false;
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        /* Dropdown Arrow Function */
+        arrowDropdown();
+
+    }
+});
+
+
+
+
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 app.component('inwardVehicleVocDetailForm', {

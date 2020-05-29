@@ -1,0 +1,105 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/static/procurement/payment/customer-search" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">Add Labour</h1>
+                    <p class="subtitle">Inward Vehicle / Add Labour</p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-form pb-60">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>ROT Type <sup class="mandatory">*</sup></label>
+                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup label="drinks">
+                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Select ROT <sup class="mandatory">*</sup></label>
+                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup label="drinks">
+                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-12">
+                                <div class="separator-line mb-20"></div><!-- Spacing -->
+                                <div class="table-responsive">
+                                    <table class="table table-dark-grey">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Description
+                                                </th>
+                                                <th>
+                                                    UOM
+                                                </th>
+                                                <th class="text-right">
+                                                    Quantity
+                                                </th>
+                                                <th class="text-right">
+                                                    Amount
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    BR05 | Changing Break Pads
+                                                </td>
+                                                <td>
+                                                    Hour
+                                                </td>
+                                                <td class="text-right">
+                                                    2
+                                                </td>
+                                                <td class="text-right">
+                                                    2000
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div><!-- Table Responsive -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Page Form -->
+                </div><!-- Column -->
+            </div><!-- Row -->
+            <div class="page-form-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="#!/static/gigo/inward/form" class="btn btn-bordered btn-grey">Cancel</a>
+                        <button class="btn btn-secondary-dark">Submit</button>
+                    </div>
+                </div>
+            </div><!-- Page Form Footer -->
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

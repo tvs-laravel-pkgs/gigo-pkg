@@ -1,0 +1,113 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order.id}}" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">Add Parts</h1>
+                    <p class="subtitle">Inward Vehicle / Add Parts</p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-form pb-60">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Part Code <sup class="mandatory">*</sup></label>
+                                    <md-select ng-model="part" placeholder="Select Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchPart" type="search" placeholder="Search for a Part Code.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="option" ng-repeat="option in extras.part_list | filter:searchPart">
+                                                {{option.name}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="part_id" value="{{part.id}}">
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Quantity <sup class="mandatory">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-12">
+                                <div class="separator-line mb-20"></div><!-- Spacing -->
+                                <div class="table-responsive">
+                                    <table class="table table-dark-grey">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Part Code
+                                                </th>
+                                                <th>
+                                                    Description
+                                                </th>
+                                                <th>
+                                                    UOM
+                                                </th>
+                                                <th class="text-right">
+                                                    Rate
+                                                </th>
+                                                <th class="text-right">
+                                                    Quantity
+                                                </th>
+                                                <th class="text-right">
+                                                    Total Amount
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    SCM07
+                                                </td>
+                                                <td>
+                                                    BR05 | Changing Break Pads
+                                                </td>
+                                                <td>
+                                                    Nos
+                                                </td>
+                                                <td class="text-right">
+                                                    1000
+                                                </td>
+                                                <td class="text-right">
+                                                    3
+                                                </td>
+                                                <td class="text-right">
+                                                    3000
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div><!-- Table Responsive -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Page Form -->
+                </div><!-- Column -->
+            </div><!-- Row -->
+            <div class="page-form-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order.id}}" class="btn btn-bordered btn-grey">Cancel</a>
+                        <button class="btn btn-secondary-dark">Submit</button>
+                    </div>
+                </div>
+            </div><!-- Page Form Footer -->
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
