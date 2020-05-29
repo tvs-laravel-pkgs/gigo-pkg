@@ -737,10 +737,33 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    when('/inward-vehicle/order-detail/view/:job_order_id', {
 	        template: '<inward-vehicle-order-detail-view></inward-vehicle-order-detail-view>',
 	        title: 'Inward Vehicle - Order Detail',
+	    }).
+	    when('/inward-vehicle/inventory-detail/form/:job_order_id', {
+	        template: '<inward-vehicle-inventory-detail-form></inward-vehicle-inventory-detail-form>',
+	        title: 'Inward Vehicle - Inventory Detail Form',
+	    }).
+	    when('/inward-vehicle/voc-detail/form/:job_order_id',{
+	    	template: '<inward-vehicle-voc-detail-form></inward-vehicle-voc-detail-form>',
+	        title: 'Inward Vehicle - VOC Detail',
+	    }).
+	    when('/inward-vehicle/road-test-detail/form/:job_order_id',{
+	    	template: '<inward-vehicle-road-test-detail-form></inward-vehicle-road-test-detail-form>',
+	        title: 'Inward Vehicle - Road Test Observations',
+	    }).
+	    when('/inward-vehicle/expert-diagnosis-detail/form/:job_order_id', {
+	        template: '<inward-vehicle-export-diagnosis-detail-form></inward-vehicle-export-diagnosis-detail-form>',
+	        title: 'Inward Vehicle - Export Diagnosis Detail',
+	    }).
+	    when('/inward-vehicle/inspection-detail/form/:job_order_id', {
+	        template: '<inward-vehicle-inspection-detail-form></inward-vehicle-inspection-detail-form>',
+	        title: 'Inward Vehicle - Inspection Detail',
+	    }).
+	    when('/inward-vehicle/dms-checklist/form/:job_order_id', {
+	        template: '<inward-vehicle-dms-check-list-form></inward-vehicle-dms-check-list-form>',
+	        title: 'Inward Vehicle - DMS Check List',
 	    });
 	}]);
 
-	//Job Orders
     var inward_vehicle_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/card-list.html')}}';
     var inward_vehicle_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/list.html')}}';
     var job_order_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/view.html')}}';
@@ -751,13 +774,20 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
      var inward_vehicle_inventory_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/inventory-detail-form.html')}}';
 
     var inward_vehicle_order_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/order-detail-view.html')}}';
+    var inward_vehicle_inventory_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/inventory-detail-form.html')}}';
+    var inward_vehicle_voc_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/voc-detail-form.html')}}';
+    var inward_vehicle_road_test_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/road-test-detail-form.html')}}';
+
+    var inward_vehicle_export_diagnosis_details_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/expert-diagnosis-detail.html')}}';
+    var inward_vehicle_dms_checklist_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/dms-check-list.html')}}';
+    var inward_vehicle_inspection_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/inspection-detail.html')}}';
 
     //PARTIALS
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';
     var inward_tabs_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/inward-tabs.html')}}';
 
 </script>
-<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/controller.js')}}'></script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
