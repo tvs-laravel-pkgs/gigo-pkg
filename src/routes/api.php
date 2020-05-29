@@ -42,6 +42,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//DMS CHECKLIST SAVE
 		Route::post('vehicle-inward/dms-checklist/save', 'VehicleInwardController@saveDmsCheckList');
+		Route::post('vehicle-inward/dms-checklist/get-form-data', 'VehicleInwardController@getDmsCheckListFormData');
 
 		//SCHEDULE MANINTENCE GET FORM DATA AND SAVE
 		Route::post('vehicle-inward/schedule-maintenance/get-form-data', 'VehicleInwardController@getScheduleMaintenanceFormData');
@@ -60,9 +61,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('save-addtional-rot-part', 'VehicleInwardController@saveAddtionalRotPart');
 
 		//ESTIMATE GET FORM DATA AND SAVE
-		//issue: Route naming
-		Route::get('get-estimate-form-data/{id}', 'VehicleInwardController@getEstimateFormData');
-		Route::post('save-estimate', 'VehicleInwardController@saveEstimate');
+		Route::post('vehicle-inward/estimate/get-form-data', 'VehicleInwardController@getEstimateFormData');
+		Route::post('vehicle-inward/estimate/save', 'VehicleInwardController@saveEstimate');
 
 		//ESTIMATION DENIED GET FORM DATA AND SAVE
 		//issue: Route naming

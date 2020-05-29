@@ -758,6 +758,14 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-inspection-detail-form></inward-vehicle-inspection-detail-form>',
 	        title: 'Inward Vehicle - Inspection Detail',
 	    }).
+	    when('/inward-vehicle/scheduled-maintenance/form/:job_order_id', {
+	        template: '<inward-vehicle-scheduled-maintenance-form></inward-vehicle-scheduled-maintenance-form>',
+	        title: 'Inward Vehicle - Scheduled Maintenance',
+	    }).
+	    when('/inward-vehicle/estimate/:job_order_id', {
+	        template: '<inward-vehicle-estimate-form></inward-vehicle-estimate-form>',
+	        title: 'Inward Vehicle - Estimate',
+	    }).
 	    when('/inward-vehicle/dms-checklist/form/:job_order_id', {
 	        template: '<inward-vehicle-dms-check-list-form></inward-vehicle-dms-check-list-form>',
 	        title: 'Inward Vehicle - DMS Check List',
@@ -781,6 +789,8 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_export_diagnosis_details_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/expert-diagnosis-detail.html')}}';
     var inward_vehicle_dms_checklist_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/dms-check-list.html')}}';
     var inward_vehicle_inspection_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/inspection-detail.html')}}';
+    var inward_vehicle_schedule_maintenance_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/schedule-maintenance.html')}}';
+    var inward_vehicle_estimate_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimate.html')}}';
 
     //PARTIALS
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';

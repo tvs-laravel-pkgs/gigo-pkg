@@ -25,69 +25,66 @@ Content Wrap -->
                         <!-- TAB PANEL -->
                         <div class="tab-pane fade in active">
                             <div class="tab-pane-wrap">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5 class="color-primary mb-10">
-                                            <b>
-                                                Voice of Customer
-                                            </b>
-                                        </h5>
-                                        <hr class="hr-15"><!-- Separater -->
-                                        <div class="row custom-row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <md-select ng-model="job_order.customer_voices.code" placeholder="Select any one" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged()">
-                                                        <md-select-header class="demo-select-header">
-                                                            <input ng-model="searchCountry" type="search" placeholder="Search for a .." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                        </md-select-header>
-                                                        <md-optgroup>
-                                                            <md-option ng-value="country" ng-repeat="customer_voice in extras.customer_voice_list | filter:searchCountry">
-                                                                {{customer_voice.code}}
-                                                            </md-option>
-                                                        </md-optgroup>
-                                                    </md-select>
-                                                    <input type="hidden" name="voc" value="{{job_order.voc}}">
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <!--  <div class="col-md-6">
-                                                <div class="form-group mb-no">
-                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
-                                                        <md-select-header class="demo-select-header">
-                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
-                                                        </md-select-header>
-                                                        <md-optgroup label="drinks">
-                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
-                                                        </md-optgroup>
-                                                    </md-select>
+                                <form id="voc_form">
+                                    <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Voice of Customer
+                                                </b>
+                                            </h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="row custom-row" ng-repeat="(index, customer_voice) in $ctrl.job_order.customer_voices">
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-no">
+                                                        <md-select ng-model="customer_voice.id" placeholder="Select any one" md-on-close="clearSearchCustomerVoice()" ng-change="onSelectedVoc(customer_voice.id)" data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchCustomerVoice" type="search" placeholder="Search for a .." class="demo-header-searchbox md-text" name="customer_voice[]">
+                                                            </md-select-header>
+                                                            <md-optgroup label="j">
+                                                                <md-option ng-value="j.id" ng-repeat="j in extras.customer_voice_list | filter:searchCustomerVoice">{{j.code}}</md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="customer_voices[{{index}}][id]" value="{{customer_voice.id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-6">
+                                                    <button class="img-btn" ng-click="$ctrl.removeCustomerVoice(index)" id="hidedelete">
+                                                        <img class="img-responsive radius-50" src="./public/theme/img/content/delete-dark.svg" alt="Delete" />
+                                                    </button>
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                            <div class="row">
+                                                <div class="col-md-6" id="voc_details">
+                                                    <div class="form-group">
+                                                        <textarea class="form-control" rows="4" placeholder="Enter Details"></textarea>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-12">
+                                                    <button class="btn btn-md type2 btn-green btn-square" ng-click="$ctrl.addNewCustomerVoice()">
+                                                        Add More
+                                                    </button>
                                                 </div>
-                                            </div> -->
-                                            <div class="col-md-6">
-                                                <button class="img-btn">
-                                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-dark.svg" alt="Delete" />
-                                                </button>
-                                            </div><!-- Column -->
-                                        </div><!-- Row -->
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <textarea class="form-control" rows="4" placeholder="Enter Details"></textarea>
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <div class="col-md-12">
-                                                <button class="btn btn-md type2 btn-green btn-square">Add More</button>
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <button type="submit" class="btn btn-red submit" ng-click="saveVocDetailForm()">
+                                                        Save & Close
+                                                    </button>
+                                                    <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/inventory-detail/form/{{job_order_id}}">
+                                                        Previous
+                                                    </a>
+                                                    <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-click="saveVocDetailForm()">
+                                                        Next
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </div><!-- Row -->
-                                    </div><!-- Column -->
-                                    <div class="tab-pane-footer">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <a class="btn btn-red">Save & Close</a>
-                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                            </div>
-                                        </div>
-                                    </div><!-- Tab Footer -->
-                                </div><!-- Row -->
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </form>
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
                     </div><!-- Tab Content -->
@@ -95,4 +92,6 @@ Content Wrap -->
             </div><!-- Tab Form Wrap -->
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
-</div><!-- Content Wrap
+</div><!-- Content Wrap -->
+<!-- Drag & Drop File Upload Plugins -->
+<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
