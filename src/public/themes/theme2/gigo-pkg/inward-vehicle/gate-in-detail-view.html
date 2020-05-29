@@ -1,0 +1,65 @@
+Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Inward Vehicle</b></h1>
+                    <p class="subtitle">Inward Vehicle / Vehicle Detail</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <job-order-header></job-order-header>
+            <div class="tab-form-wrap type-2">
+                <inward-view-tabs ng-init="active_tab = 'vehicle-detail-view'">
+                </inward-view-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="vehicle_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10">
+                                            <b>
+                                                Gate In Details
+                                            </b>
+                                        </h5>
+                                        <ul class="view-row mb-no">
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Gate In Date
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <!-- {{gate_log.date}} -->
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Gate In Time
+                                                </span>
+                                                <span class="view-col-value">
+                                                    <b>
+                                                        <!-- {{gate_log.time}} -->
+                                                    </b>
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div><!-- Column -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap

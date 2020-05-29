@@ -782,6 +782,19 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    when('/inward-vehicle/payable-labour-part/add-labour/form/:job_order_id', {
 	        template: '<inward-vehicle-payable-add-labour-form></inward-vehicle-payable-add-labour-form>',
 	        title: 'Inward Vehicle - Payable Labour Part',
+	    }).
+
+	    when('/inward-vehicle/gate-in-detail-view/:job_order_id', {
+	        template: '<inward-vehicle-gate-in-detail-view></inward-vehicle-gate-in-detail-view>',
+	        title: 'Inward Vehicle - Vehicle Detail',
+	    }).
+	    when('/inward-vehicle/vehicle-detail-view/:job_order_id', {
+	        template: '<inward-vehicle-vehicle-detail-view></inward-vehicle-vehicle-detail-view>',
+	        title: 'Inward Vehicle - Vehicle Detail View',
+	    }).
+	    when('/inward-vehicle/customer-detail-view/:job_order_id', {
+	        template: '<inward-vehicle-customer-detail-view></inward-vehicle-customer-detail-view>',
+	        title: 'Inward Vehicle - Customer Detail View',
 	    });
 
 
@@ -813,10 +826,15 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 
 
     var inward_vehicle_estimate_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimate.html')}}';
+    var inward_vehicle_gate_in_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/gate-in-detail.html')}}';
+    var inward_vehicle_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail-view.html')}}';
+    var inward_vehicle_customer_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail-view.html')}}';
+
 
     //PARTIALS
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';
     var inward_tabs_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/inward-tabs.html')}}';
+    var inward_view_tabs_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/inward-view-tabs.html')}}';
 
 </script>
 <script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/controller.js')}}"></script>
