@@ -1528,80 +1528,15 @@ app.component('inwardVehicleRoadTestDetailForm', {
         $scope.fetchData();
 
         //Save Form Data 
-        $scope.saveRoadTestDetail = function() {
+        $scope.saveRoadTestDetailForm = function() {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    'name': {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 255,
-                    },
-                    'mobile_no': {
-                        required: true,
-                        minlength: 10,
-                        maxlength: 10,
-                    },
-                    'email': {
-                        email: true,
-                    },
-                    'address_line1': {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 32,
-                    },
-                    'address_line2': {
-                        minlength: 3,
-                        maxlength: 64,
-                    },
-                    'country_id': {
-                        required: true,
-                    },
-                    'state_id': {
-                        required: true,
-                    },
-                    'city_id': {
-                        required: true,
-                    },
-                    'pincode': {
-                        required: true,
-                        minlength: 6,
-                        maxlength: 6,
-                    },
-                    'gst_number': {
-                        minlength: 6,
-                        maxlength: 32,
-                    },
-                    'pan_number': {
-                        minlength: 6,
-                        maxlength: 32,
-                    },
-                    'ownership_id': {
-                        required: true,
-                    },
+
                 },
                 messages: {
-                    'name': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 255 Characters',
-                    },
-                    'mobile_no': {
-                        minlength: 'Minimum 10 Numbers',
-                        maxlength: 'Maximum 10 Numbers',
-                    },
-                    'address_line1': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 32 Characters',
-                    },
-                    'address_line2': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 32 Characters',
-                    },
-                    'pincode': {
-                        minlength: 'Minimum 6 Numbers',
-                        maxlength: 'Maximum 6 Numbers',
-                    },
+
                 },
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
