@@ -53,7 +53,7 @@
                         Scheduled Maintenance
                     </a>
                 </li>
-                <li>
+                <li ng-class="{active:active_tab == 'payable-labour-part-detail'}">
                     <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="filter">
                         Payable Labour & Parts
                     </a>
@@ -63,8 +63,8 @@
                         Estimate
                     </a>
                 </li>
-                <li>
-                    <a href=".#!/inward-vehicle/vehicle-detail/{{job_order_id}}" class="filter">
+                <li ng-class="{active:active_tab == 'status-details'}">
+                    <a href=".#!/inward-vehicle/estimation-status-detail/form/{{job_order_id}}" class="filter">
                         Estimation Status
                     </a>
                 </li>

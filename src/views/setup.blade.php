@@ -742,6 +742,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-inventory-detail-form></inward-vehicle-inventory-detail-form>',
 	        title: 'Inward Vehicle - Inventory Detail Form',
 	    }).
+
 	    when('/inward-vehicle/voc-detail/form/:job_order_id',{
 	    	template: '<inward-vehicle-voc-detail-form></inward-vehicle-voc-detail-form>',
 	        title: 'Inward Vehicle - VOC Detail',
@@ -769,7 +770,37 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    when('/inward-vehicle/dms-checklist/form/:job_order_id', {
 	        template: '<inward-vehicle-dms-check-list-form></inward-vehicle-dms-check-list-form>',
 	        title: 'Inward Vehicle - DMS Check List',
+	    }).
+	     when('/inward-vehicle/payable-labour-part-detail/form/:job_order_id', {
+	        template: '<inward-vehicle-payable-labour-part-form></inward-vehicle-payable-labour-part-form>',
+	        title: 'Inward Vehicle - Payable Labour Part',
+	    }).
+	    when('/inward-vehicle/payable-labour-part/add-part/form/:job_order_id', {
+	        template: '<inward-vehicle-payable-add-part-form></inward-vehicle-payable-add-part-form>',
+	        title: 'Inward Vehicle - Payable Add Part',
+	    }).
+	    when('/inward-vehicle/payable-labour-part/add-labour/form/:job_order_id', {
+	        template: '<inward-vehicle-payable-add-labour-form></inward-vehicle-payable-add-labour-form>',
+	        title: 'Inward Vehicle - Payable Labour Part',
+	    }).
+	    when('/inward-vehicle/estimation-status-detail/form/:job_order_id', {
+	        template: '<inward-vehicle-estimation-status-detail-form></inward-vehicle-estimation-status-detail-form>',
+	        title: 'Inward Vehicle - Estimation Status',
+	    }).
+	    when('/inward-vehicle/gate-in-detail-view/:job_order_id', {
+	        template: '<inward-vehicle-gate-in-detail-view></inward-vehicle-gate-in-detail-view>',
+	        title: 'Inward Vehicle - Vehicle Detail',
+	    }).
+	    when('/inward-vehicle/vehicle-detail-view/:job_order_id', {
+	        template: '<inward-vehicle-vehicle-detail-view></inward-vehicle-vehicle-detail-view>',
+	        title: 'Inward Vehicle - Vehicle Detail View',
+	    }).
+	    when('/inward-vehicle/customer-detail-view/:job_order_id', {
+	        template: '<inward-vehicle-customer-detail-view></inward-vehicle-customer-detail-view>',
+	        title: 'Inward Vehicle - Customer Detail View',
 	    });
+
+
 	}]);
 
     var inward_vehicle_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/card-list.html')}}';
@@ -790,11 +821,25 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_dms_checklist_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/dms-check-list.html')}}';
     var inward_vehicle_inspection_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/inspection-detail.html')}}';
     var inward_vehicle_schedule_maintenance_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/schedule-maintenance.html')}}';
+
+    var inward_vehicle_payable_labour_part_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/payable-labour-part-form.html')}}';
+
+    var inward_vehicle_payable_labour_part_add_part_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/add-part.html')}}';
+    var inward_vehicle_payable_labour_part_add_labour_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/add-labour.html')}}';
+
+
     var inward_vehicle_estimate_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimate.html')}}';
+    var inward_vehicle_estimation_status_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimation-status-detail-form.html')}}';
+    
+    var inward_vehicle_gate_in_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/gate-in-detail.html')}}';
+    var inward_vehicle_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail-view.html')}}';
+    var inward_vehicle_customer_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail-view.html')}}';
+
 
     //PARTIALS
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';
     var inward_tabs_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/inward-tabs.html')}}';
+    var inward_view_tabs_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/inward-view-tabs.html')}}';
 
 </script>
 <script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/controller.js')}}"></script>

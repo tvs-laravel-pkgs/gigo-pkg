@@ -39,27 +39,30 @@
                                             <div class="checklist-form-wrap">
                                                 <ul class="checklist-form-ul">
                                                     <li ng-repeat="(index,inventory) in extras.inventory_type_list">
-                                                        <div class="checklist-form-item-wrap">
+                                                        <div class="checklist-form-item-wrap" ng-if="inventory.field_type_id==11">
                                                             <div class="checklist-form-item">
                                                                 <input type="hidden" id="vehicle_inventory_items[{{index}}]['inventory_item_id']" name="vehicle_inventory_items[{{index}}][inventory_item_id]" value="{{inventory.id}}" />
-                                                                <input type="checkbox" id="checkbox_{{inventory.id}}" ng-model="chkselct[inventory.id]" />
+                                                                <input type="checkbox" id="checkbox_{{inventory.id}}" ng-model="chkselct[inventory.id]" ng-checked="inventory.checked" ng-init="checkData1();" class="inventory_items" />
                                                                 <label for="checkbox_{{inventory.id}}">{{inventory.name}}</label>
                                                                 <input ng-if="chkselct[inventory.id]==true" type="hidden" name="vehicle_inventory_items[{{index}}][is_available]" autocomplete="off" value="1" />
                                                                 <input ng-if="chkselct[inventory.id]!=true" type="hidden" name="vehicle_inventory_items[{{index}}][is_available]" autocomplete="off" value="0" />
-                                                                <input ng-show="chkselct[inventory.id]" type="text" name="vehicle_inventory_items[{{index}}][remarks]" class="checklist-form-item-control" placeholder="Enter Remarks if any" autocomplete="off" />
+                                                                <input ng-show="chkselct[inventory.id]" id="chkselct_{{inventory.id}}" type="text" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" class="checklist-form-item-control remarks" placeholder="Enter Remarks if any" autocomplete="off" />
+                                                                <!-- <input ng-show="inventory.checked=='true'" id="chkselct_{{inventory.id}}" type="text" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" class="checklist-form-item-control" placeholder="Enter Remarks if any" autocomplete="off" /> -->
                                                             </div>
                                                         </div>
                                                     </li>
                                                 </ul>
                                             </div>
                                             <div class="mb-30"></div><!-- Space -->
-                                            <div class="row">
-                                                <div class="col-md-6">
+                                            <div class="row" ng-repeat="(index,inventory) in extras.inventory_type_list">
+                                                <div class="col-md-6" ng-if="inventory.field_type_id==12">
                                                     <div class="form-group">
-                                                        <label>Fuel Level</label>
+                                                        <label>{{inventory.name}}</label>
                                                         <div class="slider-container">
-                                                            <input type="range" min="0" max="100" class="slider" value="50" oninput="document.getElementById('fPrice').innerHTML = this.value" />
-                                                            <label id="fPrice"></label>
+                                                            <input type="hidden" id="vehicle_inventory_items[{{index}}]['inventory_item_id']" name="vehicle_inventory_items[{{index}}][inventory_item_id]" value="{{inventory.id}}" />
+                                                            <input type="hidden" name="vehicle_inventory_items[{{index}}][is_available]" autocomplete="off" value="1" />
+                                                            <input type="range" min="0" max="100" id="slide_val" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').innerHTML = this.value" />
+                                                            <label id="range_val"></label>
                                                             <div class="slider-lower-fill"></div>
                                                             <div class="slider-upper-fill"></div>
                                                             <div class="grid">

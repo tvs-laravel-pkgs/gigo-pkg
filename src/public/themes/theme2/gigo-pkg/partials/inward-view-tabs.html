@@ -1,0 +1,24 @@
+<div class="tab-form-header">
+    <div class="tab-header">
+        <!-- Filters -->
+        <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
+            <ul class="nav nav-pills cndn-tabs">
+                <li ng-class="{active:active_tab == 'gate-in-detail-view'}">
+                    <a class="filter" href=".#!/inward-vehicle/gate-in-detail-view/{{job_order_id}}">
+                        Gate In Details
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'vehicle-detail-view'}">
+                    <a class="filter" href=".#!/inward-vehicle/vehicle-detail-view/{{job_order_id}}">
+                        Vehicle Details
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'customer-detail-view'}">
+                    <a class="filter" href=".#!/inward-vehicle/customer-detail-view/{{job_order_id}}">
+                        Customer Details
+                    </a>
+                </li>
+            </ul>
+        </div><!-- Filters -->
+    </div><!-- Tab Header -->
+</div><!-- Tab Form Header -->

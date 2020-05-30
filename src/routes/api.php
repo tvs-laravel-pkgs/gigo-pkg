@@ -8,6 +8,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//VEHICLE INWARD
 		Route::post('vehicle-inward/get', 'VehicleInwardController@getGateInList');
 
+		//GATE IN DETAIL
+		// Route::post('vehicle-inward/get-gate-in-detail', 'VehicleInwardController@getGateInDetail');
+
 		//CUSTOMER DETAIL FORM DATA AND SAVE
 		Route::post('vehicle-inward/view', 'VehicleInwardController@getVehicleInwardViewData');
 		Route::post('vehicle-inward/get-vehicle-detail', 'VehicleInwardController@getVehicleDetail');
@@ -49,16 +52,16 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/schedule-maintenance/save', 'VehicleInwardController@saveScheduleMaintenance');
 
 		//ADDTIONAL ROT AND PART GET FORM DATA AND SAVE
-		Route::get('get-addtional-rot-part/{id}', 'VehicleInwardController@addtionalRotPartGetList');
+		Route::post('vehicle-inward/addtional-rot-part/get-form-data', 'VehicleInwardController@addtionalRotPartGetList');
 		//ROT
-		Route::get('get-repair-order-type-list/{id}', 'VehicleInwardController@getAddtionalRotFormData');
+		Route::post('vehicle-inward/repair-order-type-list/get', 'VehicleInwardController@getRepairOrderTypeList');
 		Route::get('get-repair-order-list/repair-order-type-id/{repair_order_type_id}', 'VehicleInwardController@getAddtionalRotList');
 		Route::get('get-repair-order-data/{id}', 'VehicleInwardController@getRepairOrderData');
 		//PART
-		Route::get('get-part-list/{id}', 'VehicleInwardController@getPartList');
+		Route::post('vehicle-inward/part-list/get', 'VehicleInwardController@getPartList');
 		Route::get('get-part-data/{id}', 'VehicleInwardController@getPartData');
 
-		Route::post('save-addtional-rot-part', 'VehicleInwardController@saveAddtionalRotPart');
+		Route::post('vehicle-inward/save-addtional-rot-part', 'VehicleInwardController@saveAddtionalRotPart');
 
 		//ESTIMATE GET FORM DATA AND SAVE
 		Route::post('vehicle-inward/estimate/get-form-data', 'VehicleInwardController@getEstimateFormData');

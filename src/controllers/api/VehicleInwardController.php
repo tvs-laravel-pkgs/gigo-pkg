@@ -38,11 +38,11 @@ class VehicleInwardController extends Controller {
 	public function getGateInList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [
-				'service_advisor_id' => [
-					'required',
-					'exists:users,id',
-					'integer',
-				],
+				// 'service_advisor_id' => [
+				// 	'required',
+				// 	'exists:users,id',
+				// 	'integer',
+				// ],
 				'offset' => 'nullable|numeric',
 				'limit' => 'nullable|numeric',
 			]);
@@ -546,9 +546,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			// issue : saravanan - use one get list function. Field type id condition missing
-			$params['field_type_id'] = 11;
+			$params['field_type_id'] = [11,12];
 			$extras = [
-				'inventory_type_list' => VehicleInventoryItem::getList($params),
+				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order->id,$params),
 			];
 
 			return response()->json([
@@ -968,14 +968,15 @@ class VehicleInwardController extends Controller {
 
 //Addtional Rot & Part GetList
 
-	public function addtionalRotPartGetList($id) {
+	public function addtionalRotPartGetList(Request $r) {
 		try {
 
-			$job_order = JobOrder::find($id);
+			$job_order = JobOrder::find($r->id);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Job Order Not found!',
+					'error'=>'Validation error',
+					'errors' => ['Job Order Not found!'],
 				]);
 			}
 
@@ -1000,36 +1001,38 @@ class VehicleInwardController extends Controller {
 			])
 				->where('job_order_id', $job_order->id)
 				->get();
-			$parts_amount = 0;
-			$labour_amount = 0;
+			$parts_total_amount = 0;
+			$labour_total_amount = 0;
 			$total_amount = 0;
-
 			//issue: relations naming
-			if ($job_order->jobOrderRepairOrder) {
-				foreach ($job_order->jobOrderRepairOrder as $key => $labour) {
-					$labour_amount += $labour->amount;
+			if ($job_order->jobOrderRepairOrders) {
+				foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
+					$labour_total_amount += $labour->amount;
 
 				}
 			}
 			//issue: relations naming
-			if ($job_order->jobOrderPart) {
-				foreach ($job_order->jobOrderPart as $key => $part) {
-					$parts_amount += $part->amount;
+			if ($job_order->jobOrderParts) {
+				foreach ($job_order->jobOrderParts as $key => $part) {
+					$parts_total_amount += $part->amount;
 
 				}
 			}
-			$total_amount = $parts_amount + $labour_amount;
-
+			$total_amount = $parts_total_amount + $labour_total_amount;
+			//dd($parts_total_amount,$labour_total_amount,$total_amount);
 			return response()->json([
 				'success' => true,
+				'job_order'=>$job_order,
 				'part_details' => $part_details,
 				'labour_details' => $labour_details,
-				'total_amount' => $total_amount,
+				'total_amount' => number_format($total_amount,2),
+				'parts_total_amount'=>number_format($parts_total_amount,2),
+				'labour_total_amount'=>number_format($labour_total_amount,2),
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Error',
+				'error' => 'Server Error',
 				'errors' => [$e->getMessage()],
 			]);
 		}
@@ -1165,13 +1168,14 @@ class VehicleInwardController extends Controller {
 		}
 	}
 	//Get Addtional Part Form Data
-	public function getPartList($id) {
+	public function getPartList(Request $r) {
 		try {
-			$job_order = JobOrder::find($id);
+			$job_order = JobOrder::find($r->id);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Job Order Not Found!',
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
 				]);
 			}
 
@@ -1181,25 +1185,27 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
+				'job_order'=>$job_order,
 				'extras' => $extras,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Error',
+				'error' => 'Server Error',
 				'errors' => [$e->getMessage()],
 			]);
 		}
 
 	}
 	//Get Addtional Rot Form Data
-	public function getAddtionalRotFormData($id) {
+	public function getRepairOrderTypeList(Request $r) {
 		try {
-			$job_order = JobOrder::find($id);
+			$job_order = JobOrder::find($r->id);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Job Order Not Found!',
+					'error'=>'Validation Error',
+					'errors' => ['Job Order Not Found!'],
 				]);
 			}
 			$extras = [
@@ -1207,12 +1213,13 @@ class VehicleInwardController extends Controller {
 			];
 			return response()->json([
 				'success' => true,
+				'job_order'=>$job_order,
 				'extras' => $extras,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Error',
+				'error' => 'Server Error',
 				'errors' => [$e->getMessage()],
 			]);
 		}
@@ -2274,4 +2281,44 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
+	//GATE IN DETAIL
+	// public function getGateInDetail(Request $r) {
+	// 	try {
+	// 		$gate_log = GateLog::company()->with([
+	// 			'driverAttachment',
+	// 			'kmAttachment',
+	// 			'vehicleAttachment',
+	// 			'outlet',
+	// 		])
+	// 			->select([
+	// 				'gate_logs.*',
+	// 				DB::raw('DATE_FORMAT(gate_logs.created_at,"%d/%m/%Y") as date'),
+	// 				DB::raw('DATE_FORMAT(gate_logs.created_at,"%h:%i %p") as time'),
+	// 			])
+	// 			->find($r->id);
+
+	// 		if (!$gate_log) {
+	// 			return response()->json([
+	// 				'success' => false,
+	// 				'message' => 'Gate Log Not Found!',
+	// 			]);
+	// 		}
+
+	// 		//Job card details need to get future
+	// 		return response()->json([
+	// 			'success' => true,
+	// 			'gate_log' => $gate_log,
+	// 			'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
+	// 		]);
+
+	// 	} catch (\Exception $e) {
+	// 		return response()->json([
+	// 			'success' => false,
+	// 			'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+	// 		]);
+	// 	}
+	// }
 }
+
+	
