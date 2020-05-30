@@ -1,8 +1,11 @@
 <?php
 
 namespace Abs\GigoPkg;
+use App\Config;
+use App\Customer;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
+use App\VehicleModel;
 use DB;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
@@ -11,6 +14,23 @@ class VehicleInwardController extends Controller {
 
 	public function __construct() {
 		$this->data['theme'] = config('custom.theme');
+	}
+
+	public function getVehicleInwardFilter() {
+		$params = [
+			'config_type_id' => 37,
+			'add_default' => true,
+			'default_text' => "Select Status",
+		];
+		$this->data['extras'] = [
+			'registration_type_list' => [
+				['id' => '', 'name' => 'Select Registration Type'],
+				['id' => '1', 'name' => 'Registered Vehicle'],
+				['id' => '0', 'name' => 'Un-Registered Vehicle'],
+			],
+			'status_list' => Config::getDropDownList($params),
+		];
+		return response()->json($this->data);
 	}
 
 	public function getVehicleInwardList(Request $request) {
@@ -42,6 +62,46 @@ class VehicleInwardController extends Controller {
 				DB::raw('COALESCE(customers.name, "-") as customer_name')
 			)
 			->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')")
+			->where(function ($query) use ($request) {
+				if (!empty($request->gate_in_date)) {
+					$query->whereDate('gate_logs.gate_in_date', date('Y-m-d', strtotime($request->gate_in_date)));
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->reg_no)) {
+					$query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->membership)) {
+					$query->where('amc_policies.name', 'LIKE', '%' . $request->membership . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->gate_in_no)) {
+					$query->where('gate_logs.number', 'LIKE', '%' . $request->gate_in_no . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if ($request->registration_type == '1' || $request->registration_type == '0') {
+					$query->where('vehicles.is_registered', $request->registration_type);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->customer_id)) {
+					$query->where('vehicle_owners.customer_id', $request->customer_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->model_id)) {
+					$query->where('vehicles.model_id', $request->model_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->status_id)) {
+					$query->where('gate_logs.status_id', $request->status_id);
+				}
+			})
 			->groupBy('job_orders.id');
 
 		return Datatables::of($vehicle_inwards)
@@ -64,4 +124,13 @@ class VehicleInwardController extends Controller {
 			})
 			->make(true);
 	}
+
+	public function getCustomerSearchList(Request $request) {
+		return Customer::searchCustomer($request);
+	}
+
+	public function getVehicleModelSearchList(Request $request) {
+		return VehicleModel::searchVehicleModel($request);
+	}
+
 }

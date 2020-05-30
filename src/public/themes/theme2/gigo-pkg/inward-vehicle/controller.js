@@ -25,6 +25,15 @@ app.component('inwardVehicleCardList', {
 
         //HelperService.isLoggedIn()
         self.user = $scope.user = HelperService.getLoggedUser();
+        self.search_key = '';
+        self.gate_in_date = '';
+        self.reg_no = '';
+        self.membership = '';
+        self.gate_in_no = '';
+        self.customer_id = '';
+        self.model_id = '';
+        self.registration_type = '';
+        self.status_id = '';
 
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -49,7 +58,16 @@ app.component('inwardVehicleCardList', {
                     url: base_url + '/api/vehicle-inward/get',
                     method: "POST",
                     data: {
-                        service_advisor_id: self.user.id
+                        service_advisor_id: self.user.id,
+                        search_key: self.search_key,
+                        gate_in_date: self.gate_in_date,
+                        reg_no: self.reg_no,
+                        membership: self.membership,
+                        gate_in_no: self.gate_in_no,
+                        customer_id: self.customer_id,
+                        model_id: self.model_id,
+                        registration_type: self.registration_type,
+                        status_id: self.status_id,
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -69,6 +87,25 @@ app.component('inwardVehicleCardList', {
         }
         $scope.fetchData();
 
+        $('.refresh_table').on("click", function() {
+            $scope.fetchData();
+        });
+        $("#search_inward_vehicle").keyup(function() {
+            self.search_key = this.value;
+            $scope.fetchData();
+        });
+        $("#gate_in_date").keyup(function() {
+            self.gate_in_date = this.value;
+        });
+        $("#reg_no").keyup(function() {
+            self.reg_no = this.value;
+        });
+        $("#membership").keyup(function() {
+            self.membership = this.value;
+        });
+        $("#gate_in_no").keyup(function() {
+            self.gate_in_no = this.value;
+        });
         $scope.listRedirect = function(type){
             if(type == 'table'){
                 window.location = "#!/inward-vehicle/table-list";
@@ -77,6 +114,98 @@ app.component('inwardVehicleCardList', {
                 window.location = "#!/inward-vehicle/card-list";
                 return false;
             }
+        }
+
+                // FOR FILTER
+        $http.get(
+            laravel_routes['getVehicleInwardFilter']
+        ).then(function(response) {
+            self.extras = response.data.extras;
+        });
+        //GET CUSTOMER LIST
+        self.searchCustomer = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCustomerSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+        //GET VEHICLE MODEL LIST
+        self.searchVehicleModel = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getVehicleModelSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        $scope.clearSearchTerm = function() {
+            $scope.searchTerm = '';
+            $scope.searchTerm1 = '';
+            $scope.searchTerm2 = '';
+            $scope.searchTerm3 = '';
+        };
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function(event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
+        $scope.selectedCustomer = function(id) {
+            $('#customer_id').val(id);
+            self.customer_id = id;
+        }
+        $scope.selectedVehicleModel = function(id) {
+            $('#model_id').val(id);
+            self.model_id = id;
+        }
+        $scope.onSelectedRegistrationType = function(id) {
+            $('#registration_type').val(id);
+            self.registration_type = id;
+        }
+        $scope.onSelectedStatus = function(id) {
+            $('#status_id').val(id);
+            self.status_id = id;
+        }
+        $scope.applyFilter = function() {
+            $scope.fetchData();
+            $('#vehicle-inward-filter-modal').modal('hide');
+        }
+        $scope.reset_filter = function() {
+            $("#gate_in_date").val('');
+            $("#registration_type").val('');
+            $("#reg_no").val('');
+            $("#customer_id").val('');
+            $("#model_id").val('');
+            $("#membership").val('');
+            $("#gate_in_no").val('');
+            $("#status_id").val('');
+            $scope.fetchData();
         }
 
         $rootScope.loading = false;
@@ -141,10 +270,14 @@ app.component('inwardVehicleTableList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    // d.short_name = $("#short_name").val();
-                    // d.name = $("#name").val();
-                    // d.description = $("#description").val();
-                    // d.status = $("#status").val();
+                    d.gate_in_date = $("#gate_in_date").val();
+                    d.registration_type = $("#registration_type").val();
+                    d.reg_no = $("#reg_no").val();
+                    d.customer_id = $("#customer_id").val();
+                    d.model_id = $("#model_id").val();
+                    d.membership = $("#membership").val();
+                    d.gate_in_no = $("#gate_in_no").val();
+                    d.status_id = $("#status_id").val();
                 },
             },
 
@@ -192,13 +325,50 @@ app.component('inwardVehicleTableList', {
                 return false;
             }
         }
-        // // FOR FILTER
-        // $http.get(
-        //     laravel_routes['getJobOrderFilter']
-        // ).then(function(response) {
-        //     // console.log(response);
-        //     self.extras = response.data.extras;
-        // });
+        // FOR FILTER
+        $http.get(
+            laravel_routes['getVehicleInwardFilter']
+        ).then(function(response) {
+            self.extras = response.data.extras;
+        });
+        //GET CUSTOMER LIST
+        self.searchCustomer = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCustomerSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+        //GET VEHICLE MODEL LIST
+        self.searchVehicleModel = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getVehicleModelSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -214,22 +384,34 @@ app.component('inwardVehicleTableList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
+        $scope.selectedCustomer = function(id) {
+            $('#customer_id').val(id);
+        }
+        $scope.selectedVehicleModel = function(id) {
+            $('#model_id').val(id);
+        }
+        $scope.onSelectedRegistrationType = function(id) {
+            $('#registration_type').val(id);
+        }
         $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
+            $('#status_id').val(id);
+        }
+        $scope.applyFilter = function() {
             dataTables.fnFilter();
+            $('#vehicle-inward-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#short_name").val('');
-            $("#name").val('');
-            $("#status").val('');
+            $("#gate_in_date").val('');
+            $("#registration_type").val('');
+            $("#reg_no").val('');
+            $("#customer_id").val('');
+            $("#model_id").val('');
+            $("#membership").val('');
+            $("#gate_in_no").val('');
+            $("#status_id").val('');
             dataTables.fnFilter();
         }
+
         $rootScope.loading = false;
     }
 });

@@ -83,7 +83,53 @@ class VehicleInwardController extends Controller {
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
-							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
+							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('models.model_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('amc_policies.name', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('gate_logs.number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('status.name', 'LIKE', '%' . $request->search_key . '%')
+						;
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->gate_in_date)) {
+						$query->whereDate('gate_logs.gate_in_date', date('Y-m-d', strtotime($request->gate_in_date)));
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->reg_no)) {
+						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->membership)) {
+						$query->where('amc_policies.name', 'LIKE', '%' . $request->membership . '%');
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->gate_in_no)) {
+						$query->where('gate_logs.number', 'LIKE', '%' . $request->gate_in_no . '%');
+					}
+				})
+				->where(function ($query) use ($request) {
+					if ($request->registration_type == '1' || $request->registration_type == '0') {
+						$query->where('vehicles.is_registered', $request->registration_type);
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->customer_id)) {
+						$query->where('vehicle_owners.customer_id', $request->customer_id);
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->model_id)) {
+						$query->where('vehicles.model_id', $request->model_id);
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->status_id)) {
+						$query->where('gate_logs.status_id', $request->status_id);
 					}
 				})
 			// ->where('gate_logs.status_id', 8120) //Gate In Completed
@@ -546,9 +592,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			// issue : saravanan - use one get list function. Field type id condition missing
-			$params['field_type_id'] = [11,12];
+			$params['field_type_id'] = [11, 12];
 			$extras = [
-				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order->id,$params),
+				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order->id, $params),
 			];
 
 			return response()->json([
@@ -975,7 +1021,7 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'error'=>'Validation error',
+					'error' => 'Validation error',
 					'errors' => ['Job Order Not found!'],
 				]);
 			}
@@ -1022,12 +1068,12 @@ class VehicleInwardController extends Controller {
 			//dd($parts_total_amount,$labour_total_amount,$total_amount);
 			return response()->json([
 				'success' => true,
-				'job_order'=>$job_order,
+				'job_order' => $job_order,
 				'part_details' => $part_details,
 				'labour_details' => $labour_details,
-				'total_amount' => number_format($total_amount,2),
-				'parts_total_amount'=>number_format($parts_total_amount,2),
-				'labour_total_amount'=>number_format($labour_total_amount,2),
+				'total_amount' => number_format($total_amount, 2),
+				'parts_total_amount' => number_format($parts_total_amount, 2),
+				'labour_total_amount' => number_format($labour_total_amount, 2),
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -1185,7 +1231,7 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'job_order'=>$job_order,
+				'job_order' => $job_order,
 				'extras' => $extras,
 			]);
 		} catch (\Exception $e) {
@@ -1204,7 +1250,7 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'error'=>'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => ['Job Order Not Found!'],
 				]);
 			}
@@ -1213,7 +1259,7 @@ class VehicleInwardController extends Controller {
 			];
 			return response()->json([
 				'success' => true,
-				'job_order'=>$job_order,
+				'job_order' => $job_order,
 				'extras' => $extras,
 			]);
 		} catch (\Exception $e) {
@@ -2320,5 +2366,3 @@ class VehicleInwardController extends Controller {
 	// 	}
 	// }
 }
-
-	

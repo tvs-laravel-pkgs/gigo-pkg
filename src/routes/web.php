@@ -141,6 +141,9 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 
 	//Vehicle Inward
 	Route::get('/vehicle-inward/get-list', 'VehicleInwardController@getVehicleInwardList')->name('getVehicleInwardList');
+	Route::get('/vehicle-inward/get-filter-data', 'VehicleInwardController@getVehicleInwardFilter')->name('getVehicleInwardFilter');
+	Route::post('/vehicle-inward/customer/get-search-list', 'VehicleInwardController@getCustomerSearchList')->name('getCustomerSearchList');
+	Route::post('/vehicle-inward/vehicle-model/get-search-list', 'VehicleInwardController@getVehicleModelSearchList')->name('getVehicleModelSearchList');
 
 	//Job Order
 	Route::get('/job-order/get-list', 'JobOrderController@getJobOrderList')->name('getJobOrderList');
