@@ -157,22 +157,22 @@ app.component('gateLogForm', {
         // alert("test");
         var self = this;
         // $("input:text:visible:first").focus();
-        $('.image_uploadify').imageuploadify();
-        // self.hasPermission = HelperService.hasPermission;
-        // if (!self.hasPermission('add-gate-log') && !self.hasPermission('edit-gate-log')) {
-        //     window.location = "#!/permission-denied";
-        //     return false;
-        // }
-        $scope.hasPerm = HelperService.hasPerm;
-        self.user = $scope.user = HelperService.getLoggedUser();
-
         if (!HelperService.isLoggedIn()) {
-            window.location = base_url;
+            $location.path('/login');
             return;
         }
+
+        $('.image_uploadify').imageuploadify();
+        self.hasPermission = HelperService.hasPermission;
+        if (!self.hasPermission('add-gate-log') && !self.hasPermission('edit-gate-log')) {
+            window.location = "#!/permission-denied";
+            return false;
+        }
+        $scope.hasPerm = HelperService.hasPerm;
+        self.user = $scope.user = HelperService.getLoggedUser();
         self.angular_routes = angular_routes;
         self.gate_log = {};
-
+        self.is_registered = 1;
         //Save Form Data             
         var form_id = '#gate_in_vehicle_form';
         var v = jQuery(form_id).validate({
@@ -191,7 +191,22 @@ app.component('gateLogForm', {
                     required: true,
                 },
                 'registration_number': {
-                    required: true,
+                    required: function(element) {
+                        if(self.is_registered == '1'){
+                            return true;
+                        }
+                        return false;
+                    },
+                    minlength: 10,
+                    maxlength: 10,
+                },
+                'plate_number': {
+                    required: function(element) {
+                        if(self.is_registered == '0'){
+                            return true;
+                        }
+                        return false;
+                    },
                     minlength: 10,
                     maxlength: 10,
                 },
@@ -219,7 +234,11 @@ app.component('gateLogForm', {
             },
             messages: {
                 'registration_number': {
-                    minlength: 'Minimum 3 Characters',
+                    minlength: 'Minimum 10 Characters',
+                    maxlength: 'Maximum 10 Characters',
+                },
+                'plate_number': {
+                    minlength: 'Minimum 10 Characters',
                     maxlength: 'Maximum 10 Characters',
                 },
                 'driver_name': {
