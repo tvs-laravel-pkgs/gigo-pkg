@@ -38,11 +38,11 @@ class VehicleInwardController extends Controller {
 	public function getGateInList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [
-				'service_advisor_id' => [
-					'required',
-					'exists:users,id',
-					'integer',
-				],
+				// 'service_advisor_id' => [
+				// 	'required',
+				// 	'exists:users,id',
+				// 	'integer',
+				// ],
 				'offset' => 'nullable|numeric',
 				'limit' => 'nullable|numeric',
 			]);

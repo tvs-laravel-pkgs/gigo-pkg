@@ -1107,6 +1107,8 @@ app.component('inwardVehicleVehicleDetail', {
                             showErrorNoty(res);
                             return;
                         }
+                        $('.submit').button('reset');
+                        custom_noty('success', res.message);
                         $location.path('/inward-vehicle/customer-detail/' + $scope.job_order.id);
                         $scope.$apply();
                     })
@@ -1281,6 +1283,8 @@ app.component('inwardVehicleCustomerDetail', {
                                 showErrorNoty(res);
                                 return;
                             }
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
                             $location.path('/inward-vehicle/order-detail/form/' + $routeParams.job_order_id);
                             $scope.$apply();
                         })
@@ -2056,7 +2060,7 @@ app.component('inwardVehicleVocDetailForm', {
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(voc_form_id)[0]);
-                    console.log('submit');
+                    // console.log('submit');
                     $rootScope.loading = true;
                     $('.submit').button('loading');
                     $.ajax({
@@ -2073,6 +2077,8 @@ app.component('inwardVehicleVocDetailForm', {
                                 showErrorNoty(res);
                                 return;
                             }
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
                             $location.path('/inward-vehicle/road-test-detail/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
@@ -2215,7 +2221,9 @@ app.component('inwardVehicleRoadTestDetailForm', {
                                 showErrorNoty(res);
                                 return;
                             }
-                            $location.path('/inward-vehicle/road-test-detail/form/' + $routeParams.job_order_id);
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
+                            $location.path('/inward-vehicle/road-test-detail/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
