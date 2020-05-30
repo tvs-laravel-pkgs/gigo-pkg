@@ -72,8 +72,8 @@ class VehicleInwardController extends Controller {
 					'vehicles.registration_number',
 					'models.model_number',
 					'gate_logs.number',
-					DB::raw('DATE_FORMAT(gate_logs.created_at,"%d/%m/%Y") as date'),
-					DB::raw('DATE_FORMAT(gate_logs.created_at,"%h:%i %p") as time'),
+					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
 					'job_orders.driver_name',
 					'job_orders.driver_mobile_number as driver_mobile_number',
 					DB::raw('GROUP_CONCAT(amc_policies.name) as amc_policies'),
@@ -667,12 +667,10 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-	
-
 	//DMS GET FORM DATA
 	public function getDmsCheckListFormData(Request $r) {
 		try {
-			
+
 			$attachment = JobOrder::
 				with([
 				'warrentyPolicyAttachment',
@@ -797,31 +795,29 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
-			$job_order_parts = JobOrderPart::where('job_order_id',$r->id)->first();
-			$job_order_repair_orders = JobOrderRepairOrder::where('job_order_id',$r->id)->first();
-            if (!$job_order_parts) {
-			$part_details = Part::with([
-				'uom',
-				'taxCode',
-			])->get();
+			$job_order_parts = JobOrderPart::where('job_order_id', $r->id)->first();
+			$job_order_repair_orders = JobOrderRepairOrder::where('job_order_id', $r->id)->first();
+			if (!$job_order_parts) {
+				$part_details = Part::with([
+					'uom',
+					'taxCode',
+				])->get();
 
-			$labour_details = RepairOrder::with([
-				'repairOrderType',
-				'uom',
-				'taxCode',
-				'skillLevel',
-			])->get();
-		    }
-		    else
-		    {
-		    $part_details = JobOrderPart::select('parts.id as id','parts.name','parts.code','job_order_parts.rate','job_order_parts.qty','job_order_parts.amount')
-		    ->leftJoin('parts','parts.id','job_order_parts.part_id','job_order_parts.id as del_part_id')->where('job_order_parts.job_order_id',$r->id)->get();
+				$labour_details = RepairOrder::with([
+					'repairOrderType',
+					'uom',
+					'taxCode',
+					'skillLevel',
+				])->get();
+			} else {
+				$part_details = JobOrderPart::select('parts.id as id', 'parts.name', 'parts.code', 'job_order_parts.rate', 'job_order_parts.qty', 'job_order_parts.amount')
+					->leftJoin('parts', 'parts.id', 'job_order_parts.part_id', 'job_order_parts.id as del_part_id')->where('job_order_parts.job_order_id', $r->id)->get();
 
-		    $labour_details = JobOrderRepairOrder::select('repair_orders.id','job_order_repair_orders.amount','repair_orders.hours','repair_orders.code','repair_orders.name as repair_order_name','repair_order_types.short_name','repair_order_types.name','job_order_repair_orders.remarks','job_order_repair_orders.observation','job_order_repair_orders.action_taken','job_order_repair_orders.id as job_repair_order_id')
-		    ->leftJoin('repair_orders','repair_orders.id','job_order_repair_orders.repair_order_id')
-		    ->leftJoin('repair_order_types','repair_order_types.id','repair_orders.type_id')
-		    ->where('job_order_repair_orders.job_order_id',$r->id)->get();
-		    }
+				$labour_details = JobOrderRepairOrder::select('repair_orders.id', 'job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id')
+					->leftJoin('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')
+					->leftJoin('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')
+					->where('job_order_repair_orders.job_order_id', $r->id)->get();
+			}
 
 			$parts_rate = 0;
 			$labour_amount = 0;
@@ -911,7 +907,6 @@ class VehicleInwardController extends Controller {
 			}
 
 			DB::beginTransaction();
-            
 
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
@@ -919,10 +914,9 @@ class VehicleInwardController extends Controller {
 				//issue: saravanan - is_recommended_by_oem save missing. save default 1.
 				foreach ($request->job_order_parts as $key => $part) {
 					//dd($part['part_id']);
-					if(isset($repair['del_part_id']))
-                   {
-                   	JobOrderPart::where('id', '!=', $repair['del_part_id'])->delete();
-                   }
+					if (isset($repair['del_part_id'])) {
+						JobOrderPart::where('id', '!=', $repair['del_part_id'])->delete();
+					}
 
 					$job_order_part = JobOrderPart::firstOrNew([
 						'part_id' => $part['part_id'],
@@ -940,10 +934,9 @@ class VehicleInwardController extends Controller {
 			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
-                   if(isset($repair['delete_job_repair_order_id']))
-                   {
-                   	JobOrderRepairOrder::where('id', '!=', $repair['delete_job_repair_order_id'])->delete();
-                   }
+					if (isset($repair['delete_job_repair_order_id'])) {
+						JobOrderRepairOrder::where('id', '!=', $repair['delete_job_repair_order_id'])->delete();
+					}
 					$job_order_repair_order = JobOrderRepairOrder::firstOrNew([
 						'repair_order_id' => $repair['repair_order_id'],
 						'job_order_id' => $request->job_order_id,
@@ -1958,34 +1951,33 @@ class VehicleInwardController extends Controller {
 			//issue: relation naming
 			/*if ($job_order->jobOrder->getEomRecomentation) {*/
 
-				foreach ($job_order->jobOrderRepairOrders as $oemrecomentation_labour) {
+			foreach ($job_order->jobOrderRepairOrders as $oemrecomentation_labour) {
 
-					if ($oemrecomentation_labour['is_recommended_by_oem'] == 1) {
-						//SCHEDULED MAINTANENCE
-						$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
-					}
-					if ($oemrecomentation_labour['is_recommended_by_oem'] == 0) {
-						//ADDITIONAL ROT AND PARTS
-						$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
-					}
+				if ($oemrecomentation_labour['is_recommended_by_oem'] == 1) {
+					//SCHEDULED MAINTANENCE
+					$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
 				}
+				if ($oemrecomentation_labour['is_recommended_by_oem'] == 0) {
+					//ADDITIONAL ROT AND PARTS
+					$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
+				}
+			}
 			/*}*/
-            
 
 			$oem_recomentaion_part_amount = 0;
 			$additional_rot_and_parts_part_amount = 0;
 			//issue: relation naming
 			/*if ($gate_log_detail->jobOrder->getAdditionalRotAndParts) {*/
-				foreach ($job_order->jobOrderParts as $oemrecomentation_labour) {
-					if ($oemrecomentation_labour['is_oem_recommended'] == 1) {
-						//SCHEDULED MAINTANENCE
-						$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
-					}
-					if ($oemrecomentation_labour['is_oem_recommended'] == 0) {
-						//ADDITIONAL ROT AND PARTS
-						$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
-					}
+			foreach ($job_order->jobOrderParts as $oemrecomentation_labour) {
+				if ($oemrecomentation_labour['is_oem_recommended'] == 1) {
+					//SCHEDULED MAINTANENCE
+					$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
 				}
+				if ($oemrecomentation_labour['is_oem_recommended'] == 0) {
+					//ADDITIONAL ROT AND PARTS
+					$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
+				}
+			}
 			/*}*/
 
 			//OEM RECOMENTATION LABOUR AND PARTS AND SUB TOTAL

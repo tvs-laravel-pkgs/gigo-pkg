@@ -3,31 +3,43 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Job Orders(<span id="table_infos"></span>)</h1>
+                    <h1 class="title type-2">Vehicle Inward <span class="badge badge-secondary" id="table_infos"></span></h1>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content reset-block">
+                    <div class="reset-wrap">
+                        <button class="btn-reset reset-tooltip">
+                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
+                        </button>
+                    </div>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_job_order" class="form-control" placeholder="Search" autofocus />
+                            <input type="search" id="search_inward_vehicle" class="form-control" placeholder="Search" autofocus />
                             <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
                 </div>
                 <div class="page-header-content button-block">
-                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#job-order-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#vehicle-inward-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
-                <div class="page-header-content reset-block">
-                    <div class="reset-wrap">
-                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
-                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
-                        </button>
-                    </div>
-                </div><!-- Page Header Content -->
-                <!-- Page Header Content -->
-                <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
-                    <a href="#!/gigo-pkg/job-order/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
+                <div class="page-header-content tab-block">
+                    <div class="list-card-icon-wrap">
+                        <div class="list-icon in" ng-click="listRedirect('table')">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="card-icon" ng-click="listRedirect('card')">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div><!-- List Card Wrap -->
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
@@ -36,13 +48,17 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table" id="job_orders_list" style="width: 100% !important;">
+                    <table class="table" id="inward_vehicles_list" style="width: 100% !important;">
                         <thead>
                             <tr>
-                                <th>Actions</th>
-                                <th>Short Name</th>
-                                <th>Name</th>
-                                <th>Description</th>
+                                <th class="action width-100">Action</th>
+                                <th>Gate In Date & Time</th>
+                                <th>Registration Type</th>
+                                <th>Registration No</th>
+                                <th>Customer Name</th>
+                                <th>Veh. Model</th>
+                                <th>Membership</th>
+                                <th>Gate In No</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -53,12 +69,12 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Filter Modal -->
-<div class="modal fade filter" id="job-order-filter-modal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade filter" id="vehicle-inward-filter-modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title" id="myModalLabel">Job Order Filter</h5>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
                 <div class="modal-form">
@@ -100,21 +116,3 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
-<!-- Modal -->
-<div class="modal fade alert-modal failure" id="delete_job_order" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
-            </div>
-            <div class="modal-body">
-                <h5>Delete</h5>
-                <p>You can’t retrive the data again, Are you sure you want to delete? </p>
-                <input type="hidden" name="job_order_id" id="job_order_id" value="">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal -->

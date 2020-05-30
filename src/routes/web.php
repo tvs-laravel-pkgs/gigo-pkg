@@ -2,7 +2,6 @@
 
 Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'prefix' => 'gigo-pkg'], function () {
 
-
 	//Parts Indent
 	Route::get('/parts-indent/get-list', 'PartsIndentController@getPartsindentList')->name('getPartsindentList');
 	Route::get('/parts-indent/get-filter-data', 'PartsIndentController@getPartsIndentFilter')->name('getPartsIndentFilter');
@@ -11,7 +10,6 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/parts-indent/save', 'PartsIndentController@savePartsindent')->name('savePartsindent');
 	Route::get('/parts-indent/issued-parts-details', 'PartsIndentController@getIssedParts')->name('getIssedParts');
 	Route::get('/parts-indent/delete', 'PartsIndentController@deleteIssedPart')->name('deleteIssedPart');
-
 
 	//Pause Work Reason
 	Route::get('/pause-work-reason/get-list', 'PauseWorkReasonController@getPauseWorkReasonList')->name('getPauseWorkReasonList');
@@ -140,6 +138,9 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/gate-log/save', 'GateLogController@saveGateLog')->name('saveGateLog');
 	Route::get('/gate-log/delete', 'GateLogController@deleteGateLog')->name('deleteGateLog');
 	Route::get('/gate-log/get-filter-data', 'GateLogController@getGateLogFilterData')->name('getGateLogFilterData');
+
+	//Vehicle Inward
+	Route::get('/vehicle-inward/get-list', 'VehicleInwardController@getVehicleInwardList')->name('getVehicleInwardList');
 
 	//Job Order
 	Route::get('/job-order/get-list', 'JobOrderController@getJobOrderList')->name('getJobOrderList');

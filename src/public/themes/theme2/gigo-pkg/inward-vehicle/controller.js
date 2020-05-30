@@ -19,8 +19,6 @@ app.component('inwardVehicleCardList', {
             return false;
         }
 
-
-
         $scope.clear_search = function() {
             $('#search').val('');
         }
@@ -51,7 +49,7 @@ app.component('inwardVehicleCardList', {
                     url: base_url + '/api/vehicle-inward/get',
                     method: "POST",
                     data: {
-
+                        service_advisor_id: self.user.id
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -71,26 +69,16 @@ app.component('inwardVehicleCardList', {
         }
         $scope.fetchData();
 
-        //DELETE
-        $scope.deleteJobOrder = function($id) {
-            $('#inward_vehicle_id').val($id);
+        $scope.listRedirect = function(type){
+            if(type == 'table'){
+                window.location = "#!/inward-vehicle/table-list";
+                return false;
+            }else{
+                window.location = "#!/inward-vehicle/card-list";
+                return false;
+            }
         }
-        $scope.deleteConfirm = function() {
-            $id = $('#inward_vehicle_id').val();
-            $http.get(
-                laravel_routes['deleteJobOrder'], {
-                    params: {
-                        id: $id,
-                    }
-                }
-            ).then(function(response) {
-                if (response.data.success) {
-                    custom_noty('success', 'Job Order Deleted Successfully');
-                    $('#inward_vehicles_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/job-order/list');
-                }
-            });
-        }
+
         $rootScope.loading = false;
     }
 });
@@ -98,20 +86,26 @@ app.component('inwardVehicleCardList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.component('inwardVehicleList', {
+app.component('inwardVehicleTableList', {
     templateUrl: inward_vehicle_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
         $('#search_inward_vehicle').focus();
         var self = this;
+        if (!HelperService.isLoggedIn()) {
+            $location.path('/login');
+            return;
+        }
+
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
+        
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('job-orders')) {
+        if (!self.hasPermission('inward-vehicle')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-job-order');
+
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
         var dataTable = $('#inward_vehicles_list').DataTable({
@@ -143,23 +137,27 @@ app.component('inwardVehicleList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getJobOrderList'],
+                url: laravel_routes['getVehicleInwardList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
-                    d.name = $("#name").val();
-                    d.description = $("#description").val();
-                    d.status = $("#status").val();
+                    // d.short_name = $("#short_name").val();
+                    // d.name = $("#name").val();
+                    // d.description = $("#description").val();
+                    // d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'inward_vehicles.short_name' },
-                { data: 'name', name: 'inward_vehicles.name' },
-                { data: 'description', name: 'inward_vehicles.description' },
-                { data: 'status', name: '' },
+                { data: 'date', searchable: false},
+                { data: 'registration_type', name: 'registration_type' },
+                { data: 'registration_number', name: 'vehicles.registration_number' },
+                { data: 'customer_name', name: 'customers.name' },
+                { data: 'model_number', name: 'models.model_number' },
+                { data: 'amc_policies', name: 'amc_policies.name' },
+                { data: 'number', name: 'gate_logs.number' },
+                { data: 'status', name: 'configs.name' },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -185,34 +183,22 @@ app.component('inwardVehicleList', {
             dataTables.fnFilter(this.value);
         });
 
-        //DELETE
-        $scope.deleteJobOrder = function($id) {
-            $('#inward_vehicle_id').val($id);
+        $scope.listRedirect = function(type){
+            if(type == 'table'){
+                window.location = "#!/inward-vehicle/table-list";
+                return false;
+            }else{
+                window.location = "#!/inward-vehicle/card-list";
+                return false;
+            }
         }
-        $scope.deleteConfirm = function() {
-            $id = $('#inward_vehicle_id').val();
-            $http.get(
-                laravel_routes['deleteJobOrder'], {
-                    params: {
-                        id: $id,
-                    }
-                }
-            ).then(function(response) {
-                if (response.data.success) {
-                    custom_noty('success', 'Job Order Deleted Successfully');
-                    $('#inward_vehicles_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/job-order/list');
-                }
-            });
-        }
-
-        // FOR FILTER
-        $http.get(
-            laravel_routes['getJobOrderFilter']
-        ).then(function(response) {
-            // console.log(response);
-            self.extras = response.data.extras;
-        });
+        // // FOR FILTER
+        // $http.get(
+        //     laravel_routes['getJobOrderFilter']
+        // ).then(function(response) {
+        //     // console.log(response);
+        //     self.extras = response.data.extras;
+        // });
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
