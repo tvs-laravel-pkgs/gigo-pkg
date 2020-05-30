@@ -1979,9 +1979,6 @@ app.component('inwardVehiclePayableAddLabourForm', {
     }
 });
 
-
-
-
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 app.component('inwardVehicleVocDetailForm', {
@@ -2660,6 +2657,115 @@ app.component('inwardVehicleCustomerDetailView', {
 
 //     }
 // });
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+
+app.component('inwardVehicleEstimationStatusDetailForm', {
+    templateUrl: inward_vehicle_estimation_status_detail_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        //for md-select search
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $rootScope.loading = true;
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/voc/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    $rootScope.loading = false;
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    self.job_order = $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    if (res.action == "Add") {
+                        self.addNewCustomerVoice();
+                    }
+                    $scope.action = res.action;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Save Form Data 
+        $scope.saveVocDetailForm = function() {
+            var voc_form_id = '#voc_form';
+            console.log('test');
+            var v = jQuery(voc_form_id).validate({
+                ignore: '',
+                // rules: {
+                // },
+                // messages: {
+                // },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(voc_form_id)[0]);
+                    // console.log('submit');
+                    $rootScope.loading = true;
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/voc/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $rootScope.loading = false;
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
+                            $location.path('/inward-vehicle/road-test-detail/form/' + $scope.job_order_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $rootScope.loading = false;
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
+
+    }
+});
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
