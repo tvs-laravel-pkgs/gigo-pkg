@@ -2,12 +2,11 @@
 
 namespace Abs\GigoPkg;
 
-use App\Http\Controllers\Controller;
-use App\Bay;
-use App\Outlet;
-use App\Config;
-use Abs\GigoPkg\JobOrder;
 use Abs\StatusPkg\Status;
+use App\Bay;
+use App\Config;
+use App\Http\Controllers\Controller;
+use App\Outlet;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -16,9 +15,8 @@ use Illuminate\Http\Request;
 use Validator;
 use Yajra\Datatables\Datatables;
 
-class BayController extends Controller
-{
-    public function __construct() {
+class BayController extends Controller {
+	public function __construct() {
 		$this->data['theme'] = config('custom.theme');
 	}
 
@@ -31,13 +29,13 @@ class BayController extends Controller
 			],
 		];
 
-		$this->data['outlet_list'] = collect(Outlet::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']);
-		
+		$this->data['outlet_list'] = collect(Outlet::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']);
+
 		// $this->data['bay_status_list'] = collect(Config::select('id','name')->where('config_type_id',43)->get())->prepend(['id' => '', 'name' => 'Select Bay Status']);
 
 		// $this->data['bay_status_list'] = Status::select('id','name')->where('company_id',Auth::user()->company_id)->get();
 		// $this->data['job_order_list'] = JobOrder::select('id','number')->where('company_id',Auth::user()->company_id)->get();
-		
+
 		return response()->json($this->data);
 	}
 
@@ -51,13 +49,13 @@ class BayController extends Controller
 				'outlets.code as outlet',
 				'configs.name as bay_status',
 				// 'job_orders.number as job_order',
-				
+
 				DB::raw('IF(bays.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->leftJoin('outlets', 'outlets.id', 'bays.outlet_id')
 			->leftJoin('configs', 'configs.id', 'bays.status_id')
-			// ->leftJoin('job_orders', 'job_orders.id', 'bays.job_order_id')
-			
+		// ->leftJoin('job_orders', 'job_orders.id', 'bays.job_order_id')
+
 			->where(function ($query) use ($request) {
 				if (!empty($request->short_name)) {
 					$query->where('bays.short_name', 'LIKE', '%' . $request->short_name . '%');
@@ -83,7 +81,7 @@ class BayController extends Controller
 		;
 
 		return Datatables::of($bays)
-		    ->addColumn('status', function ($bays) {
+			->addColumn('status', function ($bays) {
 				$status = $bays->status == 'Active' ? 'green' : 'red';
 				return '<span class="status-indigator ' . $status . '"></span>' . $bays->status;
 			})
@@ -115,10 +113,10 @@ class BayController extends Controller
 			$action = 'Edit';
 		}
 		$this->data['extras'] = [
-			'outlet_list' => collect(Outlet::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']),
+			'outlet_list' => collect(Outlet::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']),
 			// 'bay_status_list' => collect(Config::select('id','name')->where('config_type_id',43)->get())->prepend(['id' => '', 'name' => 'Select Bay Status']),
 			// 'job_order_list' => JobOrder::select('id','number')->where('company_id',Auth::user()->company_id)->get(),
-			];
+		];
 
 		$this->data['bay'] = $bay;
 		$this->data['action'] = $action;
@@ -143,14 +141,14 @@ class BayController extends Controller
 					'required:true',
 					'min:3',
 					'max:32',
-					'unique:bays,short_name,' . $request->id . ',id,outlet_id,' . Auth::user()->outlet_id,
+					'unique:bays,short_name,' . $request->id . ',id,outlet_id,' . $request->outlet_id,
 				],
 				'name' => [
 					// 'required:true',
 					'min:3',
 					'max:128',
 					'nullable',
-					'unique:bays,name,' . $request->id . ',id,outlet_id,' . Auth::user()->outlet_id,
+					'unique:bays,name,' . $request->id . ',id,outlet_id,' . $request->outlet_id,
 				],
 				'outlet_id' => 'required',
 				// 'status_id' => 'required',
@@ -185,7 +183,7 @@ class BayController extends Controller
 				$bay->deleted_at = NULL;
 			}
 			$bay->save();
-			
+
 			DB::commit();
 			if (!($request->id)) {
 				return response()->json([
