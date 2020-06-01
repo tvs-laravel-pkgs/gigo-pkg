@@ -106,17 +106,17 @@ app.component('inwardVehicleCardList', {
         $("#gate_in_no").keyup(function() {
             self.gate_in_no = this.value;
         });
-        $scope.listRedirect = function(type){
-            if(type == 'table'){
+        $scope.listRedirect = function(type) {
+            if (type == 'table') {
                 window.location = "#!/inward-vehicle/table-list";
                 return false;
-            }else{
+            } else {
                 window.location = "#!/inward-vehicle/card-list";
                 return false;
             }
         }
 
-                // FOR FILTER
+        // FOR FILTER
         $http.get(
             laravel_routes['getVehicleInwardFilter']
         ).then(function(response) {
@@ -228,7 +228,7 @@ app.component('inwardVehicleTableList', {
 
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
-        
+
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('inward-vehicle')) {
             window.location = "#!/page-permission-denied";
@@ -283,7 +283,7 @@ app.component('inwardVehicleTableList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'date', searchable: false},
+                { data: 'date', searchable: false },
                 { data: 'registration_type', name: 'registration_type' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'customer_name', name: 'customers.name' },
@@ -316,11 +316,11 @@ app.component('inwardVehicleTableList', {
             dataTables.fnFilter(this.value);
         });
 
-        $scope.listRedirect = function(type){
-            if(type == 'table'){
+        $scope.listRedirect = function(type) {
+            if (type == 'table') {
                 window.location = "#!/inward-vehicle/table-list";
                 return false;
-            }else{
+            } else {
                 window.location = "#!/inward-vehicle/card-list";
                 return false;
             }
@@ -2195,7 +2195,8 @@ app.component('inwardVehicleVocDetailForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    self.job_order = $scope.job_order = res.job_order;
+                    // self.job_order = $scope.job_order = res.job_order;
+                    $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
                     if (res.action == "Add") {
                         self.addNewCustomerVoice();
@@ -2853,7 +2854,7 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
         $scope.fetchData = function() {
             $rootScope.loading = true;
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/voc/get-form-data',
+                    url: base_url + '/api/vehicle-inward/estimation-denied/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
@@ -2868,12 +2869,8 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    self.job_order = $scope.job_order = res.job_order;
-                    $scope.extras = res.extras;
-                    if (res.action == "Add") {
-                        self.addNewCustomerVoice();
-                    }
-                    $scope.action = res.action;
+                    $scope.job_order = res.job_order;
+                    $scope.estimation_type = res.estimation_type;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -2884,10 +2881,10 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
         $scope.fetchData();
 
         //Save Form Data 
-        $scope.saveVocDetailForm = function() {
-            var voc_form_id = '#voc_form';
+        $scope.saveStatusDetaiForm = function() {
+            var form_id = '#status_detail_form';
             console.log('test');
-            var v = jQuery(voc_form_id).validate({
+            var v = jQuery(form_id).validate({
                 ignore: '',
                 // rules: {
                 // },
@@ -2897,12 +2894,12 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
                 submitHandler: function(form) {
-                    let formData = new FormData($(voc_form_id)[0]);
+                    let formData = new FormData($(form_id)[0]);
                     // console.log('submit');
                     $rootScope.loading = true;
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/vehicle-inward/voc/save',
+                            url: base_url + '/api/vehicle-inward/estimation-denied/save',
                             method: "POST",
                             data: formData,
                             processData: false,
@@ -2915,9 +2912,9 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                                 showErrorNoty(res);
                                 return;
                             }
-                            $('.submit').button('reset');
+                            // $('.submit').button('reset');
                             custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/road-test-detail/form/' + $scope.job_order_id);
+                            $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
