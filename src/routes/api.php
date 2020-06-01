@@ -8,8 +8,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//VEHICLE INWARD
 		Route::post('vehicle-inward/get', 'VehicleInwardController@getGateInList');
 
-		// GATE IN DETAIL
-		// Route::post('vehicle-inward/get-gate-in-detail', 'VehicleInwardController@getGateInDetail');
+		//VEHICLE INWARD VIEW DATA
+		Route::post('vehicle-inward/get-view-data', 'VehicleInwardController@getVehicleInwardView');
 
 		//CUSTOMER DETAIL FORM DATA AND SAVE
 		Route::post('vehicle-inward/view', 'VehicleInwardController@getVehicleInwardViewData');
