@@ -69,8 +69,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//ESTIMATION DENIED GET FORM DATA AND SAVE
 		//issue: Route naming
-		Route::get('get-estimation-denied-form-data/{id}', 'VehicleInwardController@getEstimationDeniedFormData');
-		Route::post('save-estimation-denied', 'VehicleInwardController@saveEstimateDenied');
+		Route::post('vehicle-inward/estimation-denied/get-form-data', 'VehicleInwardController@getEstimationDeniedFormData');
+		Route::post('vehicle-inward/estimation-denied/save', 'VehicleInwardController@saveEstimateDenied');
 
 		//CUSTOMER CONFIRMATION SAVE AND GET DATA
 		Route::post('save-customer-confirmation', 'VehicleInwardController@saveCustomerConfirmation');
@@ -84,9 +84,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//GET CITY BASED STATE
 		Route::get('get-city/state-id/{state_id}', 'VehicleInwardController@getcity');
 
-		//Save Job Card
-		//issue: Route naming
-		Route::post('save-job-card', 'JobCardController@saveJobCard');
+		//Update Job Card
+		Route::post('vehicle-inward/job-card/save', 'JobCardController@saveJobCard');
 
 		//GET BAY ASSIGNMENT FORM DATA
 		Route::get('get-bay-form-data/{job_card_id}', 'JobCardController@getBayFormData');
