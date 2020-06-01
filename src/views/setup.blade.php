@@ -787,6 +787,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-estimation-status-detail-form></inward-vehicle-estimation-status-detail-form>',
 	        title: 'Inward Vehicle - Estimation Status',
 	    }).
+	    when('/inward-vehicle/update-jc/form/:job_order_id', {
+	        template: '<inward-vehicle-updatejc-form></inward-vehicle-updatejc-detail-form>',
+	        title: 'Inward Vehicle - Update Job Card',
+	    }).
 	    when('/inward-vehicle/gate-in-detail-view/:job_order_id', {
 	        template: '<inward-vehicle-gate-in-detail-view></inward-vehicle-gate-in-detail-view>',
 	        title: 'Inward Vehicle - Vehicle Detail',
@@ -821,6 +825,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_dms_checklist_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/dms-check-list.html')}}';
     var inward_vehicle_inspection_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/inspection-detail.html')}}';
     var inward_vehicle_schedule_maintenance_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/schedule-maintenance.html')}}';
+    var inward_vehicle_updatejc_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/update-jc.html')}}';
 
     var inward_vehicle_payable_labour_part_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/payable-labour-part-form.html')}}';
 
@@ -843,6 +848,28 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 
 </script>
 <script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/controller.js')}}"></script>
+
+<!--My Job Card--->
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    when('/my-jobcard/card-list', {
+	        template: '<my-jobcard-card-list></my-jobcard-card-list>',
+	        title: 'My Job Card List',
+	    }).
+	    when('/my-jobcard/view/:job_card_id', {
+	        template: '<my-jobcard-view></my-jobcard-view>',
+	        title: 'My Job Card View',
+	    });
+	}]);
+
+	//Gate Logs
+
+    var myjobcard_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/my-jobcard/card-list.html')}}';
+    var myjobcard_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/my-jobcard/view.html')}}';
+
+</script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/my-jobcard/controller.js')}}"></script>
 
 
 <script type='text/javascript'>

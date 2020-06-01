@@ -443,7 +443,7 @@ class JobCardController extends Controller {
 	// JOB CARD VIEW DATA
 	public function getMyJobCardData(Request $request) {
 		try {
-			// dd($job_card_id);
+			//dd($request->job_card_id);
 			$job_card = JobCard::find($request->job_card_id);
 
 			if (!$job_card) {
@@ -452,6 +452,34 @@ class JobCardController extends Controller {
 					'error' => 'Invalid Job Order!',
 				]);
 			}
+
+			$user_details = Employee::
+			with(['user',
+				'outlet',
+				'outlet.state'])->find($request->mechanic_id);
+
+			$my_job_card_details = Employee::select([
+				'job_cards.job_card_number as jc_number',
+				'vehicles.registration_number',
+				DB::raw('COUNT(job_order_repair_orders.id) as no_of_ROTs'),
+				'configs.name as status',
+				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
+				'models.model_number',
+			])
+				->join('users', 'users.entity_id', 'employees.id')
+				->join('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
+				->join('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')
+				->join('job_orders', 'job_orders.id', 'job_order_repair_orders.job_order_id')
+				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
+				->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
+				->leftJoin('models', 'models.id', 'vehicles.model_id')
+				->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')
+				->join('configs', 'configs.id', 'job_cards.status_id')
+				->where('users.user_type_id', 1)
+				->where('employees.id', $request->mechanic_id)
+				->where('job_cards.id',$request->job_card_id)
+				->first();
 
 			$pass_work_reasons = PauseWorkReason::where('company_id', Auth::user()->company_id)
 				->get();
@@ -462,8 +490,10 @@ class JobCardController extends Controller {
 
 			$job_order_repair_orders = JobOrderRepairOrder::with([
 				'repairOrderMechanics',
+				'repairOrderMechanics.mechanicTimeLogs',
 				'repairOrderMechanics.mechanic',
 				'repairOrderMechanics.status',
+				'status',
 			])
 				->where('job_order_id', $job_card->job_order_id)
 				->whereIn('id', $job_order_repair_order_ids)
@@ -475,6 +505,8 @@ class JobCardController extends Controller {
 				'job_card' => $job_card,
 				'job_order_repair_orders' => $job_order_repair_orders,
 				'pass_work_reasons' => $pass_work_reasons,
+				'user_details' => $user_details,
+				'my_job_card_details' => $my_job_card_details,
 			]);
 
 		} catch (Exception $e) {

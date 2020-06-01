@@ -593,6 +593,15 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+
+			//My JobCard
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'my-jobcard',
+				'display_name' => 'My JobCard List',
+			],
+			
 			//Job Order Repair Orders
 			[
 				'display_order' => 99,

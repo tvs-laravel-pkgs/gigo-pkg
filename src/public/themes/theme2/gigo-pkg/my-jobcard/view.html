@@ -1,0 +1,302 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/static/gigo/kanban/job-card/list" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">
+                        My Job Card
+                    </h1>
+                    <p class="subtitle">
+                        Inward Vehicle / Job card / Update
+                    </p>
+                </div>
+                <div class="page-header-content">
+                    <div class="jc-profile">
+                        <img class="img-responsive profile-image" src="./public/theme/img/content/profile.jpg" alt="Profile">
+                        <span>
+                                <b>
+                                    {{user_details.user.name}} | 
+                                </b>  
+                                ECode : {{user_details.code}} | {{user_details.outlet.state.code}} / {{user_details.outlet.code}} / Mechanic
+                        </span>
+                    </div>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left --> 
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form-top type-2">
+            <div class="page-tab-form-top-left">
+                <div class="page-tab-form-top-left-info pad-lf-rt">
+                    <span class="page-tab-form-top-left-info-content">
+                        <b>
+                            JC No: {{my_job_card_details.jc_number}}  |
+                        </b>  
+                        {{my_job_card_details.registration_number}}  |  {{my_job_card_details.model_number}}  | {{my_job_card_details.date}}, {{my_job_card_details.time}}
+                    </span>
+                </div>
+            </div><!-- Page Tab Form Top Left -->
+            <div class="page-tab-form-top-right">
+                <div class="page-tab-form-top-right-info">
+                        Status : {{my_job_card_details.status}}
+                </div>
+            </div><!-- Page Tab Form Top Right -->
+        </div><!-- Page Tab Form Top -->            
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-form pb-60 mt-30">
+                        <h5 class="jc-update-title">
+                            Total Labours ({{job_order_repair_orders[0].repair_order_mechanics.length}})
+                        </h5>
+                        <p class="jc-update-label">
+                            Assign to Mechanics
+                        </p>
+                        <ul class="card-list">
+                            <li ng-repeat="(key, job_order_repair_orders) in job_order_repair_orders">
+                                <div class="card-box type-2">
+                                    <div class="card-box-info">
+                                        <div class="card-box-head">
+                                            <div class="info">
+                                                MIS-BEND1
+                                            </div>
+                                            <div class="title">
+                                                {{job_order_repair_orders.observation}}
+                                            </div>
+                                        </div>
+                                        <div class="card-box-label">
+                                            <div class="info">
+                                                Assigned to:<span ng-repeat="(key, repair_order_mechanics) in job_order_repair_orders.repair_order_mechanics"> {{repair_order_mechanics.mechanic.name}} ,</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-box-body start" id="start_{{key}}">
+                                            <span class="card-box-content-wrap">
+                                                <div class="card-box-content bg-dark">
+                                                        <span class="info">
+                                                            Start
+                                                        </span> 
+                                                </div>
+                                            </span>                                       
+                                        </div><!-- Card Box Body -->
+                                        <div class="card-box-body" id="alstart_{{key}}">
+                                            <span class="card-box-content-wrap alstart">
+                                                <div class="card-box-content bg-grey">
+                                                    <span class="data">
+                                                        Start Time
+                                                    </span>
+                                                    <span class="data small">
+                                                        09:00 am
+                                                    </span> 
+                                                    <span class="time">
+                                                        01:20:30
+                                                    </span> 
+                                                </div>   
+                                            </span>
+                                            <span class="card-box-content-wrap pause" id="pause_{{key}}">
+                                                <a data-toggle="modal" data-target="#pause_work">
+                                                    <div class="card-box-content bg-dark">
+                                                        <span class="info">
+                                                            Pause<br> Work
+                                                        </span> 
+                                                    </div>                                            
+                                                </a>
+                                            </span>
+                                            <span class="card-box-content-wrap finish" id="finish_{{key}}">
+                                                <a data-toggle="modal" data-target="#finish_work">
+                                                    <div class="card-box-content bg-red">
+                                                        <span class="info">
+                                                            Finish<br> Work
+                                                        </span> 
+                                                    </div>                                            
+                                                </a>
+                                            </span>
+                                        </div><!-- Card Box Body -->
+                                    </div><!-- Card Box Info -->
+                                    <div class="card-box-footer">
+                                        <span class="info">
+                                            Status : {{job_order_repair_orders.status.name}}
+                                        </span>
+                                    </div><!-- Card Box Footer -->
+                                </div><!-- Card Box -->
+                            </li>
+                            <!-- <li>
+                                <div class="card-box type-2">
+                                    <div class="card-box-info">
+                                        <div class="card-box-head">
+                                            <div class="info">
+                                                MIS-BEND1
+                                            </div>
+                                            <div class="title">
+                                                All Wheel Hub Greasing
+                                            </div>
+                                        </div>
+                                        <div class="card-box-label">
+                                            <div class="info">
+                                                Assigned to: You, Manishkanth
+                                            </div>
+                                        </div>
+                                        <div class="card-box-body">
+                                            <span class="card-box-content-wrap">
+                                                <div class="card-box-content bg-grey">
+                                                    <span class="data">
+                                                        Start Time
+                                                    </span>
+                                                    <span class="data small">
+                                                        09:00 am
+                                                    </span> 
+                                                    <span class="time">
+                                                        01:20:30
+                                                    </span> 
+                                                </div>
+                                            </span>
+                                            <span class="card-box-content-wrap">
+                                                <div class="card-box-content bg-dark">
+                                                    <span class="data">
+                                                        Paused
+                                                    </span>
+                                                    <span class="data small">
+                                                        11:00 am
+                                                    </span> 
+                                                    <span class="time txt-white">
+                                                        Start Again
+                                                    </span> 
+                                                </div>   
+                                            </span>
+                                            <span class="card-box-content-wrap">
+                                                <div class="card-box-content bg-red opacity-05">
+                                                    <span class="info">
+                                                        Finish<br> Work
+                                                    </span> 
+                                                </div> 
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="card-box-footer">
+                                        <span class="info">
+                                            Status : Pending
+                                        </span>
+                                    </div>
+                                </div>
+                            </li> -->
+                            
+                        </ul><!-- Card List -->                                            
+                        
+                    </div><!-- Page Form -->                    
+                </div><!-- Column -->
+           </div><!-- Row -->
+           <div class="page-form-footer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="#!/my-jobcard/card-list"><button class="btn btn-red btn-min-wdth">Back</button></a>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Page Form Footer --> 
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+
+<!-- Modal -->
+<div class="modal alert-modal jc-confirm-modal fade" id="finish_work" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">Confirm</h5>
+                <h6 class="sub-title">Work Summary</h6>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+               <table class="time-modal">
+                   <thead>
+                       <tr>
+                            <th>Started</th>
+                            <th>Finished</th>
+                       </tr>
+                   </thead>
+                   <tbody>
+                       <tr>
+                           <td>
+                                <p>20/04/2020</p>
+                                <p>09 : 00 am</p>
+                            </td>
+                            <td>
+                                <p>20/04/2020</p>
+                                <p>04 : 00 pm</p>
+                            </td>
+                       </tr>                       
+                   </tbody>
+               </table>
+               <span class="grey-box">
+                   Standard Hours 7hrs
+                </span>
+               <span class="title">
+                   Actual Hours Worked
+                </span>
+               <span class="time">
+                   6hrs 0min
+                </span>
+            </div><!-- Modal Body -->   
+            <div class="modal-footer">
+                <button type="button" class="btn btn-green btn-block btn-square">Confirm</button>                
+            </div><!-- Modal Footer --> 
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+
+<!-- Modal -->
+<div class="modal alert-modal jc-confirm-modal fade" id="pause_work" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">Reason to Pause Work</h5>
+                <h6 class="sub-title">Select from the list</h6>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <ul class="pause-work-list">
+                    <li class="pause-work-list-item">
+                        <a href="#!" class="pause-work-list-item-link">
+                            Tea Break
+                        </a>
+                    </li>
+                    <li class="pause-work-list-item">
+                        <a href="#!" class="pause-work-list-item-link active">
+                            Lunch Break
+                        </a>
+                    </li>
+                    <li class="pause-work-list-item">
+                        <a href="#!" class="pause-work-list-item-link">
+                            Waiting for Parts
+                        </a>
+                    </li>
+                    <li class="pause-work-list-item">
+                        <a href="#!" class="pause-work-list-item-link">
+                            Machine Problem
+                        </a>
+                    </li>
+                    <li class="pause-work-list-item">
+                        <a href="#!" class="pause-work-list-item-link">
+                            Tools Not Available
+                        </a>
+                    </li>
+                    <li class="pause-work-list-item">
+                        <a href="#!" class="pause-work-list-item-link">
+                            Others
+                        </a>
+                    </li>
+                </ul>               
+            </div><!-- Modal Body -->   
+            <div class="modal-footer">
+                <button type="button" class="btn btn-green btn-block btn-square">Submit</button>                
+            </div><!-- Modal Footer --> 
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->

@@ -118,7 +118,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::get('view-material-gate-pass/{job_card_id}', 'JobCardController@viewMetirialGatePass');
 
 		// MY JOB CARD DATA
-		Route::post('get-my-job-card-data', 'JobCardController@getMyJobCardData');
+		Route::post('my-job-card-view', 'JobCardController@getMyJobCardData');
 
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
