@@ -72,16 +72,18 @@
                                             <div class="title">
                                                 {{job_order_repair_orders.observation}}
                                             </div>
+                                            <input type="hidden" id="repair_order_id{{key}}" value="{{job_order_repair_orders.id}})">
                                         </div>
                                         <div class="card-box-label">
                                             <div class="info">
-                                                Assigned to:<span ng-repeat="(key, repair_order_mechanics) in job_order_repair_orders.repair_order_mechanics"> {{repair_order_mechanics.mechanic.name}} ,</span>
+                                                Assigned to:<span ng-repeat="(index, repair_order_mechanics) in job_order_repair_orders.repair_order_mechanics"> {{repair_order_mechanics.mechanic.name}} ,
+                                                </span>
                                             </div>
                                         </div>
                                         <div class="card-box-body start" id="start_{{key}}">
                                             <span class="card-box-content-wrap">
                                                 <div class="card-box-content bg-dark">
-                                                        <span class="info">
+                                                        <span class="info" ng-click="StartWork(8261,key)">
                                                             Start
                                                         </span> 
                                                 </div>
@@ -104,7 +106,7 @@
                                             <span class="card-box-content-wrap pause" id="pause_{{key}}">
                                                 <a data-toggle="modal" data-target="#pause_work">
                                                     <div class="card-box-content bg-dark">
-                                                        <span class="info">
+                                                        <span class="info" ng-click="StartWork(8262)">
                                                             Pause<br> Work
                                                         </span> 
                                                     </div>                                            
@@ -113,7 +115,7 @@
                                             <span class="card-box-content-wrap finish" id="finish_{{key}}">
                                                 <a data-toggle="modal" data-target="#finish_work">
                                                     <div class="card-box-content bg-red">
-                                                        <span class="info">
+                                                        <span class="info" ng-click="StartWork(8263)">
                                                             Finish<br> Work
                                                         </span> 
                                                     </div>                                            
@@ -262,36 +264,12 @@
             </div><!-- Modal Header -->
             <div class="modal-body">
                 <ul class="pause-work-list">
-                    <li class="pause-work-list-item">
+                    <li class="pause-work-list-item" ng-repeat="(index, pass_work_reasons) in pass_work_reasons">
                         <a href="#!" class="pause-work-list-item-link">
-                            Tea Break
+                            {{pass_work_reasons.name}}
                         </a>
                     </li>
-                    <li class="pause-work-list-item">
-                        <a href="#!" class="pause-work-list-item-link active">
-                            Lunch Break
-                        </a>
-                    </li>
-                    <li class="pause-work-list-item">
-                        <a href="#!" class="pause-work-list-item-link">
-                            Waiting for Parts
-                        </a>
-                    </li>
-                    <li class="pause-work-list-item">
-                        <a href="#!" class="pause-work-list-item-link">
-                            Machine Problem
-                        </a>
-                    </li>
-                    <li class="pause-work-list-item">
-                        <a href="#!" class="pause-work-list-item-link">
-                            Tools Not Available
-                        </a>
-                    </li>
-                    <li class="pause-work-list-item">
-                        <a href="#!" class="pause-work-list-item-link">
-                            Others
-                        </a>
-                    </li>
+                    
                 </ul>               
             </div><!-- Modal Body -->   
             <div class="modal-footer">

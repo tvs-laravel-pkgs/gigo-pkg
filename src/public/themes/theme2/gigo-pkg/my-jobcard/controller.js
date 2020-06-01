@@ -89,7 +89,7 @@ app.component('myJobcardView', {
 
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
-        
+
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('my-jobcard')) {
             window.location = "#!/page-permission-denied";
@@ -132,6 +132,7 @@ app.component('myJobcardView', {
                     $scope.my_job_card_details = res.my_job_card_details;
                     $scope.user_details = res.user_details;
                     $scope.job_order_repair_orders = res.job_order_repair_orders;
+                    $scope.pass_work_reasons = res.pass_work_reasons;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -139,6 +140,37 @@ app.component('myJobcardView', {
                 });
         }
         $scope.fetchData();
+
+        $scope.StartWork = function($id,$key)
+        {
+         job_repair_order_id = $("#repair_order_id"+$key).val();
+         status_id = $id;
+          $.ajax({
+                    url: base_url + '/api/save-my-job-card',
+                    method: "POST",
+                    data: {
+                        job_repair_order_id : job_repair_order_id,
+                        machanic_id: self.user.id,
+                        status_id : status_id,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                }).done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    /*$scope.my_job_card_details = res.my_job_card_details;
+                    $scope.user_details = res.user_details;
+                    $scope.job_order_repair_orders = res.job_order_repair_orders;
+                    $scope.pass_work_reasons = res.pass_work_reasons;
+                    $scope.$apply();*/
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                }); 
+        }
        
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
