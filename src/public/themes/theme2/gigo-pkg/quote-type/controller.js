@@ -224,11 +224,7 @@ app.component('quoteTypeForm', {
                         } else {
                             if (!res.success == true) {
                                 $('.submit').button('reset');
-                                var errors = '';
-                                for (var i in res.errors) {
-                                    errors += '<li>' + res.errors[i] + '</li>';
-                                }
-                                custom_noty('error', errors);
+                                showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
                                 $location.path('/gigo-pkg/quote-type/list');

@@ -291,11 +291,7 @@ app.component('partsIndentView', {
                                 $('#part_code').val(" ");
                                 $('#issued_qty').val(" ");
                                 $('#machanic_id').val(" ");
-                                var errors = '';
-                                for (var i in res.errors) {
-                                    errors += '<li>' + res.errors[i] + '</li>';
-                                }
-                                custom_noty('error', errors);
+                                showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
                                $location.path('/gigo-pkg/parts-indent/view/' + $routeParams.id);

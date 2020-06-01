@@ -163,6 +163,72 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//VEHICLE INWARD VIEW 
+	public function getVehicleInwardView(Request $r) {
+		try {
+			$job_order = JobOrder::company()->with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'vehicle.currentOwner.customer',
+				'vehicle.currentOwner.customer.address',
+				'vehicle.currentOwner.customer.address.country',
+				'vehicle.currentOwner.customer.address.state',
+				'vehicle.currentOwner.customer.address.city',
+				'vehicle.currentOwner.ownershipType',
+				'vehicle.lastJobOrder',
+				'vehicle.lastJobOrder.jobCard',
+				'type',
+				'quoteType',
+				'serviceType',
+				'kmReadingType',
+				'status',
+				'gateLog',
+				'gateLog.driverAttachment',
+				'gateLog.kmAttachment',
+				'gateLog.vehicleAttachment',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Job Order Not Found!',
+				]);
+			}
+
+			// $extras = [
+			// 	'job_order_type_list' => ServiceOrderType::getDropDownList(),
+			// 	'quote_type_list' => QuoteType::getDropDownList(),
+			// 	'service_type_list' => ServiceType::getDropDownList(),
+			// 	'reading_type_list' => Config::getDropDownList([
+			// 		'config_type_id' => 33,
+			// 		'default_text' => 'Select Reading type',
+			// 	]),
+			// ];
+
+			//Job card details need to get future
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+				// 'extras' => $extras,
+				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+			]);
+		}
+	}
+
+
 	//VEHICLE INWARD VIEW DATA
 	public function getVehicleInwardViewData(Request $r) {
 		try {
@@ -995,7 +1061,7 @@ class VehicleInwardController extends Controller {
 				$part_details = JobOrderPart::select('parts.id as id', 'parts.name', 'parts.code', 'job_order_parts.rate', 'job_order_parts.qty', 'job_order_parts.amount')
 					->leftJoin('parts', 'parts.id', 'job_order_parts.part_id', 'job_order_parts.id as del_part_id')->where('job_order_parts.job_order_id', $r->id)->get();
 
-				$labour_details = JobOrderRepairOrder::select('repair_orders.id', 'job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id')
+				$labour_details = JobOrderRepairOrder::select('repair_orders.id','job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id','job_order_repair_orders.qty')
 					->leftJoin('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')
 					->leftJoin('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')
 					->where('job_order_repair_orders.job_order_id', $r->id)->get();
@@ -1116,6 +1182,7 @@ class VehicleInwardController extends Controller {
 			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
+					
 					if (isset($repair['delete_job_repair_order_id'])) {
 						JobOrderRepairOrder::where('id', '!=', $repair['delete_job_repair_order_id'])->delete();
 					}
@@ -2329,29 +2396,38 @@ class VehicleInwardController extends Controller {
 	}
 
 	// ESTIMATION DENIED GET FORM DATA
-	public function getEstimationDeniedFormData($id) {
-		// dd($id);
+	public function getEstimationDeniedFormData(Request $r) {
 		try {
-			$gate_log_validate = GateLog::find($id);
-			if (!$gate_log_validate) {
+			$job_order = JobOrder::find($r->id);
+
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
 				]);
 			}
-			//issue: select name & id - query optimisation.
-			$estimation_type = EstimationType::where('company_id', Auth::user()->company_id)
+			$estimation_type = EstimationType::select(
+				'name',
+				'id'
+			)
+				->where('company_id', Auth::user()->company_id)
 				->get();
 
 			return response()->json([
 				'success' => true,
 				'estimation_type' => $estimation_type,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -2381,7 +2457,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -2402,8 +2478,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -2423,13 +2501,6 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:job_orders,id',
 				],
-
-				//issue: is_customer_agreed - no need
-				'is_customer_agreed' => [
-					'required',
-					'boolean',
-				],
-
 				'customer_photo' => [
 					'required',
 					'mimes:jpeg,jpg,png',

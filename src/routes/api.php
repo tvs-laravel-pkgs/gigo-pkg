@@ -8,8 +8,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//VEHICLE INWARD
 		Route::post('vehicle-inward/get', 'VehicleInwardController@getGateInList');
 
-		//GATE IN DETAIL
-		// Route::post('vehicle-inward/get-gate-in-detail', 'VehicleInwardController@getGateInDetail');
+		//VEHICLE INWARD VIEW DATA
+		Route::post('vehicle-inward/get-view-data', 'VehicleInwardController@getVehicleInwardView');
 
 		//CUSTOMER DETAIL FORM DATA AND SAVE
 		Route::post('vehicle-inward/view', 'VehicleInwardController@getVehicleInwardViewData');
@@ -74,12 +74,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/estimate/save', 'VehicleInwardController@saveEstimate');
 
 		//ESTIMATION DENIED GET FORM DATA AND SAVE
-		//issue: Route naming
-		Route::get('get-estimation-denied-form-data/{id}', 'VehicleInwardController@getEstimationDeniedFormData');
-		Route::post('save-estimation-denied', 'VehicleInwardController@saveEstimateDenied');
+		Route::post('vehicle-inward/estimation-denied/get-form-data', 'VehicleInwardController@getEstimationDeniedFormData');
+		Route::post('vehicle-inward/estimation-denied/save', 'VehicleInwardController@saveEstimateDenied');
 
-		//CUSTOMER CONFIRMATION SAVE AND GET DATA
-		Route::post('save-customer-confirmation', 'VehicleInwardController@saveCustomerConfirmation');
+		//CUSTOMER CONFIRMATION SAVE
+		Route::post('vehicle-inward/customer-confirmation/save', 'VehicleInwardController@saveCustomerConfirmation');
 
 		//INITIATE JOB SAVE
 		Route::post('save-initiate-job', 'VehicleInwardController@saveInitiateJob');
@@ -90,9 +89,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//GET CITY BASED STATE
 		Route::get('get-city/state-id/{state_id}', 'VehicleInwardController@getcity');
 
-		//Save Job Card
-		//issue: Route naming
-		Route::post('save-job-card', 'JobCardController@saveJobCard');
+		//Update Job Card
+		Route::post('vehicle-inward/job-card/save', 'JobCardController@saveJobCard');
 
 		//GET BAY ASSIGNMENT FORM DATA
 		Route::get('get-bay-form-data/{job_card_id}', 'JobCardController@getBayFormData');
@@ -125,7 +123,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::get('view-material-gate-pass/{job_card_id}', 'JobCardController@viewMetirialGatePass');
 
 		// MY JOB CARD DATA
-		Route::post('get-my-job-card-data', 'JobCardController@getMyJobCardData');
+		Route::post('my-job-card-view', 'JobCardController@getMyJobCardData');
 
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
