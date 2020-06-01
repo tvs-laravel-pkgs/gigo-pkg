@@ -198,23 +198,13 @@ app.component('pauseWorkReasonForm', {
                         contentType: false,
                     })
                     .done(function(res) {
-                        if (res.success == true) {
+                        if (res.success) {
                             custom_noty('success', res.message);
                             $location.path('/gigo-pkg/pasuse-work-reason/list');
                             $scope.$apply();
                         } else {
-                            if (!res.success == true) {
-                                $('.submit').button('reset');
-                                var errors = '';
-                                for (var i in res.errors) {
-                                    errors += '<li>' + res.errors[i] + '</li>';
-                                }
-                                custom_noty('error', errors);
-                            } else {
-                                $('.submit').button('reset');
-                                $location.path('/gigo-pkg/pasuse-work-reason/list');
-                                $scope.$apply();
-                            }
+                            $('.submit').button('reset');
+                            showErrorNoty(res);
                         }
                     })
                     .fail(function(xhr) {
