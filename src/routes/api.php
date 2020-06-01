@@ -68,12 +68,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/estimate/save', 'VehicleInwardController@saveEstimate');
 
 		//ESTIMATION DENIED GET FORM DATA AND SAVE
-		//issue: Route naming
 		Route::post('vehicle-inward/estimation-denied/get-form-data', 'VehicleInwardController@getEstimationDeniedFormData');
 		Route::post('vehicle-inward/estimation-denied/save', 'VehicleInwardController@saveEstimateDenied');
 
-		//CUSTOMER CONFIRMATION SAVE AND GET DATA
-		Route::post('save-customer-confirmation', 'VehicleInwardController@saveCustomerConfirmation');
+		//CUSTOMER CONFIRMATION SAVE
+		Route::post('vehicle-inward/customer-confirmation/save', 'VehicleInwardController@saveCustomerConfirmation');
 
 		//INITIATE JOB SAVE
 		Route::post('save-initiate-job', 'VehicleInwardController@saveInitiateJob');
