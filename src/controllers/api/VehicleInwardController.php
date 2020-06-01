@@ -2119,29 +2119,38 @@ class VehicleInwardController extends Controller {
 	}
 
 	// ESTIMATION DENIED GET FORM DATA
-	public function getEstimationDeniedFormData($id) {
-		// dd($id);
+	public function getEstimationDeniedFormData(Request $r) {
 		try {
-			$gate_log_validate = GateLog::find($id);
-			if (!$gate_log_validate) {
+			$job_order = JobOrder::find($r->id);
+
+			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Gate Log Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
 				]);
 			}
-			//issue: select name & id - query optimisation.
-			$estimation_type = EstimationType::where('company_id', Auth::user()->company_id)
+			$estimation_type = EstimationType::select(
+				'name',
+				'id'
+			)
+				->where('company_id', Auth::user()->company_id)
 				->get();
 
 			return response()->json([
 				'success' => true,
 				'estimation_type' => $estimation_type,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -2171,7 +2180,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -2192,8 +2201,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}

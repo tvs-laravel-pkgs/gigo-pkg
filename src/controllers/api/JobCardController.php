@@ -43,6 +43,7 @@ class JobCardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -76,10 +77,13 @@ class JobCardController extends Controller {
 				'success' => true,
 				'job_card_list' => $job_card_list,
 			]);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -89,9 +93,9 @@ class JobCardController extends Controller {
 		try {
 
 			$validator = Validator::make($request->all(), [
-				//issue: exist rule missing
 				'job_order_id' => [
 					'required',
+					'exists:job_orders,id',
 					'integer',
 				],
 				'job_card_number' => [
@@ -106,8 +110,6 @@ class JobCardController extends Controller {
 			]);
 
 			if ($validator->fails()) {
-				$errors = $validator->errors()->all();
-				$success = false;
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
@@ -169,11 +171,13 @@ class JobCardController extends Controller {
 				'message' => 'Job Card saved successfully!!',
 			]);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
