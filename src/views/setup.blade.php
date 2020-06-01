@@ -716,6 +716,14 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<job-order-view></job-order-view>',
 	        title: 'Job Order - View',
 	    }).
+	    when('/inward-vehicle/view/:job_order_id', {
+	        template: '<inward-vehicle-view></inward-vehicle-view>',
+	        title: 'Inward Vehicle - View',
+	    }).
+	    when('/inward-vehicle/view/:job_order_id/:type_id', {
+	        template: '<inward-vehicle-view></inward-vehicle-view>',
+	        title: 'Inward Vehicle - View',
+	    }).
 	    when('/inward-vehicle/vehicle-detail/:job_order_id', {
 	        template: '<inward-vehicle-vehicle-detail></inward-vehicle-vehicle-detail>',
 	        title: 'Inward Vehicle - Vehicle Detail',
@@ -787,6 +795,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-estimation-status-detail-form></inward-vehicle-estimation-status-detail-form>',
 	        title: 'Inward Vehicle - Estimation Status',
 	    }).
+	    when('/inward-vehicle/update-jc/form/:job_order_id', {
+	        template: '<inward-vehicle-updatejc-form></inward-vehicle-updatejc-detail-form>',
+	        title: 'Inward Vehicle - Update Job Card',
+	    }).
 	    when('/inward-vehicle/gate-in-detail-view/:job_order_id', {
 	        template: '<inward-vehicle-gate-in-detail-view></inward-vehicle-gate-in-detail-view>',
 	        title: 'Inward Vehicle - Vehicle Detail',
@@ -799,13 +811,12 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-customer-detail-view></inward-vehicle-customer-detail-view>',
 	        title: 'Inward Vehicle - Customer Detail View',
 	    });
-
-
 	}]);
 
     var inward_vehicle_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/card-list.html')}}';
     var inward_vehicle_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/list.html')}}';
-    var job_order_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/view.html')}}';
+    var job_order_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/job-order-view.html')}}';
+    var inward_vehicle_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/view.html')}}';
     var inward_vehicle_vehicle_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail.html')}}';
     var inward_vehicle_customer_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail.html')}}';
     var inward_vehicle_order_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/order-detail-form.html')}}';
@@ -821,6 +832,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_dms_checklist_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/dms-check-list.html')}}';
     var inward_vehicle_inspection_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/inspection-detail.html')}}';
     var inward_vehicle_schedule_maintenance_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/schedule-maintenance.html')}}';
+    var inward_vehicle_updatejc_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/update-jc.html')}}';
 
     var inward_vehicle_payable_labour_part_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/payable-labour-part-form.html')}}';
 
@@ -830,11 +842,6 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 
     var inward_vehicle_estimate_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimate.html')}}';
     var inward_vehicle_estimation_status_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimation-status-detail-form.html')}}';
-    
-    var inward_vehicle_gate_in_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/gate-in-detail.html')}}';
-    var inward_vehicle_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail-view.html')}}';
-    var inward_vehicle_customer_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail-view.html')}}';
-
 
     //PARTIALS
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';
@@ -843,6 +850,28 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 
 </script>
 <script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/controller.js')}}"></script>
+
+<!--My Job Card--->
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    when('/my-jobcard/card-list', {
+	        template: '<my-jobcard-card-list></my-jobcard-card-list>',
+	        title: 'My Job Card List',
+	    }).
+	    when('/my-jobcard/view/:job_card_id', {
+	        template: '<my-jobcard-view></my-jobcard-view>',
+	        title: 'My Job Card View',
+	    });
+	}]);
+
+	//Gate Logs
+
+    var myjobcard_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/my-jobcard/card-list.html')}}';
+    var myjobcard_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/my-jobcard/view.html')}}';
+
+</script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/my-jobcard/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
