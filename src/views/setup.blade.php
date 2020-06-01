@@ -779,7 +779,15 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-payable-add-part-form></inward-vehicle-payable-add-part-form>',
 	        title: 'Inward Vehicle - Payable Add Part',
 	    }).
-	    when('/inward-vehicle/payable-labour-part/add-labour/form/:job_order_id', {
+	    when('/inward-vehicle/payable-labour-part/add-part/form/edit/:job_order_id/:id', {
+	        template: '<inward-vehicle-payable-add-part-form></inward-vehicle-payable-add-part-form>',
+	        title: 'Inward Vehicle - Payable Add Part',
+	    }).
+	    when('/inward-vehicle/payable-labour-part/add-labour/form/edit/:job_order_id/:id', {
+	        template: '<inward-vehicle-payable-add-labour-form></inward-vehicle-payable-add-labour-form>',
+	        title: 'Inward Vehicle - Payable Labour Part',
+	    }).
+	     when('/inward-vehicle/payable-labour-part/add-labour/form/:job_order_id', {
 	        template: '<inward-vehicle-payable-add-labour-form></inward-vehicle-payable-add-labour-form>',
 	        title: 'Inward Vehicle - Payable Labour Part',
 	    }).
