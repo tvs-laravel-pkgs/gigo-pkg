@@ -1,4 +1,4 @@
-<!-- Content Wrap -->
+Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -21,9 +21,7 @@
             <div class="page-tab-form pb-70">
                 <div class="page-tab-form-top">
                     <div class="page-tab-form-top-left">
-                        <div class="page-tab-form-top-left-title">
-                            General Info
-                        </div>
+                        <div class="page-tab-form-top-left-title">General Info</div>
                         <div class="page-tab-form-top-left-link">
                             <a class="btn-link-arrow btn-prev">
                                 <i class="ionicons ion-md-arrow-round-back"></i>
@@ -34,13 +32,25 @@
                         </div>
                         <div class="page-tab-form-top-left-info">
                             <span class="page-tab-form-top-left-info-content">
-                                <b>TN 47 BV 1283</b> | AL 407-1 | Sasikumar | 31/03/2020, 09:15am
+                                <b>
+                                    {{job_order.vehicle.registration_number}}
+                                </b>
+                                <a class="page-tab-form-top-left-info-link" data-toggle="modal" data-target="#search_vehicle_modal" style="margin-left: 0;">
+                                    <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
+                                </a>
+                                <span ng-if="job_order.vehicle.model.model_number">
+                                    | {{job_order.vehicle.model.model_number}}
+                                </span>
+                                <span ng-if="job_order.driver_name">
+                                    | {{job_order.driver_name}}
+                                </span>
+                                | {{job_order.date}}, {{job_order.time}}
                             </span>
                         </div>
                     </div><!-- Page Tab Form Top Left -->
                     <div class="page-tab-form-top-right">
                         <div class="page-tab-form-top-right-info">
-                            Status : New
+                            Status : {{job_order.status.name}}
                         </div>
                     </div><!-- Page Tab Form Top Right -->
                 </div><!-- Page Tab Form Top -->
@@ -138,26 +148,29 @@
                                                             <tbody>
                                                                 <tr>
                                                                     <td><b>Gate In Date</b></td>
-                                                                    <td>31/03/2020</td>
+                                                                    <td>{{job_order.date}}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td><b>Gate In Time</b></td>
-                                                                    <td>09:15 am</td>
+                                                                    <td>{{job_order.time}}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td><b>Captured by</b></td>
-                                                                    <td>Rajesh</td>
+                                                                    <td>
+                                                                        <!-- {{job_order.created_by_id.name}} -->
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td><b>Outlet</b></td>
-                                                                    <td>TN1 / Coimbatore</td>
+                                                                    <td></td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
                                                     </div><!-- Column -->
                                                     <div class="col-md-6">
                                                         <div class="multi-img">
-                                                            <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" />
+                                                            <!-- <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" /> -->
+                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{$ctrl.job_order.gate_log.driver_attachment[0].attachment_of_id}}" alt="Images" />
                                                             <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" />
                                                             <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" />
                                                         </div>
@@ -181,33 +194,76 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>Vehicle Details</b></h5>
-                                            <ul class="view-row mb-no">
+                                            <ul class="view-row mb-no" ng-show="show_vehicle_detail">
                                                 <li class="view-col-3">
-                                                    <span class="view-col-label">Registration Type</span>
-                                                    <span class="view-data-list-value"><b>Registered</b></span>
+                                                    <span class="view-col-label">
+                                                        Registration Type
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b ng-if="job_order.vehicle.is_registered == 1">
+                                                            Registered Vehicle
+                                                        </b>
+                                                        <b ng-if="job_order.vehicle.is_registered != 1">
+                                                            Un-Registered Vehicle
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3" ng-if="job_order.vehicle.is_registered == 1">
+                                                    <span class="view-col-label">
+                                                        Registration No
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.vehicle.registration_number}}
+                                                        </b>
+                                                    </span>
                                                 </li>
                                                 <li class="view-col-3">
-                                                    <span class="view-col-label">Registration No</span>
-                                                    <span class="view-col-value"><b>TN47 BV 1283</b></span>
+                                                    <span class="view-col-label">
+                                                        Vehicle Model
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.vehicle.model.model_name}}
+                                                        </b>
+                                                    </span>
                                                 </li>
                                                 <li class="view-col-3">
-                                                    <span class="view-col-label">Vehicle Model</span>
-                                                    <span class="view-col-value"><b>AL502</b></span>
+                                                    <span class="view-col-label">
+                                                        VIN Number
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_order.vehicle.vin_number}}
+                                                    </span>
                                                 </li>
                                                 <li class="view-col-3">
-                                                    <span class="view-col-label">VIN Number</span>
-                                                    <span class="view-col-value">VIN7878888788MN</span>
+                                                    <span class="view-col-label">
+                                                        Engine Number
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_order.vehicle.engine_number}}
+                                                    </span>
                                                 </li>
                                                 <li class="view-col-3">
-                                                    <span class="view-col-label">Engine Number</span>
-                                                    <span class="view-col-value">EI898998998K</span>
-                                                </li>
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">Chasis Number</span>
-                                                    <span class="view-data-list-value"><b>CH899899888999</b></span>
+                                                    <span class="view-col-label">
+                                                        Chassis Number
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.vehicle.chassis_number}}
+                                                        </b>
+                                                    </span>
                                                 </li>
                                             </ul>
-                                            <button class="btn btn-secondary-dark btn-md btn-square">Edit</button>
+                                            <!-- <button class="btn btn-secondary-dark btn-md btn-square" >
+                                                Edit
+                                            </button> -->
+                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/view/{{job_order_id}}/{{type_id}}">
+                                                Edit
+                                            </a>
+                                            <!-- <a type="button" class="btn btn-red" ng-click="showVehicleForm()">
+                                                Edit
+                                            </a> -->
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -228,32 +284,70 @@
                                             <h5 class="color-primary mb-10"><b>Customer Details</b></h5>
                                             <ul class="view-row mb-no">
                                                 <li class="view-col-3">
-                                                    <span class="view-col-label">Name</span>
-                                                    <span class="view-data-list-value"><b>Abdul</b></span>
+                                                    <span class="view-col-label">
+                                                        Name
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.vehicle.current_owner.customer.name}}
+                                                        </b>
+                                                    </span>
                                                 </li>
                                                 <li class="view-col-3">
-                                                    <span class="view-col-label">Mobile No</span>
-                                                    <span class="view-col-value"><b>9898798987</b></span>
+                                                    <span class="view-col-label">
+                                                        Mobile No
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.vehicle.current_owner.customer.mobile_no}}
+                                                        </b>
+                                                    </span>
                                                 </li>
                                                 <li class="view-col-3">
-                                                    <span class="view-col-label">Email</span>
-                                                    <span class="view-col-value"><b>mail@gmail.com</b></span>
+                                                    <span class="view-col-label">
+                                                        Email
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.vehicle.current_owner.customer.email}}
+                                                        </b>
+                                                    </span>
                                                 </li>
                                                 <li class="view-col-3 ptb-2">
-                                                    <span class="view-col-label">Address</span>
-                                                    <span class="view-col-value">No.102, Athipalayam Road, Chinnavedampatti, Coimbatore.</span>
+                                                    <span class="view-col-label">
+                                                        Address
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_order.vehicle.current_owner.customer.address.address_line1}},{{job_order.vehicle.current_owner.customer.address.address_line2}},{{job_order.vehicle.current_owner.customer.address.city.name}},{{job_order.vehicle.current_owner.customer.address.state.name}},{{job_order.vehicle.current_owner.customer.address.pincode}},{{job_order.vehicle.current_owner.customer.address.country.name}}.
+                                                    </span>
                                                 </li>
                                                 <li class="view-col-3">
-                                                    <span class="view-col-label">GST No</span>
-                                                    <span class="view-col-value">GS7878889999776</span>
+                                                    <span class="view-col-label">
+                                                        GST No
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_order.vehicle.current_owner.customer.gst_number}}
+                                                    </span>
                                                 </li>
                                                 <li class="view-col-3">
-                                                    <span class="view-col-label">PAN No</span>
-                                                    <span class="view-data-list-value"><b>B19899PL</b></span>
+                                                    <span class="view-col-label">
+                                                        PAN No
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.vehicle.current_owner.customer.pan_number}}
+                                                        </b>
+                                                    </span>
                                                 </li>
                                                 <li class="view-col-3">
-                                                    <span class="view-col-label">Ownership</span>
-                                                    <span class="view-data-list-value"><b>First</b></span>
+                                                    <span class="view-col-label">
+                                                        Ownership
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.vehicle.current_owner.ownership_type.name}}
+                                                        </b>
+                                                    </span>
                                                 </li>
                                             </ul>
                                             <button class="btn btn-secondary-dark btn-md btn-square">Edit</button>
@@ -275,7 +369,11 @@
                                 <div class="tab-pane-wrap">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>Order Details</b></h5>
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Order Details
+                                                </b>
+                                            </h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="panel-group" id="accordion">
                                                 <div class="panel panel-default type-3">
@@ -295,8 +393,9 @@
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                Abdul
-                                                                            </b></span>
+                                                                                {{job_order.driver_name}}
+                                                                            </b>
+                                                                        </span>
                                                                     </li>
                                                                     <li class="view-col-3">
                                                                         <span class="view-col-label">
@@ -304,7 +403,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                9898798987
+                                                                                {{job_order.driver_mobile_number}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -339,7 +438,7 @@
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                Pre Sale Order
+                                                                                {{job_order.type.name}}
                                                                             </b></span>
                                                                     </li>
                                                                     <li class="view-col-3">
@@ -348,7 +447,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                ZDQT - At Site Quote
+                                                                                {{job_order.quote_type.name}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -358,7 +457,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                2nd Free Service - BSIV
+                                                                                {{job_order.service_type.name}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -368,7 +467,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                600002
+                                                                                {{job_order.km_reading_type}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -378,7 +477,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                9898798987
+                                                                                {{job_order.contact_number}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -405,7 +504,7 @@
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                JV123223
+                                                                                {{job_order.vehicle.last_job_order.job_card.number}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -415,7 +514,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                31/03/2020, 09:15 am
+                                                                                {{job_order.vehicle.last_job_order.created_at}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -425,7 +524,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                3600
+                                                                                {{job_order.vehicle.last_job_order.km_reading}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -456,7 +555,7 @@
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                20/03/2020
+                                                                                {{job_order.driver_license_expiry_date}}
                                                                             </b></span>
                                                                     </li>
                                                                     <li class="view-col-3">
@@ -465,7 +564,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                20/03/2021
+                                                                                {{job_order.insurance_expiry_date }}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -482,6 +581,18 @@
                                                             <div class="mb-15"></div><!-- Spacing -->
                                                             <div class="multi-docs">
                                                                 <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" />
+                                                                <!-- <div class="col-md-4">
+                                                                    <div class="img-caption-wrap">
+                                                                        <div class="img-wrap">
+                                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{$ctrl.gate_pass_details.warrenty_policy_attachment[0].name}}" alt="Screenshot" />
+                                                                        </div>
+                                                                        <div class="caption-wrap">
+                                                                            <h6 class="caption-title">Warranty</h6>
+                                                                            <div class="font-sm font-bold">Valid Upto</div>
+                                                                            <div class="font-xs ">{{$ctrl.gate_pass_details.warranty_expiry_date}}</div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div> -->
                                                                 <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" />
                                                                 <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" />
                                                             </div>
@@ -510,4 +621,4 @@
             </div><!-- Page Form -->
         </form>
     </div><!-- Page Main Content -->
-</div><!-- Content Wrap -->
+</div><!-- Content Wrap

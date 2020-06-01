@@ -163,6 +163,72 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//VEHICLE INWARD VIEW 
+	public function getVehicleInwardView(Request $r) {
+		try {
+			$job_order = JobOrder::company()->with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'vehicle.currentOwner.customer',
+				'vehicle.currentOwner.customer.address',
+				'vehicle.currentOwner.customer.address.country',
+				'vehicle.currentOwner.customer.address.state',
+				'vehicle.currentOwner.customer.address.city',
+				'vehicle.currentOwner.ownershipType',
+				'vehicle.lastJobOrder',
+				'vehicle.lastJobOrder.jobCard',
+				'type',
+				'quoteType',
+				'serviceType',
+				'kmReadingType',
+				'status',
+				'gateLog',
+				'gateLog.driverAttachment',
+				'gateLog.kmAttachment',
+				'gateLog.vehicleAttachment',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Job Order Not Found!',
+				]);
+			}
+
+			// $extras = [
+			// 	'job_order_type_list' => ServiceOrderType::getDropDownList(),
+			// 	'quote_type_list' => QuoteType::getDropDownList(),
+			// 	'service_type_list' => ServiceType::getDropDownList(),
+			// 	'reading_type_list' => Config::getDropDownList([
+			// 		'config_type_id' => 33,
+			// 		'default_text' => 'Select Reading type',
+			// 	]),
+			// ];
+
+			//Job card details need to get future
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+				// 'extras' => $extras,
+				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+			]);
+		}
+	}
+
+
 	//VEHICLE INWARD VIEW DATA
 	public function getVehicleInwardViewData(Request $r) {
 		try {
