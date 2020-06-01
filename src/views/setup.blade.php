@@ -716,6 +716,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<job-order-view></job-order-view>',
 	        title: 'Job Order - View',
 	    }).
+	    when('/inward-vehicle/view/:job_order_id', {
+	        template: '<inward-vehicle-view></inward-vehicle-view>',
+	        title: 'Inward Vehicle - View',
+	    }).
 	    when('/inward-vehicle/vehicle-detail/:job_order_id', {
 	        template: '<inward-vehicle-vehicle-detail></inward-vehicle-vehicle-detail>',
 	        title: 'Inward Vehicle - Vehicle Detail',
@@ -803,13 +807,25 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-customer-detail-view></inward-vehicle-customer-detail-view>',
 	        title: 'Inward Vehicle - Customer Detail View',
 	    });
-
+	    // when('/inward-vehicle/gate-in-detail/view/:job_order_id', {
+	    //     template: '<inward-vehicle-gate-in-detail-view></inward-vehicle-gate-in-detail-view>',
+	    //     title: 'Inward Vehicle - Gate In Detail',
+	    // }).
+	    // when('/inward-vehicle/vehicle-detail/view/:job_order_id', {
+	    //     template: '<inward-vehicle-vehicle-detail-view></inward-vehicle-vehicle-detail-view>',
+	    //     title: 'Inward Vehicle - Vehicle Detail View',
+	    // }).
+	    // when('/inward-vehicle/customer-detail/view/:job_order_id', {
+	    //     template: '<inward-vehicle-customer-detail-view></inward-vehicle-customer-detail-view>',
+	    //     title: 'Inward Vehicle - Customer Detail View',
+	    // });
 
 	}]);
 
     var inward_vehicle_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/card-list.html')}}';
     var inward_vehicle_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/list.html')}}';
-    var job_order_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/view.html')}}';
+    var job_order_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/job-order-view.html')}}';
+    var inward_vehicle_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/view.html')}}';
     var inward_vehicle_vehicle_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail.html')}}';
     var inward_vehicle_customer_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail.html')}}';
     var inward_vehicle_order_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/order-detail-form.html')}}';
@@ -836,9 +852,9 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_estimate_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimate.html')}}';
     var inward_vehicle_estimation_status_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimation-status-detail-form.html')}}';
     
-    var inward_vehicle_gate_in_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/gate-in-detail.html')}}';
-    var inward_vehicle_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail-view.html')}}';
-    var inward_vehicle_customer_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail-view.html')}}';
+    // var inward_vehicle_gate_in_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/gate-in-detail-view.html')}}';
+    // var inward_vehicle_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail-view.html')}}';
+    // var inward_vehicle_customer_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail-view.html')}}';
 
 
     //PARTIALS

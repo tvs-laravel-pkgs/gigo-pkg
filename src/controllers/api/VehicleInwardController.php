@@ -2225,13 +2225,6 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:job_orders,id',
 				],
-
-				//issue: is_customer_agreed - no need
-				'is_customer_agreed' => [
-					'required',
-					'boolean',
-				],
-
 				'customer_photo' => [
 					'required',
 					'mimes:jpeg,jpg,png',
