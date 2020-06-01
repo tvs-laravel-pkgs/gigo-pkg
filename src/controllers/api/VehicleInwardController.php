@@ -925,7 +925,7 @@ class VehicleInwardController extends Controller {
 				$part_details = JobOrderPart::select('parts.id as id', 'parts.name', 'parts.code', 'job_order_parts.rate', 'job_order_parts.qty', 'job_order_parts.amount')
 					->leftJoin('parts', 'parts.id', 'job_order_parts.part_id', 'job_order_parts.id as del_part_id')->where('job_order_parts.job_order_id', $r->id)->get();
 
-				$labour_details = JobOrderRepairOrder::select('repair_orders.id', 'job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id')
+				$labour_details = JobOrderRepairOrder::select('repair_orders.id','job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id','job_order_repair_orders.qty')
 					->leftJoin('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')
 					->leftJoin('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')
 					->where('job_order_repair_orders.job_order_id', $r->id)->get();
@@ -1046,6 +1046,7 @@ class VehicleInwardController extends Controller {
 			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
+					
 					if (isset($repair['delete_job_repair_order_id'])) {
 						JobOrderRepairOrder::where('id', '!=', $repair['delete_job_repair_order_id'])->delete();
 					}
