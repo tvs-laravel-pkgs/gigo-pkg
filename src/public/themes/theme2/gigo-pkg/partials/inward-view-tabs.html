@@ -4,18 +4,73 @@
         <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
             <ul class="nav nav-pills cndn-tabs">
                 <li ng-class="{active:active_tab == 'gate-in-detail-view'}">
-                    <a class="filter" href=".#!/inward-vehicle/gate-in-detail-view/{{job_order_id}}">
+                    <a class="filter" href=".#!/inward-vehicle/gate-in-detail/view/{{job_order_id}}">
                         Gate In Details
                     </a>
                 </li>
                 <li ng-class="{active:active_tab == 'vehicle-detail-view'}">
-                    <a class="filter" href=".#!/inward-vehicle/vehicle-detail-view/{{job_order_id}}">
+                    <a class="filter" href=".#!/inward-vehicle/vehicle-detail/view/{{job_order_id}}">
                         Vehicle Details
                     </a>
                 </li>
                 <li ng-class="{active:active_tab == 'customer-detail-view'}">
-                    <a class="filter" href=".#!/inward-vehicle/customer-detail-view/{{job_order_id}}">
+                    <a class="filter" href=".#!/inward-vehicle/customer-detail/view/{{job_order_id}}">
                         Customer Details
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'order-detail-view'}">
+                    <a href=".#!/inward-vehicle/order-detail/view/{{job_order_id}}" class="filter">
+                        Order Details
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'inventory-detail-view'}">
+                    <a href=".#!/inward-vehicle/inventory-detail/view/{{job_order_id}}" class="filter">
+                        Inventory
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'voc-detail-view'}">
+                    <a href=".#!/inward-vehicle/voc-detail/view/{{job_order_id}}" class="filter">
+                        Capture VOC
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'road-test-detail-view'}">
+                    <a href=".#!/inward-vehicle/road-test-detail/view/{{job_order_id}}" class="filter">
+                        Road Test Observations
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'expert-diagnosis-detail-view'}">
+                    <a href=".#!/inward-vehicle/expert-diagnosis-detail/view/{{job_order_id}}" class="filter">
+                        Expert Diagnosis Report
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'inspection-detail-view'}">
+                    <a href=".#!/inward-vehicle/inspection-detail/view/{{job_order_id}}" class="filter">
+                        Vehicle Inspection Report
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'dms-checklist'}">
+                    <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="filter">
+                        DMS Checklist
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'scheduled-maintenance'}">
+                    <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="filter">
+                        Scheduled Maintenance
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'payable-labour-part-detail'}">
+                    <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="filter">
+                        Payable Labour & Parts
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'estimate-details'}">
+                    <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="filter">
+                        Estimate
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'status-details'}">
+                    <a href=".#!/inward-vehicle/estimation-status-detail/form/{{job_order_id}}" class="filter">
+                        Estimation Status
                     </a>
                 </li>
             </ul>
