@@ -419,7 +419,7 @@ app.component('inwardVehicleTableList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 //Vehicle Diagonis Details
-app.component('inwardVehicleExportDiagnosisDetails', {
+app.component('inwardVehicleExportDiagnosisDetailForm', {
     templateUrl: inward_vehicle_export_diagnosis_details_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         $element.find('input').on('keydown', function(ev) {
@@ -443,7 +443,7 @@ app.component('inwardVehicleExportDiagnosisDetails', {
                     url: base_url + '/api/vehicle-inward/expert-diagnosis-report/get-form-data',
                     method: "POST",
                     data: {
-                        job_order_id: $routeParams.job_order_id
+                        id: $routeParams.job_order_id
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -526,7 +526,7 @@ app.component('inwardVehicleExportDiagnosisDetails', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 //Vehicle Inspection Details
-app.component('inwardVehicleInspectionDetail', {
+app.component('inwardVehicleInspectionDetailForm', {
     templateUrl: inward_vehicle_inspection_detail_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         $element.find('input').on('keydown', function(ev) {
@@ -550,7 +550,7 @@ app.component('inwardVehicleInspectionDetail', {
                     url: base_url + '/api/vehicle-inward/vehicle-inspection/get-form-data',
                     method: "POST",
                     data: {
-                        job_order_id: $routeParams.job_order_id
+                        id: $routeParams.job_order_id
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -632,7 +632,7 @@ app.component('inwardVehicleInspectionDetail', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 //DMS Check list
-app.component('inwardVehicleDmsCheckList', {
+app.component('inwardVehicleDmsCheckListForm', {
     templateUrl: inward_vehicle_dms_checklist_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         $element.find('input').on('keydown', function(ev) {
@@ -656,7 +656,7 @@ app.component('inwardVehicleDmsCheckList', {
                     url: base_url + '/api/vehicle-inward/dms-checklist/get-form-data',
                     method: "POST",
                     data: {
-                        job_order_id: $routeParams.job_order_id
+                        id: $routeParams.job_order_id
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
