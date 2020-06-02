@@ -771,6 +771,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-scheduled-maintenance-form></inward-vehicle-scheduled-maintenance-form>',
 	        title: 'Inward Vehicle - Scheduled Maintenance',
 	    }).
+	    when('/inward-vehicle/customer-estimation-approval/:job_order_id', {
+	        template: '<inward-vehicle-customer-estimation-approval-form></inward-vehicle-customer-estimation-approval-form>',
+	        title: 'Inward Vehicle - Customer Estimation Approval',
+	    }).
 	    when('/inward-vehicle/estimate/:job_order_id', {
 	        template: '<inward-vehicle-estimate-form></inward-vehicle-estimate-form>',
 	        title: 'Inward Vehicle - Estimate',
@@ -848,8 +852,15 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_payable_labour_part_add_labour_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/add-labour.html')}}';
 
 
+    var inward_vehicle_customer_estimation_approval_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-estimation-approval.html')}}';
+
     var inward_vehicle_estimate_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimate.html')}}';
     var inward_vehicle_estimation_status_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimation-status-detail-form.html')}}';
+
+    var inward_vehicle_gate_in_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/gate-in-detail.html')}}';
+    var inward_vehicle_vehicle_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/vehicle-detail-view.html')}}';
+    var inward_vehicle_customer_detail_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-detail-view.html')}}';
+
 
     //PARTIALS
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';
@@ -1042,7 +1053,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    $routeProvider.
 	    //Job Card
 	    when('/gigo-pkg/job-card/list', {
-	        template: '<job-card-list></job-card-list>',
+	        template: '<job-card-table-list></job-card-table-list>',
 	        title: 'Job Cards',
 	    }).
 	    when('/gigo-pkg/job-card/add', {

@@ -1,11 +1,12 @@
-app.component('jobCardList', {
+app.component('jobCardTableList', {
     templateUrl: job_card_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
         $('#search_job_card').focus();
         var self = this;
+        //alert();
         $('li').removeClass('active');
-        $('.master_link').addClass('active').trigger('click');
+        $('.job_cards').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('job-cards')) {
             window.location = "#!/page-permission-denied";
@@ -43,22 +44,26 @@ app.component('jobCardList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getJobCardList'],
+                url: laravel_routes['getJobCardTableList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
+                    /*d.short_name = $("#short_name").val();
                     d.name = $("#name").val();
                     d.description = $("#description").val();
-                    d.status = $("#status").val();
+                    d.status = $("#status").val();*/
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'job_cards.short_name' },
-                { data: 'name', name: 'job_cards.name' },
-                { data: 'description', name: 'job_cards.description' },
+                { data: 'date', },
+                { data: 'job_card_number', name: 'job_cards.job_card_number' },
+                { data: 'registration_number', name: 'vechicles.registration_number' },
+                { data: 'customer_name', name: 'customers.name' },
+                { data: 'job_order_type', name: 'service_order_types.name' },
+                { data: 'quote_type', name: 'quote_types.name' },
+                { data: 'service_type', name: 'service_types.name' },
                 { data: 'status', name: '' },
 
             ],
@@ -107,12 +112,12 @@ app.component('jobCardList', {
         }
 
         // FOR FILTER
-        $http.get(
+        /*$http.get(
             laravel_routes['getJobCardFilter']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
-        });
+        });*/
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -148,6 +153,220 @@ app.component('jobCardList', {
     }
 });
 
+
+app.component('jobCardCardList', {
+    templateUrl: inward_vehicle_card_list_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+        $rootScope.loading = true;
+        $('#search').focus();
+        var self = this;
+
+        if (!HelperService.isLoggedIn()) {
+            $location.path('/login');
+            return;
+        }
+
+        $('li').removeClass('active');
+        $('.master_link').addClass('active').trigger('click');
+
+        self.hasPermission = HelperService.hasPermission;
+        if (!self.hasPermission('inward-vehicle')) {
+            window.location = "#!/page-permission-denied";
+            return false;
+        }
+
+        $scope.clear_search = function() {
+            $('#search').val('');
+        }
+
+        //HelperService.isLoggedIn()
+        self.user = $scope.user = HelperService.getLoggedUser();
+        self.search_key = '';
+        self.gate_in_date = '';
+        self.reg_no = '';
+        self.membership = '';
+        self.gate_in_no = '';
+        self.customer_id = '';
+        self.model_id = '';
+        self.registration_type = '';
+        self.status_id = '';
+
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        $scope.clearSearchTerm = function() {
+            $scope.searchTerm = '';
+            $scope.searchTerm1 = '';
+            $scope.searchTerm2 = '';
+            $scope.searchTerm3 = '';
+        };
+
+        $scope.reset_filter = function() {
+            $("#short_name").val('');
+            $("#name").val('');
+            $("#status").val('');
+            dataTables.fnFilter();
+        }
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/get',
+                    method: "POST",
+                    data: {
+                        service_advisor_id: self.user.id,
+                        search_key: self.search_key,
+                        gate_in_date: self.gate_in_date,
+                        reg_no: self.reg_no,
+                        membership: self.membership,
+                        gate_in_no: self.gate_in_no,
+                        customer_id: self.customer_id,
+                        model_id: self.model_id,
+                        registration_type: self.registration_type,
+                        status_id: self.status_id,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.gate_logs = res.gate_logs;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        $('.refresh_table').on("click", function() {
+            $scope.fetchData();
+        });
+        $("#search_inward_vehicle").keyup(function() {
+            self.search_key = this.value;
+            $scope.fetchData();
+        });
+        $("#gate_in_date").keyup(function() {
+            self.gate_in_date = this.value;
+        });
+        $("#reg_no").keyup(function() {
+            self.reg_no = this.value;
+        });
+        $("#membership").keyup(function() {
+            self.membership = this.value;
+        });
+        $("#gate_in_no").keyup(function() {
+            self.gate_in_no = this.value;
+        });
+        $scope.listRedirect = function(type) {
+            if (type == 'table') {
+                window.location = "#!/inward-vehicle/table-list";
+                return false;
+            } else {
+                window.location = "#!/inward-vehicle/card-list";
+                return false;
+            }
+        }
+
+        // FOR FILTER
+        $http.get(
+            laravel_routes['getVehicleInwardFilter']
+        ).then(function(response) {
+            self.extras = response.data.extras;
+        });
+        //GET CUSTOMER LIST
+        self.searchCustomer = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCustomerSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+        //GET VEHICLE MODEL LIST
+        self.searchVehicleModel = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getVehicleModelSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        $scope.clearSearchTerm = function() {
+            $scope.searchTerm = '';
+            $scope.searchTerm1 = '';
+            $scope.searchTerm2 = '';
+            $scope.searchTerm3 = '';
+        };
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function(event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
+        $scope.selectedCustomer = function(id) {
+            $('#customer_id').val(id);
+            self.customer_id = id;
+        }
+        $scope.selectedVehicleModel = function(id) {
+            $('#model_id').val(id);
+            self.model_id = id;
+        }
+        $scope.onSelectedRegistrationType = function(id) {
+            $('#registration_type').val(id);
+            self.registration_type = id;
+        }
+        $scope.onSelectedStatus = function(id) {
+            $('#status_id').val(id);
+            self.status_id = id;
+        }
+        $scope.applyFilter = function() {
+            $scope.fetchData();
+            $('#vehicle-inward-filter-modal').modal('hide');
+        }
+        $scope.reset_filter = function() {
+            $("#gate_in_date").val('');
+            $("#registration_type").val('');
+            $("#reg_no").val('');
+            $("#customer_id").val('');
+            $("#model_id").val('');
+            $("#membership").val('');
+            $("#gate_in_no").val('');
+            $("#status_id").val('');
+            $scope.fetchData();
+        }
+
+        $rootScope.loading = false;
+    }
+});
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
