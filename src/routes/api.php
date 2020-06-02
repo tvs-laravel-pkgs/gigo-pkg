@@ -69,6 +69,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		Route::post('vehicle-inward/save-addtional-rot-part', 'VehicleInwardController@saveAddtionalRotPart');
 
+		Route::post('vehicle-inward/web/addtional-rot-part/save', 'VehicleInwardController@saveWebAddtionalRotPart');
+
 		//ESTIMATE GET FORM DATA AND SAVE
 		Route::post('vehicle-inward/estimate/get-form-data', 'VehicleInwardController@getEstimateFormData');
 		Route::post('vehicle-inward/estimate/save', 'VehicleInwardController@saveEstimate');

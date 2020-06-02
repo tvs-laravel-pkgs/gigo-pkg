@@ -28,7 +28,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>ROT Type <sup class="mandatory">*</sup></label>
-                                        <md-select ng-model="job_order_labour.repair_order.repair_order_type" placeholder="Select Rot Type" ng-change="fetchRotData(job_order_labour.repair_order.repair_order_type.id)" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select ng-model="repair_order_type" placeholder="Select Rot Type" ng-change="fetchRotData(repair_order_type.id)" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                             <md-select-header class="demo-select-header">
                                                 <input ng-model="searchRotType" type="search" placeholder="Search for a Rot Type.." class="demo-header-searchbox md-text">
                                             </md-select-header>
@@ -38,13 +38,13 @@
                                                 </md-option>
                                             </md-optgroup>
                                         </md-select>
-                                        <input type="hidden" name="rot_type_id" id="rot_type_id" value="{{job_order_labour.repair_order.repair_order_type.id}}">
+                                        <input type="hidden" name="rot_type_id" id="rot_type_id" value="{{repair_order_type.id}}">
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Select ROT <sup class="mandatory">*</sup></label>
-                                        <md-select ng-model="job_order_labour.repair_order" placeholder="Select Rot" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select ng-model="repair_order" placeholder="Select Rot" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                             <md-select-header class="demo-select-header">
                                                 <input ng-model="searchRot" type="search" placeholder="Search for a Rot Type.." class="demo-header-searchbox md-text">
                                             </md-select-header>
@@ -54,7 +54,7 @@
                                                 </md-option>
                                             </md-optgroup>
                                         </md-select>
-                                        <input type="hidden" name="rot_id" value="{{job_order_labour.repair_order.id}}">
+                                        <input type="hidden" name="rot_id" value="{{repair_order.id}}">
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-12">
