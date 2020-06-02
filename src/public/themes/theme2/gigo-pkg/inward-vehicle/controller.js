@@ -2464,7 +2464,7 @@ app.component('inwardVehicleVocDetailForm', {
         });
 
         var self = this;
-        $('#voc_details').hide();
+        $('#voc_remark_details').hide();
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
         //     window.location = "#!/page-permission-denied";
@@ -2476,9 +2476,9 @@ app.component('inwardVehicleVocDetailForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
         $scope.onSelectedVoc = function(id) {
             if (id == 6)
-                $('#voc_details').show();
+                $('#voc_remark_details').show();
             else
-                $('#voc_details').hide();
+                $('#voc_remark_details').hide();
         }
         $scope.job_order_id = $routeParams.job_order_id;
 
@@ -2504,6 +2504,8 @@ app.component('inwardVehicleVocDetailForm', {
                     // self.job_order = $scope.job_order = res.job_order;
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
+                    // console.log(res.extras);
+                    // console.log(res.job_order.customer_voices);
                     if (res.action == "Add") {
                         self.addNewCustomerVoice();
                     }
