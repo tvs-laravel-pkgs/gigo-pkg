@@ -116,7 +116,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::get('get-vendor-details/{vendor_id}', 'JobCardController@VendorDetails');
 
 		// JOB CARD LIST
-		Route::post('get-job-card-list', 'JobCardController@getJobCardList');
+		Route::post('job-card/get', 'JobCardController@getJobCardList');
 
 		// JOB CARD TIME LOG
 		Route::get('get-job-card-time-log/{job_card_id}', 'JobCardController@getJobCardTimeLog');

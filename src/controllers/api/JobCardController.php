@@ -33,7 +33,7 @@ class JobCardController extends Controller {
 
 	public function getJobCardList(Request $request) {
 		try {
-			$validator = Validator::make($request->all(), [
+			/*$validator = Validator::make($request->all(), [
 				'floor_supervisor_id' => [
 					'required',
 					'exists:users,id',
@@ -46,32 +46,95 @@ class JobCardController extends Controller {
 					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
-			}
+			}*/
 			//issue: query optimisation
-			$job_card_list = Jobcard::select('job_cards.*', 'job_cards.status_id')
-				->with([
-					'jobOrder',
-					'jobOrder.gateLog',
-					'jobOrder.gateLog.vehicleDetail',
-					'jobOrder.gateLog.vehicleDetail.vehicleCurrentOwner',
-					'jobOrder.gateLog.vehicleDetail.vehicleCurrentOwner.CustomerDetail',
-				])
-				->leftJoin('job_orders', 'job_orders.id', 'job_cards.job_order_id')
-				->leftJoin('gate_logs', 'gate_logs.id', 'job_orders.gate_log_id')
-				->leftJoin('vehicles', 'gate_logs.vehicle_id', 'vehicles.id')
-				->leftJoin('vehicle_owners', 'vehicles.id', 'vehicle_owners.vehicle_id')
-				->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
-			//->whereIn('job_cards.id', $jobcard_ids)
-				->where(function ($query) use ($request) {
+			$job_card_list = JobCard::select([
+				'job_cards.id as job_card_id',
+				'job_cards.job_card_number',
+				'job_cards.bay_id',
+				'job_orders.id as job_order_id',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y - %h:%i %p") as date'),
+				'vehicles.registration_number',
+				'models.model_name',
+				'customers.name as customer_name',
+				'status.name as status',
+				'service_types.name as service_type',
+				'quote_types.name as quote_type',
+				'service_order_types.name as job_order_type',
+
+			])
+			->leftJoin('job_orders', 'job_orders.id', 'job_cards.job_order_id')
+			->leftJoin('gate_passes', 'gate_passes.job_card_id', 'job_cards.id')
+			->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
+			->leftJoin('models', 'models.id', 'vehicles.model_id')
+			->leftJoin('vehicle_owners', function ($join) {
+				$join->on('vehicle_owners.vehicle_id', 'job_orders.vehicle_id')
+					->whereRaw('vehicle_owners.from_date = (select MAX(vehicle_owners1.from_date) from vehicle_owners as vehicle_owners1 where vehicle_owners1.vehicle_id = job_orders.vehicle_id)');
+			})
+			->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
+			->leftJoin('configs as status', 'status.id', 'job_cards.status_id')
+			->leftJoin('service_types', 'service_types.id', 'job_orders.service_type_id')
+			->leftJoin('quote_types', 'quote_types.id', 'job_orders.quote_type_id')
+			->leftJoin('service_order_types', 'service_order_types.id', 'job_orders.type_id')
+			->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
-							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
+							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('models.model_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('job_cards.job_card_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('status.name', 'LIKE', '%' . $request->search_key . '%')
+						;
 					}
 				})
+			->where(function ($query) use ($request) {
+				if (!empty($request->date)) {
+					$query->whereDate('job_cards.created_at', date('Y-m-d', strtotime($request->date)));
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->reg_no)) {
+					$query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->job_card_no)) {
+					$query->where('job_cards.job_card_number', 'LIKE', '%' . $request->job_card_no . '%');
+				}
+			})			
+			->where(function ($query) use ($request) {
+				if (!empty($request->customer_id)) {
+					$query->where('vehicle_owners.customer_id', $request->customer_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->model_id)) {
+					$query->where('vehicles.model_id', $request->model_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->status_id)) {
+					$query->where('job_cards.status_id', $request->status_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->quote_type_id)) {
+					$query->where('job_orders.quote_type_id', $request->quote_type_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->service_type_id)) {
+					$query->where('job_orders.service_type_id', $request->service_type_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->job_order_type_id)) {
+					$query->where('job_orders.type_id', $request->job_order_type_id);
+				}
+			})
 			//Floor Supervisor not Assigned =>8220
-				->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')")
-				->groupBy('job_cards.id')
-				->get();
+			->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')")
+			->groupBy('job_cards.id')
+			->get();
 
 			return response()->json([
 				'success' => true,
