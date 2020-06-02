@@ -1498,7 +1498,7 @@ app.component('inwardVehicleCustomerDetail', {
                         minlength: 6,
                         maxlength: 32,
                     },
-                    'ownership_id': {
+                    'ownership_type_id': {
                         required: true,
                     },
                 },
