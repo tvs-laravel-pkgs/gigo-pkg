@@ -72,7 +72,7 @@
                                             <div class="title">
                                                 {{job_order_repair_orders.observation}}
                                             </div>
-                                            <input type="hidden" id="repair_order_id{{key}}" value="{{job_order_repair_orders.id}})">
+                                            <input type="hidden" id="repair_repair_order_id{{key}}" value="{{job_order_repair_orders.id}}">
                                         </div>
                                         <div class="card-box-label">
                                             <div class="info">
@@ -80,7 +80,7 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="card-box-body start" id="start_{{key}}">
+                                        <div class="card-box-body start" id="start_{{key}}" ng-show="{{getwork_status[key].status_id}} == 8060">
                                             <span class="card-box-content-wrap">
                                                 <div class="card-box-content bg-dark">
                                                         <span class="info" ng-click="StartWork(8261,key)">
@@ -89,39 +89,118 @@
                                                 </div>
                                             </span>                                       
                                         </div><!-- Card Box Body -->
-                                        <div class="card-box-body" id="alstart_{{key}}">
-                                            <span class="card-box-content-wrap alstart">
+                                        <div class="card-box-body" id="alstart_{{key}}" ng-show="{{getwork_status[key].status_id}} == 8261">
+                                            <span class="card-box-content-wrap alstart" >
                                                 <div class="card-box-content bg-grey">
                                                     <span class="data">
                                                         Start Time
                                                     </span>
-                                                    <span class="data small">
-                                                        09:00 am
+                                                    <span class="data small" ng-repeat="(index, repair_order_mechanic) in job_order_repair_orders.repair_order_mechanics">
+                                                        {{repair_order_mechanic.mechanic_time_logs[0].start_date_time  | date: 'h:mm:ss a'}}
                                                     </span> 
-                                                    <span class="time">
-                                                        01:20:30
-                                                    </span> 
+                                                    
                                                 </div>   
                                             </span>
-                                            <span class="card-box-content-wrap pause" id="pause_{{key}}">
+                                            <span class="card-box-content-wrap pause" id="pause_{{key}}" >
                                                 <a data-toggle="modal" data-target="#pause_work">
                                                     <div class="card-box-content bg-dark">
-                                                        <span class="info" ng-click="StartWork(8262)">
+                                                        <span class="info" ng-click="PauseWork(key)">
                                                             Pause<br> Work
                                                         </span> 
                                                     </div>                                            
                                                 </a>
                                             </span>
-                                            <span class="card-box-content-wrap finish" id="finish_{{key}}">
+                                            <span class="card-box-content-wrap finish" id="finish_{{key}}" >
                                                 <a data-toggle="modal" data-target="#finish_work">
                                                     <div class="card-box-content bg-red">
-                                                        <span class="info" ng-click="StartWork(8263)">
+                                                        <span class="info" ng-click="StartWork(8263,key)">
                                                             Finish<br> Work
                                                         </span> 
                                                     </div>                                            
                                                 </a>
                                             </span>
                                         </div><!-- Card Box Body -->
+
+                                         <div class="card-box-body" id="alstart_{{key}}" ng-show="{{getwork_status[key].status_id}} == 8264">
+                                            <span class="card-box-content-wrap alstart" >
+                                                <div class="card-box-content bg-grey">
+                                                    <span class="data">
+                                                        Start Time
+                                                    </span>
+                                                    <span class="data small" ng-repeat="(index, repair_order_mechanic) in job_order_repair_orders.repair_order_mechanics">
+                                                        {{repair_order_mechanic.mechanic_time_logs[0].start_date_time  | date: 'h:mm:ss a'}}
+                                                    </span>
+                                                </div>   
+                                            </span>
+                                            <span class="card-box-content-wrap pause" id="pause_{{key}}" >
+                                                <a data-toggle="modal" data-target="#pause_work">
+                                                    <div class="card-box-content bg-dark">
+                                                        <span class="info" ng-click="PauseWork(key)">
+                                                            Pause<br> Work
+                                                        </span> 
+                                                    </div>                                            
+                                                </a>
+                                            </span>
+                                            <span class="card-box-content-wrap finish" id="finish_{{key}}" >
+                                                <a data-toggle="modal" data-target="#finish_work">
+                                                    <div class="card-box-content bg-red">
+                                                        <span class="info" ng-click="StartWork(8263,key)">
+                                                            Finish<br> Work
+                                                        </span> 
+                                                    </div>                                            
+                                                </a>
+                                            </span>
+                                        </div><!-- Card Box Body -->
+
+                                        <div class="card-box-body" ng-show="{{getwork_status[key].status_id}} == 8262">
+                                            <span class="card-box-content-wrap">
+                                                <div class="card-box-content bg-grey">
+                                                    <span class="data">
+                                                        Start Time
+                                                    </span>
+                                                    <span class="data small" ng-repeat="(index, repair_order_mechanic) in job_order_repair_orders.repair_order_mechanics">
+                                                        {{repair_order_mechanic.mechanic_time_logs[0].start_date_time  | date: 'h:mm:ss a'}}
+                                                    </span>
+                                                </div>
+                                            </span>
+                                            <span class="card-box-content-wrap">
+                                                <div class="card-box-content bg-dark">
+                                                    <span class="data">
+                                                        Paused
+                                                    </span>
+                                                    <!-- <span class="data small">
+                                                        11:00 am
+                                                    </span>  -->
+                                                    <span class="time txt-white" ng-click="StartWork(8264,key)">
+                                                        Start Again
+                                                    </span> 
+                                                </div>   
+                                            </span>
+                                            <span class="card-box-content-wrap">
+                                                <div class="card-box-content bg-red opacity-05">
+                                                    <span class="info" ng-click="StartWork(8263,key)">
+                                                        Finish<br> Work
+                                                    </span> 
+                                                </div> 
+                                            </span>
+                                        </div><!-- Card Box Body -->
+
+                                        <div class="card-box-body" ng-show="{{getwork_status[key].status_id}} == 8263">
+                                            <span class="card-box-content-wrap wid-100">
+                                                <div class="card-box-content bg-grey txt-left pl-19">
+                                                    <span class="data pt-10">
+                                                        <b>
+                                                            Work Finished
+                                                        </b>
+                                                    </span>
+                                                    <!-- <span class="time">
+                                                        01:20:30
+                                                    </span>  -->
+                                                </div>  
+                                            </span>
+                                        </div><!-- Card Box Body -->
+
+
                                     </div><!-- Card Box Info -->
                                     <div class="card-box-footer">
                                         <span class="info">
@@ -130,66 +209,6 @@
                                     </div><!-- Card Box Footer -->
                                 </div><!-- Card Box -->
                             </li>
-                            <!-- <li>
-                                <div class="card-box type-2">
-                                    <div class="card-box-info">
-                                        <div class="card-box-head">
-                                            <div class="info">
-                                                MIS-BEND1
-                                            </div>
-                                            <div class="title">
-                                                All Wheel Hub Greasing
-                                            </div>
-                                        </div>
-                                        <div class="card-box-label">
-                                            <div class="info">
-                                                Assigned to: You, Manishkanth
-                                            </div>
-                                        </div>
-                                        <div class="card-box-body">
-                                            <span class="card-box-content-wrap">
-                                                <div class="card-box-content bg-grey">
-                                                    <span class="data">
-                                                        Start Time
-                                                    </span>
-                                                    <span class="data small">
-                                                        09:00 am
-                                                    </span> 
-                                                    <span class="time">
-                                                        01:20:30
-                                                    </span> 
-                                                </div>
-                                            </span>
-                                            <span class="card-box-content-wrap">
-                                                <div class="card-box-content bg-dark">
-                                                    <span class="data">
-                                                        Paused
-                                                    </span>
-                                                    <span class="data small">
-                                                        11:00 am
-                                                    </span> 
-                                                    <span class="time txt-white">
-                                                        Start Again
-                                                    </span> 
-                                                </div>   
-                                            </span>
-                                            <span class="card-box-content-wrap">
-                                                <div class="card-box-content bg-red opacity-05">
-                                                    <span class="info">
-                                                        Finish<br> Work
-                                                    </span> 
-                                                </div> 
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="card-box-footer">
-                                        <span class="info">
-                                            Status : Pending
-                                        </span>
-                                    </div>
-                                </div>
-                            </li> -->
-                            
                         </ul><!-- Card List -->                                            
                         
                     </div><!-- Page Form -->                    
@@ -226,28 +245,28 @@
                    <tbody>
                        <tr>
                            <td>
-                                <p>20/04/2020</p>
-                                <p>09 : 00 am</p>
+                                <p id="start_date_time"></p><!-- 
+                                <p>09 : 00 am</p> -->
                             </td>
                             <td>
-                                <p>20/04/2020</p>
-                                <p>04 : 00 pm</p>
+                                <p id="end_date_time">{{work_start_date_time.end_date_time}}</p>
+                               <!--  <p>04 : 00 pm</p> -->
                             </td>
                        </tr>                       
                    </tbody>
                </table>
                <span class="grey-box">
-                   Standard Hours 7hrs
+                   Standard Hours <p id="estimation_work_hours"></p>hrs
                 </span>
                <span class="title">
                    Actual Hours Worked
                 </span>
                <span class="time">
-                   6hrs 0min
+                   <p id="actual_hours"></p>hrs
                 </span>
             </div><!-- Modal Body -->   
             <div class="modal-footer">
-                <button type="button" class="btn btn-green btn-block btn-square">Confirm</button>                
+               <!--  <button type="button" class="btn btn-green btn-block btn-square">Confirm</button>    -->             
             </div><!-- Modal Footer --> 
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
@@ -265,15 +284,18 @@
             <div class="modal-body">
                 <ul class="pause-work-list">
                     <li class="pause-work-list-item" ng-repeat="(index, pass_work_reasons) in pass_work_reasons">
-                        <a href="#!" class="pause-work-list-item-link">
-                            {{pass_work_reasons.name}}
-                        </a>
+                        <span class="pause-work-list-item-link" id="ac{{index}}">
+                            <span ng-click="getReason(index)">{{pass_work_reasons.name}}</span>
+                            <input type="hidden" id="reason_id{{index}}" value="{{pass_work_reasons.id}}">
+                        </span>
                     </li>
                     
                 </ul>               
             </div><!-- Modal Body -->   
             <div class="modal-footer">
-                <button type="button" class="btn btn-green btn-block btn-square">Submit</button>                
+                <input type="hidden" id="reason" value="">
+                <input type="hidden" id="pause_wrk_repair_id" value="">
+                <button type="button" ng-click="reasonConfirm()" class="btn btn-green btn-block btn-square" >Submit</button>                
             </div><!-- Modal Footer --> 
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
