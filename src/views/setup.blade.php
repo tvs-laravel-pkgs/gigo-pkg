@@ -720,19 +720,19 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-view></inward-vehicle-view>',
 	        title: 'Inward Vehicle - View',
 	    }).
-	    when('/inward-vehicle/view/:job_order_id/:type_id', {
-	        template: '<inward-vehicle-view></inward-vehicle-view>',
-	        title: 'Inward Vehicle - View',
-	    }).
-	    when('/inward-vehicle/vehicle-detail/:job_order_id', {
+	    when('/inward-vehicle/vehicle-detail/:job_order_id/:type_id?', {
 	        template: '<inward-vehicle-vehicle-detail></inward-vehicle-vehicle-detail>',
-	        title: 'Inward Vehicle - Vehicle Detail',
+	        title: 'Inward Vehicle',
 	    }).
-	    when('/inward-vehicle/customer-detail/:job_order_id', {
+	    // when('/inward-vehicle/vehicle-detail/:job_order_id', {
+	    //     template: '<inward-vehicle-vehicle-detail></inward-vehicle-vehicle-detail>',
+	    //     title: 'Inward Vehicle - Vehicle Detail',
+	    // }).
+	    when('/inward-vehicle/customer-detail/:job_order_id/:type_id?', {
 	        template: '<inward-vehicle-customer-detail></inward-vehicle-customer-detail>',
 	        title: 'Inward Vehicle - Customer Detail',
 	    }).
-	    when('/inward-vehicle/order-detail/form/:job_order_id', {
+	    when('/inward-vehicle/order-detail/form/:job_order_id/:type_id?', {
 	        template: '<inward-vehicle-order-detail-form></inward-vehicle-order-detail-form>',
 	        title: 'Inward Vehicle - Order Detail Form',
 	    }).

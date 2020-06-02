@@ -163,7 +163,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-	//VEHICLE INWARD VIEW 
+	//VEHICLE INWARD VIEW
 	public function getVehicleInwardView(Request $r) {
 		try {
 			$job_order = JobOrder::company()->with([
@@ -227,7 +227,6 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
-
 
 	//VEHICLE INWARD VIEW DATA
 	public function getVehicleInwardViewData(Request $r) {
@@ -384,9 +383,18 @@ class VehicleInwardController extends Controller {
 	public function saveCustomerDetail(Request $request) {
 		try {
 
-			$validator = Validator::make($request->all(), [
+			DB::beginTransaction();
 
-			]);
+			$job_order = JobOrder::company()->find($request->job_order_id);
+			$vehicle = $job_order->vehicle;
+
+			$error_messages = [
+				'ownership_type_id.unique' => "Ownership ID is already taken",
+			];
+
+			$validator = Validator::make($request->all(), [
+				'ownership_type_id' => 'required|unique:vehicle_owners,ownership_id,' . $request->id . ',id,vehicle_id,' . $vehicle->id,
+			], $error_messages);
 
 			if ($validator->fails()) {
 				return response()->json([
@@ -396,13 +404,8 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			DB::beginTransaction();
-
 			$customer = Customer::saveCustomer($request->all());
 			$customer->saveAddress($request->all());
-
-			$job_order = JobOrder::company()->find($request->job_order_id);
-			$vehicle = $job_order->vehicle;
 
 			if (!$request->id) {
 				//NEW OWNER
@@ -646,7 +649,6 @@ class VehicleInwardController extends Controller {
 	}
 
 	//Add Part Save
-
 	public function saveAddtionalPart(Request $request) {
 		//dd($request->all());
 		try {
@@ -676,9 +678,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$part=Part::where('id',$request->part_id)
-			->first();
-			if(!$part){
+			$part = Part::where('id', $request->part_id)
+				->first();
+			if (!$part) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
@@ -687,19 +689,19 @@ class VehicleInwardController extends Controller {
 			}
 			DB::beginTransaction();
 
-				$job_order_part = JobOrderPart::firstOrNew([
-					'part_id' => $part->id,
-					'job_order_id' => $request->job_order_id,
-				]);
-				//$job_order_part->fill($request);
-				$job_order_part->job_order_id = $request->job_order_id;
-				$job_order_part->split_order_type_id = NULL;
-				$job_order_part->qty = $request->qty;
-				$job_order_part->rate = $part->rate;
-				$job_order_part->is_oem_recommended = 0;
-				$job_order_part->amount = $request->qty * $part->rate;
-				$job_order_part->status_id = 8200; //Customer Approval Pending
-				$job_order_part->save();
+			$job_order_part = JobOrderPart::firstOrNew([
+				'part_id' => $part->id,
+				'job_order_id' => $request->job_order_id,
+			]);
+			//$job_order_part->fill($request);
+			$job_order_part->job_order_id = $request->job_order_id;
+			$job_order_part->split_order_type_id = NULL;
+			$job_order_part->qty = $request->qty;
+			$job_order_part->rate = $part->rate;
+			$job_order_part->is_oem_recommended = 0;
+			$job_order_part->amount = $request->qty * $part->rate;
+			$job_order_part->status_id = 8200; //Customer Approval Pending
+			$job_order_part->save();
 
 			DB::commit();
 
@@ -717,7 +719,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-		public function saveAddtionalLabour(Request $request) {
+	public function saveAddtionalLabour(Request $request) {
 		//dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
@@ -741,9 +743,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$repair_order=RepairOrder::where('id',$request->rot_id)
-			->first();
-			if(!$repair_order){
+			$repair_order = RepairOrder::where('id', $request->rot_id)
+				->first();
+			if (!$repair_order) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
@@ -751,19 +753,19 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			DB::beginTransaction();
-				$job_order_repair_order = JobOrderRepairOrder::firstOrNew([
-						'repair_order_id' => $request->rot_id,
-						'job_order_id' => $request->job_order_id,
-					]);
-					//$job_order_repair_order->fill($request);
-					$job_order_repair_order->job_order_id = $request->job_order_id;
-					$job_order_repair_order->qty = $repair_order->hours;
-					$job_order_repair_order->amount = $repair_order->amount;
-					$job_order_repair_order->split_order_type_id = NULL;
-					$job_order_repair_order->is_recommended_by_oem = 1;
-					$job_order_repair_order->is_customer_approved = 0;
-					$job_order_repair_order->status_id = 8180; //Customer Approval Pending
-					$job_order_repair_order->save();
+			$job_order_repair_order = JobOrderRepairOrder::firstOrNew([
+				'repair_order_id' => $request->rot_id,
+				'job_order_id' => $request->job_order_id,
+			]);
+			//$job_order_repair_order->fill($request);
+			$job_order_repair_order->job_order_id = $request->job_order_id;
+			$job_order_repair_order->qty = $repair_order->hours;
+			$job_order_repair_order->amount = $repair_order->amount;
+			$job_order_repair_order->split_order_type_id = NULL;
+			$job_order_repair_order->is_recommended_by_oem = 1;
+			$job_order_repair_order->is_customer_approved = 0;
+			$job_order_repair_order->status_id = 8180; //Customer Approval Pending
+			$job_order_repair_order->save();
 			DB::commit();
 
 			return response()->json([
@@ -779,7 +781,6 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
-
 
 	//INVENTORY
 	public function getInventoryFormData(Request $r) {
@@ -1061,7 +1062,7 @@ class VehicleInwardController extends Controller {
 				$part_details = JobOrderPart::select('parts.id as id', 'parts.name', 'parts.code', 'job_order_parts.rate', 'job_order_parts.qty', 'job_order_parts.amount')
 					->leftJoin('parts', 'parts.id', 'job_order_parts.part_id', 'job_order_parts.id as del_part_id')->where('job_order_parts.job_order_id', $r->id)->get();
 
-				$labour_details = JobOrderRepairOrder::select('repair_orders.id','job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id','job_order_repair_orders.qty')
+				$labour_details = JobOrderRepairOrder::select('repair_orders.id', 'job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id', 'job_order_repair_orders.qty')
 					->leftJoin('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')
 					->leftJoin('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')
 					->where('job_order_repair_orders.job_order_id', $r->id)->get();
@@ -1182,7 +1183,7 @@ class VehicleInwardController extends Controller {
 			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
-					
+
 					if (isset($repair['delete_job_repair_order_id'])) {
 						JobOrderRepairOrder::where('id', '!=', $repair['delete_job_repair_order_id'])->delete();
 					}
@@ -1537,7 +1538,7 @@ class VehicleInwardController extends Controller {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
-					'errors' =>['Repair order type not found!'],
+					'errors' => ['Repair order type not found!'],
 				]);
 			}
 			$rot_list = RepairOrder::roList($repair_order_type->id);

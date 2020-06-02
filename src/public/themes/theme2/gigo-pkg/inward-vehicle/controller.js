@@ -1377,7 +1377,7 @@ app.component('inwardVehicleVehicleDetail', {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
-
+        // alert("test");
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
@@ -1503,17 +1503,16 @@ app.component('inwardVehicleVehicleDetail', {
         });
 
         $scope.showVehicleForm = function() {
-            // alert("test");
-            if ($routeParams.type_id) {
-                $scope.show_vehicle_detail = false;
-                $scope.show_vehicle_form = true;
-            }
-            // $scope.show_vehicle_detail = false;
-            // $scope.show_vehicle_form = true;
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
         }
-        // if ($routeParams.type_id) {
-        //     $scope.show_vehicle_detail = false;
-        //     $scope.show_vehicle_form = true;
+
+        if ($routeParams.type_id == 1) {
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
+        }
+        // else {
+        //     $scope.showVehicleForm();
         // }
     }
 });
@@ -1578,6 +1577,11 @@ app.component('inwardVehicleCustomerDetail', {
         }
         $scope.fetchData();
 
+        if ($routeParams.type_id == 1) {
+            $scope.show_customer_detail = false;
+            $scope.show_customer_form = true;
+        }
+
         //Save Form Data 
         $scope.saveCustomer = function() {
             var form_id = '#form';
@@ -1628,7 +1632,7 @@ app.component('inwardVehicleCustomerDetail', {
                         minlength: 6,
                         maxlength: 32,
                     },
-                    'ownership_id': {
+                    'ownership_type_id': {
                         required: true,
                     },
                 },
@@ -2491,7 +2495,7 @@ app.component('inwardVehicleVocDetailForm', {
         });
 
         var self = this;
-        $('#voc_details').hide();
+        $('#voc_remark_details').hide();
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
         //     window.location = "#!/page-permission-denied";
@@ -2503,9 +2507,9 @@ app.component('inwardVehicleVocDetailForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
         $scope.onSelectedVoc = function(id) {
             if (id == 6)
-                $('#voc_details').show();
+                $('#voc_remark_details').show();
             else
-                $('#voc_details').hide();
+                $('#voc_remark_details').hide();
         }
         $scope.job_order_id = $routeParams.job_order_id;
 
@@ -2531,6 +2535,8 @@ app.component('inwardVehicleVocDetailForm', {
                     // self.job_order = $scope.job_order = res.job_order;
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
+                    // console.log(res.extras);
+                    // console.log(res.job_order.customer_voices);
                     if (res.action == "Add") {
                         self.addNewCustomerVoice();
                     }

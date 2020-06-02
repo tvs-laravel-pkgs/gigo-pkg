@@ -25,7 +25,7 @@ class VehicleOwner extends Model {
 	}
 
 	public function setFromDateAttribute($date) {
-		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+		return $this->attributes['from_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
 	public function customer() {
