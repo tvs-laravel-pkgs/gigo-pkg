@@ -945,7 +945,7 @@ app.component('inwardVehicleUpdatejcForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_order_id = $routeParams.job_order_id;
-        
+
 
         //Save Form Data 
         $scope.saveSchedule = function() {
@@ -1247,7 +1247,7 @@ app.component('inwardVehicleVehicleDetail', {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
-
+        // alert("test");
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
@@ -1373,17 +1373,16 @@ app.component('inwardVehicleVehicleDetail', {
         });
 
         $scope.showVehicleForm = function() {
-            // alert("test");
-            if ($routeParams.type_id) {
-                $scope.show_vehicle_detail = false;
-                $scope.show_vehicle_form = true;
-            }
-            // $scope.show_vehicle_detail = false;
-            // $scope.show_vehicle_form = true;
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
         }
-        // if ($routeParams.type_id) {
-        //     $scope.show_vehicle_detail = false;
-        //     $scope.show_vehicle_form = true;
+
+        if ($routeParams.type_id == 1) {
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
+        }
+        // else {
+        //     $scope.showVehicleForm();
         // }
     }
 });
@@ -1447,6 +1446,11 @@ app.component('inwardVehicleCustomerDetail', {
                 });
         }
         $scope.fetchData();
+
+        if ($routeParams.type_id == 1) {
+            $scope.show_customer_detail = false;
+            $scope.show_customer_form = true;
+        }
 
         //Save Form Data 
         $scope.saveCustomer = function() {

@@ -194,7 +194,7 @@ Content Wrap -->
                                     <div class="row">
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>Vehicle Details</b></h5>
-                                            <ul class="view-row mb-no" ng-show="show_vehicle_detail">
+                                            <ul class="view-row mb-no">
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
                                                         Registration Type
@@ -258,7 +258,7 @@ Content Wrap -->
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square" >
                                                 Edit
                                             </button> -->
-                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/view/{{job_order_id}}/{{type_id}}">
+                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/vehicle-detail/{{job_order_id}}/1">
                                                 Edit
                                             </a>
                                             <!-- <a type="button" class="btn btn-red" ng-click="showVehicleForm()">
@@ -350,7 +350,10 @@ Content Wrap -->
                                                     </span>
                                                 </li>
                                             </ul>
-                                            <button class="btn btn-secondary-dark btn-md btn-square">Edit</button>
+                                            <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
+                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/customer-detail/{{job_order_id}}/1">
+                                                Edit
+                                            </a>
                                             <button class="btn btn-bordered btn-dark btn-md btn-square">Add New Owner</button>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
