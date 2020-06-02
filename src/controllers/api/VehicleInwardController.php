@@ -179,11 +179,16 @@ class VehicleInwardController extends Controller {
 				'vehicle.lastJobOrder',
 				'vehicle.lastJobOrder.jobCard',
 				'type',
+				'outlet',
+				'customerVoices',
 				'quoteType',
 				'serviceType',
 				'kmReadingType',
 				'status',
 				'gateLog',
+				'driverLicenseAttachment',
+				'insuranceAttachment',
+				'rcBookAttachment',
 				'gateLog.driverAttachment',
 				'gateLog.kmAttachment',
 				'gateLog.vehicleAttachment',
@@ -202,6 +207,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			$params['field_type_id'] = [11, 12];
+			$inventory_type_list = VehicleInventoryItem::getInventoryList($job_order->id, $params);
+
 			// $extras = [
 			// 	'job_order_type_list' => ServiceOrderType::getDropDownList(),
 			// 	'quote_type_list' => QuoteType::getDropDownList(),
@@ -216,7 +224,7 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
-				// 'extras' => $extras,
+				'inventory_type_list' => $inventory_type_list,
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
 
@@ -1450,6 +1458,59 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	public function saveWebAddtionalRotPart(Request $request) {
+		$validator = Validator::make($request->all(), [
+			'job_order_id' => [
+				'required',
+				'integer',
+				'exists:job_orders,id',
+			],
+		]);
+		if ($validator->fails()) {
+			return response()->json([
+				'success' => false,
+				'message' => 'Validation Error',
+				'errors' => $validator->errors()->all(),
+			]);
+		}
+
+		if (isset($request->delete_labour_ids) && !empty($request->delete_labour_ids)) {
+			$delete_labour_ids = explode(',', str_replace(array('[', ']'), '', $request->delete_labour_ids));
+			foreach ($delete_labour_ids as $key => $delete_labour_id) {
+				$job_order_repair_order = JobOrderRepairOrder::find($delete_labour_id);
+				if (!$job_order_repair_order) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Job order repair order not found'],
+					]);
+				}
+				$job_order_repair_order->forceDelete();
+
+			}
+		}
+		if (isset($request->delete_part_ids) && !empty($request->delete_part_ids)) {
+			$delete_part_ids = explode(',', str_replace(array('[', ']'), '', $request->delete_part_ids));
+			foreach ($delete_part_ids as $key => $delete_part_id) {
+				$job_order_part = JobOrderPart::find($delete_part_id);
+				if (!$job_order_part) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Job order part not found'],
+					]);
+				}
+				$job_order_part->forceDelete();
+			}
+		}
+
+		return response()->json([
+			'success' => true,
+			'message' => 'Payable details saved successfully!!',
+		]);
+
+	}
+
 	//Get Addtional Part Form Data
 	public function getPartList(Request $r) {
 		try {
@@ -1524,13 +1585,13 @@ class VehicleInwardController extends Controller {
 			}
 			$rot_list = RepairOrder::roList($repair_order_type->id);
 
-			$extras = [
+			$extras_list = [
 				'rot_list' => $rot_list,
 			];
 
 			return response()->json([
 				'success' => true,
-				'extras' => $extras,
+				'extras_list' => $extras_list,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([

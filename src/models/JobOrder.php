@@ -126,6 +126,10 @@ class JobOrder extends Model {
 		return $this->belongsTo('Abs\GigoPkg\ServiceOrderType', 'type_id');
 	}
 
+	public function outlet() {
+		return $this->belongsTo('App\Outlet', 'outlet_id');
+	}
+
 	//issue : company condition not required
 	// public function serviceOrederType() {
 	// 	return $this->belongsTo('App\ServiceOrderType', 'type_id')->where('company_id', Auth::user()->company_id);
@@ -183,6 +187,18 @@ class JobOrder extends Model {
 
 	public function AMCAttachment() {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 258);
+	}
+
+	public function driverLicenseAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 251);
+	}
+
+	public function insuranceAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 252);
+	}
+
+	public function rcBookAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 250);
 	}
 
 	public static function createFromObject($record_data) {
