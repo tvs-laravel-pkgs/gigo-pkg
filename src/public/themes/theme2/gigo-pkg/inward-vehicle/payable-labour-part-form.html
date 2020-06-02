@@ -68,11 +68,11 @@
                                                             {{job_order_labour.amount}}
                                                         </td>
                                                         <td class="wid-100">
-                                                            <a href="#!/static/gigo/inward/add-labour" class="btn img-btn btn-delete">
+                                                            <a href="#!/inward-vehicle/payable-labour-part/add-labour/form/edit/{{job_order.id}}/{{job_order_labour.id}}" class="btn img-btn btn-delete">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </a>
                                                             <button class="btn img-btn btn-delete">
-                                                                <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                <img class="img-responsive radius-50" ng-click="removePayableLabour(index,job_order_labour.id)" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -96,6 +96,7 @@
                                                         <td class="wid-100">
                                                         </td>
                                                     </tr>
+                                                    <input type="hidden" name="delete_labour_ids[]" id="delete_labour_ids" value="">
                                                 </tbody>
                                             </table>
                                         </div><!-- Table Responsive -->
@@ -140,11 +141,11 @@
                                                             {{job_order_part.amount}}
                                                         </td>
                                                         <td class="wid-100">
-                                                            <a href="#!/static/gigo/inward/add-labour" class="btn img-btn btn-delete">
+                                                            <a href="#!/inward-vehicle/payable-labour-part/add-part/form/edit/{{job_order.id}}/{{job_order_part.id}}" class="btn img-btn btn-delete">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </a>
                                                             <button class="btn img-btn btn-delete">
-                                                                <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                <img class="img-responsive radius-50" ng-click="removePayablePart(index,job_order_labour.id)" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -168,6 +169,7 @@
                                                         <td class="wid-100">
                                                         </td>
                                                     </tr>
+                                                    <input type="hidden" name="delete_part_ids[]" id="delete_part_ids" value="">
                                                 </tbody>
                                             </table>
                                         </div><!-- Table Responsive -->

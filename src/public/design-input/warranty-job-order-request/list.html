@@ -3,7 +3,10 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Job Cards (<span id="table_infos"></span>)</h1>
+                    <h1 class="title type-2">
+                        Warranty Job Order Requests
+                        <span class="badge badge-secondary">04</span>
+                    </h1>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
@@ -21,27 +24,12 @@
                     </div><!-- Search Filter -->
                 </div><!-- Page Header Content -->
                 <div class="page-header-content button-block">
-                    <button class="btn btn-bordered" data-toggle="modal" data-target="#filter"><i class="icon ion-md-funnel"></i>Filter</button>
+                    <button class="btn btn-bordered" data-toggle="modal" data-target="#filter">
+                        <i class="icon ion-md-funnel"></i>
+                        Filter
+                    </button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
-            <div class="page-header-content-right">
-                <div class="page-header-content tab-block">
-                    <div class="list-card-icon-wrap">
-                        <div class="list-icon in">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                        <div class="card-icon">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                    </div><!-- List Card Wrap -->
-                </div><!-- Page Header Content -->
-            </div><!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
     <div class="list-card-tab-wrap">
@@ -50,21 +38,63 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table" id="job_cards_list" style="width: 100% !important;">
+                            <table class="table" id="example-datatable" style="width: 100% !important;">
                                 <thead>
                                     <tr>
                                         <th class="action width-100">Action</th>
                                         <th>Date & Time</th>
                                         <th>Job Card No</th>
-                                        <th>Registration Number</th>
+                                        <th>Registration No</th>
+                                        <th>Model</th>
                                         <th>Customer Name</th>
-                                        <th>Job Order Type</th>
-                                        <th>Quote Type</th>
+                                        <th>Customer Code</th>
+                                        <th>Order Type</th>
                                         <th>Service Type</th>
+                                        <th>Claim Amount</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <tr>
+                                        <td class="action width-100">
+                                            <a href="#!/static/gigo/mgate-pass/form" class="" title="View">
+                                                <img class="img-responsive" src="./public/theme/img/table/cndn/view.svg" alt="View" />
+                                            </a>
+                                            <a href="di/#!/warranty-job-order-request/ppr-form" class="" title="Initiate Approval Request">
+                                                <img class="img-responsive" src="./public/theme/img/table/cndn/view.svg" alt="View" />
+                                            </a>
+                                        </td>
+                                        <td>
+                                            31/03/2020, 09:15am
+                                        </td>
+                                        <td>
+                                            JCMDU1210
+                                        </td>
+                                        <td>
+                                            TN 47 BV 1234
+                                        </td>
+                                        <td>
+                                            Al 407-1
+                                        </td>
+                                        <td>
+                                            Sasikumar
+                                        </td>
+                                        <td>
+                                            CUS10274
+                                        </td>
+                                        <td>
+                                            Body Building / FC Order
+                                        </td>
+                                        <td>
+                                            1st Free Service BSIV
+                                        </td>
+                                        <td class="text-right">
+                                            Rs. 26000.00
+                                        </td>
+                                        <td class="text-red">
+                                            Request not initiated
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div><!-- Column -->

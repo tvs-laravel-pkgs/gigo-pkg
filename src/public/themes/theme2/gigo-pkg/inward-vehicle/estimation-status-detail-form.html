@@ -34,21 +34,29 @@
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <div class="form-group">
-                                                        <label>Estimation Type <sup class="mandatory">*</sup></label>
-                                                        <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                        <label>
+                                                            Estimation Type
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-select ng-model="estimation_type" placeholder="Select Estimation" data-md-container-class="selectdemoSelectHeader">
                                                             <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                                <input ng-model="searchEstimationType" type="search" placeholder="Search for a Estimation Type.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
-                                                            <md-optgroup label="drinks">
-                                                                <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="type" ng-repeat="type in estimation_type | filter:searchEstimationType">
+                                                                    {{type.name}}
+                                                                </md-option>
                                                             </md-optgroup>
                                                         </md-select>
+                                                        <input type="hidden" name="estimation_type_id" value="{{estimation_type.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-4">
                                                     <div class="form-group">
-                                                        <label>Minimum Payable Amount <sup class="mandatory">*</sup></label>
-                                                        <input type="text" class="form-control" placeholder="Enter Amount" />
+                                                        <label>Minimum Payable Amount
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" name="minimum_payable_amount" class="form-control" placeholder="Enter Amount" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
@@ -56,9 +64,15 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <a class="btn btn-red">Save & Close</a>
-                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <button type="button" class="btn btn-secondary-dark" data-toggle="modal" data-target="#confirm_notification">Submit</button>
+                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-red">
+                                                        Save & Close
+                                                    </button>
+                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-secondary-dark btn-prev">
+                                                        Previous
+                                                    </button>
+                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        Next
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->

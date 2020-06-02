@@ -17,50 +17,61 @@ class JobCardController extends Controller {
 		$this->data['theme'] = config('custom.theme');
 	}
 
+
 	public function getJobCardList(Request $request) {
-		$job_cards = JobCard::withTrashed()
+		$job_cards = JobCard::select([
+				'job_cards.id as job_card_id',
+				'job_cards.job_card_number',
+				'job_cards.bay_id',
+				'job_orders.id as job_order_id',
+				//'gate_passes.number as gate_pass_number',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y - %h:%i %p") as date'),
+				'vehicles.registration_number',
+				'models.model_name',
+				'customers.name as customer_name',
+				'configs.name as status',
+				'service_types.name as service_type',
+				'quote_types.name as quote_type',
+				'service_order_types.name as job_order_type',
 
-			->select([
-				'job_cards.id',
-				'job_cards.name',
-				'job_cards.code',
-
-				DB::raw('IF(job_cards.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
-			->where('job_cards.company_id', Auth::user()->company_id)
-
-			->where(function ($query) use ($request) {
-				if (!empty($request->name)) {
-					$query->where('job_cards.name', 'LIKE', '%' . $request->name . '%');
-				}
+			->leftJoin('job_orders', 'job_orders.id', 'job_cards.job_order_id')
+			->leftJoin('gate_passes', 'gate_passes.job_card_id', 'job_cards.id')
+			->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
+			->leftJoin('models', 'models.id', 'vehicles.model_id')
+			->leftJoin('vehicle_owners', function ($join) {
+				$join->on('vehicle_owners.vehicle_id', 'job_orders.vehicle_id')
+					->whereRaw('vehicle_owners.from_date = (select MAX(vehicle_owners1.from_date) from vehicle_owners as vehicle_owners1 where vehicle_owners1.vehicle_id = job_orders.vehicle_id)');
 			})
-			->where(function ($query) use ($request) {
-				if ($request->status == '1') {
-					$query->whereNull('job_cards.deleted_at');
-				} else if ($request->status == '0') {
-					$query->whereNotNull('job_cards.deleted_at');
-				}
-			})
-		;
-
+			->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
+			->leftJoin('configs', 'configs.id', 'job_cards.status_id')
+			->leftJoin('service_types', 'service_types.id', 'job_orders.service_type_id')
+			->leftJoin('quote_types', 'quote_types.id', 'job_orders.quote_type_id')
+			->leftJoin('service_order_types', 'service_order_types.id', 'job_orders.type_id')
+			->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . Auth::user()->id . "')")
+			->groupBy('job_cards.id')
+			//->get()
+			;
+			//dd($job_cards);
 		return Datatables::of($job_cards)
 			->rawColumns(['name', 'action'])
-			->addColumn('name', function ($job_card) {
+			/*->addColumn('name', function ($job_card) {
 				$status = $job_card->status == 'Active' ? 'green' : 'red';
 				return '<span class="status-indicator ' . $status . '"></span>' . $job_card->name;
-			})
+			})*/
 			->addColumn('action', function ($job_card) {
-				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
+				$img1 = asset('./public/theme/img/table/cndn/view.svg');
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('edit-job_card')) {
-					$output .= '<a href="#!/gigo-pkg/job_card/edit/' . $job_card->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				if (Entrust::can('job-cards')) {
+					$output .= '<a href="#!/static/gigo/mgate-pass/form" class=""><img class="img-responsive" src="'.$img1.'" alt="View" /></a>';
+					if(!$job_card->bay_id){
+						$output .= '<button class="btn btn-secondary-dark btn-sm">Assign Bay</button>';
+					}
 				}
-				if (Entrust::can('delete-job_card')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#job_card-delete-modal" onclick="angular.element(this).scope().deleteJobCard(' . $job_card->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
-				}
+				
 				return $output;
 			})
 			->make(true);

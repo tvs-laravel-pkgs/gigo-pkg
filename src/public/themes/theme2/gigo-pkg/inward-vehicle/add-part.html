@@ -18,96 +18,99 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="page-form pb-60">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Part Code <sup class="mandatory">*</sup></label>
-                                    <md-select ng-model="part" placeholder="Select Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
-                                        <md-select-header class="demo-select-header">
-                                            <input ng-model="searchPart" type="search" placeholder="Search for a Part Code.." class="demo-header-searchbox md-text">
-                                        </md-select-header>
-                                        <md-optgroup>
-                                            <md-option ng-value="option" ng-repeat="option in extras.part_list | filter:searchPart">
-                                                {{option.name}}
-                                            </md-option>
-                                        </md-optgroup>
-                                    </md-select>
-                                    <input type="hidden" name="part_id" value="{{part.id}}">
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Quantity <sup class="mandatory">*</sup></label>
-                                    <input type="text" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                            <div class="col-md-12">
-                                <div class="separator-line mb-20"></div><!-- Spacing -->
-                                <div class="table-responsive">
-                                    <table class="table table-dark-grey">
-                                        <thead>
-                                            <tr>
-                                                <th>
-                                                    Part Code
-                                                </th>
-                                                <th>
-                                                    Description
-                                                </th>
-                                                <th>
-                                                    UOM
-                                                </th>
-                                                <th class="text-right">
-                                                    Rate
-                                                </th>
-                                                <th class="text-right">
-                                                    Quantity
-                                                </th>
-                                                <th class="text-right">
-                                                    Total Amount
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    SCM07
-                                                </td>
-                                                <td>
-                                                    BR05 | Changing Break Pads
-                                                </td>
-                                                <td>
-                                                    Nos
-                                                </td>
-                                                <td class="text-right">
-                                                    1000
-                                                </td>
-                                                <td class="text-right">
-                                                    3
-                                                </td>
-                                                <td class="text-right">
-                                                    3000
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div><!-- Table Responsive -->
-                            </div><!-- Column -->
-                        </div><!-- Row -->
-                    </div><!-- Page Form -->
-                </div><!-- Column -->
-            </div><!-- Row -->
-            <div class="page-form-footer">
+        <form id="part_form">
+            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <div class="container">
                 <div class="row">
-                    <div class="col-md-12">
-                        <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order.id}}" class="btn btn-bordered btn-grey">Cancel</a>
-                        <button class="btn btn-secondary-dark">Submit</button>
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Part Code <sup class="mandatory">*</sup></label>
+                                        <md-select ng-model="job_order_part.part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchPart" type="search" placeholder="Search for a Part Code.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option" ng-repeat="option in extras.part_list | filter:searchPart">
+                                                    {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="part_id" value="{{job_order_part.part.id}}">
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Quantity <sup class="mandatory">*</sup></label>
+                                        <input type="text" name="qty" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-12">
+                                    <div class="separator-line mb-20"></div><!-- Spacing -->
+                                    <div class="table-responsive">
+                                        <table class="table table-dark-grey">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        Part Code
+                                                    </th>
+                                                    <th>
+                                                        Description
+                                                    </th>
+                                                    <th>
+                                                        UOM
+                                                    </th>
+                                                    <th class="text-right">
+                                                        Rate
+                                                    </th>
+                                                    <th class="text-right">
+                                                        Quantity
+                                                    </th>
+                                                    <th class="text-right">
+                                                        Total Amount
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="ptb-12" ng-if="job_order_part">{{job_order_part}}
+                                                    <td>
+                                                        {{job_order_part.part.code ? job_order_part.part.code : ''}}
+                                                    </td>
+                                                    <td>
+                                                        {{job_order_part.part.name ? job_order_part.part.name : ''}}
+                                                    </td>
+                                                    <td>
+                                                        {{job_order_part.part.uom.name ? job_order_part.part.uom.name : ''}}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{job_order_part.rate}}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{job_order_part.qty}}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{job_order_part.amount}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div><!-- Table Responsive -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Page Form -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <div class="page-form-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order.id}}" class="btn btn-bordered btn-grey">Cancel</a>
+                            <button type="submit" class="btn btn-secondary-dark submit" ng-click="savePartForm()">Submit</button>
+                        </div>
                     </div>
-                </div>
-            </div><!-- Page Form Footer -->
-        </div><!-- Container -->
+                </div><!-- Page Form Footer -->
+            </div><!-- Container -->
+        </form>
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
