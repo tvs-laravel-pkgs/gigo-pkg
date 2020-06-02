@@ -107,8 +107,6 @@ app.component('myJobcardView', {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
-
-         
         
         //console.log($routeParams.job_card_id);
         //FETCH DATA
@@ -133,6 +131,7 @@ app.component('myJobcardView', {
                     $scope.user_details = res.user_details;
                     $scope.job_order_repair_orders = res.job_order_repair_orders;
                     $scope.pass_work_reasons = res.pass_work_reasons;
+                    $scope.getwork_status = res.getwork_status;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -143,7 +142,7 @@ app.component('myJobcardView', {
 
         $scope.StartWork = function($id,$key)
         {
-         job_repair_order_id = $("#repair_order_id"+$key).val();
+         job_repair_order_id = $("#repair_repair_order_id"+$key).val();
          status_id = $id;
           $.ajax({
                     url: base_url + '/api/save-my-job-card',
@@ -157,19 +156,86 @@ app.component('myJobcardView', {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 }).done(function(res) {
+                    if(status_id == 8261)
+                    {
+                       custom_noty('success', 'Work has been started');
+                       setTimeout(function(){ location.reload(); }, 1000);
+                       
+                    }
+                    if(status_id == 8263)
+                    {
+                        $("#start_date_time").text(res.work_start_date_time.start_date_time);
+                        $("#end_date_time").text(res.work_end_date_time.end_date_time);
+                        $("#estimation_work_hours").text(res.estimation_work_hours[0].hours);
+                        $("#actual_hours").text(res.total_working_hours);
+
+                        custom_noty('success', 'Work has been Completed');
+                        setTimeout(function(){ location.reload(); }, 1000);
+                    }
+                    if(status_id == 8264)
+                    {
+                        custom_noty('success', 'Work has been started');
+                        setTimeout(function(){ location.reload(); }, 1000);
+                    }
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
                     }
-                    /*$scope.my_job_card_details = res.my_job_card_details;
-                    $scope.user_details = res.user_details;
-                    $scope.job_order_repair_orders = res.job_order_repair_orders;
-                    $scope.pass_work_reasons = res.pass_work_reasons;
-                    $scope.$apply();*/
+                  
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 }); 
+        }
+
+        $scope.PauseWork = function($key)
+        {
+        job_repair_order_id = $("#repair_repair_order_id"+$key).val();
+        pause_wrk_repair_id = $("#pause_wrk_repair_id").val(job_repair_order_id);
+        }
+
+        $scope.getReason = function($reason_id)
+        {
+            reason_id = $("#reason_id"+$reason_id).val();
+            reason_id = $("#reason").val(reason_id);
+            $("#ac"+$reason_id).addClass('active');
+
+        }
+
+        $scope.reasonConfirm = function() {
+            reason_id = $('#reason').val();
+            if(reason_id == '')
+            {
+                custom_noty('error', 'Select Reason to Pause Work');
+                return;
+            }
+            pause_wrk_repair_id = $("#pause_wrk_repair_id").val();
+          $.ajax({
+                    url: base_url + '/api/save-my-job-card',
+                    method: "POST",
+                    data: {
+                        job_repair_order_id : pause_wrk_repair_id,
+                        machanic_id: self.user.id,
+                        status_id : 8262,
+                        reason_id : reason_id,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                }).done(function(res) {
+                    custom_noty('success', 'Work has Paused');
+                    setTimeout(function(){ location.reload(); }, 1000);
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+
+                $("#pause_work").hide();
+           
         }
        
         $element.find('input').on('keydown', function(ev) {

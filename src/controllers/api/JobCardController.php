@@ -499,6 +499,10 @@ class JobCardController extends Controller {
 				->whereIn('id', $job_order_repair_order_ids)
 				->get();
 
+			$status = RepairOrderMechanic::select('repair_order_mechanics.id','repair_order_mechanics.status_id','repair_order_mechanics.job_order_repair_order_id')
+				->whereIn('job_order_repair_order_id', $job_order_repair_order_ids)
+				->orderby('repair_order_mechanics.id','ASC')->groupBy('repair_order_mechanics.job_order_repair_order_id')->get();
+				
 			// dd($job_order_repair_orders);
 			return response()->json([
 				'success' => true,
@@ -507,6 +511,8 @@ class JobCardController extends Controller {
 				'pass_work_reasons' => $pass_work_reasons,
 				'user_details' => $user_details,
 				'my_job_card_details' => $my_job_card_details,
+				'getwork_status' => $status,
+				
 			]);
 
 		} catch (Exception $e) {
@@ -1258,7 +1264,7 @@ class JobCardController extends Controller {
 				$mechanic_time_log->created_by_id = Auth::user()->id;
 				$mechanic_time_log->save();
 			} else {
-				$reason_id = $request->status_id == 8263 ? $request->reason_id : '';
+				$reason_id = $request->status_id == 8263 ? $request->reason_id : $request->reason_id;
 				$mechanic_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->whereNull('end_date_time')->update(['end_date_time' => Carbon::now(), 'reason_id' => $reason_id, 'status_id' => $request->status_id]);
 			}
 
