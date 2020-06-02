@@ -3,116 +3,566 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Job Cards(<span id="table_infos"></span>)</h1>
+                    <h1 class="title type-2">Job Cards (<span id="table_infos"></span>)</h1>
                 </div><!-- Page Header Content -->
-                <div class="page-header-content search-block">
-                    <div class="search_filter">
-                        <label>
-                            <input type="search" id="search_job_card" class="form-control" placeholder="Search" autofocus />
-                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
-                        </label>
-                    </div><!-- Search Filter -->
-                </div>
-                <div class="page-header-content button-block">
-                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#job-card-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
-                </div><!-- Page Header Content -->
-            </div><!-- Page Header Content Left -->
-            <div class="page-header-content-right">
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
-                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
+                        <button class="btn-reset reset-tooltip">
                             <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
                         </button>
                     </div>
                 </div><!-- Page Header Content -->
-                <!-- Page Header Content -->
-                <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
-                    <a href="#!/gigo-pkg/job-card/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
+                <div class="page-header-content search-block">
+                    <div class="search_filter">
+                        <label>
+                            <input type="search" id="search_box" class="form-control" placeholder="Search" />
+                            <button class="btn-clear">Clear</button>
+                        </label>
+                    </div><!-- Search Filter -->
+                </div><!-- Page Header Content -->
+                <div class="page-header-content button-block">
+                    <button class="btn btn-bordered" data-toggle="modal" data-target="#filter"><i class="icon ion-md-funnel"></i>Filter</button>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+            <div class="page-header-content-right">
+                <div class="page-header-content tab-block">
+                    <div class="list-card-icon-wrap">
+                        <div class="list-icon in">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="card-icon">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div><!-- List Card Wrap -->
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
-    <div class="page-main-content list-page-content">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <table class="table" id="job_cards_list" style="width: 100% !important;">
-                        <thead>
-                            <tr>
-                                <th>Actions</th>
-                                <th>Short Name</th>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                    </table>
-                </div><!-- Column -->
-            </div><!-- Row -->
-        </div><!-- Container -->
-    </div><!-- Page Main Content -->
+    <div class="list-card-tab-wrap">
+        <div class="list-tab-content in">
+            <div class="page-main-content list-page-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table" id="job_cards_list" style="width: 100% !important;">
+                                <thead>
+                                    <tr>
+                                        <th class="action width-100">Action</th>
+                                        <th>Date & Time</th>
+                                        <th>Job Card No</th>
+                                        <th>Registration Number</th>
+                                        <th>Customer Name</th>
+                                        <th>Job Order Type</th>
+                                        <th>Quote Type</th>
+                                        <th>Service Type</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Container -->
+            </div><!-- Page Main Content -->
+        </div><!-- List Tab Content -->
+        <div class="card-tab-content">
+            <div class="page-card-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="card-list">
+                                <li>
+                                    <div class="card-box">
+                                        <div class="card-box-body">
+                                            <p class="card-top-info-bold">
+                                                JC No : GIM0031342
+                                            </p>
+                                            <div class="box-list">
+                                                <div class="box-left">
+                                                    <div class="box-color white">
+                                                        <div class="box-color-title">
+                                                            TN 47 BV 1283
+                                                        </div>
+                                                        <div class="box-color-subtitle">
+                                                            AL-404-1
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Box Left -->
+                                                <div class="box-right">
+                                                    <div class="box-info">
+                                                        <div class="box-info-head">
+                                                            JC Created On
+                                                        </div>
+                                                        <div class="box-info-body">
+                                                            <div class="box-info-body-text">
+                                                                31/03/2020
+                                                            </div>
+                                                            <div class="box-info-body-text">
+                                                                09:15 am
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- Box Info -->
+                                                </div><!-- Box Right -->
+                                            </div><!-- Box List -->
+                                            <div class="card-box-content mb-8">
+                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <span class="card-box-content-value">
+                                                    <b>
+                                                        Sasikumar
+                                                    </b>
+                                                </span>
+                                                <table class="card-box-content-table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                Job Order Type
+                                                            </td>
+                                                            <td>
+                                                                : Warranty Order
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Quote Type
+                                                            </td>
+                                                            <td>
+                                                                : At Site Quote
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Service Type
+                                                            </td>
+                                                            <td>
+                                                                : 2nd Service BSIV
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- Card Box Body -->
+                                        <div class="card-box-footer">
+                                            <div class="card-box-footer-left">
+                                                <div class="card-box-footer-info">
+                                                    <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                    <span class="card-box-footer-value">
+                                                        Ready to Work
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="card-box-footer-right">
+                                                <button class="btn btn-square btn-md btn-red">View</button>
+                                                <button class="btn btn-square btn-md btn-secondary-dark">Assign Bay</button>
+                                            </div>
+                                        </div><!-- Card Box Footer -->
+                                    </div><!-- Card Box -->
+                                </li>
+                                <li>
+                                    <div class="card-box">
+                                        <div class="card-box-body">
+                                            <p class="card-top-info-bold">
+                                                JC No : GIM0031342
+                                            </p>
+                                            <div class="box-list">
+                                                <div class="box-left">
+                                                    <div class="box-color white">
+                                                        <div class="box-color-title">
+                                                            TN 47 BV 1283
+                                                        </div>
+                                                        <div class="box-color-subtitle">
+                                                            AL-404-1
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Box Left -->
+                                                <div class="box-right">
+                                                    <div class="box-info">
+                                                        <div class="box-info-head">
+                                                            JC Created On
+                                                        </div>
+                                                        <div class="box-info-body">
+                                                            <div class="box-info-body-text">
+                                                                31/03/2020
+                                                            </div>
+                                                            <div class="box-info-body-text">
+                                                                09:15 am
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- Box Info -->
+                                                </div><!-- Box Right -->
+                                            </div><!-- Box List -->
+                                            <div class="card-box-content mb-8">
+                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <span class="card-box-content-value">
+                                                    <b>
+                                                        Sasikumar
+                                                    </b>
+                                                </span>
+                                                <table class="card-box-content-table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                Job Order Type
+                                                            </td>
+                                                            <td>
+                                                                : Warranty Order
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Quote Type
+                                                            </td>
+                                                            <td>
+                                                                : At Site Quote
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Service Type
+                                                            </td>
+                                                            <td>
+                                                                : 2nd Service BSIV
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- Card Box Body -->
+                                        <div class="card-box-footer">
+                                            <div class="card-box-footer-left">
+                                                <div class="card-box-footer-info">
+                                                    <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                    <span class="card-box-footer-value">
+                                                        Job Completed
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="card-box-footer-right">
+                                                <button class="btn btn-square btn-md btn-red">View</button>
+                                                <button class="btn btn-square btn-md btn-secondary-dark">Review</button>
+                                            </div>
+                                        </div><!-- Card Box Footer -->
+                                    </div><!-- Card Box -->
+                                </li>
+                                <li>
+                                    <div class="card-box">
+                                        <div class="card-box-body">
+                                            <p class="card-top-info-bold">
+                                                JC No : GIM0031342
+                                            </p>
+                                            <div class="box-list">
+                                                <div class="box-left">
+                                                    <div class="box-color white">
+                                                        <div class="box-color-title">
+                                                            TN 47 BV 1283
+                                                        </div>
+                                                        <div class="box-color-subtitle">
+                                                            AL-404-1
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Box Left -->
+                                                <div class="box-right">
+                                                    <div class="box-info">
+                                                        <div class="box-info-head">
+                                                            JC Created On
+                                                        </div>
+                                                        <div class="box-info-body">
+                                                            <div class="box-info-body-text">
+                                                                31/03/2020
+                                                            </div>
+                                                            <div class="box-info-body-text">
+                                                                09:15 am
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- Box Info -->
+                                                </div><!-- Box Right -->
+                                            </div><!-- Box List -->
+                                            <div class="card-box-content mb-8">
+                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <span class="card-box-content-value">
+                                                    <b>
+                                                        Sasikumar
+                                                    </b>
+                                                </span>
+                                                <table class="card-box-content-table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                Job Order Type
+                                                            </td>
+                                                            <td>
+                                                                : Warranty Order
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Quote Type
+                                                            </td>
+                                                            <td>
+                                                                : At Site Quote
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Service Type
+                                                            </td>
+                                                            <td>
+                                                                : 2nd Service BSIV
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- Card Box Body -->
+                                        <div class="card-box-footer">
+                                            <div class="card-box-footer-left">
+                                                <div class="card-box-footer-info">
+                                                    <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                    <span class="card-box-footer-value">
+                                                        JC Updated
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="card-box-footer-right">
+                                                <button class="btn btn-square btn-md btn-red">View</button>
+                                                <button class="btn btn-square btn-md btn-secondary-dark">Assign Bay</button>
+                                            </div>
+                                        </div><!-- Card Box Footer -->
+                                    </div><!-- Card Box -->
+                                </li>
+                                <li>
+                                    <div class="card-box">
+                                        <div class="card-box-body">
+                                            <p class="card-top-info-bold">
+                                                JC No : GIM0031342
+                                            </p>
+                                            <div class="box-list">
+                                                <div class="box-left">
+                                                    <div class="box-color white">
+                                                        <div class="box-color-title">
+                                                            TN 47 BV 1283
+                                                        </div>
+                                                        <div class="box-color-subtitle">
+                                                            AL-404-1
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Box Left -->
+                                                <div class="box-right">
+                                                    <div class="box-info">
+                                                        <div class="box-info-head">
+                                                            JC Created On
+                                                        </div>
+                                                        <div class="box-info-body">
+                                                            <div class="box-info-body-text">
+                                                                31/03/2020
+                                                            </div>
+                                                            <div class="box-info-body-text">
+                                                                09:15 am
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- Box Info -->
+                                                </div><!-- Box Right -->
+                                            </div><!-- Box List -->
+                                            <div class="card-box-content mb-8">
+                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <span class="card-box-content-value">
+                                                    <b>
+                                                        Sasikumar
+                                                    </b>
+                                                </span>
+                                                <table class="card-box-content-table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                Job Order Type
+                                                            </td>
+                                                            <td>
+                                                                : Warranty Order
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Quote Type
+                                                            </td>
+                                                            <td>
+                                                                : At Site Quote
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Service Type
+                                                            </td>
+                                                            <td>
+                                                                : 2nd Service BSIV
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- Card Box Body -->
+                                        <div class="card-box-footer">
+                                            <div class="card-box-footer-left">
+                                                <div class="card-box-footer-info">
+                                                    <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                    <span class="card-box-footer-value">
+                                                        JC Updated
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="card-box-footer-right">
+                                                <button class="btn btn-square btn-md btn-red">View</button>
+                                                <button class="btn btn-square btn-md btn-secondary-dark">Assign Bay</button>
+                                            </div>
+                                        </div><!-- Card Box Footer -->
+                                    </div><!-- Card Box -->
+                                </li>
+                                <li>
+                                    <div class="card-box">
+                                        <div class="card-box-body">
+                                            <p class="card-top-info-bold">
+                                                JC No : GIM0031342
+                                            </p>
+                                            <div class="box-list">
+                                                <div class="box-left">
+                                                    <div class="box-color white">
+                                                        <div class="box-color-title">
+                                                            TN 47 BV 1283
+                                                        </div>
+                                                        <div class="box-color-subtitle">
+                                                            AL-404-1
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Box Left -->
+                                                <div class="box-right">
+                                                    <div class="box-info">
+                                                        <div class="box-info-head">
+                                                            JC Created On
+                                                        </div>
+                                                        <div class="box-info-body">
+                                                            <div class="box-info-body-text">
+                                                                31/03/2020
+                                                            </div>
+                                                            <div class="box-info-body-text">
+                                                                09:15 am
+                                                            </div>
+                                                        </div>
+                                                    </div><!-- Box Info -->
+                                                </div><!-- Box Right -->
+                                            </div><!-- Box List -->
+                                            <div class="card-box-content mb-8">
+                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <span class="card-box-content-value">
+                                                    <b>
+                                                        Sasikumar
+                                                    </b>
+                                                </span>
+                                                <table class="card-box-content-table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                Job Order Type
+                                                            </td>
+                                                            <td>
+                                                                : Warranty Order
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Quote Type
+                                                            </td>
+                                                            <td>
+                                                                : At Site Quote
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Service Type
+                                                            </td>
+                                                            <td>
+                                                                : 2nd Service BSIV
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- Card Box Body -->
+                                        <div class="card-box-footer">
+                                            <div class="card-box-footer-left">
+                                                <div class="card-box-footer-info">
+                                                    <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                    <span class="card-box-footer-value">
+                                                        Ready to Work
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="card-box-footer-right">
+                                                <button class="btn btn-square btn-md btn-red">View</button>
+                                                <button class="btn btn-square btn-md btn-secondary-dark">Assign Bay</button>
+                                            </div>
+                                        </div><!-- Card Box Footer -->
+                                    </div><!-- Card Box -->
+                                </li>
+                            </ul><!-- Card List -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Container -->
+            </div><!-- Page Card Content -->
+        </div><!-- Card Tab Content -->
+    </div><!-- List & Card Tab Wrap -->
 </div><!-- Content Wrap -->
-<!-- Filter Modal -->
-<div class="modal fade filter" id="job-card-filter-modal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
+<!-- Modal -->
+<div class="modal fade filter" id="filter" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog filter-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title" id="myModalLabel">Job Card Filter</h5>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Short Name</label>
-                                <input type="text" class="form-control" id="short_name" name="short_name" placeholder="Enter Short Name" autocomplete="off">
+                                <label>Vendor<span class="mandatory">*</span></label>
+                                <input type="text" class="form-control" placeholder="Enter" aria-invalid="false" />
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" autocomplete="off">
+                                <label>Outlet<span class="mandatory">*</span></label>
+                                <input type="text" class="form-control" placeholder="Enter" aria-invalid="false" />
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Status</label>
-                                <md-select ng-model="$ctrl.status" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status" ng-change="onSelectedStatus($ctrl.status)">
-                                    <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
-                                    </md-select-header>
-                                    <md-optgroup>
-                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">{{status.name}}</md-option>
-                                    </md-optgroup>
-                                </md-select>
-                                <input type="hidden" class="form-control type-sm" name="status" id="status" value="">
+                            <div class="input-text form-group">
+                                <label>Invoice Date<span class="mandatory">*</span></label>
+                                <div class="input-group date" data-provide="datepicker">
+                                    <input type="text" class="form-control" placeholder="Select Date" aria-invalid="false">
+                                    <div class="input-group-addon">
+                                        <img src="./public/theme/img/content/calender-gray-icon.svg" class="img-responsive">
+                                    </div>
+                                </div><!-- Input Group -->
                             </div><!-- Field -->
                         </div><!-- Column -->
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-rose my-tooltip" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
-                        </div>
                     </div><!-- Row -->
                 </div><!-- Modal Form -->
             </div><!-- Modal Body -->
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="reset-link">Reset Filter</button>
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-primary btn-md">Apply</button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Footer -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
-<!-- Modal -->
-<div class="modal fade alert-modal failure" id="delete_job_card">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">ARE YOU SURE?</h4>
-            </div>
-            <div class="modal-body">
-                <h5>Delete</h5>
-                <p>You can’t retrive the data again, Are you sure you want to delete? </p>
-                <input type="hidden" name="job_card_id" id="job_card_id" value="">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal -->

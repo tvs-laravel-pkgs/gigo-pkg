@@ -1042,7 +1042,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    $routeProvider.
 	    //Job Card
 	    when('/gigo-pkg/job-card/list', {
-	        template: '<job-card-list></job-card-list>',
+	        template: '<job-card-table-list></job-card-table-list>',
 	        title: 'Job Cards',
 	    }).
 	    when('/gigo-pkg/job-card/add', {

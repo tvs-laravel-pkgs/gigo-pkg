@@ -188,7 +188,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/job-order-issued-part/get-filter-data', 'JobOrderIssuedPartController@getJobOrderIssuedPartFilterData')->name('getJobOrderIssuedPartFilterData');
 
 	//Job Card
-	Route::get('/job-card/get-list', 'JobCardController@getJobCardList')->name('getJobCardList');
+	Route::get('/job-card/get-list', 'JobCardController@getJobCardList')->name('getJobCardTableList');
 	Route::get('/job-card/get-form-data', 'JobCardController@getJobCardFormData')->name('getJobCardFormData');
 	Route::post('/job-card/save', 'JobCardController@saveJobCard')->name('saveJobCard');
 	Route::get('/job-card/delete', 'JobCardController@deleteJobCard')->name('deleteJobCard');
