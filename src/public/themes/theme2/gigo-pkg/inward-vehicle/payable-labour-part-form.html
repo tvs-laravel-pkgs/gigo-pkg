@@ -28,187 +28,192 @@
                 <inward-tabs ng-init="active_tab = 'payable-labour-part-detail'"></inward-tabs>
                 <div class="tab-form-body">
                     <div class="tab-content">
-                        <div class="tab-pane fade in active" id="payable_details" data-animation="fadeInUp" data-animation-delay="300">
-                            <div class="tab-pane-wrap">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5 class="color-primary mb-10"><b>Payable Labour & Parts</b></h5>
-                                        <hr class="hr-15"><!-- Separater -->
-                                        <div class="table-responsive">
-                                            <table class="table table-dark-grey">
-                                                <thead>
-                                                    <tr>
-                                                        <th>
-                                                            Labour Details
-                                                        </th>
-                                                        <th>
-                                                            Type
-                                                        </th>
-                                                        <th class="text-right">
-                                                            Quantity
-                                                        </th>
-                                                        <th class="wid-100 white-space-unset text-right">
-                                                            Labour Value
-                                                        </th>
-                                                        <th class="wid-100"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index,job_order_labour) in labour_details">
-                                                        <td>
-                                                            {{job_order_labour.repair_order.code ? job_order_labour.repair_order.code : ''}} | {{job_order_labour.repair_order.name ? job_order_labour.repair_order.name : ''}}
-                                                        </td>
-                                                        <td>
-                                                            {{job_order_labour.repair_order.repair_order_type.name ? job_order_labour.repair_order.repair_order_type.name : ''}}
-                                                        </td>
-                                                        <td class="text-right">
-                                                            {{job_order_labour.qty}}
-                                                        </td>
-                                                        <td class="wid-100 white-space-unset text-right">
-                                                            {{job_order_labour.amount}}
-                                                        </td>
-                                                        <td class="wid-100">
-                                                            <a href="#!/inward-vehicle/payable-labour-part/add-labour/form/edit/{{job_order.id}}/{{job_order_labour.id}}" class="btn img-btn btn-delete">
-                                                                <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
-                                                            </a>
-                                                            <button class="btn img-btn btn-delete">
-                                                                <img class="img-responsive radius-50" ng-click="removePayableLabour(index,job_order_labour.id)" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr class="ptb-9">
-                                                        <td>
-                                                            <a href=".#!/inward-vehicle/payable-labour-part/add-labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
-                                                                Add Labour
-                                                            </a>
-                                                        </td>
-                                                        <td colspan="2" class="text-right">
-                                                            <b>
-                                                                Total Labour
-                                                            </b>
-                                                        </td>
-                                                        <td class="wid-100 white-space-unset  text-right">
-                                                            <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
-                                                            <b>
-                                                                {{labour_total_amount}}
-                                                            </b>
-                                                        </td>
-                                                        <td class="wid-100">
-                                                        </td>
-                                                    </tr>
-                                                    <input type="hidden" name="delete_labour_ids[]" id="delete_labour_ids" value="">
-                                                </tbody>
-                                            </table>
-                                        </div><!-- Table Responsive -->
-                                        <div class="mb-15"></div><!-- Spacing -->
-                                        <div class="table-responsive">
-                                            <table class="table table-dark-grey">
-                                                <thead>
-                                                    <tr>
-                                                        <th>
-                                                            Parts Details
-                                                        </th>
-                                                        <th>
-                                                            Type
-                                                        </th>
-                                                        <th class="text-right">
-                                                            Rate
-                                                        </th>
-                                                        <th class="text-right">
-                                                            Quantity
-                                                        </th>
-                                                        <th class="wid-100 white-space-unset text-right">
-                                                            Amount
-                                                        </th>
-                                                        <th class="wid-100"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index,job_order_part) in part_details">
-                                                        <td>
-                                                            {{job_order_part.part.code ? job_order_part.part.code : ''}} | {{job_order_part.part.name ? job_order_part.part.name : ''}}
-                                                        </td>
-                                                        <td>
-                                                            {{job_order_part.split_order_type.name ? job_order_part.split_order_type.name : ''}}
-                                                        </td>
-                                                        <td class="text-right">
-                                                            {{job_order_part.rate}}
-                                                        </td>
-                                                        <td class="text-right">
-                                                            {{job_order_part.qty}}
-                                                        </td>
-                                                        <td class="wid-100 white-space-unset text-right">
-                                                            {{job_order_part.amount}}
-                                                        </td>
-                                                        <td class="wid-100">
-                                                            <a href="#!/inward-vehicle/payable-labour-part/add-part/form/edit/{{job_order.id}}/{{job_order_part.id}}" class="btn img-btn btn-delete">
-                                                                <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
-                                                            </a>
-                                                            <button class="btn img-btn btn-delete">
-                                                                <img class="img-responsive radius-50" ng-click="removePayablePart(index,job_order_labour.id)" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr class="ptb-9">
-                                                        <td>
-                                                            <a href=".#!/inward-vehicle/payable-labour-part/add-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
-                                                                Add Parts
-                                                            </a>
-                                                        </td>
-                                                        <td colspan="3" class="text-right">
-                                                            <b>
-                                                                Total Parts
-                                                            </b>
-                                                        </td>
-                                                        <td class="wid-100 white-space-unset text-right">
-                                                            <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
-                                                            <b>
-                                                                {{parts_total_amount}}
-                                                            </b>
-                                                        </td>
-                                                        <td class="wid-100">
-                                                        </td>
-                                                    </tr>
-                                                    <input type="hidden" name="delete_part_ids[]" id="delete_part_ids" value="">
-                                                </tbody>
-                                            </table>
-                                        </div><!-- Table Responsive -->
-                                        <div class="mb-20"></div><!-- Spacing -->
-                                        <div class="table-transparent-wrap">
+                        <form id="payable_form">
+                            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                            <div class="tab-pane fade in active" id="payable_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Payable Labour & Parts</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
                                             <div class="table-responsive">
-                                                <table class="table-transparent">
-                                                    <tbody>
+                                                <table class="table table-dark-grey">
+                                                    <thead>
                                                         <tr>
+                                                            <th>
+                                                                Labour Details
+                                                            </th>
+                                                            <th>
+                                                                Type
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Quantity
+                                                            </th>
+                                                            <th class="wid-100 white-space-unset text-right">
+                                                                Labour Value
+                                                            </th>
+                                                            <th class="wid-100"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="ptb-12" ng-repeat="(index,job_order_labour) in labour_details">
+                                                            <td>
+                                                                {{job_order_labour.repair_order.code ? job_order_labour.repair_order.code : ''}} | {{job_order_labour.repair_order.name ? job_order_labour.repair_order.name : ''}}
+                                                            </td>
+                                                            <td>
+                                                                {{job_order_labour.repair_order.repair_order_type.name ? job_order_labour.repair_order.repair_order_type.name : ''}}
+                                                            </td>
                                                             <td class="text-right">
+                                                                {{job_order_labour.qty}}
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                {{job_order_labour.amount}}
+                                                                <input type="hidden" class="job_order_labours" name="labouramount[{{index}}][amount]" value="{{job_order_labour.amount}}">
+                                                            </td>
+                                                            <td class="wid-100">
+                                                                <a href="#!/inward-vehicle/payable-labour-part/add-labour/form/edit/{{job_order.id}}/{{job_order_labour.id}}" class="btn img-btn btn-delete">
+                                                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                                </a>
+                                                                <button class="btn img-btn btn-delete">
+                                                                    <img class="img-responsive radius-50" ng-click="removePayableLabour(index,job_order_labour.id)" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="ptb-9">
+                                                            <td>
+                                                                <a href=".#!/inward-vehicle/payable-labour-part/add-labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                                    Add Labour
+                                                                </a>
+                                                            </td>
+                                                            <td colspan="2" class="text-right">
                                                                 <b>
-                                                                    Total Labour & Parts
+                                                                    Total Labour
                                                                 </b>
                                                             </td>
-                                                            <td class="wid-100 text-right">
+                                                            <td class="wid-100 white-space-unset  text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{total_amount}}
+                                                                    {{labour_total_amount}}
                                                                 </b>
                                                             </td>
-                                                            <td class="wid-100"></td>
+                                                            <td class="wid-100">
+                                                            </td>
                                                         </tr>
+                                                        <input type="hidden" name="delete_labour_ids" id="delete_labour_ids" value="">
                                                     </tbody>
                                                 </table>
+                                            </div><!-- Table Responsive -->
+                                            <div class="mb-15"></div><!-- Spacing -->
+                                            <div class="table-responsive">
+                                                <table class="table table-dark-grey">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                Parts Details
+                                                            </th>
+                                                            <th>
+                                                                Type
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Rate
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Quantity
+                                                            </th>
+                                                            <th class="wid-100 white-space-unset text-right">
+                                                                Amount
+                                                            </th>
+                                                            <th class="wid-100"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="ptb-12" ng-repeat="(index,job_order_part) in part_details">
+                                                            <td>
+                                                                {{job_order_part.part.code ? job_order_part.part.code : ''}} | {{job_order_part.part.name ? job_order_part.part.name : ''}}
+                                                            </td>
+                                                            <td>
+                                                                {{job_order_part.split_order_type.name ? job_order_part.split_order_type.name : ''}}
+                                                            </td>
+                                                            <td class="text-right">
+                                                                {{job_order_part.rate}}
+                                                            </td>
+                                                            <td class="text-right">
+                                                                {{job_order_part.qty}}
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                {{job_order_part.amount}}
+                                                                <input type="hidden" class="job_order_parts" name="part_amount[{{index}}][amount]" value="{{job_order_part.amount}}">
+                                                            </td>
+                                                            <td class="wid-100">
+                                                                <a href="#!/inward-vehicle/payable-labour-part/add-part/form/edit/{{job_order.id}}/{{job_order_part.id}}" class="btn img-btn btn-delete">
+                                                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                                </a>
+                                                                <button class="btn img-btn btn-delete">
+                                                                    <img class="img-responsive radius-50" ng-click="removePayablePart(index,job_order_part.id)" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="ptb-9">
+                                                            <td>
+                                                                <a href=".#!/inward-vehicle/payable-labour-part/add-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                                    Add Parts
+                                                                </a>
+                                                            </td>
+                                                            <td colspan="3" class="text-right">
+                                                                <b>
+                                                                    Total Parts
+                                                                </b>
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                <b>
+                                                                    {{parts_total_amount}}
+                                                                </b>
+                                                            </td>
+                                                            <td class="wid-100">
+                                                            </td>
+                                                        </tr>
+                                                        <input type="hidden" name="delete_part_ids" id="delete_part_ids" value="">
+                                                    </tbody>
+                                                </table>
+                                            </div><!-- Table Responsive -->
+                                            <div class="mb-20"></div><!-- Spacing -->
+                                            <div class="table-transparent-wrap">
+                                                <div class="table-responsive">
+                                                    <table class="table-transparent">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="text-right">
+                                                                    <b>
+                                                                        Total Labour & Parts
+                                                                    </b>
+                                                                </td>
+                                                                <td class="wid-100 text-right">
+                                                                    <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                    <b>
+                                                                        {{total_amount}}
+                                                                    </b>
+                                                                </td>
+                                                                <td class="wid-100"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div><!-- Table Transparent Wrap -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <button class="btn btn-red submit" type="submit" ng-click="savePayableForm()">Save & Close</button>
+                                                    <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order.id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <button class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-click="savePayableForm()">Next</button>
+                                                </div>
                                             </div>
-                                        </div><!-- Table Transparent Wrap -->
-                                    </div><!-- Column -->
-                                    <div class="tab-pane-footer">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <a class="btn btn-red">Save & Close</a>
-                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                            </div>
-                                        </div>
-                                    </div><!-- Tab Footer -->
-                                </div><!-- Row -->
-                            </div><!-- Tab Pane Wrap -->
-                        </div><!-- Tabe Pane -->
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                        </form>
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
             </div><!-- Tab Form Wrap -->
