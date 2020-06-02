@@ -1416,6 +1416,10 @@ app.component('inwardVehicleVehicleDetail', {
                         $scope.show_vehicle_detail = true;
                         $scope.show_vehicle_form = false;
                     }
+                    if ($routeParams.type_id == 1) {
+                        $scope.show_vehicle_detail = false;
+                        $scope.show_vehicle_form = true;
+                    }
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
@@ -1511,6 +1515,14 @@ app.component('inwardVehicleVehicleDetail', {
             $scope.show_vehicle_detail = false;
             $scope.show_vehicle_form = true;
         }
+
+        // if ($routeParams.type_id == 1) {
+        //     alert("test");
+        //     // $scope.show_vehicle_detail = false;
+        //     // $scope.show_vehicle_form = true;
+        //     $("#vehicle_view").hide();
+        //     $("#vehicle_edit").show();
+        // }
         // else {
         //     $scope.showVehicleForm();
         // }
@@ -1567,6 +1579,16 @@ app.component('inwardVehicleCustomerDetail', {
                         $scope.show_customer_detail = true;
                         $scope.show_customer_form = false;
                     }
+                    if ($routeParams.type_id == 1) {
+                        $scope.show_customer_detail = false;
+                        $scope.show_customer_form = true;
+                    }
+                    if ($routeParams.type_id == 2) {
+                        $scope.show_customer_detail = false;
+                        $scope.show_customer_form = true;
+                        $scope.job_order.vehicle.current_owner = ' ';
+                    }
+
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
@@ -1576,11 +1598,6 @@ app.component('inwardVehicleCustomerDetail', {
                 });
         }
         $scope.fetchData();
-
-        if ($routeParams.type_id == 1) {
-            $scope.show_customer_detail = false;
-            $scope.show_customer_form = true;
-        }
 
         //Save Form Data 
         $scope.saveCustomer = function() {
@@ -1691,6 +1708,11 @@ app.component('inwardVehicleCustomerDetail', {
                         });
                 }
             });
+        }
+
+        if ($routeParams.type_id == 1) {
+            $scope.show_customer_detail = false;
+            $scope.show_customer_form = true;
         }
 
         $scope.showOwnerForm = function() {
@@ -1987,6 +2009,17 @@ app.component('inwardVehicleInventoryDetailForm', {
             }
         }*/
 
+        $scope.showDiv = function(id) {
+            if (event.target.checked == true) {
+                $("#remarks_div_" + id).removeClass('ng-hide');
+                $("#remarks_div_" + id).val('');
+                $("#is_available_" + id).val('1');
+            } else {
+                $("#remarks_div_" + id).addClass('ng-hide');
+                $("#remarks_div_" + id).val('');
+                $("#is_available_" + id).val('0');
+            }
+        }
 
         //Save Form Data 
         $scope.saveInventoryForm = function() {
