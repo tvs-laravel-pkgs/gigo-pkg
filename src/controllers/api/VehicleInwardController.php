@@ -179,6 +179,8 @@ class VehicleInwardController extends Controller {
 				'vehicle.lastJobOrder',
 				'vehicle.lastJobOrder.jobCard',
 				'type',
+				'outlet',
+				'customerVoices',
 				'quoteType',
 				'serviceType',
 				'kmReadingType',
@@ -202,6 +204,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			$params['field_type_id'] = [11, 12];
+			$inventory_type_list = VehicleInventoryItem::getInventoryList($job_order->id, $params);
+
 			// $extras = [
 			// 	'job_order_type_list' => ServiceOrderType::getDropDownList(),
 			// 	'quote_type_list' => QuoteType::getDropDownList(),
@@ -216,7 +221,7 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
-				// 'extras' => $extras,
+				'inventory_type_list' => $inventory_type_list,
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
 

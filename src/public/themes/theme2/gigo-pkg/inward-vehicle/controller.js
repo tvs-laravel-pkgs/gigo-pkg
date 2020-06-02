@@ -2483,41 +2483,39 @@ app.component('inwardVehicleVocDetailForm', {
         $scope.job_order_id = $routeParams.job_order_id;
 
         //FETCH DATA
-        $scope.fetchData = function() {
-            $rootScope.loading = true;
-            $.ajax({
-                    url: base_url + '/api/vehicle-inward/voc/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    $rootScope.loading = false;
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    // self.job_order = $scope.job_order = res.job_order;
-                    $scope.job_order = res.job_order;
-                    $scope.extras = res.extras;
-                    // console.log(res.extras);
-                    // console.log(res.job_order.customer_voices);
-                    if (res.action == "Add") {
-                        self.addNewCustomerVoice();
-                    }
-                    $scope.action = res.action;
-                    $scope.$apply();
-                })
-                .fail(function(xhr) {
-                    $rootScope.loading = false;
-                    custom_noty('error', 'Something went wrong at server');
-                });
-        }
-        $scope.fetchData();
+        // $scope.fetchData = function() {
+        $rootScope.loading = true;
+        $.ajax({
+                url: base_url + '/api/vehicle-inward/voc/get-form-data',
+                method: "POST",
+                data: {
+                    id: $routeParams.job_order_id
+                },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+            .done(function(res) {
+                $rootScope.loading = false;
+                if (!res.success) {
+                    showErrorNoty(res);
+                    return;
+                }
+                // self.job_order = $scope.job_order = res.job_order;
+                $scope.job_order = res.job_order;
+                $scope.extras = res.extras;
+                if (res.action == "Add") {
+                    $scope.addNewCustomerVoice();
+                }
+                $scope.action = res.action;
+                $scope.$apply();
+            })
+            .fail(function(xhr) {
+                $rootScope.loading = false;
+                custom_noty('error', 'Something went wrong at server');
+            });
+        // }
+        // $scope.fetchData();
 
         //Save Form Data 
         $scope.saveVocDetailForm = function() {
@@ -2565,14 +2563,19 @@ app.component('inwardVehicleVocDetailForm', {
             });
         }
 
-        self.addNewCustomerVoice = function() {
-            self.job_order.customer_voices.push({
+        $scope.addNewCustomerVoice = function() {
+            $scope.job_order.customer_voices.push({
                 id: '',
             });
         }
 
         self.removeCustomerVoice = function(index) {
-            self.job_order.customer_voices.splice(index, 1);
+            // if (index == 6) {
+            //     $scope.job_order.customer_voices.splice(index, 1);
+            //     $('#voc_remark_details').hide();
+            // } else {
+            $scope.job_order.customer_voices.splice(index, 1);
+            // }
         }
 
         /* Image Uploadify Funtion */
@@ -2851,6 +2854,7 @@ app.component('inwardVehicleView', {
                         return;
                     }
                     $scope.job_order = res.job_order;
+                    $scope.inventory_type_list = res.inventory_type_list;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -2858,6 +2862,20 @@ app.component('inwardVehicleView', {
                 });
         }
         $scope.fetchData();
+
+        $('.btn-nxt').on("click", function() {
+            $('.cndn-tabs li.active').next().children('a').trigger("click");
+            tabPaneFooter();
+        });
+        $('.btn-prev').on("click", function() {
+            $('.cndn-tabs li.active').prev().children('a').trigger("click");
+            tabPaneFooter();
+        });
+        $('.btn-pills').on("click", function() {
+            tabPaneFooter();
+        });
+        $scope.btnNxt = function() {}
+        $scope.prev = function() {}
 
         //Save Form Data 
         var form_id = '#inward_vehicle_form';

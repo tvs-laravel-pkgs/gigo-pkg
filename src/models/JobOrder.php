@@ -126,6 +126,10 @@ class JobOrder extends Model {
 		return $this->belongsTo('Abs\GigoPkg\ServiceOrderType', 'type_id');
 	}
 
+	public function outlet() {
+		return $this->belongsTo('App\Outlet', 'outlet_id');
+	}
+
 	//issue : company condition not required
 	// public function serviceOrederType() {
 	// 	return $this->belongsTo('App\ServiceOrderType', 'type_id')->where('company_id', Auth::user()->company_id);

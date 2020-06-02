@@ -162,7 +162,7 @@ Content Wrap -->
                                                                 </tr>
                                                                 <tr>
                                                                     <td><b>Outlet</b></td>
-                                                                    <td></td>
+                                                                    <td>{{job_order.outlet.name}}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -170,9 +170,9 @@ Content Wrap -->
                                                     <div class="col-md-6">
                                                         <div class="multi-img">
                                                             <!-- <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" /> -->
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{$ctrl.job_order.gate_log.driver_attachment[0].attachment_of_id}}" alt="Images" />
-                                                            <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" />
-                                                            <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" />
+                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.driver_attachment[0].name}}" alt="Driver Image" />
+                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.km_attachment[0].name}}" alt="KM" />
+                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.vehicle_attachment[0].name}}" alt="Vehicle Image" />
                                                         </div>
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
@@ -626,121 +626,13 @@ Content Wrap -->
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="checklist-form-wrap">
                                                 <ul class="checklist-form-ul">
-                                                    <li>
+                                                    <li ng-repeat="(key, inventory_type_list) in inventory_type_list">
                                                         <div class="checklist-item-wrap pad-big active">
                                                             <div class="checklist-item-value">
-                                                                Registration Certificate
+                                                                {{inventory_type_list.name}}
                                                             </div>
                                                             <div class="checklist-item-value-sm">
-                                                                Slightly in Damaged Condition
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap active">
-                                                            <div class="checklist-item-value">
-                                                                Indiacator
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap active">
-                                                            <div class="checklist-item-value">
-                                                                Rear Lamps
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap active">
-                                                            <div class="checklist-item-value">
-                                                                Road Tax
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap">
-                                                            <div class="checklist-item-value">
-                                                                Valid Driving Licence
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap pad-big active">
-                                                            <div class="checklist-item-value">
-                                                                Battery
-                                                            </div>
-                                                            <div class="checklist-item-value-sm">
-                                                                Slightly in Damaged Condition
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap">
-                                                            <div class="checklist-item-value">
-                                                                Head Lamp
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap">
-                                                            <div class="checklist-item-value">
-                                                                Valid Driving Licence
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap">
-                                                            <div class="checklist-item-value">
-                                                                Indicator
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap active">
-                                                            <div class="checklist-item-value">
-                                                                Pendrive
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap">
-                                                            <div class="checklist-item-value">
-                                                                Wheel Jack
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap">
-                                                            <div class="checklist-item-value">
-                                                                Steering Wheel Cover
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap">
-                                                            <div class="checklist-item-value">
-                                                                Stephney
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap">
-                                                            <div class="checklist-item-value">
-                                                                Bumper
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap">
-                                                            <div class="checklist-item-value">
-                                                                Seat Cover
-                                                            </div>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="checklist-item-wrap active">
-                                                            <div class="checklist-item-value">
-                                                                Aerial
+                                                                {{inventory_type_list.remarks}}
                                                             </div>
                                                         </div>
                                                     </li>
@@ -789,40 +681,18 @@ Content Wrap -->
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>Voice of Customer</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
-                                            <ul class="checklist-form-ul">
+                                            <ul class="checklist-form-ul" ng-repeat="(key, customer_voice) in job_order.customer_voices">
                                                 <li>
                                                     <div class="checklist-form-item-wrap">
                                                         <div class="checklist-form-content">
                                                             <div class="checklist-form-content-title">
-                                                                Clutch Problem
+                                                                {{customer_voice.name}}
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </li>
                                             </ul>
-                                            <ul class="checklist-form-ul">
-                                                <li>
-                                                    <div class="checklist-form-item-wrap">
-                                                        <div class="checklist-form-content">
-                                                            <div class="checklist-form-content-title">
-                                                                Gear Problem
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                            <ul class="checklist-form-ul">
-                                                <li>
-                                                    <div class="checklist-form-item-wrap">
-                                                        <div class="checklist-form-content">
-                                                            <div class="checklist-form-content-title">
-                                                                Break Problem
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                            <ul class="checklist-form-ul">
+                                            <!-- <ul class="checklist-form-ul">
                                                 <li>
                                                     <div class="checklist-form-item-wrap">
                                                         <div class="checklist-form-content">
@@ -835,7 +705,7 @@ Content Wrap -->
                                                         </div>
                                                     </div>
                                                 </li>
-                                            </ul>
+                                            </ul> -->
                                             <hr class="hr-15"><!-- Separater -->
                                             <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
