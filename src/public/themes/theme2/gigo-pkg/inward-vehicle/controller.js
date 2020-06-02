@@ -945,7 +945,7 @@ app.component('inwardVehicleUpdatejcForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_order_id = $routeParams.job_order_id;
-        
+
 
         //Save Form Data 
         $scope.saveSchedule = function() {
@@ -1005,6 +1005,136 @@ app.component('inwardVehicleUpdatejcForm', {
             $scope.show_vehicle_detail = false;
             $scope.show_vehicle_form = true;
         }
+    }
+});
+
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+//Estimate
+angular.module('app').requires.push('webcam');
+// angular.module('app').requires.push('signature');
+app.component('inwardVehicleCustomerEstimationApprovalForm', {
+    templateUrl: inward_vehicle_customer_estimation_approval_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        console.log(1);
+
+        // $scope.onStream = function(data) {
+        //     console.log(data);
+        //     // $scope.encrypted_id = data;
+        //     $scope.customerPhoto(data);
+        // };
+        // $scope.onError = function(error) {
+        //     console.log(error);
+        // };
+        // $scope.onVideoError = function(error) {
+        //     console.log(error);
+        // };
+        // $scope.onSuccess = function() {
+        //     console.log(1+'test');
+        // };
+
+        function MyController($scope) {
+            $scope.myChannel = {
+                // the fields below are all optional
+                videoHeight: 800,
+                videoWidth: 600,
+                video: null // Will reference the video element on success
+            };
+            // $scope.boundingBox = {
+            //     width: 700,
+            //     height: 300
+            // };
+        }
+
+
+
+        // // Grab elements, create settings, etc.
+        // var video = document.getElementById('video');
+        // $scope.cameraOn = function() {
+        //     // Get access to the camera!
+        //     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        //         // Not adding `{ audio: true }` since we only want video now
+        //         navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+        //             //video.src = window.URL.createObjectURL(stream);
+        //             video.srcObject = stream;
+        //             video.play();
+        //         });
+        //     }
+
+        //     // Elements for taking the snapshot
+        //     var canvas = document.getElementById('canvas');
+        //     var context = canvas.getContext('2d');
+        //     var video = document.getElementById('video');
+
+        //     $scope.snapshot = function() {
+        //         // Trigger photo take
+        //         // document.getElementById("snap").addEventListener("click", function() {
+        //         // console.log(context);
+        //         context.drawImage(video, 0, 0, 460, 360);
+        //         // });
+        //         // console.log(canvas_image);
+        //     }
+        //     var customer_photo = canvas.toDataURL("image/png");
+        //     $("#customer_photo").val(customer_photo);
+
+        //     $('#customer_photo_file').append(
+        //         $('<input/>').attr('type', 'file').attr('src', customer_photo)
+        //     );
+        // }
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        // HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+        return;
+        // $scope.customerPhoto = function() {
+        //     console.log(data);
+        // }
+        //Save Form Data 
+        var form_id = '#form';
+        var v = jQuery(form_id).validate({
+            ignore: '',
+            rules: {},
+            invalidHandler: function(event, validator) {
+                custom_noty('error', 'You have errors, Please check all tabs');
+            },
+            submitHandler: function(form) {
+                let formData = new FormData($(form_id)[0]);
+                $('.submit').button('loading');
+                $.ajax({
+                        url: base_url + '/api/vehicle-inward/customer-confirmation/save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            $('.submit').button('reset');
+                            showErrorNoty(res);
+                            return;
+                        }
+                        custom_noty('success', res.message);
+                        $location.path('/inward-vehicle/estimate/' + $scope.job_order.id);
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        $('.submit').button('reset');
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
+        });
     }
 });
 
@@ -1247,7 +1377,7 @@ app.component('inwardVehicleVehicleDetail', {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
-
+        // alert("test");
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
@@ -1373,17 +1503,16 @@ app.component('inwardVehicleVehicleDetail', {
         });
 
         $scope.showVehicleForm = function() {
-            // alert("test");
-            if ($routeParams.type_id) {
-                $scope.show_vehicle_detail = false;
-                $scope.show_vehicle_form = true;
-            }
-            // $scope.show_vehicle_detail = false;
-            // $scope.show_vehicle_form = true;
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
         }
-        // if ($routeParams.type_id) {
-        //     $scope.show_vehicle_detail = false;
-        //     $scope.show_vehicle_form = true;
+
+        if ($routeParams.type_id == 1) {
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
+        }
+        // else {
+        //     $scope.showVehicleForm();
         // }
     }
 });
@@ -1447,6 +1576,11 @@ app.component('inwardVehicleCustomerDetail', {
                 });
         }
         $scope.fetchData();
+
+        if ($routeParams.type_id == 1) {
+            $scope.show_customer_detail = false;
+            $scope.show_customer_form = true;
+        }
 
         //Save Form Data 
         $scope.saveCustomer = function() {
@@ -2330,7 +2464,7 @@ app.component('inwardVehicleVocDetailForm', {
         });
 
         var self = this;
-        $('#voc_details').hide();
+        $('#voc_remark_details').hide();
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
         //     window.location = "#!/page-permission-denied";
@@ -2342,9 +2476,9 @@ app.component('inwardVehicleVocDetailForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
         $scope.onSelectedVoc = function(id) {
             if (id == 6)
-                $('#voc_details').show();
+                $('#voc_remark_details').show();
             else
-                $('#voc_details').hide();
+                $('#voc_remark_details').hide();
         }
         $scope.job_order_id = $routeParams.job_order_id;
 
@@ -2370,6 +2504,8 @@ app.component('inwardVehicleVocDetailForm', {
                     // self.job_order = $scope.job_order = res.job_order;
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
+                    // console.log(res.extras);
+                    // console.log(res.job_order.customer_voices);
                     if (res.action == "Add") {
                         self.addNewCustomerVoice();
                     }

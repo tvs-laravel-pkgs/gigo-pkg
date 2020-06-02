@@ -1,0 +1,87 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Inward Vehicle</b></h1>
+                    <p class="subtitle">Inward Vehicle / Vehicle Detail</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <job-order-header></job-order-header>
+            <div class="tab-form-wrap type-2">
+                <inward-tabs ng-init="active_tab = 'status-details'"></inward-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="customer_estimation_approval_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <form id="form">
+                                    <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Customer Estimation Approval</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <!-- <video title="Capture Image" id="video" width="640" height="360" ng-click="snapshot()"></video> -->
+                                            <!-- <canvas id="canvas" width="640" height="360"></canvas> -->
+                                            <div class="photo-sign-wrap">
+                                                <!-- ng-click="cameraOn()"> -->
+                                                <div class="photo-sign-item">
+                                                    <webcam channel="myChannel"></webcam>
+                                                    <!-- <input id="myFileInput" type="file" accept="image/*;capture=camera"> -->
+                                                    <img class="img-responsive img-profile" src="./public/theme/img/profile.png" alt="Image" />
+                                                    <!-- <input type="hidden" name="customer_photo" value="" id="customer_photo"> -->
+                                                    <div class="photo-sign-caption">Customer Photo</div>
+                                                </div>
+                                            </div><!-- Photo Sign Wrap -->
+                                            <div class="mb-30"></div><!-- Spacing -->
+                                            <!-- <div class="photo-sign-wrap"> -->
+                                            <div class="photo-sign-item bg-transparent">
+                                                <!-- <div class="container" ng-style="{'max-width': boundingBox.width + 'px', 'max-height': boundingBox.height + 'px'}">
+                                                    <signature-pad accept="accept" clear="clear" height="220" width="568" dataurl="dataurl"></signature-pad>
+                                                    <div class="buttons">
+                                                        <button ng-click="clear()">Clear</button>
+                                                        <button ng-click="dataurl = signature.dataUrl" ng-disabled="!signature">Reset</button>
+                                                        <button ng-click="signature = accept()">Sign</button>
+                                                    </div>
+                                                    <div class="sizes">
+                                                        <input type="text" ng-model="boundingBox.width"> x <input type="text" ng-model="boundingBox.height">
+                                                    </div>
+                                                </div>
+                                                <div class="result" ng-show="signature">
+                                                    <img ng-src="{{ signature.dataUrl }}">
+                                                </div> -->
+                                                <!-- <img class="img-responsive img-sign" src="./public/theme/img/content/signature.png" alt="Image" /> -->
+                                                <div class="photo-sign-caption">Customer E Sign</div>
+                                            </div>
+                                            <!-- </div>Photo Sign Wrap -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="submit" class="btn btn-red">
+                                                    Save & Close
+                                                </button>
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </form>
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap

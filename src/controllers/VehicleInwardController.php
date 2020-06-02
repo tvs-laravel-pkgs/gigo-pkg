@@ -118,7 +118,7 @@ class VehicleInwardController extends Controller {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$output = '';
-				$output .= '<a href="#!/inward-vehicle/vehicle-detail/' . $vehicle_inward->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				$output .= '<a href="#!/inward-vehicle/view/' . $vehicle_inward->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				$output .= '<a href="#!/inward-vehicle/vehicle-detail/' . $vehicle_inward->id . '" id = "" title="View" class="btn btn-secondary-dark btn-xs">Initiate</a>';
 				return $output;
 			})
