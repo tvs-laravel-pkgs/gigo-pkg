@@ -1508,8 +1508,11 @@ app.component('inwardVehicleVehicleDetail', {
         }
 
         if ($routeParams.type_id == 1) {
-            $scope.show_vehicle_detail = false;
-            $scope.show_vehicle_form = true;
+            alert("test");
+            // $scope.show_vehicle_detail = false;
+            // $scope.show_vehicle_form = true;
+            $("#vehicle_view").hide();
+            $("#vehicle_edit").show();
         }
         // else {
         //     $scope.showVehicleForm();

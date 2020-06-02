@@ -189,6 +189,18 @@ class JobOrder extends Model {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 258);
 	}
 
+	public function driverLicenseAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 251);
+	}
+
+	public function insuranceAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 252);
+	}
+
+	public function rcBookAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 250);
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
