@@ -1987,6 +1987,17 @@ app.component('inwardVehicleInventoryDetailForm', {
             }
         }*/
 
+        $scope.showDiv = function(id) {
+            if (event.target.checked == true) {
+                $("#remarks_div_" + id).removeClass('ng-hide');
+                $("#remarks_div_" + id).val('');
+                $("#is_available_" + id).val('1');
+            } else {
+                $("#remarks_div_" + id).addClass('ng-hide');
+                $("#remarks_div_" + id).val('');
+                $("#is_available_" + id).val('0');
+            }
+        }
 
         //Save Form Data 
         $scope.saveInventoryForm = function() {
