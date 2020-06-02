@@ -1416,6 +1416,10 @@ app.component('inwardVehicleVehicleDetail', {
                         $scope.show_vehicle_detail = true;
                         $scope.show_vehicle_form = false;
                     }
+                    if ($routeParams.type_id == 1) {
+                        $scope.show_vehicle_detail = false;
+                        $scope.show_vehicle_form = true;
+                    }
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
@@ -1508,12 +1512,17 @@ app.component('inwardVehicleVehicleDetail', {
         }
 
         if ($routeParams.type_id == 1) {
-            alert("test");
-            // $scope.show_vehicle_detail = false;
-            // $scope.show_vehicle_form = true;
-            $("#vehicle_view").hide();
-            $("#vehicle_edit").show();
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
         }
+
+        // if ($routeParams.type_id == 1) {
+        //     alert("test");
+        //     // $scope.show_vehicle_detail = false;
+        //     // $scope.show_vehicle_form = true;
+        //     $("#vehicle_view").hide();
+        //     $("#vehicle_edit").show();
+        // }
         // else {
         //     $scope.showVehicleForm();
         // }
@@ -1570,6 +1579,16 @@ app.component('inwardVehicleCustomerDetail', {
                         $scope.show_customer_detail = true;
                         $scope.show_customer_form = false;
                     }
+                    if ($routeParams.type_id == 1) {
+                        $scope.show_customer_detail = false;
+                        $scope.show_customer_form = true;
+                    }
+                    if ($routeParams.type_id == 2) {
+                        $scope.show_customer_detail = false;
+                        $scope.show_customer_form = true;
+                        $scope.job_order.vehicle.current_owner = ' ';
+                    }
+
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
@@ -1579,11 +1598,6 @@ app.component('inwardVehicleCustomerDetail', {
                 });
         }
         $scope.fetchData();
-
-        if ($routeParams.type_id == 1) {
-            $scope.show_customer_detail = false;
-            $scope.show_customer_form = true;
-        }
 
         //Save Form Data 
         $scope.saveCustomer = function() {
@@ -1694,6 +1708,11 @@ app.component('inwardVehicleCustomerDetail', {
                         });
                 }
             });
+        }
+
+        if ($routeParams.type_id == 1) {
+            $scope.show_customer_detail = false;
+            $scope.show_customer_form = true;
         }
 
         $scope.showOwnerForm = function() {
