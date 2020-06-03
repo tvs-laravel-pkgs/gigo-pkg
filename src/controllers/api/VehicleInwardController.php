@@ -191,6 +191,7 @@ class VehicleInwardController extends Controller {
 				'roadTestDoneBy',
 				'roadTestPreferedBy',
 				'expertDiagnosisReportBy',
+				'estimationType',
 				'driverLicenseAttachment',
 				'insuranceAttachment',
 				'rcBookAttachment',
