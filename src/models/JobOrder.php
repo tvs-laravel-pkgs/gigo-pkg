@@ -32,6 +32,8 @@ class JobOrder extends Model {
 		"road_test_done_by_id",
 		"road_test_performed_by_id",
 		"road_test_report",
+		"expert_diagnosis_report",
+		"expert_diagnosis_report_by_id ",
 		"warranty_expiry_date",
 		"ewp_expiry_date",
 		"status_id",
@@ -122,8 +124,16 @@ class JobOrder extends Model {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
 
+	public function expertDiagnosisReportBy() {
+		return $this->belongsTo('App\User', 'expert_diagnosis_report_by_id');
+	}
+
 	public function type() {
 		return $this->belongsTo('Abs\GigoPkg\ServiceOrderType', 'type_id');
+	}
+
+	public function estimationType() {
+		return $this->belongsTo('Abs\GigoPkg\EstimationType', 'estimation_type_id');
 	}
 
 	public function outlet() {

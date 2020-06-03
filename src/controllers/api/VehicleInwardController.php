@@ -186,6 +186,11 @@ class VehicleInwardController extends Controller {
 				'kmReadingType',
 				'status',
 				'gateLog',
+				'gateLog.createdBy',
+				'roadTestDoneBy',
+				'roadTestPreferedBy',
+				'expertDiagnosisReportBy',
+				'estimationType',
 				'driverLicenseAttachment',
 				'insuranceAttachment',
 				'rcBookAttachment',
@@ -209,16 +214,6 @@ class VehicleInwardController extends Controller {
 
 			$params['field_type_id'] = [11, 12];
 			$inventory_type_list = VehicleInventoryItem::getInventoryList($job_order->id, $params);
-
-			// $extras = [
-			// 	'job_order_type_list' => ServiceOrderType::getDropDownList(),
-			// 	'quote_type_list' => QuoteType::getDropDownList(),
-			// 	'service_type_list' => ServiceType::getDropDownList(),
-			// 	'reading_type_list' => Config::getDropDownList([
-			// 		'config_type_id' => 33,
-			// 		'default_text' => 'Select Reading type',
-			// 	]),
-			// ];
 
 			//Job card details need to get future
 			return response()->json([
@@ -810,7 +805,20 @@ class VehicleInwardController extends Controller {
 	public function getInventoryFormData(Request $r) {
 		//dd($r->all());
 		try {
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::company()
+				->with([
+					'vehicle',
+					'vehicle.model',
+					'vehicle.status',
+					'status',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -1936,9 +1944,22 @@ class VehicleInwardController extends Controller {
 	//VOICE OF CUSTOMER(VOC) GET FORM DATA
 	public function getVocFormData(Request $r) {
 		try {
-			$job_order = JobOrder::with([
-				'customerVoices',
-			])->find($r->id);
+
+			$job_order = JobOrder::company()
+				->with([
+					'vehicle',
+					'vehicle.model',
+					'vehicle.status',
+					'status',
+					'customerVoices',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -2038,7 +2059,20 @@ class VehicleInwardController extends Controller {
 	//ROAD TEST OBSERVATION GET FORM DATA
 	public function getRoadTestObservationFormData(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::company()
+				->with([
+					'vehicle',
+					'vehicle.model',
+					'vehicle.status',
+					'status',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -2089,7 +2123,7 @@ class VehicleInwardController extends Controller {
 					'exists:job_orders,id',
 				],
 				'road_test_done_by_id' => [
-					'required',
+					'required_if:is_road_test_required,1',
 					'exists:configs,id',
 					'integer',
 				],
@@ -2099,7 +2133,7 @@ class VehicleInwardController extends Controller {
 					'exists:users,id',
 				],
 				'road_test_report' => [
-					'required',
+					'required_if:is_road_test_required,1',
 					'string',
 				],
 			]);
@@ -2125,13 +2159,22 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = JobOrder::find($request->job_order_id);
-			$job_order->is_road_test_required = $request->is_road_test_required;
-			$job_order->road_test_done_by_id = $request->road_test_done_by_id;
-			if ($request->road_test_done_by_id == 8101) {
-				// EMPLOYEE
-				$job_order->road_test_performed_by_id = $request->road_test_performed_by_id;
+			if ($request->is_road_test_required == 1) {
+				$job_order->is_road_test_required = $request->is_road_test_required;
+				$job_order->road_test_done_by_id = $request->road_test_done_by_id;
+				if ($request->road_test_done_by_id == 8101) {
+					// EMPLOYEE
+					$job_order->road_test_performed_by_id = $request->road_test_performed_by_id;
+				} else {
+					$job_order->road_test_performed_by_id = NULL;
+				}
+				$job_order->road_test_report = $request->road_test_report;
+			} else {
+				$job_order->is_road_test_required = $request->is_road_test_required;
+				$job_order->road_test_done_by_id = NULL;
+				$job_order->road_test_performed_by_id = NULL;
+				$job_order->road_test_report = NULL;
 			}
-			$job_order->road_test_report = $request->road_test_report;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
@@ -2142,7 +2185,7 @@ class VehicleInwardController extends Controller {
 				'message' => 'Road Test Observation Added Successfully',
 			]);
 		} catch (\Exception $e) {
-			DB::rollBack();
+			// DB::rollBack();
 			return response()->json([
 				'success' => false,
 				'error' => 'Server Error',
@@ -2156,8 +2199,19 @@ class VehicleInwardController extends Controller {
 	//EXPERT DIAGNOSIS REPORT GET FORM DATA
 	public function getExpertDiagnosisReportFormData(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->id);
-
+			$job_order = JobOrder::company()
+				->with([
+					'vehicle',
+					'vehicle.model',
+					'vehicle.status',
+					'status',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -2241,9 +2295,21 @@ class VehicleInwardController extends Controller {
 	//VEHICLE INSPECTION GET FORM DATA
 	public function getVehicleInspectiongetFormData(Request $r) {
 		try {
-			$job_order = JobOrder::with([
-				'vehicleInspectionItems',
-			])->find($r->id);
+
+			$job_order = JobOrder::company()
+				->with([
+					'vehicle',
+					'vehicle.model',
+					'vehicle.status',
+					'status',
+					'vehicleInspectionItems',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
 
 			if (!$job_order) {
 				return response()->json([

@@ -157,7 +157,7 @@ Content Wrap -->
                                                                 <tr>
                                                                     <td><b>Captured by</b></td>
                                                                     <td>
-                                                                        <!-- {{job_order.created_by_id.name}} -->
+                                                                        {{job_order.gate_log.created_by.name}}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -424,7 +424,9 @@ Content Wrap -->
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <!-- <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a> -->
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}">
+                                                                Edit
+                                                            </a>
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
@@ -490,7 +492,9 @@ Content Wrap -->
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <!-- <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a> -->
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}">
+                                                                Edit
+                                                            </a>
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
@@ -541,7 +545,7 @@ Content Wrap -->
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <!-- <a href="!" class="btn btn-secondary-dark btn-md btn-square">View</a> -->
+                                                            <a href=".#!/job-card/view/{{job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a>
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
@@ -604,7 +608,9 @@ Content Wrap -->
                                                                 <img class="img-responsive" alt="RC Book" />
                                                             </div>
                                                             <div class="mb-10"></div><!-- Spacing -->
-                                                            <!-- <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a> -->
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}">
+                                                                Edit
+                                                            </a>
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
@@ -663,7 +669,7 @@ Content Wrap -->
                                             </div><!-- Row -->
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <!-- <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a> -->
+                                                    <a href=".#!/inward-vehicle/inventory-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                                 </div>
                                             </div><!-- Row -->
                                         </div><!-- Column -->
@@ -725,10 +731,1108 @@ Content Wrap -->
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="road_test_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Read Test Observations</b></h5>
+                                            <div class="view-details mb-no">
+                                                <ul class="view-row pb-none">
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label">
+                                                            Road Test
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.is_road_test_required==1 ? "Registered" : "UnRegistered"}}
+                                                            </b></span>
+                                                    </li>
+                                                    <li class="view-col-3" ng-show="job_order.is_road_test_required==1">
+                                                        <span class="view-col-label">
+                                                            Road Test by
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.road_test_done_by.name}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3" ng-show="job_order.is_road_test_required==1 && job_order.road_test_done_by.name=='Employee'">
+                                                        <span class="view-col-label">
+                                                            Driver Name
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.road_test_prefered_by.name}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label"></span>
+                                                        <span class="view-col-value"><b></b></span>
+                                                    </li>
+                                                    <li class="view-col-12" ng-show="job_order.is_road_test_required==1">
+                                                        <span class="view-col-label">
+                                                            Observations
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.road_test_report}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div><!-- View Data -->
+                                            <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="expert_diagnosis_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Expert Diagnosis Report</b></h5>
+                                            <div class="view-details mb-no">
+                                                <ul class="view-row pb-none">
+                                                    <li class="view-col-4">
+                                                        <span class="view-col-label">
+                                                            Done by
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.expert_diagnosis_report_by.name}}
+                                                            </b></span>
+                                                    </li>
+                                                    <li class="view-col-8">
+                                                        <span class="view-col-label">
+                                                            Expert Diagnosis Outcome
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.expert_diagnosis_report}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div><!-- View Data -->
+                                            <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="vehicle_inspection_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Vehicle Inspection Report</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="panel-group" id="accordion_1">
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title in" data-toggle="collapse" data-parent="#accordion_1" data-target="#collapse_1">
+                                                            Walk Around
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse_1" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <div class="color-list-wrap">
+                                                                <ul class="color-list-ul">
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Water Wiper Level
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Rear Axle Packing -Leaks
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Radiator Cap & Mounting
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Battery Health Condition
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Tipping Ramp -Dust Cover
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item red">
+                                                                            Ci Booster
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item red">
+                                                                            Fuel Tank Mounting
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Front Tyre Condition
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Silencer Bracket ,Smoke Soot
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Rear Tyre Condition
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                </ul><!-- Color List -->
+                                                            </div><!-- Color List Wrap -->
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion_1" data-target="#collapse_2">
+                                                            Under Vehicle Check Points
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse_2" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div class="color-list-wrap">
+                                                                <ul class="color-list-ul">
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Water Wiper Level
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Rear Axle Packing -Leaks
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Radiator Cap & Mounting
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Battery Health Condition
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Tipping Ramp -Dust Cover
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item red">
+                                                                            Ci Booster
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item red">
+                                                                            Fuel Tank Mounting
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Front Tyre Condition
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Silencer Bracket ,Smoke Soot
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Rear Tyre Condition
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                </ul><!-- Color List -->
+                                                            </div><!-- Color List Wrap -->
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion_1" data-target="#collapse_3">
+                                                            Cable Check Points
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse_3" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div class="color-list-wrap">
+                                                                <ul class="color-list-ul">
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Water Wiper Level
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Rear Axle Packing -Leaks
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Radiator Cap & Mounting
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Battery Health Condition
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Tipping Ramp -Dust Cover
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item red">
+                                                                            Ci Booster
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item red">
+                                                                            Fuel Tank Mounting
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Front Tyre Condition
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item yellow">
+                                                                            Silencer Bracket ,Smoke Soot
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                    <li>
+                                                                        <div class="color-list-item green">
+                                                                            Rear Tyre Condition
+                                                                        </div><!-- Color List Item -->
+                                                                    </li>
+                                                                </ul><!-- Color List -->
+                                                            </div><!-- Color List Wrap -->
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                            </div><!-- Panel Group -->
+                                            <div class="mb-10"></div><!-- Spacing -->
+                                            <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="dms_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>DMS Check list</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="gatein-img-list">
+                                                        <div class="gatein-img-list-item attach-photo-view">
+                                                            <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Photo">
+                                                        </div>
+                                                        <div class="attach-form-wrap">
+                                                            <p class="color-secondary-dark">
+                                                                <b>
+                                                                    Warranty
+                                                                </b>
+                                                            </p>
+                                                            <div class="mb-20"></div><!-- Spacing -->
+                                                            <p class="font-md mb-no">
+                                                                Eligible Upto
+                                                            </p>
+                                                            <p class="font-sm">
+                                                                01/01/2030
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Column -->
+                                                <div class="col-md-4">
+                                                    <div class="gatein-img-list">
+                                                        <div class="gatein-img-list-item attach-photo-view">
+                                                            <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Photo">
+                                                        </div>
+                                                        <div class="attach-form-wrap">
+                                                            <p class="color-secondary-dark">
+                                                                <b>
+                                                                    Extended Warranty (EWP)
+                                                                </b>
+                                                            </p>
+                                                            <div class="mb-20"></div><!-- Spacing -->
+                                                            <p class="font-md mb-no">
+                                                                Eligible Upto
+                                                            </p>
+                                                            <p class="font-sm">
+                                                                01/01/2030
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Column -->
+                                                <div class="col-md-4">
+                                                    <div class="gatein-img-list">
+                                                        <div class="gatein-img-list-item attach-photo-view">
+                                                            <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Photo">
+                                                        </div>
+                                                        <div class="attach-form-wrap">
+                                                            <p class="color-secondary-dark">
+                                                                <b>
+                                                                    Memberships
+                                                                </b>
+                                                            </p>
+                                                            <p class="font-md">
+                                                                TVSCARE-GOLD Eligible Upto 20/03/2022
+                                                            </p>
+                                                            <p class="font-md">
+                                                                TVSONE-GOLD Eligible Upto 20/03/2022
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <h6 class="color-secondary-dark mb-10"><b>Campaign Job Details</b></h6>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-dark-grey table-md">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>
+                                                                            Date
+                                                                        </b>
+                                                                    </td>
+                                                                    <td>
+                                                                        : DD/MM/YYYY
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>
+                                                                            Authorisation No
+                                                                        </b>
+                                                                    </td>
+                                                                    <td>
+                                                                        : 2344555
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>
+                                                                            Complaint Code
+                                                                        </b>
+                                                                    </td>
+                                                                    <td>
+                                                                        : 1234576
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>
+                                                                            False Code
+                                                                        </b>
+                                                                    </td>
+                                                                    <td>
+                                                                        : 1233445
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div><!-- Column -->
+                                                <div class="col-md-6">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-dark-grey table-md">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>
+                                                                            Claim Type
+                                                                        </b>
+                                                                    </td>
+                                                                    <td>
+                                                                        : Claim
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>
+                                                                            ROT
+                                                                        </b>
+                                                                    </td>
+                                                                    <td>
+                                                                        : Wheel Alignment
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>
+                                                                            ROT Amount
+                                                                        </b>
+                                                                    </td>
+                                                                    <td>
+                                                                        : INR 2500
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <b>
+                                                                            Part No.
+                                                                        </b>
+                                                                    </td>
+                                                                    <td>
+                                                                        : 87655
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                            <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="maintenance_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Scheduled Maintenance (1st Free Service - BSIV)</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="table-responsive">
+                                                <table class="table table-dark-grey">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                Labour Details
+                                                            </th>
+                                                            <th>
+                                                                Type
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Quantity
+                                                            </th>
+                                                            <th class="wid-100 white-space-unset text-right">
+                                                                Labour Value
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                BR05 | Changing Break Pads
+                                                            </td>
+                                                            <td>
+                                                                Break System
+                                                            </td>
+                                                            <td class="text-right">
+                                                                2 Hrs
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                2000
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                EN45A | Engine Oil Change
+                                                            </td>
+                                                            <td>
+                                                                Air Cooler
+                                                            </td>
+                                                            <td class="text-right">
+                                                                1 Hrs
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                1000
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="3" class="text-right">
+                                                                <b>
+                                                                    Total Labour
+                                                                </b>
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset  text-right">
+                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                <b>
+                                                                    3000
+                                                                </b>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div><!-- Table Responsive -->
+                                            <div class="mb-15"></div><!-- Spacing -->
+                                            <div class="table-responsive">
+                                                <table class="table table-dark-grey">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                Parts Details
+                                                            </th>
+                                                            <th>
+                                                                Type
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Rate
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Quantity
+                                                            </th>
+                                                            <th class="wid-100 white-space-unset text-right">
+                                                                Amount
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                BR05 | Changing Break Pads
+                                                            </td>
+                                                            <td>
+                                                                Break System
+                                                            </td>
+                                                            <td class="text-right">
+                                                                1000.00
+                                                            </td>
+                                                            <td class="text-right">
+                                                                2 Nos
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                2000
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                EN45A | Engine Oil Change
+                                                            </td>
+                                                            <td>
+                                                                Air Cooler
+                                                            </td>
+                                                            <td class="text-right">
+                                                                1000.00
+                                                            </td>
+                                                            <td class="text-right">
+                                                                1 Nos
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                1000
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="4" class="text-right">
+                                                                <b>
+                                                                    Total Parts
+                                                                </b>
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                <b>
+                                                                    3000
+                                                                </b>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div><!-- Table Responsive -->
+                                            <div class="mb-20"></div><!-- Spacing -->
+                                            <div class="table-transparent-wrap">
+                                                <div class="table-responsive">
+                                                    <table class="table-transparent">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="text-right">
+                                                                    <b>
+                                                                        Total Labour & Parts
+                                                                    </b>
+                                                                </td>
+                                                                <td class="wid-100 text-right">
+                                                                    <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                    <b>
+                                                                        6000
+                                                                    </b>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div><!-- Table Transparent Wrap -->
+                                            <div class="mb-20"></div><!-- Spacing -->
+                                            <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="payable_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Payable Labour & Parts</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="table-responsive">
+                                                <table class="table table-dark-grey">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                Labour Details
+                                                            </th>
+                                                            <th>
+                                                                Type
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Quantity
+                                                            </th>
+                                                            <th class="wid-100 white-space-unset text-right">
+                                                                Labour Value
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                BR05 | Changing Break Pads
+                                                            </td>
+                                                            <td>
+                                                                Break System
+                                                            </td>
+                                                            <td class="text-right">
+                                                                2 Hrs
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                2000
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                EN45A | Engine Oil Change
+                                                            </td>
+                                                            <td>
+                                                                Air Cooler
+                                                            </td>
+                                                            <td class="text-right">
+                                                                1 Hrs
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                1000
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="ptb-9">
+                                                            <td>
+                                                                <a href="#!/static/gigo/inward/add-labour" class="btn btn-md type2 btn-green btn-square">
+                                                                    Add Labour
+                                                                </a>
+                                                            </td>
+                                                            <td colspan="2" class="text-right">
+                                                                <b>
+                                                                    Total Labour
+                                                                </b>
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset  text-right">
+                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                <b>
+                                                                    3000
+                                                                </b>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div><!-- Table Responsive -->
+                                            <div class="mb-15"></div><!-- Spacing -->
+                                            <div class="table-responsive">
+                                                <table class="table table-dark-grey">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                Parts Details
+                                                            </th>
+                                                            <th>
+                                                                Type
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Rate
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Quantity
+                                                            </th>
+                                                            <th class="wid-100 white-space-unset text-right">
+                                                                Amount
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                BR05 | Changing Break Pads
+                                                            </td>
+                                                            <td>
+                                                                Break System
+                                                            </td>
+                                                            <td class="text-right">
+                                                                1000.00
+                                                            </td>
+                                                            <td class="text-right">
+                                                                2 Nos
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                2000
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                EN45A | Engine Oil Change
+                                                            </td>
+                                                            <td>
+                                                                Air Cooler
+                                                            </td>
+                                                            <td class="text-right">
+                                                                1000.00
+                                                            </td>
+                                                            <td class="text-right">
+                                                                1 Nos
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                1000
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="ptb-9">
+                                                            <td>
+                                                                <a href="#!/static/gigo/inward/add-parts" class="btn btn-md type2 btn-green btn-square">
+                                                                    Add Parts
+                                                                </a>
+                                                            </td>
+                                                            <td colspan="3" class="text-right">
+                                                                <b>
+                                                                    Total Parts
+                                                                </b>
+                                                            </td>
+                                                            <td class="wid-100 white-space-unset text-right">
+                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                <b>
+                                                                    3000
+                                                                </b>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div><!-- Table Responsive -->
+                                            <div class="mb-20"></div><!-- Spacing -->
+                                            <div class="table-transparent-wrap">
+                                                <div class="table-responsive">
+                                                    <table class="table-transparent">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="text-right">
+                                                                    <b>
+                                                                        Total Labour & Parts
+                                                                    </b>
+                                                                </td>
+                                                                <td class="wid-100 text-right">
+                                                                    <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                    <b>
+                                                                        6000
+                                                                    </b>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div><!-- Table Transparent Wrap -->
+                                            <div class="mb-20"></div><!-- Spacing -->
+                                            <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="estimate_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Estimate</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <ul class="flex-list pad-9">
+                                                        <li class="flex-12 flex-md-4">
+                                                            <div class="dark-box">
+                                                                <div class="dark-box-header opacity-light">
+                                                                    Scheduled Maintenance
+                                                                </div><!-- Dark Box Header -->
+                                                                <div class="dark-box-body">
+                                                                    <ul class="three-box-list">
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Labour
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    1000
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Parts
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    3000
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="wid-100">
+                                                                            <div class="three-box-content bg-grey text-center">
+                                                                                <span class="three-box-label">
+                                                                                    TOTAL
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    4000
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                    <div class="text-center">
+                                                                        <a href="" class="btn-link color-secondary-dark font-sm">
+                                                                            Edit
+                                                                        </a>
+                                                                    </div>
+                                                                </div><!-- Dark Box Body -->
+                                                            </div><!-- Dark Box Wrap -->
+                                                        </li>
+                                                        <li class="flex-12 flex-md-4">
+                                                            <div class="dark-box">
+                                                                <div class="dark-box-header opacity-light">
+                                                                    Payable Labour & Parts
+                                                                </div><!-- Dark Box Header -->
+                                                                <div class="dark-box-body">
+                                                                    <ul class="three-box-list">
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Labour
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    1000
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Parts
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    3000
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="wid-100">
+                                                                            <div class="three-box-content bg-grey text-center">
+                                                                                <span class="three-box-label">
+                                                                                    TOTAL
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    4000
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                    <div class="text-center">
+                                                                        <a href="" class="btn-link color-secondary-dark font-sm">
+                                                                            Edit
+                                                                        </a>
+                                                                    </div>
+                                                                </div><!-- Dark Box Body -->
+                                                            </div><!-- Dark Box Wrap -->
+                                                        </li>
+                                                        <li class="flex-12 flex-md-4">
+                                                            <div class="dark-box">
+                                                                <div class="dark-box-header">
+                                                                    Total Estimate
+                                                                </div><!-- Dark Box Header -->
+                                                                <div class="dark-box-body">
+                                                                    <ul class="three-box-list">
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Labour
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    1000
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Parts
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    3000
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="wid-100">
+                                                                            <div class="three-box-content bg-red text-center">
+                                                                                <span class="three-box-label">
+                                                                                    TOTAL
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-white.svg" alt="Rupee" />
+                                                                                    4000
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
+                                                                    <div class="text-center">
+                                                                        <a href="" class="btn-link font-sm">
+                                                                            Amount Exclusive of Taxes
+                                                                        </a>
+                                                                    </div>
+                                                                </div><!-- Dark Box Body -->
+                                                            </div><!-- Dark Box Wrap -->
+                                                        </li>
+                                                    </ul><!-- Flex List -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                            <div class="view-details mb-no">
+                                                <ul class="view-row">
+                                                    <li class="view-col-12">
+                                                        <span class="view-col-label">
+                                                            Estimated Delivery Date & Time
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                21/03/2020, 05:00 pm
+                                                            </b></span>
+                                                    </li>
+                                                </ul>
+                                            </div><!-- View Data -->
+                                            <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="status_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Estimation Approved by Customer</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="photo-sign-wrap">
+                                                <div class="photo-sign-item">
+                                                    <img class="img-responsive img-profile" src="./public/theme/img/profile.png" alt="Image" />
+                                                    <div class="photo-sign-caption">Customer Photo</div>
+                                                </div>
+                                            </div><!-- Photo Sign Wrap -->
+                                            <div class="mb-30"></div><!-- Spacing -->
+                                            <div class="photo-sign-wrap">
+                                                <div class="photo-sign-item bg-transparent">
+                                                    <img class="img-responsive img-sign" src="./public/theme/img/content/signature.png" alt="Image" />
+                                                    <div class="photo-sign-caption">Customer E Sign</div>
+                                                </div>
+                                            </div><!-- Photo Sign Wrap -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
                         </div><!-- Tab Content -->
                     </div><!-- Tab Form Body -->
                 </div><!-- Tab Form Wrap -->
             </div><!-- Page Form -->
         </form>
     </div><!-- Page Main Content -->
-</div><!-- Content Wrap
+</div><!-- Content Wrap -->
