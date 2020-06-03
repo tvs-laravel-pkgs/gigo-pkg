@@ -21,6 +21,7 @@ use App\RepairOrderType;
 use App\ServiceType;
 use App\State;
 use App\User;
+use App\VehicleInspectionItem;
 use App\VehicleInspectionItemGroup;
 use App\VehicleInventoryItem;
 use App\VehicleModel;
@@ -514,6 +515,8 @@ class VehicleInwardController extends Controller {
 
 	public function saveOrderDetail(Request $request) {
 		//dd($request->all());
+
+		//Add Attachemnt Remvoe ID --> order_attachments_remove_ids
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -2320,11 +2323,29 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$vehicle_inspection_item_groups = VehicleInspectionItemGroup::with([
-				'VehicleInspectionItems',
-			])
-				->where('company_id', Auth::user()->company_id)
-				->get();
+			$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
+
+			$vehicle_inspection_item_groups = array();
+			foreach ($vehicle_inspection_item_group as $key => $value) {
+				$vehicle_inspection_items = array();
+				$vehicle_inspection_items['id'] = $value->id;
+				$vehicle_inspection_items['name'] = $value->name;
+
+				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
+
+				$vehicle_inspections = $job_order->vehicleInspectionItems()->orderBy('vehicle_inspection_item_id')->get()->toArray();
+
+				if (count($vehicle_inspections) > 0) {
+					foreach ($vehicle_inspections as $value) {
+						if (isset($inspection_items[$value['id']])) {
+							$inspection_items[$value['id']]->status_id = $value['pivot']['status_id'];
+						}
+					}
+				}
+				$item_group['vehicle_inspection_items'] = $inspection_items;
+
+				$vehicle_inspection_item_groups[] = $item_group;
+			}
 
 			$params['config_type_id'] = 32;
 			$params['add_default'] = false;
@@ -2351,7 +2372,7 @@ class VehicleInwardController extends Controller {
 
 	//VEHICLE INSPECTION SAVE
 	public function saveVehicleInspection(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
@@ -2360,16 +2381,17 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:job_orders,id',
 				],
-				'vehicle_inspection_groups.*.vehicle_inspection_item_id' => [
-					'required',
-					'exists:vehicle_inspection_items,id',
-					'integer',
-				],
-				'vehicle_inspection_groups.*.vehicle_inspection_result_status_id' => [
-					'required',
-					'exists:configs,id',
-					'integer',
-				],
+				// 'vehicle_inspection_groups.*.vehicle_inspection_item_id' => [
+				// 	'required',
+				// 	'exists:vehicle_inspection_items,id',
+				// 	'integer',
+				// ],
+				// 'vehicle_inspection_groups.*.vehicle_inspection_result_status_id' => [
+				// 	'required',
+				// 	'exists:configs,id',
+				// 	'integer',
+				// ],
+				'vehicle_inspection_items' => 'required|array',
 			]);
 
 			if ($validator->fails()) {
@@ -2381,12 +2403,21 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = jobOrder::find($request->job_order_id);
-			if ($request->vehicle_inspection_groups) {
+			// if ($request->vehicle_inspection_groups) {
+			// 	$job_order->vehicleInspectionItems()->sync([]);
+			// 	foreach ($request->vehicle_inspection_groups as $key => $vehicle_inspection_group) {
+			// 		$job_order->vehicleInspectionItems()->attach($vehicle_inspection_group['vehicle_inspection_item_id'],
+			// 			[
+			// 				'status_id' => $vehicle_inspection_group['vehicle_inspection_result_status_id'],
+			// 			]);
+			// 	}
+			// }
+			if ($request->vehicle_inspection_items) {
 				$job_order->vehicleInspectionItems()->sync([]);
-				foreach ($request->vehicle_inspection_groups as $key => $vehicle_inspection_group) {
-					$job_order->vehicleInspectionItems()->attach($vehicle_inspection_group['vehicle_inspection_item_id'],
+				foreach ($request->vehicle_inspection_items as $key => $vehicle_inspection_item) {
+					$job_order->vehicleInspectionItems()->attach($key,
 						[
-							'status_id' => $vehicle_inspection_group['vehicle_inspection_result_status_id'],
+							'status_id' => $vehicle_inspection_item,
 						]);
 				}
 			}
