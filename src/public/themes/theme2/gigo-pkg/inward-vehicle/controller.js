@@ -503,7 +503,7 @@ app.component('inwardVehicleExportDiagnosisDetailForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order.id);
+                            $location.path('/inward-vehicle/inspection-detail/form/' + $scope.job_order.id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -2693,13 +2693,6 @@ app.component('inwardVehicleRoadTestDetailForm', {
                     $scope.gate_log_detail = res.gate_log_detail;
                     $scope.job_order = res.job_order;
 
-                    // if (!$scope.job_order.vehicle.current_owner) {
-                    //     $scope.show_customer_detail = false;
-                    //     $scope.show_customer_form = true;
-                    // } else {
-                    //     $scope.show_customer_detail = true;
-                    //     $scope.show_customer_form = false;
-                    // }
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
@@ -2709,26 +2702,6 @@ app.component('inwardVehicleRoadTestDetailForm', {
                 });
         }
         $scope.fetchData();
-
-        $("#road_test_driver").hide();
-        self.selectRegistered = function($value) {
-            if ($value == 1) {
-                $("#road_test_by").show();
-                $("#road_test_observation").show();
-            } else {
-                $("#road_test_by").hide();
-                $("#road_test_driver").hide();
-                $("#road_test_observation").hide();
-            }
-        }
-
-        self.selectRoadTestBy = function($value) {
-            if ($value == 8101) {
-                $("#road_test_driver").show();
-            } else {
-                $("#road_test_driver").hide();
-            }
-        }
 
         //Save Form Data 
         $scope.saveRoadTestDetailForm = function() {
@@ -2764,7 +2737,7 @@ app.component('inwardVehicleRoadTestDetailForm', {
                             }
                             $('.submit').button('reset');
                             custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/road-test-detail/form/' + $scope.job_order_id);
+                            $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
