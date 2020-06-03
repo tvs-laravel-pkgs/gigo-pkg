@@ -1,0 +1,141 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Inward Vehicle</b></h1>
+                    <p class="subtitle">Inward Vehicle / Vehicle Detail</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <jobcard-header></jobcard-header>
+            <div class="tab-form-wrap type-2">
+                <jobcard-tabs ng-init="active_tab = 'material-gatepass'"></jobcard-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="material_gatepass" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="title-red">
+                                            Material gatepass
+                                        </h5>
+                                        <div class="mgatepass-wrap border">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="row">
+                                                        <div class="col-md-8">
+                                                            <div class="mgpass-address-left-wrap">
+                                                                <span class="title mb-10">
+                                                                    Vendor Code : V789989 (External)
+                                                                </span>
+                                                                <span class="heading">
+                                                                    Abdulkadhar Service Center
+                                                                </span>
+                                                                <span class="address">
+                                                                    102, Athipalayam Road, Near New Bustand, Coimbatore.
+                                                                </span>                                                        
+                                                                <span class="contact">
+                                                                    Vendor Contact No : 9898798987 
+                                                                </span>                                                
+                                                            </div>
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-4">
+                                                            <div class="mgpass-address-left-wrap">
+                                                                <span class="date">
+                                                                    Created On : 20/03/2020
+                                                                </span>                                                               
+                                                                <ul class="grey-list d-block">
+                                                                    <li>
+                                                                        <div class="grey-box">
+                                                                            <div class="grey-box-header">Status : Received</div>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>                                                                                                             
+                                                            </div>
+                                                        </div><!-- Column -->
+                                                    </div><!-- Row -->
+                                                    <div class="mgpass-address-left-wrap">
+                                                        <ul class="view-row mb-no border-none">
+                                                            <li class="view-col-4">
+                                                                <span class="view-col-label">Work Order No</span>
+                                                                <span class="view-col-value">000909090</span>
+                                                            </li>
+                                                            <li class="view-col-4">
+                                                                <span class="view-col-label">Work Order Description</span>
+                                                                <span class="view-col-value">Tyre for Puncture</span>
+                                                            </li>
+                                                            <li class="view-col-4">
+                                                                <span class="view-col-label">No. of Items</span>
+                                                                <span class="view-col-value">2</span>
+                                                            </li>                      
+                                                        </ul>
+                                                    </div>                                                   
+                                                    <a href="#!" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
+                                                </div><!-- Column -->
+                                                <div class="col-md-4">                                                                                           
+                                                                                                        
+                                                </div><!-- Column --> 
+                                            </div><!-- Row -->
+                                        </div>
+                                        <div class="text-center pt-40"> 
+                                            <a class="btn btn-red">Add Another Material Gate Pass</a>
+                                        </div>
+                                    </div><!-- Column -->                                    
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xs" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title">Search Vehicle</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Registration Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Customer Code <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>VIN Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->

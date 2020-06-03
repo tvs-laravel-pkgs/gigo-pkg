@@ -1,0 +1,35 @@
+<div class="page-tab-form-top">
+    <div class="page-tab-form-top-left">
+        <div class="page-tab-form-top-left-title">General Info</div>
+        <div class="page-tab-form-top-left-link">
+            <a class="btn-link-arrow btn-prev">
+                <i class="ionicons ion-md-arrow-round-back"></i>
+            </a>
+            <a class="btn-link-arrow btn-nxt">
+                <i class="ionicons ion-md-arrow-round-forward"></i>
+            </a>
+        </div>
+        <div class="page-tab-form-top-left-info">
+            <span class="page-tab-form-top-left-info-content">
+                <b>
+                    {{job_order.vehicle.registration_number}}
+                </b>
+                <a class="page-tab-form-top-left-info-link" data-toggle="modal" data-target="#search_vehicle_modal" style="margin-left: 0;">
+                    <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
+                </a>
+                <span ng-if="job_order.vehicle.model.model_number">
+                    | {{job_order.vehicle.model.model_number}}
+                </span>
+                <span ng-if="job_order.driver_name">
+                    | {{job_order.driver_name}}
+                </span>
+                | {{job_order.date}}, {{job_order.time}}
+            </span>
+        </div>
+    </div><!-- Page Tab Form Top Left -->
+    <div class="page-tab-form-top-right">
+        <div class="page-tab-form-top-right-info">
+            Status : {{job_order.status.name}}
+        </div>
+    </div><!-- Page Tab Form Top Right -->
+</div><!-- Page Tab Form Top -->
