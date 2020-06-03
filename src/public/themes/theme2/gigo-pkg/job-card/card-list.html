@@ -3,11 +3,16 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Job Cards (<span id="table_infos"></span>)</h1>
+                    <h1 class="title type-2">
+                        Job Cards
+                        <span class="badge badge-secondary">
+                            {{job_cards.length}}
+                        </span>
+                    </h1>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
-                        <button class="btn-reset reset-tooltip refresh_table">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
                             <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
                         </button>
                     </div>
@@ -16,24 +21,24 @@
                     <div class="search_filter">
                         <label>
                             <input type="search" id="search_job_card" class="form-control" placeholder="Search" />
-                            <button class="btn-clear" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
+                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
                 </div><!-- Page Header Content -->
                 <div class="page-header-content button-block">
-                    <button class="btn btn-bordered" data-toggle="modal" data-target="#job-card-filter-modal"><i class="icon ion-md-funnel"></i>Filter</button>
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#job-card-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
                 <div class="page-header-content tab-block">
                     <div class="list-card-icon-wrap">
-                        <div class="list-icon in" ng-click="listRedirect('table')">
+                        <div class="list-icon" ng-click="listRedirect('table')">
                             <span></span>
                             <span></span>
                             <span></span>
                             <span></span>
                         </div>
-                        <div class="card-icon" ng-click="listRedirect('card')">
+                        <div class="card-icon in" ng-click="listRedirect('card')">
                             <span></span>
                             <span></span>
                             <span></span>
@@ -45,36 +50,109 @@
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
     <div class="list-card-tab-wrap">
-        <div class="list-tab-content in">
-            <div class="page-main-content list-page-content">
+        <div class="card-tab-content in">
+            <div class="page-card-content">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table" id="job_cards_list" style="width: 100% !important;">
-                                <thead>
-                                    <tr>
-                                        <th class="action width-100">Action</th>
-                                        <th>Date & Time</th>
-                                        <th>Job Card No</th>
-                                        <th>Registration Number</th>
-                                        <th>Customer Name</th>
-                                        <th>Job Order Type</th>
-                                        <th>Quote Type</th>
-                                        <th>Service Type</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
+                            <ul class="card-list">
+                                <li ng-repeat="(key, job_card) in job_cards">
+                                    <div class="card-box">
+                                        <div class="card-box-body">
+                                            <p class="card-top-info-bold">
+                                                JC No : {{job_card.job_card_number ? job_card.job_card_number : '' }}
+                                            </p>
+                                            <div class="box-list">
+                                                <div class="box-left">
+                                                    <div class="box-color white">
+                                                        <div class="box-color-title">
+                                                            {{job_card.registration_number ? job_card.registration_number : '' }}
+                                                        </div>
+                                                        <div class="box-color-subtitle">
+                                                            {{job_card.model_name ? job_card.model_name : '' }}
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Box Left -->
+                                                <div class="box-right">
+                                                    <div class="box-info">
+                                                        <div class="box-info-head">
+                                                            JC Created On
+                                                        </div>
+                                                        <div class="box-info-body">
+                                                            <div class="box-info-body-text">
+                                                                {{job_card.date ? job_card.date : '' | date:'dd/MM/yyyy'}}
+                                                            </div>
+                                                            <!-- <div class="box-info-body-text">
+                                                                {{job_card.date ? job_card.date : '' | date:'shortTime'}}
+                                                            </div> -->
+                                                        </div>
+                                                    </div><!-- Box Info -->
+                                                </div><!-- Box Right -->
+                                            </div><!-- Box List -->
+                                            <div class="card-box-content mb-8">
+                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <span class="card-box-content-value">
+                                                    <b>
+                                                        {{job_card.customer_name ? job_card.customer_name : ''}}
+                                                    </b>
+                                                </span>
+                                                <table class="card-box-content-table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                Job Order Type
+                                                            </td>
+                                                            <td>
+                                                                : {{job_card.job_order_type ? job_card.job_order_type : ''}}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Quote Type
+                                                            </td>
+                                                            <td>
+                                                                : {{job_card.quote_type ? job_card.quote_type : ''}}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                Service Type
+                                                            </td>
+                                                            <td>
+                                                                : {{job_card.service_type ? job_card.service_type : ''}}
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div><!-- Card Box Body -->
+                                        <div class="card-box-footer">
+                                            <div class="card-box-footer-left">
+                                                <div class="card-box-footer-info">
+                                                    <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                    <span class="card-box-footer-value">
+                                                        {{job_card.status ? job_card.status : ''}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="card-box-footer-right">
+                                                <a href=".#!/gigo-pkg/job-card/material-gatepass/{{job_card.job_card_id}}" class="btn btn-square btn-md btn-red">
+                                                    View
+                                                </a>
+                                                <button class="btn btn-square btn-md btn-secondary-dark">Assign Bay</button>
+                                            </div>
+                                        </div><!-- Card Box Footer -->
+                                    </div><!-- Card Box -->
+                                </li>
+                            </ul><!-- Card List -->
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Container -->
-            </div><!-- Page Main Content -->
-        </div><!-- List Tab Content -->
+            </div><!-- Page Card Content -->
+        </div><!-- Card Tab Content -->
     </div><!-- List & Card Tab Wrap -->
 </div><!-- Content Wrap -->
-<!-- Modal -->
+<!-- Filter Modal -->
 <div class="modal fade filter" id="job-card-filter-modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

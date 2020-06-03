@@ -3,6 +3,10 @@
 namespace Abs\GigoPkg;
 use App\Http\Controllers\Controller;
 use App\JobCard;
+use App\ServiceOrderType;
+use App\ServiceType;
+use App\QuoteType;
+use App\Config;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -17,14 +21,29 @@ class JobCardController extends Controller {
 		$this->data['theme'] = config('custom.theme');
 	}
 
+	public function getJobCardFilter() {
+		$params = [
+			'config_type_id' => 42,
+			'add_default' => true,
+			'default_text' => "Select Status",
+		];
+
+		$this->data['extras'] = [
+			'job_order_type_list'=>ServiceOrderType::getDropDownList(),
+			'service_type_list'=>ServiceType::getDropDownList(),
+			'quote_type_list'=>QuoteType::getDropDownList(),
+			'status_list' => Config::getDropDownList($params),
+		];
+		return response()->json($this->data);
+	}
 
 	public function getJobCardList(Request $request) {
+		//dd($request->all());
 		$job_cards = JobCard::select([
 				'job_cards.id as job_card_id',
 				'job_cards.job_card_number',
 				'job_cards.bay_id',
 				'job_orders.id as job_order_id',
-				//'gate_passes.number as gate_pass_number',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y - %h:%i %p") as date'),
 				'vehicles.registration_number',
 				'models.model_name',
@@ -49,6 +68,52 @@ class JobCardController extends Controller {
 			->leftJoin('quote_types', 'quote_types.id', 'job_orders.quote_type_id')
 			->leftJoin('service_order_types', 'service_order_types.id', 'job_orders.type_id')
 			->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . Auth::user()->id . "')")
+			->where(function ($query) use ($request) {
+				if (!empty($request->date)) {
+					$query->whereDate('job_cards.created_at', date('Y-m-d', strtotime($request->date)));
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->reg_no)) {
+					$query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->job_card_no)) {
+					$query->where('job_cards.job_card_number', 'LIKE', '%' . $request->job_card_no . '%');
+				}
+			})			
+			->where(function ($query) use ($request) {
+				if (!empty($request->customer_id)) {
+					$query->where('vehicle_owners.customer_id', $request->customer_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->model_id)) {
+					$query->where('vehicles.model_id', $request->model_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->status_id)) {
+					$query->where('job_cards.status_id', $request->status_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->quote_type_id)) {
+					$query->where('job_orders.quote_type_id', $request->quote_type_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->service_type_id)) {
+					$query->where('job_orders.service_type_id', $request->service_type_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->job_order_type_id)) {
+					$query->where('job_orders.type_id', $request->job_order_type_id);
+				}
+			})
+
 			->groupBy('job_cards.id')
 			//->get()
 			;

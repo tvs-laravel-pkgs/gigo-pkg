@@ -33,7 +33,7 @@ class JobCardController extends Controller {
 
 	public function getJobCardList(Request $request) {
 		try {
-			$validator = Validator::make($request->all(), [
+			/*$validator = Validator::make($request->all(), [
 				'floor_supervisor_id' => [
 					'required',
 					'exists:users,id',
@@ -46,32 +46,96 @@ class JobCardController extends Controller {
 					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
-			}
+			}*/
 			//issue: query optimisation
-			$job_card_list = Jobcard::select('job_cards.*', 'job_cards.status_id')
-				->with([
-					'jobOrder',
-					'jobOrder.gateLog',
-					'jobOrder.gateLog.vehicleDetail',
-					'jobOrder.gateLog.vehicleDetail.vehicleCurrentOwner',
-					'jobOrder.gateLog.vehicleDetail.vehicleCurrentOwner.CustomerDetail',
-				])
-				->leftJoin('job_orders', 'job_orders.id', 'job_cards.job_order_id')
-				->leftJoin('gate_logs', 'gate_logs.id', 'job_orders.gate_log_id')
-				->leftJoin('vehicles', 'gate_logs.vehicle_id', 'vehicles.id')
-				->leftJoin('vehicle_owners', 'vehicles.id', 'vehicle_owners.vehicle_id')
-				->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
-			//->whereIn('job_cards.id', $jobcard_ids)
-				->where(function ($query) use ($request) {
+			$job_card_list = JobCard::select([
+				'job_cards.id as job_card_id',
+				'job_cards.job_card_number',
+				'job_cards.bay_id',
+				'job_orders.id as job_order_id',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y - %h:%i %p") as date'),
+				'vehicles.registration_number',
+				'models.model_name',
+				'customers.name as customer_name',
+				'status.name as status',
+				'service_types.name as service_type',
+				'quote_types.name as quote_type',
+				'service_order_types.name as job_order_type',
+				'gate_passes.id as gate_pass_id',
+
+			])
+			->leftJoin('job_orders', 'job_orders.id', 'job_cards.job_order_id')
+			->leftJoin('gate_passes', 'gate_passes.job_card_id', 'job_cards.id')
+			->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
+			->leftJoin('models', 'models.id', 'vehicles.model_id')
+			->leftJoin('vehicle_owners', function ($join) {
+				$join->on('vehicle_owners.vehicle_id', 'job_orders.vehicle_id')
+					->whereRaw('vehicle_owners.from_date = (select MAX(vehicle_owners1.from_date) from vehicle_owners as vehicle_owners1 where vehicle_owners1.vehicle_id = job_orders.vehicle_id)');
+			})
+			->leftJoin('customers', 'vehicle_owners.customer_id', 'customers.id')
+			->leftJoin('configs as status', 'status.id', 'job_cards.status_id')
+			->leftJoin('service_types', 'service_types.id', 'job_orders.service_type_id')
+			->leftJoin('quote_types', 'quote_types.id', 'job_orders.quote_type_id')
+			->leftJoin('service_order_types', 'service_order_types.id', 'job_orders.type_id')
+			->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
-							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%');
+							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('models.model_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('job_cards.job_card_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('status.name', 'LIKE', '%' . $request->search_key . '%')
+						;
 					}
 				})
+			->where(function ($query) use ($request) {
+				if (!empty($request->date)) {
+					$query->whereDate('job_cards.created_at', date('Y-m-d', strtotime($request->date)));
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->reg_no)) {
+					$query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->job_card_no)) {
+					$query->where('job_cards.job_card_number', 'LIKE', '%' . $request->job_card_no . '%');
+				}
+			})			
+			->where(function ($query) use ($request) {
+				if (!empty($request->customer_id)) {
+					$query->where('vehicle_owners.customer_id', $request->customer_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->model_id)) {
+					$query->where('vehicles.model_id', $request->model_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->status_id)) {
+					$query->where('job_cards.status_id', $request->status_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->quote_type_id)) {
+					$query->where('job_orders.quote_type_id', $request->quote_type_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->service_type_id)) {
+					$query->where('job_orders.service_type_id', $request->service_type_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->job_order_type_id)) {
+					$query->where('job_orders.type_id', $request->job_order_type_id);
+				}
+			})
 			//Floor Supervisor not Assigned =>8220
-				->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')")
-				->groupBy('job_cards.id')
-				->get();
+			->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')")
+			->groupBy('job_cards.id')
+			->get();
 
 			return response()->json([
 				'success' => true,
@@ -499,6 +563,10 @@ class JobCardController extends Controller {
 				->whereIn('id', $job_order_repair_order_ids)
 				->get();
 
+			$status = RepairOrderMechanic::select('repair_order_mechanics.id','repair_order_mechanics.status_id','repair_order_mechanics.job_order_repair_order_id')
+				->whereIn('job_order_repair_order_id', $job_order_repair_order_ids)
+				->orderby('repair_order_mechanics.id','ASC')->groupBy('repair_order_mechanics.job_order_repair_order_id')->get();
+				
 			// dd($job_order_repair_orders);
 			return response()->json([
 				'success' => true,
@@ -507,6 +575,8 @@ class JobCardController extends Controller {
 				'pass_work_reasons' => $pass_work_reasons,
 				'user_details' => $user_details,
 				'my_job_card_details' => $my_job_card_details,
+				'getwork_status' => $status,
+				
 			]);
 
 		} catch (Exception $e) {
@@ -981,7 +1051,7 @@ class JobCardController extends Controller {
 	}
 
 	//JOB CARD GATE PASS VIEW
-	public function viewMetirialGatePass($job_card_id) {
+	public function viewMeterialGatePass(Request $request) {
 		// dd($job_card_id);
 		try {
 			$view_metrial_gate_pass = JobCard::with([
@@ -1000,7 +1070,7 @@ class JobCardController extends Controller {
 				'gatePasses.gatePassDetail.vendor.addresses.city',
 				'gatePasses.gatePassItems',
 			])
-				->find($job_card_id);
+				->find($request->id);
 
 			if (!$view_metrial_gate_pass) {
 				return response()->json([
@@ -1023,6 +1093,66 @@ class JobCardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'view_metrial_gate_pass' => $view_metrial_gate_pass,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//JOB CARD Vendor Details
+	public function getMeterialGatePassOutwardDetail(Request $request) {
+		//dd($request->all());
+		try {
+			$gate_pass = GatePass::with([
+				'gatePassDetail',
+				'gatePassDetail.vendorType',
+				'gatePassDetail.vendor',
+				'gatePassDetail.vendor.addresses',
+			])
+				->find($request->gate_pass_id);
+
+			if (!$gate_pass) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Card Not found!',
+				]);
+			}
+
+			$gate_pass_item = GatePassItem::where('gate_pass_id',$request->gate_pass_id)->get();
+
+			$my_job_card_details = Employee::select([
+				'job_cards.job_card_number as jc_number',
+				'vehicles.registration_number',
+				DB::raw('COUNT(job_order_repair_orders.id) as no_of_ROTs'),
+				'configs.name as status',
+				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
+				'models.model_number',
+			])
+				->join('users', 'users.entity_id', 'employees.id')
+				->join('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
+				->join('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')
+				->join('job_orders', 'job_orders.id', 'job_order_repair_orders.job_order_id')
+				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
+				->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
+				->leftJoin('models', 'models.id', 'vehicles.model_id')
+				->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')
+				->join('configs', 'configs.id', 'job_cards.status_id')
+				->where('users.user_type_id', 1)
+				->where('job_cards.id',$request->id)
+				->first();
+
+
+			return response()->json([
+				'success' => true,
+				'gate_pass' => $gate_pass,
+				'my_job_card_details' => $my_job_card_details,
+				'gate_pass_item' => $gate_pass_item,
 			]);
 
 		} catch (Exception $e) {
@@ -1085,12 +1215,12 @@ class JobCardController extends Controller {
 			}
 
 			$status = Status::where('type_id', 8451)->where('name', 'Gate Out Pending')->first();
-			if ($status) {
+			/*if ($status) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Gate Out Pending Status Not Found!',
 				]);
-			}
+			}*/
 			$gate_pass = GatePass::firstOrNew([
 				'job_card_id' => $request->job_card_id,
 			]);
@@ -1128,7 +1258,7 @@ class JobCardController extends Controller {
 
 	//Material GatePass Item Save
 	public function saveMaterialGatePassItem(Request $request) {
-		// dd($request->all());
+		//dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -1258,7 +1388,7 @@ class JobCardController extends Controller {
 				$mechanic_time_log->created_by_id = Auth::user()->id;
 				$mechanic_time_log->save();
 			} else {
-				$reason_id = $request->status_id == 8263 ? $request->reason_id : '';
+				$reason_id = $request->status_id == 8263 ? $request->reason_id : $request->reason_id;
 				$mechanic_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->whereNull('end_date_time')->update(['end_date_time' => Carbon::now(), 'reason_id' => $reason_id, 'status_id' => $request->status_id]);
 			}
 

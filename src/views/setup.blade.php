@@ -720,15 +720,15 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-view></inward-vehicle-view>',
 	        title: 'Inward Vehicle - View',
 	    }).
-	    when('/inward-vehicle/view/:job_order_id/:type_id', {
-	        template: '<inward-vehicle-view></inward-vehicle-view>',
-	        title: 'Inward Vehicle - View',
-	    }).
-	    when('/inward-vehicle/vehicle-detail/:job_order_id', {
+	    when('/inward-vehicle/vehicle-detail/:job_order_id/:type_id?', {
 	        template: '<inward-vehicle-vehicle-detail></inward-vehicle-vehicle-detail>',
-	        title: 'Inward Vehicle - Vehicle Detail',
+	        title: 'Inward Vehicle',
 	    }).
-	    when('/inward-vehicle/customer-detail/:job_order_id', {
+	    // when('/inward-vehicle/vehicle-detail/:job_order_id', {
+	    //     template: '<inward-vehicle-vehicle-detail></inward-vehicle-vehicle-detail>',
+	    //     title: 'Inward Vehicle - Vehicle Detail',
+	    // }).
+	    when('/inward-vehicle/customer-detail/:job_order_id/:type_id?', {
 	        template: '<inward-vehicle-customer-detail></inward-vehicle-customer-detail>',
 	        title: 'Inward Vehicle - Customer Detail',
 	    }).
@@ -1052,7 +1052,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
 	    //Job Card
-	    when('/gigo-pkg/job-card/list', {
+	    when('/gigo-pkg/job-card/table-list', {
 	        template: '<job-card-table-list></job-card-table-list>',
 	        title: 'Job Cards',
 	    }).
@@ -1067,6 +1067,14 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    when('/gigo-pkg/job-card/card-list', {
 	        template: '<job-card-card-list></job-card-card-list>',
 	        title: 'Job Card Card List',
+	    }).
+	    when('/gigo-pkg/job-card/material-gatepass/:job_card_id', {
+	        template: '<job-card-material-gatepass-form></job-card-material-gatepass-form>',
+	        title: 'Job Card Material Gate Pass',
+	    }).
+	    when('/gigo-pkg/job-card/material-outward/:job_card_id/:gatepass_id', {
+	        template: '<job-card-material-outward-form></job-card-material-outward-form>',
+	        title: 'Job Card Material Outward',
 	    });
 	}]);
 
@@ -1075,6 +1083,15 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/form.html')}}';
     var job_card_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/card-list.html')}}';
     var job_card_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-card-modal-form.html')}}';
+    var job_card_material_gatepass_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/material-gatepass.html')}}';
+    var job_card_material_outward_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/material-outward.html')}}';
+
+
+     //PARTIALS
+    var job_card_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/jobcard-header.html')}}';
+    var jobcard_tabs_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/jobcard-tabs.html')}}';
+    
+
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/controller.js')}}'></script>
 

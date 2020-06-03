@@ -48,10 +48,15 @@ app.component('jobCardTableList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    /*d.short_name = $("#short_name").val();
-                    d.name = $("#name").val();
-                    d.description = $("#description").val();
-                    d.status = $("#status").val();*/
+                    d.date = $("#date").val();
+                    d.reg_no = $("#reg_no").val();
+                    d.job_card_no = $("#job_card_no").val();
+                    d.customer_id = $("#customer_id").val();
+                    d.model_id = $("#model_id").val();
+                    d.quote_type_id = $("#quote_type_id").val();
+                    d.service_type_id = $("#service_type_id").val();
+                    d.job_order_type_id = $("#job_order_type_id").val();
+                    d.status_id = $("#status_id").val();
                 },
             },
 
@@ -59,12 +64,12 @@ app.component('jobCardTableList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'date', },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
-                { data: 'registration_number', name: 'vechicles.registration_number' },
+                { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'customer_name', name: 'customers.name' },
                 { data: 'job_order_type', name: 'service_order_types.name' },
                 { data: 'quote_type', name: 'quote_types.name' },
                 { data: 'service_type', name: 'service_types.name' },
-                { data: 'status', name: '' },
+                { data: 'status', searchable: false },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -90,34 +95,52 @@ app.component('jobCardTableList', {
             dataTables.fnFilter(this.value);
         });
 
-        //DELETE
-        $scope.deleteJobCard = function($id) {
-            $('#job_card_id').val($id);
-        }
-        $scope.deleteConfirm = function() {
-            $id = $('#job_card_id').val();
-            $http.get(
-                laravel_routes['deleteJobCard'], {
-                    params: {
-                        id: $id,
-                    }
-                }
-            ).then(function(response) {
-                if (response.data.success) {
-                    custom_noty('success', 'Job Card Deleted Successfully');
-                    $('#job_cards_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/job-card/list');
-                }
-            });
-        }
-
         // FOR FILTER
-        /*$http.get(
+        $http.get(
             laravel_routes['getJobCardFilter']
         ).then(function(response) {
-            // console.log(response);
             self.extras = response.data.extras;
-        });*/
+        });
+
+        //GET CUSTOMER LIST
+        self.searchCustomer = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCustomerSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+        //GET VEHICLE MODEL LIST
+        self.searchVehicleModel = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getVehicleModelSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -133,21 +156,69 @@ app.component('jobCardTableList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+        $scope.listRedirect = function(type) {
+            if (type == 'table') {
+                window.location = "#!/gigo-pkg/job-card/table-list";
+                return false;
+            } else {
+                //alert();
+                window.location = "#!/gigo-pkg/job-card/card-list";
+                return false;
+            }
+        }
+
+        $("#date").keyup(function() {
+            self.date = this.value;
+        });
+        $('#reg_no').on('keyup', function() {
             dataTables.fnFilter();
         });
-        $('#name').on('keyup', function() {
+        $('#job_card_no').on('keyup', function() {
             dataTables.fnFilter();
         });
+        $scope.selectedCustomer = function(id) {
+            $('#customer_id').val(id);
+            self.customer_id = id;
+        }
+        $scope.selectedVehicleModel = function(id) {
+            $('#model_id').val(id);
+            self.model_id = id;
+        }
+
         $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
+            $('#status_id').val(id);
+            dataTables.fnFilter();
+        }
+
+        $scope.onSelectedQuoteType = function(id) {
+            $('#quote_type_id').val(id);
+            dataTables.fnFilter();
+        }
+        $scope.onSelectedServiceType = function(id) {
+            $('#service_type_id').val(id);
+            dataTables.fnFilter();
+        }
+        $scope.onSelectedJobOrderType = function(id) {
+            $('#job_order_type_id').val(id);
+            dataTables.fnFilter();
+        }
+
+        $scope.applyFilter = function() {
+            //$scope.fetchData();
+            $('#job-card-filter-modal').modal('hide');
             dataTables.fnFilter();
         }
         $scope.reset_filter = function() {
-            $("#short_name").val('');
-            $("#name").val('');
-            $("#status").val('');
+            $("#date").val('');
+            $("#reg_no").val('');
+            $("#customer_id").val('');
+            $("#model_id").val('');
+            $("#quote_type_id").val('');
+            $("#service_type_id").val('');
+            $("#job_order_type_id").val('');
+            $("#status_id").val('');
             dataTables.fnFilter();
+            //$scope.fetchData();
         }
         $rootScope.loading = false;
     }
@@ -155,10 +226,10 @@ app.component('jobCardTableList', {
 
 
 app.component('jobCardCardList', {
-    templateUrl: inward_vehicle_card_list_template_url,
+    templateUrl: job_card_card_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $rootScope.loading = true;
-        $('#search').focus();
+        $('#search_job_card').focus();
         var self = this;
 
         if (!HelperService.isLoggedIn()) {
@@ -167,28 +238,28 @@ app.component('jobCardCardList', {
         }
 
         $('li').removeClass('active');
-        $('.master_link').addClass('active').trigger('click');
+        $('.job_cards').addClass('active').trigger('click');
 
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('inward-vehicle')) {
+        if (!self.hasPermission('job-cards')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
 
         $scope.clear_search = function() {
-            $('#search').val('');
+            $('#search_job_card').val('');
         }
 
         //HelperService.isLoggedIn()
         self.user = $scope.user = HelperService.getLoggedUser();
         self.search_key = '';
-        self.gate_in_date = '';
+        self.date = '';
         self.reg_no = '';
-        self.membership = '';
-        self.gate_in_no = '';
-        self.customer_id = '';
+        self.job_card_no = '';
+        self.service_type_id = '';
+        self.quote_type_id = '';
+        self.job_order_type_id = '';
         self.model_id = '';
-        self.registration_type = '';
         self.status_id = '';
 
         $element.find('input').on('keydown', function(ev) {
@@ -201,28 +272,22 @@ app.component('jobCardCardList', {
             $scope.searchTerm3 = '';
         };
 
-        $scope.reset_filter = function() {
-            $("#short_name").val('');
-            $("#name").val('');
-            $("#status").val('');
-            dataTables.fnFilter();
-        }
-
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/get',
+                    url: base_url + '/api/job-card/get',
                     method: "POST",
                     data: {
-                        service_advisor_id: self.user.id,
                         search_key: self.search_key,
-                        gate_in_date: self.gate_in_date,
+                        date: self.date,
                         reg_no: self.reg_no,
-                        membership: self.membership,
+                        job_card_no: self.job_card_no,
                         gate_in_no: self.gate_in_no,
                         customer_id: self.customer_id,
                         model_id: self.model_id,
-                        registration_type: self.registration_type,
+                        service_type_id: self.service_type_id,
+                        quote_type_id: self.quote_type_id,
+                        job_order_type_id: self.job_order_type_id,
                         status_id: self.status_id,
                     },
                     beforeSend: function(xhr) {
@@ -234,7 +299,7 @@ app.component('jobCardCardList', {
                         showErrorNoty(res);
                         return;
                     }
-                    $scope.gate_logs = res.gate_logs;
+                    $scope.job_cards = res.job_card_list;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -246,35 +311,33 @@ app.component('jobCardCardList', {
         $('.refresh_table').on("click", function() {
             $scope.fetchData();
         });
-        $("#search_inward_vehicle").keyup(function() {
+        $("#search_job_card").keyup(function() {
             self.search_key = this.value;
             $scope.fetchData();
         });
-        $("#gate_in_date").keyup(function() {
-            self.gate_in_date = this.value;
+        $("#date").keyup(function() {
+            self.date = this.value;
         });
         $("#reg_no").keyup(function() {
             self.reg_no = this.value;
         });
-        $("#membership").keyup(function() {
-            self.membership = this.value;
+        $("#job_card_no").keyup(function() {
+            self.job_card_no = this.value;
         });
-        $("#gate_in_no").keyup(function() {
-            self.gate_in_no = this.value;
-        });
+
         $scope.listRedirect = function(type) {
             if (type == 'table') {
-                window.location = "#!/inward-vehicle/table-list";
+                window.location = "#!/gigo-pkg/job-card/table-list";
                 return false;
             } else {
-                window.location = "#!/inward-vehicle/card-list";
+                window.location = "#!/gigo-pkg/job-card/card-list";
                 return false;
             }
         }
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getVehicleInwardFilter']
+            laravel_routes['getJobCardFilter']
         ).then(function(response) {
             self.extras = response.data.extras;
         });
@@ -336,31 +399,41 @@ app.component('jobCardCardList', {
             $('#customer_id').val(id);
             self.customer_id = id;
         }
-        $scope.selectedVehicleModel = function(id) {
-            $('#model_id').val(id);
-            self.model_id = id;
-        }
-        $scope.onSelectedRegistrationType = function(id) {
-            $('#registration_type').val(id);
-            self.registration_type = id;
-        }
         $scope.onSelectedStatus = function(id) {
             $('#status_id').val(id);
             self.status_id = id;
         }
+        $scope.onSelectedQuoteType = function(id) {
+            $('#quote_type_id').val(id);
+            self.quote_type_id = id;
+            //dataTables.fnFilter();
+        }
+        $scope.onSelectedServiceType = function(id) {
+            $('#service_type_id').val(id);
+            self.service_type_id = id;
+            // dataTables.fnFilter();
+        }
+        $scope.onSelectedJobOrderType = function(id) {
+            $('#job_order_type_id').val(id);
+            self.job_order_type_id = id;
+            // dataTables.fnFilter();
+        }
+
         $scope.applyFilter = function() {
+            $('#job-card-filter-modal').modal('hide');
             $scope.fetchData();
-            $('#vehicle-inward-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#gate_in_date").val('');
-            $("#registration_type").val('');
+            $("#date").val('');
             $("#reg_no").val('');
             $("#customer_id").val('');
             $("#model_id").val('');
-            $("#membership").val('');
-            $("#gate_in_no").val('');
             $("#status_id").val('');
+            $("#job_card_no").val('');
+            $("#job_card_type_id").val('');
+            $("#service_type_id").val('');
+            $("#quote_type_id").val('');
+            //dataTables.fnFilter();
             $scope.fetchData();
         }
 
@@ -474,6 +547,314 @@ app.component('jobCardForm', {
                     });
             }
         });
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+//Material Gate Pass
+app.component('jobCardMaterialGatepassForm', {
+    templateUrl: job_card_material_gatepass_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/view-material-gate-pass',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.view_metrial_gate_pass = res.view_metrial_gate_pass;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Save Form Data 
+        $scope.saveExportDiagonis = function() {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'expert_diagnosis_report': {
+                        required: true,
+                    },
+                    'expert_diagnosis_report_by_id': {
+                        required: true,
+                    },
+                },
+                messages: {
+
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/expert-diagnosis-report/save',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order.id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        $scope.showVehicleForm = function() {
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
+        }
+    }
+});
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+//Material Outward
+app.component('jobCardMaterialOutwardForm', {
+    templateUrl: job_card_material_outward_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        $scope.gatepass_id = $routeParams.gatepass_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/view-material-gate-pass-detail',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                        gate_pass_id: $routeParams.gatepass_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.gate_pass = res.gate_pass;
+                    $scope.my_job_card_details = res.my_job_card_details;
+                    $scope.gate_pass_item = res.gate_pass_item;
+                    $scope.make_list = res.make_list;
+                    $scope.model_list = res.model_list;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        $scope.addNewItem = function() {
+            $scope.gate_pass_item.push({
+                item_description: '',
+                item_make: '',
+                item_model: '',
+                item_serial_no: '',
+                qty: '',
+                remarks: '', 
+            });
+        }
+
+        //$scope.addNewItem();
+        //Save Form Data 
+        $scope.saveVendorDetails = function() {
+            var form_id = '#vendor_save';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    /*'expert_diagnosis_report': {
+                        required: true,
+                    },
+                    'expert_diagnosis_report_by_id': {
+                        required: true,
+                    },*/
+                },
+                messages: {
+
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/save-material-gate-pass-detail',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/gigo-pkg/job-card/material-outward/' + $scope.job_card_id +'/'+$scope.gatepass_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+         //Save Form Data 
+        $scope.saveItemDetails = function() {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'item_description': {
+                        required: true,
+                    },
+                    'item_make': {
+                        required: true,
+                    },
+                    'item_model': {
+                        required: true,
+                    },
+                    'item_serial_no': {
+                        required: true,
+                    },
+                    'qty': {
+                        required: true,
+                    },
+                    'remarks': {
+                        required: true,
+                    },
+                },
+                messages: {
+
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/save-material-gate-pass-item',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/gigo-pkg/job-card/material-outward/' + $scope.job_card_id +'/'+$scope.gatepass_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+         /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
+
+        $scope.showVehicleForm = function() {
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
+        }
+    }
+});
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+
+app.directive('jobcardHeader', function() {
+    return {
+        templateUrl: job_card_header_template_url,
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.directive('jobcardTabs', function() {
+    return {
+        templateUrl: jobcard_tabs_template_url,
+        controller: function() {}
     }
 });
 //------------------------------------------------------------------------------------------------------------------------

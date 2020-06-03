@@ -69,6 +69,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		Route::post('vehicle-inward/save-addtional-rot-part', 'VehicleInwardController@saveAddtionalRotPart');
 
+		Route::post('vehicle-inward/web/addtional-rot-part/save', 'VehicleInwardController@saveWebAddtionalRotPart');
+
 		//ESTIMATE GET FORM DATA AND SAVE
 		Route::post('vehicle-inward/estimate/get-form-data', 'VehicleInwardController@getEstimateFormData');
 		Route::post('vehicle-inward/estimate/save', 'VehicleInwardController@saveEstimate');
@@ -114,13 +116,17 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::get('get-vendor-details/{vendor_id}', 'JobCardController@VendorDetails');
 
 		// JOB CARD LIST
-		Route::post('get-job-card-list', 'JobCardController@getJobCardList');
+		Route::post('job-card/get', 'JobCardController@getJobCardList');
 
 		// JOB CARD TIME LOG
 		Route::get('get-job-card-time-log/{job_card_id}', 'JobCardController@getJobCardTimeLog');
 
 		// JOB CARD MATRIAL GATE PASS VIEW
-		Route::get('view-material-gate-pass/{job_card_id}', 'JobCardController@viewMetirialGatePass');
+		Route::post('view-material-gate-pass', 'JobCardController@viewMeterialGatePass');
+
+		//Job Card get OutwardDetail
+
+		Route::post('view-material-gate-pass-detail', 'JobCardController@getMeterialGatePassOutwardDetail');
 
 		// MY JOB CARD DATA
 		Route::post('my-job-card-view', 'JobCardController@getMyJobCardData');

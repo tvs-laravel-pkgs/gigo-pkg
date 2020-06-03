@@ -1,4 +1,4 @@
-<!-- Content Wrap -->
+Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -99,18 +99,18 @@
                                                     <a type="button" class="btn btn-red" ng-click="showVehicleForm()">
                                                         Edit
                                                     </a>
-                                                    <a type="button" class="btn btn-red" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
+                                                    <!-- <a type="button" class="btn btn-red" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
                                                         Save & Close
                                                     </a>
                                                     <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/customer-detail/{{job_order.id}}">
                                                         Next
-                                                    </a>
+                                                    </a> -->
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
                                         <form id="form">
                                             <input type="hidden" name="id" value="{{job_order.vehicle.id}}">
-                                            <div class="row" ng-show="show_vehicle_form">
+                                            <div class="row" ng-show="show_vehicle_form" id="vehicle_edit">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Registration Type <sup class="mandatory">*</sup></label>
@@ -178,7 +178,7 @@
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
-                                            <div class="tab-pane-footer" ng-show="show_vehicle_form">
+                                            <!-- <div class="tab-pane-footer" ng-show="show_vehicle_form">
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <button type="submit" class="btn btn-red" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
@@ -188,13 +188,32 @@
                                                             Next
                                                         </button>
                                                     </div>
-                                                </div>
-                                            </div><!-- Tab Footer -->
+                                                </div> 
+                                            </div> -->
+                                            <!-- Tab Footer -->
                                         </form>
                                     </div><!-- Column -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
+                        <div class="tab-pane-footer">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a type="button" class="btn btn-red" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
+                                        Save & Close
+                                    </a>
+                                    <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/customer-detail/{{job_order.id}}">
+                                        Next
+                                    </a>
+                                    <!-- <button type="submit" class="btn btn-red submit" ng-click="saveVocDetailForm()">
+                                        Save & Close
+                                    </button>
+                                    <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-click="saveVocDetailForm()">
+                                        Next
+                                    </button> -->
+                                </div>
+                            </div>
+                        </div><!-- Tab Footer -->
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
             </div><!-- Tab Form Wrap -->
@@ -237,4 +256,4 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->
-<!-- Modal -->
+<!-- Modal

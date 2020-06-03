@@ -9,7 +9,7 @@
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Inward Vehicle</b></h1>
-                    <p class="subtitle">Inward Vehicle / Vehicle Detail</p>
+                    <p class="subtitle">Inward Vehicle / VOC Detail</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -35,7 +35,7 @@
                                                 </b>
                                             </h5>
                                             <hr class="hr-15"><!-- Separater -->
-                                            <div class="row custom-row" ng-repeat="(index, customer_voice) in $ctrl.job_order.customer_voices">
+                                            <div class="row custom-row" ng-repeat="(index, customer_voice) in job_order.customer_voices">
                                                 <div class="col-md-6">
                                                     <div class="form-group mb-no">
                                                         <md-select ng-model="customer_voice.id" placeholder="Select any one" md-on-close="clearSearchCustomerVoice()" ng-change="onSelectedVoc(customer_voice.id)" data-md-container-class="selectdemoSelectHeader">
@@ -56,13 +56,13 @@
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
                                             <div class="row">
-                                                <div class="col-md-6" id="voc_details">
+                                                <div class="col-md-6" id="voc_remark_details">
                                                     <div class="form-group">
                                                         <textarea class="form-control" rows="4" placeholder="Enter Details"></textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-12">
-                                                    <button class="btn btn-md type2 btn-green btn-square" ng-click="$ctrl.addNewCustomerVoice()">
+                                                    <button class="btn btn-md type2 btn-green btn-square" ng-click="addNewCustomerVoice()">
                                                         Add More
                                                     </button>
                                                 </div>
