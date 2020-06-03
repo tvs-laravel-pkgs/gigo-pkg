@@ -133,7 +133,7 @@ class JobCardController extends Controller {
 				if (Entrust::can('job-cards')) {
 					$output .= '<a href="#!/static/gigo/mgate-pass/form" class=""><img class="img-responsive" src="'.$img1.'" alt="View" /></a>';
 					if(!$job_card->bay_id){
-						$output .= '<button class="btn btn-secondary-dark btn-sm">Assign Bay</button>';
+						$output .= '<a href="#!/gigo-pkg/job-card/assign-bay/'.$job_card->job_card_id.'"  class="btn btn-secondary-dark btn-sm">Assign Bay</a>';
 					}
 				}
 				

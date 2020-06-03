@@ -1,0 +1,96 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="javascript:history.go(-1);" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">
+                        Bay Assignment
+                    </h1>
+                    <p class="subtitle">
+                        Inward Vehicle / Job card / Update
+                    </p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form-top type-2">
+            <div class="page-tab-form-top-left">
+                <div class="page-tab-form-top-left-info pad-lf-rt">
+                    <span class="page-tab-form-top-left-info-content">
+                        <b>
+                            JC No: {{job_card.job_card_number ? job_card.job_card_number : ''}}
+                            | {{job_card.job_order.vehicle.registration_number ? job_card.job_order.vehicle.registration_number : ''}}
+                            |
+                        </b>
+                        {{job_card.job_order.vehicle.model.name ? job_card.job_order.vehicle.model.name : ''}}
+                        | {{job_card.created_at ? job_card.created_at : ''}}
+                    </span>
+                </div>
+            </div><!-- Page Tab Form Top Left -->
+            <div class="page-tab-form-top-right">
+                <div class="page-tab-form-top-right-info">
+                    Status : {{job_card.status.name ? job_card.status.name : ''}}
+                </div>
+            </div><!-- Page Tab Form Top Right -->
+        </div><!-- Page Tab Form Top -->
+        <div class="container">
+            <form id="bay_form">
+                <input type="hidden" name="job_card_id" value="{{job_card.id}}">
+                <input type="hidden" name="floor_supervisor_id" value="{{user.id}}">
+                <input type="hidden" name="bay_id" ng-model="bay_id" id="bay_id" value="" ng-value="bay_id">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="bay-assignment-wrap">
+                                        <p class="location">
+                                            <img class="img-responsive map-marker" src="./public/theme/img/content/map-marker.svg" alt="Location" />
+                                            {{user.employee.outlet.name}}
+                                        </p>
+                                        <h6 class="title">
+                                            Bay Areas
+                                        </h6>
+                                        <ul class="bay-assignment-list">
+                                            <li class="bay-assignment-list-item " ng-class="{'bg-white': (bay.status_id == '8240' && bay.selected ==false) , 'bg-red type-2': (bay.status_id ==' 8241' && bay.selected ==false && bay.id !=job_card.bay_id) ,'bg-green':bay.selected ==true} " ng-repeat="(index,bay) in  extras.bay_list" ng-click="OnselectBay(bay);">
+                                                <!-- <li class="bay-assignment-list-item " ng-class="{'bg-white': (bay.status_id == '8240' && bay.selected ==false) , 'bg-red type-2': (bay.status_id ==' 8241' && bay.selected ==false) ,'bg-green':bay.selected ==true} " ng-repeat="(index,bay) in  extras.bay_list" ng-click="OnselectBay(bay);"> -->
+                                                <span class="title">
+                                                    {{bay.name}}
+                                                </span>
+                                                <img class="img-responsive img-center" ng-if="bay.status_id == '8241' && bay.selected==false " src="./public/theme/img/content/truck-red.svg" />
+                                                <span class="info" ng-if="bay.status_id == '8240'">
+                                                    {{bay.status.name}}
+                                                </span>
+                                                <span class="info" ng-if="bay.status_id == '8241' && bay.selected==false ">
+                                                    ETA {{bay.job_order.estimated_delivery_date ? bay.job_order.estimated_delivery_date : ''  }}
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div><!-- Bay Assignment Wrap -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Page Form -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <div class="page-form-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href=".#!/gigo-pkg/job-card/table-list" class="btn btn-bordered btn-grey btn-min-wdth">Cancel</a>
+                            <button type="submit" class="btn btn-secondary-dark btn-min-wdth submit" ng-click="saveBay()">Save</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Page Form Footer -->
+            </form>
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>

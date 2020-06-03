@@ -443,6 +443,7 @@ app.component('jobCardCardList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
+
 app.component('jobCardForm', {
     templateUrl: job_card_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
@@ -551,3 +552,130 @@ app.component('jobCardForm', {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
+app.component('jobCardBayForm', {
+    templateUrl: job_card_bay_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        var self = this;
+        $scope.hasPerm = HelperService.hasPerm;
+        self.user = $scope.user = HelperService.getLoggedUser();
+        $rootScope.loading = false;
+        if (!HelperService.isLoggedIn()) {
+            $location.path('/page-permission-denied');
+            return;
+        }
+        // console.log($routeParams.id);
+
+        //self.angular_routes = angular_routes;
+        //VIEW GATE PASS
+        $.ajax({
+            url: base_url + '/api/job-card/bay/get-form-data',
+            type: "POST",
+            data: {
+                id: $routeParams.id,
+            },
+            dataType: "json",
+            beforeSend: function(xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+            },
+            success: function(response) {
+                console.log(response);
+                $scope.job_card = response.job_card;
+                $scope.extras = response.extras;
+                $scope.bay_id;
+                angular.forEach($scope.extras.bay_list, function(value, key) {
+                    console.log(value.selected);
+                    if (value.selected == true) {
+                        $scope.bay_id = value.id;
+                    }
+                });
+                console.log('bay_id :' + $scope.bay_id);
+                // self.material_gate_pass = response.material_gate_pass_detail;
+                // self.customer_detail = response.customer_detail;
+                $scope.$apply();
+                // Success = true; //doesn't go here
+            },
+            error: function(textStatus, errorThrown) {
+                custom_noty('error', 'Something went wrong at server');
+            }
+        });
+
+        $scope.OnselectBay = function(bay) {
+            if (bay.status_id == 8240) {
+                angular.forEach($scope.extras.bay_list, function(value, key) {
+                    // console.log(value.id);
+                    // console.log($scope.job_card.bay_id);
+                    if (value.selected == true && value.id != $scope.job_card.bay_id) {
+                        value.selected = false;
+                    } else if (value.selected == true && value.id == $scope.job_card.bay_id) {
+                        value.selected = false;
+                        value.status_id = 8240;
+                        value.status.name = 'Free';
+
+                    }
+                });
+                bay.selected = true;
+                $scope.bay_id = bay.id;
+
+            } else {
+                bay.selected = false;
+            }
+            console.log($scope.bay_id);
+
+        }
+        //Save Form Data 
+        $scope.saveBay = function() {
+            var form_id = '#bay_form';
+            if (!$scope.bay_id) {
+                custom_noty('error', 'Please select bay');
+                return false;
+            }
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                /*rules: {
+                    'job_card_id': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 32,
+                    },
+                    'bay_id': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 128,
+                    },
+                },
+                */
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/job-card/bay/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                        })
+                        .done(function(res) {
+                            console.log(res);
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                $('.submit').button('reset');
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/gigo-pkg/job-card/table-list');
+                            $scope.$apply();
+                            $('.submit').button('reset');
+                        })
+                        .fail(function(xhr) {
+                            console.log(xhr);
+                            $('.submit').button('reset');
+                            showServerErrorNoty();
+                        });
+                }
+            });
+        }
+    }
+});

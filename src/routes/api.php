@@ -95,13 +95,13 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/job-card/save', 'JobCardController@saveJobCard');
 
 		//GET BAY ASSIGNMENT FORM DATA
-		Route::get('get-bay-form-data/{job_card_id}', 'JobCardController@getBayFormData');
+		Route::post('job-card/bay/get-form-data', 'JobCardController@getBayFormData');
 
 		//MY JOB CARD
 		Route::post('get-my-job-card-list', 'MyJobCardController@getMyJobCardList');
 
 		//SAVE BAY ASSIGNMENT
-		Route::post('save-bay', 'JobCardController@saveBay');
+		Route::post('job-card/bay/save', 'JobCardController@saveBay');
 
 		//Jobcard View Labour Assignment
 		Route::get('get-labour-assignment-form-data/{jobcard_id}', 'JobCardController@LabourAssignmentFormData');

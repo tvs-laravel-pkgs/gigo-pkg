@@ -23,7 +23,7 @@ class Bay extends Model {
 	}
 
 	public function jobOrder() {
-		return $this->belongsTo('App\Config', 'job_order_id');
+		return $this->belongsTo('App\JobOrder', 'job_order_id');
 	}
 
 }

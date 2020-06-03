@@ -137,7 +137,7 @@
                                             </div>
                                             <div class="card-box-footer-right">
                                                 <button class="btn btn-square btn-md btn-red">View</button>
-                                                <button class="btn btn-square btn-md btn-secondary-dark">Assign Bay</button>
+                                                <a ng-show="!job_card.bay_id" href="#!/gigo-pkg/job-card/assign-bay/{{job_card.job_card_id}}" class="btn btn-square btn-md btn-secondary-dark">Assign Bay</a>
                                             </div>
                                         </div><!-- Card Box Footer -->
                                     </div><!-- Card Box -->

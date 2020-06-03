@@ -246,13 +246,18 @@ class JobCardController extends Controller {
 	}
 
 	//BAY ASSIGNMENT
-	public function getBayFormData($job_card_id) {
+	public function getBayFormData(Request $r) {
 		try {
-			$job_card = JobCard::find($job_card_id);
+			$job_card = JobCard::with([
+				'jobOrder.vehicle.model',
+				'status',
+			])
+			->find($r->id);
 			if (!$job_card) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Card Not Found!',
+					'error'=>'Validation Error',
+					'errors' => ['Job Card Not Found!'],
 				]);
 			}
 
@@ -262,6 +267,16 @@ class JobCardController extends Controller {
 			])
 				->where('outlet_id', $job_card->outlet_id)
 				->get();
+				foreach ($bay_list as $key => $bay) {
+					if($bay->status_id == 8241 && $bay->id==$job_card->bay_id){
+						//dd($bay->id);
+						$bay->selected=true;
+					}else {
+						$bay->selected=false;
+					}
+				}
+				//dd($bay_list);
+
 			$extras = [
 				'bay_list' => $bay_list,
 			];
@@ -321,11 +336,25 @@ class JobCardController extends Controller {
 				]);
 			}
 			$job_card->floor_supervisor_id = $request->floor_supervisor_id;
+			if($job_card->bay_id){
+				if($job_card->bay_id!=$request->bay_id){
+					$bay = Bay::find($job_card->bay_id);
+					$bay->status_id = 8240; //Free
+					$bay->updated_by_id=Auth::user()->id;
+					$bay->updated_at=Carbon::now();
+					$bay->save();
+				}
+			}
+			$job_card->bay_id = $request->bay_id;
+			$job_card->updated_by=Auth::user()->id;
+			$job_card->updated_at=Carbon::now();
 			$job_card->save();
 
 			$bay = Bay::find($request->bay_id);
 			$bay->job_order_id = $job_card->job_order_id;
 			$bay->status_id = 8241; //Assigned
+			$bay->updated_by_id=Auth::user()->id;
+			$bay->updated_at=Carbon::now();
 			$bay->save();
 
 			DB::commit();
