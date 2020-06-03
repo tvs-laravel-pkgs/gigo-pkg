@@ -1071,6 +1071,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    when('/gigo-pkg/job-card/material-gatepass/:job_card_id', {
 	        template: '<job-card-material-gatepass-form></job-card-material-gatepass-form>',
 	        title: 'Job Card Material Gate Pass',
+	    }).
+	    when('/gigo-pkg/job-card/material-outward/:job_card_id/:gatepass_id', {
+	        template: '<job-card-material-outward-form></job-card-material-outward-form>',
+	        title: 'Job Card Material Outward',
 	    });
 	}]);
 
@@ -1080,6 +1084,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/card-list.html')}}';
     var job_card_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-card-modal-form.html')}}';
     var job_card_material_gatepass_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/material-gatepass.html')}}';
+    var job_card_material_outward_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/material-outward.html')}}';
 
 
      //PARTIALS

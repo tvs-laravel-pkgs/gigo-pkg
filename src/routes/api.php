@@ -122,7 +122,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::get('get-job-card-time-log/{job_card_id}', 'JobCardController@getJobCardTimeLog');
 
 		// JOB CARD MATRIAL GATE PASS VIEW
-		Route::get('view-material-gate-pass/{job_card_id}', 'JobCardController@viewMetirialGatePass');
+		Route::post('view-material-gate-pass', 'JobCardController@viewMeterialGatePass');
+
+		//Job Card get OutwardDetail
+
+		Route::post('view-material-gate-pass-detail', 'JobCardController@getMeterialGatePassOutwardDetail');
 
 		// MY JOB CARD DATA
 		Route::post('my-job-card-view', 'JobCardController@getMyJobCardData');

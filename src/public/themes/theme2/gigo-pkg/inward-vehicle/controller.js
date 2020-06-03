@@ -668,6 +668,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                         return;
                     }
                     $scope.attachment = res.attachment;
+                    $scope.job_order_id = $routeParams.job_order_id;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -717,7 +718,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/save-dms-checklist',
+                            url: base_url + '/api/vehicle-inward/dms-checklist/save',
                             method: "POST",
                             data: formData,
                             beforeSend: function(xhr) {

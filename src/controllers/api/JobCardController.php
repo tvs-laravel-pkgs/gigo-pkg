@@ -61,6 +61,7 @@ class JobCardController extends Controller {
 				'service_types.name as service_type',
 				'quote_types.name as quote_type',
 				'service_order_types.name as job_order_type',
+				'gate_passes.id as gate_pass_id',
 
 			])
 			->leftJoin('job_orders', 'job_orders.id', 'job_cards.job_order_id')
@@ -1050,7 +1051,7 @@ class JobCardController extends Controller {
 	}
 
 	//JOB CARD GATE PASS VIEW
-	public function viewMetirialGatePass($job_card_id) {
+	public function viewMeterialGatePass(Request $request) {
 		// dd($job_card_id);
 		try {
 			$view_metrial_gate_pass = JobCard::with([
@@ -1069,7 +1070,7 @@ class JobCardController extends Controller {
 				'gatePasses.gatePassDetail.vendor.addresses.city',
 				'gatePasses.gatePassItems',
 			])
-				->find($job_card_id);
+				->find($request->id);
 
 			if (!$view_metrial_gate_pass) {
 				return response()->json([
@@ -1092,6 +1093,66 @@ class JobCardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'view_metrial_gate_pass' => $view_metrial_gate_pass,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//JOB CARD Vendor Details
+	public function getMeterialGatePassOutwardDetail(Request $request) {
+		//dd($request->all());
+		try {
+			$gate_pass = GatePass::with([
+				'gatePassDetail',
+				'gatePassDetail.vendorType',
+				'gatePassDetail.vendor',
+				'gatePassDetail.vendor.addresses',
+			])
+				->find($request->gate_pass_id);
+
+			if (!$gate_pass) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Card Not found!',
+				]);
+			}
+
+			$gate_pass_item = GatePassItem::where('gate_pass_id',$request->gate_pass_id)->get();
+
+			$my_job_card_details = Employee::select([
+				'job_cards.job_card_number as jc_number',
+				'vehicles.registration_number',
+				DB::raw('COUNT(job_order_repair_orders.id) as no_of_ROTs'),
+				'configs.name as status',
+				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
+				'models.model_number',
+			])
+				->join('users', 'users.entity_id', 'employees.id')
+				->join('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
+				->join('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')
+				->join('job_orders', 'job_orders.id', 'job_order_repair_orders.job_order_id')
+				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
+				->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
+				->leftJoin('models', 'models.id', 'vehicles.model_id')
+				->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')
+				->join('configs', 'configs.id', 'job_cards.status_id')
+				->where('users.user_type_id', 1)
+				->where('job_cards.id',$request->id)
+				->first();
+
+
+			return response()->json([
+				'success' => true,
+				'gate_pass' => $gate_pass,
+				'my_job_card_details' => $my_job_card_details,
+				'gate_pass_item' => $gate_pass_item,
 			]);
 
 		} catch (Exception $e) {
@@ -1154,12 +1215,12 @@ class JobCardController extends Controller {
 			}
 
 			$status = Status::where('type_id', 8451)->where('name', 'Gate Out Pending')->first();
-			if ($status) {
+			/*if ($status) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Gate Out Pending Status Not Found!',
 				]);
-			}
+			}*/
 			$gate_pass = GatePass::firstOrNew([
 				'job_card_id' => $request->job_card_id,
 			]);
@@ -1197,7 +1258,7 @@ class JobCardController extends Controller {
 
 	//Material GatePass Item Save
 	public function saveMaterialGatePassItem(Request $request) {
-		// dd($request->all());
+		//dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [

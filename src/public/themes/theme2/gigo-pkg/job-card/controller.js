@@ -551,7 +551,7 @@ app.component('jobCardForm', {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-//Vehicle Diagonis Details
+//Material Gate Pass
 app.component('jobCardMaterialGatepassForm', {
     templateUrl: job_card_material_gatepass_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
@@ -569,14 +569,14 @@ app.component('jobCardMaterialGatepassForm', {
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 
-        $scope.job_order_id = $routeParams.job_order_id;
+        $scope.job_card_id = $routeParams.job_card_id;
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/expert-diagnosis-report/get-form-data',
+                    url: base_url + '/api/view-material-gate-pass',
                     method: "POST",
                     data: {
-                        id: $routeParams.job_order_id
+                        id: $routeParams.job_card_id
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -587,8 +587,7 @@ app.component('jobCardMaterialGatepassForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    $scope.job_order = res.job_order;
-                    $scope.extras = res.extras;
+                    $scope.view_metrial_gate_pass = res.view_metrial_gate_pass;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -654,7 +653,192 @@ app.component('jobCardMaterialGatepassForm', {
     }
 });
 
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+//Material Outward
+app.component('jobCardMaterialOutwardForm', {
+    templateUrl: job_card_material_outward_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
 
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        $scope.gatepass_id = $routeParams.gatepass_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/view-material-gate-pass-detail',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                        gate_pass_id: $routeParams.gatepass_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.gate_pass = res.gate_pass;
+                    $scope.my_job_card_details = res.my_job_card_details;
+                    $scope.gate_pass_item = res.gate_pass_item;
+                    $scope.make_list = res.make_list;
+                    $scope.model_list = res.model_list;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        $scope.addNewItem = function() {
+            $scope.gate_pass_item.push({
+                item_description: '',
+                item_make: '',
+                item_model: '',
+                item_serial_no: '',
+                qty: '',
+                remarks: '', 
+            });
+        }
+
+        //$scope.addNewItem();
+        //Save Form Data 
+        $scope.saveVendorDetails = function() {
+            var form_id = '#vendor_save';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    /*'expert_diagnosis_report': {
+                        required: true,
+                    },
+                    'expert_diagnosis_report_by_id': {
+                        required: true,
+                    },*/
+                },
+                messages: {
+
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/save-material-gate-pass-detail',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/gigo-pkg/job-card/material-outward/' + $scope.job_card_id +'/'+$scope.gatepass_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+         //Save Form Data 
+        $scope.saveItemDetails = function() {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'item_description': {
+                        required: true,
+                    },
+                    'item_make': {
+                        required: true,
+                    },
+                    'item_model': {
+                        required: true,
+                    },
+                    'item_serial_no': {
+                        required: true,
+                    },
+                    'qty': {
+                        required: true,
+                    },
+                    'remarks': {
+                        required: true,
+                    },
+                },
+                messages: {
+
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/save-material-gate-pass-item',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/gigo-pkg/job-card/material-outward/' + $scope.job_card_id +'/'+$scope.gatepass_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+         /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
+
+        $scope.showVehicleForm = function() {
+            $scope.show_vehicle_detail = false;
+            $scope.show_vehicle_form = true;
+        }
+    }
+});
 
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
