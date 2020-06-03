@@ -732,7 +732,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-customer-detail></inward-vehicle-customer-detail>',
 	        title: 'Inward Vehicle - Customer Detail',
 	    }).
-	    when('/inward-vehicle/order-detail/form/:job_order_id/:type_id?', {
+	    when('/inward-vehicle/order-detail/form/:job_order_id', {
 	        template: '<inward-vehicle-order-detail-form></inward-vehicle-order-detail-form>',
 	        title: 'Inward Vehicle - Order Detail Form',
 	    }).

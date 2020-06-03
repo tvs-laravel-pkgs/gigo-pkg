@@ -157,7 +157,7 @@ Content Wrap -->
                                                                 <tr>
                                                                     <td><b>Captured by</b></td>
                                                                     <td>
-                                                                        <!-- {{job_order.created_by_id.name}} -->
+                                                                        {{job_order.gate_log.created_by.name}}
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
@@ -424,7 +424,9 @@ Content Wrap -->
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <!-- <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a> -->
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}">
+                                                                Edit
+                                                            </a>
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
@@ -490,7 +492,9 @@ Content Wrap -->
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <!-- <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a> -->
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}">
+                                                                Edit
+                                                            </a>
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
@@ -541,7 +545,7 @@ Content Wrap -->
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <!-- <a href="!" class="btn btn-secondary-dark btn-md btn-square">View</a> -->
+                                                            <a href=".#!/job-card/view/{{job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a>
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
@@ -604,7 +608,9 @@ Content Wrap -->
                                                                 <img class="img-responsive" alt="RC Book" />
                                                             </div>
                                                             <div class="mb-10"></div><!-- Spacing -->
-                                                            <!-- <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a> -->
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}">
+                                                                Edit
+                                                            </a>
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
@@ -663,7 +669,7 @@ Content Wrap -->
                                             </div><!-- Row -->
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <!-- <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a> -->
+                                                    <a href=".#!/inward-vehicle/inventory-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                                 </div>
                                             </div><!-- Row -->
                                         </div><!-- Column -->
@@ -712,6 +718,114 @@ Content Wrap -->
                                             </ul> -->
                                             <hr class="hr-15"><!-- Separater -->
                                             <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="road_test_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Read Test Observations</b></h5>
+                                            <div class="view-details mb-no">
+                                                <ul class="view-row pb-none">
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label">
+                                                            Road Test
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.is_road_test_required==1 ? "Registered" : "UnRegistered"}}
+                                                            </b></span>
+                                                    </li>
+                                                    <li class="view-col-3" ng-show="job_order.is_road_test_required==1">
+                                                        <span class="view-col-label">
+                                                            Road Test by
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.road_test_done_by.name}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3" ng-show="job_order.is_road_test_required==1 && job_order.road_test_done_by.name=='Employee'">
+                                                        <span class="view-col-label">
+                                                            Driver Name
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.road_test_prefered_by.name}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label"></span>
+                                                        <span class="view-col-value"><b></b></span>
+                                                    </li>
+                                                    <li class="view-col-12" ng-show="job_order.is_road_test_required==1">
+                                                        <span class="view-col-label">
+                                                            Observations
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.road_test_report}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div><!-- View Data -->
+                                            <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="expert_diagnosis_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Expert Diagnosis Report</b></h5>
+                                            <div class="view-details mb-no">
+                                                <ul class="view-row pb-none">
+                                                    <li class="view-col-4">
+                                                        <span class="view-col-label">
+                                                            Done by
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.expert_diagnosis_report_by.name}}
+                                                            </b></span>
+                                                    </li>
+                                                    <li class="view-col-8">
+                                                        <span class="view-col-label">
+                                                            Expert Diagnosis Outcome
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.expert_diagnosis_report}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div><!-- View Data -->
+                                            <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
