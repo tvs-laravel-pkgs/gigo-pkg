@@ -130,6 +130,7 @@ class JobOrder extends Model {
 
 	public function estimationType() {
 		return $this->belongsTo('Abs\GigoPkg\EstimationType', 'estimation_type_id');
+	}
 
 	public function outlet() {
 		return $this->belongsTo('App\Outlet', 'outlet_id');
