@@ -1072,6 +1072,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    when('/gigo-pkg/job-card/assign-bay/:id', {
 	        template: '<job-card-bay-form></job-card-bay-form>',
 	        title: 'Assign Bay',
+	    }).
 
 	    when('/gigo-pkg/job-card/material-gatepass/:job_card_id', {
 	        template: '<job-card-material-gatepass-form></job-card-material-gatepass-form>',
