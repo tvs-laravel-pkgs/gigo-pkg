@@ -722,6 +722,31 @@ class JobCardController extends Controller {
 
 	}
 
+	public function getReturnableItems(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			$returnable_items=JobCardReturnableItem::with([
+				'attachment'
+			])
+			->where('job_card_id',$job_card->id)
+			->get();
+
+			return response()->json([
+				'success' => true,
+				'job_card' => $job_card,
+				'returnable_items'=>$returnable_items,
+				'attachement_path' => url('app/public/gigo/job_card/returnable_items/'),
+			]);
+
+	}
+
 	public function ReturnableItemSave(Request $request) {
 		//dd($request->all());
 		try {

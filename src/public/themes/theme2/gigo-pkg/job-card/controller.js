@@ -680,6 +680,56 @@ app.component('jobCardBayForm', {
         }
     }
 });
+
+
+//Returnable Items
+app.component('jobCardReturnableItemList', {
+    templateUrl: job_card_returnable_item_list_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/job-card/returnable-items/get',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_card = res.job_card;
+                    $scope.returnable_items = res.returnable_items;
+                    $scope.returnable_item_attachement_path = res.attachement_path;
+                    console.log(res.returnable_items);
+                    console.log(res.attachement_path);
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+    }
+});
+
+
 //Material Gate Pass
 app.component('jobCardMaterialGatepassForm', {
     templateUrl: job_card_material_gatepass_form_template_url,
