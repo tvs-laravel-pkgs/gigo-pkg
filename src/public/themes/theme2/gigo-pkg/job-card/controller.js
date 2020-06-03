@@ -560,10 +560,6 @@ app.component('jobCardMaterialGatepassForm', {
         });
         var self = this;
         self.hasPermission = HelperService.hasPermission;
-        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
-        //     window.location = "#!/page-permission-denied";
-        //     return false;
-        // }
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -595,61 +591,6 @@ app.component('jobCardMaterialGatepassForm', {
                 });
         }
         $scope.fetchData();
-
-        //Save Form Data 
-        $scope.saveExportDiagonis = function() {
-            var form_id = '#form';
-            var v = jQuery(form_id).validate({
-                ignore: '',
-                rules: {
-                    'expert_diagnosis_report': {
-                        required: true,
-                    },
-                    'expert_diagnosis_report_by_id': {
-                        required: true,
-                    },
-                },
-                messages: {
-
-                },
-                invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check all tabs');
-                },
-                submitHandler: function(form) {
-                    let formData = new FormData($(form_id)[0]);
-                    $('.submit').button('loading');
-                    $.ajax({
-                            url: base_url + '/api/vehicle-inward/expert-diagnosis-report/save',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function(xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function(res) {
-                            if (!res.success) {
-                                $('.submit').button('reset');
-                                showErrorNoty(res);
-                                return;
-                            }
-                            custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order.id);
-                            $scope.$apply();
-                        })
-                        .fail(function(xhr) {
-                            $('.submit').button('reset');
-                            custom_noty('error', 'Something went wrong at server');
-                        });
-                }
-            });
-        }
-
-        $scope.showVehicleForm = function() {
-            $scope.show_vehicle_detail = false;
-            $scope.show_vehicle_form = true;
-        }
     }
 });
 
@@ -832,11 +773,7 @@ app.component('jobCardMaterialOutwardForm', {
 
          /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
-
-        $scope.showVehicleForm = function() {
-            $scope.show_vehicle_detail = false;
-            $scope.show_vehicle_form = true;
-        }
+        
     }
 });
 

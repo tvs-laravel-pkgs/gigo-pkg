@@ -83,7 +83,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/customer-confirmation/save', 'VehicleInwardController@saveCustomerConfirmation');
 
 		//INITIATE JOB SAVE
-		Route::post('save-initiate-job', 'VehicleInwardController@saveInitiateJob');
+		Route::post('vehicle-inward/initiate-job/save', 'VehicleInwardController@saveInitiateJob');
 
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/country-id/{country_id}', 'VehicleInwardController@getState');
