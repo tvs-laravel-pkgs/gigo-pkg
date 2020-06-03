@@ -42,6 +42,10 @@ class GateLog extends Model {
 		return $this->belongsTo('App\GatePass', 'gate_pass_id');
 	}
 
+	public function createdBy() {
+		return $this->belongsTo('App\User', 'created_by_id');
+	}
+
 	public function jobOrder() {
 		return $this->hasOne('App\JobOrder', 'job_order_id');
 	}
