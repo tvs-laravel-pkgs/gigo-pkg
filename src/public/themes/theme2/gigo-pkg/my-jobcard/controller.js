@@ -169,8 +169,16 @@ app.component('myJobcardView', {
                         $("#estimation_work_hours").text(res.estimation_work_hours[0].hours);
                         $("#actual_hours").text(res.total_working_hours);
 
+                        $scope.confirmFinish = function()
+                        {
                         custom_noty('success', 'Work has been Completed');
+
                         setTimeout(function(){ location.reload(); }, 1000);
+                        }
+
+                        //custom_noty('success', 'Work has been Completed');
+
+                        //setTimeout(function(){ location.reload(); }, 1000);
                     }
                     if(status_id == 8264)
                     {
