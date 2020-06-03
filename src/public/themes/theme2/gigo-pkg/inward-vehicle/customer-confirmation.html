@@ -1,0 +1,177 @@
+<!-- Content Wrap -->
+<style type="text/css">
+/*#sign {
+    border: 4px solid #ccc;
+}*/
+</style>
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Inward Vehicle</b></h1>
+                    <p class="subtitle">Inward Vehicle / Vehicle Detail</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <job-order-header></job-order-header>
+            <div class="tab-form-wrap type-2">
+                <inward-tabs ng-init="active_tab = 'status-details'"></inward-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="customer_estimation_approval_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <form id="form" enctype="multipart/form-data">
+                                    <input type="hidden" name="job_order_id" value="{{job_order_id}}">
+                                    <input type="hidden" name="web" value="website">
+                                    <input type="hidden" name="is_customer_agreed" value="1">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Customer Estimation Approval</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <video ng-show="$ctrl.video" title="Capture Image" id="video" width="640" height="360" ng-click="snapshot()"></video>
+                                            <canvas ng-show="$ctrl.screenShot" id="canvas" width="640" height="360"></canvas>
+                                            <div class="photo-sign-wrap" ng-click="cameraOn()">
+                                                <div class="photo-sign-item">
+                                                    <img class="img-responsive img-profile" src="./public/theme/img/profile.png" alt="Image" />
+                                                    <input type="hidden" name="customer_photo" value="" id="customer_photo">
+                                                    <div class="photo-sign-caption">Customer Photo</div>
+                                                </div>
+                                            </div><!-- Photo Sign Wrap -->
+                                            <span id="eror_customer_photo"></span>
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="photo-sign-wrap">
+                                                <div id="signArea">
+                                                    <div class="photo-sign-caption">Customer E Sign</div>
+                                                    <div class="sig sigWrapper" style="height:auto;">
+                                                        <div class="typed"></div>
+                                                        <!-- <canvas class="sign-pad" id="sign-pad" width="300" height="100"></canvas> -->
+                                                        <canvas id="signature" width="450" height="150" style="border: 1px solid #ddd;"></canvas>
+                                                        <input type="hidden" name="customer_e_sign" value="" id="customer_sign">
+                                                    </div>
+                                                </div>
+                                                <button id="clear-signature">Clear</button>
+                                            </div>
+                                            <span id="eror_customer_sign"></span>
+                                            <!-- <button ng-click="snapshot_sign">Take Snapshot</button> -->
+                                            <!-- <div class="photo-sign-wrap">
+                                                <canvas id="signature" width="450" height="150" style="border: 1px solid #ddd;"></canvas>
+                                                <img class="img-responsive img-sign" src="./public/theme/img/content/signature.png" alt="Image" />
+                                                <div class="photo-sign-caption">Customer E Sign</div>
+                                            </div>-->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="submit" class="btn btn-red submit" ng-click="saveForm()">
+                                                    Save & Close
+                                                </button>
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </form>
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap-->
+<!-- Inward Details Modal -->
+<div class="modal modal-success alert-modal fade" id="inward_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <form id="initiateJob">
+            <input type="hidden" name="job_order_id" value="{{$ctrl.job_order.id}}">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
+                    <p class="info">
+                        {{$ctrl.message}}
+                    </p>
+                    <div class="mb-10"></div><!-- Spacing -->
+                    <ul class="three-box-list">
+                        <li class="wid-100">
+                            <div class="three-box-content text-center">
+                                <span class="three-box-label">
+                                    Order Type
+                                </span>
+                                <span class="three-box-value">
+                                    {{$ctrl.job_order.quote_type.name}}
+                                </span>
+                            </div>
+                        </li>
+                        <li class="wid-100">
+                            <div class="three-box-content bg-grey content-sm text-center">
+                                <span class="three-box-value">
+                                    Job Type : {{$ctrl.job_order.service_type.name}}
+                                </span>
+                            </div>
+                        </li>
+                        <li class="wid-33">
+                            <div class="three-box-content bg-grey content-sm text-center">
+                                <span class="three-box-label">
+                                    Total Labour
+                                </span>
+                                <span class="three-box-value">
+                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee">
+                                    {{$ctrl.job_order.total_estimate_labour_amount || number}}
+                                </span>
+                            </div>
+                        </li>
+                        <li class="wid-33">
+                            <div class="three-box-content bg-grey content-sm text-center">
+                                <span class="three-box-label">
+                                    Total Parts
+                                </span>
+                                <span class="three-box-value">
+                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee">
+                                    {{$ctrl.job_order.total_estimate_parts_amount || number}}
+                                </span>
+                            </div>
+                        </li>
+                        <li class="wid-33">
+                            <div class="three-box-content bg-grey color-red content-sm text-center">
+                                <span class="three-box-label">
+                                    Total Estimate
+                                </span>
+                                <span class="three-box-value">
+                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-red.svg" alt="Rupee">
+                                    {{$ctrl.job_order.total_estimate_amount || number}}
+                                </span>
+                            </div>
+                        </li>
+                        <li class="wid-100">
+                            <div class="three-box-content text-center">
+                                <span class="three-box-label">
+                                    Vehicle Model
+                                </span>
+                                <span class="three-box-value">
+                                    {{$ctrl.job_order.vehicle.model.model_name}}
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="mt-30 mb-30">
+                        <button type="submit" class="btn btn-secondary-dark btn-square btn-block initiate_job" ng-click="initiateJob()">Let’s Initiate New Job</button>
+                    </div><!-- Button -->
+                </div><!-- Modal Body -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
