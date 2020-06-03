@@ -124,10 +124,6 @@ class JobOrder extends Model {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
 
-	public function expertDiagnosisReportBy() {
-		return $this->belongsTo('App\User', 'expert_diagnosis_report_by_id');
-	}
-
 	public function type() {
 		return $this->belongsTo('Abs\GigoPkg\ServiceOrderType', 'type_id');
 	}

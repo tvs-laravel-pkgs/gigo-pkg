@@ -1070,7 +1070,7 @@ Content Wrap -->
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
-                                                            <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Photo">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.warrenty_policy_attachment[0].name}}" alt="Warranty">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -1083,7 +1083,7 @@ Content Wrap -->
                                                                 Eligible Upto
                                                             </p>
                                                             <p class="font-sm">
-                                                                01/01/2030
+                                                                {{job_order.warranty_expiry_date}}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -1091,7 +1091,7 @@ Content Wrap -->
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
-                                                            <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Photo">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.e_w_p_attachment[0].name}}" alt="EWP">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -1104,7 +1104,7 @@ Content Wrap -->
                                                                 Eligible Upto
                                                             </p>
                                                             <p class="font-sm">
-                                                                01/01/2030
+                                                                {{job_order.ewp_expiry_date}}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -1112,7 +1112,7 @@ Content Wrap -->
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
-                                                            <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Photo">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.a_m_c_attachment[0].name}}" alt="Memberships">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -1121,10 +1121,10 @@ Content Wrap -->
                                                                 </b>
                                                             </p>
                                                             <p class="font-md">
-                                                                TVSCARE-GOLD Eligible Upto 20/03/2022
+                                                                <!-- TVSCARE-GOLD Eligible Upto 20/03/2022 -->
                                                             </p>
                                                             <p class="font-md">
-                                                                TVSONE-GOLD Eligible Upto 20/03/2022
+                                                                <!-- TVSONE-GOLD Eligible Upto 20/03/2022 -->
                                                             </p>
                                                         </div>
                                                     </div>
@@ -1135,7 +1135,7 @@ Content Wrap -->
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="table-responsive">
-                                                        <table class="table table-dark-grey table-md">
+                                                        <!-- <table class="table table-dark-grey table-md">
                                                             <tbody>
                                                                 <tr>
                                                                     <td>
@@ -1178,12 +1178,12 @@ Content Wrap -->
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
-                                                        </table>
+                                                        </table> -->
                                                     </div>
                                                 </div><!-- Column -->
                                                 <div class="col-md-6">
                                                     <div class="table-responsive">
-                                                        <table class="table table-dark-grey table-md">
+                                                        <!--  <table class="table table-dark-grey table-md">
                                                             <tbody>
                                                                 <tr>
                                                                     <td>
@@ -1226,11 +1226,11 @@ Content Wrap -->
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
-                                                        </table>
+                                                        </table> -->
                                                     </div>
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
-                                            <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                            <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -1409,7 +1409,7 @@ Content Wrap -->
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                            <a class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -1598,7 +1598,7 @@ Content Wrap -->
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -1663,7 +1663,7 @@ Content Wrap -->
                                                                         </li>
                                                                     </ul>
                                                                     <div class="text-center">
-                                                                        <a href="" class="btn-link color-secondary-dark font-sm">
+                                                                        <a href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm">
                                                                             Edit
                                                                         </a>
                                                                     </div>
@@ -1784,7 +1784,7 @@ Content Wrap -->
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
