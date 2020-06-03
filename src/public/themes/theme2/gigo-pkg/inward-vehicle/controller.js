@@ -642,6 +642,8 @@ app.component('inwardVehicleDmsCheckListForm', {
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 
+        $('.image_uploadify').imageuploadify();
+
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
         $scope.fetchData = function() {
