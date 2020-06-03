@@ -83,7 +83,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/customer-confirmation/save', 'VehicleInwardController@saveCustomerConfirmation');
 
 		//INITIATE JOB SAVE
-		Route::post('save-initiate-job', 'VehicleInwardController@saveInitiateJob');
+		Route::post('vehicle-inward/initiate-job/save', 'VehicleInwardController@saveInitiateJob');
 
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/country-id/{country_id}', 'VehicleInwardController@getState');
@@ -122,7 +122,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::get('get-job-card-time-log/{job_card_id}', 'JobCardController@getJobCardTimeLog');
 
 		// JOB CARD MATRIAL GATE PASS VIEW
-		Route::get('view-material-gate-pass/{job_card_id}', 'JobCardController@viewMetirialGatePass');
+		Route::post('view-material-gate-pass', 'JobCardController@viewMeterialGatePass');
+
+		//Job Card get OutwardDetail
+
+		Route::post('view-material-gate-pass-detail', 'JobCardController@getMeterialGatePassOutwardDetail');
 
 		// MY JOB CARD DATA
 		Route::post('my-job-card-view', 'JobCardController@getMyJobCardData');

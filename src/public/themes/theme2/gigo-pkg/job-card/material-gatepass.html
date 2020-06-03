@@ -5,11 +5,11 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/gigo-pkg/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>Inward Vehicle</b></h1>
-                    <p class="subtitle">Inward Vehicle / Vehicle Detail</p>
+                    <h1 class="title"><b>Material Gate Pass</b></h1>
+                    <p class="subtitle">Job Card / Material Gate Pass</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -32,33 +32,35 @@
                                         </h5>
                                         <div class="mgatepass-wrap border">
                                             <div class="row">
-                                                <div class="col-md-8">
+                                                <div class="col-md-8" ng-repeat="(key, gate_passes) in view_metrial_gate_pass.gate_passes">
                                                     <div class="row">
                                                         <div class="col-md-8">
                                                             <div class="mgpass-address-left-wrap">
                                                                 <span class="title mb-10">
-                                                                    Vendor Code : V789989 (External)
+                                                                    Vendor Code : {{gate_passes.gate_pass_detail.vendor.code}} ({{gate_passes.gate_pass_detail.vendor_type.name}})
                                                                 </span>
                                                                 <span class="heading">
-                                                                    Abdulkadhar Service Center
+                                                                    {{gate_passes.gate_pass_detail.vendor.name}}
                                                                 </span>
-                                                                <span class="address">
-                                                                    102, Athipalayam Road, Near New Bustand, Coimbatore.
-                                                                </span>                                                        
+                                                            <span class="address" ng-repeat="(key, address) in gate_passes.gate_pass_detail.vendor.addresses">
+                                                            {{address.address_line1}},
+                                                            {{address.address_line2}}
+                                                            {{address.pincode}}
+                                                                </span>  
                                                                 <span class="contact">
-                                                                    Vendor Contact No : 9898798987 
+                                                                    Vendor Contact No : {{gate_passes.gate_pass_detail.vendor_contact_no}}
                                                                 </span>                                                
                                                             </div>
                                                         </div><!-- Column -->
                                                         <div class="col-md-4">
                                                             <div class="mgpass-address-left-wrap">
                                                                 <span class="date">
-                                                                    Created On : 20/03/2020
+                                                                    Created On : {{view_metrial_gate_pass.created_at}}
                                                                 </span>                                                               
                                                                 <ul class="grey-list d-block">
                                                                     <li>
                                                                         <div class="grey-box">
-                                                                            <div class="grey-box-header">Status : Received</div>
+                                                                            <div class="grey-box-header">Status : {{view_metrial_gate_pass.status.name}}</div>
                                                                         </div>
                                                                     </li>
                                                                 </ul>                                                                                                             
@@ -69,19 +71,19 @@
                                                         <ul class="view-row mb-no border-none">
                                                             <li class="view-col-4">
                                                                 <span class="view-col-label">Work Order No</span>
-                                                                <span class="view-col-value">000909090</span>
+                                                                <span class="view-col-value">{{gate_passes.gate_pass_detail.work_order_no}}</span>
                                                             </li>
                                                             <li class="view-col-4">
                                                                 <span class="view-col-label">Work Order Description</span>
-                                                                <span class="view-col-value">Tyre for Puncture</span>
+                                                                <span class="view-col-value">{{gate_passes.gate_pass_detail.work_order_description}}</span>
                                                             </li>
                                                             <li class="view-col-4">
                                                                 <span class="view-col-label">No. of Items</span>
-                                                                <span class="view-col-value">2</span>
+                                                                <span class="view-col-value">{{view_metrial_gate_pass.no_of_items}}</span>
                                                             </li>                      
                                                         </ul>
                                                     </div>                                                   
-                                                    <a href="#!" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
+                                                    <a href="#!/gigo-pkg/job-card/material-outward/{{view_metrial_gate_pass.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
                                                 </div><!-- Column -->
                                                 <div class="col-md-4">                                                                                           
                                                                                                         
