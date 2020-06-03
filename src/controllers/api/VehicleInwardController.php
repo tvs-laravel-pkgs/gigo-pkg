@@ -186,6 +186,10 @@ class VehicleInwardController extends Controller {
 				'kmReadingType',
 				'status',
 				'gateLog',
+				'gateLog.createdBy',
+				'roadTestDoneBy',
+				'roadTestPreferedBy',
+				'expertDiagnosisReportBy',
 				'driverLicenseAttachment',
 				'insuranceAttachment',
 				'rcBookAttachment',
@@ -209,16 +213,6 @@ class VehicleInwardController extends Controller {
 
 			$params['field_type_id'] = [11, 12];
 			$inventory_type_list = VehicleInventoryItem::getInventoryList($job_order->id, $params);
-
-			// $extras = [
-			// 	'job_order_type_list' => ServiceOrderType::getDropDownList(),
-			// 	'quote_type_list' => QuoteType::getDropDownList(),
-			// 	'service_type_list' => ServiceType::getDropDownList(),
-			// 	'reading_type_list' => Config::getDropDownList([
-			// 		'config_type_id' => 33,
-			// 		'default_text' => 'Select Reading type',
-			// 	]),
-			// ];
 
 			//Job card details need to get future
 			return response()->json([
@@ -2190,7 +2184,7 @@ class VehicleInwardController extends Controller {
 				'message' => 'Road Test Observation Added Successfully',
 			]);
 		} catch (\Exception $e) {
-			DB::rollBack();
+			// DB::rollBack();
 			return response()->json([
 				'success' => false,
 				'error' => 'Server Error',

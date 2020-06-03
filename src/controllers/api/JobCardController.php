@@ -1050,7 +1050,7 @@ class JobCardController extends Controller {
 	}
 
 	//JOB CARD GATE PASS VIEW
-	public function viewMetirialGatePass($job_card_id) {
+	public function viewMaterialGatePass($job_card_id) {
 		// dd($job_card_id);
 		try {
 			$view_metrial_gate_pass = JobCard::with([
