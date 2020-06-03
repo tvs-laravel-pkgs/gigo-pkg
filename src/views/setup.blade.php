@@ -771,9 +771,9 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-scheduled-maintenance-form></inward-vehicle-scheduled-maintenance-form>',
 	        title: 'Inward Vehicle - Scheduled Maintenance',
 	    }).
-	    when('/inward-vehicle/customer-estimation-approval/:job_order_id', {
-	        template: '<inward-vehicle-customer-estimation-approval-form></inward-vehicle-customer-estimation-approval-form>',
-	        title: 'Inward Vehicle - Customer Estimation Approval',
+	    when('/inward-vehicle/customer-confirmation/:job_order_id', {
+	        template: '<inward-vehicle-customer-confirmation-form></inward-vehicle-customer-confirmation-form>',
+	        title: 'Inward Vehicle - Customer Confirmation',
 	    }).
 	    when('/inward-vehicle/estimate/:job_order_id', {
 	        template: '<inward-vehicle-estimate-form></inward-vehicle-estimate-form>',
@@ -852,7 +852,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var inward_vehicle_payable_labour_part_add_labour_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/add-labour.html')}}';
 
 
-    var inward_vehicle_customer_estimation_approval_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-estimation-approval.html')}}';
+    var inward_vehicle_customer_confirmation_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/customer-confirmation.html')}}';
 
     var inward_vehicle_estimate_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimate.html')}}';
     var inward_vehicle_estimation_status_detail_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/estimation-status-detail-form.html')}}';

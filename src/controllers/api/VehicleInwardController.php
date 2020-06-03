@@ -5,6 +5,7 @@ namespace Abs\GigoPkg\Api;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\ServiceOrderType;
 use App\Address;
+use App\Attachment;
 use App\Config;
 use App\Country;
 use App\Customer;
@@ -28,6 +29,7 @@ use App\VehicleOwner;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use File;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
@@ -163,7 +165,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-	//VEHICLE INWARD VIEW 
+	//VEHICLE INWARD VIEW
 	public function getVehicleInwardView(Request $r) {
 		try {
 			$job_order = JobOrder::company()->with([
@@ -227,7 +229,6 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
-
 
 	//VEHICLE INWARD VIEW DATA
 	public function getVehicleInwardViewData(Request $r) {
@@ -676,9 +677,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$part=Part::where('id',$request->part_id)
-			->first();
-			if(!$part){
+			$part = Part::where('id', $request->part_id)
+				->first();
+			if (!$part) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
@@ -687,19 +688,19 @@ class VehicleInwardController extends Controller {
 			}
 			DB::beginTransaction();
 
-				$job_order_part = JobOrderPart::firstOrNew([
-					'part_id' => $part->id,
-					'job_order_id' => $request->job_order_id,
-				]);
-				//$job_order_part->fill($request);
-				$job_order_part->job_order_id = $request->job_order_id;
-				$job_order_part->split_order_type_id = NULL;
-				$job_order_part->qty = $request->qty;
-				$job_order_part->rate = $part->rate;
-				$job_order_part->is_oem_recommended = 0;
-				$job_order_part->amount = $request->qty * $part->rate;
-				$job_order_part->status_id = 8200; //Customer Approval Pending
-				$job_order_part->save();
+			$job_order_part = JobOrderPart::firstOrNew([
+				'part_id' => $part->id,
+				'job_order_id' => $request->job_order_id,
+			]);
+			//$job_order_part->fill($request);
+			$job_order_part->job_order_id = $request->job_order_id;
+			$job_order_part->split_order_type_id = NULL;
+			$job_order_part->qty = $request->qty;
+			$job_order_part->rate = $part->rate;
+			$job_order_part->is_oem_recommended = 0;
+			$job_order_part->amount = $request->qty * $part->rate;
+			$job_order_part->status_id = 8200; //Customer Approval Pending
+			$job_order_part->save();
 
 			DB::commit();
 
@@ -717,7 +718,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-		public function saveAddtionalLabour(Request $request) {
+	public function saveAddtionalLabour(Request $request) {
 		//dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
@@ -741,9 +742,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$repair_order=RepairOrder::where('id',$request->rot_id)
-			->first();
-			if(!$repair_order){
+			$repair_order = RepairOrder::where('id', $request->rot_id)
+				->first();
+			if (!$repair_order) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
@@ -751,19 +752,19 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			DB::beginTransaction();
-				$job_order_repair_order = JobOrderRepairOrder::firstOrNew([
-						'repair_order_id' => $request->rot_id,
-						'job_order_id' => $request->job_order_id,
-					]);
-					//$job_order_repair_order->fill($request);
-					$job_order_repair_order->job_order_id = $request->job_order_id;
-					$job_order_repair_order->qty = $repair_order->hours;
-					$job_order_repair_order->amount = $repair_order->amount;
-					$job_order_repair_order->split_order_type_id = NULL;
-					$job_order_repair_order->is_recommended_by_oem = 1;
-					$job_order_repair_order->is_customer_approved = 0;
-					$job_order_repair_order->status_id = 8180; //Customer Approval Pending
-					$job_order_repair_order->save();
+			$job_order_repair_order = JobOrderRepairOrder::firstOrNew([
+				'repair_order_id' => $request->rot_id,
+				'job_order_id' => $request->job_order_id,
+			]);
+			//$job_order_repair_order->fill($request);
+			$job_order_repair_order->job_order_id = $request->job_order_id;
+			$job_order_repair_order->qty = $repair_order->hours;
+			$job_order_repair_order->amount = $repair_order->amount;
+			$job_order_repair_order->split_order_type_id = NULL;
+			$job_order_repair_order->is_recommended_by_oem = 1;
+			$job_order_repair_order->is_customer_approved = 0;
+			$job_order_repair_order->status_id = 8180; //Customer Approval Pending
+			$job_order_repair_order->save();
 			DB::commit();
 
 			return response()->json([
@@ -779,7 +780,6 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
-
 
 	//INVENTORY
 	public function getInventoryFormData(Request $r) {
@@ -1061,7 +1061,7 @@ class VehicleInwardController extends Controller {
 				$part_details = JobOrderPart::select('parts.id as id', 'parts.name', 'parts.code', 'job_order_parts.rate', 'job_order_parts.qty', 'job_order_parts.amount')
 					->leftJoin('parts', 'parts.id', 'job_order_parts.part_id', 'job_order_parts.id as del_part_id')->where('job_order_parts.job_order_id', $r->id)->get();
 
-				$labour_details = JobOrderRepairOrder::select('repair_orders.id','job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id','job_order_repair_orders.qty')
+				$labour_details = JobOrderRepairOrder::select('repair_orders.id', 'job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id', 'job_order_repair_orders.qty')
 					->leftJoin('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')
 					->leftJoin('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')
 					->where('job_order_repair_orders.job_order_id', $r->id)->get();
@@ -1182,7 +1182,7 @@ class VehicleInwardController extends Controller {
 			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
-					
+
 					if (isset($repair['delete_job_repair_order_id'])) {
 						JobOrderRepairOrder::where('id', '!=', $repair['delete_job_repair_order_id'])->delete();
 					}
@@ -1484,7 +1484,7 @@ class VehicleInwardController extends Controller {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
-					'errors' =>['Repair order type not found!'],
+					'errors' => ['Repair order type not found!'],
 				]);
 			}
 			$rot_list = RepairOrder::roList($repair_order_type->id);
@@ -2248,12 +2248,16 @@ class VehicleInwardController extends Controller {
 
 	//ESTIMATE GET FORM DATA
 	public function getEstimateFormData(Request $r) {
+		// dd($r->all());
 		try {
 			$job_order = JobOrder::with([
 				'vehicle',
 				'vehicle.model',
 				'jobOrderRepairOrders',
 				'jobOrderParts',
+				'type',
+				'quoteType',
+				'serviceType',
 			])->find($r->id);
 
 			if (!$job_order) {
@@ -2490,27 +2494,39 @@ class VehicleInwardController extends Controller {
 	public function saveCustomerConfirmation(Request $request) {
 		// dd($request->all());
 		try {
-			$validator = Validator::make($request->all(), [
-				'gate_log_id' => [
-					'required',
-					'integer',
-					'exists:gate_logs,id',
-				],
-				'job_order_id' => [
-					'required',
-					'integer',
-					'exists:job_orders,id',
-				],
-				'customer_photo' => [
-					'required',
-					'mimes:jpeg,jpg,png',
-				],
-				'customer_e_sign' => [
-					'required',
-					'mimes:jpeg,jpg,png',
-				],
-			]);
-
+			if ($request->web == 'website') {
+				$validator = Validator::make($request->all(), [
+					'job_order_id' => [
+						'required',
+						'integer',
+						'exists:job_orders,id',
+					],
+					'customer_photo' => [
+						'required',
+						// 'mimes:jpeg,jpg,png',
+					],
+					'customer_e_sign' => [
+						'required',
+						// 	// 'mimes:jpeg,jpg,png',
+					],
+				]);
+			} else {
+				$validator = Validator::make($request->all(), [
+					'job_order_id' => [
+						'required',
+						'integer',
+						'exists:job_orders,id',
+					],
+					'customer_photo' => [
+						'required',
+						'mimes:jpeg,jpg,png',
+					],
+					'customer_e_sign' => [
+						'required',
+						'mimes:jpeg,jpg,png',
+					],
+				]);
+			}
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
@@ -2521,37 +2537,88 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
+			$attachment_path = storage_path('app/public/gigo/job_order/customer-confirmation/');
+			Storage::makeDirectory($attachment_path, 0777);
+
+			if ($request->web == 'website') {
+				//CUSTOMER SIGN
+				if (!empty($request->customer_photo)) {
+					$customer_photo = str_replace('data:image/jpeg;base64,', '', $request->customer_photo);
+					$customer_photo = str_replace(' ', '+', $customer_photo);
+
+					$filename = "webcam_customer_photo_" . strtotime("now") . ".jpeg";
+
+					File::put($attachment_path . '/' . $filename, base64_decode($customer_photo));
+
+					//SAVE ATTACHMENT
+					$attachment = new Attachment;
+					$attachment->attachment_of_id = 227; //JOB ORDER
+					$attachment->attachment_type_id = 254; //CUSTOMER SIGN PHOTO
+					$attachment->entity_id = $request->job_order_id;
+					$attachment->name = $filename;
+					$attachment->created_by = auth()->user()->id;
+					$attachment->created_at = Carbon::now();
+					$attachment->save();
+				}
+				//CUSTOMER E SIGN
+				if (!empty($request->customer_e_sign)) {
+					$customer_sign = str_replace('data:image/png;base64,', '', $request->customer_e_sign);
+					$customer_sign = str_replace(' ', '+', $customer_sign);
+
+					$filename = "webcam_customer_sign_" . strtotime("now") . ".png";
+
+					File::put($attachment_path . '/' . $filename, base64_decode($customer_sign));
+
+					//SAVE ATTACHMENT
+					$attachment = new Attachment;
+					$attachment->attachment_of_id = 227; //JOB ORDER
+					$attachment->attachment_type_id = 253; //CUSTOMER E SIGN
+					$attachment->entity_id = $request->job_order_id;
+					$attachment->name = $filename;
+					$attachment->created_by = auth()->user()->id;
+					$attachment->created_at = Carbon::now();
+					$attachment->save();
+				}
+			} else {
+				if (!empty($request->customer_photo)) {
+					$attachment = $request->customer_photo;
+					$entity_id = $request->job_order_id;
+					$attachment_of_id = 227; //JOB ORDER
+					$attachment_type_id = 254; //CUSTOMER SIGN PHOTO
+					saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+				}
+				if (!empty($request->customer_e_sign)) {
+					$attachment = $request->customer_e_sign;
+					$entity_id = $request->job_order_id;
+					$attachment_of_id = 227; //JOB ORDER
+					$attachment_type_id = 253; //CUSTOMER E SIGN
+					saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+				}
+			}
 			//UPDATE JOB ORDER REPAIR ORDER STATUS UPDATE
 			//issue: readability
-			$job_order_repair_order_status_update = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->update(['status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //MACHANIC NOT ASSIGNED
+			$job_order_repair_order_status_update = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)
+				->update([
+					'status_id' => 8181, //MACHANIC NOT ASSIGNED
+					'updated_by_id' => Auth::user()->id,
+					'updated_at' => Carbon::now(),
+				]);
 
 			//UPDATE JOB ORDER PARTS STATUS UPDATE
 			//issue: readability
-			$job_order_parts_status_update = JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //NOT ISSUED
+			$job_order_parts_status_update = JobOrderPart::where('job_order_id', $request->job_order_id)
+				->update([
+					'status_id' => 8201, //NOT ISSUED
+					'updated_by_id' => Auth::user()->id,
+					'updated_at' => Carbon::now(),
+				]);
 
 			// //UPDATE GATE LOG STATUS
 			// $gate_log = GateLog::where('id', $request->gate_log_id)->update(['status_id', 8122, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //VEHICLE INWARD COMPLETED
 
-			$attachment_path = storage_path('app/public/gigo/job_order/customer-confirmation/');
-			Storage::makeDirectory($attachment_path, 0777);
-			//SAVE WARRANTY EXPIRY PHOTO ATTACHMENT
-			if (!empty($request->customer_photo)) {
-				$attachment = $request->customer_photo;
-				$entity_id = $request->job_order_id;
-				$attachment_of_id = 227; //JOB ORDER
-				$attachment_type_id = 254; //CUSTOMER SIGN PHOTO
-				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
-			}
-			if (!empty($request->customer_e_sign)) {
-				$attachment = $request->customer_e_sign;
-				$entity_id = $request->job_order_id;
-				$attachment_of_id = 227; //JOB ORDER
-				$attachment_type_id = 253; //CUSTOMER E SIGN
-				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
-			}
-
 			//GET TOTAL AMOUNT IN PARTS AND LABOUR
-			$repair_order_and_parts_detils = $this->getEstimateFormData($request->gate_log_id);
+			$request['id'] = $request->job_order_id; // ID ADDED FOR BELOW FUNCTION TO FIND BASED ON ID
+			$repair_order_and_parts_detils = $this->getEstimateFormData($request);
 
 			DB::commit();
 
@@ -2575,10 +2642,10 @@ class VehicleInwardController extends Controller {
 		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
-				'gate_log_id' => [
+				'job_order_id' => [
 					'required',
 					'integer',
-					'exists:gate_logs,id',
+					'exists:job_orders,id',
 				],
 			]);
 
@@ -2590,9 +2657,21 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			$job_order = JobOrder::with([
+				'gateLog',
+			])
+				->find($request->job_order_id);
+
 			//UPDATE GATE LOG STATUS
 			//issue: readability
-			$gate_log = GateLog::where('id', $request->gate_log_id)->update(['status_id' => 8122, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //VEHICLE INWARD COMPLETED
+			if (!empty($job_order->gateLog)) {
+				$gate_log = GateLog::where('id', $job_order->gateLog->id)
+					->update([
+						'status_id' => 8122, //VEHICLE INWARD COMPLETED
+						'updated_by_id' => Auth::user()->id,
+						'updated_at' => Carbon::now(),
+					]);
+			}
 
 			DB::commit();
 

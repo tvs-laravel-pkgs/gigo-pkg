@@ -945,7 +945,7 @@ app.component('inwardVehicleUpdatejcForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_order_id = $routeParams.job_order_id;
-        
+
 
         //Save Form Data 
         $scope.saveSchedule = function() {
@@ -1014,130 +1014,182 @@ app.component('inwardVehicleUpdatejcForm', {
 //Estimate
 angular.module('app').requires.push('webcam');
 // angular.module('app').requires.push('signature');
-app.component('inwardVehicleCustomerEstimationApprovalForm', {
-    templateUrl: inward_vehicle_customer_estimation_approval_form_template_url,
+app.component('inwardVehicleCustomerConfirmationForm', {
+    templateUrl: inward_vehicle_customer_confirmation_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
-        console.log(1);
 
-        // $scope.onStream = function(data) {
-        //     console.log(data);
-        //     // $scope.encrypted_id = data;
-        //     $scope.customerPhoto(data);
-        // };
-        // $scope.onError = function(error) {
-        //     console.log(error);
-        // };
-        // $scope.onVideoError = function(error) {
-        //     console.log(error);
-        // };
-        // $scope.onSuccess = function() {
-        //     console.log(1+'test');
-        // };
-
-        function MyController($scope) {
-            $scope.myChannel = {
-                // the fields below are all optional
-                videoHeight: 800,
-                videoWidth: 600,
-                video: null // Will reference the video element on success
-            };
-            // $scope.boundingBox = {
-            //     width: 700,
-            //     height: 300
-            // };
-        }
-
-
-
-        // // Grab elements, create settings, etc.
-        // var video = document.getElementById('video');
-        // $scope.cameraOn = function() {
-        //     // Get access to the camera!
-        //     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        //         // Not adding `{ audio: true }` since we only want video now
-        //         navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-        //             //video.src = window.URL.createObjectURL(stream);
-        //             video.srcObject = stream;
-        //             video.play();
-        //         });
-        //     }
-
-        //     // Elements for taking the snapshot
-        //     var canvas = document.getElementById('canvas');
-        //     var context = canvas.getContext('2d');
-        //     var video = document.getElementById('video');
-
-        //     $scope.snapshot = function() {
-        //         // Trigger photo take
-        //         // document.getElementById("snap").addEventListener("click", function() {
-        //         // console.log(context);
-        //         context.drawImage(video, 0, 0, 460, 360);
-        //         // });
-        //         // console.log(canvas_image);
-        //     }
-        //     var customer_photo = canvas.toDataURL("image/png");
-        //     $("#customer_photo").val(customer_photo);
-
-        //     $('#customer_photo_file').append(
-        //         $('<input/>').attr('type', 'file').attr('src', customer_photo)
-        //     );
-        // }
-        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
-        //     window.location = "#!/page-permission-denied";
-        //     return false;
-        // }
         self.angular_routes = angular_routes;
 
         // HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
-
         $scope.job_order_id = $routeParams.job_order_id;
-        return;
-        // $scope.customerPhoto = function() {
-        //     console.log(data);
-        // }
-        //Save Form Data 
-        var form_id = '#form';
-        var v = jQuery(form_id).validate({
-            ignore: '',
-            rules: {},
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
-            },
-            submitHandler: function(form) {
-                let formData = new FormData($(form_id)[0]);
-                $('.submit').button('loading');
-                $.ajax({
-                        url: base_url + '/api/vehicle-inward/customer-confirmation/save',
-                        method: "POST",
-                        data: formData,
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
-                            $('.submit').button('reset');
-                            showErrorNoty(res);
-                            return;
-                        }
-                        custom_noty('success', res.message);
-                        $location.path('/inward-vehicle/estimate/' + $scope.job_order.id);
-                        $scope.$apply();
-                    })
-                    .fail(function(xhr) {
-                        $('.submit').button('reset');
-                        custom_noty('error', 'Something went wrong at server');
-                    });
+
+        self.video = false;
+        self.screenShot = false;
+
+        //WEBCAM TO TAKE CUSTOMER PHOTO
+        // Grab elements, create settings, etc.
+        var video = document.getElementById('video');
+        $scope.cameraOn = function() {
+            self.video = true;
+            self.screenShot = true;
+            // Get access to the camera!
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                // Not adding `{ audio: true }` since we only want video now
+                navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+                    //video.src = window.URL.createObjectURL(stream);
+                    video.srcObject = stream;
+                    video.play();
+                });
+            } else {
+                custom_noty('error', 'Camera Not Working!');
             }
+
+            // Elements for taking the snapshot
+            var canvas_photo = document.getElementById('canvas');
+            var context = canvas_photo.getContext('2d');
+            var video = document.getElementById('video');
+
+            $scope.snapshot = function() {
+                // Trigger photo take
+                context.drawImage(video, 0, 0, 460, 360);
+                var customer_photo = canvas_photo.toDataURL('image/jpeg', 1.0);
+                $("#customer_photo").val(customer_photo);
+            }
+        }
+
+        //SIGN PAD
+        var signaturePad;
+        $(document).ready(function($) {
+            $("#customer_sign").val('');
+            var canvas_sign = document.getElementById("signature");
+            signaturePad = new SignaturePad(canvas_sign);
+
+            $('#clear-signature').on('click', function() {
+                signaturePad.clear();
+                $("#customer_sign").val('');
+            });
         });
+
+        //SIGN VALIDATION
+        jQuery.validator.addMethod("customer_e_sign", function(value, element, options) {
+            if (signaturePad.isEmpty()) {
+                return false;
+            }
+            return true;
+        }, "Your signature is required");
+
+        //Save Form Data 
+        $scope.saveForm = function() {
+            //GET AND APPEND SIGNATURE VALUE
+            var canvas_sign = document.getElementById("signature");
+            var customer_sign = canvas_sign.toDataURL('image/png');
+            $("#customer_sign").val(customer_sign);
+
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                errorPlacement: function(error, element) {
+                    if (element.attr("name") == "customer_photo") {
+                        error.insertAfter("#eror_customer_photo");
+                    } else if (element.attr("name") == "customer_e_sign") {
+                        error.insertAfter("#eror_customer_sign");
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                rules: {
+                    'customer_photo': {
+                        required: true,
+                    },
+                    'customer_e_sign': {
+                        customer_e_sign: true,
+                    },
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    // console.log(formData);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/customer-confirmation/save',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            console.log(res);
+                            self.job_order = res.repair_order_and_parts_detils.original.job_order;
+                            self.message = res.message;
+                            $("#inward_notification").modal('show');
+                            // self.repair_order_and_parts_detils
+                            // custom_noty('success', res.message);
+                            // $location.path('/inward-vehicle/table-list');
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        //INITIATE JOB
+        $scope.initiateJob = function() {
+            var form_id = '#initiateJob';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    // console.log(formData);
+                    $('.initiate_job').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/initiate-job/save',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.initiate_job').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            console.log(res);
+                            $("#inward_notification").modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            custom_noty('success', res.message);
+                            $location.path('/inward-vehicle/table-list');
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.initiate_job').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
     }
 });
-
 
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
@@ -1186,13 +1238,26 @@ app.component('inwardVehicleEstimateForm', {
         }
         $scope.fetchData();
 
+        //APPEND LINK ON LOAD
+        $(document).ready(function() {
+            if ($("#check_agree").prop('checked')) {
+                $('#is_customer_agreed').val(1);
+                $("#estimate_next").attr("href", ".#!/inward-vehicle/customer-confirmation/" + $routeParams.job_order_id);
+            } else {
+                $('#is_customer_agreed').val(0);
+                $("#estimate_next").attr("href", ".#!/inward-vehicle/estimation-status-detail/form/" + $routeParams.job_order_id);
+            }
+        });
+
+        //APPEND LINK AFTER CLICK THE CHECK BOX
         self.checkbox = function() {
             if ($("#check_agree").prop('checked')) {
                 $('#is_customer_agreed').val(1);
+                $("#estimate_next").attr("href", ".#!/inward-vehicle/customer-confirmation/" + $routeParams.job_order_id);
             } else {
                 $('#is_customer_agreed').val(0);
+                $("#estimate_next").attr("href", ".#!/inward-vehicle/estimation-status-detail/form/" + $routeParams.job_order_id);
             }
-
         }
 
         //Save Form Data 
