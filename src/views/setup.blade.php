@@ -1108,6 +1108,11 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Job Card DMS Check List',
 
 	    }).
+	    when('/gigo-pkg/job-card/part-indent/:job_card_id', {
+	        template: '<job-card-part-indent-form></job-card-part-indent-form>',
+	        title: 'Job Card Part Indent',
+
+	    }).
 	    when('/gigo-pkg/job-card/expert-diagnosis/:job_card_id', {
 	        template: '<job-card-expert-diagnosis-form></job-card-expert-diagnosis-form>',
 	        title: 'Job Card Export Diagnosis',
@@ -1131,6 +1136,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_export_diagonosis_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/expert-diagnosis.html')}}';
     var job_card_vehicle_inspection_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/vehicle-inspection.html')}}';
     var job_card_dms_checklist_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/dms-checklist.html')}}';
+    var job_card_part_indent_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/parts-indent.html')}}';
 
 
      //PARTIALS
