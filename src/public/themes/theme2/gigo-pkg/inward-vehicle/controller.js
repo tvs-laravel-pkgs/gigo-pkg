@@ -760,6 +760,8 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             ev.stopPropagation();
         });
         var self = this;
+        self.labour_removal_id = [];
+        self.parts_removal_id = [];
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
         //     window.location = "#!/page-permission-denied";
@@ -808,48 +810,103 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             } else {
                 $('#check_val').val(0);
             }
-
         }
 
-        self.removeLabourDetails = function($id) {
-            $('#delete_labour_details').val($id);
+        self.removeLabourDetails = function($id, $labour_id) {
+            $('.delete_labour_details').val($id);
+            $('.labour_detail_id').val($labour_id);
         }
 
         $scope.deleteConfirm = function() {
-            $id = $('#delete_labour_details').val();
-            $('#tr_' + $id).remove();
-            tot_lab_value = 0;
-            $(".lab_amount").each(function() {
-                amt_lab = $(this).val();
-                tot_lab_value = parseInt(tot_lab_value) + parseInt(amt_lab);
-            });
-            $("#tot_amt_lab").text(tot_lab_value);
+            $id = $('.delete_labour_details').val();
+            $labour_id = $('.labour_detail_id').val();
 
-            rate_part = $("#rate_part").text();
+            if ($labour_id) {
+                self.labour_removal_id.push($labour_id);
+                $('#labour_removal_ids').val(JSON.stringify(self.labour_removal_id));
+            }
 
-            tot_full_val = parseInt(tot_lab_value) + parseInt(rate_part);
-            $("#tot_amt").text(tot_full_val);
+            $scope.labour_details.splice($id, 1);
+
+            setTimeout(function() {
+                var total_labour_amount = 0;
+                for (var i = 0; i < $scope.labour_details.length; i++) {
+                    var labour_amount = parseFloat($('#labour_amount_' + i).val());
+                    if (labour_amount && !isNaN(labour_amount)) {
+                        total_labour_amount += labour_amount;
+                    }
+                }
+
+                $("#total_amount_labour").text(total_labour_amount.toFixed(2));
+
+                var total_part_amount = 0;
+                for (var i = 0; i < $scope.part_details.length; i++) {
+                    var part_amount = parseFloat($('#part_amount_' + i).val());
+                    if (part_amount && !isNaN(part_amount)) {
+                        total_part_amount += part_amount;
+                    }
+                }
+
+                var total_amount = parseFloat(total_labour_amount) + parseFloat(total_part_amount);
+                $("#total_amount").text(total_amount.toFixed(2));
+
+            }, 1000);
         }
 
-        self.delete_parts_details = function($id) {
-            $('#delete_parts_details').val($id);
+        self.delete_parts_details = function($id, $part_id) {
+            $('.delete_parts_details').val($id);
+            $('.part_detail_id').val($part_id);
         }
 
         $scope.deletePartsConfirm = function() {
-            $id = $('#delete_parts_details').val();
-            $('#tp_' + $id).remove();
+            $id = $('.delete_parts_details').val();
+            $part_id = $('.part_detail_id').val();
 
-            tot_part_value = 0;
-            $(".parts_rate").each(function() {
-                amt_part = $(this).val();
-                tot_part_value = parseInt(tot_part_value) + parseInt(amt_part);
-            });
-            $("#rate_part").text(tot_part_value);
+            if ($part_id) {
+                self.parts_removal_id.push($part_id);
+                $('#parts_removal_ids').val(JSON.stringify(self.parts_removal_id));
+            }
 
-            rate_lab = $("#tot_amt_lab").text();
+            $scope.part_details.splice($id, 1);
 
-            tot_full_val = parseInt(tot_part_value) + parseInt(rate_lab);
-            $("#tot_amt").text(tot_full_val);
+            console.log($scope.part_details);
+            setTimeout(function() {
+                var total_part_amount = 0;
+                for (var i = 0; i < $scope.part_details.length; i++) {
+                    var part_amount = parseFloat($('#part_amount_' + i).val());
+                    if (part_amount && !isNaN(part_amount)) {
+                        total_part_amount += part_amount;
+                    }
+                }
+                $("#total_amount_part").text(total_part_amount.toFixed(2));
+
+                var total_labour_amount = 0;
+                for (var i = 0; i < $scope.labour_details.length; i++) {
+                    var labour_amount = parseFloat($('#labour_amount_' + i).val());
+                    if (labour_amount && !isNaN(labour_amount)) {
+                        total_labour_amount += labour_amount;
+                    }
+                }
+
+                var total_amount = parseFloat(total_labour_amount) + parseFloat(total_part_amount);
+                $("#total_amount").text(total_amount.toFixed(2));
+
+            }, 1000);
+
+            // // alert($labour_id);
+            // $('#tp_' + $id).remove();
+
+            // tot_part_value = 0;
+            // $(".parts_rate").each(function() {
+            //     amt_part = $(this).val();
+            //     tot_part_value = parseInt(tot_part_value) + parseInt(amt_part);
+            // });
+            // $("#rate_part").text(tot_part_value);
+
+            // rate_lab = $("#tot_amt_lab").text();
+
+            // tot_full_val = parseInt(tot_part_value) + parseInt(rate_lab);
+            // $("#tot_amt").text(tot_full_val);
         }
 
         //Save Form Data 
@@ -2952,7 +3009,8 @@ app.component('inwardVehicleView', {
                         return;
                     }
                     $scope.job_order = res.job_order;
-                    $scope.inventory_type_list = res.inventory_type_list;
+                    $scope.extras = res.extras;
+                    $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
