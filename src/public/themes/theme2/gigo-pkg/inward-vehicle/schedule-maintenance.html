@@ -55,6 +55,11 @@
                                                             <td>
                                                                 {{labour_details.code}}|{{labour_details.name}}
                                                                 <input type="hidden" class="lab_amount" id="labour_amount_{{index}}" name="job_order_repair_orders[{{index}}][amount]" value="{{labour_details.amount}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][repair_order_id]" value="{{labour_details.id}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][qty]" value="{{labour_details.qty}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][remarks]" value="{{labour_details.remarks}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][observation]" value="{{labour_details.observation}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][action_taken]" value="{{labour_details.action_taken}}">
                                                             </td>
                                                             <td>
                                                                 {{labour_details.name}}
@@ -106,7 +111,7 @@
                                                             <th class="text-right">
                                                                 Quantity
                                                             </th>
-                                                            <th class="wid-100 white-space-unset text-right">
+                                                            <th class="wid-180 white-space-unset text-right">
                                                                 Amount
                                                             </th>
                                                             <th class="wid-100"></th>
@@ -129,7 +134,7 @@
                                                                 <input type="hidden" name="job_order_parts[{{index}}][qty]" value="{{part_details.qty}}">
                                                                 <input type="hidden" id="part_amount_{{index}}" class="parts_rate" name="job_order_parts[{{index}}][rate]" value="{{part_details.rate}}">
                                                             </td>
-                                                            <td class="wid-100 white-space-unset text-right">
+                                                            <td class="wid-180 white-space-unset text-right">
                                                                 {{part_details.rate}}
                                                             </td>
                                                             <td class="wid-100">
@@ -191,7 +196,7 @@
                                                     <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
                                                         Previous
                                                     </a>
-                                                    <button ng-click="saveDms()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                    <button ng-click="saveSchedule()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Next
                                                     </button>
                                                 </div>

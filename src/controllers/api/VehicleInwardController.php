@@ -1189,7 +1189,7 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'job_order_id' => $r->id,
+				'job_order' => $job_order,
 				'part_details' => $part_details,
 				'labour_details' => $labour_details,
 				'total_amount' => number_format($total_amount, 2),
@@ -1260,16 +1260,22 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
+			//Remove Schedule Part Details
+			if (!empty($request->parts_removal_ids)) {
+				$parts_removal_ids = json_decode($request->parts_removal_ids, true);
+				JobOrderPart::whereIn('part_id', $parts_removal_ids)->where('job_order_id', $request->job_order_id)->forceDelete();
+			}
+			//Remove Schedule Labour Details
+			if (!empty($request->labour_removal_ids)) {
+				$labour_removal_ids = json_decode($request->labour_removal_ids, true);
+				JobOrderRepairOrder::whereIn('repair_order_id', $labour_removal_ids)->where('job_order_id', $request->job_order_id)->forceDelete();
+			}
+
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
 				//dd($request->job_order_parts);
 				//issue: saravanan - is_recommended_by_oem save missing. save default 1.
 				foreach ($request->job_order_parts as $key => $part) {
-					//dd($part['part_id']);
-					if (isset($repair['del_part_id'])) {
-						JobOrderPart::where('id', '!=', $repair['del_part_id'])->delete();
-					}
-
 					$job_order_part = JobOrderPart::firstOrNew([
 						'part_id' => $part['part_id'],
 						'job_order_id' => $request->job_order_id,
@@ -1284,19 +1290,9 @@ class VehicleInwardController extends Controller {
 				}
 			}
 
-			//Remove Schedule Part Details
-			if (!empty($request->parts_removal_ids)) {
-				$parts_removal_ids = json_decode($request->parts_removal_ids, true);
-				JobOrderRepairOrder::whereIn('id', $parts_removal_ids)->delete();
-			}
-
 			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
-
-					if (isset($repair['delete_job_repair_order_id'])) {
-						JobOrderRepairOrder::where('id', '!=', $repair['delete_job_repair_order_id'])->delete();
-					}
 					$job_order_repair_order = JobOrderRepairOrder::firstOrNew([
 						'repair_order_id' => $repair['repair_order_id'],
 						'job_order_id' => $request->job_order_id,

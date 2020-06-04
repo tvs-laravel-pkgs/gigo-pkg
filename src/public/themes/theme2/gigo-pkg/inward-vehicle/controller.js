@@ -790,12 +790,12 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    $scope.job_order = res.job_order;
                     $scope.part_details = res.part_details;
                     $scope.labour_details = res.labour_details;
                     $scope.total_amount = res.total_amount;
                     $scope.labour_amount = res.labour_amount;
                     $scope.parts_rate = res.parts_rate;
-                    $scope.job_order_id = res.job_order_id;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -822,7 +822,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $labour_id = $('.labour_detail_id').val();
 
             if ($labour_id) {
-                self.labour_removal_id.push($labour_id);
+                self.labour_removal_id.push(parseInt($labour_id));
                 $('#labour_removal_ids').val(JSON.stringify(self.labour_removal_id));
             }
 
@@ -863,7 +863,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $part_id = $('.part_detail_id').val();
 
             if ($part_id) {
-                self.parts_removal_id.push($part_id);
+                self.parts_removal_id.push(parseInt($part_id));
                 $('#parts_removal_ids').val(JSON.stringify(self.parts_removal_id));
             }
 
@@ -957,7 +957,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/scheduled-maintenance/form/' + $scope.job_order.id);
+                            $location.path('/inward-vehicle/payable-labour-part-detail/form/' + $scope.job_order.id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
