@@ -15,6 +15,8 @@ use Abs\GigoPkg\PauseWorkReason;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
 use Abs\StatusPkg\Status;
+use Abs\PartPkg\Part;
+use Abs\GigoPkg\JobOrderIssuedPart;
 use App\Attachment;
 use App\Config;
 use App\Employee;
@@ -806,6 +808,40 @@ class JobCardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
+			]);
+
+	}
+
+	public function getPartsIndent(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			
+		 $part_list = collect(Part::select('id','name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Part List']); 
+
+		 $mechanic_list = collect(JobOrderRepairOrder::select('users.id','users.name')->leftJoin('repair_order_mechanics','repair_order_mechanics.job_order_repair_order_id','job_order_repair_orders.id')->leftJoin('users','users.id','repair_order_mechanics.mechanic_id')->where('job_order_repair_orders.job_order_id',$job_card->job_order_id)->distinct()->get())->prepend(['id' => '', 'name' => 'Select Mechanic']);
+
+		 $issued_mode = collect(Config::select('id','name')->where('config_type_id',109)->get())->prepend(['id' => '', 'name' => 'Select Issue Mode']);
+
+		 $issued_parts_details = JobOrderIssuedPart::select('job_order_issued_parts.id as issued_id','parts.code','job_order_parts.id','job_order_parts.qty','job_order_issued_parts.issued_qty',DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'),'users.name as issued_to','configs.name as config_name','job_order_issued_parts.issued_mode_id','job_order_issued_parts.issued_to_id')
+		    ->leftJoin('job_order_parts','job_order_parts.id','job_order_issued_parts.job_order_part_id')
+	        ->leftJoin('parts','parts.id','job_order_parts.part_id')	
+	        ->leftJoin('users','users.id','job_order_issued_parts.issued_to_id')
+	        ->leftJoin('configs','configs.id','job_order_issued_parts.issued_mode_id')
+	        ->where('job_order_parts.job_order_id',$job_card->job_order_id)->groupBy('job_order_issued_parts.id')->get();
+
+			return response()->json([
+				'success' => true,
+				'issued_parts_details' => $issued_parts_details,
+				'part_list' => $part_list,
+				'mechanic_list' => $mechanic_list,
+				'issued_mode' => $issued_mode,
 			]);
 
 	}
