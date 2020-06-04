@@ -224,29 +224,29 @@ class VehicleInwardController extends Controller {
 					'message' => 'Job Order Not Found!',
 				]);
 			}
-	
+
 			$schedule_maintenance_part_amount = 0;
-            $schedule_maintenance_labour_amount = 0;
-            $schedule_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 1)->get();
-            if(!empty($schedule_maintenance['labour_details'])){
-	            foreach ($schedule_maintenance['labour_details'] as $key => $value) {
-	            	$schedule_maintenance_labour_amount += $value->amount;
-	            	$value->repair_order = $value->repairOrder;
-	            	$value->repair_order_type = $value->repairOrder->repairOrderType;
-	            }            	
-            }
-            $schedule_maintenance['labour_amount'] = $schedule_maintenance_labour_amount;
+			$schedule_maintenance_labour_amount = 0;
+			$schedule_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 1)->get();
+			if (!empty($schedule_maintenance['labour_details'])) {
+				foreach ($schedule_maintenance['labour_details'] as $key => $value) {
+					$schedule_maintenance_labour_amount += $value->amount;
+					$value->repair_order = $value->repairOrder;
+					$value->repair_order_type = $value->repairOrder->repairOrderType;
+				}
+			}
+			$schedule_maintenance['labour_amount'] = $schedule_maintenance_labour_amount;
 
-            $schedule_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 1)->get();
-            if(!empty($schedule_maintenance['part_details'])){
-	            foreach ($schedule_maintenance['part_details'] as $key => $value) {
-	            	$schedule_maintenance_part_amount += $value->amount;
-	            	$value->part = $value->part;
-	            }            	
-            }
-            $schedule_maintenance['part_amount'] = $schedule_maintenance_part_amount;
+			$schedule_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 1)->get();
+			if (!empty($schedule_maintenance['part_details'])) {
+				foreach ($schedule_maintenance['part_details'] as $key => $value) {
+					$schedule_maintenance_part_amount += $value->amount;
+					$value->part = $value->part;
+				}
+			}
+			$schedule_maintenance['part_amount'] = $schedule_maintenance_part_amount;
 
-            $schedule_maintenance['total_amount'] =  $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
+			$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
 			// dd($schedule_maintenance['labour_details']);
 
 			$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
@@ -1353,7 +1353,20 @@ class VehicleInwardController extends Controller {
 		//dd($r->all());
 		try {
 
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::company()->with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'gateLog',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
