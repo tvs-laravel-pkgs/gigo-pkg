@@ -20,6 +20,8 @@ use App\Config;
 use App\Employee;
 use App\Http\Controllers\Controller;
 use App\Vendor;
+use App\VehicleInspectionItemGroup;
+use App\VehicleInspectionItem;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -720,6 +722,168 @@ class JobCardController extends Controller {
 			'message' => 'Job Card Updated successfully!!',
 		]);
 
+	}
+
+	public function getRoadTestObservation(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			$job_order = JobOrder::company()
+				->with([
+					'status',
+					'roadTestDoneBy',
+					'roadTestPreferedBy',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($job_card->job_order_id);
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+			]);
+
+	}
+
+	public function getExpertDiagnosis(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			$job_order = JobOrder::company()->with([
+				'expertDiagnosisReportBy',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($job_card->job_order_id);
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+			]);
+
+	}
+
+	public function getDmsCheckList(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			$job_order = JobOrder::company()->with([
+				'warrentyPolicyAttachment',
+				'EWPAttachment',
+				'AMCAttachment',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($job_card->job_order_id);
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+			]);
+
+	}
+
+	//VEHICLE INSPECTION GET FORM DATA
+	public function getVehicleInspection(Request $request) {
+		try {
+
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			$job_order = JobOrder::company()
+				->with([
+					'vehicle',
+					'vehicle.model',
+					'vehicle.status',
+					'status',
+					'vehicleInspectionItems',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($job_card->job_order_id);
+
+			
+			$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
+
+			$vehicle_inspection_item_groups = array();
+			foreach ($vehicle_inspection_item_group as $key => $value) {
+				$vehicle_inspection_items = array();
+				$vehicle_inspection_items['id'] = $value->id;
+				$vehicle_inspection_items['name'] = $value->name;
+
+				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
+
+				$vehicle_inspections = $job_order->vehicleInspectionItems()->orderBy('vehicle_inspection_item_id')->get()->toArray();
+
+				if (count($vehicle_inspections) > 0) {
+					foreach ($vehicle_inspections as $value) {
+						if (isset($inspection_items[$value['id']])) {
+							$inspection_items[$value['id']]->status_id = $value['pivot']['status_id'];
+						}
+					}
+				}
+				$item_group['vehicle_inspection_items'] = $inspection_items;
+
+				$vehicle_inspection_item_groups[] = $item_group;
+			}
+
+			$params['config_type_id'] = 32;
+			$params['add_default'] = false;
+			$extras = [
+				'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
+			];
+
+			return response()->json([
+				'success' => true,
+				'extras' => $extras,
+				'vehicle_inspection_item_groups' => $vehicle_inspection_item_groups,
+				'job_order' => $job_order,
+			]);
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
 	}
 
 	public function getReturnableItems(Request $request){
