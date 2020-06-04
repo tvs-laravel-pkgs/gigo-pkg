@@ -1124,7 +1124,20 @@ class VehicleInwardController extends Controller {
 	public function getScheduleMaintenanceFormData(Request $r) {
 		// dd($id);
 		try {
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::company()
+				->with([
+					'vehicle',
+					'vehicle.model',
+					'vehicle.status',
+					'status',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -1196,7 +1209,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveScheduleMaintenance(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 			//issue : saravanan - split_order_type_id, is_oem_recommended, status_id not required in job order parts requests. split_order_type_id, is_oem_recommended, status_id, failure_date not required in job order repair orders requests. also remove in validations
 			$validator = Validator::make($request->all(), [
@@ -1270,6 +1283,13 @@ class VehicleInwardController extends Controller {
 					$job_order_part->save();
 				}
 			}
+
+			//Remove Schedule Part Details
+			if (!empty($request->parts_removal_ids)) {
+				$parts_removal_ids = json_decode($request->parts_removal_ids, true);
+				JobOrderRepairOrder::whereIn('id', $parts_removal_ids)->delete();
+			}
+
 			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
@@ -2367,9 +2387,9 @@ class VehicleInwardController extends Controller {
 
 			$vehicle_inspection_item_groups = array();
 			foreach ($vehicle_inspection_item_group as $key => $value) {
-				$vehicle_inspection_items = array();
-				$vehicle_inspection_items['id'] = $value->id;
-				$vehicle_inspection_items['name'] = $value->name;
+				$item_group = array();
+				$item_group['id'] = $value->id;
+				$item_group['name'] = $value->name;
 
 				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
 
