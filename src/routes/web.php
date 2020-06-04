@@ -10,6 +10,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/parts-indent/save', 'PartsIndentController@savePartsindent')->name('savePartsindent');
 	Route::get('/parts-indent/issued-parts-details', 'PartsIndentController@getIssedParts')->name('getIssedParts');
 	Route::get('/parts-indent/delete', 'PartsIndentController@deleteIssedPart')->name('deleteIssedPart');
+	Route::get('/parts-indent-parts/data', 'PartsIndentController@getPartsIndentPartsData')->name('getPartsIndentPartsData');
 
 	//Pause Work Reason
 	Route::get('/pause-work-reason/get-list', 'PauseWorkReasonController@getPauseWorkReasonList')->name('getPauseWorkReasonList');

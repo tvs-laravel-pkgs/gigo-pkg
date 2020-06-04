@@ -108,7 +108,7 @@ class PartsIndentController extends Controller {
 	public function getPartsIndentData(Request $request) {
 		$id = $request->id;
 		$this->data['job_cards'] = $job_card = JobCard::select([
-				'job_cards.job_card_number',
+				'job_cards.job_card_number','job_cards.id as job_card_id',
 				'users.name as floor_supervisor',
 				'job_cards.job_order_id','configs.name as work_status',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d-%m-%Y") as date_time'),
@@ -161,7 +161,7 @@ class PartsIndentController extends Controller {
 
 		 $this->data['issued_mode'] = collect(Config::select('id','name')->where('config_type_id',109)->get())->prepend(['id' => '', 'name' => 'Select Issue Mode']);
 
-		 $this->data['issued_parts_details'] = JobOrderIssuedPart::select('job_order_issued_parts.id','parts.code','job_order_parts.id','job_order_parts.qty','job_order_issued_parts.issued_qty',DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'),'users.name as issued_to','configs.name as config_name')
+		 $this->data['issued_parts_details'] = JobOrderIssuedPart::select('job_order_issued_parts.id as issued_id','parts.code','job_order_parts.id','job_order_parts.qty','job_order_issued_parts.issued_qty',DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'),'users.name as issued_to','configs.name as config_name','job_order_issued_parts.issued_mode_id','job_order_issued_parts.issued_to_id')
 		    ->leftJoin('job_order_parts','job_order_parts.id','job_order_issued_parts.job_order_part_id')
 	        ->leftJoin('parts','parts.id','job_order_parts.part_id')	
 	        ->leftJoin('users','users.id','job_order_issued_parts.issued_to_id')
@@ -175,6 +175,36 @@ class PartsIndentController extends Controller {
 	{
 	$this->data['parts_details'] = JobOrderPart::select('job_order_parts.id','job_order_parts.qty',DB::raw("SUM(job_order_issued_parts.issued_qty) as issued_qty"))->leftJoin('job_order_issued_parts','job_order_issued_parts.job_order_part_id','job_order_parts.id')->where('job_order_parts.part_id',$request->key)->first();
 	return response()->json($this->data);
+	}
+
+	public function getPartsIndentPartsData(Request $request)
+	{
+       $this->data['issued_parts_details'] = $job_order_issued = JobOrderIssuedPart::select('job_order_issued_parts.id as issued_id','parts.code','job_order_parts.id','job_order_parts.qty','job_order_issued_parts.issued_qty',DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'),'users.name as issued_to','configs.name as config_name','job_order_issued_parts.issued_mode_id','job_order_issued_parts.issued_to_id','job_order_issued_parts.job_order_part_id')
+		    ->leftJoin('job_order_parts','job_order_parts.id','job_order_issued_parts.job_order_part_id')
+	        ->leftJoin('parts','parts.id','job_order_parts.part_id')	
+	        ->leftJoin('users','users.id','job_order_issued_parts.issued_to_id')
+	        ->leftJoin('configs','configs.id','job_order_issued_parts.issued_mode_id')
+	        ->where('job_order_issued_parts.id',$request->part_id)->first();    
+
+		$this->data['job_cards'] = $job_card = JobCard::select([
+				'job_cards.job_card_number',
+				'users.name as floor_supervisor',
+				'job_cards.job_order_id','configs.name as work_status','job_cards.id as job_card_id',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d-%m-%Y") as date_time'),
+				'job_orders.vehicle_id',
+			])
+			->leftJoin('users', 'users.id', 'job_cards.floor_supervisor_id')
+			->leftJoin('job_orders', 'job_orders.id', 'job_cards.job_order_id')
+			->leftJoin('configs', 'configs.id', 'job_cards.status_id')
+			->where('job_cards.id', $request->job_card_id)->first();
+
+		$this->data['part_list'] = collect(Part::select('id','name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Repair Order Type']); 
+
+		$this->data['mechanic_list'] = collect(JobOrderRepairOrder::select('users.id','users.name')->leftJoin('repair_order_mechanics','repair_order_mechanics.job_order_repair_order_id','job_order_repair_orders.id')->leftJoin('users','users.id','repair_order_mechanics.mechanic_id')->where('job_order_repair_orders.job_order_id',$job_card->job_order_id)->distinct()->get())->prepend(['id' => '', 'name' => 'Select Mechanic']);
+
+		$this->data['issued_mode'] = collect(Config::select('id','name')->where('config_type_id',109)->get())->prepend(['id' => '', 'name' => 'Select Issue Mode']);
+		return response()->json($this->data);
+
 	}
 
 	public function savePartsindent(Request $request) {
@@ -192,10 +222,20 @@ class PartsIndentController extends Controller {
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
 			}
-
+            
+            if (!$request->id) { 
 			if($request->bal_qty < $request->issued_qty)
 			{
 				return response()->json(['success' => false, 'errors' => ['Exception Error' => 'Transfered Quantity Exceed Requested Quantity']]);
+			}}
+			else
+			{
+			$total_qty = $request->issued_qty+$request->bal_qty;
+			if($total_qty < $request->issued_qty)
+			{
+				return response()->json(['success' => false, 'errors' => ['Exception Error' => 'Transfered Quantity Exceed Requested Quantity']]);
+			}
+
 			}
 
 			DB::beginTransaction();

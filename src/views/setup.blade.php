@@ -138,6 +138,10 @@
 	        template: '<parts-indent-view></parts-indent-view>',
 	        title: 'View Parts Indent',
 	    }).
+	    when('/gigo-pkg/parts-indent/edit-parts/:job_card_id/:part_id', {
+	        template: '<parts-indent-edit-parts></parts-indent-edit-parts>',
+	        title: 'Edit Parts Indent',
+	    }).
 
 
 	    //Kanban App
@@ -194,6 +198,7 @@
      //Parts Indent
      var parts_indent_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/list.html')}}";
      var parts_indent_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/view.html')}}";
+     var parts_indent_edit_parts_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/edit-parts.html')}}";
 
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>

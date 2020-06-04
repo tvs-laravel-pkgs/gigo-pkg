@@ -559,9 +559,9 @@ Content Wrap -->
                                                              <tr ng-repeat="(index, issued_parts_details) in $ctrl.issued_parts_details">
 
                                                                 <td class="action width-100">
-                                                                    <!-- <a href="#!" class="">
+                                                                    <a href="#!/gigo-pkg/parts-indent/edit-parts/{{$ctrl.job_cards.job_card_id}}/{{issued_parts_details.issued_id}}" class="">
                                                                         <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
-                                                                    </a> -->
+                                                                    </a>
                                                                     <a href="javascript:;" data-toggle="modal" data-target="#delete_parts_issued" ng-click="$ctrl.removeIssedParts(issued_parts_details.id)" class="">
                                                                         <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
                                                                     </a>
