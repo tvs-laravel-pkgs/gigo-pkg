@@ -181,6 +181,13 @@ class VehicleInwardController extends Controller {
 				'vehicle.currentOwner.ownershipType',
 				'vehicle.lastJobOrder',
 				'vehicle.lastJobOrder.jobCard',
+				'vehicleInventoryItem',
+				'vehicleInspectionItems',
+				// 'jobOrderRepairOrders',
+				// 'jobOrderRepairOrders.repairOrder',
+				// 'jobOrderRepairOrders.repairOrder.repairOrderType',
+				// 'jobOrderParts',
+				// 'jobOrderParts.part',
 				'type',
 				'outlet',
 				'customerVoices',
@@ -218,14 +225,67 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$params['field_type_id'] = [11, 12];
-			$inventory_type_list = VehicleInventoryItem::getInventoryList($job_order->id, $params);
+			$schedule_maintenance_part_amount = 0;
+			$schedule_maintenance_labour_amount = 0;
+			$schedule_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 1)->get();
+			if (!empty($schedule_maintenance['labour_details'])) {
+				foreach ($schedule_maintenance['labour_details'] as $key => $value) {
+					$schedule_maintenance_labour_amount += $value->amount;
+					$value->repair_order = $value->repairOrder;
+					$value->repair_order_type = $value->repairOrder->repairOrderType;
+				}
+			}
+			$schedule_maintenance['labour_amount'] = $schedule_maintenance_labour_amount;
+
+			$schedule_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 1)->get();
+			if (!empty($schedule_maintenance['part_details'])) {
+				foreach ($schedule_maintenance['part_details'] as $key => $value) {
+					$schedule_maintenance_part_amount += $value->amount;
+					$value->part = $value->part;
+				}
+			}
+			$schedule_maintenance['part_amount'] = $schedule_maintenance_part_amount;
+
+			$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
+			// dd($schedule_maintenance['labour_details']);
+
+			$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
+
+			$vehicle_inspection_item_groups = array();
+			foreach ($vehicle_inspection_item_group as $key => $value) {
+				$vehicle_inspection_items = array();
+				$vehicle_inspection_items['id'] = $value->id;
+				$vehicle_inspection_items['name'] = $value->name;
+
+				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
+
+				$vehicle_inspections = $job_order->vehicleInspectionItems()->orderBy('vehicle_inspection_item_id')->get()->toArray();
+
+				if (count($vehicle_inspections) > 0) {
+					foreach ($vehicle_inspections as $value) {
+						if (isset($inspection_items[$value['id']])) {
+							$inspection_items[$value['id']]->status_id = $value['pivot']['status_id'];
+						}
+					}
+				}
+				$item_group['vehicle_inspection_items'] = $inspection_items;
+
+				$vehicle_inspection_item_groups[] = $item_group;
+			}
+
+			$params['config_type_id'] = 32;
+			$params['add_default'] = false;
+			$extras = [
+				'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
+			];
 
 			//Job card details need to get future
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
-				'inventory_type_list' => $inventory_type_list,
+				'extras' => $extras,
+				'schedule_maintenance' => $schedule_maintenance,
+				'vehicle_inspection_item_groups' => $vehicle_inspection_item_groups,
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
 
@@ -1090,7 +1150,20 @@ class VehicleInwardController extends Controller {
 	public function getScheduleMaintenanceFormData(Request $r) {
 		// dd($id);
 		try {
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::company()
+				->with([
+					'vehicle',
+					'vehicle.model',
+					'vehicle.status',
+					'status',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -1142,7 +1215,7 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'job_order_id' => $r->id,
+				'job_order' => $job_order,
 				'part_details' => $part_details,
 				'labour_details' => $labour_details,
 				'total_amount' => number_format($total_amount, 2),
@@ -1162,7 +1235,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveScheduleMaintenance(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 			//issue : saravanan - split_order_type_id, is_oem_recommended, status_id not required in job order parts requests. split_order_type_id, is_oem_recommended, status_id, failure_date not required in job order repair orders requests. also remove in validations
 			$validator = Validator::make($request->all(), [
@@ -1213,16 +1286,22 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
+			//Remove Schedule Part Details
+			if (!empty($request->parts_removal_ids)) {
+				$parts_removal_ids = json_decode($request->parts_removal_ids, true);
+				JobOrderPart::whereIn('part_id', $parts_removal_ids)->where('job_order_id', $request->job_order_id)->forceDelete();
+			}
+			//Remove Schedule Labour Details
+			if (!empty($request->labour_removal_ids)) {
+				$labour_removal_ids = json_decode($request->labour_removal_ids, true);
+				JobOrderRepairOrder::whereIn('repair_order_id', $labour_removal_ids)->where('job_order_id', $request->job_order_id)->forceDelete();
+			}
+
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
 				//dd($request->job_order_parts);
 				//issue: saravanan - is_recommended_by_oem save missing. save default 1.
 				foreach ($request->job_order_parts as $key => $part) {
-					//dd($part['part_id']);
-					if (isset($repair['del_part_id'])) {
-						JobOrderPart::where('id', '!=', $repair['del_part_id'])->delete();
-					}
-
 					$job_order_part = JobOrderPart::firstOrNew([
 						'part_id' => $part['part_id'],
 						'job_order_id' => $request->job_order_id,
@@ -1236,13 +1315,10 @@ class VehicleInwardController extends Controller {
 					$job_order_part->save();
 				}
 			}
+
 			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
-
-					if (isset($repair['delete_job_repair_order_id'])) {
-						JobOrderRepairOrder::where('id', '!=', $repair['delete_job_repair_order_id'])->delete();
-					}
 					$job_order_repair_order = JobOrderRepairOrder::firstOrNew([
 						'repair_order_id' => $repair['repair_order_id'],
 						'job_order_id' => $request->job_order_id,
@@ -1277,7 +1353,20 @@ class VehicleInwardController extends Controller {
 		//dd($r->all());
 		try {
 
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::company()->with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'gateLog',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -2333,9 +2422,9 @@ class VehicleInwardController extends Controller {
 
 			$vehicle_inspection_item_groups = array();
 			foreach ($vehicle_inspection_item_group as $key => $value) {
-				$vehicle_inspection_items = array();
-				$vehicle_inspection_items['id'] = $value->id;
-				$vehicle_inspection_items['name'] = $value->name;
+				$item_group = array();
+				$item_group['id'] = $value->id;
+				$item_group['name'] = $value->name;
 
 				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
 

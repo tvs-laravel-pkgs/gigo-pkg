@@ -27,195 +27,182 @@
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <form id="form">
-                                        <input type="hidden" name="job_order_id" value="{{job_order_id}}"> 
-                                    <div class="col-md-12">
-                                        <h5 class="color-primary mb-10"><b>Scheduled Maintenance (1st Free Service - BSIV)</b></h5>
-                                        <hr class="hr-15"><!-- Separater -->
-                                        <div class="table-responsive">
-                                            <table class="table table-dark-grey">
-                                                <thead>
-                                                    <tr>
-                                                        <th>
-                                                            Labour Details
-                                                        </th>
-                                                        <th>
-                                                            Type
-                                                        </th>
-                                                        <th class="text-right">
-                                                            Quantity
-                                                        </th>
-                                                        <th class="wid-100 white-space-unset text-right">
-                                                            Labour Value
-                                                        </th>
-                                                        <th class="wid-100"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index, labour_details) in labour_details" id="tr_{{index}}">
-                                                        <td>
-                                                            {{labour_details.code}}|{{labour_details.short_name}}
-
-                                                        <input type="hidden" name="job_order_repair_orders[{{index}}][delete_job_repair_order_id]" value="{{labour_details.job_repair_order_id}}">
-
-                                                        <input type="hidden" name="job_order_repair_orders[{{index}}][repair_order_id]" value="{{labour_details.id}}">
-
-                                                        <input type="hidden" name="job_order_repair_orders[{{index}}][qty]" value="{{labour_details.qty}}">
-
-                                                        <input type="hidden" class="lab_amount" name="job_order_repair_orders[{{index}}][amount]" value="{{labour_details.amount}}">
-
-                                                        <input type="hidden" name="job_order_repair_orders[{{index}}][remarks]" value="{{labour_details.remarks}}">
-
-                                                        <input type="hidden" name="job_order_repair_orders[{{index}}][observation]" value="{{labour_details.observation}}">
-
-                                                        <input type="hidden" name="job_order_repair_orders[{{index}}][action_taken]" value="{{labour_details.action_taken}}">
-
-                                                        </td>
-                                                        <td>
-                                                           {{labour_details.name}}
-                                                        </td>
-                                                        <td class="text-right">
-                                                            {{labour_details.qty}} 
-                                                        </td>
-                                                        <td class="wid-100 white-space-unset text-right">
-                                                            {{labour_details.amount}}
-                                                        </td>
-                                                        <td class="wid-100">
-                                                            <button type="button" class="btn img-btn btn-delete">
-                                                                <img href="javascript:;" data-toggle="modal" data-target="#delete_labour_details" ng-click="$ctrl.removeLabourDetails(index)" class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="3" class="text-right">
-                                                            <b>
-                                                                Total Labour
-                                                            </b>
-                                                        </td>
-                                                        <td class="wid-100 white-space-unset  text-right">
-                                                            <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
-                                                            <b id="tot_amt_lab">
-                                                                 {{labour_amount}}
-                                                            </b>
-                                                        </td>
-                                                        <td class="wid-100">
-                                                            
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div><!-- Table Responsive -->
-                                        <div class="mb-15"></div><!-- Spacing -->
-                                        <div class="table-responsive">
-                                            <table class="table table-dark-grey">
-                                                <thead>
-                                                    <tr>
-                                                        <th>
-                                                            Parts Details
-                                                        </th>
-                                                        <th>
-                                                            Type
-                                                        </th>
-                                                        <th class="text-right">
-                                                            Rate
-                                                        </th>
-                                                        <th class="text-right">
-                                                            Quantity
-                                                        </th>
-                                                        <th class="wid-100 white-space-unset text-right">
-                                                            Amount
-                                                        </th>
-                                                        <th class="wid-100"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index, part_details) in part_details" id="tp_{{index}}">
-
-                                                        <td>
-                                                            {{part_details.name}} | {{part_details.code}}
-                                                        </td>
-                                                        <td>
-                                                            {{part_details.name}}
-                                                        </td>
-                                                        <td class="text-right">
-                                                            {{part_details.amount}}
-                                                        </td>
-                                                        <td class="text-right">
-                                                           {{part_details.qty}}
-
-                                                        <input type="hidden" name="job_order_parts[{{index}}][del_part_id]" value="{{part_details.del_part_id}}">
-
-                                                        <input type="hidden" name="job_order_parts[{{index}}][qty]" value="{{part_details.qty}}">
-                                                        <input type="hidden" name="job_order_parts[{{index}}][part_id]" value="{{part_details.id}}">
-                                                        <input type="hidden" class="parts_rate" name="job_order_parts[{{index}}][rate]" value="{{part_details.rate}}">
-                                                        </td>
-                                                        <td class="wid-100 white-space-unset text-right">
-                                                            {{part_details.rate}}
-                                                        </td>
-                                                        <td class="wid-100">
-                                                           <button type="button" class="btn img-btn btn-delete">
-                                                                <img href="javascript:;" data-toggle="modal" data-target="#delete_parts_details" ng-click="$ctrl.delete_parts_details(index)" class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td colspan="4" class="text-right">
-                                                            <b>
-                                                                Total Parts
-                                                            </b>
-                                                        </td>
-                                                        <td class="wid-100 white-space-unset text-right">
-                                                            <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
-                                                            <b id="rate_part">
-                                                                {{parts_rate}}
-                                                            </b>
-                                                        </td>
-                                                        <td class="wid-100">
-                                                            
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div><!-- Table Responsive -->
-                                        <div class="mb-20"></div><!-- Spacing -->
-                                        <div class="table-transparent-wrap">
+                                        <input type="hidden" name="job_order_id" value="{{job_order_id}}">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Scheduled Maintenance (1st Free Service - BSIV)</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
                                             <div class="table-responsive">
-                                                <table class="table-transparent">
-                                                    <tbody>
+                                                <table class="table table-dark-grey">
+                                                    <thead>
                                                         <tr>
+                                                            <th>
+                                                                Labour Details
+                                                            </th>
+                                                            <th>
+                                                                Type
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Quantity
+                                                            </th>
+                                                            <th class="wid-180 white-space-unset text-right">
+                                                                Labour Value
+                                                            </th>
+                                                            <th class="wid-100"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="ptb-12" ng-repeat="(index, labour_details) in labour_details" id="tr_{{index}}">
+                                                            <td>
+                                                                {{labour_details.code}}|{{labour_details.name}}
+                                                                <input type="hidden" class="lab_amount" id="labour_amount_{{index}}" name="job_order_repair_orders[{{index}}][amount]" value="{{labour_details.amount}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][repair_order_id]" value="{{labour_details.id}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][qty]" value="{{labour_details.qty}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][remarks]" value="{{labour_details.remarks}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][observation]" value="{{labour_details.observation}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][action_taken]" value="{{labour_details.action_taken}}">
+                                                            </td>
+                                                            <td>
+                                                                {{labour_details.name}}
+                                                            </td>
                                                             <td class="text-right">
+                                                                {{labour_details.hours}}
+                                                            </td>
+                                                            <td class="wid-180 white-space-unset text-right">
+                                                                {{labour_details.amount}}
+                                                            </td>
+                                                            <td class="wid-100">
+                                                                <button type="button" class="btn img-btn btn-delete">
+                                                                    <img href="javascript:;" data-toggle="modal" data-target="#delete_labour_details" ng-click="$ctrl.removeLabourDetails(index,labour_details.id)" class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="3" class="text-right">
                                                                 <b>
-                                                                    Total Labour &  Parts
+                                                                    Total Labour
                                                                 </b>
                                                             </td>
-                                                            <td class="wid-100 text-right">
+                                                            <td class="wid-180 white-space-unset  text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
-                                                                <b id="tot_amt">
-                                                                    {{total_amount}}
+                                                                <b id="total_amount_labour">
+                                                                    {{labour_amount}}
                                                                 </b>
                                                             </td>
-                                                            <td class="wid-100"></td>
+                                                            <td class="wid-100">
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
-                                            </div>
-                                        </div><!-- Table Transparent Wrap -->
-                                    </div><!-- Column -->
-                                    <div class="tab-pane-footer">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <button type="submit" ng-click="saveSchedule()" class="btn btn-red">
-                                                            Save & Close
-                                                        </button>
-                                                <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
+                                            </div><!-- Table Responsive -->
+                                            <div class="mb-15"></div><!-- Spacing -->
+                                            <div class="table-responsive">
+                                                <table class="table table-dark-grey">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>
+                                                                Parts Details
+                                                            </th>
+                                                            <th>
+                                                                Type
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Rate
+                                                            </th>
+                                                            <th class="text-right">
+                                                                Quantity
+                                                            </th>
+                                                            <th class="wid-180 white-space-unset text-right">
+                                                                Amount
+                                                            </th>
+                                                            <th class="wid-100"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr class="ptb-12" ng-repeat="(index, part_details) in part_details" id="tp_{{index}}">
+                                                            <td>
+                                                                {{part_details.name}} | {{part_details.code}}
+                                                            </td>
+                                                            <td>
+                                                                {{part_details.name}}
+                                                            </td>
+                                                            <td class="text-right">
+                                                                {{part_details.amount}}
+                                                            </td>
+                                                            <td class="text-right">
+                                                                {{part_details.qty}}
+                                                                <input type="hidden" name="job_order_parts[{{index}}][part_id]" value="{{part_details.id}}">
+                                                                <input type="hidden" name="job_order_parts[{{index}}][qty]" value="{{part_details.qty}}">
+                                                                <input type="hidden" id="part_amount_{{index}}" class="parts_rate" name="job_order_parts[{{index}}][rate]" value="{{part_details.rate}}">
+                                                            </td>
+                                                            <td class="wid-180 white-space-unset text-right">
+                                                                {{part_details.rate}}
+                                                            </td>
+                                                            <td class="wid-100">
+                                                                <button type="button" class="btn img-btn btn-delete">
+                                                                    <img href="javascript:;" data-toggle="modal" data-target="#delete_parts_details" ng-click="$ctrl.delete_parts_details(index,part_details.id)" class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="4" class="text-right">
+                                                                <b>
+                                                                    Total Parts
+                                                                </b>
+                                                            </td>
+                                                            <td class="wid-180 white-space-unset text-right">
+                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                <b id="total_amount_part">
+                                                                    {{parts_rate}}
+                                                                </b>
+                                                            </td>
+                                                            <td class="wid-100">
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div><!-- Table Responsive -->
+                                            <div class="mb-20"></div><!-- Spacing -->
+                                            <div class="table-transparent-wrap">
+                                                <div class="table-responsive">
+                                                    <table class="table-transparent">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td class="text-right">
+                                                                    <b>
+                                                                        Total Labour & Parts
+                                                                    </b>
+                                                                </td>
+                                                                <td class="wid-180 text-right">
+                                                                    <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                    <b id="total_amount">
+                                                                        {{total_amount}}
+                                                                    </b>
+                                                                </td>
+                                                                <td class="wid-100"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div><!-- Table Transparent Wrap -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <input type="hidden" id="labour_removal_ids" name="labour_removal_ids">
+                                                    <input type="hidden" id="parts_removal_ids" name="parts_removal_ids">
+                                                    <button type="submit" ng-click="saveSchedule()" class="btn btn-red">
+                                                        Save & Close
+                                                    </button>
+                                                    <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
                                                         Previous
                                                     </a>
-                                                    <button ng-click="saveDms()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                    <button ng-click="saveSchedule()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Next
                                                     </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div><!-- Tab Footer -->
-                                </form>
+                                        </div><!-- Tab Footer -->
+                                    </form>
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
@@ -225,7 +212,6 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-
 <div class="modal fade alert-modal failure" id="delete_labour_details" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -235,7 +221,8 @@
             <div class="modal-body">
                 <h5>Delete</h5>
                 <p>You can’t retrive the data again, Are you sure you want to delete? </p>
-                <input type="hidden" name="delete_labour_details" id="delete_labour_details" value="">
+                <input type="hidden" name="delete_labour_details" class="delete_labour_details" value="">
+                <input type="hidden" name="labour_detail_id" class="labour_detail_id" value="">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
                 <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
             </div>
@@ -243,7 +230,6 @@
     </div>
 </div>
 <!-- Modal -->
-
 <div class="modal fade alert-modal failure" id="delete_parts_details" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -253,7 +239,8 @@
             <div class="modal-body">
                 <h5>Delete</h5>
                 <p>You can’t retrive the data again, Are you sure you want to delete? </p>
-                <input type="hidden" name="delete_parts_details" id="delete_parts_details" value="">
+                <input type="hidden" name="delete_parts_details" class="delete_parts_details" value="">
+                <input type="hidden" name="part_detail_id" class="part_detail_id" value="">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
                 <button class="btn btn-rose" ng-click="deletePartsConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
             </div>
@@ -261,8 +248,6 @@
     </div>
 </div>
 <!-- Modal -->
-
-
 <!-- Modal -->
 <div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-xs" role="document">

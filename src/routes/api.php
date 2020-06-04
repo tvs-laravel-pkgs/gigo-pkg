@@ -148,6 +148,14 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		Route::post('job-card/returnable-item/save', 'JobCardController@ReturnableItemSave');
 
+		//Job Card View
+		Route::post('jobcard/road-test-observation/get', 'JobCardController@getRoadTestObservation');
+		Route::post('jobcard/expert-diagnosis/get', 'JobCardController@getExpertDiagnosis');
+		Route::post('jobcard/dms-checklist/get', 'JobCardController@getDmsCheckList');
+		Route::post('jobcard/vehicle-inspection/get', 'JobCardController@getVehicleInspection');
+		Route::post('jobcard/part-indent/get', 'JobCardController@getPartsIndent');
+
+		
 		//Material-GatePass Details Save
 		Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');
 

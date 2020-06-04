@@ -636,13 +636,13 @@ Content Wrap -->
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="checklist-form-wrap">
                                                 <ul class="checklist-form-ul">
-                                                    <li ng-repeat="(key, inventory_type_list) in inventory_type_list">
+                                                    <li ng-repeat="(key, vehicle_inventory_item) in job_order.vehicle_inventory_item">
                                                         <div class="checklist-item-wrap pad-big active">
                                                             <div class="checklist-item-value">
-                                                                {{inventory_type_list.name}}
+                                                                {{vehicle_inventory_item.name}}
                                                             </div>
                                                             <div class="checklist-item-value-sm">
-                                                                {{inventory_type_list.remarks}}
+                                                                {{vehicle_inventory_item.pivot.remarks}}
                                                             </div>
                                                         </div>
                                                     </li>
@@ -846,10 +846,10 @@ Content Wrap -->
                                             <h5 class="color-primary mb-10"><b>Vehicle Inspection Report</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="panel-group" id="accordion_1">
-                                                <div class="panel panel-default type-3">
+                                                <div class="panel panel-default type-3" ng-repeat="(index, vehicle_inspection_item_group) in vehicle_inspection_item_groups">
                                                     <div class="panel-heading">
                                                         <a class="panel-title in" data-toggle="collapse" data-parent="#accordion_1" data-target="#collapse_1">
-                                                            Walk Around
+                                                            {{vehicle_inspection_item_group.name}}
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
@@ -857,186 +857,15 @@ Content Wrap -->
                                                         <div class="panel-body">
                                                             <div class="color-list-wrap">
                                                                 <ul class="color-list-ul">
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Water Wiper Level
+                                                                    <li ng-repeat="(key, vehicle_inspection_item) in vehicle_inspection_item_group.vehicle_inspection_items">
+                                                                        <div class="color-list-item green" ng-if="vehicle_inspection_item.status_id == 8020">
+                                                                            {{vehicle_inspection_item.name}}
                                                                         </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Rear Axle Packing -Leaks
+                                                                        <div class="color-list-item yellow" ng-if="vehicle_inspection_item.status_id == 8021">
+                                                                            {{vehicle_inspection_item.name}}
                                                                         </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Radiator Cap & Mounting
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Battery Health Condition
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Tipping Ramp -Dust Cover
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item red">
-                                                                            Ci Booster
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item red">
-                                                                            Fuel Tank Mounting
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Front Tyre Condition
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Silencer Bracket ,Smoke Soot
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Rear Tyre Condition
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                </ul><!-- Color List -->
-                                                            </div><!-- Color List Wrap -->
-                                                        </div><!-- Panel Body -->
-                                                    </div><!-- Panel Collapse -->
-                                                </div><!-- Panel -->
-                                                <div class="panel panel-default type-3">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion_1" data-target="#collapse_2">
-                                                            Under Vehicle Check Points
-                                                            <span class="arrow"></span>
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapse_2" class="panel-collapse collapse">
-                                                        <div class="panel-body">
-                                                            <div class="color-list-wrap">
-                                                                <ul class="color-list-ul">
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Water Wiper Level
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Rear Axle Packing -Leaks
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Radiator Cap & Mounting
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Battery Health Condition
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Tipping Ramp -Dust Cover
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item red">
-                                                                            Ci Booster
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item red">
-                                                                            Fuel Tank Mounting
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Front Tyre Condition
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Silencer Bracket ,Smoke Soot
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Rear Tyre Condition
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                </ul><!-- Color List -->
-                                                            </div><!-- Color List Wrap -->
-                                                        </div><!-- Panel Body -->
-                                                    </div><!-- Panel Collapse -->
-                                                </div><!-- Panel -->
-                                                <div class="panel panel-default type-3">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion_1" data-target="#collapse_3">
-                                                            Cable Check Points
-                                                            <span class="arrow"></span>
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapse_3" class="panel-collapse collapse">
-                                                        <div class="panel-body">
-                                                            <div class="color-list-wrap">
-                                                                <ul class="color-list-ul">
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Water Wiper Level
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Rear Axle Packing -Leaks
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Radiator Cap & Mounting
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Battery Health Condition
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Tipping Ramp -Dust Cover
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item red">
-                                                                            Ci Booster
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item red">
-                                                                            Fuel Tank Mounting
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Front Tyre Condition
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item yellow">
-                                                                            Silencer Bracket ,Smoke Soot
-                                                                        </div><!-- Color List Item -->
-                                                                    </li>
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Rear Tyre Condition
+                                                                        <div class="color-list-item red" ng-if="vehicle_inspection_item.status_id == 8022">
+                                                                            {{vehicle_inspection_item.name}}
                                                                         </div><!-- Color List Item -->
                                                                     </li>
                                                                 </ul><!-- Color List -->
@@ -1046,14 +875,13 @@ Content Wrap -->
                                                 </div><!-- Panel -->
                                             </div><!-- Panel Group -->
                                             <div class="mb-10"></div><!-- Spacing -->
-                                            <a href="!" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                            <a href="#!/inward-vehicle/inspection-detail/form/{{job_order.id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                    <a href=".#!/gigo-pkg/job-card/expert-diagnosis/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a href=".#!/gigo-pkg/job-card/dms-checklist/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -1070,7 +898,7 @@ Content Wrap -->
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.warrenty_policy_attachment[0].name}}" alt="Warranty">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.warrenty_policy_attachment[0].name}}" alt="Warranty">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -1091,7 +919,7 @@ Content Wrap -->
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.e_w_p_attachment[0].name}}" alt="EWP">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.e_w_p_attachment[0].name}}" alt="EWP">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -1112,7 +940,7 @@ Content Wrap -->
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.a_m_c_attachment[0].name}}" alt="Memberships">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.a_m_c_attachment[0].name}}" alt="Memberships">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -1135,7 +963,7 @@ Content Wrap -->
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="table-responsive">
-                                                        <!-- <table class="table table-dark-grey table-md">
+                                                        <table class="table table-dark-grey table-md">
                                                             <tbody>
                                                                 <tr>
                                                                     <td>
@@ -1178,12 +1006,12 @@ Content Wrap -->
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
-                                                        </table> -->
+                                                        </table>
                                                     </div>
                                                 </div><!-- Column -->
                                                 <div class="col-md-6">
                                                     <div class="table-responsive">
-                                                        <!--  <table class="table table-dark-grey table-md">
+                                                        <table class="table table-dark-grey table-md">
                                                             <tbody>
                                                                 <tr>
                                                                     <td>
@@ -1226,7 +1054,7 @@ Content Wrap -->
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
-                                                        </table> -->
+                                                        </table>
                                                     </div>
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
@@ -1269,32 +1097,18 @@ Content Wrap -->
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
+                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in scheduled_maintenance.labour_details" id="tr_{{index}}">
                                                             <td>
-                                                                BR05 | Changing Break Pads
+                                                                {{labour_detail.repair_order.code}} | {{labour_detail.repair_order.name}}
                                                             </td>
                                                             <td>
-                                                                Break System
+                                                                {{labour_detail.repair_order.repair_order_type.name}}
                                                             </td>
                                                             <td class="text-right">
-                                                                2 Hrs
+                                                                {{labour_detail.repair_order.hours}}
                                                             </td>
                                                             <td class="wid-100 white-space-unset text-right">
-                                                                2000
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                EN45A | Engine Oil Change
-                                                            </td>
-                                                            <td>
-                                                                Air Cooler
-                                                            </td>
-                                                            <td class="text-right">
-                                                                1 Hrs
-                                                            </td>
-                                                            <td class="wid-100 white-space-unset text-right">
-                                                                1000
+                                                                {{labour_detail.amount}}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -1306,7 +1120,7 @@ Content Wrap -->
                                                             <td class="wid-100 white-space-unset  text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    3000
+                                                                    {{scheduled_maintenance.labour_amount}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1336,38 +1150,21 @@ Content Wrap -->
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
+                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in scheduled_maintenance.part_details" id="tp_{{index}}">
                                                             <td>
-                                                                BR05 | Changing Break Pads
+                                                                {{part_detail.part.code}} | {{part_detail.part.name}}
                                                             </td>
                                                             <td>
-                                                                Break System
+                                                                {{part_detail.part.name}}
                                                             </td>
                                                             <td class="text-right">
-                                                                1000.00
+                                                                {{part_detail.rate}}
                                                             </td>
                                                             <td class="text-right">
-                                                                2 Nos
+                                                                {{part_detail.qty}}
                                                             </td>
                                                             <td class="wid-100 white-space-unset text-right">
-                                                                2000
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                EN45A | Engine Oil Change
-                                                            </td>
-                                                            <td>
-                                                                Air Cooler
-                                                            </td>
-                                                            <td class="text-right">
-                                                                1000.00
-                                                            </td>
-                                                            <td class="text-right">
-                                                                1 Nos
-                                                            </td>
-                                                            <td class="wid-100 white-space-unset text-right">
-                                                                1000
+                                                                {{part_detail.amount}}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -1379,7 +1176,7 @@ Content Wrap -->
                                                             <td class="wid-100 white-space-unset text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    3000
+                                                                    {{scheduled_maintenance.part_amount}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1400,7 +1197,7 @@ Content Wrap -->
                                                                 <td class="wid-100 text-right">
                                                                     <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                     <b>
-                                                                        6000
+                                                                        {{scheduled_maintenance.total_amount}}
                                                                     </b>
                                                                 </td>
                                                             </tr>
@@ -1409,7 +1206,7 @@ Content Wrap -->
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
