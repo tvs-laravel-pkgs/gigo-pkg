@@ -762,6 +762,7 @@ app.component('jobCardMaterialGatepassForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    $scope.job_card_id = $routeParams.job_card_id;
                     $scope.view_metrial_gate_pass = res.view_metrial_gate_pass;
                     $scope.$apply();
                 })
@@ -991,6 +992,7 @@ app.component('jobCardRoadTestObservationForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
                     $scope.$apply();
                 })
@@ -1036,6 +1038,7 @@ app.component('jobCardExpertDiagnosisForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
                     $scope.$apply();
                 })
@@ -1067,7 +1070,7 @@ app.component('jobCardVehicleInspectionForm', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/jobcard/expert-diagnosis/get',
+                    url: base_url + '/api/jobcard/vehicle-inspection/get',
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id
@@ -1081,7 +1084,10 @@ app.component('jobCardVehicleInspectionForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1112,7 +1118,7 @@ app.component('jobCardDmsChecklistForm', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/jobcard/expert-diagnosis/get',
+                    url: base_url + '/api/jobcard/dms-checklist/get',
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id
@@ -1126,6 +1132,7 @@ app.component('jobCardDmsChecklistForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
                     $scope.$apply();
                 })
