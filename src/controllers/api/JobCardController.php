@@ -722,6 +722,63 @@ class JobCardController extends Controller {
 
 	}
 
+	public function getRoadTestObservation(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			$job_order = JobOrder::company()
+				->with([
+					'status',
+					'roadTestDoneBy',
+					'roadTestPreferedBy',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($job_card->job_order_id);
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+			]);
+
+	}
+
+	public function getExpertDiagnosis(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			$job_order = JobOrder::company()->with([
+				'expertDiagnosisReportBy',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($job_card->job_order_id);
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+			]);
+
+	}
+
 	public function getReturnableItems(Request $request){
 			$job_card = JobCard::find($request->id);
 			if (!$job_card) {

@@ -146,6 +146,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('job-card/returnable-items/get', 'JobCardController@getReturnableItems');
 		Route::post('job-card/returnable-item/save', 'JobCardController@ReturnableItemSave');
 
+		//View Road test Observation Jobcard
+		Route::post('jobcard/road-test-observation/get', 'JobCardController@getRoadTestObservation');
+		Route::post('jobcard/expert-diagnosis/get', 'JobCardController@getExpertDiagnosis');
+
 		//Material-GatePass Details Save
 		Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');
 
