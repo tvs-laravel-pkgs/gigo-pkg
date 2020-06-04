@@ -729,6 +729,124 @@ app.component('jobCardReturnableItemList', {
     }
 });
 
+app.component('jobCardReturnableItemForm', {
+    templateUrl: job_card_returnable_item_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        $scope.returnable_item_id = $routeParams.id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/job-card/returnable-items/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                        returnable_item_id: $routeParams.id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_card = res.job_card;
+                    $scope.returnable_item = res.returnable_item;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+        //Save Form Data 
+        $scope.saveReturnableItem = function() {
+            var form_id = '#returnable_item';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'job_card_returnable_items[0][item_name]': {
+                        required: true,
+                    },
+                    'job_card_returnable_items[0][item_description]': {
+                        required: true,
+                    },
+                    'item_make': {
+                        required: true,
+                    },
+                    'item_model': {
+                        required: true,
+                    },
+                    'item_serial_no': {
+                        required: true,
+                    },
+                    'qty': {
+                        required: true,
+                    },
+                    'job_card_returnable_items[0][qty]': {
+                        required: true,
+                    },
+                },
+                messages: {
+
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/job-card/returnable-item/save',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/gigo-pkg/job-card/returnable-item/' + $scope.job_card.id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+
+        /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
+
+    }
+});
+
 
 //Material Gate Pass
 app.component('jobCardMaterialGatepassForm', {

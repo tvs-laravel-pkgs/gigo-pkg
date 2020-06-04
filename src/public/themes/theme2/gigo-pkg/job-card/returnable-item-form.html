@@ -1,0 +1,126 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href=".#!/gigo-pkg/job-card/returnable-item/{{job_card.id}}" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">
+                        Add Returnable Item
+                    </h1>
+                    <p class="subtitle">
+                        Jobcard / Returnable Items
+                    </p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form-top type-2">
+            <div class="page-tab-form-top-left">
+                <div class="page-tab-form-top-left-info pad-lf-rt">
+                    <span class="page-tab-form-top-left-info-content">
+                        JC No: {{job_card.job_card_number ? job_card.job_card_number : ''}}
+                        | {{job_card.job_order.vehicle.registration_number ? job_card.job_order.vehicle.registration_number : ''}}
+                        | {{job_card.job_order.vehicle.model.name ? job_card.job_order.vehicle.model.name : ''}}
+                        | {{job_card.date}}, {{job_card.time}}
+                    </span>
+                </div>
+            </div><!-- Page Tab Form Top Left -->
+            <div class="page-tab-form-top-right">
+                <div class="page-tab-form-top-right-info">
+                    Status : {{job_card.status.name ? job_card.status.name : ''}}
+                </div>
+            </div><!-- Page Tab Form Top Right -->
+        </div><!-- Page Tab Form Top -->
+        <div class="container">
+            <form id="returnable_item" enctype="multipart/form-data">
+                <input type="hidden" name="job_card_id" value="{{job_card.id}}">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60 mt-30">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Item Name <sup class="mandatory">*</sup></label>
+                                                <input type="text" class="form-control" placeholder="Enter Name" autocomplete="off" name="job_card_returnable_items[0][item_name]" ng-model="returnable_item.item_name" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Item Description <sup class="mandatory">*</sup></label>
+                                                <input type="text" class="form-control" placeholder="Enter Description" name="job_card_returnable_items[0][item_description]" ng-model="returnable_item.item_description" autocomplete="off" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Make</label>
+                                                <input type="text" class="form-control" placeholder="Enter Make" autocomplete="off" name="job_card_returnable_items[0][item_make]" ng-model="returnable_item.item_make" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                </div><!-- Column -->
+                                <div class="col-md-5">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Model</label>
+                                                <input type="text" class="form-control" placeholder="Enter Model" autocomplete="off" name="job_card_returnable_items[0][item_model]" ng-model="returnable_item.item_model" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Item Serial No</label>
+                                                <input type="text" class="form-control" placeholder="Enter Serial No" autocomplete="off" name="job_card_returnable_items[0][item_serial_no]" ng-model="returnable_item.item_serial_no" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                </div><!-- Column -->
+                                <div class="col-md-7">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Quantity <sup class="mandatory">*</sup></label>
+                                                <input type="text" class="form-control" placeholder="Enter Quantity" autocomplete="off" name="job_card_returnable_items[0][qty]" ng-model="returnable_item.qty" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-8">
+                                            <div class="form-group">
+                                                <label>Remarks</label>
+                                                <input type="text" class="form-control" placeholder="Enter Remarks" autocomplete="off" name="job_card_returnable_items[0][remarks]" ng-model="returnable_item.remarks" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                </div><!-- Column -->
+                                <div class="col-md-12">
+                                    <ul class="gatein-img-list">
+                                        <li class="gatein-img-list-item item-img">
+                                            <input type="file" multiple class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" name="job_card_returnable_items[0][attachments][]" />
+                                        </li>
+                                    </ul>
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Page Form -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <div class="page-form-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href=".#!/gigo-pkg/job-card/returnable-item/{{job_card.id}}" class="btn btn-bordered btn-grey btn-min-wdth">Cancel</a>
+                            <button type="submit" class="btn btn-secondary-dark btn-min-wdth submit" ng-click="saveReturnableItem()">Save</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Page Form Footer -->
+            </form>
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>

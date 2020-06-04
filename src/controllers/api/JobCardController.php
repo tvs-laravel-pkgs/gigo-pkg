@@ -742,13 +742,48 @@ class JobCardController extends Controller {
 				'success' => true,
 				'job_card' => $job_card,
 				'returnable_items'=>$returnable_items,
-				'attachement_path' => url('app/public/gigo/job_card/returnable_items/'),
+				'attachement_path' => url('storage/app/public/gigo/job_card/returnable_items/'),
 			]);
 
 	}
+	public function getReturnableItemFormdata(Request $request){
+				$job_card = JobCard::with([
+				'jobOrder.vehicle.model',
+				'status',
+			])
+				->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+				])->find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+			if($request->returnable_item_id){
+				$returnable_item=JobCardReturnableItem::with([
+				'attachment'
+				])
+				->find($request->returnable_item_id);
+				//->first();
+				$action = 'Edit';
+			}else{
+				$returnable_item= new JobCardReturnableItem;
+				$action = 'Add';
+			}
+			return response()->json([
+				'success' => true,
+				'job_card' => $job_card,
+				'returnable_item'=>$returnable_item,
+				'attachement_path' => url('storage/app/public/gigo/job_card/returnable_items/'),
+			]);
+	}
 
 	public function ReturnableItemSave(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_card_id' => [
@@ -826,6 +861,8 @@ class JobCardController extends Controller {
 						$returnable_item->created_by_id = Auth::user()->id;
 					}
 					$returnable_item->save();
+
+					//dd($job_card_returnable_item['attachments']);
 					//Attachment Save
 					$attachment_path = storage_path('app/public/gigo/job_card/returnable_items/');
 					Storage::makeDirectory($attachment_path, 0777);
