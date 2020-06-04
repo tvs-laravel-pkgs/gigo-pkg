@@ -86,7 +86,7 @@ class VehicleInventoryItem extends Model {
 			'field_type_id',
 		])
 			->where('company_id', Auth::user()->company_id)
-			->orderBy('display_order');
+			->orderBy('id');
 		if (count($params) > 0) {
 			foreach ($params as $key => $value) {
 				$list->whereIn($key, $value);
@@ -101,14 +101,16 @@ class VehicleInventoryItem extends Model {
 				'errors' => ['Job Order Not Found!'],
 			]);
 		}
-		$vehicle_inventory_items = $job_order->vehicleInventoryItem()->orderBy('display_order')->get()->toArray();
+		$vehicle_inventory_items = $job_order->vehicleInventoryItem()->orderBy('id')->get()->toArray();
 
 		if (count($vehicle_inventory_items) > 0) {
 			foreach ($vehicle_inventory_items as $value) {
-				$list[$value['id']]->checked = true;
-				$list[$value['id']]->is_available = 1;
-				if ($value['pivot']['remarks']) {
-					$list[$value['id']]->remarks = $value['pivot']['remarks'];
+				if (isset($list[$value['id']])) {
+					$list[$value['id']]->checked = true;
+					$list[$value['id']]->is_available = 1;
+					if ($value['pivot']['remarks']) {
+						$list[$value['id']]->remarks = $value['pivot']['remarks'];
+					}
 				}
 			}
 		}
