@@ -3009,6 +3009,9 @@ app.component('inwardVehicleView', {
                         return;
                     }
                     $scope.job_order = res.job_order;
+                    console.log($scope.job_order);
+
+
                     $scope.extras = res.extras;
                     $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.$apply();

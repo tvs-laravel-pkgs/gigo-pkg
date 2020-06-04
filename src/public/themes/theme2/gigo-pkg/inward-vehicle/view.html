@@ -1097,32 +1097,18 @@ Content Wrap -->
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
+                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in scheduled_maintenance.labour_details" id="tr_{{index}}">
                                                             <td>
-                                                                BR05 | Changing Break Pads
+                                                                {{labour_detail.repair_order.code}} | {{labour_detail.repair_order.name}}
                                                             </td>
                                                             <td>
-                                                                Break System
+                                                                {{labour_detail.repair_order.repair_order_type.name}}
                                                             </td>
                                                             <td class="text-right">
-                                                                2 Hrs
+                                                                {{labour_detail.repair_order.hours}}
                                                             </td>
                                                             <td class="wid-100 white-space-unset text-right">
-                                                                2000
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                EN45A | Engine Oil Change
-                                                            </td>
-                                                            <td>
-                                                                Air Cooler
-                                                            </td>
-                                                            <td class="text-right">
-                                                                1 Hrs
-                                                            </td>
-                                                            <td class="wid-100 white-space-unset text-right">
-                                                                1000
+                                                                {{labour_detail.amount}}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -1134,7 +1120,7 @@ Content Wrap -->
                                                             <td class="wid-100 white-space-unset  text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    3000
+                                                                    {{scheduled_maintenance.labour_amount}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1164,38 +1150,21 @@ Content Wrap -->
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
+                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in scheduled_maintenance.part_details" id="tp_{{index}}">
                                                             <td>
-                                                                BR05 | Changing Break Pads
+                                                                {{part_detail.part.code}} | {{part_detail.part.name}}
                                                             </td>
                                                             <td>
-                                                                Break System
+                                                                {{part_detail.part.name}}
                                                             </td>
                                                             <td class="text-right">
-                                                                1000.00
+                                                                {{part_detail.rate}}
                                                             </td>
                                                             <td class="text-right">
-                                                                2 Nos
+                                                                {{part_detail.qty}}
                                                             </td>
                                                             <td class="wid-100 white-space-unset text-right">
-                                                                2000
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                EN45A | Engine Oil Change
-                                                            </td>
-                                                            <td>
-                                                                Air Cooler
-                                                            </td>
-                                                            <td class="text-right">
-                                                                1000.00
-                                                            </td>
-                                                            <td class="text-right">
-                                                                1 Nos
-                                                            </td>
-                                                            <td class="wid-100 white-space-unset text-right">
-                                                                1000
+                                                                {{part_detail.amount}}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -1207,7 +1176,7 @@ Content Wrap -->
                                                             <td class="wid-100 white-space-unset text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    3000
+                                                                    {{scheduled_maintenance.part_amount}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1228,7 +1197,7 @@ Content Wrap -->
                                                                 <td class="wid-100 text-right">
                                                                     <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                     <b>
-                                                                        6000
+                                                                        {{scheduled_maintenance.total_amount}}
                                                                     </b>
                                                                 </td>
                                                             </tr>
@@ -1237,7 +1206,7 @@ Content Wrap -->
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
