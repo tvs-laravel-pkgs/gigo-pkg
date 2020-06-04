@@ -5,6 +5,7 @@ use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\JobCard;
 use Abs\GigoPkg\JobOrder;
 use Abs\GigoPkg\JobOrderPart;
+use Abs\GigoPkg\JobOrderIssuedPart;
 use Abs\PartPkg\Part;
 use App\Config;
 use App\Customer;
