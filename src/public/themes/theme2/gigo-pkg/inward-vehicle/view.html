@@ -846,10 +846,10 @@ Content Wrap -->
                                             <h5 class="color-primary mb-10"><b>Vehicle Inspection Report</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="panel-group" id="accordion_1">
-                                                <div class="panel panel-default type-3" ng-repeat="(key, value) in dataset">
+                                                <div class="panel panel-default type-3" ng-repeat="(index, vehicle_inspection_item_group) in vehicle_inspection_item_groups">
                                                     <div class="panel-heading">
                                                         <a class="panel-title in" data-toggle="collapse" data-parent="#accordion_1" data-target="#collapse_1">
-                                                            {{}}
+                                                            {{vehicle_inspection_item_group.name}}
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
@@ -857,9 +857,15 @@ Content Wrap -->
                                                         <div class="panel-body">
                                                             <div class="color-list-wrap">
                                                                 <ul class="color-list-ul">
-                                                                    <li>
-                                                                        <div class="color-list-item green">
-                                                                            Water Wiper Level
+                                                                    <li ng-repeat="(key, vehicle_inspection_item) in vehicle_inspection_item_group.vehicle_inspection_items">
+                                                                        <div class="color-list-item green" ng-if="vehicle_inspection_item.status_id == 8020">
+                                                                            {{vehicle_inspection_item.name}}
+                                                                        </div><!-- Color List Item -->
+                                                                        <div class="color-list-item yellow" ng-if="vehicle_inspection_item.status_id == 8021">
+                                                                            {{vehicle_inspection_item.name}}
+                                                                        </div><!-- Color List Item -->
+                                                                        <div class="color-list-item red" ng-if="vehicle_inspection_item.status_id == 8022">
+                                                                            {{vehicle_inspection_item.name}}
                                                                         </div><!-- Color List Item -->
                                                                     </li>
                                                                 </ul><!-- Color List -->
@@ -869,14 +875,13 @@ Content Wrap -->
                                                 </div><!-- Panel -->
                                             </div><!-- Panel Group -->
                                             <div class="mb-10"></div><!-- Spacing -->
-                                            <a href=".#!/inward-vehicle/inspection-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                            <a href="#!/inward-vehicle/inspection-detail/form/{{job_order.id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red">Initiate Job card</a>
+                                                    <a href=".#!/gigo-pkg/job-card/expert-diagnosis/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a href=".#!/gigo-pkg/job-card/dms-checklist/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->

@@ -220,14 +220,42 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			// $params['field_type_id'] = [11, 12];
-			// $inventory_type_list = VehicleInventoryItem::getInventoryList($job_order->id, $params);
+			$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
+
+			$vehicle_inspection_item_groups = array();
+			foreach ($vehicle_inspection_item_group as $key => $value) {
+				$vehicle_inspection_items = array();
+				$vehicle_inspection_items['id'] = $value->id;
+				$vehicle_inspection_items['name'] = $value->name;
+
+				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
+
+				$vehicle_inspections = $job_order->vehicleInspectionItems()->orderBy('vehicle_inspection_item_id')->get()->toArray();
+
+				if (count($vehicle_inspections) > 0) {
+					foreach ($vehicle_inspections as $value) {
+						if (isset($inspection_items[$value['id']])) {
+							$inspection_items[$value['id']]->status_id = $value['pivot']['status_id'];
+						}
+					}
+				}
+				$item_group['vehicle_inspection_items'] = $inspection_items;
+
+				$vehicle_inspection_item_groups[] = $item_group;
+			}
+
+			$params['config_type_id'] = 32;
+			$params['add_default'] = false;
+			$extras = [
+				'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
+			];
 
 			//Job card details need to get future
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
-				// 'inventory_type_list' => $inventory_type_list,
+				'extras' => $extras,
+				'vehicle_inspection_item_groups' => $vehicle_inspection_item_groups,
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
 

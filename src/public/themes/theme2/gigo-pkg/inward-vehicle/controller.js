@@ -2952,7 +2952,8 @@ app.component('inwardVehicleView', {
                         return;
                     }
                     $scope.job_order = res.job_order;
-                    // $scope.inventory_type_list = res.inventory_type_list;
+                    $scope.extras = res.extras;
+                    $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
