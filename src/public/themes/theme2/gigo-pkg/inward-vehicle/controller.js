@@ -4,12 +4,7 @@ app.component('inwardVehicleCardList', {
         $rootScope.loading = true;
         $('#search').focus();
         var self = this;
-
-        if (!HelperService.isLoggedIn()) {
-            $location.path('/login');
-            return;
-        }
-
+        HelperService.isLoggedIn()
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
 
@@ -23,7 +18,6 @@ app.component('inwardVehicleCardList', {
             $('#search').val('');
         }
 
-        //HelperService.isLoggedIn()
         self.user = $scope.user = HelperService.getLoggedUser();
         self.search_key = '';
         self.gate_in_date = '';
@@ -221,11 +215,7 @@ app.component('inwardVehicleTableList', {
         $scope.loading = true;
         $('#search_inward_vehicle').focus();
         var self = this;
-        if (!HelperService.isLoggedIn()) {
-            $location.path('/login');
-            return;
-        }
-
+        HelperService.isLoggedIn()
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
 
@@ -1592,81 +1582,97 @@ app.component('inwardVehicleVehicleDetail', {
         $scope.fetchData();
 
         //Save Form Data 
-        var form_id = '#form';
-        var v = jQuery(form_id).validate({
-            ignore: '',
-            rules: {
-                'is_registered': {
-                    required: true,
+        $scope.onSubmit = function(type){
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'is_registered': {
+                        required: true,
+                    },
+                    'registration_number': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 10,
+                    },
+                    'model_id': {
+                        required: true,
+                    },
+                    'vin_number': {
+                        required: true,
+                        minlength: 17,
+                        maxlength: 32,
+                    },
+                    'engine_number': {
+                        required: true,
+                        minlength: 7,
+                        maxlength: 64,
+                    },
+                    'chassis_number': {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 64,
+                    },
                 },
-                'registration_number': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 10,
+                messages: {
+                    'vin_number': {
+                        minlength: 'Minimum 17 Numbers',
+                        maxlength: 'Maximum 32 Numbers',
+                    },
+                    'engine_number': {
+                        minlength: 'Minimum 7 Numbers',
+                        maxlength: 'Maximum 64 Numbers',
+                    },
+                    'chassis_number': {
+                        minlength: 'Minimum 10 Numbers',
+                        maxlength: 'Maximum 64 Numbers',
+                    }
                 },
-                'model_id': {
-                    required: true,
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                'vin_number': {
-                    required: true,
-                    minlength: 17,
-                    maxlength: 32,
-                },
-                'engine_number': {
-                    required: true,
-                    minlength: 7,
-                    maxlength: 64,
-                },
-                'chassis_number': {
-                    required: true,
-                    minlength: 10,
-                    maxlength: 64,
-                },
-            },
-            messages: {
-                'vin_number': {
-                    minlength: 'Minimum 17 Numbers',
-                    maxlength: 'Maximum 32 Numbers',
-                },
-                'engine_number': {
-                    minlength: 'Minimum 7 Numbers',
-                    maxlength: 'Maximum 64 Numbers',
-                },
-                'chassis_number': {
-                    minlength: 'Minimum 10 Numbers',
-                    maxlength: 'Maximum 64 Numbers',
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    if(type == 1){
+                        $('.save').button('loading');
+                    }else{
+                        $('.next').button('loading');
+                    }
+                    $.ajax({
+                            url: base_url + '/api/vehicle/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            if(type == 1){
+                                $('.submit').button('reset');
+                                custom_noty('success', res.message);
+                                $location.path('/inward-vehicle/table-list');
+                            }else{
+                                $('.next').button('reset');
+                                $location.path('/inward-vehicle/customer-detail/' + $scope.job_order.id);
+                            }
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            if(type == 1){
+                                $('.save').button('reset');
+                            }else{
+                                $('.next').button('reset');
+                            }
+                            custom_noty('error', 'Something went wrong at server');
+                        });
                 }
-            },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
-            },
-            submitHandler: function(form) {
-                let formData = new FormData($(form_id)[0]);
-                $('.submit').button('loading');
-                $.ajax({
-                        url: base_url + '/api/vehicle/save',
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
-                            $('.submit').button('reset');
-                            showErrorNoty(res);
-                            return;
-                        }
-                        $('.submit').button('reset');
-                        custom_noty('success', res.message);
-                        $location.path('/inward-vehicle/customer-detail/' + $scope.job_order.id);
-                        $scope.$apply();
-                    })
-                    .fail(function(xhr) {
-                        $('.submit').button('reset');
-                        custom_noty('error', 'Something went wrong at server');
-                    });
-            }
-        });
+            });
+        }
+       
 
         $scope.showVehicleForm = function() {
             $scope.show_vehicle_detail = false;
@@ -1762,7 +1768,7 @@ app.component('inwardVehicleCustomerDetail', {
         $scope.fetchData();
 
         //Save Form Data 
-        $scope.saveCustomer = function() {
+        $scope.saveCustomer = function(type) {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -1843,7 +1849,11 @@ app.component('inwardVehicleCustomerDetail', {
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
                     $rootScope.loading = true;
-                    $('.submit').button('loading');
+                    if(type == 1){
+                        $('.save').button('loading');
+                    }else{
+                        $('.next').button('loading');
+                    }
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/save-customer-detail',
                             method: "POST",
@@ -1854,18 +1864,33 @@ app.component('inwardVehicleCustomerDetail', {
                         .done(function(res) {
                             if (!res.success) {
                                 $rootScope.loading = false;
-                                $('.submit').button('reset');
+                                if(type == 1){
+                                    $('.save').button('reset');
+                                }else{
+                                    $('.next').button('reset');
+                                }
                                 showErrorNoty(res);
                                 return;
                             }
-                            $('.submit').button('reset');
-                            custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/order-detail/form/' + $routeParams.job_order_id);
-                            $scope.$apply();
+                            if(type == 1){
+                                $('.save').button('reset');
+                                custom_noty('success', res.message);
+                                $location.path('/inward-vehicle/table-list');
+                                $scope.$apply();
+                            }else{
+                                $('.next').button('reset');
+                                custom_noty('success', res.message);
+                                $location.path('/inward-vehicle/order-detail/form/' + $routeParams.job_order_id);
+                                $scope.$apply();
+                            }
                         })
                         .fail(function(xhr) {
                             $rootScope.loading = false;
-                            $('.submit').button('reset');
+                            if(type == 1){
+                                $('.save').button('reset');
+                            }else{
+                                $('.next').button('reset');
+                            }
                             custom_noty('error', 'Something went wrong at server');
                         });
                 }
