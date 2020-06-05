@@ -109,9 +109,9 @@ Content Wrap -->
                                                     Add New Owner
                                                 </button>
                                             </div> <!-- customer-detail -->
-                                            <input type="hidden" name="id" value="{{job_order.vehicle.current_owner.id}}">
-                                            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                                            <div class="row">
+                                            <div class="row" ng-show="show_customer_form">
+                                                <input type="hidden" name="id" value="  {{job_order.vehicle.current_owner.id}}">
+                                                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>
@@ -196,20 +196,20 @@ Content Wrap -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>
-                                                            City (Change this to auto complete)
+                                                            City
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="job_order.vehicle.current_owner.customer.address.city" placeholder="Select City" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
-                                                            <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchCity" type="search" placeholder="Search for a city.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                            </md-select-header>
-                                                            <md-optgroup>
-                                                                <md-option ng-value="city" ng-repeat="city in extras.city_list | filter:searchCity">
-                                                                    {{city.name}}
-                                                                </md-option>
-                                                            </md-optgroup>
-                                                        </md-select>
-                                                        <input type="hidden" name="city_id" value="{{job_order.vehicle.current_owner.customer.address.city.id}}">
+                                                        <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="job_order.vehicle.current_owner.customer.address.city"  md-selected-item-change="selectedCustomer(job_order.vehicle.current_owner.customer.address.city.id)" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus>
+                                                            <md-item-template>
+                                                                <span>
+                                                                    {{option.name}}
+                                                                </span>
+                                                            </md-item-template>
+                                                            <md-not-found>
+                                                                No City matching "{{$ctrl.customerSearchText}}" were found.
+                                                            </md-not-found>
+                                                        </md-autocomplete>
+                                                        <input type="hidden" id="city_id" name="city_id" value="{{job_order.vehicle.current_owner.customer.address.city.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">

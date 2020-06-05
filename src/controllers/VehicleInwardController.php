@@ -1,6 +1,7 @@
 <?php
 
 namespace Abs\GigoPkg;
+use App\City;
 use App\Config;
 use App\Customer;
 use App\Http\Controllers\Controller;
@@ -136,6 +137,20 @@ class VehicleInwardController extends Controller {
 
 	public function getVehicleModelSearchList(Request $request) {
 		return VehicleModel::searchVehicleModel($request);
+	}
+
+	public function getCitySearchList(Request $r) {
+		$key = $r->key;
+		$list = City::select(
+			'id',
+			'name'
+		)
+			->where(function ($q) use ($key) {
+				$q->where('name', 'like', $key . '%')
+				;
+			})
+			->get();
+		return response()->json($list);
 	}
 
 }
