@@ -1084,6 +1084,15 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Job Card Returnable Items',
 	    }).
 
+	    when('/gigo-pkg/job-card/returnable-item/add/:job_card_id', {
+	        template: '<job-card-returnable-item-form></job-card-returnable-item-form>',
+	        title: 'Add Returnable Item',
+	    }).
+	    when('/gigo-pkg/job-card/returnable-item/edit/:job_card_id/:id', {
+	        template: '<job-card-returnable-item-form></job-card-returnable-item-form>',
+	        title: 'Edit Returnable Item',
+	    }).
+
 	    when('/gigo-pkg/job-card/material-gatepass/:job_card_id', {
 	        template: '<job-card-material-gatepass-form></job-card-material-gatepass-form>',
 	        title: 'Job Card Material Gate Pass',
@@ -1129,6 +1138,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_bay_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/bay-form.html')}}';
 
     var job_card_returnable_item_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/returnable-item-detail.html')}}';
+     var job_card_returnable_item_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/returnable-item-form.html')}}';
 
     var job_card_material_gatepass_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/material-gatepass.html')}}';
     var job_card_material_outward_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/material-outward.html')}}';
