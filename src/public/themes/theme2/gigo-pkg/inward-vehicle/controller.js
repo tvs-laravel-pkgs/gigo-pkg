@@ -719,7 +719,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/dms-checklist/form/' + $scope.job_order.id);
+                            $location.path('/inward-vehicle/scheduled-maintenance/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
