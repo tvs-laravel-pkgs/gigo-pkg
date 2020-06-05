@@ -1097,7 +1097,7 @@ Content Wrap -->
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in scheduled_maintenance.labour_details" id="tr_{{index}}">
+                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in schedule_maintenance.labour_details" id="tr_{{index}}">
                                                             <td>
                                                                 {{labour_detail.repair_order.code}} | {{labour_detail.repair_order.name}}
                                                             </td>
@@ -1150,7 +1150,7 @@ Content Wrap -->
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in scheduled_maintenance.part_details" id="tp_{{index}}">
+                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in schedule_maintenance.part_details" id="tp_{{index}}">
                                                             <td>
                                                                 {{part_detail.part.code}} | {{part_detail.part.name}}
                                                             </td>
@@ -1176,7 +1176,7 @@ Content Wrap -->
                                                             <td class="wid-100 white-space-unset text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{scheduled_maintenance.part_amount}}
+                                                                    {{schedule_maintenance.part_amount}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1197,7 +1197,7 @@ Content Wrap -->
                                                                 <td class="wid-100 text-right">
                                                                     <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                     <b>
-                                                                        {{scheduled_maintenance.total_amount}}
+                                                                        {{schedule_maintenance.total_amount}}
                                                                     </b>
                                                                 </td>
                                                             </tr>
