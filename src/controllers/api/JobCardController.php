@@ -17,6 +17,7 @@ use Abs\GigoPkg\RepairOrderMechanic;
 use Abs\StatusPkg\Status;
 use Abs\PartPkg\Part;
 use Abs\GigoPkg\JobOrderIssuedPart;
+use App\JobOrderPart;
 use App\Attachment;
 use App\Config;
 use App\Employee;
@@ -842,6 +843,134 @@ class JobCardController extends Controller {
 				'part_list' => $part_list,
 				'mechanic_list' => $mechanic_list,
 				'issued_mode' => $issued_mode,
+			]);
+
+	}
+
+	public function getScheduleMaintenance(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			$job_order = JobOrder::find($job_card->job_order_id);
+
+			$schedule_maintenance_part_amount = 0;
+			$schedule_maintenance_labour_amount = 0;
+			$schedule_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 1)->get();
+			if (!empty($schedule_maintenance['labour_details'])) {
+				foreach ($schedule_maintenance['labour_details'] as $key => $value) {
+					$schedule_maintenance_labour_amount += $value->amount;
+					$value->repair_order = $value->repairOrder;
+					$value->repair_order_type = $value->repairOrder->repairOrderType;
+				}
+			}
+			$schedule_maintenance['labour_amount'] = $schedule_maintenance_labour_amount;
+
+			$schedule_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 1)->get();
+			if (!empty($schedule_maintenance['part_details'])) {
+				foreach ($schedule_maintenance['part_details'] as $key => $value) {
+					$schedule_maintenance_part_amount += $value->amount;
+					$value->part = $value->part;
+				}
+			}
+			$schedule_maintenance['part_amount'] = $schedule_maintenance_part_amount;
+
+			$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
+			// dd($schedule_maintenance['labour_details']);
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+				'schedule_maintenance' => $schedule_maintenance,
+			]);
+
+	}
+
+	public function getPayableLabourPart(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			$job_order = JobOrder::company()->with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'gateLog',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($job_card->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation error',
+					'errors' => ['Job Order Not found!'],
+				]);
+			}
+
+			$part_details = JobOrderPart::with([
+				'part',
+				'part.uom',
+				'part.taxCode',
+				'splitOrderType',
+				'status',
+			])
+				->where('job_order_id', $job_order->id)
+				->get();
+
+			$labour_details = JobOrderRepairOrder::with([
+				'repairOrder',
+				'repairOrder.repairOrderType',
+				'repairOrder.uom',
+				'repairOrder.taxCode',
+				'repairOrder.skillLevel',
+				'splitOrderType',
+				'status',
+			])
+				->where('job_order_id', $job_order->id)
+				->get();
+			$parts_total_amount = 0;
+			$labour_total_amount = 0;
+			$total_amount = 0;
+
+			if ($job_order->jobOrderRepairOrders) {
+				foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
+					$labour_total_amount += $labour->amount;
+
+				}
+			}
+
+			if ($job_order->jobOrderParts) {
+				foreach ($job_order->jobOrderParts as $key => $part) {
+					$parts_total_amount += $part->amount;
+
+				}
+			}
+			$total_amount = $parts_total_amount + $labour_total_amount;
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+				'part_details' => $part_details,
+				'labour_details' => $labour_details,
+				'total_amount' => number_format($total_amount, 2),
+				'parts_total_amount' => number_format($parts_total_amount, 2),
+				'labour_total_amount' => number_format($labour_total_amount, 2),
 			]);
 
 	}
