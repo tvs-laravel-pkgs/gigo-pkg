@@ -1914,6 +1914,25 @@ app.component('inwardVehicleCustomerDetail', {
 
             };
         }
+        //GET CITY LIST
+        self.searchCity = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCitySearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
 
         $scope.countryChanged = function() {
             $rootScope.loading = true;
