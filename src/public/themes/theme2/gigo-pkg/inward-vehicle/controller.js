@@ -2918,6 +2918,9 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                         return;
                     }
                     $scope.job_order = res.job_order;
+                    if ($scope.job_order.is_customer_agreed == 1) {
+                        $location.path('/inward-vehicle/customer-confirmation/' + $scope.job_order.id);
+                    }
                     $scope.estimation_type = res.estimation_type;
                     $scope.$apply();
                 })

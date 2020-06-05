@@ -2696,7 +2696,23 @@ class VehicleInwardController extends Controller {
 	// ESTIMATION DENIED GET FORM DATA
 	public function getEstimationDeniedFormData(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->id);
+
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'jobOrderRepairOrders',
+				'jobOrderParts',
+				'type',
+				'quoteType',
+				'serviceType',
+				'status',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
 
 			if (!$job_order) {
 				return response()->json([
