@@ -79,7 +79,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/estimation-denied/get-form-data', 'VehicleInwardController@getEstimationDeniedFormData');
 		Route::post('vehicle-inward/estimation-denied/save', 'VehicleInwardController@saveEstimateDenied');
 
-		//CUSTOMER CONFIRMATION SAVE
+		//CUSTOMER CONFIRMATION GET FORM DATA SAVE
+		Route::post('vehicle-inward/customer-confirmation/get-form-data', 'VehicleInwardController@getCustomerConfirmationFormData');
 		Route::post('vehicle-inward/customer-confirmation/save', 'VehicleInwardController@saveCustomerConfirmation');
 
 		//INITIATE JOB SAVE
@@ -155,7 +156,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('jobcard/vehicle-inspection/get', 'JobCardController@getVehicleInspection');
 		Route::post('jobcard/part-indent/get', 'JobCardController@getPartsIndent');
 
-		
 		//Material-GatePass Details Save
 		Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');
 

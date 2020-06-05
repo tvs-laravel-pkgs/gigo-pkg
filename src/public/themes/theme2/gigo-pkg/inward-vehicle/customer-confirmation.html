@@ -38,33 +38,47 @@
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>Customer Estimation Approval</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
-                                            <video ng-show="$ctrl.video" title="Capture Image" id="video" width="640" height="360" ng-click="snapshot()"></video>
-                                            <canvas ng-show="$ctrl.screenShot" id="canvas" width="640" height="360"></canvas>
-                                            <div class="photo-sign-wrap" ng-click="cameraOn()">
-                                                <div class="photo-sign-item">
-                                                    <img class="img-responsive img-profile" src="./public/theme/img/profile.png" alt="Image" />
-                                                    <input type="hidden" name="customer_photo" value="" id="customer_photo">
-                                                    <div class="photo-sign-caption">Customer Photo</div>
+                                            <div class="photo-sign-wrap" style="width: 100%;height: 500px">
+                                                <div class="photo-sign-caption">Customer Photo</div>
+                                                <br>
+                                                <div class="col-md-6">
+                                                    <video ng-show="$ctrl.video" title="Capture Image" id="video" width="550" height="360" ng-click="snapshot()"></video>
+                                                    <span id="eror_customer_photo"></span>
                                                 </div>
+                                                <div class="col-md-6">
+                                                    <img src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_approval_attachment[0].name}}" id="customer_pic" height="360" width="550">
+                                                    <canvas ng-show="$ctrl.screenShot" id="canvas" width="550" height="360"></canvas>
+                                                </div>
+                                                <!-- <div class="col-md-12">
+                                                    <video ng-show="$ctrl.video" title="Capture Image" id="video" width="640" height="360" ng-click="snapshot()"></video>
+                                                </div> -->
+                                                <!-- <div class="photo-sign-item"> -->
+                                                <!-- <img class="img-responsive img-profile" src="./public/theme/img/profile.png" alt="Image" />  -->
+                                                <!-- <div class="photo-sign-caption">Customer Photo</div> -->
+                                                <!-- </div> -->
+                                                <input type="hidden" name="customer_photo" value="" id="customer_photo">
                                             </div><!-- Photo Sign Wrap -->
-                                            <span id="eror_customer_photo"></span>
                                         </div><!-- Column -->
-                                    </div><!-- Row -->
-                                    <div class="row">
                                         <div class="col-md-12">
-                                            <div class="photo-sign-wrap">
+                                            <div class="photo-sign-wrap" style="width: 100%;height: 300px">
                                                 <div id="signArea">
                                                     <div class="photo-sign-caption">Customer E Sign</div>
-                                                    <div class="sig sigWrapper" style="height:auto;">
-                                                        <div class="typed"></div>
-                                                        <!-- <canvas class="sign-pad" id="sign-pad" width="300" height="100"></canvas> -->
-                                                        <canvas id="signature" width="450" height="150" style="border: 1px solid #ddd;"></canvas>
-                                                        <input type="hidden" name="customer_e_sign" value="" id="customer_sign">
+                                                    <br>
+                                                    <div class="col-md-6">
+                                                        <div class="sig sigWrapper" style="height:auto;">
+                                                            <div class="typed"></div>
+                                                            <!-- <canvas class="sign-pad" id="sign-pad" width="300" height="100"></canvas> -->
+                                                            <canvas id="signature" width="450" height="150" style="border: 1px solid #ddd;"></canvas>
+                                                            <input type="hidden" name="customer_e_sign" value="" id="customer_sign">
+                                                        </div>
+                                                        <button id="clear-signature">Clear</button>
+                                                        <span id="eror_customer_sign"></span>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <img src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_e_sign[0].name}}" id="customer_pic" height="150" width="450">
                                                     </div>
                                                 </div>
-                                                <button id="clear-signature">Clear</button>
                                             </div>
-                                            <span id="eror_customer_sign"></span>
                                             <!-- <button ng-click="snapshot_sign">Take Snapshot</button> -->
                                             <!-- <div class="photo-sign-wrap">
                                                 <canvas id="signature" width="450" height="150" style="border: 1px solid #ddd;"></canvas>
