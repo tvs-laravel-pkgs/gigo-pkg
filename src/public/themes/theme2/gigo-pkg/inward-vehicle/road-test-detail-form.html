@@ -57,6 +57,7 @@ Content Wrap -->
                                                                 No
                                                             </label>
                                                         </div>
+                                                        <div id="errorRoadTestRequired"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-4" ng-if="job_order.is_road_test_required == 1">
@@ -74,6 +75,7 @@ Content Wrap -->
                                                                 Customer
                                                             </label>
                                                         </div>
+                                                        <div id="errorRoadTestDone"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-4" id="road_test_driver" ng-if="job_order.is_road_test_required == 1 && job_order.road_test_done_by_id == 8101">
@@ -102,8 +104,9 @@ Content Wrap -->
                                                             Road Test Observations
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <textarea class="form-control" rows="4" placeholder="Enter Observations" name="road_test_report">{{job_order.road_test_report}}
+                                                        <textarea class="form-control required" rows="4" placeholder="Enter Observations" name="road_test_report">{{job_order.road_test_report}}
                                                         </textarea>
+                                                        <div id="errorRoadTestObservation"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
