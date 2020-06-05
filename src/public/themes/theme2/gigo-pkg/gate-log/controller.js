@@ -157,11 +157,7 @@ app.component('gateLogForm', {
         // alert("test");
         var self = this;
         // $("input:text:visible:first").focus();
-        if (!HelperService.isLoggedIn()) {
-            $location.path('/login');
-            return;
-        }
-
+        HelperService.isLoggedIn()
         $('.image_uploadify').imageuploadify();
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('add-gate-log') && !self.hasPermission('edit-gate-log')) {
@@ -264,7 +260,7 @@ app.component('gateLogForm', {
 
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
-                $('.submit').button('loading');
+                $('#submit').button('loading');
                 $.ajax({
                         url: base_url + '/api/gate-in-entry/create',
                         method: "POST",
@@ -276,23 +272,20 @@ app.component('gateLogForm', {
                         },
                     })
                     .done(function(res) {
-                        if (res.success == true) {
+                        if (res.success) {
                             custom_noty('success', res.message);
                             // $location.path('/gigo-pkg/gate-log/list');
                             self.gate_log = res.gate_log;
-                            console.log(res.gate_log, $scope.gate_log);
                             $('#confirm_notification').modal('show');
                             $('#number').html(res.gate_log.number);
                             $('#registration_number').html(res.gate_log.registration_number);
-                            // $location.reload(true);
-                            // $scope.$apply();
                         } else {
-                            $('.submit').button('reset');
+                            $('#submit').button('reset');
                             showErrorNoty(res);
                         }
                     })
                     .fail(function(xhr) {
-                        $('.submit').button('reset');
+                        $('#submit').button('reset');
                         custom_noty('error', 'Something went wrong at server');
                     });
             }

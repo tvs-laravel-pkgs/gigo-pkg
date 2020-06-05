@@ -70,6 +70,10 @@ class JobOrder extends Model {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 
+	public function getEstimatedDeliveryDateAttribute($date) {
+		return empty($date) ? '' : date('d-m-Y h:i A ', strtotime($date));
+	}
+
 	public function setEwpExpiryDateAttribute($date) {
 		return $this->attributes['ewp_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
@@ -205,6 +209,14 @@ class JobOrder extends Model {
 
 	public function rcBookAttachment() {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 250);
+	}
+
+	public function customerApprovalAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 254);
+	}
+
+	public function customerESign() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 253);
 	}
 
 	public static function createFromObject($record_data) {
