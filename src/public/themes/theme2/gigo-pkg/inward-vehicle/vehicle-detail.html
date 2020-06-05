@@ -5,7 +5,7 @@ Content Wrap -->
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/inward-vehicle/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Inward Vehicle</b></h1>
@@ -20,6 +20,7 @@ Content Wrap -->
             <job-order-header></job-order-header>
             <div class="tab-form-wrap type-2">
                 <inward-tabs ng-init="active_tab = 'vehicle-detail'"></inward-tabs>
+                <form id="form">
                 <div class="tab-form-body">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
@@ -93,22 +94,6 @@ Content Wrap -->
                                                 </span>
                                             </li>
                                         </ul>
-                                        <div class="tab-pane-footer1" ng-show="show_vehicle_detail">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a type="button" class="btn btn-red" ng-click="showVehicleForm()">
-                                                        Edit
-                                                    </a>
-                                                    <a type="button" class="btn btn-red" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
-                                                        Save & Close
-                                                    </a>
-                                                    <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/customer-detail/{{job_order.id}}">
-                                                        Next
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
-                                        <form id="form">
                                             <input type="hidden" name="id" value="{{job_order.vehicle.id}}">
                                             <div class="row" ng-show="show_vehicle_form" id="vehicle_edit">
                                                 <div class="col-md-3">
@@ -178,38 +163,41 @@ Content Wrap -->
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
-                                            <div class="tab-pane-footer" ng-show="show_vehicle_form">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <button type="submit" class="btn btn-red" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
-                                                            Save & Close
-                                                        </button>
-                                                        <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/customer-detail/{{job_order.id}}">
-                                                            Next
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- Tab Footer -->
-                                        </form>
                                     </div><!-- Column -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                        <div class="tab-pane-footer">
+                        <div class="tab-pane-footer" ng-show="show_vehicle_detail">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <!-- <a type="button" class="btn btn-red" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
+                                    <a type="button" class="btn btn-red" ng-click="showVehicleForm()">
+                                        Edit
+                                    </a>
+                                    <a type="button" class="btn btn-red" href="#!/inward-vehicle/table-list">
                                         Save & Close
                                     </a>
                                     <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/customer-detail/{{job_order.id}}">
                                         Next
-                                    </a> -->
+                                    </a>
                                 </div>
                             </div>
                         </div><!-- Tab Footer -->
+                        <div class="tab-pane-footer" ng-show="show_vehicle_form">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-red save" ng-click="onSubmit(1)">
+                                        Save & Close
+                                    </button>
+                                    <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt next" ng-click="onSubmit(0)">
+                                        Next
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Tab Footer -->
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
+                </form>
             </div><!-- Tab Form Wrap -->
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->

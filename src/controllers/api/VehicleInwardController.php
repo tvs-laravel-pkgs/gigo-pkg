@@ -41,11 +41,11 @@ class VehicleInwardController extends Controller {
 	public function getGateInList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [
-				// 'service_advisor_id' => [
-				// 	'required',
-				// 	'exists:users,id',
-				// 	'integer',
-				// ],
+				'service_advisor_id' => [
+					'required',
+					'exists:users,id',
+					'integer',
+				],
 				'offset' => 'nullable|numeric',
 				'limit' => 'nullable|numeric',
 			]);
@@ -75,6 +75,7 @@ class VehicleInwardController extends Controller {
 					'vehicles.registration_number',
 					'models.model_number',
 					'gate_logs.number',
+					'gate_logs.status_id',
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
 					'job_orders.driver_name',
