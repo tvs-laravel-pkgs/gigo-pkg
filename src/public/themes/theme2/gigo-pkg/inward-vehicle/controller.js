@@ -1768,7 +1768,7 @@ app.component('inwardVehicleCustomerDetail', {
         $scope.fetchData();
 
         //Save Form Data 
-        $scope.saveCustomer = function() {
+        $scope.saveCustomer = function(type) {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -1849,7 +1849,11 @@ app.component('inwardVehicleCustomerDetail', {
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
                     $rootScope.loading = true;
-                    $('.submit').button('loading');
+                    if(type == 1){
+                        $('.save').button('loading');
+                    }else{
+                        $('.next').button('loading');
+                    }
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/save-customer-detail',
                             method: "POST",
@@ -1860,18 +1864,33 @@ app.component('inwardVehicleCustomerDetail', {
                         .done(function(res) {
                             if (!res.success) {
                                 $rootScope.loading = false;
-                                $('.submit').button('reset');
+                                if(type == 1){
+                                    $('.save').button('reset');
+                                }else{
+                                    $('.next').button('reset');
+                                }
                                 showErrorNoty(res);
                                 return;
                             }
-                            $('.submit').button('reset');
-                            custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/order-detail/form/' + $routeParams.job_order_id);
-                            $scope.$apply();
+                            if(type == 1){
+                                $('.save').button('reset');
+                                custom_noty('success', res.message);
+                                $location.path('/inward-vehicle/table-list');
+                                $scope.$apply();
+                            }else{
+                                $('.next').button('reset');
+                                custom_noty('success', res.message);
+                                $location.path('/inward-vehicle/order-detail/form/' + $routeParams.job_order_id);
+                                $scope.$apply();
+                            }
                         })
                         .fail(function(xhr) {
                             $rootScope.loading = false;
-                            $('.submit').button('reset');
+                            if(type == 1){
+                                $('.save').button('reset');
+                            }else{
+                                $('.next').button('reset');
+                            }
                             custom_noty('error', 'Something went wrong at server');
                         });
                 }
