@@ -207,6 +207,14 @@ class JobOrder extends Model {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 250);
 	}
 
+	public function customerApprovalAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 254);
+	}
+
+	public function customerESign() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 253);
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];

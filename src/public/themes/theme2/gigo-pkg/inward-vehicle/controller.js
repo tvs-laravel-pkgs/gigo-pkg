@@ -1069,6 +1069,43 @@ app.component('inwardVehicleCustomerConfirmationForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
         $scope.job_order_id = $routeParams.job_order_id;
 
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $rootScope.loading = true;
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/customer-confirmation/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    $rootScope.loading = false;
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+
+                    console.log($scope.job_order);
+                    if ($scope.job_order.is_customer_agreed != 1) {
+                        $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order.id);
+                    }
+                    $scope.base_url = res.extras.base_url;
+                    $scope.cameraOn();
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        $scope.fetchData();
+
         self.video = false;
         self.screenShot = false;
 
@@ -1096,6 +1133,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
             var video = document.getElementById('video');
 
             $scope.snapshot = function() {
+                $('#customer_pic').hide();
                 // Trigger photo take
                 context.drawImage(video, 0, 0, 460, 360);
                 var customer_photo = canvas_photo.toDataURL('image/jpeg', 1.0);
