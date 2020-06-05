@@ -64,13 +64,11 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-red">
+                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-red submit">
                                                         Save & Close
                                                     </button>
-                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-secondary-dark btn-prev">
-                                                        Previous
-                                                    </button>
-                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                    <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/estimate/{{job_order_id}}" >Previous</a>
+                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-secondary-dark btn-min-wdth btn-nxt submit">
                                                         Next
                                                     </button>
                                                 </div>

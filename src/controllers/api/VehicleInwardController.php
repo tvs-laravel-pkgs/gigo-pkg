@@ -41,11 +41,11 @@ class VehicleInwardController extends Controller {
 	public function getGateInList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [
-				// 'service_advisor_id' => [
-				// 	'required',
-				// 	'exists:users,id',
-				// 	'integer',
-				// ],
+				'service_advisor_id' => [
+					'required',
+					'exists:users,id',
+					'integer',
+				],
 				'offset' => 'nullable|numeric',
 				'limit' => 'nullable|numeric',
 			]);
@@ -75,6 +75,7 @@ class VehicleInwardController extends Controller {
 					'vehicles.registration_number',
 					'models.model_number',
 					'gate_logs.number',
+					'gate_logs.status_id',
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
 					'job_orders.driver_name',
@@ -514,7 +515,7 @@ class VehicleInwardController extends Controller {
 			];
 
 			$validator = Validator::make($request->all(), [
-				'ownership_type_id' => 'required|unique:vehicle_owners,ownership_id,' . $request->id . ',id,vehicle_id,' . $vehicle->id,
+				'ownership_type_id' => 'required|unique:vehicle_owners,ownership_id,' . $request->id . ',customer_id,vehicle_id,' . $vehicle->id,
 			], $error_messages);
 
 			if ($validator->fails()) {
@@ -2836,7 +2837,59 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-	//CUSTOMER CONFIRMATION SAVE
+	// CUSTOMER CONFIRMATION GET FORM DATA
+	public function getCustomerConfirmationFormData(Request $r) {
+		try {
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'jobOrderRepairOrders',
+				'jobOrderParts',
+				'type',
+				'quoteType',
+				'serviceType',
+				'status',
+				'customerApprovalAttachment',
+				'customerESign',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
+				]);
+			}
+
+			$extras = [
+				'base_url' => url('/'),
+			];
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+				'extras' => $extras,
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+
 	public function saveCustomerConfirmation(Request $request) {
 		// dd($request->all());
 		try {
@@ -2881,20 +2934,26 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			DB::beginTransaction();
-
 			$attachment_path = storage_path('app/public/gigo/job_order/customer-confirmation/');
 			Storage::makeDirectory($attachment_path, 0777);
+
+			DB::beginTransaction();
 
 			if ($request->web == 'website') {
 				//CUSTOMER SIGN
 				if (!empty($request->customer_photo)) {
+					$remove_previous_attachment = Attachment::where([
+						'entity_id' => $request->job_order_id,
+						'attachment_of_id' => 227,
+						'attachment_type_id' => 254,
+					])->forceDelete();
+
 					$customer_photo = str_replace('data:image/jpeg;base64,', '', $request->customer_photo);
 					$customer_photo = str_replace(' ', '+', $customer_photo);
 
 					$filename = "webcam_customer_photo_" . strtotime("now") . ".jpeg";
 
-					File::put($attachment_path . '/' . $filename, base64_decode($customer_photo));
+					File::put($attachment_path . $filename, base64_decode($customer_photo));
 
 					//SAVE ATTACHMENT
 					$attachment = new Attachment;
@@ -2908,12 +2967,18 @@ class VehicleInwardController extends Controller {
 				}
 				//CUSTOMER E SIGN
 				if (!empty($request->customer_e_sign)) {
+					$remove_previous_attachment = Attachment::where([
+						'entity_id' => $request->job_order_id,
+						'attachment_of_id' => 227,
+						'attachment_type_id' => 253,
+					])->forceDelete();
+
 					$customer_sign = str_replace('data:image/png;base64,', '', $request->customer_e_sign);
 					$customer_sign = str_replace(' ', '+', $customer_sign);
 
 					$filename = "webcam_customer_sign_" . strtotime("now") . ".png";
 
-					File::put($attachment_path . '/' . $filename, base64_decode($customer_sign));
+					File::put($attachment_path . $filename, base64_decode($customer_sign));
 
 					//SAVE ATTACHMENT
 					$attachment = new Attachment;
