@@ -1,4 +1,4 @@
-<!-- Content Wrap -->
+Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -24,56 +24,54 @@
                     <div class="tab-content">
                         <!-- TAB PANEL -->
                         <div class="tab-pane fade in active" id="expert_diagnosis_details" data-animation="fadeInUp" data-animation-delay="300">
-                             <div class="tab-pane-wrap">
+                            <div class="tab-pane-wrap">
                                 <div class="row">
                                     <form id="form">
-                                    <div class="col-md-12">
-                                        <h5 class="color-primary mb-10"><b>Expert Diagnosis Report</b></h5>
-                                        <hr class="hr-15">
-                                         <input type="hidden" name="job_order_id" value="{{job_order.id}}"> 
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label>Expert Diagnosis Outcome <sup class="mandatory">*</sup></label>
-                                                    <textarea class="form-control" name="expert_diagnosis_report"  rows="4" placeholder="Enter Observations">{{job_order.expert_diagnosis_report}}</textarea>
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <label>Diagnosed by <sup class="mandatory">*</sup></label>
-                                                   <md-select ng-model="job_order.expert_diagnosis_report_by_id" placeholder="Select Expert Diagnosis" data-md-container-class="selectdemoSelectHeader">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Expert Diagnosis Report</b></h5>
+                                            <hr class="hr-15">
+                                            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Expert Diagnosis Outcome <sup class="mandatory">*</sup></label>
+                                                        <textarea class="form-control" name="expert_diagnosis_report" rows="4" placeholder="Enter Observations">{{job_order.expert_diagnosis_report}}</textarea>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label>Diagnosed by <sup class="mandatory">*</sup></label>
+                                                        <md-select ng-model="job_order.expert_diagnosis_report_by_id" placeholder="Select Diagnosis" md-on-close="clearSearchDriver()" data-md-container-class="selectdemoSelectHeader">
                                                             <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchExpertDiagnosis" type="search" placeholder="Search for a Expert Diagnosis.." class="demo-header-searchbox md-text">
+                                                                <input ng-model="searchModel" type="search" placeholder="Search for a Expert Diagnosis.." class="demo-header-searchbox md-text">
                                                             </md-select-header>
-                                                    <md-optgroup>
-                                                       <md-optgroup>
+                                                            <md-optgroup>
                                                                 <md-option ng-value="model.id" ng-repeat="model in extras.user_list | filter:searchModel">
                                                                     {{model.name}}
                                                                 </md-option>
                                                             </md-optgroup>
-                                                    </md-optgroup>
-                                                </md-select>
+                                                        </md-select>
                                                         <input type="hidden" name="expert_diagnosis_report_by_id" value="{{job_order.expert_diagnosis_report_by_id}}">
-                                                </div><!-- Feild -->
-                                            </div><!-- Column -->
-                                        </div><!-- Row -->
-                                    </div><!-- Column -->
-                                    <div class="tab-pane-footer">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                 <button type="submit" ng-click="saveExportDiagonis()" class="btn btn-red">
-                                                            Save & Close
-                                                        </button>
-                                                <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <button type="submit" ng-click="saveExportDiagonis()" class="btn btn-red">
+                                                        Save & Close
+                                                    </button>
+                                                    <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
                                                         Previous
                                                     </a>
                                                     <button ng-click="saveExportDiagonis()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Next
                                                     </button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div><!-- Tab Footer -->
-                                </form>
+                                        </div><!-- Tab Footer -->
+                                    </form>
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
@@ -119,4 +117,4 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->
-<!-- Modal -->
+<!-- Modal
