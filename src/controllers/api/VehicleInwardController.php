@@ -2546,7 +2546,13 @@ class VehicleInwardController extends Controller {
 				'type',
 				'quoteType',
 				'serviceType',
-			])->find($r->id);
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
 
 			if (!$job_order) {
 				return response()->json([

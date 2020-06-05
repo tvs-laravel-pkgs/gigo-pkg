@@ -1314,49 +1314,55 @@ app.component('inwardVehicleEstimateForm', {
         }
 
         //Save Form Data 
-        var form_id = '#form';
-        var v = jQuery(form_id).validate({
-            ignore: '',
-            rules: {
-                'estimated_delivery_date': {
-                    required: true,
+        $scope.saveEstimate = function() {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'estimated_delivery_date': {
+                        required: true,
+                    },
                 },
-            },
-            messages: {
+                messages: {
 
-            },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
-            },
-            submitHandler: function(form) {
-                let formData = new FormData($(form_id)[0]);
-                $('.submit').button('loading');
-                $.ajax({
-                        url: base_url + '/api/vehicle-inward/estimate/save',
-                        method: "POST",
-                        data: formData,
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/estimate/save',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            if ($('#is_customer_agreed').val() == 1) {
+                                $location.path('/inward-vehicle/customer-confirmation/' + $scope.job_order.id);
+                            } else {
+                                $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order.id);
+                            }
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
                             $('.submit').button('reset');
-                            showErrorNoty(res);
-                            return;
-                        }
-                        custom_noty('success', res.message);
-                        $location.path('/inward-vehicle/estimate/' + $scope.job_order.id);
-                        $scope.$apply();
-                    })
-                    .fail(function(xhr) {
-                        $('.submit').button('reset');
-                        custom_noty('error', 'Something went wrong at server');
-                    });
-            }
-        });
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
 
         $scope.showVehicleForm = function() {
             $scope.show_vehicle_detail = false;
