@@ -479,7 +479,7 @@ class VehicleInwardController extends Controller {
 			];
 
 			$validator = Validator::make($request->all(), [
-				'ownership_type_id' => 'required|unique:vehicle_owners,ownership_id,' . $request->id . ',id,vehicle_id,' . $vehicle->id,
+				'ownership_type_id' => 'required|unique:vehicle_owners,ownership_id,' . $request->id . ',customer_id,vehicle_id,' . $vehicle->id,
 			], $error_messages);
 
 			if ($validator->fails()) {
