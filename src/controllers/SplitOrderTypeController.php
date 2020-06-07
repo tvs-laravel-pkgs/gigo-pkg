@@ -110,7 +110,7 @@ class SplitOrderTypeController extends Controller {
 				'code.unique' => 'Short Name is already taken',
 				'code.min' => 'Short Name is Minimum 3 Charachers',
 				'code.max' => 'Short Name is Maximum 32 Charachers',
-				'name.unique' => 'Name is already taken',
+				// 'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
 			];
