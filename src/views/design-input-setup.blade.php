@@ -8,6 +8,7 @@
 
 {{-- Warranty Job Order Requests --}}
 <script type="text/javascript">
+
     var designInputWarrantyJobOrderRequest = "{{asset($gigo_pkg_prefix.'/public/design-input/warranty-job-order-request/list.html')}}";
     var warrantyJobOrderRequestPPRForm = "{{asset($gigo_pkg_prefix.'/public/design-input/warranty-job-order-request/ppr-form.html')}}";
     var warrantyJobOrderRequestEstimateForm = "{{asset($gigo_pkg_prefix.'/public/design-input/warranty-job-order-request/estimate-form.html')}}";
