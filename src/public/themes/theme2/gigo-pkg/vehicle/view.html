@@ -5,86 +5,274 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/vehicle/list" type="button" class="btn-back btn-img">
-                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
-                    </a>
+                    <a href="#!/gigo-pkg/vehicle/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Vehicle</b></h1>
-                    <p class="subtitle">
-                        Masters /
-                        <a href="#!/gigo-pkg/vehicle/list">
-                            Vehicles
-                        </a> /
-                        {{$ctrl.action}}
-                    </p>
+                    <h1 class="title"><b>Vehicle View</b></h1>
+                    <p class="subtitle">Vehicle Master / View</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
+
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
-        <form id="form" autocomplete="off">
-            <input type="hidden" name="id" value="{{$ctrl.job_card.id}}">
-            <div class="page-tab-form pb-70">
-                <div class="tab-form-wrap">
-                    <div class="tab-form-header">
-                        <div class="tab-header">
+        <div class="page-tab-form pb-70">
+            <div class="page-tab-form-top">
+                <div class="page-tab-form-top-left">
+                    <div class="page-tab-form-top-left-title">General Info</div>
+                    <div class="page-tab-form-top-left-link">
+                        <a class="btn-link-arrow btn-prev">
+                            <i class="ionicons ion-md-arrow-round-back"></i>
+                        </a>
+                        <a class="btn-link-arrow btn-nxt">
+                            <i class="ionicons ion-md-arrow-round-forward"></i>
+                        </a>
+                    </div>
+                    <div class="page-tab-form-top-left-info">
+                        <span class="page-tab-form-top-left-info-content"><b>{{$ctrl.vehicles_details.registration_number}}</b>  |  {{$ctrl.vehicles_details.model.model_name}}  |  {{$ctrl.vehicles_details.current_owner.customer.code}} | {{$ctrl.vehicles_details.date}}, {{$ctrl.vehicles_details.time}}</span>
+                        <a class="page-tab-form-top-left-info-link" data-toggle="modal" data-target="#search_vehicle_modal">
+                            <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
+                        </a>
+                    </div>
+                </div><!-- Page Tab Form Top Left -->
+                <div class="page-tab-form-top-right">
+                    <div class="page-tab-form-top-right-info">Status : {{$ctrl.vehicles_details.status.name}}</div>
+                </div><!-- Page Tab Form Top Right -->
+            </div><!-- Page Tab Form Top -->
+            <div class="tab-form-wrap type-2">
+                <div class="tab-form-header">
+                    <div class="tab-header">
                             <!-- Filters -->
-                            <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
-                                <ul class="nav nav-pills cndn-tabs">
-                                    <li class="active">
-                                        <a class="filter active" data-target="#general-information" data-toggle="tab" aria-expanded="true">
-                                            General Information
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div><!-- Filters -->
-                        </div><!-- Tab Header -->
-                    </div><!-- Tab Form Header -->
-                    <div class="tab-form-body">
-                        <div class="tab-content">
-                            <!-- TAB PANEL -->
-                            <div class="tab-pane fade in active" id="general-information" data-animation="fadeInUp" data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <ul class="grid-row">
-                                            <li class="grid-col-3">
-                                                <span class="grid-col-label">Chassis Number</span>
-                                                <span class="grid-col-value">{{$ctrl.vehicles_details.chassis_number}}</span>
+                        <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
+                            <ul class="nav nav-pills cndn-tabs">
+                                <li class="active"><a class="filter active" data-target="#vehicle_details" data-toggle="tab" aria-expanded="true">Vehicle Details</a></li>
+                                <li><a data-target="#customer_details" data-toggle="tab" aria-expanded="true" class="filter">Customer Details</a></li>
+                                <li><a data-target="#job_cards" data-toggle="tab" aria-expanded="true" class="filter">Job Cards</a></li>
+                            </ul>
+                        </div><!-- Filters -->  
+                    </div><!-- Tab Header -->
+                </div><!-- Tab Form Header -->
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="vehicle_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Vehicle Details</b></h5>
+                                        <ul class="view-row mb-no">
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">Registration Type</span>
+                                                <span class="view-data-list-value">
+                                                    <b ng-if="$ctrl.vehicles_details.is_registered == 1">Registered</b>
+                                                    <b ng-if="$ctrl.vehicles_details.is_registered != 1">Not Registered</b></span>
                                             </li>
-                                            <li class="grid-col-3">
-                                                <span class="grid-col-label">Engine Number</span>
-                                                <span class="grid-col-value">{{$ctrl.vehicles_details.engine_number}}</span>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">Registration No</span>
+                                                <span class="view-col-value"><b>{{$ctrl.vehicles_details.registration_number}}</b></span>
                                             </li>
-                                            <li class="grid-col-3">
-                                                <span class="grid-col-label">Model</span>
-                                                <span class="grid-col-value">{{$ctrl.vehicles_details.model_name}}</span>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">Vehicle Model</span>
+                                                <span class="view-col-value"><b>{{$ctrl.vehicles_details.model.model_name}}</b></span>
                                             </li>
-                                            <li class="grid-col-3">
-                                                <span class="grid-col-label">Registration Number</span>
-                                                <span class="grid-col-value">{{$ctrl.vehicles_details.registration_number}}</span>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">VIN Number</span>
+                                                <span class="view-col-value">{{$ctrl.vehicles_details.vin_number}}</span>
                                             </li>
-                                            <li class="grid-col-3">
-                                                <span class="grid-col-label">Sold Date</span>
-                                                <span class="grid-col-value">{{$ctrl.vehicles_details.sold_date}}</span>
-                                            </li>
-                                            <li class="grid-col-3">
-                                                <span class="grid-col-label">Vin Number </span>
-                                                <span class="grid-col-value">{{$ctrl.vehicles_details.vin_number}}</span>
-                                            </li>
-                                            <li class="grid-col-3">
-                                                <span class="grid-col-label">Active Status</span>
-                                                <span class="grid-col-value">{{$ctrl.vehicles_details.status}}</span>
-                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">Engine Number</span>
+                                                <span class="view-col-value">{{$ctrl.vehicles_details.engine_number}}</span>
+                                            </li> 
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">Chasis Number</span>
+                                                <span class="view-data-list-value"><b>{{$ctrl.vehicles_details.chassis_number}}</b></span>
+                                            </li>                          
                                         </ul>
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
-                        </div><!-- Tab Content -->
-                    </div><!-- Tab Form Body -->
-                </div><!-- Tab Form Wrap -->
-            </div><!-- Page Form -->
-        </form>
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+
+                        <div class="tab-pane fade" id="customer_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Customer Details</b></h5>
+                                        <ul class="view-row mb-no">
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">Name</span>
+                                                <span class="view-data-list-value"><b>{{$ctrl.vehicles_details.current_owner.customer.name}}</b></span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">Mobile No</span>
+                                                <span class="view-col-value"><b>{{$ctrl.vehicles_details.current_owner.customer.mobile_no}}</b></span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">Email</span>
+                                                <span class="view-col-value"><b>{{$ctrl.vehicles_details.current_owner.customer.email}}</b></span>
+                                            </li>
+                                            <li class="view-col-3 ptb-2">
+                                                <span class="view-col-label">Address</span>
+                                                <span class="view-col-value">{{$ctrl.vehicles_details.current_owner.customer.address.address_line1}},{{$ctrl.vehicles_details.current_owner.customer.address.address_line2}},
+                                                {{$ctrl.vehicles_details.current_owner.customer.city.name}}</span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">GST No</span>
+                                                <span class="view-col-value">{{$ctrl.vehicles_details.current_owner.customer.gst_number}}</span>
+                                            </li> 
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">PAN No</span>
+                                                <span class="view-data-list-value"><b>{{$ctrl.vehicles_details.current_owner.customer.pan_number}}</b></span>
+                                            </li>  
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">Ownership</span>
+                                                <span class="view-data-list-value"><b>{{$ctrl.vehicles_details.current_owner.ownership_type.name}}</b></span>
+                                            </li>                        
+                                        </ul>
+                                        <button class="btn btn-secondary-dark btn-square">Add New Owner</button>
+                                        
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+
+                        <div class="tab-pane fade" id="job_cards" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Order Details</b></h5>
+                                        <hr class="hr-15"><!-- Separater -->
+                                        <ul class="card-list">
+                                            <li class="wid-4" ng-repeat="(index, job_order) in $ctrl.job_order">
+                                                <div class="card-box">
+                                                    <div class="card-box-head">
+                                                        <div class="card-box-head-title"><b>JC No : {{job_order.job_card.job_card_number}}</b></div>
+                                                    </div><!-- Card Box Head -->
+                                                    <div class="card-box-body">
+                                                        <div class="box-list">
+                                                            <div class="box-left">
+                                                                <table class="font-sm">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>
+                                                                                Job Order Type &nbsp;
+                                                                            </td>
+                                                                            <td>
+                                                                                : {{job_order.service_type.name}}
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>
+                                                                                Quote Type
+                                                                            </td>
+                                                                            <td>
+                                                                                : {{job_order.quote_type.name}}
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>
+                                                                                Service Type
+                                                                            </td>
+                                                                            <td>
+                                                                                : {{job_order.service_type.name}}
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div><!-- Box Left -->
+                                                            <div class="box-right">
+                                                                <div class="box-info">
+                                                                    <div class="box-info-head">Gate In ID : {{job_order.gate_log.number}}</div>
+                                                                    <div class="box-info-body">
+                                                                        <div class="box-info-body-text">{{job_order.date}}</div>
+                                                                        <div class="box-info-body-text">{{job_order.time}}</div>
+                                                                    </div>
+                                                                </div><!-- Box Info -->
+                                                            </div><!-- Box Right -->
+                                                        </div><!-- Box List -->
+                                                    </div><!-- Card Box Body -->
+                                                    <div class="card-box-footer">
+                                                        <div class="card-box-footer-left">
+                                                            <div class="card-box-footer-info">
+                                                                <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                                <span class="card-box-footer-value">{{job_order.job_card.status.name}}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="card-box-footer-right">
+                                                            <a href="#!/gigo-pkg/job-card/material-gatepass/{{job_order.job_card.id}}" class="btn btn-square btn-md btn-red">View</a>
+                                                        </div>
+                                                    </div><!-- Card Box Footer -->
+                                                </div><!-- Card Box -->
+                                            </li>
+                                        </ul><!-- Card List -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->   
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+
+<!-- Modal -->
+<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xs" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title">Search Vehicle</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Registration Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Customer Code <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>VIN Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
