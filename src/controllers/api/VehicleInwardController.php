@@ -283,9 +283,9 @@ class VehicleInwardController extends Controller {
 
 			$vehicle_inspection_item_groups = array();
 			foreach ($vehicle_inspection_item_group as $key => $value) {
-				$vehicle_inspection_items = array();
-				$vehicle_inspection_items['id'] = $value->id;
-				$vehicle_inspection_items['name'] = $value->name;
+				$item_group = array();
+				$item_group['id'] = $value->id;
+				$item_group['name'] = $value->name;
 
 				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
 
@@ -309,6 +309,7 @@ class VehicleInwardController extends Controller {
 				'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
 			];
 
+			$inventory_params['field_type_id'] = [11, 12];
 			//Job card details need to get future
 			return response()->json([
 				'success' => true,
@@ -320,6 +321,7 @@ class VehicleInwardController extends Controller {
 				'total_estimate_part_amount' => $total_estimate_part_amount,
 				'total_estimate_amount' => $total_estimate_amount,
 				'vehicle_inspection_item_groups' => $vehicle_inspection_item_groups,
+				'inventory_list' => VehicleInventoryItem::getInventoryList($r->id, $inventory_params),
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
 
