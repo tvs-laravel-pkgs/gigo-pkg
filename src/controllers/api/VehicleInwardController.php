@@ -2716,6 +2716,7 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
+				'job_order' =>$job_order,
 				'message' => 'Estimate Details Added Successfully',
 			]);
 		} catch (\Exception $e) {
@@ -2821,6 +2822,7 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
+				'job_order' => $job_order,
 				'message' => 'Estimation Denied Details Added Successfully',
 			]);
 		} catch (\Exception $e) {

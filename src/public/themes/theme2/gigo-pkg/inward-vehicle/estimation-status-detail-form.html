@@ -88,23 +88,26 @@
 <div class="modal modal-success alert-modal fade" id="confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
-            <div class="modal-body text-center">
-                <img class="img-responsive img-center" src="./public/theme/img/content/success-fill-green.svg" />
-                <div class="mb-10"></div><!-- Spacing -->
-                <p class="info">
-                    Payment Details
-                </p>
-                <p class="info">
-                    Send to Customer
-                </p>
-                <br />
-                <p class="info">
-                    Estimate Ref No: ER6765
-                </p>
-                <div class="mt-30 mb-30">
-                    <button type="button" class="btn btn-red btn-square btn-block" data-toggle="modal" data-target="#inward_notification" data-dismiss="modal"><b>Done</b></button>
-                </div><!-- Button -->
-            </div><!-- Modal Body -->
+            <form id="Payment_detail">
+                <div class="modal-body text-center">
+                    <img class="img-responsive img-center" src="./public/theme/img/content/success-fill-green.svg" />
+                    <div class="mb-10"></div><!-- Spacing -->
+                    <p class="info">
+                        Payment Details
+                    </p>
+                    <p class="info">
+                        Send to Customer
+                    </p>
+                    <br />
+                    <p class="info">
+                        Estimate Ref No: ER6765
+                    </p>
+                    <div class="mt-30 mb-30">
+                        <a href="" id="payment_detail" class="btn btn-red btn-square btn-block"><b>Done</b></a>
+                        <!-- <button type="submit" class="btn btn-red btn-square btn-block" data-toggle="modal" data-target="#inward_notification" data-dismiss="modal" ng-click="showPaymentDetails(job_order.id)"><b>Done</b></button> -->
+                    </div><!-- Button -->
+                </div><!-- Modal Body -->
+            </form>
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->

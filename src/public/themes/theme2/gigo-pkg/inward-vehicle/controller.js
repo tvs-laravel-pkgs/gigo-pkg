@@ -3248,16 +3248,21 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                             contentType: false,
                         })
                         .done(function(res) {
+                            console.log(res);
                             if (!res.success) {
                                 $rootScope.loading = false;
                                 $('.submit').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }
-                            // $('.submit').button('reset');
-                            custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order_id);
-                            $scope.$apply();
+                            $('.submit').button('reset');
+                            $('#confirm_notification').modal('show');
+                            payment_detail_url = base_url + '/vehicle-inward/show-payment-detail/' + res.job_order.id;
+                            $("#payment_detail").attr("href", payment_detail_url);
+                            //$(".tttt").text(payment_detail_url);
+                            console.log(payment_detail_url);
+                            //$location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order_id);
+                            //$scope.$apply();
                         })
                         .fail(function(xhr) {
                             $rootScope.loading = false;
@@ -3266,6 +3271,14 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                         });
                 }
             });
+        }
+
+        $scope.showPaymentDetails1 = function(id) {
+            $('#confirm_notification').modal('hide');
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
+
+            console.log(base_url);
         }
 
         /* Image Uploadify Funtion */
