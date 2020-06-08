@@ -211,6 +211,8 @@ class VehicleInwardController extends Controller {
 				'gateLog.driverAttachment',
 				'gateLog.kmAttachment',
 				'gateLog.vehicleAttachment',
+				'customerApprovalAttachment',
+				'customerESign',
 			])
 				->select([
 					'job_orders.*',
