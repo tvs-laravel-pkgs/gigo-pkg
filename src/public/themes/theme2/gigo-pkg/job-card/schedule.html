@@ -1,0 +1,81 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/gigo-pkg/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Schedules</b></h1>
+                    <p class="subtitle">Job Card / Schedules</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <jobcard-header></jobcard-header>
+            <div class="tab-form-wrap type-2">
+                <jobcard-tabs ng-init="active_tab = 'schedules'"></jobcard-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="schedules" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="title-red">
+                                            Schedules
+                                        </h5>
+                                        <div class="schedules-box-wrap" ng-repeat="(key,job_order_repair_order) in job_card.job_order.job_order_repair_orders">
+                                            <div class="left-wrap border-bottom">
+                                                <div class="schedules-left-wrap">
+                                                    <span class="info">{{job_order_repair_order.repair_order.code}}</span>
+                                                    <span class="title">{{job_order_repair_order.repair_order.name}}</span>
+                                                </div>
+                                                <div class="schedules-right-wrap">
+                                                    <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id == 8181">Assign</a>
+                                                    <a class="btn btn-bordered btn-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id !=8182">View Time Log</a>
+                                                    <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185">Review</a>
+                                                    <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181">Edit</a>
+                                                </div>
+                                            </div><!-- Left Wrap -->
+                                            <div class="right-wrap">
+                                                <span class="status bg-yellow type-2">
+                                                    {{job_order_repair_order.status.name}}
+                                                    <span class="time">6h 45m</span>
+                                                </span>
+                                            </div><!-- Right Wrap -->
+                                            <div class="assigned-info" ng-if="job_order_repair_order.repair_order_mechanics.length > 0">
+                                                <span class="title">Assigned To</span>
+                                                <ul class="flex-row type-2 assigned-info-list">
+                                                    <li class="flex-col-3" ng-repeat="(key,repair_order_mechanics) in job_order_repair_order.repair_order_mechanics">
+                                                        <div class="assigned-info-list-item">
+                                                            <span class="title">{{repair_order_mechanics.mechanic.name}}</span>
+                                                            <span class="info">
+                                                                0h 15m |
+                                                                <span class="color-red">
+                                                                    View Time Log
+                                                                </span>
+                                                            </span>
+                                                        </div><!-- Assigned Info List Item -->
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div><!-- Schedules Box Wrap -->
+                                        <hr>
+                                        <!-- <a href="#!/static/gigo/job-card/form-returnable-item"><button class="btn btn-md type2 btn-green btn-square">Add Another Item</button></a> -->
+                                        <a class="btn btn-red">Mark Job as Completed</a>
+                                    </div><!-- Column -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

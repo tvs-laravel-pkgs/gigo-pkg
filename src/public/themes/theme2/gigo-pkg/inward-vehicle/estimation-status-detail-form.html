@@ -68,8 +68,8 @@
                                                         Save & Close
                                                     </button>
                                                     <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/estimate/{{job_order_id}}">Previous</a>
-                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-secondary-dark btn-min-wdth btn-nxt submit">
-                                                        Next
+                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        Submit
                                                     </button>
                                                 </div>
                                             </div>
@@ -84,6 +84,31 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<!-- Submit Alert Modal -->
+<div class="modal modal-success alert-modal fade" id="confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img class="img-responsive img-center" src="./public/theme/img/content/success-fill-green.svg" />
+                <div class="mb-10"></div><!-- Spacing -->
+                <p class="info">
+                    Payment Details
+                </p>
+                <p class="info">
+                    Send to Customer
+                </p>
+                <br />
+                <p class="info">
+                    Estimate Ref No: ER6765
+                </p>
+                <div class="mt-30 mb-30">
+                    <button type="button" class="btn btn-red btn-square btn-block" data-toggle="modal" data-target="#inward_notification" data-dismiss="modal"><b>Done</b></button>
+                </div><!-- Button -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
 <!-- Modal -->
 <div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-xs" role="document">
