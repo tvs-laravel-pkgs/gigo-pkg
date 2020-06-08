@@ -1489,6 +1489,7 @@ class JobCardController extends Controller {
 				'gatePasses.gatePassDetail.vendor.addresses.state',
 				'gatePasses.gatePassDetail.vendor.addresses.city',
 				'gatePasses.gatePassItems',
+				'gatePasses.gatePassItems.attachments',
 			])
 				->find($request->id);
 
@@ -1678,7 +1679,7 @@ class JobCardController extends Controller {
 
 	//Material GatePass Item Save
 	public function saveMaterialGatePassItem(Request $request) {
-		//dd($request->all());
+		//dd($request->material_outward_attachments);
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -1744,9 +1745,9 @@ class JobCardController extends Controller {
 			//SAVE MATERIAL OUTWARD ATTACHMENT
 			if (!empty($request->material_outward_attachments)) {
 				foreach ($request->material_outward_attachments as $material_outward_attachment) {
-					// $attachment = $request->material_outward_attachment;
+					//dump($material_outward_attachment);
 					$attachment = $material_outward_attachment;
-					$entity_id = $gate_pass_item_id->id;
+					$entity_id = $gate_pass_item->id;
 					$attachment_of_id = 231; //Material Gate Pass
 					$attachment_type_id = 238; //Material Gate Pass
 					saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
