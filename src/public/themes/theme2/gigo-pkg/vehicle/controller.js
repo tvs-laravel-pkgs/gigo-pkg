@@ -106,7 +106,7 @@ app.component('vehicleList', {
                 if (response.data.success) {
                     custom_noty('success', 'Vehicle Deleted Successfully');
                     $('#vehicles_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/material-gate-pass/list');
+                    $location.path('/gigo-pkg/vehicle/list');
                 }
             });
         }
