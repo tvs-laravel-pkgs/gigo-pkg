@@ -201,9 +201,9 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="common-checkbox type-2">
-                                                            <input type="checkbox" id="check_agree" ng-click="$ctrl.checkbox()" />
+                                                            <input type="checkbox" id="check_agree" ng-value="1" ng-checked="job_order.is_customer_agreed == 1"  ng-click="$ctrl.checkbox()" />
                                                             <label for="check_agree">Customer Agreed?</label>
-                                                            <input type="hidden" name="is_customer_agreed" id="is_customer_agreed" />
+                                                            <input type="hidden" name="is_customer_agreed"  id="is_customer_agreed"/>
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
