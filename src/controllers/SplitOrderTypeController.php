@@ -125,7 +125,7 @@ class SplitOrderTypeController extends Controller {
 					'min:3',
 					'max:191',
 					'nullable',
-					'unique:split_order_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					// 'unique:split_order_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 			], $error_messages);
 			if ($validator->fails()) {
