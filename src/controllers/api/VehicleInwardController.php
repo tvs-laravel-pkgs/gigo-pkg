@@ -614,9 +614,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveOrderDetail(Request $request) {
-		//dd($request->all());
-
-		//Add Attachemnt Remvoe ID --> order_attachments_remove_ids
+		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -681,7 +679,6 @@ class VehicleInwardController extends Controller {
 					'date',
 				],
 				'driving_license_image' => [
-
 					'nullable',
 					'mimes:jpeg,jpg,png',
 				],
