@@ -608,25 +608,25 @@
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="checklist-form-wrap">
                                                 <ul class="checklist-form-ul">
-                                                    <li ng-repeat="(key, vehicle_inventory_item) in job_order.vehicle_inventory_item">
-                                                        <div class="checklist-item-wrap pad-big active">
+                                                    <li ng-repeat="(key, vehicle_inventory_item) in inventory_list" ng-if="vehicle_inventory_item.field_type_id==11">
+                                                        <div class="checklist-item-wrap" ng-class="{'pad-big active':vehicle_inventory_item.checked ==true} ">
                                                             <div class="checklist-item-value">
                                                                 {{vehicle_inventory_item.name}}
                                                             </div>
-                                                            <div class="checklist-item-value-sm">
-                                                                {{vehicle_inventory_item.pivot.remarks}}
+                                                            <div class="checklist-item-value-sm" ng-if="vehicle_inventory_item.checked==true">
+                                                                {{vehicle_inventory_item.remarks}}
                                                             </div>
                                                         </div>
                                                     </li>
                                                 </ul>
                                             </div>
                                             <div class="mb-30"></div><!-- Space -->
-                                            <div class="row">
+                                            <div class="row" ng-repeat="(index,vehicle_inventory_item) in inventory_list" ng-if="vehicle_inventory_item.field_type_id==12">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>Fuel Level</label>
                                                         <div class="slider-container in-view">
-                                                            <div class="slider-lower-fill" style="width: 50%;"></div>
+                                                            <div class="slider-lower-fill" style="width: {{vehicle_inventory_item.remarks}}%;"></div>
                                                             <div class="slider-upper-fill"></div>
                                                             <div class="grid">
                                                                 <span class="first grid-item">E</span>
@@ -639,6 +639,7 @@
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
+                                            <hr class="hr-15"><!-- Separater -->
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a href=".#!/inward-vehicle/inventory-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
@@ -674,20 +675,6 @@
                                                     </div>
                                                 </li>
                                             </ul>
-                                            <!-- <ul class="checklist-form-ul">
-                                                <li>
-                                                    <div class="checklist-form-item-wrap">
-                                                        <div class="checklist-form-content">
-                                                            <div class="checklist-form-content-title">
-                                                                Others
-                                                            </div>
-                                                            <div class="checklist-form-content-subtitle">
-                                                                Noise coming from engine
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ul> -->
                                             <hr class="hr-15"><!-- Separater -->
                                             <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
@@ -710,16 +697,16 @@
                                             <h5 class="color-primary mb-10"><b>Read Test Observations</b></h5>
                                             <div class="view-details mb-no">
                                                 <ul class="view-row pb-none">
-                                                    <li class="view-col-3">
+                                                    <li class="view-col-4">
                                                         <span class="view-col-label">
                                                             Road Test
                                                         </span>
                                                         <span class="view-data-list-value">
                                                             <b>
-                                                                {{job_order.is_road_test_required==1 ? "Registered" : "UnRegistered"}}
+                                                                {{job_order.is_road_test_required==1 ? "Required" : "Not Required"}}
                                                             </b></span>
                                                     </li>
-                                                    <li class="view-col-3" ng-show="job_order.is_road_test_required==1">
+                                                    <li class="view-col-4" ng-show="job_order.is_road_test_required==1">
                                                         <span class="view-col-label">
                                                             Road Test by
                                                         </span>
@@ -729,7 +716,7 @@
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3" ng-show="job_order.is_road_test_required==1 && job_order.road_test_done_by.name=='Employee'">
+                                                    <li class="view-col-4" ng-show="job_order.is_road_test_required==1 && job_order.road_test_done_by_id==8101">
                                                         <span class="view-col-label">
                                                             Driver Name
                                                         </span>
@@ -738,10 +725,6 @@
                                                                 {{job_order.road_test_prefered_by.name}}
                                                             </b>
                                                         </span>
-                                                    </li>
-                                                    <li class="view-col-3">
-                                                        <span class="view-col-label"></span>
-                                                        <span class="view-col-value"><b></b></span>
                                                     </li>
                                                     <li class="view-col-12" ng-show="job_order.is_road_test_required==1">
                                                         <span class="view-col-label">
@@ -1511,13 +1494,26 @@
                                             </div><!-- Row -->
                                             <div class="view-details mb-no">
                                                 <ul class="view-row">
-                                                    <li class="view-col-12">
+                                                    <li class="view-col-8">
                                                         <span class="view-col-label">
                                                             Estimated Delivery Date & Time
                                                         </span>
                                                         <span class="view-data-list-value">
                                                             <b>
                                                                 {{job_order.estimated_delivery_date}}
+                                                            </b></span>
+                                                    </li>
+                                                    <li class="view-col-4">
+                                                        <span class="view-col-label">
+                                                            Customer Agreed?
+                                                        </span>
+                                                        <span class="view-data-list-value" ng-if="job_order.is_customer_agreed == 1">
+                                                            <b>
+                                                                Yes
+                                                            </b></span>
+                                                        <span class="view-data-list-value" ng-if="job_order.is_customer_agreed != 1">
+                                                            <b>
+                                                                No
                                                             </b></span>
                                                     </li>
                                                 </ul>
