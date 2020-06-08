@@ -1494,13 +1494,26 @@
                                             </div><!-- Row -->
                                             <div class="view-details mb-no">
                                                 <ul class="view-row">
-                                                    <li class="view-col-12">
+                                                    <li class="view-col-8">
                                                         <span class="view-col-label">
                                                             Estimated Delivery Date & Time
                                                         </span>
                                                         <span class="view-data-list-value">
                                                             <b>
                                                                 {{job_order.estimated_delivery_date}}
+                                                            </b></span>
+                                                    </li>
+                                                    <li class="view-col-4">
+                                                        <span class="view-col-label">
+                                                            Customer Agreed?
+                                                        </span>
+                                                        <span class="view-data-list-value" ng-if="job_order.is_customer_agreed == 1">
+                                                            <b>
+                                                                Yes
+                                                            </b></span>
+                                                        <span class="view-data-list-value" ng-if="job_order.is_customer_agreed != 1">
+                                                            <b>
+                                                                No
                                                             </b></span>
                                                     </li>
                                                 </ul>
