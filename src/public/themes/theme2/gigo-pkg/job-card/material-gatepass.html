@@ -31,8 +31,8 @@
                                             Material gatepass
                                         </h5>
                                         <div class="mgatepass-wrap border">
-                                            <div class="row">
-                                                <div class="col-md-8" ng-repeat="(key, gate_passes) in view_metrial_gate_pass.gate_passes">
+                                            <div class="row" ng-repeat="(key, gate_passes) in view_metrial_gate_pass.gate_passes">
+                                                <div class="col-md-8">
                                                     <div class="row">
                                                         <div class="col-md-8">
                                                             <div class="mgpass-address-left-wrap">
@@ -79,25 +79,70 @@
                                                             </li>
                                                             <li class="view-col-4">
                                                                 <span class="view-col-label">No. of Items</span>
-                                                                <span class="view-col-value">{{view_metrial_gate_pass.no_of_items}}</span>
+                                                                <span class="view-col-value">{{gate_passes.gate_pass_items.length}}</span>
                                                             </li>                      
                                                         </ul>
                                                     </div>                                                   
                                                     <a href="#!/gigo-pkg/job-card/material-outward/{{view_metrial_gate_pass.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
                                                 </div><!-- Column -->
-                                                <div class="col-md-4">                                                                                           
-                                                                                                        
+                                                <div class="col-lg-4"> 
+                                                    <div id="myCarousel" class="carousel mgpass-carousel slide" data-ride="carousel">
+                                                        <ol class="carousel-indicators">
+                                                            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                                                            <li data-target="#myCarousel" data-slide-to="1"></li>
+                                                        </ol>
+                                                        <div class="carousel-inner">
+
+                                                            <div class="item active item_{{keys}}" ng-repeat="(keys, gate_pass_items) in gate_passes.gate_pass_items">
+                                                           
+                                                                <div class="border-box type-2">
+                                                                    <div class="top-title">Front Tyres <span class="right-text">Qty : {{gate_pass_items.qty}}</span></div>
+                                                                    <div class="mb-20"></div><!-- Spacing -->
+                                                                    <table class="table-info">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>Make</td>           
+                                                                                <td>: {{gate_pass_items.item_make}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Model</td>          
+                                                                                <td>: {{gate_pass_items.item_model}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Seriel no</td>          
+                                                                                <td>: {{gate_pass_items.item_serial_no}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Remarks</td>            
+                                                                                <td>: {{gate_pass_items.remarks}}</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <div class="mb-10"></div><!-- Spacing -->
+                                                                    <img class="img-responsive wid-60" src="storage/app/public/gigo/job_order/attachments/{{gate_pass_items.attachments[0].name}}"alt="Parts Image" /> 
+                                                                </div>
+                                                            </div>
+
+                                                        </div><!-- Carousel Inner -->
+                                                    </div><!-- Carousel -->   
                                                 </div><!-- Column --> 
                                             </div><!-- Row -->
                                         </div>
                                         <div class="text-center pt-40"> 
                                             <a class="btn btn-red">Add Another Material Gate Pass</a>
                                         </div>
-                                    </div><!-- Column -->                                    
+                                    </div><!-- Column -->
+
+                                    <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a href=".#!/gigo-pkg/job-card/returnable-item/{{job_card_id}}" class="btn btn-secondary-dark btn-nxt">Next</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
             </div><!-- Tab Form Wrap -->

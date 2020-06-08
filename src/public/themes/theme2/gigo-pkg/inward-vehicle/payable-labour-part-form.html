@@ -49,7 +49,7 @@
                                                             <th class="text-right">
                                                                 Quantity
                                                             </th>
-                                                            <th class="wid-100 white-space-unset text-right">
+                                                            <th class="wid-180 white-space-unset text-right">
                                                                 Labour Value
                                                             </th>
                                                             <th class="wid-100"></th>
@@ -66,7 +66,7 @@
                                                             <td class="text-right">
                                                                 {{job_order_labour.qty}}
                                                             </td>
-                                                            <td class="wid-100 white-space-unset text-right">
+                                                            <td class="wid-180 white-space-unset text-right">
                                                                 {{job_order_labour.amount}}
                                                                 <input type="hidden" class="job_order_labours" name="labouramount[{{index}}][amount]" value="{{job_order_labour.amount}}">
                                                             </td>
@@ -90,7 +90,7 @@
                                                                     Total Labour
                                                                 </b>
                                                             </td>
-                                                            <td class="wid-100 white-space-unset  text-right">
+                                                            <td class="wid-180 white-space-unset  text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
                                                                     {{labour_total_amount}}
@@ -120,7 +120,7 @@
                                                             <th class="text-right">
                                                                 Quantity
                                                             </th>
-                                                            <th class="wid-100 white-space-unset text-right">
+                                                            <th class="wid-180 white-space-unset text-right">
                                                                 Amount
                                                             </th>
                                                             <th class="wid-100"></th>
@@ -140,7 +140,7 @@
                                                             <td class="text-right">
                                                                 {{job_order_part.qty}}
                                                             </td>
-                                                            <td class="wid-100 white-space-unset text-right">
+                                                            <td class="wid-180 white-space-unset text-right">
                                                                 {{job_order_part.amount}}
                                                                 <input type="hidden" class="job_order_parts" name="part_amount[{{index}}][amount]" value="{{job_order_part.amount}}">
                                                             </td>
@@ -164,7 +164,7 @@
                                                                     Total Parts
                                                                 </b>
                                                             </td>
-                                                            <td class="wid-100 white-space-unset text-right">
+                                                            <td class="wid-180 white-space-unset text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
                                                                     {{parts_total_amount}}
@@ -188,7 +188,7 @@
                                                                         Total Labour & Parts
                                                                     </b>
                                                                 </td>
-                                                                <td class="wid-100 text-right">
+                                                                <td class="wid-180 text-right">
                                                                     <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                     <b>
                                                                         {{total_amount}}
@@ -206,7 +206,7 @@
                                                 <div class="col-md-12">
                                                     <button class="btn btn-red submit" type="submit" ng-click="savePayableForm()">Save & Close</button>
                                                     <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order.id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <button class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-click="savePayableForm()">Next</button>
+                                                    <button class="btn btn-secondary-dark btn-min-wdth btn-nxt submit" ng-click="savePayableForm()">Next</button>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->

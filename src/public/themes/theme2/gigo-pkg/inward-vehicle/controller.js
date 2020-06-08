@@ -4,12 +4,7 @@ app.component('inwardVehicleCardList', {
         $rootScope.loading = true;
         $('#search').focus();
         var self = this;
-
-        if (!HelperService.isLoggedIn()) {
-            $location.path('/login');
-            return;
-        }
-
+        HelperService.isLoggedIn()
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
 
@@ -23,7 +18,6 @@ app.component('inwardVehicleCardList', {
             $('#search').val('');
         }
 
-        //HelperService.isLoggedIn()
         self.user = $scope.user = HelperService.getLoggedUser();
         self.search_key = '';
         self.gate_in_date = '';
@@ -221,11 +215,7 @@ app.component('inwardVehicleTableList', {
         $scope.loading = true;
         $('#search_inward_vehicle').focus();
         var self = this;
-        if (!HelperService.isLoggedIn()) {
-            $location.path('/login');
-            return;
-        }
-
+        HelperService.isLoggedIn()
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
 
@@ -729,7 +719,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/dms-checklist/form/' + $scope.job_order.id);
+                            $location.path('/inward-vehicle/scheduled-maintenance/form/' + $scope.job_order_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -760,6 +750,8 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             ev.stopPropagation();
         });
         var self = this;
+        self.labour_removal_id = [];
+        self.parts_removal_id = [];
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
         //     window.location = "#!/page-permission-denied";
@@ -788,12 +780,12 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    $scope.job_order = res.job_order;
                     $scope.part_details = res.part_details;
                     $scope.labour_details = res.labour_details;
                     $scope.total_amount = res.total_amount;
                     $scope.labour_amount = res.labour_amount;
                     $scope.parts_rate = res.parts_rate;
-                    $scope.job_order_id = res.job_order_id;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -808,48 +800,103 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             } else {
                 $('#check_val').val(0);
             }
-
         }
 
-        self.removeLabourDetails = function($id) {
-            $('#delete_labour_details').val($id);
+        self.removeLabourDetails = function($id, $labour_id) {
+            $('.delete_labour_details').val($id);
+            $('.labour_detail_id').val($labour_id);
         }
 
         $scope.deleteConfirm = function() {
-            $id = $('#delete_labour_details').val();
-            $('#tr_' + $id).remove();
-            tot_lab_value = 0;
-            $(".lab_amount").each(function() {
-                amt_lab = $(this).val();
-                tot_lab_value = parseInt(tot_lab_value) + parseInt(amt_lab);
-            });
-            $("#tot_amt_lab").text(tot_lab_value);
+            $id = $('.delete_labour_details').val();
+            $labour_id = $('.labour_detail_id').val();
 
-            rate_part = $("#rate_part").text();
+            if ($labour_id) {
+                self.labour_removal_id.push(parseInt($labour_id));
+                $('#labour_removal_ids').val(JSON.stringify(self.labour_removal_id));
+            }
 
-            tot_full_val = parseInt(tot_lab_value) + parseInt(rate_part);
-            $("#tot_amt").text(tot_full_val);
+            $scope.labour_details.splice($id, 1);
+
+            setTimeout(function() {
+                var total_labour_amount = 0;
+                for (var i = 0; i < $scope.labour_details.length; i++) {
+                    var labour_amount = parseFloat($('#labour_amount_' + i).val());
+                    if (labour_amount && !isNaN(labour_amount)) {
+                        total_labour_amount += labour_amount;
+                    }
+                }
+
+                $("#total_amount_labour").text(total_labour_amount.toFixed(2));
+
+                var total_part_amount = 0;
+                for (var i = 0; i < $scope.part_details.length; i++) {
+                    var part_amount = parseFloat($('#part_amount_' + i).val());
+                    if (part_amount && !isNaN(part_amount)) {
+                        total_part_amount += part_amount;
+                    }
+                }
+
+                var total_amount = parseFloat(total_labour_amount) + parseFloat(total_part_amount);
+                $("#total_amount").text(total_amount.toFixed(2));
+
+            }, 1000);
         }
 
-        self.delete_parts_details = function($id) {
-            $('#delete_parts_details').val($id);
+        self.delete_parts_details = function($id, $part_id) {
+            $('.delete_parts_details').val($id);
+            $('.part_detail_id').val($part_id);
         }
 
         $scope.deletePartsConfirm = function() {
-            $id = $('#delete_parts_details').val();
-            $('#tp_' + $id).remove();
+            $id = $('.delete_parts_details').val();
+            $part_id = $('.part_detail_id').val();
 
-            tot_part_value = 0;
-            $(".parts_rate").each(function() {
-                amt_part = $(this).val();
-                tot_part_value = parseInt(tot_part_value) + parseInt(amt_part);
-            });
-            $("#rate_part").text(tot_part_value);
+            if ($part_id) {
+                self.parts_removal_id.push(parseInt($part_id));
+                $('#parts_removal_ids').val(JSON.stringify(self.parts_removal_id));
+            }
 
-            rate_lab = $("#tot_amt_lab").text();
+            $scope.part_details.splice($id, 1);
 
-            tot_full_val = parseInt(tot_part_value) + parseInt(rate_lab);
-            $("#tot_amt").text(tot_full_val);
+            console.log($scope.part_details);
+            setTimeout(function() {
+                var total_part_amount = 0;
+                for (var i = 0; i < $scope.part_details.length; i++) {
+                    var part_amount = parseFloat($('#part_amount_' + i).val());
+                    if (part_amount && !isNaN(part_amount)) {
+                        total_part_amount += part_amount;
+                    }
+                }
+                $("#total_amount_part").text(total_part_amount.toFixed(2));
+
+                var total_labour_amount = 0;
+                for (var i = 0; i < $scope.labour_details.length; i++) {
+                    var labour_amount = parseFloat($('#labour_amount_' + i).val());
+                    if (labour_amount && !isNaN(labour_amount)) {
+                        total_labour_amount += labour_amount;
+                    }
+                }
+
+                var total_amount = parseFloat(total_labour_amount) + parseFloat(total_part_amount);
+                $("#total_amount").text(total_amount.toFixed(2));
+
+            }, 1000);
+
+            // // alert($labour_id);
+            // $('#tp_' + $id).remove();
+
+            // tot_part_value = 0;
+            // $(".parts_rate").each(function() {
+            //     amt_part = $(this).val();
+            //     tot_part_value = parseInt(tot_part_value) + parseInt(amt_part);
+            // });
+            // $("#rate_part").text(tot_part_value);
+
+            // rate_lab = $("#tot_amt_lab").text();
+
+            // tot_full_val = parseInt(tot_part_value) + parseInt(rate_lab);
+            // $("#tot_amt").text(tot_full_val);
         }
 
         //Save Form Data 
@@ -900,7 +947,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/scheduled-maintenance/form/' + $scope.job_order.id);
+                            $location.path('/inward-vehicle/payable-labour-part-detail/form/' + $scope.job_order.id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -1022,6 +1069,43 @@ app.component('inwardVehicleCustomerConfirmationForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
         $scope.job_order_id = $routeParams.job_order_id;
 
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $rootScope.loading = true;
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/customer-confirmation/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    $rootScope.loading = false;
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+
+                    console.log($scope.job_order);
+                    if ($scope.job_order.is_customer_agreed != 1) {
+                        $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order.id);
+                    }
+                    $scope.base_url = res.extras.base_url;
+                    $scope.cameraOn();
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        $scope.fetchData();
+
         self.video = false;
         self.screenShot = false;
 
@@ -1049,6 +1133,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
             var video = document.getElementById('video');
 
             $scope.snapshot = function() {
+                $('#customer_pic').hide();
                 // Trigger photo take
                 context.drawImage(video, 0, 0, 460, 360);
                 var customer_photo = canvas_photo.toDataURL('image/jpeg', 1.0);
@@ -1257,49 +1342,55 @@ app.component('inwardVehicleEstimateForm', {
         }
 
         //Save Form Data 
-        var form_id = '#form';
-        var v = jQuery(form_id).validate({
-            ignore: '',
-            rules: {
-                'estimated_delivery_date': {
-                    required: true,
+        $scope.saveEstimate = function() {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'estimated_delivery_date': {
+                        required: true,
+                    },
                 },
-            },
-            messages: {
+                messages: {
 
-            },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
-            },
-            submitHandler: function(form) {
-                let formData = new FormData($(form_id)[0]);
-                $('.submit').button('loading');
-                $.ajax({
-                        url: base_url + '/api/vehicle-inward/estimate/save',
-                        method: "POST",
-                        data: formData,
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/estimate/save',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            if ($('#is_customer_agreed').val() == 1) {
+                                $location.path('/inward-vehicle/customer-confirmation/' + $scope.job_order.id);
+                            } else {
+                                $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order.id);
+                            }
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
                             $('.submit').button('reset');
-                            showErrorNoty(res);
-                            return;
-                        }
-                        custom_noty('success', res.message);
-                        $location.path('/inward-vehicle/estimate/' + $scope.job_order.id);
-                        $scope.$apply();
-                    })
-                    .fail(function(xhr) {
-                        $('.submit').button('reset');
-                        custom_noty('error', 'Something went wrong at server');
-                    });
-            }
-        });
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
 
         $scope.showVehicleForm = function() {
             $scope.show_vehicle_detail = false;
@@ -1491,81 +1582,97 @@ app.component('inwardVehicleVehicleDetail', {
         $scope.fetchData();
 
         //Save Form Data 
-        var form_id = '#form';
-        var v = jQuery(form_id).validate({
-            ignore: '',
-            rules: {
-                'is_registered': {
-                    required: true,
+        $scope.onSubmit = function(type) {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'is_registered': {
+                        required: true,
+                    },
+                    'registration_number': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 10,
+                    },
+                    'model_id': {
+                        required: true,
+                    },
+                    'vin_number': {
+                        required: true,
+                        minlength: 17,
+                        maxlength: 32,
+                    },
+                    'engine_number': {
+                        required: true,
+                        minlength: 7,
+                        maxlength: 64,
+                    },
+                    'chassis_number': {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 64,
+                    },
                 },
-                'registration_number': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 10,
+                messages: {
+                    'vin_number': {
+                        minlength: 'Minimum 17 Numbers',
+                        maxlength: 'Maximum 32 Numbers',
+                    },
+                    'engine_number': {
+                        minlength: 'Minimum 7 Numbers',
+                        maxlength: 'Maximum 64 Numbers',
+                    },
+                    'chassis_number': {
+                        minlength: 'Minimum 10 Numbers',
+                        maxlength: 'Maximum 64 Numbers',
+                    }
                 },
-                'model_id': {
-                    required: true,
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
                 },
-                'vin_number': {
-                    required: true,
-                    minlength: 17,
-                    maxlength: 32,
-                },
-                'engine_number': {
-                    required: true,
-                    minlength: 7,
-                    maxlength: 64,
-                },
-                'chassis_number': {
-                    required: true,
-                    minlength: 10,
-                    maxlength: 64,
-                },
-            },
-            messages: {
-                'vin_number': {
-                    minlength: 'Minimum 17 Numbers',
-                    maxlength: 'Maximum 32 Numbers',
-                },
-                'engine_number': {
-                    minlength: 'Minimum 7 Numbers',
-                    maxlength: 'Maximum 64 Numbers',
-                },
-                'chassis_number': {
-                    minlength: 'Minimum 10 Numbers',
-                    maxlength: 'Maximum 64 Numbers',
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    if (type == 1) {
+                        $('.save').button('loading');
+                    } else {
+                        $('.next').button('loading');
+                    }
+                    $.ajax({
+                            url: base_url + '/api/vehicle/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            if (type == 1) {
+                                $('.submit').button('reset');
+                                custom_noty('success', res.message);
+                                $location.path('/inward-vehicle/table-list');
+                            } else {
+                                $('.next').button('reset');
+                                $location.path('/inward-vehicle/customer-detail/' + $scope.job_order.id);
+                            }
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            if (type == 1) {
+                                $('.save').button('reset');
+                            } else {
+                                $('.next').button('reset');
+                            }
+                            custom_noty('error', 'Something went wrong at server');
+                        });
                 }
-            },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
-            },
-            submitHandler: function(form) {
-                let formData = new FormData($(form_id)[0]);
-                $('.submit').button('loading');
-                $.ajax({
-                        url: base_url + '/api/vehicle/save',
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
-                            $('.submit').button('reset');
-                            showErrorNoty(res);
-                            return;
-                        }
-                        $('.submit').button('reset');
-                        custom_noty('success', res.message);
-                        $location.path('/inward-vehicle/customer-detail/' + $scope.job_order.id);
-                        $scope.$apply();
-                    })
-                    .fail(function(xhr) {
-                        $('.submit').button('reset');
-                        custom_noty('error', 'Something went wrong at server');
-                    });
-            }
-        });
+            });
+        }
+
 
         $scope.showVehicleForm = function() {
             $scope.show_vehicle_detail = false;
@@ -1661,7 +1768,7 @@ app.component('inwardVehicleCustomerDetail', {
         $scope.fetchData();
 
         //Save Form Data 
-        $scope.saveCustomer = function() {
+        $scope.saveCustomer = function(type) {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -1742,7 +1849,11 @@ app.component('inwardVehicleCustomerDetail', {
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
                     $rootScope.loading = true;
-                    $('.submit').button('loading');
+                    if (type == 1) {
+                        $('.save').button('loading');
+                    } else {
+                        $('.next').button('loading');
+                    }
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/save-customer-detail',
                             method: "POST",
@@ -1753,18 +1864,33 @@ app.component('inwardVehicleCustomerDetail', {
                         .done(function(res) {
                             if (!res.success) {
                                 $rootScope.loading = false;
-                                $('.submit').button('reset');
+                                if (type == 1) {
+                                    $('.save').button('reset');
+                                } else {
+                                    $('.next').button('reset');
+                                }
                                 showErrorNoty(res);
                                 return;
                             }
-                            $('.submit').button('reset');
-                            custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/order-detail/form/' + $routeParams.job_order_id);
-                            $scope.$apply();
+                            if (type == 1) {
+                                $('.save').button('reset');
+                                custom_noty('success', res.message);
+                                $location.path('/inward-vehicle/table-list');
+                                $scope.$apply();
+                            } else {
+                                $('.next').button('reset');
+                                custom_noty('success', res.message);
+                                $location.path('/inward-vehicle/order-detail/form/' + $routeParams.job_order_id);
+                                $scope.$apply();
+                            }
                         })
                         .fail(function(xhr) {
                             $rootScope.loading = false;
-                            $('.submit').button('reset');
+                            if (type == 1) {
+                                $('.save').button('reset');
+                            } else {
+                                $('.next').button('reset');
+                            }
                             custom_noty('error', 'Something went wrong at server');
                         });
                 }
@@ -1787,6 +1913,25 @@ app.component('inwardVehicleCustomerDetail', {
             $scope.job_order.vehicle.current_owner = {
 
             };
+        }
+        //GET CITY LIST
+        self.searchCity = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCitySearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
         }
 
         $scope.countryChanged = function() {
@@ -2770,7 +2915,29 @@ app.component('inwardVehicleRoadTestDetailForm', {
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-
+                    'is_road_test_required': {
+                        required: true,
+                    },
+                    'road_test_done_by_id': {
+                        required: true,
+                    },
+                    'road_test_performed_by_id': {
+                        required: true,
+                    },
+                },
+                errorPlacement: function(error, element) {
+                    if (element.attr("name") == "is_road_test_required") {
+                        error.appendTo('#errorRoadTestRequired');
+                        return;
+                    } else if (element.attr("name") == "road_test_done_by_id") {
+                        error.appendTo('#errorRoadTestDone');
+                        return;
+                    } else if (element.attr("name") == "road_test_report") {
+                        error.appendTo('#errorRoadTestObservation');
+                        return;
+                    } else {
+                        error.insertAfter(element);
+                    }
                 },
                 messages: {
 
@@ -2855,6 +3022,9 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                         return;
                     }
                     $scope.job_order = res.job_order;
+                    if ($scope.job_order.is_customer_agreed == 1) {
+                        $location.path('/inward-vehicle/customer-confirmation/' + $scope.job_order.id);
+                    }
                     $scope.estimation_type = res.estimation_type;
                     $scope.$apply();
                 })
@@ -2952,7 +3122,14 @@ app.component('inwardVehicleView', {
                         return;
                     }
                     $scope.job_order = res.job_order;
-                    $scope.inventory_type_list = res.inventory_type_list;
+                    // console.log($scope.job_order);
+                    $scope.schedule_maintenance = res.schedule_maintenance;
+                    $scope.payable_maintenance = res.payable_maintenance;
+                    $scope.total_estimate_labour_amount = res.total_estimate_labour_amount;
+                    $scope.total_estimate_part_amount = res.total_estimate_part_amount;
+                    $scope.total_estimate_amount = res.total_estimate_amount;
+                    $scope.extras = res.extras;
+                    $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {

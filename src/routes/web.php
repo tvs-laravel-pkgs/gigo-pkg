@@ -10,6 +10,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/parts-indent/save', 'PartsIndentController@savePartsindent')->name('savePartsindent');
 	Route::get('/parts-indent/issued-parts-details', 'PartsIndentController@getIssedParts')->name('getIssedParts');
 	Route::get('/parts-indent/delete', 'PartsIndentController@deleteIssedPart')->name('deleteIssedPart');
+	Route::get('/parts-indent-parts/data', 'PartsIndentController@getPartsIndentPartsData')->name('getPartsIndentPartsData');
 
 	//Pause Work Reason
 	Route::get('/pause-work-reason/get-list', 'PauseWorkReasonController@getPauseWorkReasonList')->name('getPauseWorkReasonList');
@@ -145,6 +146,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/vehicle-inward/customer/get-search-list', 'VehicleInwardController@getCustomerSearchList')->name('getCustomerSearchList');
 	Route::post('/vehicle-inward/vehicle-model/get-search-list', 'VehicleInwardController@getVehicleModelSearchList')->name('getVehicleModelSearchList');
 
+	Route::post('/vehicle-inward/city/get-search-list', 'VehicleInwardController@getCitySearchList')->name('getCitySearchList');
 	//Job Order
 	Route::get('/job-order/get-list', 'JobOrderController@getJobOrderList')->name('getJobOrderList');
 	Route::get('/job-order/get-form-data', 'JobOrderController@getJobOrderFormData')->name('getJobOrderFormData');

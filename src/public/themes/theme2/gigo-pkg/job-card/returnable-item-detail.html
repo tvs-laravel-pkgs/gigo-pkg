@@ -56,13 +56,13 @@
                                                         </tbody>
                                                     </table>
                                                     <div class="mb-10"></div><!-- Spacing -->
-                                                    <img class="img-responsive wid-60" src="{{returnable_item_attachement_path}}/{{returnable_item.attachment[0].name}}" alt="Parts Image" />
-                                                    <a href="#!/static/gigo/job-card/form-returnable-item" class="btn btn-md type2 btn-secondary-dark btn-square mt-15">Edit</a>
+                                                    <img ng-repeat="(key,attachment) in returnable_item.attachment" class="img-responsive wid-60" src="{{returnable_item_attachement_path}}/{{attachment.name}}" alt="Parts Image" />
+                                                    <a href="#!/gigo-pkg/job-card/returnable-item/edit/{{job_card.id}}/{{returnable_item.id}}" class="btn btn-md type2 btn-secondary-dark btn-square mt-15">Edit</a>
                                                 </div><!-- Border Box -->
                                             </li>
                                         </ul><!-- Flex Row -->
                                         <hr>
-                                        <a href="#!/static/gigo/job-card/form-returnable-item">
+                                        <a href="#!/gigo-pkg/job-card/returnable-item/add/{{job_card.id}}">
                                             <button class="btn btn-md type2 btn-green btn-square">Add Another Item</button>
                                         </a>
                                     </div><!-- Column -->

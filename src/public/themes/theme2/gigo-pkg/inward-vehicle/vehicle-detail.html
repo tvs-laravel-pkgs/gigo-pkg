@@ -1,11 +1,11 @@
-Content Wrap -->
+<!-- Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/inward-vehicle/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Inward Vehicle</b></h1>
@@ -20,105 +20,90 @@ Content Wrap -->
             <job-order-header></job-order-header>
             <div class="tab-form-wrap type-2">
                 <inward-tabs ng-init="active_tab = 'vehicle-detail'"></inward-tabs>
-                <div class="tab-form-body">
-                    <div class="tab-content">
-                        <!-- TAB PANEL -->
-                        <div class="tab-pane fade in active" id="vehicle_details" data-animation="fadeInUp" data-animation-delay="300">
-                            <div class="tab-pane-wrap">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5 class="color-primary mb-10">
-                                            <b>
-                                                Vehicle Details
-                                            </b>
-                                        </h5>
-                                        <ul class="view-row mb-no" ng-show="show_vehicle_detail">
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">
-                                                    Registration Type
-                                                </span>
-                                                <span class="view-data-list-value">
-                                                    <b ng-if="job_order.vehicle.is_registered == 1">
-                                                        Registered Vehicle
-                                                    </b>
-                                                    <b ng-if="job_order.vehicle.is_registered != 1">
-                                                        Un-Registered Vehicle
-                                                    </b>
-                                                </span>
-                                            </li>
-                                            <li class="view-col-3" ng-if="job_order.vehicle.is_registered == 1">
-                                                <span class="view-col-label">
-                                                    Registration No
-                                                </span>
-                                                <span class="view-col-value">
-                                                    <b>
-                                                        {{job_order.vehicle.registration_number}}
-                                                    </b>
-                                                </span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">
-                                                    Vehicle Model
-                                                </span>
-                                                <span class="view-col-value">
-                                                    <b>
-                                                        {{job_order.vehicle.model.name}}
-                                                    </b>
-                                                </span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">
-                                                    VIN Number
-                                                </span>
-                                                <span class="view-col-value">
-                                                    {{job_order.vehicle.vin_number}}
-                                                </span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">
-                                                    Engine Number
-                                                </span>
-                                                <span class="view-col-value">
-                                                    {{job_order.vehicle.engine_number}}
-                                                </span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">
-                                                    Chassis Number
-                                                </span>
-                                                <span class="view-data-list-value">
-                                                    <b>
-                                                        {{job_order.vehicle.chassis_number}}
-                                                    </b>
-                                                </span>
-                                            </li>
-                                        </ul>
-                                        <div class="tab-pane-footer1" ng-show="show_vehicle_detail">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a type="button" class="btn btn-red" ng-click="showVehicleForm()">
-                                                        Edit
-                                                    </a>
-                                                    <!-- <a type="button" class="btn btn-red" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
-                                                        Save & Close
-                                                    </a>
-                                                    <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/customer-detail/{{job_order.id}}">
-                                                        Next
-                                                    </a> -->
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
-                                        <form id="form">
+                <form id="form">
+                    <div class="tab-form-body">
+                        <div class="tab-content">
+                            <!-- TAB PANEL -->
+                            <div class="tab-pane fade in active" id="vehicle_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Vehicle Details
+                                                </b>
+                                            </h5>
+                                            <ul class="view-row mb-no" ng-show="show_vehicle_detail">
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Registration Type
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b ng-if="job_order.vehicle.is_registered == 1">
+                                                            Registered Vehicle
+                                                        </b>
+                                                        <b ng-if="job_order.vehicle.is_registered != 1">
+                                                            Un-Registered Vehicle
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3" ng-if="job_order.vehicle.is_registered == 1">
+                                                    <span class="view-col-label">
+                                                        Registration No
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.vehicle.registration_number}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Vehicle Model
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.vehicle.model.name}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        VIN Number
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_order.vehicle.vin_number}}
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Engine Number
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_order.vehicle.engine_number}}
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Chassis Number
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.vehicle.chassis_number}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                            </ul>
                                             <input type="hidden" name="id" value="{{job_order.vehicle.id}}">
                                             <div class="row" ng-show="show_vehicle_form" id="vehicle_edit">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Registration Type <sup class="mandatory">*</sup></label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="radio_yes" name="is_registered" ng-model="job_order.vehicle.is_registered" ng-value="1">
-                                                            <label for="radio_yes">Registered</label>
-                                                            <input type="radio" id="radio_no" name="is_registered" ng-model="job_order.vehicle.is_registered" ng-value="0">
-                                                            <label for="radio_no">Un Registered</label>
+                                                            <input type="radio" id="registered" name="is_registered" ng-model="job_order.vehicle.is_registered" ng-value="1" ng-checked="job_order.is_registered == 1">
+                                                            <label for="registered">Registered</label>
+                                                            <input type="radio" id="unregistered" name="is_registered" ng-model="job_order.vehicle.is_registered" ng-value="0">
+                                                            <label for="unregistered">Un Registered</label>
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
@@ -178,44 +163,40 @@ Content Wrap -->
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
-                                            <!-- <div class="tab-pane-footer" ng-show="show_vehicle_form">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <button type="submit" class="btn btn-red" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
-                                                            Save & Close
-                                                        </button>
-                                                        <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/customer-detail/{{job_order.id}}">
-                                                            Next
-                                                        </button>
-                                                    </div>
-                                                </div> 
-                                            </div> -->
-                                            <!-- Tab Footer -->
-                                        </form>
-                                    </div><!-- Column -->
-                                </div><!-- Row -->
-                            </div><!-- Tab Pane Wrap -->
-                        </div><!-- Tabe Pane -->
-                        <div class="tab-pane-footer">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <a type="button" class="btn btn-red" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
-                                        Save & Close
-                                    </a>
-                                    <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/customer-detail/{{job_order.id}}">
-                                        Next
-                                    </a>
-                                    <!-- <button type="submit" class="btn btn-red submit" ng-click="saveVocDetailForm()">
-                                        Save & Close
-                                    </button>
-                                    <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-click="saveVocDetailForm()">
-                                        Next
-                                    </button> -->
-                                </div>
-                            </div>
-                        </div><!-- Tab Footer -->
-                    </div><!-- Tab Content -->
-                </div><!-- Tab Form Body -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer" ng-show="show_vehicle_detail">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a type="button" class="btn btn-red" ng-click="showVehicleForm()">
+                                                        Edit
+                                                    </a>
+                                                    <a type="button" class="btn btn-red" href="#!/inward-vehicle/table-list">
+                                                        Save & Close
+                                                    </a>
+                                                    <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/customer-detail/{{job_order.id}}">
+                                                        Next
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                        <div class="tab-pane-footer" ng-show="show_vehicle_form">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <button type="submit" class="btn btn-red save" ng-click="onSubmit(1)">
+                                                        Save & Close
+                                                    </button>
+                                                    <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt next" ng-click="onSubmit(0)">
+                                                        Next
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                        </div><!-- Tab Content -->
+                    </div><!-- Tab Form Body -->
+                </form>
             </div><!-- Tab Form Wrap -->
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->

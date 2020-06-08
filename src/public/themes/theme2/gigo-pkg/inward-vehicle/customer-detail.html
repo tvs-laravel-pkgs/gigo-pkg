@@ -5,7 +5,7 @@ Content Wrap -->
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/inward-vehicle/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Inward Vehicle</b></h1>
@@ -20,111 +20,98 @@ Content Wrap -->
             <job-order-header></job-order-header>
             <div class="tab-form-wrap type-2">
                 <inward-tabs ng-init="active_tab = 'customer-detail'"></inward-tabs>
-                <div class="tab-form-body">
-                    <div class="tab-content">
-                        <!-- TAB PANEL -->
-                        <div class="tab-pane fade in active" id="customer_details" data-animation="fadeInUp" data-animation-delay="300">
-                            <div class="tab-pane-wrap">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5 class="color-primary mb-10">
-                                            <b>
-                                                Customer Details
-                                            </b>
-                                        </h5>
-                                        <div id="customer-detail" ng-if="show_customer_detail">
-                                            <ul class="view-row mb-no">
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        Name
-                                                    </span>
-                                                    <span class="view-data-list-value">
-                                                        <b>
-                                                            {{job_order.vehicle.current_owner.customer.name}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        Mobile No
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        <b>
-                                                            {{job_order.vehicle.current_owner.customer.mobile_no}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        Email
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        <b>
-                                                            {{job_order.vehicle.current_owner.customer.email}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3 ptb-2">
-                                                    <span class="view-col-label">
-                                                        Address
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        {{job_order.vehicle.current_owner.customer.address.address_line1}},{{job_order.vehicle.current_owner.customer.address.address_line2}},{{job_order.vehicle.current_owner.customer.address.city.name}},{{job_order.vehicle.current_owner.customer.address.state.name}},{{job_order.vehicle.current_owner.customer.address.pincode}},{{job_order.vehicle.current_owner.customer.address.country.name}}.
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        GST No
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        {{job_order.vehicle.current_owner.customer.gst_number}}
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        PAN No
-                                                    </span>
-                                                    <span class="view-data-list-value">
-                                                        <b>
-                                                            {{job_order.vehicle.current_owner.customer.pan_number}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        Ownership
-                                                    </span>
-                                                    <span class="view-data-list-value">
-                                                        <b>
-                                                            {{job_order.vehicle.current_owner.ownership_type.name}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                            </ul>
-                                            <div class="tab-pane-footer1">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <button ng-click="showOwnerForm()" class="btn btn-secondary-dark btn-md btn-square">
-                                                            Edit
-                                                        </button>
-                                                        <button ng-click="addNewOwner()" class="btn btn-bordered btn-dark btn-md btn-square">
-                                                            Add New Owner
-                                                        </button>
-                                                        <!-- <button type="submit" class="btn btn-red" ng-click="saveCustomer()">
-                                                            Save & Close
-                                                        </button>
-                                                        <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/order-detail/form/{{job_order.id}}">
-                                                            Next
-                                                        </a> -->
-                                                    </div>
-                                                </div>
-                                            </div><!-- Tab Footer -->
-                                            <div class="mb-30"></div><!-- Spacing -->
-                                        </div> <!-- customer-detail -->
-                                        <form id="form" ng-if="show_customer_form">
-                                            <input type="hidden" name="id" value="{{job_order.vehicle.current_owner.id}}">
-                                            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                                            <div class="row">
+                <form id="form">
+                    <div class="tab-form-body">
+                        <div class="tab-content">
+                            <!-- TAB PANEL -->
+                            <div class="tab-pane fade in active" id="customer_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10">
+                                                <b>
+                                                    Customer Details
+                                                </b>
+                                            </h5>
+                                            <div id="customer-detail" ng-if="show_customer_detail">
+                                                <ul class="view-row mb-no">
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label">
+                                                            Name
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.vehicle.current_owner.customer.name}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label">
+                                                            Mobile No
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.vehicle.current_owner.customer.mobile_no}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label">
+                                                            Email
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.vehicle.current_owner.customer.email}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3 ptb-2">
+                                                        <span class="view-col-label">
+                                                            Address
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            {{job_order.vehicle.current_owner.customer.address.address_line1}},{{job_order.vehicle.current_owner.customer.address.address_line2}},{{job_order.vehicle.current_owner.customer.address.city.name}},{{job_order.vehicle.current_owner.customer.address.state.name}},{{job_order.vehicle.current_owner.customer.address.pincode}},{{job_order.vehicle.current_owner.customer.address.country.name}}.
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label">
+                                                            GST No
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            {{job_order.vehicle.current_owner.customer.gst_number}}
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label">
+                                                            PAN No
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.vehicle.current_owner.customer.pan_number}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label">
+                                                            Ownership
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.vehicle.current_owner.ownership_type.name}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                                <button ng-click="showOwnerForm()" class="btn btn-secondary-dark btn-md btn-square">
+                                                    Edit
+                                                </button>
+                                                <button ng-click="addNewOwner()" class="btn btn-bordered btn-dark btn-md btn-square">
+                                                    Add New Owner
+                                                </button>
+                                            </div> <!-- customer-detail -->
+                                            <div class="row" ng-show="show_customer_form">
+                                                <input type="hidden" name="id" value="{{job_order.vehicle.current_owner.customer.id}}">
+                                                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>
@@ -209,20 +196,20 @@ Content Wrap -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>
-                                                            City (Change this to auto complete)
+                                                            City
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="job_order.vehicle.current_owner.customer.address.city" placeholder="Select City" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
-                                                            <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchCity" type="search" placeholder="Search for a city.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                            </md-select-header>
-                                                            <md-optgroup>
-                                                                <md-option ng-value="city" ng-repeat="city in extras.city_list | filter:searchCity">
-                                                                    {{city.name}}
-                                                                </md-option>
-                                                            </md-optgroup>
-                                                        </md-select>
-                                                        <input type="hidden" name="city_id" value="{{job_order.vehicle.current_owner.customer.address.city.id}}">
+                                                        <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="job_order.vehicle.current_owner.customer.address.city"  md-selected-item-change="selectedCustomer(job_order.vehicle.current_owner.customer.address.city.id)" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus>
+                                                            <md-item-template>
+                                                                <span>
+                                                                    {{option.name}}
+                                                                </span>
+                                                            </md-item-template>
+                                                            <md-not-found>
+                                                                No City matching "{{$ctrl.customerSearchText}}" were found.
+                                                            </md-not-found>
+                                                        </md-autocomplete>
+                                                        <input type="hidden" id="city_id" name="city_id" value="{{job_order.vehicle.current_owner.customer.address.city.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -270,43 +257,43 @@ Content Wrap -->
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
-                                            <div class="tab-pane-footer1">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <!-- <button type="submit" ng-click="saveCustomer()" class="btn btn-red">
-                                                            Save & Close
-                                                        </button>
-                                                        <button type="submit" ng-click="saveCustomer()" class="btn btn-secondary-dark btn-prev">
-                                                            Previous
-                                                        </button>
-                                                        <button type="submit" ng-click="saveCustomer()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
-                                                            Next
-                                                        </button> -->
-                                                    </div>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer" ng-if="show_customer_detail">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a type="button" class="btn btn-red" href="#!/inward-vehicle/table-list">
+                                                        Save & Close
+                                                    </a>
+                                                    <a type="button" class="btn btn-secondary-dark" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
+                                                        Previous
+                                                    </a>                                    
+                                                    <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/order-detail/form/{{job_order.id}}">
+                                                        Next
+                                                    </a>
                                                 </div>
-                                            </div><!-- Tab Footer -->
-                                        </form> <!-- customer-form -->
-                                    </div><!-- Column -->
-                                </div><!-- Row -->
-                            </div><!-- Tab Pane Wrap -->
-                        </div><!-- Tabe Pane -->
-                        <div class="tab-pane-footer">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <button type="submit" class="btn btn-red submit" ng-click="saveCustomer()">
-                                        Save & Close
-                                    </button>
-                                    <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/vehicle-detail/{{job_order_id}}">
-                                        Previous
-                                    </a>
-                                    <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/inward-vehicle/order-detail/form/{{job_order.id}}">
-                                        Next
-                                    </a>
-                                </div>
-                            </div>
-                        </div><!-- Tab Footer -->
-                    </div><!-- Tab Content -->
-                </div><!-- Tab Form Body -->
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                        <div class="tab-pane-footer" ng-if="show_customer_form">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <button type="submit" ng-click="saveCustomer(1)" class="btn btn-red save">
+                                                        Save & Close
+                                                    </button>
+                                                    <a type="button" class="btn btn-secondary-dark" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}">
+                                                        Previous
+                                                    </a>                                    
+                                                    <button type="submit" ng-click="saveCustomer(0)" class="btn btn-secondary-dark btn-min-wdth btn-nxt next">
+                                                        Next
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->                                        
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                        </div><!-- Tab Content -->
+                    </div><!-- Tab Form Body -->
+                </form> <!-- customer-form -->
             </div><!-- Tab Form Wrap -->
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->

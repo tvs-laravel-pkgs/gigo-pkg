@@ -138,6 +138,10 @@
 	        template: '<parts-indent-view></parts-indent-view>',
 	        title: 'View Parts Indent',
 	    }).
+	    when('/gigo-pkg/parts-indent/edit-parts/:job_card_id/:part_id', {
+	        template: '<parts-indent-edit-parts></parts-indent-edit-parts>',
+	        title: 'Edit Parts Indent',
+	    }).
 
 
 	    //Kanban App
@@ -194,6 +198,7 @@
      //Parts Indent
      var parts_indent_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/list.html')}}";
      var parts_indent_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/view.html')}}";
+     var parts_indent_edit_parts_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/edit-parts.html')}}";
 
 </script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
@@ -1079,6 +1084,15 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Job Card Returnable Items',
 	    }).
 
+	    when('/gigo-pkg/job-card/returnable-item/add/:job_card_id', {
+	        template: '<job-card-returnable-item-form></job-card-returnable-item-form>',
+	        title: 'Add Returnable Item',
+	    }).
+	    when('/gigo-pkg/job-card/returnable-item/edit/:job_card_id/:id', {
+	        template: '<job-card-returnable-item-form></job-card-returnable-item-form>',
+	        title: 'Edit Returnable Item',
+	    }).
+
 	    when('/gigo-pkg/job-card/material-gatepass/:job_card_id', {
 	        template: '<job-card-material-gatepass-form></job-card-material-gatepass-form>',
 	        title: 'Job Card Material Gate Pass',
@@ -1101,6 +1115,21 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    when('/gigo-pkg/job-card/dms-checklist/:job_card_id', {
 	        template: '<job-card-dms-checklist-form></job-card-dms-checklist-form>',
 	        title: 'Job Card DMS Check List',
+
+	    }).
+	    when('/gigo-pkg/job-card/part-indent/:job_card_id', {
+	        template: '<job-card-part-indent-form></job-card-part-indent-form>',
+	        title: 'Job Card Part Indent',
+
+	    }).
+	    when('/gigo-pkg/job-card/schedule-maintenance/:job_card_id', {
+	        template: '<job-card-schedule-maintenance-form></job-card-schedule-maintenance-form>',
+	        title: 'Job Card Scheduled Maintenance',
+
+	    }).
+	    when('/gigo-pkg/job-card/payable-labour-parts/:job_card_id', {
+	        template: '<job-card-payable-labour-parts-form></job-card-payable-labour-parts-form>',
+	        title: 'Job Card Payable Labour Parts',
 
 	    }).
 	    when('/gigo-pkg/job-card/expert-diagnosis/:job_card_id', {
@@ -1131,6 +1160,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_bay_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/bay-form.html')}}';
 
     var job_card_returnable_item_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/returnable-item-detail.html')}}';
+     var job_card_returnable_item_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/returnable-item-form.html')}}';
 
     var job_card_material_gatepass_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/material-gatepass.html')}}';
     var job_card_material_outward_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/material-outward.html')}}';
@@ -1141,6 +1171,9 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_schedule_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/schedule.html')}}";
     var job_card_bil_detail_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/bill-detail.html')}}";
     var job_card_bil_detail_update_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/bill-detail-update.html')}}";
+    var job_card_part_indent_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/parts-indent.html')}}';
+    var job_card_schedule_maintendance_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/schedule-maintenance.html')}}';
+    var job_card_parts_labour_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/payable-labour-part.html')}}';
 
 
      //PARTIALS

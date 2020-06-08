@@ -41,11 +41,11 @@ class VehicleInwardController extends Controller {
 	public function getGateInList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [
-				// 'service_advisor_id' => [
-				// 	'required',
-				// 	'exists:users,id',
-				// 	'integer',
-				// ],
+				'service_advisor_id' => [
+					'required',
+					'exists:users,id',
+					'integer',
+				],
 				'offset' => 'nullable|numeric',
 				'limit' => 'nullable|numeric',
 			]);
@@ -75,6 +75,7 @@ class VehicleInwardController extends Controller {
 					'vehicles.registration_number',
 					'models.model_number',
 					'gate_logs.number',
+					'gate_logs.status_id',
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
 					'job_orders.driver_name',
@@ -181,6 +182,8 @@ class VehicleInwardController extends Controller {
 				'vehicle.currentOwner.ownershipType',
 				'vehicle.lastJobOrder',
 				'vehicle.lastJobOrder.jobCard',
+				'vehicleInventoryItem',
+				'vehicleInspectionItems',
 				'type',
 				'outlet',
 				'customerVoices',
@@ -203,6 +206,8 @@ class VehicleInwardController extends Controller {
 				'gateLog.driverAttachment',
 				'gateLog.kmAttachment',
 				'gateLog.vehicleAttachment',
+				'customerApprovalAttachment',
+				'customerESign',
 			])
 				->select([
 					'job_orders.*',
@@ -218,14 +223,103 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$params['field_type_id'] = [11, 12];
-			$inventory_type_list = VehicleInventoryItem::getInventoryList($job_order->id, $params);
+			//SCHEDULE MAINTENANCE
+			$schedule_maintenance_part_amount = 0;
+			$schedule_maintenance_labour_amount = 0;
+			$schedule_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 1)->get();
+			if (!empty($schedule_maintenance['labour_details'])) {
+				foreach ($schedule_maintenance['labour_details'] as $key => $value) {
+					$schedule_maintenance_labour_amount += $value->amount;
+					$value->repair_order = $value->repairOrder;
+					$value->repair_order_type = $value->repairOrder->repairOrderType;
+				}
+			}
+			$schedule_maintenance['labour_amount'] = $schedule_maintenance_labour_amount;
+
+			$schedule_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 1)->get();
+			if (!empty($schedule_maintenance['part_details'])) {
+				foreach ($schedule_maintenance['part_details'] as $key => $value) {
+					$schedule_maintenance_part_amount += $value->amount;
+					$value->part = $value->part;
+				}
+			}
+			$schedule_maintenance['part_amount'] = $schedule_maintenance_part_amount;
+
+			$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
+			// dd($schedule_maintenance['labour_details']);
+
+			//PAYABLE LABOUR AND PART
+			$payable_part_amount = 0;
+			$payable_labour_amount = 0;
+			$payable_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 0)->get();
+			if (!empty($payable_maintenance['labour_details'])) {
+				foreach ($payable_maintenance['labour_details'] as $key => $value) {
+					$payable_labour_amount += $value->amount;
+					$value->repair_order = $value->repairOrder;
+					$value->repair_order_type = $value->repairOrder->repairOrderType;
+				}
+			}
+			$payable_maintenance['labour_amount'] = $payable_labour_amount;
+
+			$payable_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 0)->get();
+			if (!empty($payable_maintenance['part_details'])) {
+				foreach ($payable_maintenance['part_details'] as $key => $value) {
+					$payable_part_amount += $value->amount;
+					$value->part = $value->part;
+				}
+			}
+			$payable_maintenance['part_amount'] = $payable_part_amount;
+
+			$payable_maintenance['total_amount'] = $payable_maintenance['labour_amount'] + $payable_maintenance['part_amount'];
+			// dd($payable_maintenance['labour_details']);
+
+			//TOTAL ESTIMATE
+			$total_estimate_labour_amount['labour_amount'] = $schedule_maintenance['labour_amount'] + $payable_maintenance['labour_amount'];
+			$total_estimate_part_amount['part_amount'] = $schedule_maintenance['part_amount'] + $payable_maintenance['part_amount'];
+			$total_estimate_amount = $total_estimate_labour_amount['labour_amount'] + $total_estimate_part_amount['part_amount'];
+
+			//VEHICLE INSPECTION ITEM
+			$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
+
+			$vehicle_inspection_item_groups = array();
+			foreach ($vehicle_inspection_item_group as $key => $value) {
+				$vehicle_inspection_items = array();
+				$vehicle_inspection_items['id'] = $value->id;
+				$vehicle_inspection_items['name'] = $value->name;
+
+				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
+
+				$vehicle_inspections = $job_order->vehicleInspectionItems()->orderBy('vehicle_inspection_item_id')->get()->toArray();
+
+				if (count($vehicle_inspections) > 0) {
+					foreach ($vehicle_inspections as $value) {
+						if (isset($inspection_items[$value['id']])) {
+							$inspection_items[$value['id']]->status_id = $value['pivot']['status_id'];
+						}
+					}
+				}
+				$item_group['vehicle_inspection_items'] = $inspection_items;
+
+				$vehicle_inspection_item_groups[] = $item_group;
+			}
+
+			$params['config_type_id'] = 32;
+			$params['add_default'] = false;
+			$extras = [
+				'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
+			];
 
 			//Job card details need to get future
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
-				'inventory_type_list' => $inventory_type_list,
+				'extras' => $extras,
+				'schedule_maintenance' => $schedule_maintenance,
+				'payable_maintenance' => $payable_maintenance,
+				'total_estimate_labour_amount' => $total_estimate_labour_amount,
+				'total_estimate_part_amount' => $total_estimate_part_amount,
+				'total_estimate_amount' => $total_estimate_amount,
+				'vehicle_inspection_item_groups' => $vehicle_inspection_item_groups,
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
 
@@ -418,7 +512,7 @@ class VehicleInwardController extends Controller {
 			];
 
 			$validator = Validator::make($request->all(), [
-				'ownership_type_id' => 'required|unique:vehicle_owners,ownership_id,' . $request->id . ',id,vehicle_id,' . $vehicle->id,
+				'ownership_type_id' => 'required|unique:vehicle_owners,ownership_id,' . $request->id . ',customer_id,vehicle_id,' . $vehicle->id,
 			], $error_messages);
 
 			if ($validator->fails()) {
@@ -1090,7 +1184,20 @@ class VehicleInwardController extends Controller {
 	public function getScheduleMaintenanceFormData(Request $r) {
 		// dd($id);
 		try {
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::company()
+				->with([
+					'vehicle',
+					'vehicle.model',
+					'vehicle.status',
+					'status',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -1142,7 +1249,7 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'job_order_id' => $r->id,
+				'job_order' => $job_order,
 				'part_details' => $part_details,
 				'labour_details' => $labour_details,
 				'total_amount' => number_format($total_amount, 2),
@@ -1162,7 +1269,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveScheduleMaintenance(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 			//issue : saravanan - split_order_type_id, is_oem_recommended, status_id not required in job order parts requests. split_order_type_id, is_oem_recommended, status_id, failure_date not required in job order repair orders requests. also remove in validations
 			$validator = Validator::make($request->all(), [
@@ -1213,16 +1320,22 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
+			//Remove Schedule Part Details
+			if (!empty($request->parts_removal_ids)) {
+				$parts_removal_ids = json_decode($request->parts_removal_ids, true);
+				JobOrderPart::whereIn('part_id', $parts_removal_ids)->where('job_order_id', $request->job_order_id)->forceDelete();
+			}
+			//Remove Schedule Labour Details
+			if (!empty($request->labour_removal_ids)) {
+				$labour_removal_ids = json_decode($request->labour_removal_ids, true);
+				JobOrderRepairOrder::whereIn('repair_order_id', $labour_removal_ids)->where('job_order_id', $request->job_order_id)->forceDelete();
+			}
+
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
 				//dd($request->job_order_parts);
 				//issue: saravanan - is_recommended_by_oem save missing. save default 1.
 				foreach ($request->job_order_parts as $key => $part) {
-					//dd($part['part_id']);
-					if (isset($repair['del_part_id'])) {
-						JobOrderPart::where('id', '!=', $repair['del_part_id'])->delete();
-					}
-
 					$job_order_part = JobOrderPart::firstOrNew([
 						'part_id' => $part['part_id'],
 						'job_order_id' => $request->job_order_id,
@@ -1236,13 +1349,10 @@ class VehicleInwardController extends Controller {
 					$job_order_part->save();
 				}
 			}
+
 			if (isset($request->job_order_repair_orders) && count($request->job_order_repair_orders) > 0) {
 				//Inserting Job order repair orders
 				foreach ($request->job_order_repair_orders as $key => $repair) {
-
-					if (isset($repair['delete_job_repair_order_id'])) {
-						JobOrderRepairOrder::where('id', '!=', $repair['delete_job_repair_order_id'])->delete();
-					}
 					$job_order_repair_order = JobOrderRepairOrder::firstOrNew([
 						'repair_order_id' => $repair['repair_order_id'],
 						'job_order_id' => $request->job_order_id,
@@ -1277,7 +1387,20 @@ class VehicleInwardController extends Controller {
 		//dd($r->all());
 		try {
 
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::company()->with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'gateLog',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -2073,6 +2196,8 @@ class VehicleInwardController extends Controller {
 					'vehicle.model',
 					'vehicle.status',
 					'status',
+					'roadTestDoneBy',
+					'roadTestPreferedBy',
 				])
 				->select([
 					'job_orders.*',
@@ -2213,6 +2338,7 @@ class VehicleInwardController extends Controller {
 					'vehicle.model',
 					'vehicle.status',
 					'status',
+					'expertDiagnosisReportBy',
 				])
 				->select([
 					'job_orders.*',
@@ -2333,9 +2459,9 @@ class VehicleInwardController extends Controller {
 
 			$vehicle_inspection_item_groups = array();
 			foreach ($vehicle_inspection_item_group as $key => $value) {
-				$vehicle_inspection_items = array();
-				$vehicle_inspection_items['id'] = $value->id;
-				$vehicle_inspection_items['name'] = $value->name;
+				$item_group = array();
+				$item_group['id'] = $value->id;
+				$item_group['name'] = $value->name;
 
 				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
 
@@ -2457,7 +2583,13 @@ class VehicleInwardController extends Controller {
 				'type',
 				'quoteType',
 				'serviceType',
-			])->find($r->id);
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -2601,7 +2733,23 @@ class VehicleInwardController extends Controller {
 	// ESTIMATION DENIED GET FORM DATA
 	public function getEstimationDeniedFormData(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->id);
+
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'jobOrderRepairOrders',
+				'jobOrderParts',
+				'type',
+				'quoteType',
+				'serviceType',
+				'status',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -2689,7 +2837,59 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-	//CUSTOMER CONFIRMATION SAVE
+	// CUSTOMER CONFIRMATION GET FORM DATA
+	public function getCustomerConfirmationFormData(Request $r) {
+		try {
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'jobOrderRepairOrders',
+				'jobOrderParts',
+				'type',
+				'quoteType',
+				'serviceType',
+				'status',
+				'customerApprovalAttachment',
+				'customerESign',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
+				]);
+			}
+
+			$extras = [
+				'base_url' => url('/'),
+			];
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+				'extras' => $extras,
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+
 	public function saveCustomerConfirmation(Request $request) {
 		// dd($request->all());
 		try {
@@ -2734,20 +2934,26 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			DB::beginTransaction();
-
 			$attachment_path = storage_path('app/public/gigo/job_order/customer-confirmation/');
 			Storage::makeDirectory($attachment_path, 0777);
+
+			DB::beginTransaction();
 
 			if ($request->web == 'website') {
 				//CUSTOMER SIGN
 				if (!empty($request->customer_photo)) {
+					$remove_previous_attachment = Attachment::where([
+						'entity_id' => $request->job_order_id,
+						'attachment_of_id' => 227,
+						'attachment_type_id' => 254,
+					])->forceDelete();
+
 					$customer_photo = str_replace('data:image/jpeg;base64,', '', $request->customer_photo);
 					$customer_photo = str_replace(' ', '+', $customer_photo);
 
 					$filename = "webcam_customer_photo_" . strtotime("now") . ".jpeg";
 
-					File::put($attachment_path . '/' . $filename, base64_decode($customer_photo));
+					File::put($attachment_path . $filename, base64_decode($customer_photo));
 
 					//SAVE ATTACHMENT
 					$attachment = new Attachment;
@@ -2761,12 +2967,18 @@ class VehicleInwardController extends Controller {
 				}
 				//CUSTOMER E SIGN
 				if (!empty($request->customer_e_sign)) {
+					$remove_previous_attachment = Attachment::where([
+						'entity_id' => $request->job_order_id,
+						'attachment_of_id' => 227,
+						'attachment_type_id' => 253,
+					])->forceDelete();
+
 					$customer_sign = str_replace('data:image/png;base64,', '', $request->customer_e_sign);
 					$customer_sign = str_replace(' ', '+', $customer_sign);
 
 					$filename = "webcam_customer_sign_" . strtotime("now") . ".png";
 
-					File::put($attachment_path . '/' . $filename, base64_decode($customer_sign));
+					File::put($attachment_path . $filename, base64_decode($customer_sign));
 
 					//SAVE ATTACHMENT
 					$attachment = new Attachment;

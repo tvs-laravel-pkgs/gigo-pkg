@@ -1,6 +1,7 @@
 <?php
 
 namespace Abs\GigoPkg;
+use App\City;
 use App\Config;
 use App\Customer;
 use App\Http\Controllers\Controller;
@@ -119,7 +120,12 @@ class VehicleInwardController extends Controller {
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$output = '';
 				$output .= '<a href="#!/inward-vehicle/view/' . $vehicle_inward->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
-				$output .= '<a href="#!/inward-vehicle/vehicle-detail/' . $vehicle_inward->id . '" id = "" title="View" class="btn btn-secondary-dark btn-xs">Initiate</a>';
+				if ($vehicle_inward->status_id == 8120 || $vehicle_inward->status_id == 8121) {
+					$output .= '<a href="#!/inward-vehicle/vehicle-detail/' . $vehicle_inward->id . '" id = "" title="Initiate" class="btn btn-secondary-dark btn-xs">Initiate</a>';
+				}
+				if ($vehicle_inward->status_id == 8122) {
+					$output .= '<a href="#!/inward-vehicle/update-jc/form/' . $vehicle_inward->id . '" id = "" title="Update JC" class="btn btn-secondary-dark btn-xs">Update JC</a>';
+				}
 				return $output;
 			})
 			->make(true);
@@ -131,6 +137,20 @@ class VehicleInwardController extends Controller {
 
 	public function getVehicleModelSearchList(Request $request) {
 		return VehicleModel::searchVehicleModel($request);
+	}
+
+	public function getCitySearchList(Request $r) {
+		$key = $r->key;
+		$list = City::select(
+			'id',
+			'name'
+		)
+			->where(function ($q) use ($key) {
+				$q->where('name', 'like', $key . '%')
+				;
+			})
+			->get();
+		return response()->json($list);
 	}
 
 }

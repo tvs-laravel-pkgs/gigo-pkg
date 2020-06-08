@@ -6,15 +6,14 @@ app.directive('inwardViewTabs', function() {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
-    when('/warranty-job-order-request', {
-        template: '<warranty-job-order-request></warranty-job-order-request>',
+    when('/gigo/warranty-job-order-request/list', {
+        template: '<warranty-job-order-request-list></warranty-job-order-request-list>',
         title: 'Warranty Job Order Requests'
     });
 }]);
-app.component('warrantyJobOrderRequest', {
+app.component('warrantyJobOrderRequestList', {
     templateUrl: designInputWarrantyJobOrderRequest,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $rootScope.loading = true;
@@ -34,12 +33,12 @@ app.component('warrantyJobOrderRequest', {
 
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
-    when('/warranty-job-order-request/ppr-form', {
-        template: '<warranty-job-order-request-PPR-form></warranty-job-order-request-PPR-form>',
+    when('/gigo/warranty-job-order-request/ppr-form', {
+        template: '<warranty-job-order-request-ppr-form></warranty-job-order-request-ppr-form>',
         title: 'Warranty Job Order Request - PPR Form'
     });
 }]);
-app.component('warrantyJobOrderRequestPPRForm', {
+app.component('warrantyJobOrderRequestPprForm', {
     templateUrl: warrantyJobOrderRequestPPRForm,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $rootScope.loading = true;

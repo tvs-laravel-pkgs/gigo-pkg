@@ -1,15 +1,15 @@
-Content Wrap -->
+<!-- Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/gigo-pkg/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>DMS Check List</b></h1>
-                    <p class="subtitle">Inward Vehicle / DMS Check List</p>
+                    <h1 class="title"><b>Read Test Observations</b></h1>
+                    <p class="subtitle">Job Card / Read Test Observations</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -17,25 +17,23 @@ Content Wrap -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
         <div class="page-tab-form pb-70">
-            <job-order-header></job-order-header>
+            <jobcard-header></jobcard-header>
             <div class="tab-form-wrap type-2">
-                <inward-tabs ng-init="active_tab = 'dms-checklist'"></inward-tabs>
+                <jobcard-tabs ng-init="active_tab = 'dms-checklist'"></jobcard-tabs>
                 <div class="tab-form-body">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
-                        <div class="tab-pane fade in active" id="dms_details" data-animation="fadeInUp" data-animation-delay="300">
-                            <div class="tab-pane-wrap">
-                                <div class="row">
-                                    <form id="form">
-                                        <input type="hidden" name="job_order_id" value="{{job_order_id}}">
+                         <div class="tab-pane fade in active" id="dms_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>DMS Check list</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
-                                                        <div class="gatein-img-list-item attach-photo">
-                                                            <input type="file" name="warranty_expiry_attachment" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" />
+                                                        <div class="gatein-img-list-item attach-photo-view">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.warrenty_policy_attachment[0].name}}" alt="Warranty">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -43,22 +41,20 @@ Content Wrap -->
                                                                     Warranty
                                                                 </b>
                                                             </p>
-                                                            <div class="form-group">
-                                                                <label>Eligible Upto</label>
-                                                                <div class="input-group date" data-provide="datepicker">
-                                                                    <input type="text" value="{{attachment.ewp_expiry_date}}" name="warranty_expiry_date" class="form-control" placeholder="Select Invoice Date" />
-                                                                    <div class="input-group-addon">
-                                                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
-                                                                    </div>
-                                                                </div><!-- Input Group -->
-                                                            </div><!-- Feild -->
+                                                            <div class="mb-20"></div><!-- Spacing -->
+                                                            <p class="font-md mb-no">
+                                                                Eligible Upto
+                                                            </p>
+                                                            <p class="font-sm">
+                                                                {{job_order.warranty_expiry_date}}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
-                                                        <div class="gatein-img-list-item attach-photo">
-                                                            <input type="file" name="ewp_expiry_attachment" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" />
+                                                        <div class="gatein-img-list-item attach-photo-view">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.e_w_p_attachment[0].name}}" alt="EWP">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -66,22 +62,20 @@ Content Wrap -->
                                                                     Extended Warranty (EWP)
                                                                 </b>
                                                             </p>
-                                                            <div class="form-group">
-                                                                <label>Eligible Upto</label>
-                                                                <div class="input-group date" data-provide="datepicker">
-                                                                    <input type="text" name="ewp_expiry_date" value="{{attachment.warranty_expiry_date}}" class="form-control" placeholder="Select Invoice Date" />
-                                                                    <div class="input-group-addon">
-                                                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
-                                                                    </div>
-                                                                </div><!-- Input Group -->
-                                                            </div><!-- Feild -->
+                                                            <div class="mb-20"></div><!-- Spacing -->
+                                                            <p class="font-md mb-no">
+                                                                Eligible Upto
+                                                            </p>
+                                                            <p class="font-sm">
+                                                                {{job_order.ewp_expiry_date}}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
-                                                        <div class="gatein-img-list-item attach-photo">
-                                                            <input type="file" name="membership_attachment" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" />
+                                                        <div class="gatein-img-list-item attach-photo-view">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.a_m_c_attachment[0].name}}" alt="Memberships">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -90,10 +84,10 @@ Content Wrap -->
                                                                 </b>
                                                             </p>
                                                             <p class="font-md">
-                                                                TVSCARE-GOLD Eligible Upto 20/03/2022
+                                                                <!-- TVSCARE-GOLD Eligible Upto 20/03/2022 -->
                                                             </p>
                                                             <p class="font-md">
-                                                                TVSONE-GOLD Eligible Upto 20/03/2022
+                                                                <!-- TVSONE-GOLD Eligible Upto 20/03/2022 -->
                                                             </p>
                                                         </div>
                                                     </div>
@@ -104,7 +98,7 @@ Content Wrap -->
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <div class="table-responsive">
-                                                        <table class="table table-dark-grey table-md">
+                                                        <!-- <table class="table table-dark-grey table-md">
                                                             <tbody>
                                                                 <tr>
                                                                     <td>
@@ -147,12 +141,12 @@ Content Wrap -->
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
-                                                        </table>
+                                                        </table> -->
                                                     </div>
                                                 </div><!-- Column -->
                                                 <div class="col-md-6">
                                                     <div class="table-responsive">
-                                                        <table class="table table-dark-grey table-md">
+                                                        <!--  <table class="table table-dark-grey table-md">
                                                             <tbody>
                                                                 <tr>
                                                                     <td>
@@ -195,47 +189,24 @@ Content Wrap -->
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
-                                                        </table>
+                                                        </table> -->
                                                     </div>
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <div class="common-checkbox type-2">
-                                                            <input type="checkbox" id="check_verify" ng-click="$ctrl.checkbox()" />
-                                                            <label for="check_verify">
-                                                                <b>
-                                                                    Verified in DMS
-                                                                </b>
-                                                            </label>
-                                                            <input type="hidden" name="is_verified" id="check_val" value="0">
-                                                        </div>
-                                                    </div><!-- Feild -->
-                                                </div><!-- Column -->
-                                            </div><!-- Row -->
+                                            <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order.id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="submit" ng-click="saveDms()" class="btn btn-red submit">
-                                                        Save & Close
-                                                    </button>
-                                                    <a href=".#!/inward-vehicle/inspection-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
-                                                        Previous
-                                                    </a>
-                                                    <button ng-click="saveDms()" class="btn btn-secondary-dark btn-min-wdth btn-nxt submit">
-                                                        Next
-                                                    </button>
-                                                    <!--  <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a> -->
+                                                    <a href=".#!/gigo-pkg/job-card/vehicle-inspection/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a href=".#!/gigo-pkg/job-card/part-indent/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
-                                    </form>
-                                </div><!-- Row -->
-                            </div><!-- Tab Pane Wrap -->
-                        </div><!-- Tabe Pane -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
             </div><!-- Tab Form Wrap -->
@@ -243,7 +214,6 @@ Content Wrap -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Modal -->
-<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
 <div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-xs" role="document">
         <div class="modal-content">

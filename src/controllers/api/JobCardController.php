@@ -9,16 +9,21 @@ use Abs\GigoPkg\GatePassItem;
 use Abs\GigoPkg\JobCard;
 use Abs\GigoPkg\JobCardReturnableItem;
 use Abs\GigoPkg\JobOrder;
+use Abs\GigoPkg\JobOrderIssuedPart;
 use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\PauseWorkReason;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
+use Abs\PartPkg\Part;
 use Abs\StatusPkg\Status;
 use App\Attachment;
 use App\Config;
 use App\Employee;
 use App\Http\Controllers\Controller;
+use App\JobOrderPart;
+use App\VehicleInspectionItem;
+use App\VehicleInspectionItemGroup;
 use App\Vendor;
 use Auth;
 use Carbon\Carbon;
@@ -806,16 +811,281 @@ class JobCardController extends Controller {
 			'success' => true,
 			'job_order' => $job_order,
 		]);
-
 	}
 
-	public function getReturnableItems(Request $request) {
+	public function getDmsCheckList(Request $request) {
 		$job_card = JobCard::find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
 				'error' => 'Validation Error',
 				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+
+		$job_order = JobOrder::company()->with([
+			'warrentyPolicyAttachment',
+			'EWPAttachment',
+			'AMCAttachment',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_card->job_order_id);
+
+		return response()->json([
+			'success' => true,
+			'job_order' => $job_order,
+		]);
+
+	}
+
+	public function getPartsIndent(Request $request) {
+		$job_card = JobCard::find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+
+		$part_list = collect(Part::select('id', 'name')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Part List']);
+
+		$mechanic_list = collect(JobOrderRepairOrder::select('users.id', 'users.name')->leftJoin('repair_order_mechanics', 'repair_order_mechanics.job_order_repair_order_id', 'job_order_repair_orders.id')->leftJoin('users', 'users.id', 'repair_order_mechanics.mechanic_id')->where('job_order_repair_orders.job_order_id', $job_card->job_order_id)->distinct()->get())->prepend(['id' => '', 'name' => 'Select Mechanic']);
+
+		$issued_mode = collect(Config::select('id', 'name')->where('config_type_id', 109)->get())->prepend(['id' => '', 'name' => 'Select Issue Mode']);
+
+		$issued_parts_details = JobOrderIssuedPart::select('job_order_issued_parts.id as issued_id', 'parts.code', 'job_order_parts.id', 'job_order_parts.qty', 'job_order_issued_parts.issued_qty', DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'), 'users.name as issued_to', 'configs.name as config_name', 'job_order_issued_parts.issued_mode_id', 'job_order_issued_parts.issued_to_id')
+			->leftJoin('job_order_parts', 'job_order_parts.id', 'job_order_issued_parts.job_order_part_id')
+			->leftJoin('parts', 'parts.id', 'job_order_parts.part_id')
+			->leftJoin('users', 'users.id', 'job_order_issued_parts.issued_to_id')
+			->leftJoin('configs', 'configs.id', 'job_order_issued_parts.issued_mode_id')
+			->where('job_order_parts.job_order_id', $job_card->job_order_id)->groupBy('job_order_issued_parts.id')->get();
+
+		return response()->json([
+			'success' => true,
+			'issued_parts_details' => $issued_parts_details,
+			'part_list' => $part_list,
+			'mechanic_list' => $mechanic_list,
+			'issued_mode' => $issued_mode,
+		]);
+
+	}
+
+	public function getScheduleMaintenance(Request $request) {
+		$job_card = JobCard::find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+
+		$job_order = JobOrder::find($job_card->job_order_id);
+
+		$schedule_maintenance_part_amount = 0;
+		$schedule_maintenance_labour_amount = 0;
+		$schedule_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 1)->get();
+		if (!empty($schedule_maintenance['labour_details'])) {
+			foreach ($schedule_maintenance['labour_details'] as $key => $value) {
+				$schedule_maintenance_labour_amount += $value->amount;
+				$value->repair_order = $value->repairOrder;
+				$value->repair_order_type = $value->repairOrder->repairOrderType;
+			}
+		}
+		$schedule_maintenance['labour_amount'] = $schedule_maintenance_labour_amount;
+
+		$schedule_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 1)->get();
+		if (!empty($schedule_maintenance['part_details'])) {
+			foreach ($schedule_maintenance['part_details'] as $key => $value) {
+				$schedule_maintenance_part_amount += $value->amount;
+				$value->part = $value->part;
+			}
+		}
+		$schedule_maintenance['part_amount'] = $schedule_maintenance_part_amount;
+
+		$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
+		// dd($schedule_maintenance['labour_details']);
+
+		return response()->json([
+			'success' => true,
+			'job_order' => $job_order,
+			'schedule_maintenance' => $schedule_maintenance,
+		]);
+
+	}
+
+	public function getPayableLabourPart(Request $request) {
+		$job_card = JobCard::find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+
+		$job_order = JobOrder::company()->with([
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
+			'status',
+			'gateLog',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_card->job_order_id);
+
+		if (!$job_order) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation error',
+				'errors' => ['Job Order Not found!'],
+			]);
+		}
+
+		$part_details = JobOrderPart::with([
+			'part',
+			'part.uom',
+			'part.taxCode',
+			'splitOrderType',
+			'status',
+		])
+			->where('job_order_id', $job_order->id)
+			->get();
+
+		$labour_details = JobOrderRepairOrder::with([
+			'repairOrder',
+			'repairOrder.repairOrderType',
+			'repairOrder.uom',
+			'repairOrder.taxCode',
+			'repairOrder.skillLevel',
+			'splitOrderType',
+			'status',
+		])
+			->where('job_order_id', $job_order->id)
+			->get();
+		$parts_total_amount = 0;
+		$labour_total_amount = 0;
+		$total_amount = 0;
+
+		if ($job_order->jobOrderRepairOrders) {
+			foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
+				$labour_total_amount += $labour->amount;
+
+			}
+		}
+
+		if ($job_order->jobOrderParts) {
+			foreach ($job_order->jobOrderParts as $key => $part) {
+				$parts_total_amount += $part->amount;
+
+			}
+		}
+		$total_amount = $parts_total_amount + $labour_total_amount;
+
+		return response()->json([
+			'success' => true,
+			'job_order' => $job_order,
+			'part_details' => $part_details,
+			'labour_details' => $labour_details,
+			'total_amount' => number_format($total_amount, 2),
+			'parts_total_amount' => number_format($parts_total_amount, 2),
+			'labour_total_amount' => number_format($labour_total_amount, 2),
+		]);
+
+	}
+
+	//VEHICLE INSPECTION GET FORM DATA
+	public function getVehicleInspection(Request $request) {
+		try {
+
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Card Not Found!'],
+				]);
+			}
+
+			$job_order = JobOrder::company()
+				->with([
+					'vehicle',
+					'vehicle.model',
+					'vehicle.status',
+					'status',
+					'vehicleInspectionItems',
+				])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($job_card->job_order_id);
+
+			$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
+
+			$vehicle_inspection_item_groups = array();
+			foreach ($vehicle_inspection_item_group as $key => $value) {
+				$vehicle_inspection_items = array();
+				$vehicle_inspection_items['id'] = $value->id;
+				$vehicle_inspection_items['name'] = $value->name;
+
+				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
+
+				$vehicle_inspections = $job_order->vehicleInspectionItems()->orderBy('vehicle_inspection_item_id')->get()->toArray();
+
+				if (count($vehicle_inspections) > 0) {
+					foreach ($vehicle_inspections as $value) {
+						if (isset($inspection_items[$value['id']])) {
+							$inspection_items[$value['id']]->status_id = $value['pivot']['status_id'];
+						}
+					}
+				}
+				$item_group['vehicle_inspection_items'] = $inspection_items;
+
+				$vehicle_inspection_item_groups[] = $item_group;
+			}
+
+			$params['config_type_id'] = 32;
+			$params['add_default'] = false;
+			$extras = [
+				'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
+			];
+
+			return response()->json([
+				'success' => true,
+				'extras' => $extras,
+				'vehicle_inspection_item_groups' => $vehicle_inspection_item_groups,
+				'job_order' => $job_order,
+			]);
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+
+	public function getReturnableItems(Request $request) {
+		$job_card = JobCard::find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => true,
+				'job_card' => $job_card,
+				'returnable_items' => $returnable_items,
+				'attachement_path' => url('storage/app/public/gigo/job_card/returnable_items/'),
 			]);
 		}
 
@@ -834,8 +1104,44 @@ class JobCardController extends Controller {
 
 	}
 
+	public function getReturnableItemFormdata(Request $request) {
+		$job_card = JobCard::with([
+			'jobOrder.vehicle.model',
+			'status',
+		])
+			->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])->find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+		if ($request->returnable_item_id) {
+			$returnable_item = JobCardReturnableItem::with([
+				'attachment',
+			])
+				->find($request->returnable_item_id);
+			//->first();
+			$action = 'Edit';
+		} else {
+			$returnable_item = new JobCardReturnableItem;
+			$action = 'Add';
+		}
+		return response()->json([
+			'success' => true,
+			'job_card' => $job_card,
+			'returnable_item' => $returnable_item,
+			'attachement_path' => url('storage/app/public/gigo/job_card/returnable_items/'),
+		]);
+	}
+
 	public function ReturnableItemSave(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_card_id' => [
@@ -913,6 +1219,8 @@ class JobCardController extends Controller {
 						$returnable_item->created_by_id = Auth::user()->id;
 					}
 					$returnable_item->save();
+
+					//dd($job_card_returnable_item['attachments']);
 					//Attachment Save
 					$attachment_path = storage_path('app/public/gigo/job_card/returnable_items/');
 					Storage::makeDirectory($attachment_path, 0777);
@@ -1210,6 +1518,7 @@ class JobCardController extends Controller {
 				'gatePasses.gatePassDetail.vendor.addresses.state',
 				'gatePasses.gatePassDetail.vendor.addresses.city',
 				'gatePasses.gatePassItems',
+				'gatePasses.gatePassItems.attachments',
 			])
 				->find($request->id);
 
@@ -1398,7 +1707,7 @@ class JobCardController extends Controller {
 
 	//Material GatePass Item Save
 	public function saveMaterialGatePassItem(Request $request) {
-		//dd($request->all());
+		//dd($request->material_outward_attachments);
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -1464,9 +1773,9 @@ class JobCardController extends Controller {
 			//SAVE MATERIAL OUTWARD ATTACHMENT
 			if (!empty($request->material_outward_attachments)) {
 				foreach ($request->material_outward_attachments as $material_outward_attachment) {
-					// $attachment = $request->material_outward_attachment;
+					//dump($material_outward_attachment);
 					$attachment = $material_outward_attachment;
-					$entity_id = $gate_pass_item_id->id;
+					$entity_id = $gate_pass_item->id;
 					$attachment_of_id = 231; //Material Gate Pass
 					$attachment_type_id = 238; //Material Gate Pass
 					saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
