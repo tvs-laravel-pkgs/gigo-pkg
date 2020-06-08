@@ -48,6 +48,16 @@
                         Payable Labour & Parts
                     </a>
                 </li>
+                <li ng-class="{active:active_tab == 'estimate'}">
+                    <a class="filter" href=".#!/gigo-pkg/job-card/estimate/{{job_card_id}}">
+                        Estimate
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'estimate-status'}">
+                    <a class="filter" href=".#!/gigo-pkg/job-card/estimate-status/{{job_card_id}}">
+                        Estimation Status
+                    </a>
+                </li>
             </ul>
         </div><!-- Filters -->
     </div><!-- Tab Header -->
