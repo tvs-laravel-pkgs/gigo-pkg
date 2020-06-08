@@ -1,0 +1,85 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/static/gigo/job-card/view" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">
+                        Update Bill Details
+                    </h1>
+                    <p class="subtitle">
+                        Job card / Bill Detail / Update
+                    </p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form-top type-2">
+            <div class="page-tab-form-top-left">
+                <div class="page-tab-form-top-left-info pad-lf-rt">
+                    <span class="page-tab-form-top-left-info-content">
+                        <b>JC No: {{job_card.job_card_number}} | {{job_card.job_order.vehicle.registration_number}}</b> | {{job_card.job_order.vehicle.model.model_number}} | {{job_card.creation_date}}, {{job_card.creation_time}}
+                    </span>
+                </div>
+            </div><!-- Page Tab Form Top Left -->
+            <div class="page-tab-form-top-right">
+                <div class="page-tab-form-top-right-info">
+                    Status : {{job_card.status.name}}
+                </div>
+            </div><!-- Page Tab Form Top Right -->
+        </div><!-- Page Tab Form Top -->
+        <form id="form">
+            <input type="hidden" name="job_card_id" value="{{job_card.id}}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-80 mt-30">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Bill Number <sup class="mandatory">*</sup></label>
+                                        <input type="text" ng-model="bill_number" class="form-control required" placeholder="Enter Bill Number" autocomplete="off" name="bill_number" />
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Bill Date <sup class="mandatory">*</sup></label>
+                                        <div class="input-group date" data-provide="datepicker">
+                                            <input type="text" ng-model="bill_date" class="form-control required" placeholder="Select Invoice Date" name="bill_date" />
+                                            <div class="input-group-addon">
+                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                            </div>
+                                        </div><!-- Input Group -->
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-12">
+                                    <label>Bill Copy Photo <sup class="mandatory">*</sup></label>
+                                    <div class="bill-img">
+                                        <input type="file" class="image_uploadify required" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" name="bill_copy" />
+                                    </div>
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Page Form -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <div class="page-form-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-red btn-min-wdth submit" ng-click="saveForm()">Save & Close
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Page Form Footer -->
+            </div><!-- Container -->
+        </form>
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<script src="./public/theme/js/imageuploadify-updatejc.min.js"></script>
