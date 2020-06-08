@@ -70,6 +70,10 @@ class JobOrder extends Model {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 
+	public function getEstimatedDeliveryDateAttribute($date) {
+		return empty($date) ? '' : date('d-m-Y h:i A ', strtotime($date));
+	}
+
 	public function setEwpExpiryDateAttribute($date) {
 		return $this->attributes['ewp_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}

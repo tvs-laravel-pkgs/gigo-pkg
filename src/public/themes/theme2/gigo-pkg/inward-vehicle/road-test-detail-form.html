@@ -1,4 +1,4 @@
-Content Wrap -->
+<!-- Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -57,6 +57,7 @@ Content Wrap -->
                                                                 No
                                                             </label>
                                                         </div>
+                                                        <div id="errorRoadTestRequired"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-4" ng-if="job_order.is_road_test_required == 1">
@@ -74,6 +75,7 @@ Content Wrap -->
                                                                 Customer
                                                             </label>
                                                         </div>
+                                                        <div id="errorRoadTestDone"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-4" id="road_test_driver" ng-if="job_order.is_road_test_required == 1 && job_order.road_test_done_by_id == 8101">
@@ -102,8 +104,9 @@ Content Wrap -->
                                                             Road Test Observations
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <textarea class="form-control" rows="4" placeholder="Enter Observations" name="road_test_report">{{job_order.road_test_report}}
+                                                        <textarea class="form-control required" rows="4" placeholder="Enter Observations" name="road_test_report">{{job_order.road_test_report}}
                                                         </textarea>
+                                                        <div id="errorRoadTestObservation"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
@@ -111,13 +114,13 @@ Content Wrap -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="submit" ng-click="saveRoadTestDetailForm()" class="btn btn-red submit">
+                                                    <button type="submit" ng-click="saveRoadTestDetailForm(1)" class="btn btn-red submit">
                                                         Save & Close
                                                     </button>
                                                     <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
                                                         Previous
                                                     </a>
-                                                    <button ng-click="saveRoadTestDetailForm()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                    <button ng-click="saveRoadTestDetailForm(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Next
                                                     </button>
                                                 </div>

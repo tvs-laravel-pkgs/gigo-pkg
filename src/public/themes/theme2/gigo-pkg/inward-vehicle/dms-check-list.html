@@ -26,7 +26,7 @@ Content Wrap -->
                         <div class="tab-pane fade in active" id="dms_details" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
-                                    <form id="form">
+                                    <form id="form" autocomplete="off">
                                         <input type="hidden" name="job_order_id" value="{{job_order_id}}">
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>DMS Check list</b></h5>
@@ -218,13 +218,13 @@ Content Wrap -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="submit" ng-click="saveDms()" class="btn btn-red">
+                                                    <button type="submit" ng-click="saveDms(1)" class="btn btn-red submit">
                                                         Save & Close
                                                     </button>
                                                     <a href=".#!/inward-vehicle/inspection-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
                                                         Previous
                                                     </a>
-                                                    <button ng-click="saveDms()" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                    <button ng-click="saveDms(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Next
                                                     </button>
                                                     <!--  <a class="btn btn-secondary-dark btn-prev">Previous</a>

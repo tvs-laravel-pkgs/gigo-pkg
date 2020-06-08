@@ -1122,10 +1122,32 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Job Card Part Indent',
 
 	    }).
+	    when('/gigo-pkg/job-card/schedule-maintenance/:job_card_id', {
+	        template: '<job-card-schedule-maintenance-form></job-card-schedule-maintenance-form>',
+	        title: 'Job Card Scheduled Maintenance',
+
+	    }).
+	    when('/gigo-pkg/job-card/payable-labour-parts/:job_card_id', {
+	        template: '<job-card-payable-labour-parts-form></job-card-payable-labour-parts-form>',
+	        title: 'Job Card Payable Labour Parts',
+
+	    }).
 	    when('/gigo-pkg/job-card/expert-diagnosis/:job_card_id', {
 	        template: '<job-card-expert-diagnosis-form></job-card-expert-diagnosis-form>',
 	        title: 'Job Card Export Diagnosis',
 
+	    }).
+	    when('/gigo-pkg/job-card/schedule/:job_card_id', {
+	        template: '<job-card-schedule-form></job-card-schedule-form>',
+	        title: 'Job Card Schedules',
+	    }).
+	    when('/gigo-pkg/job-card/bill-detail/:job_card_id', {
+	        template: '<job-card-bill-detail-view></job-card-bill-detail-view>',
+	        title: 'Job Card Bill Detail',
+	    }).
+	    when('/gigo-pkg/job-card/bill-detail-update/:job_card_id', {
+	        template: '<job-card-update-bill-detail></job-card-update-bill-detail>',
+	        title: 'Job Card Bill Detail Update',
 	    });
 	}]);
 
@@ -1146,13 +1168,18 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_export_diagonosis_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/expert-diagnosis.html')}}';
     var job_card_vehicle_inspection_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/vehicle-inspection.html')}}';
     var job_card_dms_checklist_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/dms-checklist.html')}}';
+    var job_card_schedule_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/schedule.html')}}";
+    var job_card_bil_detail_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/bill-detail.html')}}";
+    var job_card_bil_detail_update_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/bill-detail-update.html')}}";
     var job_card_part_indent_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/parts-indent.html')}}';
+    var job_card_schedule_maintendance_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/schedule-maintenance.html')}}';
+    var job_card_parts_labour_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/payable-labour-part.html')}}';
 
 
      //PARTIALS
     var job_card_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/jobcard-header.html')}}';
     var jobcard_tabs_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/jobcard-tabs.html')}}';
-    
+
 
 
 </script>

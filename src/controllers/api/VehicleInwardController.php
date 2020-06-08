@@ -41,11 +41,11 @@ class VehicleInwardController extends Controller {
 	public function getGateInList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [
-				// 'service_advisor_id' => [
-				// 	'required',
-				// 	'exists:users,id',
-				// 	'integer',
-				// ],
+				'service_advisor_id' => [
+					'required',
+					'exists:users,id',
+					'integer',
+				],
 				'offset' => 'nullable|numeric',
 				'limit' => 'nullable|numeric',
 			]);
@@ -75,6 +75,7 @@ class VehicleInwardController extends Controller {
 					'vehicles.registration_number',
 					'models.model_number',
 					'gate_logs.number',
+					'gate_logs.status_id',
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
 					'job_orders.driver_name',
@@ -183,11 +184,6 @@ class VehicleInwardController extends Controller {
 				'vehicle.lastJobOrder.jobCard',
 				'vehicleInventoryItem',
 				'vehicleInspectionItems',
-				// 'jobOrderRepairOrders',
-				// 'jobOrderRepairOrders.repairOrder',
-				// 'jobOrderRepairOrders.repairOrder.repairOrderType',
-				// 'jobOrderParts',
-				// 'jobOrderParts.part',
 				'type',
 				'outlet',
 				'customerVoices',
@@ -210,6 +206,8 @@ class VehicleInwardController extends Controller {
 				'gateLog.driverAttachment',
 				'gateLog.kmAttachment',
 				'gateLog.vehicleAttachment',
+				'customerApprovalAttachment',
+				'customerESign',
 			])
 				->select([
 					'job_orders.*',
@@ -225,6 +223,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			//SCHEDULE MAINTENANCE
 			$schedule_maintenance_part_amount = 0;
 			$schedule_maintenance_labour_amount = 0;
 			$schedule_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 1)->get();
@@ -249,6 +248,37 @@ class VehicleInwardController extends Controller {
 			$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
 			// dd($schedule_maintenance['labour_details']);
 
+			//PAYABLE LABOUR AND PART
+			$payable_part_amount = 0;
+			$payable_labour_amount = 0;
+			$payable_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 0)->get();
+			if (!empty($payable_maintenance['labour_details'])) {
+				foreach ($payable_maintenance['labour_details'] as $key => $value) {
+					$payable_labour_amount += $value->amount;
+					$value->repair_order = $value->repairOrder;
+					$value->repair_order_type = $value->repairOrder->repairOrderType;
+				}
+			}
+			$payable_maintenance['labour_amount'] = $payable_labour_amount;
+
+			$payable_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 0)->get();
+			if (!empty($payable_maintenance['part_details'])) {
+				foreach ($payable_maintenance['part_details'] as $key => $value) {
+					$payable_part_amount += $value->amount;
+					$value->part = $value->part;
+				}
+			}
+			$payable_maintenance['part_amount'] = $payable_part_amount;
+
+			$payable_maintenance['total_amount'] = $payable_maintenance['labour_amount'] + $payable_maintenance['part_amount'];
+			// dd($payable_maintenance['labour_details']);
+
+			//TOTAL ESTIMATE
+			$total_estimate_labour_amount['labour_amount'] = $schedule_maintenance['labour_amount'] + $payable_maintenance['labour_amount'];
+			$total_estimate_part_amount['part_amount'] = $schedule_maintenance['part_amount'] + $payable_maintenance['part_amount'];
+			$total_estimate_amount = $total_estimate_labour_amount['labour_amount'] + $total_estimate_part_amount['part_amount'];
+
+			//VEHICLE INSPECTION ITEM
 			$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
 
 			$vehicle_inspection_item_groups = array();
@@ -285,6 +315,10 @@ class VehicleInwardController extends Controller {
 				'job_order' => $job_order,
 				'extras' => $extras,
 				'schedule_maintenance' => $schedule_maintenance,
+				'payable_maintenance' => $payable_maintenance,
+				'total_estimate_labour_amount' => $total_estimate_labour_amount,
+				'total_estimate_part_amount' => $total_estimate_part_amount,
+				'total_estimate_amount' => $total_estimate_amount,
 				'vehicle_inspection_item_groups' => $vehicle_inspection_item_groups,
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
@@ -478,7 +512,7 @@ class VehicleInwardController extends Controller {
 			];
 
 			$validator = Validator::make($request->all(), [
-				'ownership_type_id' => 'required|unique:vehicle_owners,ownership_id,' . $request->id . ',id,vehicle_id,' . $vehicle->id,
+				'ownership_type_id' => 'required|unique:vehicle_owners,ownership_id,' . $request->id . ',customer_id,vehicle_id,' . $vehicle->id,
 			], $error_messages);
 
 			if ($validator->fails()) {
@@ -2162,6 +2196,8 @@ class VehicleInwardController extends Controller {
 					'vehicle.model',
 					'vehicle.status',
 					'status',
+					'roadTestDoneBy',
+					'roadTestPreferedBy',
 				])
 				->select([
 					'job_orders.*',
@@ -2302,6 +2338,7 @@ class VehicleInwardController extends Controller {
 					'vehicle.model',
 					'vehicle.status',
 					'status',
+					'expertDiagnosisReportBy',
 				])
 				->select([
 					'job_orders.*',
