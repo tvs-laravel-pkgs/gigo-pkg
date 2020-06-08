@@ -2199,6 +2199,8 @@ class VehicleInwardController extends Controller {
 					'vehicle.model',
 					'vehicle.status',
 					'status',
+					'roadTestDoneBy',
+					'roadTestPreferedBy',
 				])
 				->select([
 					'job_orders.*',
@@ -2339,6 +2341,7 @@ class VehicleInwardController extends Controller {
 					'vehicle.model',
 					'vehicle.status',
 					'status',
+					'expertDiagnosisReportBy',
 				])
 				->select([
 					'job_orders.*',
