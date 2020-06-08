@@ -591,21 +591,9 @@
                                                             </div><!-- View Data -->
                                                             <div class="mb-15"></div><!-- Spacing -->
                                                             <div class="multi-docs">
-                                                                <img class="img-responsive" alt="Driver License" />
-                                                                <!-- <div class="col-md-4">
-                                                                    <div class="img-caption-wrap">
-                                                                        <div class="img-wrap">
-                                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{$ctrl.gate_pass_details.warrenty_policy_attachment[0].name}}" alt="Screenshot" />
-                                                                        </div>
-                                                                        <div class="caption-wrap">
-                                                                            <h6 class="caption-title">Warranty</h6>
-                                                                            <div class="font-sm font-bold">Valid Upto</div>
-                                                                            <div class="font-xs ">{{$ctrl.gate_pass_details.warranty_expiry_date}}</div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div> -->
-                                                                <img class="img-responsive" alt="Insurance" />
-                                                                <img class="img-responsive" alt="RC Book" />
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment[0].name}}" alt="Driver License">
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment[0].name}}" alt="Insurance" />
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment[0].name}}" alt="RC Book" />
                                                             </div>
                                                             <div class="mb-10"></div><!-- Spacing -->
                                                             <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}">
@@ -1572,14 +1560,14 @@
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="photo-sign-wrap">
                                                 <div class="photo-sign-item">
-                                                    <img class="img-responsive img-profile" src="./public/theme/img/profile.png" alt="Image" />
+                                                    <img class="img-responsive img-profile" src="storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_approval_attachment[0].name}}" alt="Customer Photo" />
                                                     <div class="photo-sign-caption">Customer Photo</div>
                                                 </div>
                                             </div><!-- Photo Sign Wrap -->
                                             <div class="mb-30"></div><!-- Spacing -->
                                             <div class="photo-sign-wrap">
                                                 <div class="photo-sign-item bg-transparent">
-                                                    <img class="img-responsive img-sign" src="./public/theme/img/content/signature.png" alt="Image" />
+                                                    <img class="img-responsive img-sign" src="storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_e_sign[0].name}}" alt="Customer E Sign" />
                                                     <div class="photo-sign-caption">Customer E Sign</div>
                                                 </div>
                                             </div><!-- Photo Sign Wrap -->
