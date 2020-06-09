@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="{{ app()->getLocale() }}" ng-app="app">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- CSRF Token -->
+        <meta name="csrf-token" content="Payment Details">
+        <title>BPAS | Payment Details</title>
+        <!-- Fav Icon -->
+        <link rel="icon" href="../../../../favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" href="../../../../favicon.ico" type="image/x-icon" />
+        <!-- Font -->
+        <link href="https://fonts.googleapis.com/css?family=Muli:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+        <!-- Theme -->
+        <link rel="stylesheet" type="text/css" href="../../../../theme/less/theme.css" />
+        <link rel="stylesheet" type="text/css" href="../../../../theme/less/responsive.css" />
+        <!-- Custom CSS -->
+        <link rel="stylesheet" type="text/css" href="../../../../theme/css/custom.css" />
+    </head>
+
+    <body>
+        <div class="separate-page-wrap">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="separate-content-wrap">
+                            <div class="separate-head-wrap">
+                                <div class="separate-head-top">
+                                    <div class="separate-head-left">
+                                        <img class="img-responsive" src="../../../../theme/img/tvs-logo.svg" alt="Logo" />
+                                    </div>
+                                    <div class="separate-head-right">
+                                        <div class="date-info">
+                                            <span class="date-label">Generated On</span>
+                                            <span class="date-value">12/04/2020</span>
+                                        </div>
+                                        <div class="button-wrap">
+                                            <div class="button-block">
+                                                <button class="btn btn-md btn-green">Pay Now</button>
+                                            </div>
+                                            <div class="button-block">
+                                                <button class="btn img-btn">
+                                                    <img class="img-responsive" src="../../../../theme/img/content/b-download.svg" alt="Download" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="separate-head-content">
+                                    <div class="head-content-wrap">
+                                        <p class="head-content-title font-md mb-5">Dear Customer,</p>
+                                        <p class="head-content-title">Your Vehicle Sercive Completed. Kindly make payment to generate gatepass</p>
+                                        <div class="pb-10"></div><!-- Spacing -->
+                                        <ul class="head-content-list">
+                                            <li>
+                                                <div class="head-content-item">
+                                                    <span class="head-content-item-label">Reg No</span>
+                                                    <span class="head-content-item-value">TN45BA9976</span>
+                                                    <img class="img-responsive img-right" src="../../../../theme/img/content/i-license-plate.svg" alt="" />
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="head-content-item">
+                                                    <span class="head-content-item-label">Model</span>
+                                                    <span class="head-content-item-value">Al-407-1</span>
+                                                    <img class="img-responsive img-right" src="../../../../theme/img/content/i-license-plate.svg" alt="" />
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="head-content-item">
+                                                    <span class="head-content-item-label">KM Reading</span>
+                                                    <span class="head-content-item-value">001235</span>
+                                                    <img class="img-responsive img-right" src="../../../../theme/img/content/i-kmreading.svg" alt="" />
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="head-content-item big">
+                                                    <span class="head-content-item-label">Total Amount to Pay</span>
+                                                    <span class="head-content-item-value">
+                                                        <img class="img-responsive" src="../../../../theme/img/content/rupee.svg" alt="" />
+                                                        3600.00
+                                                    </span>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div><!-- Head Wrap -->
+                            <div class="separate-body-wrap">
+                                <div class="panel-group" id="accordion">
+                                    <div class="panel panel-default type-2">
+                                        <div class="panel-heading">
+                                            <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
+                                                Billing Details
+                                                <span class="arrow"></span>
+                                            </a>
+                                        </div>
+                                        <div id="collapse1" class="panel-collapse collapse in">
+                                            <div class="panel-body pad-10">
+                                                <div class="table-responsive">
+                                                    <table class="table table-primary-stripped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Labour Details</th>
+                                                                <th class="white-space-unset">HSN / SAC Code</th>
+                                                                <th class="white-space-unset">Quantity</th>
+                                                                <th class="text-right white-space-unset">Labour Value</th>
+                                                                <th class="text-right white-space-unset">Discount</th>
+                                                                <th class="text-right white-space-unset">Taxable Amount</th>
+                                                                <th class="text-right white-space-unset">CGST (9%)</th>
+                                                                <th class="text-right white-space-unset">SGST (9%)</th>
+                                                                <th class="text-right white-space-unset">IGST (0%)</th>
+                                                                <th class="text-right white-space-unset">Total Price</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>BR05 | Changing Break Pads</td>
+                                                                <td class="white-space-unset">SAC89889</td>
+                                                                <td class="white-space-unset">1.00 Nos</td>
+                                                                <td class="text-right white-space-unset">245.82</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">300.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">400.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>BR05 | Changing Break Pads</td>
+                                                                <td class="white-space-unset">SAC89889</td>
+                                                                <td class="white-space-unset">1.00 Nos</td>
+                                                                <td class="text-right white-space-unset">245.82</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">300.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">400.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>BR05 | Changing Break Pads</td>
+                                                                <td class="white-space-unset">SAC89889</td>
+                                                                <td class="white-space-unset">1.00 Nos</td>
+                                                                <td class="text-right white-space-unset">245.82</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">300.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">400.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>BR05 | Changing Break Pads</td>
+                                                                <td class="white-space-unset">SAC89889</td>
+                                                                <td class="white-space-unset">1.00 Nos</td>
+                                                                <td class="text-right white-space-unset">245.82</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">300.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">400.00</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div><!-- Table Responsive -->
+                                                <div class="mb-10"></div><!-- Space -->
+                                                <div class="table-responsive">
+                                                    <table class="table table-primary-stripped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Parts Details</th>
+                                                                <th class="white-space-unset">HSN / SAC Code</th>
+                                                                <th class="white-space-unset">Quantity</th>
+                                                                <th class="text-right white-space-unset">Labour Value</th>
+                                                                <th class="text-right white-space-unset">Discount</th>
+                                                                <th class="text-right white-space-unset">Taxable Amount</th>
+                                                                <th class="text-right white-space-unset">CGST (9%)</th>
+                                                                <th class="text-right white-space-unset">SGST (9%)</th>
+                                                                <th class="text-right white-space-unset">IGST (0%)</th>
+                                                                <th class="text-right white-space-unset">Total Price</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td>BR05 | Changing Break Pads</td>
+                                                                <td class="white-space-unset">SAC89889</td>
+                                                                <td class="white-space-unset">1.00 Nos</td>
+                                                                <td class="text-right white-space-unset">245.82</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">300.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">400.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>BR05 | Changing Break Pads</td>
+                                                                <td class="white-space-unset">SAC89889</td>
+                                                                <td class="white-space-unset">1.00 Nos</td>
+                                                                <td class="text-right white-space-unset">245.82</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">300.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">400.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>BR05 | Changing Break Pads</td>
+                                                                <td class="white-space-unset">SAC89889</td>
+                                                                <td class="white-space-unset">1.00 Nos</td>
+                                                                <td class="text-right white-space-unset">245.82</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">300.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">400.00</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>BR05 | Changing Break Pads</td>
+                                                                <td class="white-space-unset">SAC89889</td>
+                                                                <td class="white-space-unset">1.00 Nos</td>
+                                                                <td class="text-right white-space-unset">245.82</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">300.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">50.00</td>
+                                                                <td class="text-right white-space-unset">0.00</td>
+                                                                <td class="text-right white-space-unset">400.00</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div><!-- Table Responsive -->
+                                                <div class="dark-footer-wrap">
+                                                    <div class="dark-footer-left-content">
+                                                        <div class="dark-footer-left-content-wrap">
+                                                            <span class="dark-footer-label">Labour Total : </span>
+                                                            <span class="dark-footer-value">
+                                                                <img class="img-responsive img-web" src="../../../../theme/img/content/rupee-white.svg" alt="" />
+                                                                <img class="img-responsive img-mobile" src="../../../../theme/img/content/rupee-dark.svg" alt="" />
+                                                                1800
+                                                            </span>
+                                                        </div>
+                                                    </div><!-- Dark Footer Left Content -->
+                                                    <div class="dark-footer-left-content">
+                                                        <div class="dark-footer-left-content-wrap">
+                                                            <span class="dark-footer-label">Parts Total : </span>
+                                                            <span class="dark-footer-value">
+                                                                <img class="img-responsive img-web" src="../../../../theme/img/content/rupee-white.svg" alt="" />
+                                                                <img class="img-responsive img-mobile" src="../../../../theme/img/content/rupee-dark.svg" alt="" />
+                                                                1800
+                                                            </span>
+                                                        </div>
+                                                    </div><!-- Dark Footer Left Content -->
+                                                    <div class="dark-footer-right-content">
+                                                        <div class="dark-footer-right-content-wrap">
+                                                            <span class="dark-footer-label">Grand Total : </span>
+                                                            <span class="dark-footer-value">
+                                                                <img class="img-responsive" src="../../../../theme/img/content/rupee-white.svg" alt="" />
+                                                                3600.00
+                                                            </span>
+                                                        </div>
+                                                    </div><!-- Dark Footer Right Content -->
+                                                    <div class="dark-footer-button-block">
+                                                        <button class="btn btn-md btn-green">Pay Now</button>
+                                                    </div><!-- Dark Footer Button Block -->
+                                                </div><!-- Dark Footer Wrap -->
+                                            </div><!-- Panel Body -->
+                                        </div><!-- Panel Collapse -->
+                                    </div><!-- Panel -->
+                                    <div class="mb-15"></div><!-- Spacing -->
+                                    <div class="panel panel-default type-2">
+                                        <div class="panel-heading">
+                                            <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                                                Additional Info
+                                                <span class="arrow"></span>
+                                            </a>
+                                        </div>
+                                        <div id="collapse2" class="panel-collapse collapse">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-primary-stripped table-primary-bordered mobile-whitespace-unset">
+                                                                <thead class="pad-md">
+                                                                    <tr>
+                                                                        <th colspan="2">Gate In No : GIM001</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Gate In Date</span>
+                                                                            <span class="table-primary-stripped-value">31/03/2020</span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Gate In Time</span>
+                                                                            <span class="table-primary-stripped-value">09:15 am</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Vehicle Model</span>
+                                                                            <span class="table-primary-stripped-value">AL502</span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">VIN Number</span>
+                                                                            <span class="table-primary-stripped-value">OIG6765566MN</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Engine Number</span>
+                                                                            <span class="table-primary-stripped-value">VIN8888888878</span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Chasis Number</span>
+                                                                            <span class="table-primary-stripped-value">CH6767767888</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Membership Type</span>
+                                                                            <span class="table-primary-stripped-value">TVS One - Gold</span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">KM Reading</span>
+                                                                            <span class="table-primary-stripped-value">0076544</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Customer Name</span>
+                                                                            <span class="table-primary-stripped-value">Sasikumar</span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Mobile Number</span>
+                                                                            <span class="table-primary-stripped-value">9898798987</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Driver Name</span>
+                                                                            <span class="table-primary-stripped-value">Sasikumar</span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Driver Mobile Number</span>
+                                                                            <span class="table-primary-stripped-value">9898798987</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Alternate Number</span>
+                                                                            <span class="table-primary-stripped-value">9898797654</span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label"></span>
+                                                                            <span class="table-primary-stripped-value"></span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div><!-- Table Responsive -->
+                                                    </div><!-- Column -->
+                                                    <div class="col-md-6">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-primary-stripped mobile-whitespace-unset">
+                                                                <thead class="pad-md">
+                                                                    <tr>
+                                                                        <th colspan="2">Order Type</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Job Order Type</span>
+                                                                            <span class="table-primary-stripped-value">ZDQT - At Site Quote</span>
+                                                                        </td>
+                                                                        <td>
+                                                                            <span class="table-primary-stripped-label">Job Type</span>
+                                                                            <span class="table-primary-stripped-value">Warranty Job</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div><!-- Table Responsive -->
+                                                        <div class="mb-15"></div><!-- Spacing -->
+                                                        <div class="table-responsive">
+                                                            <table class="table table-primary-stripped whitespace-unset">
+                                                                <thead class="pad-md">
+                                                                    <tr>
+                                                                        <th>Voice of Customer</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div class="table-primary-stripped-info color-grey">Break Problem, Oil Checking, Shocupsor Noise, Gear Box Noise</div>
+                                                                            <div class="table-primary-stripped-info font-md">Scheduled Maintenance</div>
+                                                                            <div class="table-primary-stripped-info">
+                                                                                <div class="table-primary-stripped-info-content font-md">Road Test</div>
+                                                                                <div class="table-primary-stripped-info-content">by Kumar / E34234</div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div><!-- Table Responsive -->
+                                                        <div class="mb-15"></div><!-- Spacing -->
+                                                        <div class="table-responsive">
+                                                            <table class="table table-primary-stripped whitespace-unset">
+                                                                <thead class="pad-md">
+                                                                    <tr>
+                                                                        <th>Observations</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div class="table-primary-stripped-info color-grey">Break Problem, Oil Checking, Shocupsor Noise, Gear Box Noise</div>
+                                                                            <div class="table-primary-stripped-info">
+                                                                                <div class="table-primary-stripped-info-content">by Kumar / E34234</div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div><!-- Table Responsive -->
+                                                    </div><!-- Column -->
+                                                </div><!-- Row -->
+                                            </div><!-- Panel Body -->
+                                        </div><!-- Panel Collapse -->
+                                    </div><!-- Panel -->
+                                </div><!-- Panel Group -->
+                            </div><!-- Body Wrap -->
+                        </div><!-- Content Wrap -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Container -->
+        </div><!-- Main Wrap -->
+        <!-- Scripts -->
+        <script src="../../../../theme/js/jquery.min.js"></script>
+        <script src="../../../../theme/js/bootstrap.min.js"></script>
+        <script src="../../../../theme/js/bootstrap-datepicker.min.js"></script>
+        <script src="../../../../theme/js/moment.js"></script>
+        <script src="../../../../theme/js/daterangepicker.min.js"></script>
+        <script src="../../../../theme/js/jquery.appear.min.js"></script>
+        <script src="../../../../theme/js/jquery.easing.min.js"></script>
+        <script src="../../../../theme/js/pace.min.js"></script>
+        <script src="../../../../theme/js/isotope.js"></script>
+        <script src="../../../../theme/js/select2.min.js"></script>
+        <script src="../../../../theme/js/bootstrap-multiselect.js"></script>
+        <script src="../../../../theme/js/datatables.min.js"></script>
+        <script src="../../../../theme/js/datatables.fixedheader.min.js"></script>
+        <script src="../../../../theme/js/bootstrap-datetimepicker.min.js"></script>
+        <!-- Fancy Box Plugins -->
+        <script src="../../../../theme/js/jquery.fancybox.min.js"></script>
+        <!-- File Upload Plugins -->
+        <script src="../../../../theme/js/fileinput.js"></script>
+        <!-- JS File for Dynamic Function -->
+        <!-- <script src="../../../../theme/js/common.js"></script> -->
+        <!-- JS File for UI Setup -->
+        <script src="../../../../theme/js/theme.js"></script>
+    </body>
+
+</html>

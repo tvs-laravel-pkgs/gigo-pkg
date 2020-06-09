@@ -33,7 +33,7 @@ class VehicleInspectionItemGroupController extends Controller {
 			->select([
 				'vehicle_inspection_item_groups.id',
 				'vehicle_inspection_item_groups.name',
-				'vehicle_inspection_item_groups.code',
+				// 'vehicle_inspection_item_groups.code',
 
 				DB::raw('IF(vehicle_inspection_item_groups.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
@@ -43,11 +43,11 @@ class VehicleInspectionItemGroupController extends Controller {
 					$query->where('vehicle_inspection_item_groups.name', 'LIKE', '%' . $request->name . '%');
 				}
 			})
-			->where(function ($query) use ($request) {
-				if (!empty($request->code)) {
-					$query->where('vehicle_inspection_item_groups.code', 'LIKE', '%' . $request->code . '%');
-				}
-			})
+			// ->where(function ($query) use ($request) {
+			// 	if (!empty($request->code)) {
+			// 		$query->where('vehicle_inspection_item_groups.code', 'LIKE', '%' . $request->code . '%');
+			// 	}
+			// })
 			->where(function ($query) use ($request) {
 				if ($request->status == '1') {
 					$query->whereNull('vehicle_inspection_item_groups.deleted_at');
@@ -98,22 +98,24 @@ class VehicleInspectionItemGroupController extends Controller {
 		// dd($request->all());
 		try {
 			$error_messages = [
-				'code.required' => 'Code is Required',
-				'code.unique' => 'Code is already taken',
-				'code.min' => 'Code is Minimum 3 Charachers',
-				'code.max' => 'Code is Maximum 32 Charachers',
+				// 'code.required' => 'Code is Required',
+				// 'code.unique' => 'Code is already taken',
+				// 'code.min' => 'Code is Minimum 3 Charachers',
+				// 'code.max' => 'Code is Maximum 32 Charachers',
+				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
 			];
 			$validator = Validator::make($request->all(), [
-				'code' => [
-					'required:true',
-					'min:3',
-					'max:32',
-					'unique:vehicle_inspection_item_groups,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
+				// 'code' => [
+				// 	'required:true',
+				// 	'min:3',
+				// 	'max:32',
+				// 	'unique:vehicle_inspection_item_groups,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				// ],
 				'name' => [
+					'required:true',
 					'min:3',
 					'max:191',
 					'nullable',
@@ -144,6 +146,9 @@ class VehicleInspectionItemGroupController extends Controller {
 				$vehicle_inspection_item_group->deleted_at = NULL;
 				$vehicle_inspection_item_group->deleted_by_id = NULL;
 			}
+			$vehicle_inspection_item_group->save();
+
+			$vehicle_inspection_item_group->code = 'VIG' . $vehicle_inspection_item_group->id;
 			$vehicle_inspection_item_group->save();
 
 			DB::commit();
@@ -197,7 +202,7 @@ class VehicleInspectionItemGroupController extends Controller {
 			->select([
 				'vehicle_inspection_item_groups.id',
 				'vehicle_inspection_item_groups.name',
-				'vehicle_inspection_item_groups.code',
+				// 'vehicle_inspection_item_groups.code',
 				DB::raw('IF(vehicle_inspection_item_groups.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->where('vehicle_inspection_item_groups.company_id', Auth::user()->company_id)

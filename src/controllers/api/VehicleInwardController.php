@@ -283,9 +283,9 @@ class VehicleInwardController extends Controller {
 
 			$vehicle_inspection_item_groups = array();
 			foreach ($vehicle_inspection_item_group as $key => $value) {
-				$vehicle_inspection_items = array();
-				$vehicle_inspection_items['id'] = $value->id;
-				$vehicle_inspection_items['name'] = $value->name;
+				$item_group = array();
+				$item_group['id'] = $value->id;
+				$item_group['name'] = $value->name;
 
 				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
 
@@ -309,6 +309,7 @@ class VehicleInwardController extends Controller {
 				'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
 			];
 
+			$inventory_params['field_type_id'] = [11, 12];
 			//Job card details need to get future
 			return response()->json([
 				'success' => true,
@@ -320,6 +321,7 @@ class VehicleInwardController extends Controller {
 				'total_estimate_part_amount' => $total_estimate_part_amount,
 				'total_estimate_amount' => $total_estimate_amount,
 				'vehicle_inspection_item_groups' => $vehicle_inspection_item_groups,
+				'inventory_list' => VehicleInventoryItem::getInventoryList($r->id, $inventory_params),
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
 
@@ -574,6 +576,7 @@ class VehicleInwardController extends Controller {
 					'quoteType',
 					'serviceType',
 					'kmReadingType',
+					'status',
 				])
 				->select([
 					'job_orders.*',
@@ -614,9 +617,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveOrderDetail(Request $request) {
-		//dd($request->all());
-
-		//Add Attachemnt Remvoe ID --> order_attachments_remove_ids
+		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -681,7 +682,6 @@ class VehicleInwardController extends Controller {
 					'date',
 				],
 				'driving_license_image' => [
-
 					'nullable',
 					'mimes:jpeg,jpg,png',
 				],
@@ -1072,10 +1072,26 @@ class VehicleInwardController extends Controller {
 
 			$attachment = JobOrder::
 				with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'vehicle.lastJobOrder',
+				'vehicle.lastJobOrder.jobCard',
+				'type',
+				'quoteType',
+				'serviceType',
+				'kmReadingType',
+				'status',
 				'warrentyPolicyAttachment',
 				'EWPAttachment',
 				'AMCAttachment',
-			])->find($r->id);
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
 
 			return response()->json([
 				'success' => true,
@@ -2583,6 +2599,7 @@ class VehicleInwardController extends Controller {
 				'type',
 				'quoteType',
 				'serviceType',
+				'status',
 			])
 				->select([
 					'job_orders.*',
@@ -2719,6 +2736,7 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
+				'job_order' => $job_order,
 				'message' => 'Estimate Details Added Successfully',
 			]);
 		} catch (\Exception $e) {
@@ -2762,7 +2780,8 @@ class VehicleInwardController extends Controller {
 			}
 			$estimation_type = EstimationType::select(
 				'name',
-				'id'
+				'id',
+				'minimum_amount'
 			)
 				->where('company_id', Auth::user()->company_id)
 				->get();
@@ -2824,6 +2843,7 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
+				'job_order' => $job_order,
 				'message' => 'Estimation Denied Details Added Successfully',
 			]);
 		} catch (\Exception $e) {

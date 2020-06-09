@@ -963,15 +963,123 @@ class JobCardController extends Controller {
 
 	}
 
-	public function getPartsIndent(Request $request) {
-		$job_card = JobCard::find($request->id);
-		if (!$job_card) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Validation Error',
-				'errors' => ['Job Card Not Found!'],
-			]);
+	public function deleteOutwardItem(Request $request)
+	{
+		DB::beginTransaction();
+		// dd($request->id);
+		try {
+			$vehicle = GatePassItem::withTrashed()->where('id', $request->id)->forceDelete();
+			if ($vehicle) {
+				DB::commit();
+				return response()->json(['success' => true, 'message' => 'Outward Item Deleted Successfully']);
+			}
+		} catch (Exception $e) {
+			DB::rollBack();
+			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
 		}
+	}
+
+	public function getEstimateStatus(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			$job_order = JobOrder::company()->with([
+				'customerApprovalAttachment',
+				'customerESign',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($job_card->job_order_id);
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
+			]);
+
+	}
+
+	public function getEstimate(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
+
+			$job_order = JobOrder::find($job_card->job_order_id);
+
+			$oem_recomentaion_labour_amount = 0;
+			$additional_rot_and_parts_labour_amount = 0;
+
+			foreach ($job_order->jobOrderRepairOrders as $oemrecomentation_labour) {
+
+				if ($oemrecomentation_labour['is_recommended_by_oem'] == 1) {
+					//SCHEDULED MAINTANENCE
+					$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
+				}
+				if ($oemrecomentation_labour['is_recommended_by_oem'] == 0) {
+					//ADDITIONAL ROT AND PARTS
+					$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
+				}
+			}
+
+			$oem_recomentaion_part_amount = 0;
+			$additional_rot_and_parts_part_amount = 0;
+			foreach ($job_order->jobOrderParts as $oemrecomentation_labour) {
+				if ($oemrecomentation_labour['is_oem_recommended'] == 1) {
+					//SCHEDULED MAINTANENCE
+					$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
+				}
+				if ($oemrecomentation_labour['is_oem_recommended'] == 0) {
+					//ADDITIONAL ROT AND PARTS
+					$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
+				}
+			}
+
+			//OEM RECOMENTATION LABOUR AND PARTS AND SUB TOTAL
+			$job_order->oem_recomentation_labour_amount = $oem_recomentaion_labour_amount;
+			$job_order->oem_recomentation_part_amount = $oem_recomentaion_part_amount;
+			$job_order->oem_recomentation_sub_total = $oem_recomentaion_labour_amount + $oem_recomentaion_part_amount;
+
+			//ADDITIONAL ROT & PARTS LABOUR AND PARTS AND SUB TOTAL
+			$job_order->additional_rot_parts_labour_amount = $additional_rot_and_parts_labour_amount;
+			$job_order->additional_rot_parts_part_amount = $additional_rot_and_parts_part_amount;
+			$job_order->additional_rot_parts_sub_total = $additional_rot_and_parts_labour_amount + $additional_rot_and_parts_part_amount;
+
+			//TOTAL ESTIMATE
+			$job_order->total_estimate_labour_amount = $oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount;
+			$job_order->total_estimate_parts_amount = $oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount;
+			$job_order->total_estimate_amount = (($oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount) + ($oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount));
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+				
+			]);
+
+	}
+
+	public function getPartsIndent(Request $request){
+			$job_card = JobCard::find($request->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' =>'Validation Error',
+					'errors' =>['Job Card Not Found!'],
+				]);
+			}
 
 		$part_list = collect(Part::select('id', 'name')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Part List']);
 
@@ -1152,13 +1260,14 @@ class JobCardController extends Controller {
 				])
 				->find($job_card->job_order_id);
 
+			//VEHICLE INSPECTION ITEM
 			$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
 
 			$vehicle_inspection_item_groups = array();
 			foreach ($vehicle_inspection_item_group as $key => $value) {
-				$vehicle_inspection_items = array();
-				$vehicle_inspection_items['id'] = $value->id;
-				$vehicle_inspection_items['name'] = $value->name;
+				$item_group = array();
+				$item_group['id'] = $value->id;
+				$item_group['name'] = $value->name;
 
 				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
 
@@ -1181,6 +1290,9 @@ class JobCardController extends Controller {
 			$extras = [
 				'inspection_results' => Config::getDropDownList($params), //VEHICLE INSPECTION RESULTS
 			];
+
+			$inventory_params['field_type_id'] = [11, 12];
+			//Job card details need to get future
 
 			return response()->json([
 				'success' => true,
