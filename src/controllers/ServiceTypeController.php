@@ -1,8 +1,9 @@
 <?php
 
 namespace Abs\GigoPkg;
-use App\Http\Controllers\Controller;
+use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\ServiceType;
+use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -83,9 +84,21 @@ class ServiceTypeController extends Controller {
 		$id = $request->id;
 		if (!$id) {
 			$service_type = new ServiceType;
+			$service_type->service_type_labours = [];
 			$action = 'Add';
 		} else {
-			$service_type = ServiceType::withTrashed()->find($id);
+			$service_type = ServiceType::withTrashed()
+				->with([
+					// 'serviceTypeLabours',
+					// 'serviceTypeLabours.repairOrderType',
+				])->find($id);
+			$service_type->service_type_labours = $labours = $service_type->serviceTypeLabours()->select('id')->get();
+			if ($service_type->service_type_labours) {
+				foreach ($labours as $key => $labour) {
+					$service_type->service_type_labours[$key]->name = RepairOrder::join('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')->where('repair_orders.id', $labour->id)->select('repair_orders.id', 'repair_orders.code', 'repair_orders.hours', 'repair_orders.amount', 'repair_order_types.name as repair_order_type')->first();
+				}
+			}
+
 			$action = 'Edit';
 		}
 		$this->data['success'] = true;
@@ -95,7 +108,6 @@ class ServiceTypeController extends Controller {
 	}
 
 	public function saveServiceType(Request $request) {
-		// dd($request->all());
 		try {
 			$error_messages = [
 				'code.required' => 'Code is Required',
@@ -118,6 +130,12 @@ class ServiceTypeController extends Controller {
 					'min:3',
 					'max:191',
 					'unique:service_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				],
+				'labours.*.id' => [
+					'required',
+					'integer',
+					'exists:repair_orders,id',
+					'distinct',
 				],
 			], $error_messages);
 			if ($validator->fails()) {
@@ -145,6 +163,20 @@ class ServiceTypeController extends Controller {
 				$service_type->deleted_at = NULL;
 			}
 			$service_type->save();
+
+			$service_type->serviceTypeLabours()->sync([]);
+
+			if ($request->labours) {
+				$total_labours = array_column($request->labours, 'id');
+				$total_labours_unique = array_unique($total_labours);
+				if (count($total_labours) != count($total_labours_unique)) {
+					return response()->json(['success' => false, 'errors' => ['Labours already been taken']]);
+				}
+
+				foreach ($request->labours as $labour) {
+					$service_type->serviceTypeLabours()->attach($labour['id']);
+				}
+			}
 
 			DB::commit();
 			if (!($request->id)) {
@@ -201,5 +233,26 @@ class ServiceTypeController extends Controller {
 			'success' => true,
 			'service_types' => $service_types,
 		]);
+	}
+
+	public function getLabourSearchList(Request $r) {
+		$key = $r->key;
+		$list = RepairOrder::join('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')->select(
+			'repair_orders.id',
+			'repair_orders.hours',
+			'repair_orders.amount',
+			'repair_orders.code',
+			'repair_orders.name',
+			'repair_order_types.name as repair_order_type'
+		)
+			->where(function ($q) use ($key) {
+				$q->where('repair_orders.name', 'like', $key . '%')
+					->orWhere('repair_orders.code', 'like', '%' . $key . '%')
+					->orWhere('repair_orders.alt_code', 'like', '%' . $key . '%')
+				;
+			})
+			->where('repair_orders.company_id', Auth::user()->company_id)
+			->get();
+		return response()->json($list);
 	}
 }

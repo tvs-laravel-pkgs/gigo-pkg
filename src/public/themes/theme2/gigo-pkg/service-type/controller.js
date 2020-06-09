@@ -55,8 +55,8 @@ app.component('serviceTypeList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'service_types.code' ,searchable: true },
-                { data: 'name', name: 'service_types.name' ,searchable: true },
+                { data: 'code', name: 'service_types.code', searchable: true },
+                { data: 'name', name: 'service_types.name', searchable: true },
                 { data: 'status', name: '' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -125,7 +125,7 @@ app.component('serviceTypeList', {
                 $mdSelect.hide();
             }
         });
-       
+
         $scope.applyFilter = function() {
             $('#status').val(self.status);
             dataTables.fnFilter();
@@ -175,6 +175,48 @@ app.component('serviceTypeForm', {
                 self.switch_value = 'Active';
             }
         });
+
+        //Add New Labour
+        self.addNewLabour = function() {
+            self.service_type.service_type_labours.push({
+                pivot: [],
+            });
+        }
+
+        //Search Labour
+        self.searchLabour = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getLabourSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $scope.getSelectedLabour = function(index, labour_detail) {
+            if (labour_detail) {
+                $('.labour_type' + index).html(labour_detail.repair_order_type);
+                $('.labour_quantity' + index).html(labour_detail.hours);
+                $('.labour_value' + index).html(labour_detail.amount);
+            } else {
+                $('.labour_type' + index).html('-');
+                $('.labour_quantity' + index).html('-');
+                $('.labour_value' + index).html('-');
+            }
+        }
+
+        self.removeLabour = function(index) {
+            self.service_type.service_type_labours.splice(index, 1);
+        }
 
         //Save Form Data 
         var form_id = '#service_type_form';

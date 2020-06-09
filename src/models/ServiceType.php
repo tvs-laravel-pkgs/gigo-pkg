@@ -26,6 +26,10 @@ class ServiceType extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
+	public function serviceTypeLabours() {
+		return $this->belongsToMany('Abs\GigoPkg\RepairOrder', 'repair_order_service_type', 'service_type_id', 'repair_order_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
