@@ -3,6 +3,7 @@
 namespace Abs\GigoPkg;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\ServiceType;
+use Abs\PartPkg\Part;
 use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
@@ -85,6 +86,7 @@ class ServiceTypeController extends Controller {
 		if (!$id) {
 			$service_type = new ServiceType;
 			$service_type->service_type_labours = [];
+			$service_type->service_type_parts = [];
 			$action = 'Add';
 		} else {
 			$service_type = ServiceType::withTrashed()
@@ -95,7 +97,14 @@ class ServiceTypeController extends Controller {
 			$service_type->service_type_labours = $labours = $service_type->serviceTypeLabours()->select('id')->get();
 			if ($service_type->service_type_labours) {
 				foreach ($labours as $key => $labour) {
-					$service_type->service_type_labours[$key]->name = RepairOrder::join('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')->where('repair_orders.id', $labour->id)->select('repair_orders.id', 'repair_orders.code', 'repair_orders.hours', 'repair_orders.amount', 'repair_order_types.name as repair_order_type')->first();
+					$service_type->service_type_labours[$key]->name = RepairOrder::join('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')->join('repair_order_service_type', 'repair_order_service_type.repair_order_id', 'repair_orders.id')->where('repair_order_service_type.service_type_id', $id)->where('repair_orders.id', $labour->id)->select('repair_orders.id', 'repair_orders.code', 'repair_orders.hours', 'repair_orders.amount', 'repair_order_types.name as repair_order_type')->first();
+				}
+			}
+
+			$service_type->service_type_parts = $parts = $service_type->serviceTypeParts()->select('id')->get();
+			if ($service_type->service_type_parts) {
+				foreach ($parts as $key => $part) {
+					$service_type->service_type_parts[$key]->name = Part::join('tax_codes', 'tax_codes.id', 'parts.tax_code_id')->join('part_service_type', 'part_service_type.part_id', 'parts.id')->where('parts.id', $part->id)->where('part_service_type.service_type_id', $id)->select('parts.id', 'parts.code', 'parts.name', 'parts.rate', 'tax_codes.code as tax_code_type', 'part_service_type.quantity', 'part_service_type.amount')->first();
 				}
 			}
 
@@ -137,6 +146,12 @@ class ServiceTypeController extends Controller {
 					'exists:repair_orders,id',
 					'distinct',
 				],
+				'parts.*.id' => [
+					'required',
+					'integer',
+					'exists:parts,id',
+					'distinct',
+				],
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
@@ -165,6 +180,7 @@ class ServiceTypeController extends Controller {
 			$service_type->save();
 
 			$service_type->serviceTypeLabours()->sync([]);
+			$service_type->serviceTypeParts()->sync([]);
 
 			if ($request->labours) {
 				$total_labours = array_column($request->labours, 'id');
@@ -175,6 +191,18 @@ class ServiceTypeController extends Controller {
 
 				foreach ($request->labours as $labour) {
 					$service_type->serviceTypeLabours()->attach($labour['id']);
+				}
+			}
+
+			if ($request->parts) {
+				$total_parts = array_column($request->parts, 'id');
+				$total_parts_unique = array_unique($total_parts);
+				if (count($total_parts) != count($total_parts_unique)) {
+					return response()->json(['success' => false, 'errors' => ['Parts already been taken']]);
+				}
+
+				foreach ($request->parts as $parts) {
+					$service_type->serviceTypeParts()->attach($parts['id'], ['quantity' => $parts['qty'], 'amount' => $parts['amount']]);
 				}
 			}
 
@@ -252,6 +280,25 @@ class ServiceTypeController extends Controller {
 				;
 			})
 			->where('repair_orders.company_id', Auth::user()->company_id)
+			->get();
+		return response()->json($list);
+	}
+
+	public function getPartSearchList(Request $r) {
+		$key = $r->key;
+		$list = Part::join('tax_codes', 'tax_codes.id', 'parts.tax_code_id')->select(
+			'parts.id',
+			'parts.rate',
+			'parts.code',
+			'parts.name',
+			'tax_codes.code as tax_code_type'
+		)
+			->where(function ($q) use ($key) {
+				$q->where('parts.name', 'like', $key . '%')
+					->orWhere('parts.code', 'like', '%' . $key . '%')
+				;
+			})
+			->where('parts.company_id', Auth::user()->company_id)
 			->get();
 		return response()->json($list);
 	}

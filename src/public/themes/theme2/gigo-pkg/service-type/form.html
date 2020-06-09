@@ -111,7 +111,7 @@ Content Wrap -->
                                                         <tr>
                                                             <th class="width-250">Labour Detail</th>
                                                             <th class="width-200">Labour Type</th>
-                                                            <th class="width-60">Quantiy</th>
+                                                            <th class="width-60">Quantity</th>
                                                             <th class="width-30">Labour Value</th>
                                                             <th class="width-30"></th>
                                                         </tr>
@@ -157,45 +157,54 @@ Content Wrap -->
                             <div class="tab-pane fade in" id="parts-info" data-animation="fadeInUp" data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Code - Parts
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.service_type.code" name="code" placeholder="Enter Code" autofocus />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Name
-                                                    <sup class="mandatory"></sup>
-                                                </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.service_type.name" name="name" placeholder="Enter Name" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <!-- <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Description
-                                                </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.service_type.description" name="description" placeholder="Enter Name" />
-                                            </div>
-                                        </div> -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Active Status
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <div class="tab-switch">
-                                                    <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
-                                                        {{ $ctrl.switch_value }}
-                                                    </md-switch>
-                                                    <input type="hidden" name="status" value="{{$ctrl.switch_value}}">
-                                                </div>
-                                            </div><!-- Form Group -->
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-form">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="width-250">Part Detail</th>
+                                                            <th class="width-200">Tax Code Type</th>
+                                                            <th class="width-60">Rate</th>
+                                                            <th class="width-60">Quantity</th>
+                                                            <th class="width-30">Amount </th>
+                                                            <th class="width-30"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="(index, part) in $ctrl.service_type.service_type_parts">
+                                                            <td>
+                                                                <md-autocomplete md-items="option in $ctrl.searchPart(option.part_search)" md-selected-item="part.name" md-selected-item-change="getSelectedPart(index,part.name)" md-search-text="option.part_search" md-item-text="option.code" md-min-length="3" placeholder="Part code / Name" class="customer_group_id">
+                                                                    <md-item-template>
+                                                                        <span>
+                                                                            {{option.code}} - {{option.name}}
+                                                                        </span>
+                                                                    </md-item-template>
+                                                                    <md-not-found>
+                                                                        No Part Found "{{$ctrl.part_search}}" were found.
+                                                                    </md-not-found>
+                                                                </md-autocomplete>
+                                                                <input type="hidden" id="" class="required" name="parts[{{index}}][id]" value="{{part.name.id}}">
+                                                            </td>
+                                                            <td class="part_type{{index}}">{{part.name.tax_code_type}}</td>
+                                                            <td class="part_amount{{index}}"><input type="text" class="form-control" readonly id="part_hour{{index}}" value="{{part.name.rate}}" /></td>
+                                                            <td><input type="text" class="form-control change_quantity required" id="part_qty{{index}}" maxlength="6" data-index="{{index}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="parts[{{index}}][qty]" value="{{part.name.quantity}}" /></td>
+                                                            <td><input type="text" class="form-control required" readonly id="part_amount{{index}}" name="parts[{{index}}][amount]" value="{{part.name.amount}}" /></td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-delete" ng-click="$ctrl.removePart(index)">
+                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <td colspan="6">
+                                                                <button type="button" class="btn btn-primary-light btn-square" ng-click="$ctrl.addNewPart()">+ Add More</button>
+                                                            </td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div><!-- Table Responsive -->
                                         </div><!-- Column -->
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->

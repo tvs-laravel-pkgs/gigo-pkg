@@ -218,6 +218,61 @@ app.component('serviceTypeForm', {
             self.service_type.service_type_labours.splice(index, 1);
         }
 
+        //Add New Part
+        self.addNewPart = function() {
+            self.service_type.service_type_parts.push({
+                pivot: [],
+            });
+        }
+        //Search Part
+        self.searchPart = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getPartSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $scope.getSelectedPart = function(index, part_detail) {
+            if (part_detail) {
+                $('.part_type' + index).html(part_detail.tax_code_type);
+                $('#part_hour' + index).val(part_detail.rate);
+            } else {
+                $('.part_type' + index).html('-');
+                $('#part_hour' + index).val('');
+                $('#part_qty' + index).val('');
+                $('#part_amount' + index).val('');
+            }
+        }
+
+        self.removePart = function(index) {
+            self.service_type.service_type_parts.splice(index, 1);
+        }
+
+        $(document).on('keyup', ".change_quantity", function() {
+            var qty = $(this).val();
+            var index = $(this).data('index');
+            var total_amount = 0;
+            setTimeout(function() {
+                var rate = $('#part_hour' + index).val();
+                if (rate > 0 || !isNaN(rate)) {
+                    total_amount = rate * qty;
+                    total_amount = total_amount.toFixed(2);
+                }
+                $('#part_amount' + index).val(parseFloat(total_amount));
+            }, 100);
+        });
+
         //Save Form Data 
         var form_id = '#service_type_form';
         var v = jQuery(form_id).validate({
