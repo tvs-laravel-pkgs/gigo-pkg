@@ -17,6 +17,7 @@ class JobOrder extends Model {
 		"number",
 		"vehicle_id",
 		"km_reading",
+		"hr_reading",
 		"km_reading_type_id",
 		"type_id",
 		"quote_type_id",

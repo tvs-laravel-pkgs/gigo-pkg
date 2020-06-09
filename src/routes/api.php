@@ -3,6 +3,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 	Route::group(['prefix' => 'api'], function () {
 
 		//SAVE GATE IN ENTRY
+		Route::get('gate-in-entry/get-form-data', 'GateInController@getFormData');
 		Route::post('gate-in-entry/create', 'GateInController@createGateInEntry');
 
 		//VEHICLE INWARD
