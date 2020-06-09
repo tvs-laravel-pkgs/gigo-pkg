@@ -219,7 +219,10 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Job Order Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
 				]);
 			}
 
@@ -328,7 +331,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -371,7 +377,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -379,6 +388,21 @@ class VehicleInwardController extends Controller {
 	//VEHICLE DETAILS
 	public function getVehicleDetail(Request $r) {
 		try {
+			$validator = Validator::make($r->all(), [
+				'service_advisor_id' => [
+					'required',
+					'exists:users,id',
+					'integer',
+				],
+			]);
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
 			$job_order = JobOrder::company()->with([
 				'vehicle',
 				'vehicle.model',
@@ -396,22 +420,18 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Job Order Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
 				]);
 			}
+			//MAPPING SERVICE ADVISOR
+			$job_order->service_advisor_id = $r->service_advisor_id;
+			$job_order->save();
 
-			//issue : repeated query and naming
-			// $gate_log_detail = GateLog::with([
-			// $gate_log = GateLog::with([
-			// 	'status',
-			// 	'driverAttachment',
-			// 	'kmAttachment',
-			// 	'vehicleAttachment',
-			// 	'vehicle',
-			// 	'vehicle.currentOwner.customer',
-			// 	'vehicle.currentOwner.ownerShipDetail',
-			// ])
-			// 	->find($r->id);
+			//UPDATE GATE LOG STATUS
+			$job_order->gateLog()->update(['status_id' => 8121]);
 
 			//Job card details need to get future
 			return response()->json([
@@ -426,7 +446,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -470,7 +493,7 @@ class VehicleInwardController extends Controller {
 					'country_list' => Country::getDropDownList(),
 					'state_list' => [], //State::getDropDownList(),
 					'city_list' => [], //City::getDropDownList(),
-					'ownership_type_list' => Config::getDropDownList(['config_type_id' => 39]),
+					'ownership_type_list' => Config::getDropDownList(['config_type_id' => 39, 'default_text' => 'Select Ownership', 'orderBy' => 'id']),
 				],
 			]);
 
@@ -495,7 +518,9 @@ class VehicleInwardController extends Controller {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
-					'errors' => ['Job Order Not Found!'],
+					'errors' => [
+						'Job Order Not Found!',
+					],
 				]);
 			}
 
@@ -505,7 +530,9 @@ class VehicleInwardController extends Controller {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
-					'errors' => ['Vehicle Not Found!'],
+					'errors' => [
+						'Vehicle Not Found!',
+					],
 				]);
 			}
 
@@ -514,7 +541,72 @@ class VehicleInwardController extends Controller {
 			];
 
 			$validator = Validator::make($request->all(), [
-				'ownership_type_id' => 'required|unique:vehicle_owners,ownership_id,' . $request->id . ',customer_id,vehicle_id,' . $vehicle->id,
+				'ownership_type_id' => [
+					'required',
+					'integer',
+					'exists:configs,id',
+					'unique:vehicle_owners,ownership_id,' . $request->id . ',customer_id,vehicle_id,' . $vehicle->id,
+				],
+				'name' => [
+					'required',
+					'min:3',
+					'max:255',
+					'string',
+				],
+				'mobile_no' => [
+					'required',
+					'min:10',
+					'max:10',
+					'string',
+				],
+				'email' => [
+					'nullable',
+					'string',
+					'max:255',
+					'unique:customers,email,' . $request->id,
+				],
+				'address_line1' => [
+					'required',
+					'min:3',
+					'max:32',
+					'string',
+				],
+				'address_line2' => [
+					'nullable',
+					'min:3',
+					'max:64',
+					'string',
+				],
+				'country_id' => [
+					'required',
+					'integer',
+					'exists:countries,id',
+				],
+				'state_id' => [
+					'required',
+					'integer',
+					'exists:states,id',
+				],
+				'city_id' => [
+					'required',
+					'integer',
+					'exists:cities,id',
+				],
+				'pincode' => [
+					'required',
+					'min:6',
+					'max:6',
+				],
+				'gst_number' => [
+					'nullable',
+					'min:15',
+					'max:15',
+				],
+				'pan_number' => [
+					'nullable',
+					'min:10',
+					'max:10',
+				],
 			], $error_messages);
 
 			if ($validator->fails()) {
