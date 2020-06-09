@@ -3331,14 +3331,17 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                             //$location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order_id);
                             //$scope.$apply();
                             // $('.submit').button('reset');
-                            custom_noty('success', res.message);
-                            if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
-                                $scope.$apply();
-                            } else {
-                                $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order_id);
-                                $scope.$apply();
-                            }
+                            // $('#confirm_notification').modal('hide');
+                            // setTimeout(function() {
+                            //     custom_noty('success', res.message);
+                            //     if (id == 1) {
+                            //         $location.path('/inward-vehicle/table-list');
+                            //         $scope.$apply();
+                            //     } else {
+                            //         $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order_id);
+                            //         $scope.$apply();
+                            //     }
+                            // }, 2000);
                         })
                         .fail(function(xhr) {
                             $rootScope.loading = false;
