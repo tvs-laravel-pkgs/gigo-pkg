@@ -15,9 +15,18 @@ class JobCard extends Model {
 	// use SoftDeletes;
 	protected $table = 'job_cards';
 	public $timestamps = true;
-	protected $fillable =
-		["job_order_id", "number", "order_number", "floor_supervisor_id", "status_id"]
-	;
+	protected $fillable = [
+		"company_id",
+		"job_card_number",
+		"dms_job_card_number",
+		"date",
+		"created_by",
+		"job_order_id",
+		"number",
+		"order_number",
+		"floor_supervisor_id",
+		"status_id",
+	];
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
