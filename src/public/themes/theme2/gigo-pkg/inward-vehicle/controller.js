@@ -14,12 +14,7 @@ app.component('inwardVehicleCardList', {
             return false;
         }
 
-        $scope.clear_search = function() {
-            $('#search').val('');
-        }
-
         self.user = $scope.user = HelperService.getLoggedUser();
-        self.search_key = '';
         self.gate_in_date = '';
         self.reg_no = '';
         self.membership = '';
@@ -28,22 +23,10 @@ app.component('inwardVehicleCardList', {
         self.model_id = '';
         self.registration_type = '';
         self.status_id = '';
-
-        $element.find('input').on('keydown', function(ev) {
-            ev.stopPropagation();
-        });
-        $scope.clearSearchTerm = function() {
-            $scope.searchTerm = '';
-            $scope.searchTerm1 = '';
-            $scope.searchTerm2 = '';
-            $scope.searchTerm3 = '';
-        };
-
-        $scope.reset_filter = function() {
-            $("#short_name").val('');
-            $("#name").val('');
-            $("#status").val('');
-            dataTables.fnFilter();
+        if(!localStorage.getItem('search_key')){
+            self.search_key = '';
+        }else{
+            self.search_key = localStorage.getItem('search_key');
         }
 
         //FETCH DATA
@@ -84,10 +67,15 @@ app.component('inwardVehicleCardList', {
         $('.refresh_table').on("click", function() {
             $scope.fetchData();
         });
-        $("#search_inward_vehicle").keyup(function() {
-            self.search_key = this.value;
+        $scope.clear_search = function() {
+            self.search_key = '';
+            localStorage.setItem('search_key', self.search_key);
             $scope.fetchData();
-        });
+        }
+        $scope.searchInwardVehicle = function(){
+            localStorage.setItem('search_key', self.search_key);
+            $scope.fetchData();
+        }
         $("#gate_in_date").keyup(function() {
             self.gate_in_date = this.value;
         });
@@ -199,7 +187,13 @@ app.component('inwardVehicleCardList', {
             $("#membership").val('');
             $("#gate_in_no").val('');
             $("#status_id").val('');
-            $scope.fetchData();
+            self.customer_id = '';
+            self.model_id = '';
+            self.registration_type = '';
+            self.status_id = '';
+            setTimeout(function(){ 
+                $scope.fetchData();
+            }, 1000);
         }
 
         $rootScope.loading = false;
@@ -224,6 +218,7 @@ app.component('inwardVehicleTableList', {
             window.location = "#!/page-permission-denied";
             return false;
         }
+        self.search_key = '';
 
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
@@ -246,7 +241,7 @@ app.component('inwardVehicleTableList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_inward_vehicle').val(state_save_val.search.search);
+                    self.search_key = state_save_val.search.search;
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -294,7 +289,7 @@ app.component('inwardVehicleTableList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_inward_vehicle').val('');
+            self.search_key = '';
             $('#inward_vehicles_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
@@ -302,9 +297,9 @@ app.component('inwardVehicleTableList', {
         });
 
         var dataTables = $('#inward_vehicles_list').dataTable();
-        $("#search_inward_vehicle").keyup(function() {
-            dataTables.fnFilter(this.value);
-        });
+        $scope.searchInwardVehicle = function(){
+            dataTables.fnFilter(self.search_key);
+        }
 
         $scope.listRedirect = function(type) {
             if (type == 'table') {
