@@ -842,6 +842,22 @@ class JobCardController extends Controller {
 
 	}
 
+	public function deleteOutwardItem(Request $request)
+	{
+		DB::beginTransaction();
+		// dd($request->id);
+		try {
+			$vehicle = GatePassItem::withTrashed()->where('id', $request->id)->forceDelete();
+			if ($vehicle) {
+				DB::commit();
+				return response()->json(['success' => true, 'message' => 'Outward Item Deleted Successfully']);
+			}
+		} catch (Exception $e) {
+			DB::rollBack();
+			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
+		}
+	}
+
 	public function getEstimateStatus(Request $request){
 			$job_card = JobCard::find($request->id);
 			if (!$job_card) {

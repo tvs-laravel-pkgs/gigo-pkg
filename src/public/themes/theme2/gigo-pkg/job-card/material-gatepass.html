@@ -93,7 +93,7 @@
                                                         </ol>
                                                         <div class="carousel-inner">
 
-                                                            <div class="item active item_{{keys}}" ng-repeat="(keys, gate_pass_items) in gate_passes.gate_pass_items">
+                                                            <div class="item active item_{{keys}}" ng-repeat="(keys, gate_pass_items) in gate_passes.gate_pass_items" ng-if="keys == 0">
                                                            
                                                                 <div class="border-box type-2">
                                                                     <div class="top-title">Front Tyres <span class="right-text">Qty : {{gate_pass_items.qty}}</span></div>
@@ -122,6 +122,35 @@
                                                                     <img class="img-responsive wid-60" src="storage/app/public/gigo/job_order/attachments/{{gate_pass_items.attachments[0].name}}"alt="Parts Image" /> 
                                                                 </div>
                                                             </div>
+
+                                                            <div class="item" ng-repeat="(keyss, gate_pass_items) in gate_passes.gate_pass_items" ng-if="keyss != 0">
+                                                                <div class="border-box type-2">
+                                                                    <div class="top-title">Front Tyres <span class="right-text">Qty : {{gate_pass_items.qty}}</span></div>
+                                                                    <div class="mb-20"></div><!-- Spacing -->
+                                                                    <table class="table-info">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td>Make</td>           
+                                                                                <td>: {{gate_pass_items.item_make}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Model</td>          
+                                                                                <td>: {{gate_pass_items.item_model}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Seriel no</td>          
+                                                                                <td>: {{gate_pass_items.item_serial_no}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td>Remarks</td>            
+                                                                                <td>: {{gate_pass_items.remarks}}</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                    <div class="mb-10"></div><!-- Spacing -->
+                                                                    <img class="img-responsive wid-60" src="storage/app/public/gigo/job_order/attachments/{{gate_pass_items.attachments[0].name}}"alt="Parts Image" /> 
+                                                                </div>
+                                                            </div><!-- Item -->
 
                                                         </div><!-- Carousel Inner -->
                                                     </div><!-- Carousel -->   

@@ -154,6 +154,94 @@
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
 
+                         <div class="tab-pane fade" id="item-details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                 <form id="form">
+                                <div class="row">
+                                    <div class="col-md-12" >
+                                        <h5 class="title-red border-bottom">
+                                            Enter Item Details
+                                            <span class="title-right">WO No : W123890</span>
+                                        </h5>
+                                        <input type="hidden" name="gate_pass_id" value="{{gate_pass.id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
+
+                                        <div class="border-icon" ng-repeat="(index, gate_pass_item) in gate_pass_item">
+                                            <input type="hidden" name="item_id" id="item_id_{{index}}" value="{{gate_pass_item.id}}" class="form-control" />
+
+                                                <img class="img-responsive img-delete" src="./public/theme/img/table/delete.svg" alt="Delete" ng-click="$ctrl.removeItem(index)">
+                                            <div class="row" >
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Item Name <sup class="mandatory">*</sup></label>
+                                                        <input type="text" name="item_details[{{index}}][name]" class="form-control requried" ng-model="gate_pass_item.name" placeholder="Enter Name" autocomplete="off" value=""  />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Item Description <sup class="mandatory">*</sup></label>
+                                                        <input type="text" class="form-control requried" placeholder="Enter Description" autocomplete="off" ng-model="gate_pass_item.item_description" name="item_details[{{index}}][item_description]" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Make</label>
+                                                        <input type="text" class="form-control requried" ng-model="gate_pass_item.item_make" placeholder="Enter Make" autocomplete="off" value="" name="item_details[{{index}}][item_make]" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->  
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Model</label>
+                                                        <input type="text" class="form-control requried" ng-model="gate_pass_item.item_model" placeholder="Enter Model" autocomplete="off" value="" name="item_details[{{index}}][item_model]" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Item Serial No</label>
+                                                        <input type="text" class="form-control requried" ng-model="gate_pass_item.item_serial_no" placeholder="Enter Serial No" autocomplete="off" value="" name="item_details[{{index}}][item_serial_no]" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->  
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>Quantity <sup class="mandatory">*</sup></label>
+                                                       <input type="text" ng-model="gate_pass_item.qty" class="form-control requried" placeholder="Enter Quantity" autocomplete="off" value="" name="item_details[{{index}}][qty]" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Remarks</label>
+                                                        <input type="text" ng-model="gate_pass_item.remarks" class="form-control requried" placeholder="Enter Remark" autocomplete="off" value="" name="item_details[{{index}}][remarks]" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-12">
+                                                    <ul class="gatein-img-list">
+                                                        <li class="gatein-img-list-item item-img">
+                                                            <input type="file" name="material_outward_attachments[{{index}}]"class="image_uploadify requried" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple/>
+                                                        </li>
+                                                        <!-- <li class="gatein-img-list-item item-img">
+                                                            <input type="file" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple/>
+                                                        </li> -->
+                                                    </ul>
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div>
+                                        <div class="mb-30">
+                                            <button class="btn btn-md type2 btn-green btn-square" ng-click="addNewItem()">Add More</button>
+                                        </div>
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <button type="submit" ng-click="saveItemDetails()" class="btn btn-red">
+                                                            Save & Close
+                                                        </button>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+
                         <div class="tab-pane fade" id="item-details" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <form id="form">
