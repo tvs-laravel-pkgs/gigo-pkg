@@ -1648,7 +1648,6 @@ app.component('inwardVehicleVehicleDetail', {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
-        // alert("test");
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
@@ -1700,8 +1699,28 @@ app.component('inwardVehicleVehicleDetail', {
         }
         $scope.fetchData();
 
+        //GET VEHICLE MODEL LIST
+        self.searchVehicleModel = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getVehicleModelSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+
         //Save Form Data 
-        $scope.onSubmit = function(type) {
+        $scope.onSubmit = function(id) {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -1752,11 +1771,7 @@ app.component('inwardVehicleVehicleDetail', {
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
-                    if (type == 1) {
-                        $('.save').button('loading');
-                    } else {
-                        $('.next').button('loading');
-                    }
+                    $scope.button_action(id, 1);
                     $.ajax({
                             url: base_url + '/api/vehicle/save',
                             method: "POST",
@@ -1765,27 +1780,22 @@ app.component('inwardVehicleVehicleDetail', {
                             contentType: false,
                         })
                         .done(function(res) {
+                            $scope.button_action(id, 2);
                             if (!res.success) {
                                 $('.submit').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }
-                            if (type == 1) {
-                                $('.submit').button('reset');
+                            if (id == 1) {
                                 custom_noty('success', res.message);
                                 $location.path('/inward-vehicle/table-list');
                             } else {
-                                $('.next').button('reset');
                                 $location.path('/inward-vehicle/customer-detail/' + $scope.job_order.id);
                             }
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
-                            if (type == 1) {
-                                $('.save').button('reset');
-                            } else {
-                                $('.next').button('reset');
-                            }
+                            $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
                         });
                 }
@@ -1803,16 +1813,24 @@ app.component('inwardVehicleVehicleDetail', {
             $scope.show_vehicle_form = true;
         }
 
-        // if ($routeParams.type_id == 1) {
-        //     alert("test");
-        //     // $scope.show_vehicle_detail = false;
-        //     // $scope.show_vehicle_form = true;
-        //     $("#vehicle_view").hide();
-        //     $("#vehicle_edit").show();
-        // }
-        // else {
-        //     $scope.showVehicleForm();
-        // }
+        $scope.button_action = function(id, type) {
+            if (type == 1) {
+                if (id == 1) {
+                    $('.save').button('loading');
+                    $('.btn-nxt').attr("disabled", "disabled");
+                } else {
+                    $('.btn-nxt').button('loading');
+                    $('.save').attr("disabled", "disabled");
+                }
+                $('.btn-prev').bind('click', false);
+            } else {
+                $('.save').button('reset');
+                $('.btn-nxt').button('reset');
+                $('.btn-prev').unbind('click', false);
+                $(".btn-nxt").removeAttr("disabled");
+                $(".save").removeAttr("disabled");
+            }
+        }
     }
 });
 //------------------------------------------------------------------------------------------------------------------------
