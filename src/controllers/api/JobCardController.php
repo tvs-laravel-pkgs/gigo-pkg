@@ -379,6 +379,7 @@ class JobCardController extends Controller {
 		}
 	}
 
+	//SCHEDULE
 	public function LabourAssignmentFormData(Request $r) {
 		// dd($r->all());
 		try {
@@ -400,9 +401,58 @@ class JobCardController extends Controller {
 				]);
 			}
 
+			return response()->json([
+				'success' => true,
+				'job_card_view' => $job_card,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function getMechanic(Request $request) {
+		// dd($request->all());
+		try {
+			//JOB CARD
+			//JOB CARD
+			$job_card = JobCard::with([
+				'jobOrder',
+				'jobOrder.JobOrderRepairOrders',
+				'jobOrder.JobOrderRepairOrders.repairOrder',
+				'jobOrder.JobOrderRepairOrders.repairOrderMechanics',
+				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanic',
+				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.status',
+			])->find($request->id);
+
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Invalid Job Card!',
+				]);
+			}
+
+			//REPAIR ORDER
+			$repair_order = RepairOrder::with([
+
+			])->find($request->repair_order_id);
+
+			if (!$repair_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Invalid Repair Order!',
+				]);
+			}
+
 			$employee_details = Employee::select([
 				'employees.*',
+				'users.name as user_name',
 				'outlets.code as outlet_code',
+				'deputed_outlet.code as deputed_outlet_code',
 				'attendance_logs.user_id',
 			])
 				->leftJoin('users', 'users.entity_id', 'employees.id')
@@ -412,35 +462,106 @@ class JobCardController extends Controller {
 						->whereDate('attendance_logs.date', '=', date('Y-m-d', strtotime("now")));
 				})
 				->leftJoin('outlets', 'outlets.id', 'employees.outlet_id')
+				->leftJoin('outlets as deputed_outlet', 'deputed_outlet.id', 'employees.deputed_outlet_id')
 				->where('employees.is_mechanic', 1)
 				->where('users.user_type_id', 1) //EMPLOYEE
 				->where('employees.outlet_id', $job_card->outlet_id)
-			// ->groupBy('employees.id')
+				->where('employees.skill_level_id', $repair_order->skill_level_id)
 				->get()
 			;
 
-			// $employee_details = Employee::select(
-			// 	'job_cards.job_order_id',
-			// 	'employees.*',
-			// 	'skill_levels.short_name as skill_level_name',
-			// 	'attendance_logs.user_id as user_status'
-			// )
-			// 	->leftJoin('attendance_logs', 'attendance_logs.user_id', 'employees.id')
-			// 	->leftJoin('skill_levels', 'skill_levels.id', 'employees.skill_level_id')
-			// 	->leftJoin('repair_orders', 'repair_orders.skill_level_id', 'skill_levels.id')
-			// 	->leftJoin('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')
-			// 	->leftJoin('job_cards', 'job_cards.job_order_id', 'job_order_repair_orders.job_order_id')
-			// // ->leftJoin('employees', 'employees.deputed_outlet_id', 'job_cards.outlet_id') //NEED TO CLARIFY
-			// // ->leftJoin('employees as emp_outlet', 'emp_outlet.outlet_id', 'job_cards.outlet_id')
-			// 	->where('employees.is_mechanic', 1)
-			// // ->whereDate('attendance_logs.date', '=', date('Y-m-d', strtotime("now")))
-			// 	->get();
-			// dd($employee_details);
+			return response()->json([
+				'success' => true,
+				'job_card' => $job_card,
+				'repair_order' => $repair_order,
+				'employee_details' => $employee_details,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function saveMechanic(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_card_id' => [
+					'required',
+					'integer',
+					'exists:job_cards,id',
+				],
+				'repair_order_id' => [
+					'required',
+					'integer',
+					'exists:repair_orders,id',
+				],
+				'selected_mechanic_ids' => [
+					'required',
+					'string',
+				],
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			$mechanic_ids = explode(',', $request->selected_mechanic_ids);
+			// dd($mechanic_ids);
+			DB::beginTransaction();
+			$job_card = jobCard::with([
+				'jobOrder',
+				'jobOrder.JobOrderRepairOrders',
+				'jobOrder.JobOrderRepairOrders.repairOrder',
+			])
+				->find($request->job_card_id);
+
+			foreach ($job_card->jobOrder->JobOrderRepairOrders as $JobOrderRepairOrder) {
+				if ($JobOrderRepairOrder->repair_order_id == $request->repair_order_id) {
+					foreach ($mechanic_ids as $mechanic_id) {
+						$repair_order_mechanic = RepairOrderMechanic::firstOrNew([
+							'job_order_repair_order_id' => $JobOrderRepairOrder->id,
+							'mechanic_id' => $mechanic_id,
+						]);
+						if ($repair_order_mechanic->exists) {
+							$repair_order_mechanic->updated_by_id = Auth::user()->id;
+							$repair_order_mechanic->updated_at = Carbon::now();
+						} else {
+							$repair_order_mechanic->created_by_id = Auth::user()->id;
+							$repair_order_mechanic->created_at = Carbon::now();
+						}
+						$repair_order_mechanic->fill($request->all());
+						$repair_order_mechanic->status_id = 8260; //PENDING
+						$repair_order_mechanic->save();
+
+						$job_order_repair_order = JobOrderRepairOrder::where('id', $JobOrderRepairOrder->id)
+							->update([
+								'status_id' => 8182, //WORK PENDING
+								'updated_by_id' => Auth::user()->id,
+								'updated_at' => Carbon::now(),
+							])
+						;
+					}
+				} else {
+					continue;
+				}
+			}
+
+			DB::commit();
 
 			return response()->json([
 				'success' => true,
-				'job_card_view' => $job_card,
-				'employee_details' => $employee_details,
+				'message' => 'Mechanic assigned successfully!!',
 			]);
 
 		} catch (Exception $e) {
