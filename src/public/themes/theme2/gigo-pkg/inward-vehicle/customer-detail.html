@@ -199,7 +199,7 @@ Content Wrap -->
                                                             City
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="job_order.vehicle.current_owner.customer.address.city" md-selected-item-change="selectedCustomer(job_order.vehicle.current_owner.customer.address.city.id)" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus>
+                                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="job_order.vehicle.current_owner.customer.address.city" md-selected-item-change="selectedCustomer(job_order.vehicle.current_owner.customer.address.city.id)" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus>
                                                             <md-item-template>
                                                                 <span>
                                                                     {{option.name}}
