@@ -30,6 +30,10 @@ class ServiceType extends Model {
 		return $this->belongsToMany('Abs\GigoPkg\RepairOrder', 'repair_order_service_type', 'service_type_id', 'repair_order_id');
 	}
 
+	public function serviceTypeParts() {
+		return $this->belongsToMany('Abs\PartPkg\Part', 'part_service_type', 'service_type_id', 'part_id')->withPivot(['quantity', 'amount']);
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
