@@ -2718,7 +2718,7 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'job_order' =>$job_order,
+				'job_order' => $job_order,
 				'message' => 'Estimate Details Added Successfully',
 			]);
 		} catch (\Exception $e) {
@@ -2762,7 +2762,8 @@ class VehicleInwardController extends Controller {
 			}
 			$estimation_type = EstimationType::select(
 				'name',
-				'id'
+				'id',
+				'minimum_amount'
 			)
 				->where('company_id', Auth::user()->company_id)
 				->get();
