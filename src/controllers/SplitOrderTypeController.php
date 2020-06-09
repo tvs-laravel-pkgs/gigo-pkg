@@ -62,7 +62,7 @@ class SplitOrderTypeController extends Controller {
 		;
 
 		return Datatables::of($split_order_types)
-			
+
 			->addColumn('status', function ($split_order_type) {
 				$status = $split_order_type->status == 'Active' ? 'green' : 'red';
 				return '<span class="status-indicator ' . $status . '"></span>' . $split_order_type->status;
@@ -106,10 +106,10 @@ class SplitOrderTypeController extends Controller {
 		// dd($request->all());
 		try {
 			$error_messages = [
-				'code.required' => 'Short Name is Required',
-				'code.unique' => 'Short Name is already taken',
-				'code.min' => 'Short Name is Minimum 3 Charachers',
-				'code.max' => 'Short Name is Maximum 32 Charachers',
+				'code.required' => 'Code is Required',
+				'code.unique' => 'Code is already taken',
+				'code.min' => 'Code is Minimum 3 Charachers',
+				'code.max' => 'Code is Maximum 32 Charachers',
 				// 'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
@@ -131,7 +131,7 @@ class SplitOrderTypeController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'errors' => $validator->errors()->all()
+					'errors' => $validator->errors()->all(),
 				]);
 			}
 

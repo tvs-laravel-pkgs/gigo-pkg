@@ -1096,6 +1096,7 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'attachment' => $attachment,
+				'attachement_path' => url('storage/app/public/gigo/job_order/attachments/'),
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
