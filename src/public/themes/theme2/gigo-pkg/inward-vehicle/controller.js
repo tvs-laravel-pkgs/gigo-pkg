@@ -702,7 +702,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    $scope.attachment = res.attachment;
+                    $scope.job_order = res.attachment;
                     $scope.job_order_id = $routeParams.job_order_id;
                     $scope.$apply();
                 })

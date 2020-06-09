@@ -576,6 +576,7 @@ class VehicleInwardController extends Controller {
 					'quoteType',
 					'serviceType',
 					'kmReadingType',
+					'status',
 				])
 				->select([
 					'job_orders.*',
@@ -1071,10 +1072,26 @@ class VehicleInwardController extends Controller {
 
 			$attachment = JobOrder::
 				with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'vehicle.lastJobOrder',
+				'vehicle.lastJobOrder.jobCard',
+				'type',
+				'quoteType',
+				'serviceType',
+				'kmReadingType',
+				'status',
 				'warrentyPolicyAttachment',
 				'EWPAttachment',
 				'AMCAttachment',
-			])->find($r->id);
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
 
 			return response()->json([
 				'success' => true,
@@ -2582,6 +2599,7 @@ class VehicleInwardController extends Controller {
 				'type',
 				'quoteType',
 				'serviceType',
+				'status',
 			])
 				->select([
 					'job_orders.*',
