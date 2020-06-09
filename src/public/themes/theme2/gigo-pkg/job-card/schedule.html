@@ -37,16 +37,18 @@
                                                     <span class="title">{{job_order_repair_order.repair_order.name}}</span>
                                                 </div>
                                                 <div class="schedules-right-wrap">
-                                                    <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id == 8181">Assign</a>
+                                                    <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id == 8181" data-toggle="modal" data-target="#assign_labours" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Assign</a>
+                                                    <!-- ng-click="assign_mechanic(job_order_repair_order.repair_order.code,job_order_repair_order.repair_order.name)" -->
                                                     <a class="btn btn-bordered btn-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id !=8182">View Time Log</a>
                                                     <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185">Review</a>
-                                                    <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181">Edit</a>
+                                                    <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181" data-toggle="modal" data-target="#assign_labours" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Edit</a>
                                                 </div>
                                             </div><!-- Left Wrap -->
                                             <div class="right-wrap">
-                                                <span class="status bg-yellow type-2">
-                                                    {{job_order_repair_order.status.name}}
-                                                    <span class="time">6h 45m</span>
+                                                <span ng-class="{'bg-blue type-2': (job_order_repair_order.status_id == 8183) , 'bg-red': (job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182) ,'bg-yellow type-2':(job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185),'bg-green type-2':(job_order_repair_order.status_id == 8185)} "
+                                                class="status {{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? 'bg-red ' :(job_order_repair_order.status_id == 8185)}}">
+                                                    {{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? 'Pending' : 'job_order_repair_order.status.name'}}
+                                                    <span class="time">{{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? '': '2Hrs'}}</span>
                                                 </span>
                                             </div><!-- Right Wrap -->
                                             <div class="assigned-info" ng-if="job_order_repair_order.repair_order_mechanics.length > 0">
@@ -79,3 +81,43 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal modal-center fade assign-labours-modal-wrap" id="assign_labours" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-md" role="document">
+        <form id="form">
+            <input type="hidden" name="job_card_id" value="{{job_card.id}}">
+            <input type="hidden" name="repair_order_id" value="{{repair_order.id}}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h5 class="modal-title">Assign Labour to Mechanics</h5>
+                    <p> Works Selected</p>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <div class="title-wrap border-bottom">
+                        <span class="info" id="repair_order_code">
+                            {{repair_order.code}}
+                        </span>
+                        <span class="title" id="repair_order_name">
+                            {{repair_order.name}}
+                        </span>
+                    </div><!-- Title Wrap -->
+                    <ul class="assign-labour-list">
+                        <li class="assign-labour-list-item check_uncheck_{{employee.id}} " ng-repeat="(key,employee) in employee_details" ng-click="selectedEmployee(employee.id,key)" ng-class="{'disabled':employee.user_id}">
+                            <div class="left-wrap">
+                                <h4 class="title">{{employee.user_name}}</h4>
+                                <p class="info {{employee.user_id ? '' : 'color-red'}}">{{employee.user_id ? 'Present' : 'Absent'}} | {{employee.deputed_outlet_code ? employee.deputed_outlet_code : employee.outlet_code}}</p>
+                            </div>
+                            <img src="" class="img-responsive check-img">
+                        </li>
+                        <input type="hidden" class="form-control required" name="selected_mechanic_ids" id="selectedMachanic" value="">
+                    </ul>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-red btn-square" ng-click="saveMechanic()">Done</button>
+                    </div>
+                </div><!-- Modal Body -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
