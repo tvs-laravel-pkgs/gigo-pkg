@@ -20,7 +20,7 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_inward_vehicle" class="form-control" placeholder="Search" />
+                            <input type="search" id="search_inward_vehicle" class="form-control" placeholder="Search" ng-model="$ctrl.search_key" ng-keyup=searchInwardVehicle() autofocus />
                             <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
@@ -164,7 +164,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Registration Type</label>
-                                <md-select ng-model="$ctrl.registration_type_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedRegistrationType($ctrl.registration_type_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Registration Type">
+                                <md-select ng-model="$ctrl.registration_type" md-on-close="clearSearchTerm()" ng-change="onSelectedRegistrationType($ctrl.registration_type)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Registration Type">
                                     <md-select-header class="demo-select-header">
                                         <input ng-model="searchTerm" type="search" placeholder="Search for a Registration Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                     </md-select-header>
@@ -234,7 +234,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Status</label>
-                                <md-select ng-model="$ctrl.status_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedStatus($ctrl.status_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
+                                <md-select ng-model="$ctrl.status_id" md-on-close="clearSearchTerm()" ng-change="onSelectedStatus($ctrl.status_id)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
                                     <md-select-header class="demo-select-header">
                                         <input ng-model="searchTerm1" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                     </md-select-header>
@@ -251,7 +251,7 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_in_date='';$ctrl.membership='';$ctrl.gate_in_no='';$ctrl.registration_type_selected='';$ctrl.reg_no='';$ctrl.customerSearchText='';$ctrl.vehicleModelSearchText='';$ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_in_date='';$ctrl.membership='';$ctrl.gate_in_no='';$ctrl.registration_type='';$ctrl.reg_no='';$ctrl.customerSearchText='';$ctrl.vehicleModelSearchText='';$ctrl.status_id='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
                             Reset Filter
                         </button>
                     </div><!-- Column -->

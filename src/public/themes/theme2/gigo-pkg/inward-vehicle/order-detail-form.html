@@ -30,7 +30,7 @@
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="order_details" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
-                                <form id="order_detail_form">
+                                <form id="order_detail_form" autocomplete="off">
                                     <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                                     <div class="row">
                                         <div class="col-md-12">
@@ -256,19 +256,19 @@
                                                                                 <label>
                                                                                     Driver License
                                                                                 </label>
-                                                                                <input type="file" name="driver_license_attachment" class="image_uploadify" accept="image/*" multiple />
+                                                                                <input type="file" name="driving_license_image" class="image_uploadify" accept="image/*" />
                                                                             </li>
                                                                             <li class="gatein-img-list-item insurance-img">
                                                                                 <label>
                                                                                     Insurance
                                                                                 </label>
-                                                                                <input type="file" class="image_uploadify" accept="image/*" name="insuarance_attachment" multiple />
+                                                                                <input type="file" class="image_uploadify" accept="image/*" name="insurance_image" />
                                                                             </li>
                                                                             <li class="gatein-img-list-item rc-book-img">
                                                                                 <label>
                                                                                     RC Book
                                                                                 </label>
-                                                                                <input type="file" class="image_uploadify" accept="image/*" name="rc_book_attachment" multiple />
+                                                                                <input type="file" class="image_uploadify" accept="image/*" name="rc_book_image" />
                                                                             </li>
                                                                         </ul>
                                                                     </div><!-- Field -->
@@ -314,13 +314,13 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button ng-click="saveOrderDetailForm()" class="btn btn-red submit">
+                                                    <button ng-click="saveOrderDetailForm(1)" class="btn btn-red submit">
                                                         Save & Close
                                                     </button>
                                                     <a href=".#!/inward-vehicle/customer-detail/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
                                                         Previous
                                                     </a>
-                                                    <button ng-click="saveOrderDetailForm()" class="btn btn-secondary-dark btn-min-wdth btn-nxt submit">
+                                                    <button ng-click="saveOrderDetailForm(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Next
                                                     </button>
                                                 </div><!-- Column -->

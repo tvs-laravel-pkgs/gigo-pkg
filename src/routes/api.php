@@ -3,6 +3,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 	Route::group(['prefix' => 'api'], function () {
 
 		//SAVE GATE IN ENTRY
+		Route::get('gate-in-entry/get-form-data', 'GateInController@getFormData');
 		Route::post('gate-in-entry/create', 'GateInController@createGateInEntry');
 
 		//VEHICLE INWARD
@@ -105,7 +106,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('job-card/bay/save', 'JobCardController@saveBay');
 
 		//Jobcard View Labour Assignment
-		Route::get('get-labour-assignment-form-data/{jobcard_id}', 'JobCardController@LabourAssignmentFormData');
+		Route::post('job-card/labour-assignment/get-form-data', 'JobCardController@LabourAssignmentFormData');
+		Route::post('job-card/get-mechanic', 'JobCardController@getMechanic');
+		Route::post('job-card/save-mechanic', 'JobCardController@saveMechanic');
 
 		//JobOrder Repair order form save
 		Route::post('labour-assignment-form-save', 'JobCardController@LabourAssignmentFormSave');
@@ -157,6 +160,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('jobcard/part-indent/get', 'JobCardController@getPartsIndent');
 		Route::post('jobcard/schedule-maintenance/get', 'JobCardController@getScheduleMaintenance');
 		Route::post('jobcard/payable-labour-part/get', 'JobCardController@getPayableLabourPart');
+		Route::post('jobcard/estimate/get', 'JobCardController@getEstimate');
+		Route::post('jobcard/estimate-status/get', 'JobCardController@getEstimateStatus');
+		Route::post('jobcard/outward-item/delete', 'JobCardController@deleteOutwardItem');
 
 		//Material-GatePass Details Save
 		Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');
@@ -176,6 +182,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('save-gate-out-confirm-material-gate-pass', 'MaterialGatePassController@materialGateOutConfirm');
 		//Resend OTP for Material Gate Pass
 		Route::get('material-gate-out-otp-resend/{id}', 'MaterialGatePassController@materialCustomerOtp');
+
+		//VIEW BILL DETAILS
+		Route::post('job-card/bill-detail/view', 'JobCardController@viewBillDetails');
+		Route::post('job-card/bill-update/get-form-data', 'JobCardController@getBillDetailFormData');
+		Route::post('job-card/bill-update/', 'JobCardController@updateBillDetails');
 
 		//VEHICLE GATE PASS LIST
 		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');

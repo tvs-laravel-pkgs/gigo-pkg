@@ -55,8 +55,8 @@ app.component('serviceTypeList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'service_types.code' ,searchable: true },
-                { data: 'name', name: 'service_types.name' ,searchable: true },
+                { data: 'code', name: 'service_types.code', searchable: true },
+                { data: 'name', name: 'service_types.name', searchable: true },
                 { data: 'status', name: '' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -125,7 +125,7 @@ app.component('serviceTypeList', {
                 $mdSelect.hide();
             }
         });
-       
+
         $scope.applyFilter = function() {
             $('#status').val(self.status);
             dataTables.fnFilter();
@@ -174,6 +174,103 @@ app.component('serviceTypeForm', {
             } else {
                 self.switch_value = 'Active';
             }
+        });
+
+        //Add New Labour
+        self.addNewLabour = function() {
+            self.service_type.service_type_labours.push({
+                pivot: [],
+            });
+        }
+
+        //Search Labour
+        self.searchLabour = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getLabourSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $scope.getSelectedLabour = function(index, labour_detail) {
+            if (labour_detail) {
+                $('.labour_type' + index).html(labour_detail.repair_order_type);
+                $('.labour_quantity' + index).html(labour_detail.hours);
+                $('.labour_value' + index).html(labour_detail.amount);
+            } else {
+                $('.labour_type' + index).html('-');
+                $('.labour_quantity' + index).html('-');
+                $('.labour_value' + index).html('-');
+            }
+        }
+
+        self.removeLabour = function(index) {
+            self.service_type.service_type_labours.splice(index, 1);
+        }
+
+        //Add New Part
+        self.addNewPart = function() {
+            self.service_type.service_type_parts.push({
+                pivot: [],
+            });
+        }
+        //Search Part
+        self.searchPart = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getPartSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $scope.getSelectedPart = function(index, part_detail) {
+            if (part_detail) {
+                $('.part_type' + index).html(part_detail.tax_code_type);
+                $('#part_hour' + index).val(part_detail.rate);
+            } else {
+                $('.part_type' + index).html('-');
+                $('#part_hour' + index).val('');
+                $('#part_qty' + index).val('');
+                $('#part_amount' + index).val('');
+            }
+        }
+
+        self.removePart = function(index) {
+            self.service_type.service_type_parts.splice(index, 1);
+        }
+
+        $(document).on('keyup', ".change_quantity", function() {
+            var qty = $(this).val();
+            var index = $(this).data('index');
+            var total_amount = 0;
+            setTimeout(function() {
+                var rate = $('#part_hour' + index).val();
+                if (rate > 0 || !isNaN(rate)) {
+                    total_amount = rate * qty;
+                    total_amount = total_amount.toFixed(2);
+                }
+                $('#part_amount' + index).val(parseFloat(total_amount));
+            }, 100);
         });
 
         //Save Form Data 

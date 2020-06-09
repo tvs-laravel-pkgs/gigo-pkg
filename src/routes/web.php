@@ -25,6 +25,8 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/service-type/save', 'ServiceTypeController@saveServiceType')->name('saveServiceType');
 	Route::get('/service-type/delete', 'ServiceTypeController@deleteServiceType')->name('deleteServiceType');
 	Route::get('/service-type/get-filter-data', 'ServiceTypeController@getServiceTypeFilterData')->name('getServiceTypeFilterData');
+	Route::post('/service-type/labour/get-search-list', 'ServiceTypeController@getLabourSearchList')->name('getLabourSearchList');
+	Route::post('/service-type/part/get-search-list', 'ServiceTypeController@getPartSearchList')->name('getPartSearchList');
 
 	//Service Order Type
 	Route::get('/service-order-type/get-list', 'ServiceOrderTypeController@getServiceOrderTypeList')->name('getServiceOrderTypeList');

@@ -883,6 +883,7 @@ app.component('jobCardMaterialGatepassForm', {
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.view_metrial_gate_pass = res.view_metrial_gate_pass;
                     $scope.$apply();
+
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -956,6 +957,38 @@ app.component('jobCardMaterialOutwardForm', {
             });
         }
 
+        self.removeItem = function(index) {
+            if (index != 0) {
+                 $scope.gate_pass_item.splice(index, 1);
+            }
+            var id = $("#item_id_" + index).val();
+            if (id) {
+                $.ajax({
+                    url: base_url + '/api/jobcard/outward-item/delete',
+                    method: "POST",
+                    data: {
+                        id: id,
+                        gate_pass_id: $routeParams.gatepass_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    custom_noty('success', 'Outward Item Deleted Successfully');
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+            } else {
+                return [];
+            }
+        }
+
         //$scope.addNewItem();
         //Save Form Data 
         $scope.saveVendorDetails = function() {
@@ -1011,24 +1044,33 @@ app.component('jobCardMaterialOutwardForm', {
         $scope.saveItemDetails = function() {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
-                ignore: '',
+                 errorPlacement: function(error, element) {
+                show_alert = true;
+                error.insertAfter(element)
+            },
+            invalidHandler: function(form, validator) {
+
+                console.log('Errors!!');
+            },
+            ignore: [],
+                //ignore: '',
                 rules: {
-                    'item_description': {
+                    'item_description[]': {
                         required: true,
                     },
-                    'item_make': {
+                    'item_make[]': {
                         required: true,
                     },
-                    'item_model': {
+                    'item_model[]': {
                         required: true,
                     },
-                    'item_serial_no': {
+                    'item_serial_no[]': {
                         required: true,
                     },
-                    'qty': {
+                    'qty[]': {
                         required: true,
                     },
-                    'remarks': {
+                    'remarks[]': {
                         required: true,
                     },
                 },
@@ -1068,6 +1110,16 @@ app.component('jobCardMaterialOutwardForm', {
                 }
             });
         }
+
+        //Buttons to navigate between tabs
+        $('.btn-nxt').on("click", function() {
+            $('.cndn-tabs li.active').next().children('a').trigger("click");
+            tabPaneFooter();
+        });
+        $('.btn-prev').on("click", function() {
+            $('.cndn-tabs li.active').prev().children('a').trigger("click");
+            tabPaneFooter();
+        });
 
 
         /* Image Uploadify Funtion */
@@ -1309,7 +1361,7 @@ app.component('jobCardPartIndentForm', {
         }
         $scope.fetchData();
 
-         $scope.onSelectedpartcode = function(part_code_selected) {
+        $scope.onSelectedpartcode = function(part_code_selected) {
             $('#part_code').val(part_code_selected);
             if (part_code_selected) {
                 return new Promise(function(resolve, reject) {
@@ -1321,16 +1373,15 @@ app.component('jobCardPartIndentForm', {
                         .then(function(response) {
                             self.parts_details = response.data.parts_details;
                             $("#job_order_part_id").val(self.parts_details.id);
-                            $("#req_qty").text(self.parts_details.qty+" "+"nos");
-                            $("#issue_qty").text(self.parts_details.issued_qty+" "+"nos");
+                            $("#req_qty").text(self.parts_details.qty + " " + "nos");
+                            $("#issue_qty").text(self.parts_details.issued_qty + " " + "nos");
                             issued_qty = self.parts_details.issued_qty;
-                            if(issued_qty == null)
-                            {
-                             issued_qty = 0;
-                             $("#issue_qty").text(issued_qty+" "+"nos");
+                            if (issued_qty == null) {
+                                issued_qty = 0;
+                                $("#issue_qty").text(issued_qty + " " + "nos");
                             }
-                            balance_qty = parseInt(self.parts_details.qty)-parseInt(issued_qty);
-                            $("#balance_qty").text(balance_qty+" "+"nos");
+                            balance_qty = parseInt(self.parts_details.qty) - parseInt(issued_qty);
+                            $("#balance_qty").text(balance_qty + " " + "nos");
                             $("#bal_qty").val(balance_qty);
                         });
                 });
@@ -1347,7 +1398,7 @@ app.component('jobCardPartIndentForm', {
         }
 
         self.removeIssedParts = function($id) {
-           $('#delete_issued_part_id').val($id);
+            $('#delete_issued_part_id').val($id);
         }
 
         $scope.deleteConfirm = function() {
@@ -1372,8 +1423,8 @@ app.component('jobCardPartIndentForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'part_code':{
-                    required:true,
+                'part_code': {
+                    required: true,
                 },
                 'issued_qty': {
                     required: true,
@@ -1387,7 +1438,7 @@ app.component('jobCardPartIndentForm', {
 
             },
             messages: {
-               
+
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
@@ -1407,7 +1458,7 @@ app.component('jobCardPartIndentForm', {
                             $('.submit').button('reset');
                             $('#issued_qty').val(" ");
                             custom_noty('success', res.message);
-                           $location.path('/gigo-pkg/job-card/part-indent/' + $routeParams.job_card_id);
+                            $location.path('/gigo-pkg/job-card/part-indent/' + $routeParams.job_card_id);
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -1418,7 +1469,7 @@ app.component('jobCardPartIndentForm', {
                                 showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
-                               $location.path('/gigo-pkg/job-card/part-indent/' + $routeParams.job_card_id);
+                                $location.path('/gigo-pkg/job-card/part-indent/' + $routeParams.job_card_id);
                                 $scope.$apply();
                             }
                         }
@@ -1531,6 +1582,415 @@ app.component('jobCardPayableLabourPartsForm', {
         $scope.fetchData();
     }
 });
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//SCHEDULES
+app.component('jobCardScheduleForm', {
+    templateUrl: job_card_schedule_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $route) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/job-card/labour-assignment/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_card = res.job_card_view;
+                    // $scope.employee_details = res.employee_details;
+                    console.log($scope.job_card);
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //ASSIGN MECHANIC
+        // $scope.assign_mechanic = function(code, name) {
+        //     console.log(code, name);
+        //     $scope.job_card.repair_order_code = code;
+        //     $scope.job_card.repair_order_name = name;
+        // }
+        $scope.assignMechanic = function(repair_order_id) {
+            console.log(repair_order_id);
+            $.ajax({
+                    url: base_url + '/api/job-card/get-mechanic',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                        repair_order_id: repair_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_card = res.job_card;
+                    $scope.repair_order = res.repair_order;
+                    $scope.employee_details = res.employee_details;
+                    angular.forEach($scope.job_card.job_order.job_order_repair_orders, function(value, key) {
+                        if (value.repair_order_mechanics && value.repair_order_id == repair_order_id) {
+                            angular.forEach(value.repair_order_mechanics, function(value, key) {
+                                setTimeout(function() {
+                                    $scope.selectedEmployee(value.mechanic_id);
+                                }, 500);
+                            });
+                        } else {
+                            $('#selectedMachanic').val('');
+                        }
+                    });
+                    // $("#selectedMachanic").;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        self.selectedEmployee_ids = [];
+        $scope.selectedEmployee = function(id) {
+            console.log(id);
+            if ($('.check_uncheck_' + id).hasClass('bg-dark')) {
+                console.log("1");
+                $('.check_uncheck_' + id).removeClass('bg-dark');
+                $('.check_uncheck_' + id).find('img').attr('src', '');
+                self.selectedEmployee_ids = jQuery.grep(self.selectedEmployee_ids, function(value) {
+                    return value != id;
+                });
+                console.log(self.selectedEmployee_ids);
+                $('#selectedMachanic').val(self.selectedEmployee_ids);
+            } else {
+                console.log("2");
+                $('.check_uncheck_' + id).addClass('bg-dark');
+                $('.check_uncheck_' + id).find('img').attr('src', './public/theme/img/content/icons/check-white.svg');
+                if (self.selectedEmployee_ids.includes(id)) {
+                    $('#selectedMachanic').val(self.selectedEmployee_ids);
+                } else {
+                    console.log("2");
+                    self.selectedEmployee_ids.push(id);
+                    $('#selectedMachanic').val(self.selectedEmployee_ids);
+                }
+                console.log(self.selectedEmployee_ids);
+            }
+        }
+        //SAVE MECHANIC
+        $scope.saveMechanic = function() {
+            if (!$("#selectedMachanic").val()) {
+                custom_noty('error', 'Kindly Select Employee to assign work!');
+            }
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'selected_mechanic_ids': {
+                        required: true,
+                    },
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/job-card/save-mechanic',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $("#assign_labours").modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $route.reload();
+                            // $location.path('/gigo-pkg/job-card/schedule/' + $routeParams.job_card_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+    }
+});
+
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//Bill Details
+app.component('jobCardBillDetailView', {
+    templateUrl: job_card_bil_detail_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/job-card/bill-detail/view',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_card = res.job_card;
+                    console.log($scope.job_card);
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+    }
+});
+
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//Update Bill Details
+app.component('jobCardUpdateBillDetail', {
+    templateUrl: job_card_bil_detail_update_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        $('.image_uploadify').imageuploadify();
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/job-card/bill-update/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_card = res.job_card;
+                    console.log($scope.job_card);
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Save Form Data 
+        $scope.saveForm = function() {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'bill_date': {
+                        required: true,
+                    },
+                    'bill_number': {
+                        required: true,
+                    },
+                    'bill_copy': {
+                        required: true,
+                    },
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/job-card/bill-update',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/gigo-pkg/job-card/bill-detail/' + $routeParams.job_card_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+    }
+});
+
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//Estimate
+app.component('jobCardEstimateForm', {
+    templateUrl: job_card_estimate_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/jobcard/estimate/get',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_card_id = $routeParams.job_card_id;
+                    $scope.job_order = res.job_order;
+                    
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+    }
+});
+
+
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//Estimate Status
+app.component('jobCardEstimateStatusForm', {
+    templateUrl: job_card_estimate_status_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/jobcard/estimate-status/get',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_card_id = $routeParams.job_card_id;
+                    $scope.job_order = res.job_order;
+                    $scope.attachement_path = res.attachement_path;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+    }
+});
+
 
 
 //------------------------------------------------------------------------------------------------------------------------

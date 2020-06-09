@@ -106,7 +106,7 @@ app.component('vehicleList', {
                 if (response.data.success) {
                     custom_noty('success', 'Vehicle Deleted Successfully');
                     $('#vehicles_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/material-gate-pass/list');
+                    $location.path('/gigo-pkg/vehicle/list');
                 }
             });
         }
@@ -356,7 +356,19 @@ app.component('vehicleDataView', {
             }
         ).then(function(response) {
             self.vehicles_details = response.data.vehicles_details;
+            self.job_order = response.data.job_order;
             self.action = response.data.action;
+        });
+
+
+        //Buttons to navigate between tabs
+        $('.btn-nxt').on("click", function() {
+            $('.cndn-tabs li.active').next().children('a').trigger("click");
+            tabPaneFooter();
+        });
+        $('.btn-prev').on("click", function() {
+            $('.cndn-tabs li.active').prev().children('a').trigger("click");
+            tabPaneFooter();
         });
     }
 });

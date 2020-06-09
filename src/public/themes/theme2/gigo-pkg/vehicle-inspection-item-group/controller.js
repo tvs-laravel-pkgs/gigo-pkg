@@ -47,7 +47,7 @@ app.component('vehicleInspectionItemGroupList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.code = $("#code").val();
+                    // d.code = $("#code").val();
                     d.name = $("#name").val();
                     d.status = $("#status").val();
                 },
@@ -55,7 +55,7 @@ app.component('vehicleInspectionItemGroupList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'vehicle_inspection_item_groups.code' },
+                // { data: 'code', name: 'vehicle_inspection_item_groups.code' },
                 { data: 'name', name: 'vehicle_inspection_item_groups.name' },
                 { data: 'status', name: '', searchable: false },
             ],
@@ -132,7 +132,7 @@ app.component('vehicleInspectionItemGroupList', {
             dataTables.fnFilter();
         }
         $scope.reset_filter = function() {
-            $("#code").val('');
+            // $("#code").val('');
             $("#name").val('');
             $("#status").val('');
             // dataTables.fnFilter();
@@ -182,21 +182,22 @@ app.component('vehicleInspectionItemGroupForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'code': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 32,
-                },
+                // 'code': {
+                //     required: true,
+                //     minlength: 3,
+                //     maxlength: 32,
+                // },
                 'name': {
+                    required: true,
                     minlength: 3,
                     maxlength: 191,
                 },
             },
             messages: {
-                'code': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 32 Characters',
-                },
+                // 'code': {
+                //     minlength: 'Minimum 3 Characters',
+                //     maxlength: 'Maximum 32 Characters',
+                // },
                 'name': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 191 Characters',

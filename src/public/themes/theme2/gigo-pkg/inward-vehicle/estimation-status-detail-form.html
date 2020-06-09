@@ -38,17 +38,17 @@
                                                             Estimation Type
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="estimation_type" placeholder="Select Estimation" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select ng-model="job_order.estimation_type_id" placeholder="Select Estimation" data-md-container-class="selectdemoSelectHeader" ng-change="getSelectedEstimationType(job_order.estimation_type_id)" >
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchEstimationType" type="search" placeholder="Search for a Estimation Type.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
                                                             <md-optgroup>
-                                                                <md-option ng-value="type" ng-repeat="type in estimation_type | filter:searchEstimationType">
+                                                                <md-option ng-value="type.id" ng-repeat="type in estimation_type | filter:searchEstimationType">
                                                                     {{type.name}}
                                                                 </md-option>
                                                             </md-optgroup>
                                                         </md-select>
-                                                        <input type="hidden" name="estimation_type_id" value="{{estimation_type.id}}">
+                                                        <input type="hidden" name="estimation_type_id" value="{{job_order.estimation_type_id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-4">
@@ -56,7 +56,7 @@
                                                         <label>Minimum Payable Amount
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" name="minimum_payable_amount" class="form-control" placeholder="Enter Amount" />
+                                                        <input type="text" ng-model="minimum_payable_amount" name="minimum_payable_amount" class="form-control" placeholder="Enter Amount" value="{{minimum_payable_amount}}"/>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
@@ -64,12 +64,12 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-red submit">
+                                                    <button type="submit" ng-click="saveStatusDetaiForm(1)" class="btn btn-red submit">
                                                         Save & Close
                                                     </button>
-                                                    <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/estimate/{{job_order_id}}" >Previous</a>
-                                                    <button type="submit" ng-click="saveStatusDetaiForm()" class="btn btn-secondary-dark btn-min-wdth btn-nxt submit">
-                                                        Next
+                                                    <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/estimate/{{job_order_id}}">Previous</a>
+                                                    <button type="submit" ng-click="saveStatusDetaiForm(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        Submit
                                                     </button>
                                                 </div>
                                             </div>
@@ -84,5 +84,70 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<!-- Submit Alert Modal -->
+<div class="modal modal-success alert-modal fade" id="confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <form id="Payment_detail">
+                <div class="modal-body text-center">
+                    <img class="img-responsive img-center" src="./public/theme/img/content/success-fill-green.svg" />
+                    <div class="mb-10"></div><!-- Spacing -->
+                    <p class="info">
+                        Payment Details
+                    </p>
+                    <p class="info">
+                        Send to Customer
+                    </p>
+                    <br />
+                    <p class="info">
+                        Estimate Ref No: ER6765
+                    </p>
+                    <div class="mt-30 mb-30">
+                        <a href="" id="payment_detail" class="btn btn-red btn-square btn-block"><b>Done</b></a>
+                        <!-- <button type="submit" class="btn btn-red btn-square btn-block" data-toggle="modal" data-target="#inward_notification" data-dismiss="modal" ng-click="showPaymentDetails(job_order.id)"><b>Done</b></button> -->
+                    </div><!-- Button -->
+                </div><!-- Modal Body -->
+            </form>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
+<!-- Modal -->
+<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xs" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title">Search Vehicle</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Registration Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Customer Code <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>VIN Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
 <!-- Drag & Drop File Upload Plugins -->
 <script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
