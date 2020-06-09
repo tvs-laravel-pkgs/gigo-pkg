@@ -39,6 +39,10 @@ class JobCard extends Model {
 		return $this->belongsTo('App\Company', 'company_id');
 	}
 
+	public function workOrders() {
+		return $this->hasMany('App\WorkOrder');
+	}
+
 	public function business() {
 		return $this->belongsTo('App\Business', 'business_id')->where('company_id', Auth::user()->company_id);
 	}
