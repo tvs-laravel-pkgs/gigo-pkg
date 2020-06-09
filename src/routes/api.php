@@ -106,6 +106,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//Jobcard View Labour Assignment
 		Route::post('job-card/labour-assignment/get-form-data', 'JobCardController@LabourAssignmentFormData');
+		Route::post('job-card/get-mechanic', 'JobCardController@getMechanic');
+		Route::post('job-card/save-mechanic', 'JobCardController@saveMechanic');
 
 		//JobOrder Repair order form save
 		Route::post('labour-assignment-form-save', 'JobCardController@LabourAssignmentFormSave');
