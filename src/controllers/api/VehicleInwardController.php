@@ -1402,8 +1402,12 @@ class VehicleInwardController extends Controller {
 			$labour_amount = 0;
 			$parts_rate = 0;
 
-			$job_order_parts = JobOrderPart::where('job_order_id', $r->id)->first();
-			$job_order_repair_orders = JobOrderRepairOrder::where('job_order_id', $r->id)->first();
+			$job_order_parts = JobOrderPart::where('job_order_id', $r->id)
+				->where('job_order_parts.is_oem_recommended', 1)
+				->first();
+			$job_order_repair_orders = JobOrderRepairOrder::where('job_order_id', $r->id)
+				->where('job_order_repair_orders.is_recommended_by_oem', 1)
+				->first();
 
 			if (!$job_order_repair_orders) {
 				if ($job_order->serviceType->serviceTypeLabours) {
@@ -1520,7 +1524,6 @@ class VehicleInwardController extends Controller {
 	public function saveScheduleMaintenance(Request $request) {
 		// dd($request->all());
 		try {
-			//issue : saravanan - split_order_type_id, is_oem_recommended, status_id not required in job order parts requests. split_order_type_id, is_oem_recommended, status_id, failure_date not required in job order repair orders requests. also remove in validations
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
 					'required',
@@ -1582,8 +1585,6 @@ class VehicleInwardController extends Controller {
 
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
-				//dd($request->job_order_parts);
-				//issue: saravanan - is_recommended_by_oem save missing. save default 1.
 				foreach ($request->job_order_parts as $key => $part) {
 					$job_order_part = JobOrderPart::firstOrNew([
 						'part_id' => $part['part_id'],
@@ -1615,7 +1616,7 @@ class VehicleInwardController extends Controller {
 			DB::commit();
 			return response()->json([
 				'success' => true,
-				'message' => 'Schedule Maintenance added successfully',
+				'message' => 'Schedule Maintenance saved successfully',
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -2715,49 +2716,38 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			// //issue: relation naming
-			// $gate_log_detail = GateLog::with([
-			// 	'vehicle',
-			// 	'vehicle.model',
-			// 	'jobOrder',
-			// 	'jobOrder.getEomRecomentation',
-			// 	'jobOrder.getAdditionalRotAndParts',
-			// ])
-			// 	->find($id);
-
 			$oem_recomentaion_labour_amount = 0;
 			$additional_rot_and_parts_labour_amount = 0;
-			//issue: relation naming
-			/*if ($job_order->jobOrder->getEomRecomentation) {*/
 
-			foreach ($job_order->jobOrderRepairOrders as $oemrecomentation_labour) {
+			if ($job_order->jobOrderRepairOrders) {
+				foreach ($job_order->jobOrderRepairOrders as $oemrecomentation_labour) {
 
-				if ($oemrecomentation_labour['is_recommended_by_oem'] == 1) {
-					//SCHEDULED MAINTANENCE
-					$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
-				}
-				if ($oemrecomentation_labour['is_recommended_by_oem'] == 0) {
-					//ADDITIONAL ROT AND PARTS
-					$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
+					if ($oemrecomentation_labour['is_recommended_by_oem'] == 1 && $oemrecomentation_labour['is_free_service'] == 0) {
+						//SCHEDULED MAINTANENCE
+						$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
+					}
+					if ($oemrecomentation_labour['is_recommended_by_oem'] == 0) {
+						//ADDITIONAL ROT AND PARTS
+						$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
+					}
 				}
 			}
-			/*}*/
 
 			$oem_recomentaion_part_amount = 0;
 			$additional_rot_and_parts_part_amount = 0;
-			//issue: relation naming
-			/*if ($gate_log_detail->jobOrder->getAdditionalRotAndParts) {*/
-			foreach ($job_order->jobOrderParts as $oemrecomentation_labour) {
-				if ($oemrecomentation_labour['is_oem_recommended'] == 1) {
-					//SCHEDULED MAINTANENCE
-					$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
-				}
-				if ($oemrecomentation_labour['is_oem_recommended'] == 0) {
-					//ADDITIONAL ROT AND PARTS
-					$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
+
+			if ($job_order->jobOrderParts) {
+				foreach ($job_order->jobOrderParts as $oemrecomentation_labour) {
+					if ($oemrecomentation_labour['is_oem_recommended'] == 1 && $oemrecomentation_labour['is_free_service'] == 0) {
+						//SCHEDULED MAINTANENCE
+						$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
+					}
+					if ($oemrecomentation_labour['is_oem_recommended'] == 0) {
+						//ADDITIONAL ROT AND PARTS
+						$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
+					}
 				}
 			}
-			/*}*/
 
 			//OEM RECOMENTATION LABOUR AND PARTS AND SUB TOTAL
 			$job_order->oem_recomentation_labour_amount = $oem_recomentaion_labour_amount;
@@ -2792,7 +2782,7 @@ class VehicleInwardController extends Controller {
 
 	//ESTIMATE SAVE
 	public function saveEstimate(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		DB::beginTransaction();
 		try {
 			$validator = Validator::make($request->all(), [
@@ -2803,12 +2793,9 @@ class VehicleInwardController extends Controller {
 				],
 				'estimated_delivery_date' => [
 					'required',
-					// 'date_format:d/m/Y h:i A', //NOT ACCEPT THIS FORMAT
-					//'date_format:d-m-Y h:i A',
 					'string',
 				],
 				//WAITING FOR CONFIRMATION -- NOT CONFIRMED
-				//issue: is_customer_agreed - required
 				'is_customer_agreed' => [
 					'nullable',
 				],
@@ -2823,7 +2810,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = jobOrder::find($request->job_order_id);
-			$job_order->estimated_delivery_date = $date = date('Y-m-d H:i', strtotime(str_replace('/', '-', $request->estimated_delivery_date)));
+			$job_order->estimated_delivery_date = date('Y-m-d H:i:s', strtotime($request->estimated_delivery_date));
 			$job_order->is_customer_agreed = $request->is_customer_agreed;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
@@ -2834,13 +2821,15 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
-				'message' => 'Estimate Details Added Successfully',
+				'message' => 'Estimate Details Saved Successfully',
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
