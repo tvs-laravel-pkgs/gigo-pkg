@@ -173,6 +173,12 @@ class VehicleInwardController extends Controller {
 			$job_order = JobOrder::company()->with([
 				'vehicle',
 				'vehicle.model',
+				'vehicle.model.campaign',
+				'vehicle.model.campaign.claimType',
+				'vehicle.model.campaign.faultType',
+				'vehicle.model.campaign.complaintType',
+				'vehicle.model.campaign.campaignLabours',
+				'vehicle.model.campaign.campaignParts',
 				'vehicle.status',
 				'vehicle.currentOwner.customer',
 				'vehicle.currentOwner.customer.address',
@@ -1210,7 +1216,7 @@ class VehicleInwardController extends Controller {
 
 	//DMS CHECKLIST SAVE
 	public function saveDmsCheckList(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -1256,6 +1262,7 @@ class VehicleInwardController extends Controller {
 			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->warranty_expiry_date = $request->warranty_expiry_date;
 			$job_order->ewp_expiry_date = $request->ewp_expiry_date;
+			$job_order->is_dms_verified = $request->is_verified;
 			$job_order->save();
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
