@@ -121,6 +121,13 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/bay/delete', 'BayController@deleteBay')->name('deleteBay');
 	Route::get('/bay/get-filter-data', 'BayController@getBayFilter')->name('getBayFilter');
 
+	//Campaign
+	Route::get('/campaign/get-list', 'CompaignController@getCampaignList')->name('getCampaignList');
+	Route::get('/campaign/get-form-data', 'CompaignController@getCampaignFormData')->name('getCampaignFormData');
+	Route::post('/campaign/save', 'CompaignController@saveCampaign')->name('saveCampaign');
+	Route::get('/campaign/delete', 'CompaignController@deleteCampaign')->name('deleteCampaign');
+	Route::get('/campaign/get-filter-data', 'CompaignController@getCampaignFilterData')->name('getCampaignFilterData');
+
 	//Estimation Type
 	Route::get('/estimation-type/get-list', 'EstimationTypeController@getEstimationTypeList')->name('getEstimationTypeList');
 	Route::get('/estimation-type/get-form-data', 'EstimationTypeController@getEstimationTypeFormData')->name('getEstimationTypeFormData');

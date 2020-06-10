@@ -3,7 +3,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Service Types<span id="table_infos" class="badge badge-secondary"></span></h1>
+                    <h1 class="title type-2">Campaigns<span id="table_infos" class="badge badge-secondary"></span></h1>
                 </div><!-- Page Header Content -->
                  <div class="page-header-content reset-block">
                     <div class="reset-wrap">
@@ -28,15 +28,7 @@
             <div class="page-header-content-right">
                 <!-- Page Header Content -->
                 <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
-                    <a href="#!/gigo-pkg/service-type/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
-                    <div class="dropdown">
-                        <a class="btn-extension dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                            <img class="img-responsive" src="./public/theme/img/content/extension-white.svg" alt="Extension" />
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
-                            <li><a href="#!/gigo-pkg/service-type/add">Form</a></li>
-                        </ul>
-                    </div><!-- Dropdown -->
+                    <a href="#!/gigo-pkg/compaigns/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
@@ -49,8 +41,10 @@
                         <thead>
                             <tr>
                                 <th>Actions</th>
-                                <th>Code</th>
-                                <th>Name</th>
+                                <th>Authorization Number</th>
+                                <th>Complaint Code</th>
+                                <th>Fault Code</th>
+                                <th>Claim Type</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
