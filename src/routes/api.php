@@ -57,20 +57,18 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//ROT
 		Route::post('vehicle-inward/repair-order-type-list/get', 'VehicleInwardController@getRepairOrderTypeList');
 		Route::post('vehicle-inward/get-repair-order-list/get', 'VehicleInwardController@getAddtionalRotList');
-		Route::get('vehicle-inward/repair-order/get-form-data', 'VehicleInwardController@getRepairOrderData');
+		Route::post('vehicle-inward/repair-order/get-form-data', 'VehicleInwardController@getRepairOrderData');
 
 		Route::post('vehicle-inward/job-order-repair-order/get-form-data', 'VehicleInwardController@getJobOrderRepairOrderData');
 		Route::post('vehicle-inward/add-repair-order/save', 'VehicleInwardController@saveAddtionalLabour');
 		//PART
 		Route::post('vehicle-inward/part-list/get', 'VehicleInwardController@getPartList');
-		Route::get('vehicle-inward/part/get-form-data', 'VehicleInwardController@getPartData');
+		Route::post('vehicle-inward/part/get-form-data', 'VehicleInwardController@getPartData');
 
 		Route::post('vehicle-inward/job_order-part/get-form-data', 'VehicleInwardController@getJobOrderPartData');
 		Route::post('vehicle-inward/add-part/save', 'VehicleInwardController@saveAddtionalPart');
 
-		Route::post('vehicle-inward/save-addtional-rot-part', 'VehicleInwardController@saveAddtionalRotPart');
-
-		Route::post('vehicle-inward/web/addtional-rot-part/save', 'VehicleInwardController@saveWebAddtionalRotPart');
+		Route::post('vehicle-inward/addtional-rot-part/save', 'VehicleInwardController@saveAddtionalRotPart');
 
 		//ESTIMATE GET FORM DATA AND SAVE
 		Route::post('vehicle-inward/estimate/get-form-data', 'VehicleInwardController@getEstimateFormData');
