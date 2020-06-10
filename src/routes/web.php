@@ -134,7 +134,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/estimation-type/get-form-data', 'EstimationTypeController@getEstimationTypeFormData')->name('getEstimationTypeFormData');
 	Route::post('/estimation-type/save', 'EstimationTypeController@saveEstimationType')->name('saveEstimationType');
 	Route::get('/estimation-type/delete', 'EstimationTypeController@deleteEstimationType')->name('deleteEstimationType');
-	Route::get('/estimation-type/get-filter-data', 'EstimationTypeController@getEstimationTypeFilterData')->name('getEstimationTypeFilterData');
+	Route::get('/estimation-type/get-filter-data', 'EstimationTypeController@getEstimationTypeFilter')->name('getEstimationTypeFilter');
 
 	//Gate Pass
 	Route::get('/gate-pass/get-list', 'GatePassController@getGatePassList')->name('getGatePassList');
