@@ -2,6 +2,13 @@
 
 Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'prefix' => 'gigo-pkg'], function () {
 
+	//Fault
+	Route::get('/fault/get-list', 'FaultController@getFaultList')->name('getFaultList');
+	Route::get('/fault/get-form-data', 'FaultController@getFaultFormData')->name('getFaultFormData');
+	Route::post('/fault/save', 'FaultController@saveFault')->name('saveFault');
+	Route::get('/fault/delete', 'FaultController@deleteFault')->name('deleteFault');
+	Route::get('/fault/get-filter-data', 'FaultController@getFaultFilter')->name('getFaultFilter');
+
 	//Parts Indent
 	Route::get('/parts-indent/get-list', 'PartsIndentController@getPartsindentList')->name('getPartsindentList');
 	Route::get('/parts-indent/get-filter-data', 'PartsIndentController@getPartsIndentFilter')->name('getPartsIndentFilter');
