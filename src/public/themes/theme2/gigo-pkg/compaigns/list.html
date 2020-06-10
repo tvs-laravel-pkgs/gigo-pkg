@@ -1,0 +1,131 @@
+<div class="content-wrap cndn-wrap">
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content title-block">
+                    <h1 class="title type-2">Campaigns<span id="table_infos" class="badge badge-secondary"></span></h1>
+                </div><!-- Page Header Content -->
+                 <div class="page-header-content reset-block">
+                    <div class="reset-wrap">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip"
+                        ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
+                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
+                        </button>
+                    </div>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content search-block">
+                    <div class="search_filter">
+                        <label>
+                            <input type="search" id="search_service_type" class="form-control" placeholder="Search" autofocus />
+                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
+                        </label>
+                    </div><!-- Search Filter -->
+                </div>
+                <div class="page-header-content button-block">
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#service-type-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+            <div class="page-header-content-right">
+                <!-- Page Header Content -->
+                <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
+                    <a href="#!/gigo-pkg/compaigns/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Right -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <div class="page-main-content list-page-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table" id="campaigns_list" style="width: 100% !important;">
+                        <thead>
+                            <tr>
+                                <th>Actions</th>
+                                <th>Authorization Number</th>
+                                <th>Complaint Code</th>
+                                <th>Fault Code</th>
+                                <th>Claim Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div><!-- Column -->
+            </div><!-- Row -->
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<div class="modal fade filter" id="service-type-filter-modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog filter-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="modal-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Authorization Code</label>
+                                <input type="text" class="form-control" id="authorization_code" name="authorization_code" placeholder="Enter Code" autocomplete="off">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Complaint Code</label>
+                                <input type="text" class="form-control" id="complaint_code" name="complaint_code" placeholder="Enter Code" autocomplete="off">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Fault Code</label>
+                                <input type="text" class="form-control" id="fault_code" name="fault_code" placeholder="Enter Code" autocomplete="off">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <md-select ng-model="$ctrl.status" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm3" type="search" placeholder="Search Status" class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">{{status.name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="status" id="status" value="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Form -->
+            </div><!-- Modal Body -->
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">Apply</button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Footer -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<div class="modal fade alert-modal failure" id="service_type-delete-modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
+            </div>
+            <div class="modal-body">
+                <h5>Delete</h5>
+                <p>You can’t retrive the data again, Are you sure you want to delete? </p>
+                <input type="hidden" name="service_type_id" id="service_type_id" value="">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->

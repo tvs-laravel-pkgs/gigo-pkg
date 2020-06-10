@@ -2,6 +2,7 @@
 
 namespace Abs\GigoPkg\Api;
 
+use App\Config;
 use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
@@ -15,6 +16,30 @@ use Validator;
 
 class GateInController extends Controller {
 	public $successStatus = 200;
+
+	public function getFormData() {
+		try {
+			$extras = [
+				'reading_type_list' => Config::getDropDownList([
+					'config_type_id' => 33,
+					'default_text' => 'Select Reading type',
+				]),
+			];
+			return response()->json([
+				'success' => true,
+				'extras' => $extras,
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
 
 	public function createGateInEntry(Request $request) {
 		try {
@@ -72,23 +97,36 @@ class GateInController extends Controller {
 				],
 				'registration_number' => [
 					'required_if:is_registered,==,1',
-					// 'min:8',
-					// 'string',
 					'max:10',
-					//issue : vijay ; logic
-					// 'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				],
+				'vin_number' => [
+					'required',
+					'min:17',
+					'max:32',
+					'string',
+				],
+				'km_reading_type_id' => [
+					'required',
+					'integer',
+					'exists:configs,id',
 				],
 				'km_reading' => [
-					'required',
+					'required_if:km_reading_type_id,==,8040',
+					'numeric',
+				],
+				'hr_reading' => [
+					'required_if:km_reading_type_id,==,8041',
 					'numeric',
 				],
 				'driver_name' => [
 					'nullable',
-					'max:191',
+					'min:3',
+					'max:64',
 					'string',
 				],
-				'contact_number' => [
+				'driver_mobile_number' => [
 					'nullable',
+					'min:10',
 					'max:10',
 					'string',
 				],
@@ -100,10 +138,9 @@ class GateInController extends Controller {
 			]);
 
 			if ($validator->fails()) {
-				$errors = $validator->errors()->all();
-				$success = false;
 				return response()->json([
 					'success' => false,
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -148,7 +185,6 @@ class GateInController extends Controller {
 			$gate_log->created_by_id = Auth::user()->id;
 			$gate_log->gate_in_date = Carbon::now();
 			$gate_log->status_id = 8120; //GATE IN COMPLETED
-			//issue : logic missing : vijay
 			$gate_log->outlet_id = Auth::user()->employee->outlet_id;
 			$gate_log->save();
 
@@ -199,7 +235,10 @@ class GateInController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 

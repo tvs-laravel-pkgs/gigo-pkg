@@ -162,12 +162,14 @@
                                                                     <label>Free Service Done
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                                    <md-select multiple ng-model="service_types" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
                                                                         <md-select-header class="demo-select-header">
                                                                             <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
                                                                         </md-select-header>
                                                                         <md-optgroup label="drinks">
-                                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                                            <md-option ng-value="service_type" ng-repeat="service_type in extras.service_types | filter:searchDrink">
+                                                                                {{service_type.name}}
+                                                                            </md-option>
                                                                         </md-optgroup>
                                                                     </md-select>
                                                                 </div><!-- Feild -->
@@ -178,14 +180,15 @@
                                                                         Complaint code
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
-                                                                        <md-select-header class="demo-select-header">
-                                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
-                                                                        </md-select-header>
-                                                                        <md-optgroup label="drinks">
-                                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
-                                                                        </md-optgroup>
-                                                                    </md-select>
+                                                                    <md-autocomplete md-selected-item="complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code" md-min-length="0" md-escape-options="clear" placeholder="Ex. 01C4">
+                                                                        <md-item-template>
+                                                                            <span>
+                                                                                {{complaint.code}}</span>
+                                                                        </md-item-template>
+                                                                        <md-not-found>
+                                                                            No complaints matching "{{complaintSearchKey}}" were found.
+                                                                        </md-not-found>
+                                                                    </md-autocomplete>
                                                                 </div><!-- Feild -->
                                                             </li>
                                                             <li class="view-col-3">
@@ -193,7 +196,7 @@
                                                                     Complaint description:
                                                                 </span>
                                                                 <span class="view-col-value">
-                                                                    CWP 6.83 R149
+                                                                    {{complaint.name}}
                                                                 </span>
                                                             </li>
                                                             <li class="view-col-3">
@@ -202,14 +205,16 @@
                                                                         Fault code
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
-                                                                        <md-select-header class="demo-select-header">
-                                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
-                                                                        </md-select-header>
-                                                                        <md-optgroup label="drinks">
-                                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
-                                                                        </md-optgroup>
-                                                                    </md-select>
+                                                                    <md-autocomplete md-selected-item="fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code" md-min-length="0" md-escape-options="clear" placeholder="Ex. AA">
+                                                                        <md-item-template>
+                                                                            <span>
+                                                                                {{fault.code}}
+                                                                            </span>
+                                                                        </md-item-template>
+                                                                        <md-not-found>
+                                                                            No faults matching "{{faultSearchKey}}" were found.
+                                                                        </md-not-found>
+                                                                    </md-autocomplete>
                                                                 </div><!-- Feild -->
                                                             </li>
                                                             <li class="view-col-3">
@@ -217,7 +222,7 @@
                                                                     Fault description:
                                                                 </span>
                                                                 <span class="view-col-value">
-                                                                    PEELED OFF/CHIPPING
+                                                                    {{fault.name}}
                                                                 </span>
                                                             </li>
                                                             <li class="view-col-3">

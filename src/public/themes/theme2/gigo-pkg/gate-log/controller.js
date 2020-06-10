@@ -169,6 +169,32 @@ app.component('gateLogForm', {
         self.angular_routes = angular_routes;
         self.gate_log = {};
         self.is_registered = 1;
+
+        //for md-select search
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/gate-in-entry/get-form-data',
+                    method: "GET",
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.extras = res.extras;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
         //Save Form Data             
         var form_id = '#gate_in_vehicle_form';
         var v = jQuery(form_id).validate({
@@ -197,12 +223,12 @@ app.component('gateLogForm', {
                     maxlength: 10,
                 },
                 'plate_number': {
-                    required: function(element) {
-                        if(self.is_registered == '0'){
-                            return true;
-                        }
-                        return false;
-                    },
+                    // required: function(element) {
+                    //     if(self.is_registered == '0'){
+                    //         return true;
+                    //     }
+                    //     return false;
+                    // },
                     minlength: 10,
                     maxlength: 10,
                 },
@@ -221,6 +247,15 @@ app.component('gateLogForm', {
                     digits: true,
                     maxlength: 10,
                     // regex: /^-?[0-9]+(?:\.[0-9]{1,2})?$/,
+                },
+                'hr_reading': {
+                    required: true,
+                    maxlength: 10,
+                },
+                'vin_number': {
+                    required: true,
+                    minlength: 17,
+                    maxlength: 32,
                 },
                 'gate_in_remarks': {
                     minlength: 3,
@@ -272,16 +307,15 @@ app.component('gateLogForm', {
                         },
                     })
                     .done(function(res) {
-                        if (res.success) {
+                        if (!res.success) {
+                            $('#submit').button('reset');
+                            showErrorNoty(res);
+                        }else{
                             custom_noty('success', res.message);
-                            // $location.path('/gigo-pkg/gate-log/list');
                             self.gate_log = res.gate_log;
                             $('#confirm_notification').modal('show');
                             $('#number').html(res.gate_log.number);
-                            $('#registration_number').html(res.gate_log.registration_number);
-                        } else {
-                            $('#submit').button('reset');
-                            showErrorNoty(res);
+                            $('#registration_number').html(res.gate_log.registration_number);                            
                         }
                     })
                     .fail(function(xhr) {

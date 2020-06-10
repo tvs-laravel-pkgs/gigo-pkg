@@ -4,12 +4,13 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/" type="button" class="btn-back btn-img">
+                    <a href="#!/inward-vehicle/card-list" type="button" class="btn-back btn-img">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
                     </a>
                 </div>
                 <div class="page-header-content title-block">
                     <h1 class="title">Gate In Vehicle</h1>
+                    <p class="subtitle">Gate In Vehicle / Add</p>
                 </div>
             </div>
         </div><!-- Page Header Inner -->
@@ -43,21 +44,15 @@
                             </div><!-- Row -->
                             <div class="row">
                                 <div class="col-md-4 col-lg-3">
-                                    <div class="input-text form-group">
-                                        <label>
-                                            Registration Type
-                                            <sup class="mandatory">*</sup>
-                                        </label>
-                                        <md-radio-group ng-model="$ctrl.is_registered">
-                                            <md-radio-button value="1" class="md-primary">
-                                                Registered
-                                            </md-radio-button>
-                                            <md-radio-button value="0">
-                                                Un Registered
-                                            </md-radio-button>
-                                        </md-radio-group>
-                                        <input type="hidden" class="form-control" value="{{$ctrl.is_registered}}" name="is_registered">
-                                    </div> <!-- Form Group -->
+                                    <div class="form-group">
+                                        <label>Registration Type <sup class="mandatory">*</sup></label>
+                                        <div class="common-radio-button type-4">
+                                            <input type="radio" id="registered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="1">
+                                            <label for="registered">Registered</label>
+                                            <input type="radio" id="unregistered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="0">
+                                            <label for="unregistered">Un Registered</label>
+                                        </div>
+                                    </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-4 col-lg-3" ng-if="$ctrl.is_registered == 1">
                                     <div class="form-group">
@@ -71,23 +66,60 @@
                                     <div class="form-group">
                                         <label>
                                             Trade Plate Number
-                                            <sup class="mandatory">*</sup></label>
+                                        </label>
                                         <input type="text" class="form-control" placeholder="Enter Trade Plate Number" value="" autocomplete="off" name="plate_number" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-4 col-lg-3">
                                     <div class="form-group">
                                         <label>
+                                            VIN Number
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter VIN No" autocomplete="off" name="vin_number" />
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-4 col-lg-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Reading Type
+                                            <sup class="mandatory">
+                                                *
+                                            </sup>
+                                        </label>
+                                        <md-select ng-model="$ctrl.reading_type" placeholder="Select Reading Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchReadingType" type="search" placeholder="Search for a Reading Type.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option" ng-repeat="option in extras.reading_type_list | filter:searchReadingType">
+                                                    {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="km_reading_type_id" value="{{$ctrl.reading_type.id}}" class="required">
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-4 col-lg-3" ng-if="$ctrl.reading_type.id == 8040">
+                                    <div class="form-group">
+                                        <label>
                                             KM Reading
                                             <sup class="mandatory">*</sup></label>
-                                        <input type="text" class="form-control" placeholder="Enter KM Reading" value="" autocomplete="off" name="km_reading" />
+                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter KM Reading" value="" autocomplete="off" name="km_reading" />
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-4 col-lg-3" ng-if="$ctrl.reading_type.id == 8041">
+                                    <div class="form-group">
+                                        <label>
+                                            HR Reading
+                                            <sup class="mandatory">*</sup></label>
+                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter HR Reading" value="" autocomplete="off" name="hr_reading" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-4 col-lg-3">
                                     <div class="form-group">
                                         <label>
                                             Driver Name
-                                            <!-- <sup class="mandatory">*</sup> -->
                                         </label>
                                         <input type="text" class="form-control" placeholder="Enter Driver Name" value="" autocomplete="off" name="driver_name" />
                                     </div><!-- Feild -->
@@ -96,18 +128,16 @@
                                     <div class="input-text form-group">
                                         <label>
                                             Driver Mobile
-                                            <!-- <sup class="mandatory">*</sup> -->
                                         </label>
-                                        <input type="text" class="form-control" placeholder="Enter Driver Name" value="" autocomplete="off" name="driver_mobile_number" />
+                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Driver Name" value="" autocomplete="off" name="driver_mobile_number" />
                                     </div><!-- Form Group -->
                                 </div><!-- Column -->
-                                <div class="col-md-8 col-lg-9">
+                                <div class="col-md-4 col-lg-3">
                                     <div class="form-group">
                                         <label>
                                             Remarks
-                                            <!-- <sup class="mandatory">*</sup> -->
                                         </label>
-                                        <input type="text" class="form-control" placeholder="Enter Remarks" autocomplete="off" name="gate_in_remarks" />
+                                        <textarea class="form-control" rows="2" placeholder="Enter Remarks" name="gate_in_remarks"></textarea>
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                             </div><!-- Row -->

@@ -15,7 +15,7 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_inward_vehicle" class="form-control" placeholder="Search" autofocus />
+                            <input type="search" id="search_inward_vehicle" class="form-control" placeholder="Search" ng-model="$ctrl.search_key" ng-keyup=searchInwardVehicle() autofocus />
                             <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->

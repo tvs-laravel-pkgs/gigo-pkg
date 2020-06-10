@@ -1,20 +1,21 @@
-app.component('bayList', {
-    templateUrl: bay_list_template_url,
+app.component('compaignsList', {
+    templateUrl: compaigns_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_bay').focus();
+        $('#search_service_type').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('bays')) {
-            window.location = "#!/permission-denied";
+        if (!self.hasPermission('service-types')) {
+            window.location = "#!/page-permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-bay');
+        self.add_permission = self.hasPermission('add-service-type');
         var table_scroll;
+
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#bays_list').DataTable({
+        var dataTable = $('#campaigns_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -24,7 +25,6 @@ app.component('bayList', {
                     "next": '<i class="icon ion-ios-arrow-forward"></i>',
                     "previous": '<i class="icon ion-ios-arrow-back"></i>'
                 },
-
             },
             pageLength: 10,
             processing: true,
@@ -34,7 +34,7 @@ app.component('bayList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_bay').val(state_save_val.search.search);
+                    $('#search_service_type').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -44,25 +44,23 @@ app.component('bayList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getBayList'],
+                url: laravel_routes['getCampaignList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $('#short_name').val();
-                    d.name = $('#name').val();
-                    d.outlet = $('#outlet').val();
-                    d.area_type = $('#area_type').val();
+                    d.authorization_code = $("#authorization_code").val();
+                    d.complaint_code = $("#complaint_code").val();
+                    d.fault_code = $("#fault_code").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'bays.short_name', searchable: true },
-                { data: 'name', name: 'bays.name', searchable: true },
-                { data: 'outlet', name: 'outlets.code', searchable: true },
-                { data: 'area_type', name: 'area_type.name', searchable: true },
-                { data: 'bay_status', name: 'configs.name', searchable: true },
+                { data: 'authorisation_no', name: 'compaigns.authorisation_no', searchable: true },
+                { data: 'complaint_code', name: 'compaigns.complaint_code', searchable: true },
+                { data: 'fault_code', name: 'compaigns.fault_code', searchable: true },
+                { data: 'claim_type_name', name: 'configs.name', searchable: true },
                 { data: 'status', name: '' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -76,62 +74,45 @@ app.component('bayList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_bay').val('');
-            $('#bays_list').DataTable().search('').draw();
+            $('#search_service_type').val('');
+            $('#campaigns_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#bays_list').DataTable().ajax.reload();
+            $('#campaigns_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#bays_list').dataTable();
-        $("#search_bay").keyup(function() {
+        var dataTables = $('#campaigns_list').dataTable();
+        $("#search_service_type").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
-        $scope.deleteBay = function($id) {
-            $('#bay_id').val($id);
+        $scope.deleteServiceType = function($id) {
+            $('#service_type_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#bay_id').val();
+            $id = $('#service_type_id').val();
             $http.get(
-                laravel_routes['deleteBay'], {
+                laravel_routes['deleteServiceType'], {
                     params: {
                         id: $id,
                     }
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Bay Deleted Successfully');
-                    $('#bays_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/bay/list');
+                    custom_noty('success', 'Compaign Deleted Successfully');
+                    $('#service_types_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/gigo-pkg/compaigns/list');
                 }
             });
         }
 
-        //FOR FILTER
+        // FOR FILTER
         $http.get(
-            laravel_routes['getBayFilter']
+            laravel_routes['getCampaignFilterData']
         ).then(function(response) {
             self.extras = response.data.extras;
-            self.bay = response.data.bay;
-            self.outlet_list = response.data.outlet_list;
-            self.area_type_list = response.data.area_type_list;
-            self.outlet_selected = '';
-            self.bay_status_selected = '';
-            self.area_type_selected = '';
         });
-
-        $scope.onSelectedOutlet = function(outlet_selected) {
-            $('#outlet').val(outlet_selected);
-        }
-        $scope.onSelectedAreaType = function(area_type_selected) {
-            $('#area_type').val(area_type_selected);
-        }
-        // $scope.onSelectedJobOrder = function(job_order_selected) {
-        //     $('#job_order').val(job_order_selected);
-        // }
-
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -147,53 +128,50 @@ app.component('bayList', {
                 $mdSelect.hide();
             }
         });
+
         $scope.applyFilter = function() {
             $('#status').val(self.status);
             dataTables.fnFilter();
-            $('#bay-filter-modal').modal('hide');
+            $('#service-type-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#short_name").val('');
-            $("#name").val('');
-            $("#outlet").val('');
-            $("#area_type").val('');
+            $("#authorization_code").val('');
+            $("#complaint_code").val('');
+            $("#fault_code").val('');
             $("#status").val('');
+            //dataTables.fnFilter();
         }
-
         $rootScope.loading = false;
     }
 });
+
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.component('bayForm', {
-    templateUrl: bay_form_template_url,
+
+app.component('compaignsForm', {
+    templateUrl: compaigns_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-bay') && !self.hasPermission('edit-bay')) {
-            window.location = "#!/permission-denied";
+        if (!self.hasPermission('add-service-type') || !self.hasPermission('edit-service-type')) {
+            window.location = "#!/page-permission-denied";
             return false;
         }
         self.angular_routes = angular_routes;
         $http.get(
-            laravel_routes['getBayFormData'], {
+            laravel_routes['getCampaignFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
             }
         ).then(function(response) {
-            self.bay = response.data.bay;
-            self.extras = response.data.extras;
-            // console.log(self.extras);
-            // return;
-            // self.outlet = response.data.outlet;
-            // self.bay_status = response.data.bay_status;
-            // self.job_order = response.data.job_order;
+            self.campaign = response.data.campaign;
+            self.claim_types = response.data.claim_types;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
-                if (self.bay.deleted_at) {
+                if (self.campaign.deleted_at) {
                     self.switch_value = 'Inactive';
                 } else {
                     self.switch_value = 'Active';
@@ -203,37 +181,129 @@ app.component('bayForm', {
             }
         });
 
+        //Search Vehicle Model
+        self.searchVehicleModel = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getVehicleModelSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
+
+        //Add New Labour
+        self.addNewLabour = function() {
+            self.campaign.campaign_labours.push({
+                pivot: [],
+            });
+        }
+
+        //Search Labour
+        self.searchLabour = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getLabourSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $scope.getSelectedLabour = function(index, labour_detail) {
+            if (labour_detail) {
+                $('.labour_type' + index).html(labour_detail.repair_order_type);
+                $('#labour_amount' + index).val('');
+            } else {
+                $('.labour_type' + index).html('-');
+                $('#labour_amount' + index).val('');
+            }
+        }
+
+        self.removeLabour = function(index) {
+            self.campaign.campaign_labours.splice(index, 1);
+        }
+
+        //Add New Part
+        self.addNewPart = function() {
+            self.campaign.campaign_parts.push({
+                pivot: [],
+            });
+        }
+        //Search Part
+        self.searchPart = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getPartSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $scope.getSelectedPart = function(index, part_detail) {
+            if (part_detail) {
+                $('.part_type' + index).html(part_detail.tax_code_type);
+            } else {
+                $('.part_type' + index).html('-');
+            }
+        }
+
+        self.removePart = function(index) {
+            self.campaign.campaign_parts.splice(index, 1);
+        }
+
         //Save Form Data 
-        var form_id = '#bay_form';
+        var form_id = '#service_type_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
+                'code': {
                     required: true,
                     minlength: 3,
                     maxlength: 32,
                 },
-                // 'name': {
-                //     required: true,
-                //     minlength: 3,
-                //     maxlength: 128,
-                // },
-                'outlet_id': {
-                    required: true,
+                'name': {
+                    minlength: 3,
+                    maxlength: 191,
                 },
-                'area_type_id': {
+                'manufacture_date': {
                     required: true,
                 },
             },
             messages: {
-                'short_name': {
+                'code': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
-                // 'name': {
-                //     minlength: 'Minimum 3 Characters',
-                //     maxlength: 'Maximum 128 Characters',
-                // },
+                'name': {
+                    minlength: 'Minimum 3 Characters',
+                    maxlength: 'Maximum 191 Characters',
+                },
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
@@ -242,7 +312,7 @@ app.component('bayForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveBay'],
+                        url: laravel_routes['saveCampaign'],
                         method: "POST",
                         data: formData,
                         processData: false,
@@ -251,7 +321,7 @@ app.component('bayForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/bay/list');
+                            $location.path('/gigo-pkg/compaigns/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -259,7 +329,7 @@ app.component('bayForm', {
                                 showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/gigo-pkg/bay/list');
+                                $location.path('/gigo-pkg/compaigns/list');
                                 $scope.$apply();
                             }
                         }
@@ -272,3 +342,5 @@ app.component('bayForm', {
         });
     }
 });
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------

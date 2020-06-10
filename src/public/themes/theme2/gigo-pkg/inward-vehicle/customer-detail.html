@@ -5,7 +5,7 @@ Content Wrap -->
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/inward-vehicle/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/inward-vehicle/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Inward Vehicle</b></h1>
@@ -127,7 +127,7 @@ Content Wrap -->
                                                             Mobile Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Mobile No" autocomplete="off" ng-model="job_order.vehicle.current_owner.customer.mobile_no" name="mobile_no" />
+                                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Mobile No" autocomplete="off" ng-model="job_order.vehicle.current_owner.customer.mobile_no" name="mobile_no" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -206,7 +206,7 @@ Content Wrap -->
                                                                 </span>
                                                             </md-item-template>
                                                             <md-not-found>
-                                                                No City matching "{{$ctrl.customerSearchText}}" were found.
+                                                                No City matching "{{$ctrl.citySearchText}}" were found.
                                                             </md-not-found>
                                                         </md-autocomplete>
                                                         <input type="hidden" id="city_id" name="city_id" value="{{job_order.vehicle.current_owner.customer.address.city.id}}">
@@ -218,7 +218,7 @@ Content Wrap -->
                                                             PIN Code
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter PIN Code" autocomplete="off" ng-model="job_order.vehicle.current_owner.customer.address.pincode" name="pincode" />
+                                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter PIN Code" autocomplete="off" ng-model="job_order.vehicle.current_owner.customer.address.pincode" name="pincode" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -248,7 +248,7 @@ Content Wrap -->
                                                                 <input ng-model="searchOwnership" type="search" placeholder="Search for a ownership.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
                                                             <md-optgroup>
-                                                                <md-option ng-value="ownership_type" ng-repeat="ownership_type in extras.ownership_type_list | filter:searchOwnershipType">
+                                                                <md-option ng-value="ownership_type" ng-repeat="ownership_type in extras.ownership_type_list | filter:searchOwnership">
                                                                     {{ownership_type.name}}
                                                                 </md-option>
                                                             </md-optgroup>
