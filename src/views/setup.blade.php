@@ -620,6 +620,31 @@
 <script type='text/javascript'>
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
+	    //Compaigns
+	    when('/gigo-pkg/compaigns/list', {
+	        template: '<compaigns-list></compaigns-list>',
+	        title: 'Compaigns',
+	    }).
+	    when('/gigo-pkg/compaigns/add', {
+	        template: '<compaigns-form></compaigns-form>',
+	        title: 'Add Compaign',
+	    }).
+	    when('/gigo-pkg/compaigns/edit/:id', {
+	        template: '<compaigns-form></compaigns-form>',
+	        title: 'Edit Compaign',
+	    }).
+	}]);
+
+	//Compaigns
+    var compaigns_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/compaigns/list.html')}}';
+    var compaigns_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/compaigns/form.html')}}';
+</script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/compaigns/controller.js?v=3')}}"></script>
+
+
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
 	    //Estimation Type
 	    when('/gigo-pkg/estimation-type/list', {
 	        template: '<estimation-type-list></estimation-type-list>',
