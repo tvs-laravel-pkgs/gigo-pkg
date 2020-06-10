@@ -2993,7 +2993,6 @@ app.component('inwardVehicleVocDetailForm', {
         //Save Form Data 
         $scope.saveVocDetailForm = function(id) {
             var voc_form_id = '#voc_form';
-            console.log('test');
             var v = jQuery(voc_form_id).validate({
                 ignore: '',
                 // rules: {
@@ -3023,7 +3022,7 @@ app.component('inwardVehicleVocDetailForm', {
                             }
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
