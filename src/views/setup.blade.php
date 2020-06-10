@@ -157,6 +157,20 @@
 	        title: 'Edit Complaint Group',
 	    }).
 
+	    //Complaint
+	     when('/gigo-pkg/complaint/list', {
+	        template: '<complaint-list></complaint-list>',
+	        title: 'Complaint',
+	    }).
+	    when('/gigo-pkg/complaint/add', {
+	        template: '<complaint-form></complaint-form>',
+	        title: 'Add Complaint',
+	    }).
+	    when('/gigo-pkg/complaint/edit/:id', {
+	        template: '<complaint-form></complaint-form>',
+	        title: 'Edit Complaint',
+	    }).
+
 
 	    //Kanban App
 	     when('/gigo-pkg/kanban-app', {
@@ -197,6 +211,10 @@
     var complaint_group_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint-group/list.html')}}";
     var complaint_group_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint-group/form.html')}}";
 
+    //Complaint
+    var complaint_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint/list.html')}}";
+    var complaint_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint/form.html')}}";
+
      //Vehicle
     var vehicle_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/list.html')}}";
     var vehicle_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/form.html')}}";
@@ -231,6 +249,7 @@
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint-group/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint/controller.js')}}"></script>
 
 
 <script type='text/javascript'>
