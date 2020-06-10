@@ -2255,7 +2255,7 @@ app.component('inwardVehicleOrderDetailForm', {
                             $scope.button_action(id, 2);
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
@@ -2387,7 +2387,7 @@ app.component('inwardVehicleInventoryDetailForm', {
 
         //Save Form Data 
         $scope.saveInventoryForm = function(id) {
-            $('#slide_val').val($('#range_val').text());
+            $('#slide_val').val($('#range_val').val());
             var form_id = '#inventory_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -2425,7 +2425,7 @@ app.component('inwardVehicleInventoryDetailForm', {
                             }
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
@@ -2713,7 +2713,7 @@ app.component('inwardVehiclePayableAddPartForm', {
 
         //Save Form Data 
         $scope.savePartForm = function() {
-            $('#slide_val').val($('#range_val').val());
+            $('#slide_val').val($('#range_val').text());
             var form_id = '#part_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
