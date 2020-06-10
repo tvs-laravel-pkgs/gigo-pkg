@@ -2024,6 +2024,7 @@ app.component('inwardVehicleCustomerDetail', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_order_id = $routeParams.job_order_id;
+        $scope.type_id = $routeParams.type_id ? $routeParams.type_id : '';
         //FETCH DATA
         $scope.fetchData = function() {
             $rootScope.loading = true;
@@ -2052,11 +2053,11 @@ app.component('inwardVehicleCustomerDetail', {
                         $scope.show_customer_detail = true;
                         $scope.show_customer_form = false;
                     }
-                    if ($routeParams.type_id == 1) {
+                    if ($scope.type_id == 1) {
                         $scope.show_customer_detail = false;
                         $scope.show_customer_form = true;
                     }
-                    if ($routeParams.type_id == 2) {
+                    if ($scope.type_id == 2) {
                         $scope.show_customer_detail = false;
                         $scope.show_customer_form = true;
                         $scope.job_order.vehicle.current_owner = ' ';
