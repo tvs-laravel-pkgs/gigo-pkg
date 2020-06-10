@@ -1040,7 +1040,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveInventoryItem(Request $request) {
-		dd($request->all());
+		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
