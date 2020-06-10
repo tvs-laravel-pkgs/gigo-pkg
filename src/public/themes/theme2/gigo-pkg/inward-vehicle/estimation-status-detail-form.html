@@ -5,11 +5,11 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/inward-vehicle/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Inward Vehicle</b></h1>
-                    <p class="subtitle">Inward Vehicle / Status Detail</p>
+                    <p class="subtitle">Inward Vehicle / Estimation Status Detail</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -38,7 +38,7 @@
                                                             Estimation Type
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="job_order.estimation_type_id" placeholder="Select Estimation" data-md-container-class="selectdemoSelectHeader" ng-change="getSelectedEstimationType(job_order.estimation_type_id)" >
+                                                        <md-select ng-model="job_order.estimation_type_id" placeholder="Select Estimation Type" data-md-container-class="selectdemoSelectHeader" ng-change="getSelectedEstimationType(job_order.estimation_type_id)" >
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchEstimationType" type="search" placeholder="Search for a Estimation Type.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
@@ -56,7 +56,7 @@
                                                         <label>Minimum Payable Amount
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" ng-model="minimum_payable_amount" name="minimum_payable_amount" class="form-control" placeholder="Enter Amount" value="{{minimum_payable_amount}}"/>
+                                                        <input type="text" ng-model="minimum_payable_amount" name="minimum_payable_amount" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Amount" value="{{minimum_payable_amount}}"/>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->

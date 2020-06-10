@@ -3481,7 +3481,6 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
 
         //FETCH DATA
         $scope.fetchData = function() {
-            $rootScope.loading = true;
             $.ajax({
                     url: base_url + '/api/vehicle-inward/estimation-denied/get-form-data',
                     method: "POST",
@@ -3493,7 +3492,6 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                     },
                 })
                 .done(function(res) {
-                    $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -3507,7 +3505,6 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
-                    $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
@@ -3527,10 +3524,15 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
             var form_id = '#status_detail_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
-                // rules: {
-                // },
-                // messages: {
-                // },
+                rules: {
+                    'estimation_type_id':{
+                        required: true,
+                    },
+                    'minimum_payable_amount':{
+                        required: true,
+                        number: true,
+                    },
+                },
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },

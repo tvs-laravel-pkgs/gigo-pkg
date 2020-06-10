@@ -2864,13 +2864,14 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
-			$estimation_type = EstimationType::select(
+			$estimation_type = collect(EstimationType::select(
 				'name',
 				'id',
 				'minimum_amount'
 			)
-				->where('company_id', Auth::user()->company_id)
-				->get();
+					->where('company_id', Auth::user()->company_id)
+					->get())
+				->prepend(['id' => '', 'name' => 'Select Estimation Type', 'minimum_amount' => '']);
 
 			return response()->json([
 				'success' => true,
