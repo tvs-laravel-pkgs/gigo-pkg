@@ -13,7 +13,7 @@ class Bay extends Model {
 	protected $table = 'bays';
 	public $timestamps = true;
 	protected $fillable =
-		["id", "short_name", "outlet_id", "name", "status_id", "job_order_id"]
+		["id", "short_name", "outlet_id", "name", "status_id", "job_order_id", "area_type_id"]
 	;
 
 	public function status() {

@@ -79,38 +79,20 @@ Content Wrap -->
                                                 <input type="hidden" class="form-control required" name="outlet_id" id="outlet_id" value="{{$ctrl.bay.outlet_id}}">
                                             </div><!-- Field -->
                                         </div><!-- Column -->
-                                        <!-- <div class="col-md-3">
+                                        <div class="col-md-3">
                                             <div class="input-text form-group">
-                                                <label>Bay Status<sup class="mandatory">*</sup></label>
-                                                <md-select ng-model="$ctrl.bay.status_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Bay Status">
+                                                <label>Area Type<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.bay.area_type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Area Type">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Bay Status" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Area Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
                                                     <md-optgroup>
-                                                        <md-option ng-value="bay_status.id" ng-repeat="bay_status in $ctrl.extras.bay_status_list | filter:searchTerm">{{bay_status.name}}</md-option>
+                                                        <md-option ng-value="area_type.id" ng-repeat="area_type in $ctrl.extras.area_type_list | filter:searchTerm">{{area_type.name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
-                                                <input type="hidden" class="form-control required" name="status_id" id="status_id" value="{{$ctrl.bay.status_id}}">
-                                            </div> -->
-                                        <!-- Field -->
-                                        <!-- </div> -->
-                                        <!-- Column -->
-                                        <!-- <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>Job Order<sup class="mandatory">*</sup></label>
-                                                <md-select ng-model="$ctrl.bay.job_order_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Job Order">
-                                                    <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Job Order" class="demo-header-searchbox md-text">
-                                                    </md-select-header>
-                                                    <md-optgroup>
-                                                        <md-option ng-value="job_order.id" ng-repeat="job_order in $ctrl.extras.job_order_list | filter:searchTerm">{{job_order.number}}</md-option>
-                                                    </md-optgroup>
-                                                </md-select>
-                                                <input type="hidden" class="form-control required" name="job_order_id" id="job_order_id" value="{{$ctrl.bay.job_order_id}}"> -->
-                                        <!-- </div> -->
-                                        <!-- Field  -->
-                                        <!-- </div> -->
-                                        <!-- Column  -->
+                                                <input type="hidden" class="form-control required" name="area_type_id" id="area_type_id" value="{{$ctrl.bay.area_type_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>

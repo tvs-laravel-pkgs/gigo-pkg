@@ -31,16 +31,13 @@ class BayController extends Controller {
 
 		$this->data['outlet_list'] = collect(Outlet::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']);
 
-		// $this->data['bay_status_list'] = collect(Config::select('id','name')->where('config_type_id',43)->get())->prepend(['id' => '', 'name' => 'Select Bay Status']);
-
-		// $this->data['bay_status_list'] = Status::select('id','name')->where('company_id',Auth::user()->company_id)->get();
-		// $this->data['job_order_list'] = JobOrder::select('id','number')->where('company_id',Auth::user()->company_id)->get();
+		$this->data['area_type_list'] = collect(Config::select('id', 'name')->where('config_type_id',120)->get())->prepend(['id' => '', 'name' => 'Select Area Type']);
 
 		return response()->json($this->data);
 	}
 
 	public function getBayList(Request $request) {
-
+// dd($request->area_type_id);
 		$bays = Bay::withTrashed()
 			->select([
 				'bays.short_name',
@@ -48,12 +45,14 @@ class BayController extends Controller {
 				'bays.name',
 				'outlets.code as outlet',
 				'configs.name as bay_status',
-				// 'job_orders.number as job_order',
+				'area_type.name as area_type',
 
 				DB::raw('IF(bays.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->leftJoin('outlets', 'outlets.id', 'bays.outlet_id')
 			->leftJoin('configs', 'configs.id', 'bays.status_id')
+			->join('configs as area_type', 'area_type.id', 'bays.area_type_id')
+
 		// ->leftJoin('job_orders', 'job_orders.id', 'bays.job_order_id')
 
 			->where(function ($query) use ($request) {
@@ -69,6 +68,11 @@ class BayController extends Controller {
 			->where(function ($query) use ($request) {
 				if (!empty($request->outlet)) {
 					$query->where('bays.outlet_id', 'LIKE', '%' . $request->outlet . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->area_type_id)) {
+					$query->where('bays.area_type_id', $request->area_type_id);
 				}
 			})
 			->where(function ($query) use ($request) {
@@ -114,8 +118,7 @@ class BayController extends Controller {
 		}
 		$this->data['extras'] = [
 			'outlet_list' => collect(Outlet::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']),
-			// 'bay_status_list' => collect(Config::select('id','name')->where('config_type_id',43)->get())->prepend(['id' => '', 'name' => 'Select Bay Status']),
-			// 'job_order_list' => JobOrder::select('id','number')->where('company_id',Auth::user()->company_id)->get(),
+			'area_type_list' => collect(Config::select('id', 'name')->where('config_type_id',120)->get())->prepend(['id' => '', 'name' => 'Select Area Type']),
 		];
 
 		$this->data['bay'] = $bay;
@@ -124,6 +127,7 @@ class BayController extends Controller {
 	}
 
 	public function saveBay(Request $request) {
+		// dd($request->all());
 		try {
 			$error_messages = [
 				'short_name.required' => 'Short Name is Required',
@@ -135,6 +139,7 @@ class BayController extends Controller {
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 128 Charachers',
 				'outlet_id.required' => 'Outlet is Required',
+				'area_type_id.required' => 'Area Type is Required',
 			];
 			$validator = Validator::make($request->all(), [
 				'short_name' => [
@@ -151,7 +156,7 @@ class BayController extends Controller {
 					'unique:bays,name,' . $request->id . ',id,outlet_id,' . $request->outlet_id,
 				],
 				'outlet_id' => 'required',
-				// 'status_id' => 'required',
+				'area_type_id' => 'required',
 				// 'job_order_id' => [
 				// 	'nullable',
 				// 	'unique:job_orders,number,' . $request->id,

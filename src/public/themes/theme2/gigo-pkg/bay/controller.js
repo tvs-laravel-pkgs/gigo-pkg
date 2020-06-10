@@ -51,8 +51,7 @@ app.component('bayList', {
                     d.short_name = $('#short_name').val();
                     d.name = $('#name').val();
                     d.outlet = $('#outlet').val();
-                    // d.bay_status = $('#bay_status').val();
-                    // d.job_order = $('#job_order').val();
+                    d.area_type_id = $('#area_type_id').val();
                     d.status = $("#status").val();
                 },
             },
@@ -62,8 +61,8 @@ app.component('bayList', {
                 { data: 'short_name', name: 'bays.short_name', searchable: true },
                 { data: 'name', name: 'bays.name', searchable: true },
                 { data: 'outlet', name: 'outlets.code', searchable: true },
+                { data: 'area_type', name: 'area_type.name', searchable: true },
                 { data: 'bay_status', name: 'configs.name', searchable: true },
-                // { data: 'job_order', name: 'job_orders.number', searchable: true },
                 { data: 'status', name: '' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -117,19 +116,18 @@ app.component('bayList', {
             self.extras = response.data.extras;
             self.bay = response.data.bay;
             self.outlet_list = response.data.outlet_list;
-            // self.bay_status_list = response.data.bay_status_list;
-            // self.job_order_list = response.data.job_order_list;
+            self.area_type_list = response.data.area_type_list;
             self.outlet_selected = '';
             self.bay_status_selected = '';
-            // self.job_order_selected = '';
+            self.area_type_selected = '';
         });
 
         $scope.onSelectedOutlet = function(outlet_selected) {
             $('#outlet').val(outlet_selected);
         }
-        // $scope.onSelectedBayStatus = function(bay_status_selected) {
-        //     $('#bay_status').val(bay_status_selected);
-        // }
+        $scope.onSelectedAreaType = function(area_type_selected) {
+            $('#area_type_id').val(area_type_selected);
+        }
         // $scope.onSelectedJobOrder = function(job_order_selected) {
         //     $('#job_order').val(job_order_selected);
         // }
@@ -158,8 +156,7 @@ app.component('bayList', {
             $("#short_name").val('');
             $("#name").val('');
             $("#outlet").val('');
-            // $("#bay_status").val('');
-            // $("#job_order").val('');
+            $("#area_type_id").val('');
             $("#status").val('');
         }
 
@@ -222,6 +219,9 @@ app.component('bayForm', {
                 //     maxlength: 128,
                 // },
                 'outlet_id': {
+                    required: true,
+                },
+                'area_type_id': {
                     required: true,
                 },
             },
