@@ -1167,6 +1167,12 @@ class VehicleInwardController extends Controller {
 				with([
 				'vehicle',
 				'vehicle.model',
+				'vehicle.model.campaign',
+				'vehicle.model.campaign.claimType',
+				'vehicle.model.campaign.faultType',
+				'vehicle.model.campaign.complaintType',
+				'vehicle.model.campaign.campaignLabours',
+				'vehicle.model.campaign.campaignParts',
 				'vehicle.status',
 				'vehicle.lastJobOrder',
 				'vehicle.lastJobOrder.jobCard',

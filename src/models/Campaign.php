@@ -27,6 +27,18 @@ class Campaign extends Model {
 		return $this->belongsTo('App\VehicleModel', 'vehicle_model_id');
 	}
 
+	public function claimType() {
+		return $this->belongsTo('App\Config', 'claim_type_id');
+	}
+
+	public function faultType() {
+		return $this->belongsTo('Abs\GigoPkg\Fault', 'fault_id');
+	}
+
+	public function complaintType() {
+		return $this->belongsTo('Abs\GigoPkg\Complaint', 'fault_id');
+	}
+
 	public function campaignLabours() {
 		return $this->belongsToMany('Abs\GigoPkg\RepairOrder', 'compaign_repair_order', 'compaign_id', 'repair_order_id')->withPivot(['amount']);
 	}
