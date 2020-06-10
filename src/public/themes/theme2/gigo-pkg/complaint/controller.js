@@ -151,6 +151,7 @@ app.component('complaintList', {
             $("#group").val('');
             $("#hour").val('');
             $("#kms").val('');
+            $("#month").val('');
             $("#status").val('');
             //dataTables.fnFilter();
         }

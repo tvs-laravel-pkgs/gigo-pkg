@@ -47,7 +47,7 @@ class ComplaintController extends Controller {
 			->where('complaints.company_id', Auth::user()->company_id)
 			->where(function ($query) use ($request) {
 				if (!empty($request->code)) {
-					$query->where('complaints.code', 'LIKE', '%' . $request->short_name . '%');
+					$query->where('complaints.code', 'LIKE', '%' . $request->code . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
