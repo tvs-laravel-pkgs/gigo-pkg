@@ -2,6 +2,8 @@
 
 namespace Abs\GigoPkg;
 use Abs\GigoPkg\Campaign;
+use Abs\GigoPkg\Complaint;
+use Abs\GigoPkg\Fault;
 use Abs\GigoPkg\RepairOrder;
 use Abs\PartPkg\Part;
 use App\Config;
@@ -34,30 +36,34 @@ class CompaignController extends Controller {
 	public function getCampaignList(Request $request) {
 		$compaigns = Campaign::withTrashed()
 			->join('configs', 'configs.id', 'compaigns.claim_type_id')
+			->join('faults', 'faults.id', 'compaigns.fault_id')
+			->join('complaints', 'complaints.id', 'compaigns.complaint_id')
+			->join('models', 'models.id', 'compaigns.vehicle_model_id')
 			->select([
 				'compaigns.id',
 				'compaigns.authorisation_no',
-				'compaigns.complaint_code',
-				'compaigns.fault_code',
+				'complaints.name as complaint_type',
+				'faults.name as fault_type',
 				'configs.name as claim_type_name',
+				'models.model_name as vehicle_model',
 				DB::raw('IF(compaigns.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->where('compaigns.company_id', Auth::user()->company_id)
-			->where(function ($query) use ($request) {
-				if (!empty($request->authorisation_code)) {
-					$query->where('compaigns.authorisation_no', 'LIKE', '%' . $request->authorisation_no . '%');
-				}
-			})
-			->where(function ($query) use ($request) {
-				if (!empty($request->complaint_code)) {
-					$query->where('compaigns.complaint_code', 'LIKE', '%' . $request->complaint_code . '%');
-				}
-			})
-			->where(function ($query) use ($request) {
-				if (!empty($request->fault_code)) {
-					$query->where('compaigns.fault_code', 'LIKE', '%' . $request->fault_code . '%');
-				}
-			})
+		// ->where(function ($query) use ($request) {
+		// 	if (!empty($request->authorisation_code)) {
+		// 		$query->where('compaigns.authorisation_no', 'LIKE', '%' . $request->authorisation_no . '%');
+		// 	}
+		// })
+		// ->where(function ($query) use ($request) {
+		// 	if (!empty($request->complaint_code)) {
+		// 		$query->where('compaigns.complaint_code', 'LIKE', '%' . $request->complaint_code . '%');
+		// 	}
+		// })
+		// ->where(function ($query) use ($request) {
+		// 	if (!empty($request->fault_code)) {
+		// 		$query->where('compaigns.fault_code', 'LIKE', '%' . $request->fault_code . '%');
+		// 	}
+		// })
 			->where(function ($query) use ($request) {
 				if ($request->status == '1') {
 					$query->whereNull('compaigns.deleted_at');
@@ -82,7 +88,7 @@ class CompaignController extends Controller {
 					$output .= '<a href="#!/gigo-pkg/compaigns/edit/' . $compaigns->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
 				if (Entrust::can('delete-service-type')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#service_type-delete-modal" onclick="angular.element(this).scope().deleteServiceType(' . $compaigns->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#campaign-delete-modal" onclick="angular.element(this).scope().deleteCampaign(' . $compaigns->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
 				return $output;
 			})
@@ -127,23 +133,24 @@ class CompaignController extends Controller {
 		$this->data['success'] = true;
 		$this->data['campaign'] = $campaign;
 		$this->data['claim_types'] = Config::getDropDownList($params);
+		$this->data['complaint_types'] = Complaint::getList();
+		$this->data['fault_types'] = Fault::getList();
 		$this->data['action'] = $action;
 		return response()->json($this->data);
 	}
 
 	public function saveCampaign(Request $request) {
+		// dd($request->all());
 		try {
 			$error_messages = [
 				'authorisation_no.required' => 'Authorization Code is Required',
 				'authorisation_no.unique' => 'Authorization Code is already taken',
 				'authorisation_no.min' => 'Authorization Code is Minimum 3 Charachers',
 				'authorisation_no.max' => 'Authorization Code is Maximum 32 Charachers',
-				'complaint_code.min' => 'Complaint Code is Minimum 3 Charachers',
-				'complaint_code.max' => 'Complaint Code is Maximum 32 Charachers',
-				'fault_code.min' => 'Fault Code is Minimum 3 Charachers',
-				'fault_code.max' => 'Fault Code is Maximum 32 Charachers',
 				'manufacture_date.required' => 'Manufacture Date is Required',
 				'vehicle_model_id.required' => 'Vehicle Model is Required',
+				'complaint_id.required' => 'Complaint Type is Required',
+				'fault_id.required' => 'Fault Type is Required',
 			];
 			$validator = Validator::make($request->all(), [
 				'authorisation_no' => [
@@ -178,6 +185,16 @@ class CompaignController extends Controller {
 					'required',
 					'integer',
 					'exists:models,id',
+				],
+				'complaint_id' => [
+					'required',
+					'integer',
+					'exists:complaints,id',
+				],
+				'fault_id' => [
+					'required',
+					'integer',
+					'exists:faults,id',
 				],
 				'manufacture_date' => 'required|date',
 			], $error_messages);
@@ -257,7 +274,6 @@ class CompaignController extends Controller {
 
 	public function deleteCampaign(Request $request) {
 		DB::beginTransaction();
-		// dd($request->id);
 		try {
 			$service_type = Campaign::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($service_type) {

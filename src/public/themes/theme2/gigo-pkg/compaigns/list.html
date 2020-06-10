@@ -41,9 +41,10 @@
                         <thead>
                             <tr>
                                 <th>Actions</th>
+                                <th>Vehicle Model</th>
                                 <th>Authorization Number</th>
-                                <th>Complaint Code</th>
-                                <th>Fault Code</th>
+                                <th>Complaint Type</th>
+                                <th>Fault Type</th>
                                 <th>Claim Type</th>
                                 <th>Status</th>
                             </tr>
@@ -64,19 +65,19 @@
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 ng-hide">
                             <div class="form-group">
                                 <label>Authorization Code</label>
                                 <input type="text" class="form-control" id="authorization_code" name="authorization_code" placeholder="Enter Code" autocomplete="off">
                             </div><!-- Field -->
                         </div><!-- Column -->
-                        <div class="col-md-6">
+                        <div class="col-md-6 ng-hide">
                             <div class="form-group">
                                 <label>Complaint Code</label>
                                 <input type="text" class="form-control" id="complaint_code" name="complaint_code" placeholder="Enter Code" autocomplete="off">
                             </div><!-- Field -->
                         </div><!-- Column -->
-                        <div class="col-md-6">
+                        <div class="col-md-6 ng-hide">
                             <div class="form-group">
                                 <label>Fault Code</label>
                                 <input type="text" class="form-control" id="fault_code" name="fault_code" placeholder="Enter Code" autocomplete="off">
@@ -112,7 +113,7 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
-<div class="modal fade alert-modal failure" id="service_type-delete-modal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade alert-modal failure" id="campaign-delete-modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -121,7 +122,7 @@
             <div class="modal-body">
                 <h5>Delete</h5>
                 <p>You can’t retrive the data again, Are you sure you want to delete? </p>
-                <input type="hidden" name="service_type_id" id="service_type_id" value="">
+                <input type="hidden" name="campaign_id" id="campaign_id" value="">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
                 <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
             </div>

@@ -12,7 +12,7 @@ class Campaign extends Model {
 	protected $table = 'compaigns';
 	public $timestamps = true;
 	protected $fillable =
-		["company_id", "authorisation_no", "complaint_code", "fault_code", "claim_type_id", "manufacture_date", "vehicle_model_id"]
+		["company_id", "authorisation_no", "complaint_id", "fault_id", "claim_type_id", "manufacture_date", "vehicle_model_id"]
 	;
 
 	public function getManufactureDateAttribute($value) {
