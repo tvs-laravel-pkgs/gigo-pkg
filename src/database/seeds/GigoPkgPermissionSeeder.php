@@ -13,6 +13,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 	public function run() {
 		$permissions = [
 
+			//Fault
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'faults',
+				'display_name' => 'Faults',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'faults',
+				'name' => 'add-fault',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'faults',
+				'name' => 'edit-fault',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'faults',
+				'name' => 'delete-fault',
+				'display_name' => 'Delete',
+			],
+
 			//Parts Indent
 			[
 				'display_order' => 99,

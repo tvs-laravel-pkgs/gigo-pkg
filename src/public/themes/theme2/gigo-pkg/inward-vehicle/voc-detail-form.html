@@ -38,9 +38,9 @@
                                             <div class="row custom-row" ng-repeat="(index, customer_voice) in job_order.customer_voices">
                                                 <div class="col-md-6">
                                                     <div class="form-group mb-no">
-                                                        <md-select ng-model="customer_voice.id" placeholder="Select any one" md-on-close="clearSearchCustomerVoice()" ng-change="onSelectedVoc(customer_voice.id)" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select ng-model="customer_voice.id" placeholder="Select Voice of Customer" ng-change="onSelectedVoc(customer_voice.id)" data-md-container-class="selectdemoSelectHeader">
                                                             <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchCustomerVoice" type="search" placeholder="Search for a .." class="demo-header-searchbox md-text" name="customer_voice[]">
+                                                                <input ng-model="searchCustomerVoice" type="search" placeholder="Search for a Voice of Customer" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
                                                             <md-optgroup label="j">
                                                                 <md-option ng-value="j.id" ng-repeat="j in extras.customer_voice_list | filter:searchCustomerVoice">{{j.code}}</md-option>
