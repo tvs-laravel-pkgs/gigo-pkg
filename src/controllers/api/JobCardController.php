@@ -19,7 +19,9 @@ use Abs\PartPkg\Part;
 use Abs\StatusPkg\Status;
 use App\Attachment;
 use App\Config;
+use App\Customer;
 use App\Employee;
+use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrderPart;
 use App\VehicleInspectionItem;
@@ -157,10 +159,47 @@ class JobCardController extends Controller {
 		}
 	}
 
-	public function saveJobCard(Request $request) {
-		//dd($request->all());
+	public function getUpdateJcFormData(Request $r) {
+		// dd($r->all());
 		try {
+			$job_order = JobOrder::with([
+				'gateLog',
+				'gateLog.status',
+				'vehicle',
+				'vehicle.model',
+				'jobCard',
+				'jobCard.attachment',
+			])
+				->find($r->id);
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
+				]);
+			}
 
+			$job_order->jobCard['job_card_date'] = date('d-m-Y', strtotime($job_order->jobCard->date));
+			$job_order->jobCard['job_card_creation_date'] = date('d/m/Y', strtotime($job_order->jobCard->created_at));
+			$job_order->jobCard['job_card_creation_time'] = date('h:sa', strtotime($job_order->jobCard->created_at));
+			$job_order->jobCard['attachment_path'] = 'storage/app/public/gigo/job_card/attachments';
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function saveJobCard(Request $request) {
+		// dd($request->all());
+		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
 					'required',
@@ -173,8 +212,12 @@ class JobCardController extends Controller {
 					'integer',
 				],
 				'job_card_photo' => [
-					'nullable',
+					'required',
 					'mimes:jpeg,jpg,png',
+				],
+				'job_card_date' => [
+					'required',
+					'date_format:"d-m-Y',
 				],
 			]);
 
@@ -185,59 +228,64 @@ class JobCardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
+
+			$job_order = JobOrder::with([
+				'jobCard',
+				'gateLog',
+				'jobOrderRepairOrders',
+				'jobOrderParts',
+			])
+				->find($request->job_order_id);
+
 			DB::beginTransaction();
 			//JOB Card SAVE
 			$job_card = JobCard::firstOrNew([
 				'job_order_id' => $request->job_order_id,
 			]);
 			$job_card->job_card_number = $request->job_card_number;
+			$job_card->date = date('Y-m-d', strtotime($request->job_card_date));
 			//$job_card->outlet_id = 32;
-			$job_card->status_id = 8220;
+			$job_card->status_id = 8220; //Floor Supervisor not Assigned
 			$job_card->company_id = Auth::user()->company_id;
 			$job_card->created_by = Auth::user()->id;
 			$job_card->save();
 
 			//CREATE DIRECTORY TO STORAGE PATH
-			$attachement_path = storage_path('app/public/gigo/job_card/attachments/');
-			Storage::makeDirectory($attachement_path, 0777);
+			$attachment_path = storage_path('app/public/gigo/job_card/attachments/');
+			Storage::makeDirectory($attachment_path, 0777);
 
 			//SAVE Job Card ATTACHMENT
-			//issue: attachment save - code optimisation
 			if (!empty($request->job_card_photo)) {
-				//REMOVE OLD ATTACHMENT
-				$remove_previous_attachment = Attachment::where([
-					'entity_id' => $job_card->id,
-					'attachment_of_id' => 228, //Job Card
-					'attachment_type_id' => 255, //Jobcard Photo
-				])->first();
-				if (!empty($remove_previous_attachment)) {
-					$img_path = $attachement_path . $remove_previous_attachment->name;
-					if (File::exists($img_path)) {
-						File::delete($img_path);
-					}
-					$remove = $remove_previous_attachment->forceDelete();
-				}
+				$attachment = $request->job_card_photo;
+				$entity_id = $job_card->id;
+				$attachment_of_id = 228; //Job Card
+				$attachment_type_id = 255; //Jobcard Photo
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+			}
 
-				$file_name_with_extension = $request->job_card_photo->getClientOriginalName();
-				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
-				$extension = $request->job_card_photo->getClientOriginalExtension();
+			//UPDATE JOB ORDER REPAIR ORDER STATUS
+			foreach ($job_order->jobOrderRepairOrders as $job_order_repair_order) {
+				$job_order_repair_order_update_status = JobOrderRepairOrder::find($job_order_repair_order->id);
+				$job_order_repair_order_update_status->status_id = 8180; //Customer Approval Pending
+				$job_order_repair_order_update_status->updated_by_id = Auth::user()->id;
+				$job_order_repair_order_update_status->updated_at = Carbon::now();
+				$job_order_repair_order_update_status->save();
+			}
 
-				$name = $job_card->id . '_' . $file_name . '.' . $extension;
-
-				$request->job_card_photo->move($attachement_path, $name);
-				$attachement = new Attachment;
-				$attachement->attachment_of_id = 228; //Job Card
-				$attachement->attachment_type_id = 255; //Jobcard Photo
-				$attachement->entity_id = $job_card->id;
-				$attachement->name = $name;
-				$attachement->save();
+			//UPDATE JOB ORDER PARTS STATUS
+			foreach ($job_order->jobOrderParts as $job_order_part) {
+				$job_order_part_update_status = JobOrderPart::find($job_order_part->id);
+				$job_order_part_update_status->status_id = 8200; //Customer Approval Pending
+				$job_order_part_update_status->updated_by_id = Auth::user()->id;
+				$job_order_part_update_status->updated_at = Carbon::now();
+				$job_order_part_update_status->save();
 			}
 
 			DB::commit();
 
 			return response()->json([
 				'success' => true,
-				'message' => 'Job Card saved successfully!!',
+				'message' => 'Job Card Updated successfully!!',
 			]);
 
 		} catch (\Exception $e) {
@@ -247,6 +295,247 @@ class JobCardController extends Controller {
 				'errors' => [
 					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 				],
+			]);
+		}
+	}
+
+	public function sendCustomerOtp(Request $request) {
+		// dd($request->all());
+		try {
+			$job_order = JobOrder::with([
+				'jobCard',
+			])
+				->find($request->id);
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Order Found!',
+				]);
+			}
+
+			$customer_detail = Customer::select('name', 'mobile_no')
+				->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
+				->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
+				->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
+				->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')
+				->where('job_cards.id', $job_order->jobCard->id)
+				->orderBy('vehicle_owners.from_date', 'DESC')
+				->first();
+			// dd($customer_detail);
+			if (!$customer_detail) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Customer Details Not Found!',
+				]);
+			}
+
+			DB::beginTransaction();
+			$job_card_otp_update = JobCard::where('id', $job_order->jobCard->id)
+				->update([
+					'otp_no' => mt_rand(111111, 999999),
+					'updated_by' => Auth::user()->id,
+					'updated_at' => Carbon::now(),
+				]);
+
+			DB::commit();
+			if (!$job_card_otp_update) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Card OTP Update Failed',
+				]);
+			}
+			$job_card = JobCard::find($job_order->jobCard->id);
+
+			$otp = $job_card->otp_no;
+			$mobile_number = $customer_detail->mobile_no;
+			$mobile_number = '9787516244'; //Vijay mobile for testing
+			// dump($mobile_number);
+			// dd($otp, $job_card->otp_no);
+			$message = 'OTP is ' . $otp . ' for Job Card Approve On Behalf of Customer. Please enter OTP to verify your Job Card Approval';
+			if (!$mobile_number) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Customer Mobile Number Not Found',
+				]);
+			}
+			$msg = sendSMSNotification($mobile_number, $message);
+			//dd($msg);
+			//Enable After Sms Issue Resloved
+			/*if(!$msg){
+				return response()->json([
+					'success' => false,
+					'error' => 'OTP SMS Not Sent.Please Try again ',
+				]);
+			}*/
+			return response()->json([
+				'success' => true,
+				'customer_detail' => $customer_detail,
+				'message' => 'OTP Sent successfully!!',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function verifyOtp(Request $request) {
+		dd($request->all());
+		try {
+			if ($request->verify_otp) {
+				$validator = Validator::make($request->all(), [
+					'job_order_id' => [
+						'required',
+						'exists:job_orders,id',
+						'integer',
+					],
+					'otp_no' => [
+						'required',
+						'min:8',
+						'integer',
+					],
+					'verify_otp' => [
+						'required',
+						'integer',
+					],
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+			} else {
+				$validator = Validator::make($request->all(), [
+					'job_order_id' => [
+						'required',
+						'exists:job_orders,id',
+						'integer',
+					],
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+			}
+
+			$job_order = JobOrder::with([
+				'gateLog',
+				'jobCard',
+				'jobOrderRepairOrders',
+				'jobOrderParts',
+			])
+				->find($request->job_order_id);
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
+				]);
+			}
+
+			DB::beginTransaction();
+			if ($request->verify_otp) {
+				$otp_validate = JobCard::where('id', $job_order->jobCard->id)
+					->where('otp_no', '=', $request->otp_no)
+					->first();
+				if (!$otp_validate) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Job Card Approve Behalf of Customer OTP is worng. Please try again.',
+					]);
+				}
+			} else {
+				$customer_detail = Customer::select('name', 'mobile_no')
+					->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
+					->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
+					->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
+					->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')
+					->where('job_cards.id', $job_order->jobCard->id)
+					->orderBy('vehicle_owners.from_date', 'DESC')
+					->first();
+				// dd($customer_detail);
+				if (!$customer_detail) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Customer Details Not Found!',
+					]);
+				}
+
+				$mobile_number = $customer_detail->mobile_no;
+				$mobile_number = '9787516244'; //Vijay mobile for testing
+				// dump($mobile_number);
+				// dd($otp, $job_card->otp_no);
+				$approval_link = url('/vehicle-inward/show-payment-detail/for-approval/' . $request->job_order_id);
+				// dd($approval_link);
+				$message = 'Click <a href="' . url($approval_link) . '">Here</a> to Approval for Inward Vehicle Information.';
+				if (!$mobile_number) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Customer Mobile Number Not Found',
+					]);
+				}
+				dd($mobile_number, $message);
+				$msg = sendSMSNotification($mobile_number, $message);
+				// dd($msg);
+				//Enable After Sms Issue Resloved
+				/*if(!$msg){
+				return response()->json([
+					'success' => false,
+					'error' => 'OTP SMS Not Sent.Please Try again ',
+				]);
+			}*/
+			}
+
+			//UPDATE JOB ORDER STATUS
+			$job_order_status_update = JobOrder::find($request->job_order_id);
+			$job_order_status_update->status_id = 8462; //Ready To Start Work
+			$job_order_status_update->updated_at = Carbon::now();
+			$job_order_status_update->save();
+
+			//UPDATE GATE LOG STATUS
+			$gate_log_status_update = GateLog::find($job_order->gateLog->id);
+			$gate_log_status_update->status_id = 8123; //Gate Out Pending
+			$gate_log_status_update->updated_at = Carbon::now();
+			$gate_log_status_update->save();
+
+			//UPDATE JOB ORDER REPAIR ORDER STATUS
+			foreach ($job_order->jobOrderRepairOrders as $job_order_repair_order) {
+				$job_order_repair_order_update_status = JobOrderRepairOrder::find($job_order_repair_order->id);
+				$job_order_repair_order_update_status->status_id = 8181; //Mechanic Not Assigned
+				// $job_order_repair_order_update_status->updated_by_id = Auth::user()->id;
+				$job_order_repair_order_update_status->updated_at = Carbon::now();
+				$job_order_repair_order_update_status->save();
+			}
+
+			//UPDATE JOB ORDER PARTS STATUS
+			foreach ($job_order->jobOrderParts as $job_order_part) {
+				$job_order_part_update_status = JobOrderPart::find($job_order_part->id);
+				$job_order_part_update_status->status_id = 8201; //Not Issued
+				// $job_order_part_update_status->updated_by_id = Auth::user()->id;
+				$job_order_part_update_status->updated_at = Carbon::now();
+				$job_order_part_update_status->save();
+			}
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Customer Approved Successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
 			]);
 		}
 	}
@@ -343,6 +632,7 @@ class JobCardController extends Controller {
 			}
 			$job_card->floor_supervisor_id = $request->floor_supervisor_id;
 			if ($job_card->bay_id) {
+				//Exists bay checking and Bay status update
 				if ($job_card->bay_id != $request->bay_id) {
 					$bay = Bay::find($job_card->bay_id);
 					$bay->status_id = 8240; //Free
@@ -963,8 +1253,7 @@ class JobCardController extends Controller {
 
 	}
 
-	public function deleteOutwardItem(Request $request)
-	{
+	public function deleteOutwardItem(Request $request) {
 		DB::beginTransaction();
 		// dd($request->id);
 		try {
@@ -979,107 +1268,107 @@ class JobCardController extends Controller {
 		}
 	}
 
-	public function getEstimateStatus(Request $request){
-			$job_card = JobCard::find($request->id);
-			if (!$job_card) {
-				return response()->json([
-					'success' => false,
-					'error' =>'Validation Error',
-					'errors' =>['Job Card Not Found!'],
-				]);
-			}
+	public function getEstimateStatus(Request $request) {
+		$job_card = JobCard::find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
 
-			$job_order = JobOrder::company()->with([
-				'customerApprovalAttachment',
-				'customerESign',
+		$job_order = JobOrder::company()->with([
+			'customerApprovalAttachment',
+			'customerESign',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 			])
-				->select([
-					'job_orders.*',
-					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-				])
-				->find($job_card->job_order_id);
+			->find($job_card->job_order_id);
 
-			return response()->json([
-				'success' => true,
-				'job_order' => $job_order,
-				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
-			]);
+		return response()->json([
+			'success' => true,
+			'job_order' => $job_order,
+			'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
+		]);
 
 	}
 
-	public function getEstimate(Request $request){
-			$job_card = JobCard::find($request->id);
-			if (!$job_card) {
-				return response()->json([
-					'success' => false,
-					'error' =>'Validation Error',
-					'errors' =>['Job Card Not Found!'],
-				]);
-			}
-
-			$job_order = JobOrder::find($job_card->job_order_id);
-
-			$oem_recomentaion_labour_amount = 0;
-			$additional_rot_and_parts_labour_amount = 0;
-
-			foreach ($job_order->jobOrderRepairOrders as $oemrecomentation_labour) {
-
-				if ($oemrecomentation_labour['is_recommended_by_oem'] == 1) {
-					//SCHEDULED MAINTANENCE
-					$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
-				}
-				if ($oemrecomentation_labour['is_recommended_by_oem'] == 0) {
-					//ADDITIONAL ROT AND PARTS
-					$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
-				}
-			}
-
-			$oem_recomentaion_part_amount = 0;
-			$additional_rot_and_parts_part_amount = 0;
-			foreach ($job_order->jobOrderParts as $oemrecomentation_labour) {
-				if ($oemrecomentation_labour['is_oem_recommended'] == 1) {
-					//SCHEDULED MAINTANENCE
-					$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
-				}
-				if ($oemrecomentation_labour['is_oem_recommended'] == 0) {
-					//ADDITIONAL ROT AND PARTS
-					$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
-				}
-			}
-
-			//OEM RECOMENTATION LABOUR AND PARTS AND SUB TOTAL
-			$job_order->oem_recomentation_labour_amount = $oem_recomentaion_labour_amount;
-			$job_order->oem_recomentation_part_amount = $oem_recomentaion_part_amount;
-			$job_order->oem_recomentation_sub_total = $oem_recomentaion_labour_amount + $oem_recomentaion_part_amount;
-
-			//ADDITIONAL ROT & PARTS LABOUR AND PARTS AND SUB TOTAL
-			$job_order->additional_rot_parts_labour_amount = $additional_rot_and_parts_labour_amount;
-			$job_order->additional_rot_parts_part_amount = $additional_rot_and_parts_part_amount;
-			$job_order->additional_rot_parts_sub_total = $additional_rot_and_parts_labour_amount + $additional_rot_and_parts_part_amount;
-
-			//TOTAL ESTIMATE
-			$job_order->total_estimate_labour_amount = $oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount;
-			$job_order->total_estimate_parts_amount = $oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount;
-			$job_order->total_estimate_amount = (($oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount) + ($oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount));
-
+	public function getEstimate(Request $request) {
+		$job_card = JobCard::find($request->id);
+		if (!$job_card) {
 			return response()->json([
-				'success' => true,
-				'job_order' => $job_order,
-				
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
 			]);
+		}
+
+		$job_order = JobOrder::find($job_card->job_order_id);
+
+		$oem_recomentaion_labour_amount = 0;
+		$additional_rot_and_parts_labour_amount = 0;
+
+		foreach ($job_order->jobOrderRepairOrders as $oemrecomentation_labour) {
+
+			if ($oemrecomentation_labour['is_recommended_by_oem'] == 1) {
+				//SCHEDULED MAINTANENCE
+				$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
+			}
+			if ($oemrecomentation_labour['is_recommended_by_oem'] == 0) {
+				//ADDITIONAL ROT AND PARTS
+				$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
+			}
+		}
+
+		$oem_recomentaion_part_amount = 0;
+		$additional_rot_and_parts_part_amount = 0;
+		foreach ($job_order->jobOrderParts as $oemrecomentation_labour) {
+			if ($oemrecomentation_labour['is_oem_recommended'] == 1) {
+				//SCHEDULED MAINTANENCE
+				$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
+			}
+			if ($oemrecomentation_labour['is_oem_recommended'] == 0) {
+				//ADDITIONAL ROT AND PARTS
+				$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
+			}
+		}
+
+		//OEM RECOMENTATION LABOUR AND PARTS AND SUB TOTAL
+		$job_order->oem_recomentation_labour_amount = $oem_recomentaion_labour_amount;
+		$job_order->oem_recomentation_part_amount = $oem_recomentaion_part_amount;
+		$job_order->oem_recomentation_sub_total = $oem_recomentaion_labour_amount + $oem_recomentaion_part_amount;
+
+		//ADDITIONAL ROT & PARTS LABOUR AND PARTS AND SUB TOTAL
+		$job_order->additional_rot_parts_labour_amount = $additional_rot_and_parts_labour_amount;
+		$job_order->additional_rot_parts_part_amount = $additional_rot_and_parts_part_amount;
+		$job_order->additional_rot_parts_sub_total = $additional_rot_and_parts_labour_amount + $additional_rot_and_parts_part_amount;
+
+		//TOTAL ESTIMATE
+		$job_order->total_estimate_labour_amount = $oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount;
+		$job_order->total_estimate_parts_amount = $oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount;
+		$job_order->total_estimate_amount = (($oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount) + ($oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount));
+
+		return response()->json([
+			'success' => true,
+			'job_order' => $job_order,
+
+		]);
 
 	}
 
-	public function getPartsIndent(Request $request){
-			$job_card = JobCard::find($request->id);
-			if (!$job_card) {
-				return response()->json([
-					'success' => false,
-					'error' =>'Validation Error',
-					'errors' =>['Job Card Not Found!'],
-				]);
-			}
+	public function getPartsIndent(Request $request) {
+		$job_card = JobCard::find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
 
 		$part_list = collect(Part::select('id', 'name')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Part List']);
 

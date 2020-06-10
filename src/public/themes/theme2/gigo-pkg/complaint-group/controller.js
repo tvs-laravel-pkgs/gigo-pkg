@@ -1,20 +1,20 @@
-app.component('serviceTypeList', {
-    templateUrl: service_type_list_template_url,
+app.component('complaintGroupList', {
+    templateUrl: complaint_group_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_service_type').focus();
+        $('#search_complaint_group').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('service-types')) {
+        if (!self.hasPermission('complaint-groups')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-service-type');
+        self.add_permission = self.hasPermission('add-complaint-group');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#service_types_list').DataTable({
+        var dataTable = $('#complaint_group_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -33,7 +33,7 @@ app.component('serviceTypeList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_service_type').val(state_save_val.search.search);
+                    $('#search_complaint_group').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -43,7 +43,7 @@ app.component('serviceTypeList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getServiceTypeList'],
+                url: laravel_routes['getComplaintGroupList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
@@ -55,9 +55,11 @@ app.component('serviceTypeList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'service_types.code', searchable: true },
-                { data: 'name', name: 'service_types.name', searchable: true },
+                { data: 'code', name: 'complaint_groups.code',searchable: true },
+                { data: 'name', name: 'complaint_groups.name' ,searchable: true },
+               /* { data: 'description', name: 'quote_types.description' },*/
                 { data: 'status', name: '' },
+
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -70,42 +72,42 @@ app.component('serviceTypeList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_service_type').val('');
-            $('#service_types_list').DataTable().search('').draw();
+            $('#search_complaint_group').val('');
+            $('#complaint_group_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#service_types_list').DataTable().ajax.reload();
+            $('#complaint_group_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#service_types_list').dataTable();
-        $("#search_service_type").keyup(function() {
+        var dataTables = $('#complaint_group_list').dataTable();
+        $("#search_complaint_group").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
-        $scope.deleteServiceType = function($id) {
-            $('#service_type_id').val($id);
+        $scope.deleteComplaintGroup = function($id) {
+            $('#complaint_group_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#service_type_id').val();
+            $id = $('#complaint_group_id').val();
             $http.get(
-                laravel_routes['deleteServiceType'], {
+                laravel_routes['deleteComplaintGroup'], {
                     params: {
                         id: $id,
                     }
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Service Type Deleted Successfully');
-                    $('#service_types_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/service-type/list');
+                    custom_noty('success', 'Complaint Group Deleted Successfully');
+                    $('#complaint_group_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/gigo-pkg/complaint-group/list');
                 }
             });
         }
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getServiceTypeFilterData']
+            laravel_routes['getComplaintGroupFilterData']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
@@ -125,11 +127,10 @@ app.component('serviceTypeList', {
                 $mdSelect.hide();
             }
         });
-
         $scope.applyFilter = function() {
             $('#status').val(self.status);
             dataTables.fnFilter();
-            $('#service-type-filter-modal').modal('hide');
+            $('#complaint-group-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
             $("#short_name").val('');
@@ -144,29 +145,29 @@ app.component('serviceTypeList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.component('serviceTypeForm', {
-    templateUrl: service_type_form_template_url,
+app.component('complaintGroupForm', {
+    templateUrl: complaint_group_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-service-type') || !self.hasPermission('edit-service-type')) {
+        if (!self.hasPermission('add-complaint-group') || !self.hasPermission('edit-complaint-group')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
         self.angular_routes = angular_routes;
         $http.get(
-            laravel_routes['getServiceTypeFormData'], {
+            laravel_routes['getComplaintGroupFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
             }
         ).then(function(response) {
-            self.service_type = response.data.service_type;
+            self.complaint_group = response.data.complaint_group;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
-                if (self.service_type.deleted_at) {
+                if (self.complaint_group.deleted_at) {
                     self.switch_value = 'Inactive';
                 } else {
                     self.switch_value = 'Active';
@@ -176,106 +177,8 @@ app.component('serviceTypeForm', {
             }
         });
 
-        //Add New Labour
-        self.addNewLabour = function() {
-            self.service_type.service_type_labours.push({
-                switch_value: 'No',
-            });
-        }
-
-        //Search Labour
-        self.searchLabour = function(query) {
-            if (query) {
-                return new Promise(function(resolve, reject) {
-                    $http
-                        .post(
-                            laravel_routes['getLabourSearchList'], {
-                                key: query,
-                            }
-                        )
-                        .then(function(response) {
-                            resolve(response.data);
-                        });
-                });
-            } else {
-                return [];
-            }
-        }
-
-        $scope.getSelectedLabour = function(index, labour_detail) {
-            if (labour_detail) {
-                $('.labour_type' + index).html(labour_detail.repair_order_type);
-                $('.labour_quantity' + index).html(labour_detail.hours);
-                $('.labour_value' + index).html(labour_detail.amount);
-            } else {
-                $('.labour_type' + index).html('-');
-                $('.labour_quantity' + index).html('-');
-                $('.labour_value' + index).html('-');
-            }
-        }
-
-        self.removeLabour = function(index) {
-            self.service_type.service_type_labours.splice(index, 1);
-        }
-
-        //Add New Part
-        self.addNewPart = function() {
-            self.service_type.service_type_parts.push({
-                switch_value: 'No',
-            });
-        }
-
-        //Search Part
-        self.searchPart = function(query) {
-            if (query) {
-                return new Promise(function(resolve, reject) {
-                    $http
-                        .post(
-                            laravel_routes['getPartSearchList'], {
-                                key: query,
-                            }
-                        )
-                        .then(function(response) {
-                            resolve(response.data);
-                        });
-                });
-            } else {
-                return [];
-            }
-        }
-
-        $scope.getSelectedPart = function(index, part_detail) {
-            if (part_detail) {
-                $('.part_type' + index).html(part_detail.tax_code_type);
-                $('#part_hour' + index).val(part_detail.rate);
-            } else {
-                $('.part_type' + index).html('-');
-                $('#part_hour' + index).val('');
-                $('#part_qty' + index).val('');
-                $('#part_amount' + index).val('');
-            }
-        }
-
-        self.removePart = function(index) {
-            self.service_type.service_type_parts.splice(index, 1);
-        }
-
-        $(document).on('keyup', ".change_quantity", function() {
-            var qty = $(this).val();
-            var index = $(this).data('index');
-            var total_amount = 0;
-            setTimeout(function() {
-                var rate = $('#part_hour' + index).val();
-                if (rate > 0 || !isNaN(rate)) {
-                    total_amount = rate * qty;
-                    total_amount = total_amount.toFixed(2);
-                }
-                $('#part_amount' + index).val(parseFloat(total_amount));
-            }, 100);
-        });
-
         //Save Form Data 
-        var form_id = '#service_type_form';
+        var form_id = '#complaint_group_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
@@ -306,7 +209,7 @@ app.component('serviceTypeForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveServiceType'],
+                        url: laravel_routes['saveComplaintGroup'],
                         method: "POST",
                         data: formData,
                         processData: false,
@@ -315,7 +218,7 @@ app.component('serviceTypeForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/service-type/list');
+                            $location.path('/gigo-pkg/complaint-group/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -323,7 +226,7 @@ app.component('serviceTypeForm', {
                                 showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/gigo-pkg/service-type/list');
+                                $location.path('/gigo-pkg/complaint-group/list');
                                 $scope.$apply();
                             }
                         }

@@ -84,6 +84,10 @@ class JobCard extends Model {
 		return $this->hasMany('Abs\GigoPkg\JobCardReturnableItem');
 	}
 
+	public function attachment() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 228)->where('attachment_type_id', 255);
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];

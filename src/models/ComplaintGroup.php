@@ -9,13 +9,13 @@ use Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ServiceType extends Model {
+class ComplaintGroup extends Model {
 	use SeederTrait;
 	use SoftDeletes;
-	protected $table = 'service_types';
+	protected $table = 'complaint_groups';
 	public $timestamps = true;
 	protected $fillable =
-		["company_id", "code", "name"]
+		["id", "company_id", "code", "name"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
@@ -24,14 +24,6 @@ class ServiceType extends Model {
 
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
-	}
-
-	public function serviceTypeLabours() {
-		return $this->belongsToMany('Abs\GigoPkg\RepairOrder', 'repair_order_service_type', 'service_type_id', 'repair_order_id')->withPivot(['is_free_service']);
-	}
-
-	public function serviceTypeParts() {
-		return $this->belongsToMany('Abs\PartPkg\Part', 'part_service_type', 'service_type_id', 'part_id')->withPivot(['quantity', 'amount', 'is_free_service']);
 	}
 
 	public static function createFromObject($record_data) {
@@ -69,18 +61,6 @@ class ServiceType extends Model {
 		return $record;
 	}
 
-	public static function getDropDownList($params = [], $add_default = true, $default_text = 'Select Service Type') {
-		$list = Collect(Self::select([
-			'id',
-			'name',
-		])
-				->orderBy('name')
-				->where('company_id', Auth::user()->company_id)
-				->get());
-		if ($add_default) {
-			$list->prepend(['id' => '', 'name' => $default_text]);
-		}
-		return $list;
-	}
+	
 
 }

@@ -109,11 +109,12 @@ Content Wrap -->
                                                 <table class="table table-form">
                                                     <thead>
                                                         <tr>
-                                                            <th class="width-250">Labour Detail</th>
-                                                            <th class="width-200">Labour Type</th>
+                                                            <th class="width-230">Labour Detail</th>
+                                                            <th class="width-190">Labour Type</th>
                                                             <th class="width-60">Quantity</th>
-                                                            <th class="width-30">Labour Value</th>
-                                                            <th class="width-30"></th>
+                                                            <th class="width-60">Labour Value</th>
+                                                            <th class="width-120">Is Free Service</th>
+                                                            <th class="width-60"></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -135,6 +136,14 @@ Content Wrap -->
                                                             <td class="labour_quantity{{index}}">{{repair_order.name.hours}}</td>
                                                             <td class="labour_value{{index}}">{{repair_order.name.amount}}</td>
                                                             <td>
+                                                                <div class="tab-switch">
+                                                                    <md-switch ng-model="repair_order.switch_value" aria-label="Switch {{index}}" ng-true-value="'No'" ng-false-value="'Yes'"class="md-warn type-2">
+                                                                        {{ repair_order.switch_value }}
+                                                                    </md-switch>
+                                                                    <input type="hidden" name="labours[{{index}}][status]" value="{{repair_order.switch_value}}">
+                                                                </div>
+                                                            </td>
+                                                            <td>
                                                                 <button type="button" class="btn btn-delete" ng-click="$ctrl.removeLabour(index)">
                                                                     <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
                                                                 </button>
@@ -143,7 +152,7 @@ Content Wrap -->
                                                     </tbody>
                                                     <tfoot>
                                                         <tr>
-                                                            <td colspan="5">
+                                                            <td colspan="6">
                                                                 <button type="button" class="btn btn-primary-light btn-square" ng-click="$ctrl.addNewLabour()">+ Add More</button>
                                                             </td>
                                                         </tr>
@@ -162,12 +171,13 @@ Content Wrap -->
                                                 <table class="table table-form">
                                                     <thead>
                                                         <tr>
-                                                            <th class="width-250">Part Detail</th>
-                                                            <th class="width-200">Tax Code Type</th>
-                                                            <th class="width-60">Rate</th>
-                                                            <th class="width-60">Quantity</th>
-                                                            <th class="width-30">Amount </th>
-                                                            <th class="width-30"></th>
+                                                            <th class="width-230">Part Detail</th>
+                                                            <th class="width-60">Tax Code</th>
+                                                            <th class="width-120">Rate</th>
+                                                            <th class="width-120">Quantity</th>
+                                                            <th class="width-190">Amount </th>
+                                                            <th class="width-190">Is Free Service </th>
+                                                            <th class="width-60"></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -190,6 +200,14 @@ Content Wrap -->
                                                             <td><input type="text" class="form-control change_quantity required" id="part_qty{{index}}" maxlength="6" data-index="{{index}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="parts[{{index}}][qty]" value="{{part.name.quantity}}" /></td>
                                                             <td><input type="text" class="form-control required" readonly id="part_amount{{index}}" name="parts[{{index}}][amount]" value="{{part.name.amount}}" /></td>
                                                             <td>
+                                                                <div class="tab-switch">
+                                                                    <md-switch ng-model="part.switch_value" aria-label="Switch {{index}}" ng-true-value="'No'" ng-false-value="'Yes'"class="md-warn type-2">
+                                                                        {{ part.switch_value }}
+                                                                    </md-switch>
+                                                                    <input type="hidden" name="parts[{{index}}][status]" value="{{part.switch_value}}">
+                                                                </div>
+                                                            </td>
+                                                            <td>
                                                                 <button type="button" class="btn btn-delete" ng-click="$ctrl.removePart(index)">
                                                                     <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
                                                                 </button>
@@ -198,7 +216,7 @@ Content Wrap -->
                                                     </tbody>
                                                     <tfoot>
                                                         <tr>
-                                                            <td colspan="6">
+                                                            <td colspan="7">
                                                                 <button type="button" class="btn btn-primary-light btn-square" ng-click="$ctrl.addNewPart()">+ Add More</button>
                                                             </td>
                                                         </tr>
