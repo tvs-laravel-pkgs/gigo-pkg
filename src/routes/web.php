@@ -10,11 +10,18 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/fault/get-filter-data', 'FaultController@getFaultFilter')->name('getFaultFilter');
 
 	//Complaint Group
-	Route::get('/complaint-group/get-list', 'ComplaintGropController@getComplaintGroupList')->name('getComplaintGroupList');
-	Route::get('/complaint-group/get-form-data', 'ComplaintGropController@getComplaintGroupFormData')->name('getComplaintGroupFormData');
-	Route::post('/complaint-group/save', 'ComplaintGropController@saveComplaintGroup')->name('saveComplaintGroup');
-	Route::get('/complaint-group/delete', 'ComplaintGropController@deleteComplaintGroup')->name('deleteComplaintGroup');
-	Route::get('/complaint-group/get-filter-data', 'ComplaintGropController@getComplaintGroupFilterData')->name('getComplaintGroupFilterData');
+	Route::get('/complaint-group/get-list', 'ComplaintGroupController@getComplaintGroupList')->name('getComplaintGroupList');
+	Route::get('/complaint-group/get-form-data', 'ComplaintGroupController@getComplaintGroupFormData')->name('getComplaintGroupFormData');
+	Route::post('/complaint-group/save', 'ComplaintGroupController@saveComplaintGroup')->name('saveComplaintGroup');
+	Route::get('/complaint-group/delete', 'ComplaintGroupController@deleteComplaintGroup')->name('deleteComplaintGroup');
+	Route::get('/complaint-group/get-filter-data', 'ComplaintGroupController@getComplaintGroupFilterData')->name('getComplaintGroupFilterData');
+
+	//Complaint
+	Route::get('/complaint/get-list', 'ComplaintController@getComplaintList')->name('getComplaintList');
+	Route::get('/complaint/get-form-data', 'ComplaintController@getComplaintFormData')->name('getComplaintFormData');
+	Route::post('/complaint/save', 'ComplaintController@saveComplaint')->name('saveComplaint');
+	Route::get('/complaint/delete', 'ComplaintController@deleteComplaint')->name('deleteComplaint');
+	Route::get('/complaint/get-filter-data', 'ComplaintController@getComplaintFilterData')->name('getComplaintFilterData');
 
 	//Parts Indent
 	Route::get('/parts-indent/get-list', 'PartsIndentController@getPartsindentList')->name('getPartsindentList');

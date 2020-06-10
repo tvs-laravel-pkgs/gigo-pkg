@@ -1,20 +1,20 @@
-app.component('complaintGroupList', {
-    templateUrl: complaint_group_list_template_url,
+app.component('complaintList', {
+    templateUrl: complaint_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_complaint_group').focus();
+        $('#search_complaint').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('complaint-groups')) {
+        if (!self.hasPermission('complaint')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-complaint-group');
+        self.add_permission = self.hasPermission('add-complaint');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#complaint_group_list').DataTable({
+        var dataTable = $('#complaint_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -33,7 +33,7 @@ app.component('complaintGroupList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_complaint_group').val(state_save_val.search.search);
+                    $('#search_complaint').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -43,21 +43,28 @@ app.component('complaintGroupList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getComplaintGroupList'],
+                url: laravel_routes['getComplaintList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
+                    d.code = $("#code").val();
                     d.name = $("#name").val();
+                    d.group = $("#group").val();
+                    d.hour = $("#hour").val();
+                    d.kms = $("#kms").val();
+                    d.month = $("#month").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'complaint_groups.code', searchable: true },
-                { data: 'name', name: 'complaint_groups.name', searchable: true },
-                /* { data: 'description', name: 'quote_types.description' },*/
+                { data: 'code', name: 'complaints.code',searchable: true },
+                { data: 'name', name: 'complaints.name' ,searchable: true },
+                { data: 'name', name: 'complaint_groups.code' ,searchable: true },
+                { data: 'name', name: 'complaints.hours' ,searchable: true },
+                { data: 'name', name: 'complaints.kms' ,searchable: true },
+                 { data: 'name', name: 'complaints.months' ,searchable: true },
                 { data: 'status', name: '' },
 
             ],
@@ -72,46 +79,52 @@ app.component('complaintGroupList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_complaint_group').val('');
-            $('#complaint_group_list').DataTable().search('').draw();
+            $('#search_complaint').val('');
+            $('#complaint_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#complaint_group_list').DataTable().ajax.reload();
+            $('#complaint_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#complaint_group_list').dataTable();
-        $("#search_complaint_group").keyup(function() {
+        var dataTables = $('#complaint_list').dataTable();
+        $("#search_complaint").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
-        $scope.deleteComplaintGroup = function($id) {
-            $('#complaint_group_id').val($id);
+        $scope.deleteComplaint = function($id) {
+            $('#complaint_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#complaint_group_id').val();
+            $id = $('#complaint_id').val();
             $http.get(
-                laravel_routes['deleteComplaintGroup'], {
+                laravel_routes['deleteComplaint'], {
                     params: {
                         id: $id,
                     }
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Complaint Group Deleted Successfully');
-                    $('#complaint_group_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/complaint-group/list');
+                    custom_noty('success', 'Complaint Deleted Successfully');
+                    $('#complaint_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/gigo-pkg/complaint/list');
                 }
             });
         }
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getComplaintGroupFilterData']
+            laravel_routes['getComplaintFilterData']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
+            self.complaint_group = response.data.complaint_group;
         });
+
+        $scope.onSelectedgroup = function(complaint_selected) {
+            $('#group').val(complaint_selected);
+        }
+
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -130,7 +143,7 @@ app.component('complaintGroupList', {
         $scope.applyFilter = function() {
             $('#status').val(self.status);
             dataTables.fnFilter();
-            $('#complaint-group-filter-modal').modal('hide');
+            $('#complaint-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
             $("#short_name").val('');
@@ -145,8 +158,8 @@ app.component('complaintGroupList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.component('complaintGroupForm', {
-    templateUrl: complaint_group_form_template_url,
+app.component('complaintForm', {
+    templateUrl: complaint_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         $("input:text:visible:first").focus();
@@ -157,17 +170,18 @@ app.component('complaintGroupForm', {
         }
         self.angular_routes = angular_routes;
         $http.get(
-            laravel_routes['getComplaintGroupFormData'], {
+            laravel_routes['getComplaintFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
             }
         ).then(function(response) {
+            self.complaint = response.data.complaint;
             self.complaint_group = response.data.complaint_group;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
-                if (self.complaint_group.deleted_at) {
+                if (self.complaint.deleted_at) {
                     self.switch_value = 'Inactive';
                 } else {
                     self.switch_value = 'Active';
@@ -178,7 +192,7 @@ app.component('complaintGroupForm', {
         });
 
         //Save Form Data 
-        var form_id = '#complaint_group_form';
+        var form_id = '#complaint_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
@@ -188,9 +202,22 @@ app.component('complaintGroupForm', {
                     maxlength: 32,
                 },
                 'name': {
-                    required: true,
                     minlength: 3,
                     maxlength: 191,
+                },
+                'group_id': {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 10,
+                },
+                'hours': {
+                    maxlength: 10,
+                },
+                'kms': {
+                    maxlength: 10,
+                },
+                'months': {
+                    maxlength: 8,
                 },
             },
             messages: {
@@ -210,7 +237,7 @@ app.component('complaintGroupForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveComplaintGroup'],
+                        url: laravel_routes['saveComplaint'],
                         method: "POST",
                         data: formData,
                         processData: false,
@@ -219,7 +246,7 @@ app.component('complaintGroupForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/complaint-group/list');
+                            $location.path('/gigo-pkg/complaint/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -227,7 +254,7 @@ app.component('complaintGroupForm', {
                                 showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/gigo-pkg/complaint-group/list');
+                                $location.path('/gigo-pkg/complaint/list');
                                 $scope.$apply();
                             }
                         }

@@ -5,16 +5,16 @@ Content Wrap -->
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/complaint-group/list" type="button" class="btn-back btn-img">
+                    <a href="#!/gigo-pkg/complaint/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Complaint Group</b></h1>
+                    <h1 class="title"><b>{{$ctrl.action}} Complaint</b></h1>
                     <p class="subtitle">
                         Masters /
-                        <a href="#!/gigo-pkg/complaint-group/list">
-                            Complaint Groups
+                        <a href="#!/gigo-pkg/complaint/list">
+                            Complaints
                         </a> /
                         {{$ctrl.action}}
                     </p>
@@ -24,8 +24,8 @@ Content Wrap -->
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
-        <form id="complaint_group_form" autocomplete="off">
-            <input type="hidden" name="id" value="{{$ctrl.complaint_group.id}}">
+        <form id="complaint_form" autocomplete="off">
+            <input type="hidden" name="id" value="{{$ctrl.complaint.id}}">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
                     <div class="tab-form-header">
@@ -61,9 +61,50 @@ Content Wrap -->
                                             <div class="input-text form-group">
                                                 <label>
                                                     Name
-                                                    <sup class="mandatory">*</sup>
+                                                    <sup class="mandatory"></sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.complaint_group.name" name="name" placeholder="Enter Name" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.complaint_group.name" name="name" placeholder="Enter Name" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Complaint Group<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.complaint.group_id" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Complaint Group">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchType" type="search" placeholder="Search Complaint Group" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="complaint_group.id" ng-repeat="complaint_group in $ctrl.complaint_group | filter:searchType">{{complaint_group.code}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" name="group_id" id="group_id" value="{{$ctrl.complaint.group_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Hours
+                                                    <sup class="mandatory"></sup>
+                                                </label>
+                                                <input type="text" class="form-control" ng-model="$ctrl.complaint.hours" name="hours" placeholder="Enter Hours" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Kilometer
+                                                    <sup class="mandatory"></sup>
+                                                </label>
+                                                <input type="text" class="form-control" ng-model="$ctrl.complaint.kms" name="kms" placeholder="Enter Kilometer" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                         <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Months
+                                                    <sup class="mandatory"></sup>
+                                                </label>
+                                                <input type="text" class="form-control" ng-model="$ctrl.complaint.months" name="months" placeholder="Enter Months" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -86,7 +127,7 @@ Content Wrap -->
                             <div class="tab-pane-footer">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <a href="#!/gigo-pkg/complaint-group/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
+                                        <a href="#!/gigo-pkg/complaint/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
                                         <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
                                     </div>
                                 </div>
