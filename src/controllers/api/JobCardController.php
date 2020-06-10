@@ -343,6 +343,7 @@ class JobCardController extends Controller {
 			}
 			$job_card->floor_supervisor_id = $request->floor_supervisor_id;
 			if ($job_card->bay_id) {
+				//Exists bay checking and Bay status update
 				if ($job_card->bay_id != $request->bay_id) {
 					$bay = Bay::find($job_card->bay_id);
 					$bay->status_id = 8240; //Free
