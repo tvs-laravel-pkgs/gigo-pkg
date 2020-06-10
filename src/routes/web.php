@@ -9,6 +9,13 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/fault/delete', 'FaultController@deleteFault')->name('deleteFault');
 	Route::get('/fault/get-filter-data', 'FaultController@getFaultFilter')->name('getFaultFilter');
 
+	//Complaint Group
+	Route::get('/complaint-group/get-list', 'ComplaintGropController@getComplaintGroupList')->name('getComplaintGroupList');
+	Route::get('/complaint-group/get-form-data', 'ComplaintGropController@getComplaintGroupFormData')->name('getComplaintGroupFormData');
+	Route::post('/complaint-group/save', 'ComplaintGropController@saveComplaintGroup')->name('saveComplaintGroup');
+	Route::get('/complaint-group/delete', 'ComplaintGropController@deleteComplaintGroup')->name('deleteComplaintGroup');
+	Route::get('/complaint-group/get-filter-data', 'ComplaintGropController@getComplaintGroupFilterData')->name('getComplaintGroupFilterData');
+
 	//Parts Indent
 	Route::get('/parts-indent/get-list', 'PartsIndentController@getPartsindentList')->name('getPartsindentList');
 	Route::get('/parts-indent/get-filter-data', 'PartsIndentController@getPartsIndentFilter')->name('getPartsIndentFilter');
