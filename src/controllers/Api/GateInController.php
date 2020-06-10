@@ -121,7 +121,7 @@ class GateInController extends Controller {
 				'driver_name' => [
 					'nullable',
 					'min:3',
-					'max:191',
+					'max:64',
 					'string',
 				],
 				'driver_mobile_number' => [
