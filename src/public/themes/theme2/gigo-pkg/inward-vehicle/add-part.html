@@ -10,8 +10,8 @@
                     </a>
                 </div>
                 <div class="page-header-content title-block">
-                    <h1 class="title">Add Parts</h1>
-                    <p class="subtitle">Inward Vehicle / Add Parts</p>
+                    <h1 class="title">{{$ctrl.action}} Parts</h1>
+                    <p class="subtitle">Inward Vehicle / {{$ctrl.action}} Parts</p>
                 </div>
             </div>
         </div><!-- Page Header Inner -->
@@ -20,6 +20,7 @@
     <div class="page-main-content form-content">
         <form id="part_form">
             <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <input type="hidden" name="job_order_part_id" value="{{job_order_part_id}}">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
@@ -28,7 +29,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Part Code <sup class="mandatory">*</sup></label>
-                                        <md-select ng-model="job_order_part.part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select ng-model="$ctrl.part" ng-change="getPartFormData($ctrl.part.id);job_order_part=''" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                             <md-select-header class="demo-select-header">
                                                 <input ng-model="searchPart" type="search" placeholder="Search for a Part Code.." class="demo-header-searchbox md-text">
                                             </md-select-header>
@@ -38,13 +39,13 @@
                                                 </md-option>
                                             </md-optgroup>
                                         </md-select>
-                                        <input type="hidden" name="part_id" value="{{job_order_part.part.id}}">
+                                        <input type="hidden" name="part_id" value="{{$ctrl.part.id}}">
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Quantity <sup class="mandatory">*</sup></label>
-                                        <input type="text" name="qty" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                                        <input type="text" name="qty" ng-model="$ctrl.qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" ng-change="onChangeQty()" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-12">
@@ -76,13 +77,13 @@
                                             <tbody>
                                                 <tr class="ptb-12" ng-if="job_order_part">
                                                     <td>
-                                                        {{job_order_part.part.code ? job_order_part.part.code : ''}}
+                                                        {{job_order_part.code ? job_order_part.code : ''}}
                                                     </td>
                                                     <td>
-                                                        {{job_order_part.part.name ? job_order_part.part.name : ''}}
+                                                        {{job_order_part.name ? job_order_part.name : ''}}
                                                     </td>
                                                     <td>
-                                                        {{job_order_part.part.uom.name ? job_order_part.part.uom.name : ''}}
+                                                        {{job_order_part.uom.name ? job_order_part.uom.name : ''}}
                                                     </td>
                                                     <td class="text-right">
                                                         {{job_order_part.rate}}

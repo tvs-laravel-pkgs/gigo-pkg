@@ -878,17 +878,17 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<inward-vehicle-payable-add-part-form></inward-vehicle-payable-add-part-form>',
 	        title: 'Inward Vehicle - Payable Add Part',
 	    }).
-	    when('/inward-vehicle/payable-labour-part/add-part/form/edit/:job_order_id/:id', {
+	    when('/inward-vehicle/payable-labour-part/add-part/form/edit/:job_order_id/:job_order_part_id', {
 	        template: '<inward-vehicle-payable-add-part-form></inward-vehicle-payable-add-part-form>',
-	        title: 'Inward Vehicle - Payable Add Part',
+	        title: 'Inward Vehicle - Payable Edit Part',
 	    }).
-	    when('/inward-vehicle/payable-labour-part/add-labour/form/edit/:job_order_id/:id', {
+	    when('/inward-vehicle/payable-labour-part/add-labour/form/edit/:job_order_id/:job_order_repair_order_id', {
 	        template: '<inward-vehicle-payable-add-labour-form></inward-vehicle-payable-add-labour-form>',
-	        title: 'Inward Vehicle - Payable Labour Part',
+	        title: 'Inward Vehicle - Payable Edit Labour',
 	    }).
 	     when('/inward-vehicle/payable-labour-part/add-labour/form/:job_order_id', {
 	        template: '<inward-vehicle-payable-add-labour-form></inward-vehicle-payable-add-labour-form>',
-	        title: 'Inward Vehicle - Payable Labour Part',
+	        title: 'Inward Vehicle - Payable Add Labour',
 	    }).
 	    when('/inward-vehicle/estimation-status-detail/form/:job_order_id', {
 	        template: '<inward-vehicle-estimation-status-detail-form></inward-vehicle-estimation-status-detail-form>',
