@@ -632,7 +632,7 @@
 	    when('/gigo-pkg/compaigns/edit/:id', {
 	        template: '<compaigns-form></compaigns-form>',
 	        title: 'Edit Compaign',
-	    }).
+	    });
 	}]);
 
 	//Compaigns

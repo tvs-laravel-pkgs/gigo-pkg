@@ -1,4 +1,3 @@
-alert(11);
 app.component('compaignsList', {
     templateUrl: compaigns_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
