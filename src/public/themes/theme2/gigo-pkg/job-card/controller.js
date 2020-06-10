@@ -606,8 +606,12 @@ app.component('jobCardBayForm', {
                     // console.log(value.id);
                     // console.log($scope.job_card.bay_id);
                     if (value.selected == true && value.id != $scope.job_card.bay_id) {
+                        //console.log('add');
                         value.selected = false;
+                        value.status_id = 8240;
+                        value.status.name = 'Free';
                     } else if (value.selected == true && value.id == $scope.job_card.bay_id) {
+                        //console.log('edit');
                         value.selected = false;
                         value.status_id = 8240;
                         value.status.name = 'Free';
@@ -615,12 +619,14 @@ app.component('jobCardBayForm', {
                     }
                 });
                 bay.selected = true;
+                bay.status.name = 'Selected';
                 $scope.bay_id = bay.id;
 
             } else {
                 bay.selected = false;
             }
             console.log($scope.bay_id);
+            console.log(bay);
 
         }
         //Save Form Data 
@@ -959,31 +965,31 @@ app.component('jobCardMaterialOutwardForm', {
 
         self.removeItem = function(index) {
             if (index != 0) {
-                 $scope.gate_pass_item.splice(index, 1);
+                $scope.gate_pass_item.splice(index, 1);
             }
             var id = $("#item_id_" + index).val();
             if (id) {
                 $.ajax({
-                    url: base_url + '/api/jobcard/outward-item/delete',
-                    method: "POST",
-                    data: {
-                        id: id,
-                        gate_pass_id: $routeParams.gatepass_id
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    custom_noty('success', 'Outward Item Deleted Successfully');
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });
+                        url: base_url + '/api/jobcard/outward-item/delete',
+                        method: "POST",
+                        data: {
+                            id: id,
+                            gate_pass_id: $routeParams.gatepass_id
+                        },
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        }
+                        custom_noty('success', 'Outward Item Deleted Successfully');
+                    })
+                    .fail(function(xhr) {
+                        custom_noty('error', 'Something went wrong at server');
+                    });
             } else {
                 return [];
             }
@@ -1044,15 +1050,15 @@ app.component('jobCardMaterialOutwardForm', {
         $scope.saveItemDetails = function() {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
-                 errorPlacement: function(error, element) {
-                show_alert = true;
-                error.insertAfter(element)
-            },
-            invalidHandler: function(form, validator) {
+                errorPlacement: function(error, element) {
+                    show_alert = true;
+                    error.insertAfter(element)
+                },
+                invalidHandler: function(form, validator) {
 
-                console.log('Errors!!');
-            },
-            ignore: [],
+                    console.log('Errors!!');
+                },
+                ignore: [],
                 //ignore: '',
                 rules: {
                     'item_description[]': {
@@ -1932,7 +1938,7 @@ app.component('jobCardEstimateForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
-                    
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
