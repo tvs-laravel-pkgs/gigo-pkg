@@ -134,6 +134,7 @@ class ComplaintController extends Controller {
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
 				'group_id.required' => 'Complaint Group is Required',
+				'group_id.unique' => 'Complaint Group is already taken',
 				'kms.max' => 'Kilometer is Maximum 10 Charachers',
 				'hours.max' => 'Hours is Maximum 10 Charachers',
 				'months.max' => 'Hours is Maximum 8 Charachers',
@@ -153,7 +154,9 @@ class ComplaintController extends Controller {
 				],
 				'group_id' => [
 					'required:true',
-					'unique:complaints,group_id,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					'unique:complaints,code,' . $request->id . ',id,group_id,' . $request->group_id . ',company_id,' . Auth::user()->company_id,
+                    'unique:complaints,name,' . $request->id . ',id,group_id,' . $request->group_id . ',company_id,' . Auth::user()->company_id,
+  
 				],
 			], $error_messages);
 			if ($validator->fails()) {

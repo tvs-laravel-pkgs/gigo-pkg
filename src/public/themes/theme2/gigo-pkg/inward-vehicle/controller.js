@@ -23,9 +23,9 @@ app.component('inwardVehicleCardList', {
         self.model_id = '';
         self.registration_type = '';
         self.status_id = '';
-        if(!localStorage.getItem('search_key')){
+        if (!localStorage.getItem('search_key')) {
             self.search_key = '';
-        }else{
+        } else {
             self.search_key = localStorage.getItem('search_key');
         }
 
@@ -72,7 +72,7 @@ app.component('inwardVehicleCardList', {
             localStorage.setItem('search_key', self.search_key);
             $scope.fetchData();
         }
-        $scope.searchInwardVehicle = function(){
+        $scope.searchInwardVehicle = function() {
             localStorage.setItem('search_key', self.search_key);
             $scope.fetchData();
         }
@@ -191,7 +191,7 @@ app.component('inwardVehicleCardList', {
             self.model_id = '';
             self.registration_type = '';
             self.status_id = '';
-            setTimeout(function(){ 
+            setTimeout(function() {
                 $scope.fetchData();
             }, 1000);
         }
@@ -299,7 +299,7 @@ app.component('inwardVehicleTableList', {
         });
 
         var dataTables = $('#inward_vehicles_list').dataTable();
-        $scope.searchInwardVehicle = function(){
+        $scope.searchInwardVehicle = function() {
             dataTables.fnFilter(self.search_key);
         }
 
@@ -674,6 +674,9 @@ app.component('inwardVehicleDmsCheckListForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        $('.btn-nxt').attr("disabled", "disabled");
+        $(".submit").attr("disabled", "disabled");
+        
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -702,6 +705,10 @@ app.component('inwardVehicleDmsCheckListForm', {
                     $scope.job_order = res.attachment;
                     $scope.job_order_id = $routeParams.job_order_id;
                     $scope.$apply();
+
+                    setTimeout(function() {
+                        self.checkbox();
+                    }, 1000);
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -712,10 +719,13 @@ app.component('inwardVehicleDmsCheckListForm', {
         self.checkbox = function() {
             if ($("#check_verify").prop('checked')) {
                 $('#check_val').val(1);
+                $(".btn-nxt").removeAttr("disabled");
+                $(".submit").removeAttr("disabled");
             } else {
                 $('#check_val').val(0);
+                $('.btn-nxt').attr("disabled", "disabled");
+                $(".submit").attr("disabled", "disabled");
             }
-
         }
 
         //Save Form Data 
@@ -3174,32 +3184,32 @@ app.component('inwardVehicleVocDetailForm', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                url: base_url + '/api/vehicle-inward/voc/get-form-data',
-                method: "POST",
-                data: {
-                    id: $routeParams.job_order_id
-                },
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                },
-            })
-            .done(function(res) {
-                if (!res.success) {
-                    showErrorNoty(res);
-                    return;
-                }
-                // self.job_order = $scope.job_order = res.job_order;
-                $scope.job_order = res.job_order;
-                $scope.extras = res.extras;
-                if (res.action == "add") {
-                    $scope.addNewCustomerVoice();
-                }
-                $scope.action = res.action;
-                $scope.$apply();
-            })
-            .fail(function(xhr) {
-                custom_noty('error', 'Something went wrong at server');
-            });
+                    url: base_url + '/api/vehicle-inward/voc/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    // self.job_order = $scope.job_order = res.job_order;
+                    $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    if (res.action == "add") {
+                        $scope.addNewCustomerVoice();
+                    }
+                    $scope.action = res.action;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
         }
         $scope.fetchData();
 
@@ -3334,11 +3344,11 @@ app.component('inwardVehicleRoadTestDetailForm', {
                     $scope.gate_log_detail = res.gate_log_detail;
                     $scope.job_order = res.job_order;
 
-                    if(!$scope.job_order.is_road_test_required){
+                    if (!$scope.job_order.is_road_test_required) {
                         $scope.job_order.is_road_test_required = 0;
                     }
 
-                    if(!$scope.job_order.road_test_done_by_id){
+                    if (!$scope.job_order.road_test_done_by_id) {
                         $scope.job_order.road_test_done_by_id = 8100;
                     }
 

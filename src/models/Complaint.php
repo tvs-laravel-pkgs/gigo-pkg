@@ -5,7 +5,6 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
-use Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -15,7 +14,7 @@ class Complaint extends Model {
 	protected $table = 'complaints';
 	public $timestamps = true;
 	protected $fillable =
-		["company_id", "code", "name","group_id","hours","kms","months"]
+		["company_id", "code", "name", "group_id", "hours", "kms", "months"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
@@ -61,6 +60,17 @@ class Complaint extends Model {
 		return $record;
 	}
 
-	
+	public static function getList($params = [], $add_default = true, $default_text = 'Select Complaint Type') {
+		$list = Collect(Self::select([
+			'id',
+			'name',
+		])
+				->orderBy('name')
+				->get());
+		if ($add_default) {
+			$list->prepend(['id' => '', 'name' => $default_text]);
+		}
+		return $list;
+	}
 
 }

@@ -101,109 +101,136 @@
                                             </div><!-- Row -->
                                             <hr class="hr-15"><!-- Separater -->
                                             <h6 class="color-secondary-dark mb-10"><b>Campaign Job Details</b></h6>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-dark-grey table-md">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>
-                                                                        <b>
-                                                                            Date
-                                                                        </b>
-                                                                    </td>
-                                                                    <td>
-                                                                        : DD/MM/YYYY
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <b>
-                                                                            Authorisation No
-                                                                        </b>
-                                                                    </td>
-                                                                    <td>
-                                                                        : 2344555
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <b>
-                                                                            Complaint Code
-                                                                        </b>
-                                                                    </td>
-                                                                    <td>
-                                                                        : 1234576
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <b>
-                                                                            False Code
-                                                                        </b>
-                                                                    </td>
-                                                                    <td>
-                                                                        : 1233445
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
+                                            <div class="panel-group" id="accordion_1">
+                                                <div class="panel panel-default type-3" ng-repeat="(index, campaign) in job_order.vehicle.model.campaign">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title in" data-toggle="collapse" data-parent="#accordion_1" data-target="#{{index}}">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-dark-grey table-md">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <b>
+                                                                                    Date
+                                                                                </b>
+                                                                            </td>
+                                                                            <td>
+                                                                                : {{campaign.manufacture_date}}
+                                                                            </td>
+                                                                            <td>
+                                                                                <b>
+                                                                                    Authorization No
+                                                                                </b>
+                                                                            </td>
+                                                                            <td>
+                                                                                : {{campaign.authorisation_no}}
+                                                                            </td>
+                                                                            <td>
+                                                                                <b>
+                                                                                    Complaint Code
+                                                                                </b>
+                                                                            </td>
+                                                                            <td>
+                                                                                : {{campaign.complaint_type.code}}
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>
+                                                                                <b>
+                                                                                    Fault Code
+                                                                                </b>
+                                                                            </td>
+                                                                            <td>
+                                                                                : {{campaign.fault_type.code}}
+                                                                            </td>
+                                                                            <td>
+                                                                                <b>
+                                                                                    Claim Type
+                                                                                </b>
+                                                                            </td>
+                                                                            <td>
+                                                                                : {{campaign.claim_type.name}}
+                                                                            </td>
+                                                                            <td>
+                                                                            </td>
+                                                                            <td>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <span class="arrow"></span>
+                                                        </a>
                                                     </div>
-                                                </div><!-- Column -->
-                                                <div class="col-md-6">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-dark-grey table-md">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>
-                                                                        <b>
-                                                                            Claim Type
-                                                                        </b>
-                                                                    </td>
-                                                                    <td>
-                                                                        : Claim
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <b>
-                                                                            ROT
-                                                                        </b>
-                                                                    </td>
-                                                                    <td>
-                                                                        : Wheel Alignment
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <b>
-                                                                            ROT Amount
-                                                                        </b>
-                                                                    </td>
-                                                                    <td>
-                                                                        : INR 2500
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <b>
-                                                                            Part No.
-                                                                        </b>
-                                                                    </td>
-                                                                    <td>
-                                                                        : 87655
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div><!-- Column -->
-                                            </div><!-- Row -->
+                                                    <div id="{{index}}" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>ROT Details</label>
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-dark-grey table-md">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th>
+                                                                                            <b>
+                                                                                                ROT 
+                                                                                            </b>
+                                                                                        </th>
+                                                                                        <th>
+                                                                                            ROT Amount
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr ng-repeat="(index, campaign_labour) in campaign.campaign_labours">
+                                                                                        <td>{{campaign_labour.code}}</td>  
+                                                                                        <td>{{campaign_labour.pivot.amount}}</td>  
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-6">
+                                                                    <div class="form-group">
+                                                                        <label>Part Details</label>
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-dark-grey table-md">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th>
+                                                                                            <b>
+                                                                                                Part Number 
+                                                                                            </b>
+                                                                                        </th>
+                                                                                        <th>
+                                                                                            <b>
+                                                                                                Part Code 
+                                                                                            </b>
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr ng-repeat="(index, campaign_part) in campaign.campaign_parts">
+                                                                                        <td>{{campaign_part.code}}</td>  
+                                                                                        <td>{{campaign_part.name}}</td>  
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                            </div><!-- Row -->
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                            </div><!-- Panel Group -->
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="common-checkbox type-2">
-                                                            <input type="checkbox" id="check_verify" ng-click="$ctrl.checkbox()" />
+                                                            <input type="checkbox" id="check_verify" ng-value="1" ng-checked="job_order.is_dms_verified == 1"  ng-click="$ctrl.checkbox()" />
                                                             <label for="check_verify">
                                                                 <b>
                                                                     Verified in DMS
