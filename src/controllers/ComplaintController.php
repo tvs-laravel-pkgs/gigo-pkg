@@ -3,6 +3,7 @@
 namespace Abs\GigoPkg;
 use App\Http\Controllers\Controller;
 use Abs\GigoPkg\Complaint;
+use Abs\GigoPkg\ComplaintGroup;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -36,7 +37,7 @@ class ComplaintController extends Controller {
 				'complaints.id',
 				'complaints.name',
 				'complaints.code',
-				'complaint_groups.code',
+				'complaint_groups.code as group_code',
 				'complaints.hours',
 				'complaints.kms',
 				'complaints.months',
@@ -45,13 +46,33 @@ class ComplaintController extends Controller {
 			->leftJoin('complaint_groups', 'complaint_groups.id', 'complaints.group_id')
 			->where('complaints.company_id', Auth::user()->company_id)
 			->where(function ($query) use ($request) {
-				if (!empty($request->short_name)) {
-					$query->where('complaints.code', 'LIKE', '%' . $request->short_name . '%');
+				if (!empty($request->code)) {
+					$query->where('complaints.code', 'LIKE', '%' . $request->code . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('complaints.name', 'LIKE', '%' . $request->name . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->group)) {
+					$query->where('complaints.group_id', $request->group);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->hour)) {
+					$query->where('complaints.hours', $request->hour);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->kms)) {
+					$query->where('complaints.kms', 'LIKE', '%' . $request->kms . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->month)) {
+					$query->where('complaints.months', 'LIKE', '%' . $request->month . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
@@ -112,7 +133,8 @@ class ComplaintController extends Controller {
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
-				'group_id.required' => 'Group is Required',
+				'group_id.required' => 'Complaint Group is Required',
+				'group_id.unique' => 'Complaint Group is already taken',
 				'kms.max' => 'Kilometer is Maximum 10 Charachers',
 				'hours.max' => 'Hours is Maximum 10 Charachers',
 				'months.max' => 'Hours is Maximum 8 Charachers',
@@ -122,19 +144,19 @@ class ComplaintController extends Controller {
 					'required:true',
 					'min:3',
 					'max:32',
-					'unique:complaint,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					'unique:complaints,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'name' => [
-					'nullable',
+					'required:true',
 					'min:3',
 					'max:191',
-					'unique:complaint,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					'unique:complaints,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'group_id' => [
-					'nullable',
-					'min:3',
-					'max:191',
-					'unique:complaint,group_id,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					'required:true',
+					'unique:complaints,code,' . $request->id . ',id,group_id,' . $request->group_id . ',company_id,' . Auth::user()->company_id,
+                    'unique:complaints,name,' . $request->id . ',id,group_id,' . $request->group_id . ',company_id,' . Auth::user()->company_id,
+  
 				],
 			], $error_messages);
 			if ($validator->fails()) {
@@ -143,34 +165,34 @@ class ComplaintController extends Controller {
 
 			DB::beginTransaction();
 			if (!$request->id) {
-				$complaint_group = new ComplaintGroup;
-				$complaint_group->created_by_id = Auth::user()->id;
-				$complaint_group->created_at = Carbon::now();
-				$complaint_group->updated_at = NULL;
+				$complaint = new Complaint;
+				$complaint->created_by_id = Auth::user()->id;
+				$complaint->created_at = Carbon::now();
+				$complaint->updated_at = NULL;
 			} else {
-				$complaint_group = ComplaintGroup::withTrashed()->find($request->id);
-				$complaint_group->updated_by_id = Auth::user()->id;
-				$complaint_group->updated_at = Carbon::now();
+				$complaint = Complaint::withTrashed()->find($request->id);
+				$complaint->updated_by_id = Auth::user()->id;
+				$complaint->updated_at = Carbon::now();
 			}
-			$complaint_group->company_id = Auth::user()->company_id;
-			$complaint_group->fill($request->all());
+			$complaint->company_id = Auth::user()->company_id;
+			$complaint->fill($request->all());
 			if ($request->status == 'Inactive') {
-				$complaint_group->deleted_at = Carbon::now();
+				$complaint->deleted_at = Carbon::now();
 			} else {
-				$complaint_group->deleted_at = NULL;
+				$complaint->deleted_at = NULL;
 			}
-			$complaint_group->save();
+			$complaint->save();
 
 			DB::commit();
 			if (!($request->id)) {
 				return response()->json([
 					'success' => true,
-					'message' => 'Complaint Group Added Successfully',
+					'message' => 'Complaint  Added Successfully',
 				]);
 			} else {
 				return response()->json([
 					'success' => true,
-					'message' => 'Complaint Group Updated Successfully',
+					'message' => 'Complaint  Updated Successfully',
 				]);
 			}
 		} catch (Exceprion $e) {
@@ -186,10 +208,10 @@ class ComplaintController extends Controller {
 		DB::beginTransaction();
 		//dd($request->id);
 		try {
-			$complaint_group = ComplaintGroup::withTrashed()->where('id', $request->id)->forceDelete();
-			if ($complaint_group) {
+			$complaint = Complaint::withTrashed()->where('id', $request->id)->forceDelete();
+			if ($complaint) {
 				DB::commit();
-				return response()->json(['success' => true, 'message' => 'Complaint Group Deleted Successfully']);
+				return response()->json(['success' => true, 'message' => 'Complaint Deleted Successfully']);
 			}
 		} catch (Exception $e) {
 			DB::rollBack();

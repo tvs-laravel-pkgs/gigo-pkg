@@ -1106,7 +1106,9 @@ class VehicleInwardController extends Controller {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
-					'errors' => ['Job order Not found!'],
+					'errors' => [
+						'Job order Not found!',
+					],
 				]);
 			}
 
@@ -1146,7 +1148,7 @@ class VehicleInwardController extends Controller {
 			DB::commit();
 			return response()->json([
 				'success' => true,
-				'message' => 'Vehicle inventory items added successfully',
+				'message' => 'Vehicle inventory items saved successfully',
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -1285,7 +1287,7 @@ class VehicleInwardController extends Controller {
 			DB::commit();
 			return response()->json([
 				'success' => true,
-				'message' => 'Vehicle DMS checklist added successfully',
+				'message' => 'Vehicle DMS checklist saved successfully',
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -2290,7 +2292,7 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'message' => 'VOC Added Successfully',
+				'message' => 'VOC Saved Successfully',
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -2395,13 +2397,13 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			//EMPLOYEE
-			if ($request->road_test_done_by_id == 8101) {
+			if ($request->is_road_test_required == 1 && $request->road_test_done_by_id == 8101) {
 				if (!$request->road_test_performed_by_id) {
 					return response()->json([
 						'success' => false,
 						'error' => 'Validation Error',
 						'errors' => [
-							'The road test performed by id field is required.',
+							'Driver for Road Test is required.',
 						],
 					]);
 				}
@@ -2431,7 +2433,7 @@ class VehicleInwardController extends Controller {
 			DB::commit();
 			return response()->json([
 				'success' => true,
-				'message' => 'Road Test Observation Added Successfully',
+				'message' => 'Road Test Observation Saved Successfully',
 			]);
 		} catch (\Exception $e) {
 			// DB::rollBack();
@@ -2484,7 +2486,9 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => false,
 				'error' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -2531,13 +2535,15 @@ class VehicleInwardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'message' => 'Expert Diagnosis Report Added Successfully',
+				'message' => 'Expert Diagnosis Report Saved Successfully',
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
 				'error' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}

@@ -61,10 +61,10 @@ app.component('complaintList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'code', name: 'complaints.code',searchable: true },
                 { data: 'name', name: 'complaints.name' ,searchable: true },
-                { data: 'name', name: 'complaint_groups.code' ,searchable: true },
-                { data: 'name', name: 'complaints.hours' ,searchable: true },
-                { data: 'name', name: 'complaints.kms' ,searchable: true },
-                 { data: 'name', name: 'complaints.months' ,searchable: true },
+                { data: 'group_code', name: 'complaint_groups.code' ,searchable: true },
+                { data: 'hours', name: 'complaints.hours' ,searchable: true },
+                { data: 'kms', name: 'complaints.kms' ,searchable: true },
+                 { data: 'months', name: 'complaints.months' ,searchable: true },
                 { data: 'status', name: '' },
 
             ],
@@ -146,8 +146,12 @@ app.component('complaintList', {
             $('#complaint-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#short_name").val('');
+            $("#code").val('');
             $("#name").val('');
+            $("#group").val('');
+            $("#hour").val('');
+            $("#kms").val('');
+            $("#month").val('');
             $("#status").val('');
             //dataTables.fnFilter();
         }
@@ -207,8 +211,6 @@ app.component('complaintForm', {
                 },
                 'group_id': {
                     required: true,
-                    minlength: 3,
-                    maxlength: 10,
                 },
                 'hours': {
                     maxlength: 10,
