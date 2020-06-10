@@ -79,6 +79,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//Complaint
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'complaint',
+				'display_name' => 'Complaint',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'complaint',
+				'name' => 'add-complaint',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'complaint',
+				'name' => 'edit-complaint',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'complaint',
+				'name' => 'delete-complaint',
+				'display_name' => 'Delete',
+			],
+
 			//Pause Work Reason
 			[
 				'display_order' => 99,
