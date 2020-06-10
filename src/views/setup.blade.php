@@ -8,6 +8,20 @@
 	app.config(['$routeProvider', function($routeProvider) {
 
 	    $routeProvider.
+	    //Fault
+	    when('/gigo-pkg/fault/list', {
+	        template: '<fault-list></fault-list>',
+	        title: 'Faults',
+	    }).
+	    when('/gigo-pkg/fault/add', {
+	        template: '<fault-form></fault-form>',
+	        title: 'Add Fault',
+	    }).
+	    when('/gigo-pkg/fault/edit/:id', {
+	        template: '<fault-form></fault-form>',
+	        title: 'Edit Fault',
+	    }).
+
 	     //Repair Order Types
 	    when('/gigo-pkg/repair-order-type/list', {
 	        template: '<repair-order-type-list></repair-order-type-list>',
@@ -143,6 +157,20 @@
 	        title: 'Edit Parts Indent',
 	    }).
 
+	    //Complaint Group
+	     when('/gigo-pkg/complaint-group/list', {
+	        template: '<complaint-group-list></complaint-group-list>',
+	        title: 'Complaint Groups',
+	    }).
+	    when('/gigo-pkg/complaint-group/add', {
+	        template: '<complaint-group-form></complaint-group-form>',
+	        title: 'Add Complaint Group',
+	    }).
+	    when('/gigo-pkg/complaint-group/edit/:id', {
+	        template: '<complaint-group-form></complaint-group-form>',
+	        title: 'Edit Complaint Group',
+	    }).
+
 
 	    //Kanban App
 	     when('/gigo-pkg/kanban-app', {
@@ -156,6 +184,10 @@
 	    });
 
 	}]);
+
+	//Faults
+    var fault_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/fault/list.html')}}";
+    var fault_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/fault/form.html')}}";
 
 	//Repair Orders
     var repair_order_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/list.html')}}";
@@ -179,6 +211,10 @@
     var quote_type_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/list.html')}}";
     var quote_type_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/quote-type/form.html')}}";
 
+     //Complaint Group
+    var complaint_group_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint-group/list.html')}}";
+    var complaint_group_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint-group/form.html')}}";
+
      //Vehicle
     var vehicle_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/list.html')}}";
     var vehicle_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/form.html')}}";
@@ -201,6 +237,7 @@
      var parts_indent_edit_parts_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/edit-parts.html')}}";
 
 </script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/fault/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/controller.js')}}"></script>
@@ -212,6 +249,7 @@
 
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint-group/controller.js')}}"></script>
 
 
 <script type='text/javascript'>

@@ -61,16 +61,33 @@
                                             Bay Areas
                                         </h6>
                                         <ul class="bay-assignment-list">
-                                            <li class="bay-assignment-list-item " ng-class="{'bg-white': (bay.status_id == '8240' && bay.selected ==false) , 'bg-red type-2': (bay.status_id ==' 8241' && bay.selected ==false && bay.id !=job_card.bay_id) ,'bg-green':bay.selected ==true} " ng-repeat="(index,bay) in  extras.bay_list" ng-click="OnselectBay(bay);">
+                                            <li ng-if="bay.area_type_id==8680" class="bay-assignment-list-item " ng-class="{'bg-white': (bay.status_id == '8240' && bay.selected ==false) , 'bg-red type-2': (bay.status_id =='8241' && bay.selected ==false && bay.id !=job_card.bay_id) ,'bg-green':bay.selected ==true} " ng-repeat="(index,bay) in  extras.bay_list" ng-click="OnselectBay(bay);">
                                                 <!-- <li class="bay-assignment-list-item " ng-class="{'bg-white': (bay.status_id == '8240' && bay.selected ==false) , 'bg-red type-2': (bay.status_id ==' 8241' && bay.selected ==false) ,'bg-green':bay.selected ==true} " ng-repeat="(index,bay) in  extras.bay_list" ng-click="OnselectBay(bay);"> -->
                                                 <span class="title">
                                                     {{bay.name}}
                                                 </span>
                                                 <img class="img-responsive img-center" ng-if="bay.status_id == '8241' && bay.selected==false " src="./public/theme/img/content/truck-red.svg" />
-                                                <span class="info" ng-if="bay.status_id == '8240'">
+                                                <span class="info">
                                                     {{bay.status.name}}
                                                 </span>
-                                                <span class="info" ng-if="bay.status_id == '8241' && bay.selected==false ">
+                                                <span class="info" ng-if="bay.status_id == '8241' && bay.selected==false">
+                                                    ETA {{bay.job_order.estimated_delivery_date ? bay.job_order.estimated_delivery_date : ''  }}
+                                                </span>
+                                            </li>
+                                        </ul>
+                                        <h6 class="title">
+                                            Parking Areas
+                                        </h6>
+                                        <ul class="bay-assignment-list">
+                                            <li ng-if="bay.area_type_id==8681" class="bay-assignment-list-item " ng-repeat="(index,bay) in  extras.bay_list " ng-class="{'border-yellow type-3':(bay.status_id == '8240' && bay.selected ==false),'border-yellow type-2': (bay.status_id =='8241' && bay.selected ==false && bay.id !=job_card.bay_id), 'bg-green':bay.selected ==true} " ng-click="OnselectBay(bay);">
+                                                <span class="title">
+                                                    {{bay.name}}
+                                                </span>
+                                                <img class="img-responsive img-center" ng-if="bay.status_id == '8241' && bay.selected==false" src="./public/theme/img/content/truck-yellow.svg" />
+                                                <span class="info pt-20">
+                                                    {{bay.status.name}}
+                                                </span>
+                                                <span class="info" ng-if="bay.status_id == '8241' && bay.selected==false">
                                                     ETA {{bay.job_order.estimated_delivery_date ? bay.job_order.estimated_delivery_date : ''  }}
                                                 </span>
                                             </li>
