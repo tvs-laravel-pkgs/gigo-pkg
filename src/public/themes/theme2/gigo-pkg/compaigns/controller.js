@@ -13,8 +13,9 @@ app.component('compaignsList', {
         }
         self.add_permission = self.hasPermission('add-service-type');
         var table_scroll;
+
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#service_types_list').DataTable({
+        var dataTable = $('#campaigns_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -43,20 +44,23 @@ app.component('compaignsList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getServiceTypeList'],
+                url: laravel_routes['getCampaignList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
-                    d.name = $("#name").val();
+                    d.authorization_code = $("#authorization_code").val();
+                    d.complaint_code = $("#complaint_code").val();
+                    d.fault_code = $("#fault_code").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'service_types.code', searchable: true },
-                { data: 'name', name: 'service_types.name', searchable: true },
+                { data: 'authorisation_no', name: 'compaigns.authorisation_no', searchable: true },
+                { data: 'complaint_code', name: 'compaigns.complaint_code', searchable: true },
+                { data: 'fault_code', name: 'compaigns.fault_code', searchable: true },
+                { data: 'claim_type_name', name: 'configs.name', searchable: true },
                 { data: 'status', name: '' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -71,13 +75,13 @@ app.component('compaignsList', {
 
         $scope.clear_search = function() {
             $('#search_service_type').val('');
-            $('#service_types_list').DataTable().search('').draw();
+            $('#campaigns_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#service_types_list').DataTable().ajax.reload();
+            $('#campaigns_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#service_types_list').dataTable();
+        var dataTables = $('#campaigns_list').dataTable();
         $("#search_service_type").keyup(function() {
             dataTables.fnFilter(this.value);
         });
@@ -105,9 +109,8 @@ app.component('compaignsList', {
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getServiceTypeFilterData']
+            laravel_routes['getCampaignFilterData']
         ).then(function(response) {
-            // console.log(response);
             self.extras = response.data.extras;
         });
         $element.find('input').on('keydown', function(ev) {
@@ -132,8 +135,9 @@ app.component('compaignsList', {
             $('#service-type-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#short_name").val('');
-            $("#name").val('');
+            $("#authorization_code").val('');
+            $("#complaint_code").val('');
+            $("#fault_code").val('');
             $("#status").val('');
             //dataTables.fnFilter();
         }
@@ -156,17 +160,18 @@ app.component('compaignsForm', {
         }
         self.angular_routes = angular_routes;
         $http.get(
-            laravel_routes['getServiceTypeFormData'], {
+            laravel_routes['getCampaignFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
             }
         ).then(function(response) {
-            self.service_type = response.data.service_type;
+            self.campaign = response.data.campaign;
+            self.claim_types = response.data.claim_types;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
-                if (self.service_type.deleted_at) {
+                if (self.campaign.deleted_at) {
                     self.switch_value = 'Inactive';
                 } else {
                     self.switch_value = 'Active';
@@ -176,12 +181,29 @@ app.component('compaignsForm', {
             }
         });
 
+        //Search Vehicle Model
+        self.searchVehicleModel = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getVehicleModelSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
+
         //Add New Labour
         self.addNewLabour = function() {
-            self.service_type.service_type_labours.push({
-                pivot: [
-                // switch_value: 'Active',
-                ],
+            self.campaign.campaign_labours.push({
+                pivot: [],
             });
         }
 
@@ -207,22 +229,20 @@ app.component('compaignsForm', {
         $scope.getSelectedLabour = function(index, labour_detail) {
             if (labour_detail) {
                 $('.labour_type' + index).html(labour_detail.repair_order_type);
-                $('.labour_quantity' + index).html(labour_detail.hours);
-                $('.labour_value' + index).html(labour_detail.amount);
+                $('#labour_amount' + index).val('');
             } else {
                 $('.labour_type' + index).html('-');
-                $('.labour_quantity' + index).html('-');
-                $('.labour_value' + index).html('-');
+                $('#labour_amount' + index).val('');
             }
         }
 
         self.removeLabour = function(index) {
-            self.service_type.service_type_labours.splice(index, 1);
+            self.campaign.campaign_labours.splice(index, 1);
         }
 
         //Add New Part
         self.addNewPart = function() {
-            self.service_type.service_type_parts.push({
+            self.campaign.campaign_parts.push({
                 pivot: [],
             });
         }
@@ -248,32 +268,14 @@ app.component('compaignsForm', {
         $scope.getSelectedPart = function(index, part_detail) {
             if (part_detail) {
                 $('.part_type' + index).html(part_detail.tax_code_type);
-                $('#part_hour' + index).val(part_detail.rate);
             } else {
                 $('.part_type' + index).html('-');
-                $('#part_hour' + index).val('');
-                $('#part_qty' + index).val('');
-                $('#part_amount' + index).val('');
             }
         }
 
         self.removePart = function(index) {
-            self.service_type.service_type_parts.splice(index, 1);
+            self.campaign.campaign_parts.splice(index, 1);
         }
-
-        $(document).on('keyup', ".change_quantity", function() {
-            var qty = $(this).val();
-            var index = $(this).data('index');
-            var total_amount = 0;
-            setTimeout(function() {
-                var rate = $('#part_hour' + index).val();
-                if (rate > 0 || !isNaN(rate)) {
-                    total_amount = rate * qty;
-                    total_amount = total_amount.toFixed(2);
-                }
-                $('#part_amount' + index).val(parseFloat(total_amount));
-            }, 100);
-        });
 
         //Save Form Data 
         var form_id = '#service_type_form';
@@ -288,6 +290,9 @@ app.component('compaignsForm', {
                 'name': {
                     minlength: 3,
                     maxlength: 191,
+                },
+                'manufacture_date': {
+                    required: true,
                 },
             },
             messages: {
@@ -307,7 +312,7 @@ app.component('compaignsForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveServiceType'],
+                        url: laravel_routes['saveCampaign'],
                         method: "POST",
                         data: formData,
                         processData: false,

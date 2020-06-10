@@ -51,10 +51,10 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Short Name
+                                                    Code
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.estimation_type.short_name" name="short_name" placeholder="Enter Short Name" autofocus />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.estimation_type.code" name="code" placeholder="Enter Code" autofocus />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -69,9 +69,10 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Description
+                                                    Minimum Amount
+                                                    <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.estimation_type.description" name="description" placeholder="Enter Name" />
+                                                <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control required" ng-model="$ctrl.estimation_type.minimum_amount" name="minimum_amount" placeholder="Enter Minimum Amount" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">

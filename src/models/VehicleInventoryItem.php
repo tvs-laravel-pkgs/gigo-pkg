@@ -98,7 +98,9 @@ class VehicleInventoryItem extends Model {
 			return response()->json([
 				'success' => false,
 				'error' => 'Validation Error',
-				'errors' => ['Job Order Not Found!'],
+				'errors' => [
+					'Job Order Not Found!',
+				],
 			]);
 		}
 		$vehicle_inventory_items = $job_order->vehicleInventoryItem()->orderBy('id')->get()->toArray();

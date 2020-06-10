@@ -8,10 +8,10 @@ app.component('estimationTypeList', {
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('estimation-types')) {
-            window.location = "#!/page-permission-denied";
+            window.location = "#!/permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-estimation-type');
+        self.add_permission = self.hasPermission('estimation-types');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
         var dataTable = $('#estimation_types_list').DataTable({
@@ -47,18 +47,18 @@ app.component('estimationTypeList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
+                    d.code = $("#code").val();
                     d.name = $("#name").val();
-                    d.description = $("#description").val();
+                    d.minimum_amount = $("#minimum_amount").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'estimation_types.short_name' },
+                { data: 'code', name: 'estimation_types.code' },
                 { data: 'name', name: 'estimation_types.name' },
-                { data: 'description', name: 'estimation_types.description' },
+                { data: 'minimum_amount', name: 'estimation_types.minimum_amount' },
                 { data: 'status', name: '' },
 
             ],
@@ -128,22 +128,21 @@ app.component('estimationTypeList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
             dataTables.fnFilter();
-        });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
-            dataTables.fnFilter();
+            $('#estimation-type-filter-modal').modal('hide');
         }
+
         $scope.reset_filter = function() {
-            $("#short_name").val('');
+            $("#code").val('');
             $("#name").val('');
+            $("#minimum_amount").val('');
             $("#status").val('');
-            dataTables.fnFilter();
+            // dataTables.fnFilter();
         }
+
         $rootScope.loading = false;
     }
 });
@@ -155,11 +154,13 @@ app.component('estimationTypeForm', {
     templateUrl: estimation_type_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-estimation-type') || !self.hasPermission('edit-estimation-type')) {
-            window.location = "#!/page-permission-denied";
+        if (!self.hasPermission('add-estimation-type') && !self.hasPermission('edit-estimation-type')) {
+            window.location = "#!/permission-denied";
             return false;
         }
+
         self.angular_routes = angular_routes;
         $http.get(
             laravel_routes['getEstimationTypeFormData'], {
@@ -187,33 +188,28 @@ app.component('estimationTypeForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
+                'code': {
                     required: true,
                     minlength: 3,
-                    maxlength: 32,
+                    maxlength: 64,
                 },
                 'name': {
                     required: true,
                     minlength: 3,
-                    maxlength: 128,
+                    maxlength: 64,
                 },
-                'description': {
-                    minlength: 3,
-                    maxlength: 255,
+                'minimum_amount': {
+                    required: true,
                 }
             },
             messages: {
-                'short_name': {
+                'code': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 32 Characters',
+                    maxlength: 'Maximum 64 Characters',
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 128 Characters',
-                },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
+                    maxlength: 'Maximum 64 Characters',
                 }
             },
             invalidHandler: function(event, validator) {
@@ -237,11 +233,7 @@ app.component('estimationTypeForm', {
                         } else {
                             if (!res.success == true) {
                                 $('.submit').button('reset');
-                                var errors = '';
-                                for (var i in res.errors) {
-                                    errors += '<li>' + res.errors[i] + '</li>';
-                                }
-                                custom_noty('error', errors);
+                                showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
                                 $location.path('/gigo-pkg/estimation-type/list');

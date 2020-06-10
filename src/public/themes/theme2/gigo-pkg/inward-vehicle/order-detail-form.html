@@ -138,20 +138,6 @@
                                                                 <div class="col-md-3">
                                                                     <div class="form-group">
                                                                         <label>
-                                                                            KM Reading
-                                                                            <sup class="mandatory">
-                                                                                *
-                                                                            </sup>
-                                                                            <small class="float-right text-grey">
-                                                                                LR : 100008
-                                                                            </small>
-                                                                        </label>
-                                                                        <input type="text" class="form-control" placeholder="Enter KM Reading" autocomplete="off" ng-model="job_order.km_reading" name="km_reading" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
-                                                                    </div><!-- Feild -->
-                                                                </div><!-- Column -->
-                                                                <div class="col-md-3">
-                                                                    <div class="form-group">
-                                                                        <label>
                                                                             Reading Type
                                                                             <sup class="mandatory">
                                                                                 *
@@ -170,6 +156,31 @@
                                                                         <input type="hidden" name="km_reading_type_id" value="{{job_order.km_reading_type.id}}">
                                                                     </div><!-- Feild -->
                                                                 </div><!-- Column -->
+                                                                <div class="col-md-3" ng-if="job_order.km_reading_type.id == 8040">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            KM Reading
+                                                                            <sup class="mandatory">
+                                                                                *
+                                                                            </sup>
+                                                                            <small class="float-right text-grey" ng-if="job_order.vehicle.lastJobOrder && job_order.vehicle.lastJobOrder.km_reading">
+                                                                                LR : {{job_order.vehicle.lastJobOrder.km_reading}}
+                                                                            </small>
+                                                                        </label>
+                                                                        <input type="text" class="form-control" placeholder="Enter KM Reading" autocomplete="off" ng-model="job_order.km_reading" name="km_reading" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-3" ng-if="job_order.km_reading_type.id == 8041">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            HR Reading
+                                                                            <sup class="mandatory">
+                                                                                *
+                                                                            </sup>
+                                                                        </label>
+                                                                        <input type="text" class="form-control" placeholder="Enter HR Reading" autocomplete="off" ng-model="job_order.hr_reading" name="hr_reading" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
                                                                 <div class="col-md-3">
                                                                     <div class="form-group">
                                                                         <label>
@@ -185,7 +196,7 @@
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
-                                                <div class="panel panel-default type-3">
+                                                <div class="panel panel-default type-3" ng-if="job_order.vehicle.lastJobOrder">
                                                     <div class="panel-heading">
                                                         <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
                                                             Previous Job Card Details

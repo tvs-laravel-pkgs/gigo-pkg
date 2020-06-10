@@ -1949,12 +1949,12 @@ app.component('inwardVehicleCustomerDetail', {
                         maxlength: 6,
                     },
                     'gst_number': {
-                        minlength: 6,
-                        maxlength: 32,
+                        minlength: 15,
+                        maxlength: 15,
                     },
                     'pan_number': {
-                        minlength: 6,
-                        maxlength: 32,
+                        minlength: 10,
+                        maxlength: 10,
                     },
                     'ownership_type_id': {
                         required: true,
@@ -2202,6 +2202,10 @@ app.component('inwardVehicleOrderDetailForm', {
                         required: true,
                         number: true,
                     },
+                    'hr_reading': {
+                        required: true,
+                        maxlength: 10,
+                    },
                     'km_reading_type_id': {
                         required: true,
                     },
@@ -2227,20 +2231,6 @@ app.component('inwardVehicleOrderDetailForm', {
                         required: true,
                     },
                 },
-                messages: {
-                    'short_name': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 32 Characters',
-                    },
-                    'name': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 128 Characters',
-                    },
-                    'description': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 255 Characters',
-                    }
-                },
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all sections');
                 },
@@ -2265,7 +2255,7 @@ app.component('inwardVehicleOrderDetailForm', {
                             $scope.button_action(id, 2);
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
@@ -2397,8 +2387,7 @@ app.component('inwardVehicleInventoryDetailForm', {
 
         //Save Form Data 
         $scope.saveInventoryForm = function(id) {
-            $('#slide_val').val($('#range_val').text());
-            console.log($('#slide_val').val());
+            $('#slide_val').val($('#range_val').val());
             var form_id = '#inventory_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -2436,7 +2425,7 @@ app.component('inwardVehicleInventoryDetailForm', {
                             }
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);

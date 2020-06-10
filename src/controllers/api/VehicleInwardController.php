@@ -682,7 +682,10 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Order Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Order Not Found!',
+					],
 				]);
 			}
 
@@ -706,7 +709,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -723,23 +729,26 @@ class VehicleInwardController extends Controller {
 				'driver_name' => [
 					'required',
 					'string',
-					'max:191',
+					'max:64',
 				],
-				//issue : saravanan - Add max 10 rule for mobile number
 				'driver_mobile_number' => [
 					'required',
 					'min:10',
 					'max:10',
 					'string',
 				],
-				'km_reading' => [
-					'required',
-					'numeric',
-				],
 				'km_reading_type_id' => [
 					'required',
 					'integer',
 					'exists:configs,id',
+				],
+				'km_reading' => [
+					'required_if:km_reading_type_id,==,8040',
+					'numeric',
+				],
+				'hr_reading' => [
+					'required_if:km_reading_type_id,==,8041',
+					'numeric',
 				],
 				'type_id' => [
 					'required',
@@ -756,13 +765,6 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:service_types,id',
 				],
-
-				/*'outlet_id' => [
-					'required',
-					'integer',
-					'exists:outlets,id',
-				],*/
-
 				'contact_number' => [
 					'nullable',
 					'min:10',
@@ -791,12 +793,10 @@ class VehicleInwardController extends Controller {
 			]);
 
 			if ($validator->fails()) {
-				$errors = $validator->errors()->all();
-				$success = false;
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
-					'errors' => [$validator->errors()->all()],
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
 				]);
 			}
 
@@ -804,21 +804,10 @@ class VehicleInwardController extends Controller {
 
 			//JOB ORDER SAVE
 			$job_order = JobOrder::find($request->job_order_id);
-			$job_order->number = mt_rand(1, 10000);
 			$job_order->fill($request->all());
-			$job_order->company_id = Auth::user()->company_id;
+			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->updated_at = Carbon::now();
 			$job_order->save();
-			if ($job_order->exists) {
-				$job_order->updated_by_id = Auth::user()->id;
-				$job_order->updated_at = Carbon::now();
-			} else {
-				$job_order->created_by_id = Auth::user()->id;
-				$job_order->created_at = Carbon::now();
-			}
-			$job_order->fill($request->all());
-			$job_order->save();
-
-			//issue : saravanan - save attachment code optimisation
 
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
@@ -859,7 +848,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1020,10 +1012,11 @@ class VehicleInwardController extends Controller {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
-					'errors' => ['Job Order Not Found!'],
+					'errors' => [
+						'Job Order Not Found!',
+					],
 				]);
 			}
-			// issue : saravanan - use one get list function. Field type id condition missing
 			$params['field_type_id'] = [11, 12];
 			$extras = [
 				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order->id, $params),
@@ -1038,7 +1031,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1156,7 +1152,9 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => false,
 				'error' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
