@@ -233,29 +233,83 @@ class VehicleInwardController extends Controller {
 			}
 
 			//SCHEDULE MAINTENANCE
-			$schedule_maintenance_part_amount = 0;
-			$schedule_maintenance_labour_amount = 0;
-			$schedule_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 1)->get();
-			if (!empty($schedule_maintenance['labour_details'])) {
-				foreach ($schedule_maintenance['labour_details'] as $key => $value) {
-					$schedule_maintenance_labour_amount += $value->amount;
-					$value->repair_order = $value->repairOrder;
-					$value->repair_order_type = $value->repairOrder->repairOrderType;
-				}
-			}
-			$schedule_maintenance['labour_amount'] = $schedule_maintenance_labour_amount;
+			$labour_amount = 0;
+			$part_amount = 0;
 
-			$schedule_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 1)->get();
-			if (!empty($schedule_maintenance['part_details'])) {
-				foreach ($schedule_maintenance['part_details'] as $key => $value) {
-					$schedule_maintenance_part_amount += $value->amount;
-					$value->part = $value->part;
+			$repair_order_details = JobOrderRepairOrder::with([
+				'repairOrder',
+				'repairOrder.repairOrderType',
+			])
+				->where('job_order_repair_orders.is_recommended_by_oem', 1)
+				->where('job_order_repair_orders.job_order_id', $r->id)->get();
+
+			$labour_details = array();
+			if ($repair_order_details) {
+				foreach ($repair_order_details as $key => $value) {
+					$labour_details[$key]['id'] = $value->repair_order_id;
+					$labour_details[$key]['name'] = $value->repairOrder->code . ' | ' . $value->repairOrder->name;
+					$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
+					$labour_details[$key]['qty'] = $value->qty;
+					$labour_details[$key]['amount'] = $value->amount;
+					$labour_details[$key]['is_free_service'] = $value->is_free_service;
+					if ($value->is_free_service != 1) {
+						$labour_amount += $value->amount;
+					}
 				}
 			}
-			$schedule_maintenance['part_amount'] = $schedule_maintenance_part_amount;
+			$schedule_maintenance['labour_details'] = $labour_details;
+			$schedule_maintenance['labour_amount'] = $labour_amount;
+
+			$parts_details = JobOrderPart::with([
+				'part',
+				'part.taxCode',
+			])
+				->where('job_order_parts.is_oem_recommended', 1)
+				->where('job_order_parts.job_order_id', $r->id)->get();
+
+			$part_details = array();
+			if ($parts_details) {
+				foreach ($parts_details as $key => $value) {
+					$part_details[$key]['id'] = $value->part_id;
+					$part_details[$key]['name'] = $value->part->code . ' | ' . $value->part->name;
+					$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
+					$part_details[$key]['rate'] = $value->rate;
+					$part_details[$key]['qty'] = $value->qty;
+					$part_details[$key]['amount'] = $value->amount;
+					$part_details[$key]['is_free_service'] = $value->is_free_service;
+					if ($value->is_free_service != 1) {
+						$part_amount += $value->amount;
+					}
+				}
+			}
+
+			$schedule_maintenance['part_details'] = $part_details;
+			$schedule_maintenance['part_amount'] = $part_amount;
 
 			$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
-			// dd($schedule_maintenance['labour_details']);
+
+			// $schedule_maintenance_part_amount = 0;
+			// $schedule_maintenance_labour_amount = 0;
+			// $schedule_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 1)->get();
+			// if (!empty($schedule_maintenance['labour_details'])) {
+			// 	foreach ($schedule_maintenance['labour_details'] as $key => $value) {
+			// 		$schedule_maintenance_labour_amount += $value->amount;
+			// 		$value->repair_order = $value->repairOrder;
+			// 		$value->repair_order_type = $value->repairOrder->repairOrderType;
+			// 	}
+			// }
+			// $schedule_maintenance['labour_amount'] = $schedule_maintenance_labour_amount;
+
+			// $schedule_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 1)->get();
+			// if (!empty($schedule_maintenance['part_details'])) {
+			// 	foreach ($schedule_maintenance['part_details'] as $key => $value) {
+			// 		$schedule_maintenance_part_amount += $value->amount;
+			// 		$value->part = $value->part;
+			// 	}
+			// }
+			// $schedule_maintenance['part_amount'] = $schedule_maintenance_part_amount;
+
+			// // dd($schedule_maintenance['labour_details']);
 
 			//PAYABLE LABOUR AND PART
 			$payable_part_amount = 0;
@@ -1374,6 +1428,7 @@ class VehicleInwardController extends Controller {
 					'repairOrder',
 					'repairOrder.repairOrderType',
 				])
+					->where('job_order_repair_orders.is_recommended_by_oem', 1)
 					->where('job_order_repair_orders.job_order_id', $r->id)->get();
 
 				$labour_details = array();
@@ -1420,6 +1475,7 @@ class VehicleInwardController extends Controller {
 					'part',
 					'part.taxCode',
 				])
+					->where('job_order_parts.is_oem_recommended', 1)
 					->where('job_order_parts.job_order_id', $r->id)->get();
 
 				$part_details = array();
