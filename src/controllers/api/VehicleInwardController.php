@@ -2389,13 +2389,13 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			//EMPLOYEE
-			if ($request->road_test_done_by_id == 8101) {
+			if ($request->is_road_test_required == 1 && $request->road_test_done_by_id == 8101) {
 				if (!$request->road_test_performed_by_id) {
 					return response()->json([
 						'success' => false,
 						'error' => 'Validation Error',
 						'errors' => [
-							'The road test performed by id field is required.',
+							'Driver for Road Test is required.',
 						],
 					]);
 				}

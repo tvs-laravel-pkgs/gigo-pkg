@@ -5,7 +5,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/static/gigo/indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/inward-vehicle/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title">
@@ -48,11 +48,11 @@
                                                             Road Test Required ?
                                                         </label>
                                                         <div class="common-radio-button type-4">
-                                                            <input type="radio" id="registered" name="is_road_test_required" ng-value="1" value="1" ng-model="job_order.is_road_test_required" ng-checked="job_order.is_road_test_required == 1">
+                                                            <input type="radio" id="registered" name="is_road_test_required" ng-value="1" value="1" ng-model="job_order.is_road_test_required" ng-checked="job_order.is_road_test_required">
                                                             <label for="registered">
                                                                 Yes
                                                             </label>
-                                                            <input type="radio" id="unregistered" name="is_road_test_required" ng-value="0" value="0" ng-model="job_order.is_road_test_required" ng-checked="job_order.is_road_test_required != 1">
+                                                            <input type="radio" id="unregistered" name="is_road_test_required" ng-value="0" value="0" ng-model="job_order.is_road_test_required" ng-checked="!job_order.is_road_test_required">
                                                             <label for="unregistered">
                                                                 No
                                                             </label>
@@ -85,9 +85,9 @@
                                                             Select Driver For Road Test
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="job_order.road_test_performed_by_id" placeholder="Select employee" md-on-close="clearSearchDriver()" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select ng-model="job_order.road_test_performed_by_id" placeholder="Select Employee" data-md-container-class="selectdemoSelectHeader">
                                                             <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchDriver" type="search" placeholder="Search for a employee.." class="demo-header-searchbox md-text">
+                                                                <input ng-model="searchDriver" type="search" placeholder="Search for a employee.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
                                                             <md-optgroup>
                                                                 <md-option ng-value="employee.id" ng-repeat="employee in extras.user_list | filter:searchDriver">
@@ -104,8 +104,7 @@
                                                             Road Test Observations
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <textarea class="form-control required" rows="4" placeholder="Enter Observations" name="road_test_report">{{job_order.road_test_report}}
-                                                        </textarea>
+                                                        <textarea class="form-control" rows="4" placeholder="Enter Observations" name="road_test_report">{{job_order.road_test_report}}</textarea>
                                                         <div id="errorRoadTestObservation"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
