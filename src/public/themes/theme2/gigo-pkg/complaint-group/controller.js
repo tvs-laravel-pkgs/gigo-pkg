@@ -55,9 +55,9 @@ app.component('complaintGroupList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'complaint_groups.code',searchable: true },
-                { data: 'name', name: 'complaint_groups.name' ,searchable: true },
-               /* { data: 'description', name: 'quote_types.description' },*/
+                { data: 'code', name: 'complaint_groups.code', searchable: true },
+                { data: 'name', name: 'complaint_groups.name', searchable: true },
+                /* { data: 'description', name: 'quote_types.description' },*/
                 { data: 'status', name: '' },
 
             ],
@@ -188,6 +188,7 @@ app.component('complaintGroupForm', {
                     maxlength: 32,
                 },
                 'name': {
+                    required: true,
                     minlength: 3,
                     maxlength: 191,
                 },

@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Validator;
 use Yajra\Datatables\Datatables;
 
-class ComplaintGropController extends Controller {
+class ComplaintGroupController extends Controller {
 
 	public function __construct() {
 		$this->data['theme'] = config('custom.theme');
@@ -103,6 +103,7 @@ class ComplaintGropController extends Controller {
 				'code.unique' => 'Code is already taken',
 				'code.min' => 'Code is Minimum 3 Charachers',
 				'code.max' => 'Code is Maximum 32 Charachers',
+				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
@@ -115,7 +116,7 @@ class ComplaintGropController extends Controller {
 					'unique:complaint_groups,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'name' => [
-					'nullable',
+					'required:true',
 					'min:3',
 					'max:191',
 					'unique:complaint_groups,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,

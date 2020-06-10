@@ -5,7 +5,7 @@ Content Wrap -->
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/quote-type/list" type="button" class="btn-back btn-img">
+                    <a href="#!/gigo-pkg/complaint-group/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
                     </a>
                 </div><!-- Page Header Content -->
@@ -13,7 +13,7 @@ Content Wrap -->
                     <h1 class="title"><b>{{$ctrl.action}} Complaint Group</b></h1>
                     <p class="subtitle">
                         Masters /
-                        <a href="#!/gigo-pkg/quote-type/list">
+                        <a href="#!/gigo-pkg/complaint-group/list">
                             Complaint Groups
                         </a> /
                         {{$ctrl.action}}
@@ -61,9 +61,9 @@ Content Wrap -->
                                             <div class="input-text form-group">
                                                 <label>
                                                     Name
-                                                    <sup class="mandatory"></sup>
+                                                    <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.complaint_group.name" name="name" placeholder="Enter Name" />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.complaint_group.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
