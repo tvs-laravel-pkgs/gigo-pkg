@@ -14,7 +14,7 @@ class EstimationType extends Model {
 	protected $table = 'estimation_types';
 	public $timestamps = true;
 	protected $fillable =
-		["id","company_id","minimum_amount","name"]
+		["id","company_id","code","minimum_amount","name"]
 	;
 
 	public function getDateOfJoinAttribute($value) {

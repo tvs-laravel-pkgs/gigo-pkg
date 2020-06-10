@@ -159,7 +159,7 @@
                                         <h5 class="color-primary mb-10"><b>Order Details</b></h5>
                                         <hr class="hr-15"><!-- Separater -->
                                         <ul class="card-list">
-                                            <li class="wid-4" ng-repeat="(index, job_order) in $ctrl.job_order">
+                                            <li class="wid-4" ng-repeat="(index, job_order) in $ctrl.job_order" ng-if="job_order.job_card.id != NULL">
                                                 <div class="card-box">
                                                     <div class="card-box-head">
                                                         <div class="card-box-head-title"><b>JC No : {{job_order.job_card.job_card_number}}</b></div>
