@@ -1,20 +1,20 @@
-<!-- Content Wrap -->
+Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/estimation-type/list" type="button" class="btn-back btn-img">
+                    <a href="#!/gigo-pkg/quote-type/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Estimation Type</b></h1>
+                    <h1 class="title"><b>{{$ctrl.action}} Complaint Group</b></h1>
                     <p class="subtitle">
                         Masters /
-                        <a href="#!/gigo-pkg/estimation-type/list">
-                            Estimation Types
+                        <a href="#!/gigo-pkg/quote-type/list">
+                            Complaint Groups
                         </a> /
                         {{$ctrl.action}}
                     </p>
@@ -24,8 +24,8 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
-        <form id="estimation_type_form" autocomplete="off">
-            <input type="hidden" name="id" value="{{$ctrl.estimation_type.id}}">
+        <form id="complaint_group_form" autocomplete="off">
+            <input type="hidden" name="id" value="{{$ctrl.complaint_group.id}}">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
                     <div class="tab-form-header">
@@ -54,25 +54,16 @@
                                                     Code
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.estimation_type.code" name="code" placeholder="Enter Code" autofocus />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.complaint_group.code" name="code" placeholder="Enter Code" autofocus />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Name
-                                                    <sup class="mandatory">*</sup>
+                                                    <sup class="mandatory"></sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.estimation_type.name" name="name" placeholder="Enter Name" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Minimum Amount
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control required" ng-model="$ctrl.estimation_type.minimum_amount" name="minimum_amount" placeholder="Enter Minimum Amount" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.complaint_group.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -95,7 +86,7 @@
                             <div class="tab-pane-footer">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <a href="#!/gigo-pkg/estimation-type/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
+                                        <a href="#!/gigo-pkg/complaint-group/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
                                         <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
                                     </div>
                                 </div>
@@ -106,4 +97,4 @@
             </div><!-- Page Form -->
         </form>
     </div><!-- Page Main Content -->
-</div><!-- Content Wrap -->
+</div><!-- Content Wrap

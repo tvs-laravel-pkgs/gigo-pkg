@@ -5,16 +5,17 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
+use Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class EstimationType extends Model {
+class ComplaintGroup extends Model {
 	use SeederTrait;
 	use SoftDeletes;
-	protected $table = 'estimation_types';
+	protected $table = 'complaint_groups';
 	public $timestamps = true;
 	protected $fillable =
-		["id","company_id","code","minimum_amount","name"]
+		["id", "company_id", "code", "name"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
@@ -60,17 +61,6 @@ class EstimationType extends Model {
 		return $record;
 	}
 
-	public static function getList($params = [], $add_default = true, $default_text = 'Select Estimation Type') {
-		$list = Collect(Self::select([
-			'id',
-			'name',
-		])
-				->orderBy('name')
-				->get());
-		if ($add_default) {
-			$list->prepend(['id' => '', 'name' => $default_text]);
-		}
-		return $list;
-	}
+	
 
 }

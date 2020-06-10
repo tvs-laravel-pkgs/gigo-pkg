@@ -2,6 +2,20 @@
 
 Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'prefix' => 'gigo-pkg'], function () {
 
+	//Fault
+	Route::get('/fault/get-list', 'FaultController@getFaultList')->name('getFaultList');
+	Route::get('/fault/get-form-data', 'FaultController@getFaultFormData')->name('getFaultFormData');
+	Route::post('/fault/save', 'FaultController@saveFault')->name('saveFault');
+	Route::get('/fault/delete', 'FaultController@deleteFault')->name('deleteFault');
+	Route::get('/fault/get-filter-data', 'FaultController@getFaultFilter')->name('getFaultFilter');
+
+	//Complaint Group
+	Route::get('/complaint-group/get-list', 'ComplaintGropController@getComplaintGroupList')->name('getComplaintGroupList');
+	Route::get('/complaint-group/get-form-data', 'ComplaintGropController@getComplaintGroupFormData')->name('getComplaintGroupFormData');
+	Route::post('/complaint-group/save', 'ComplaintGropController@saveComplaintGroup')->name('saveComplaintGroup');
+	Route::get('/complaint-group/delete', 'ComplaintGropController@deleteComplaintGroup')->name('deleteComplaintGroup');
+	Route::get('/complaint-group/get-filter-data', 'ComplaintGropController@getComplaintGroupFilterData')->name('getComplaintGroupFilterData');
+
 	//Parts Indent
 	Route::get('/parts-indent/get-list', 'PartsIndentController@getPartsindentList')->name('getPartsindentList');
 	Route::get('/parts-indent/get-filter-data', 'PartsIndentController@getPartsIndentFilter')->name('getPartsIndentFilter');
@@ -121,12 +135,20 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/bay/delete', 'BayController@deleteBay')->name('deleteBay');
 	Route::get('/bay/get-filter-data', 'BayController@getBayFilter')->name('getBayFilter');
 
+	//Campaign
+	Route::get('/campaign/get-list', 'CompaignController@getCampaignList')->name('getCampaignList');
+	Route::get('/campaign/get-form-data', 'CompaignController@getCampaignFormData')->name('getCampaignFormData');
+	Route::post('/campaign/save', 'CompaignController@saveCampaign')->name('saveCampaign');
+	Route::get('/campaign/delete', 'CompaignController@deleteCampaign')->name('deleteCampaign');
+	Route::get('/campaign/get-filter-data', 'CompaignController@getCampaignFilterData')->name('getCampaignFilterData');
+	Route::post('/campaign/vehicle-model/get-search-list', 'VehicleInwardController@getVehicleModelSearchList')->name('getVehicleModelSearchList');
+
 	//Estimation Type
 	Route::get('/estimation-type/get-list', 'EstimationTypeController@getEstimationTypeList')->name('getEstimationTypeList');
 	Route::get('/estimation-type/get-form-data', 'EstimationTypeController@getEstimationTypeFormData')->name('getEstimationTypeFormData');
 	Route::post('/estimation-type/save', 'EstimationTypeController@saveEstimationType')->name('saveEstimationType');
 	Route::get('/estimation-type/delete', 'EstimationTypeController@deleteEstimationType')->name('deleteEstimationType');
-	Route::get('/estimation-type/get-filter-data', 'EstimationTypeController@getEstimationTypeFilterData')->name('getEstimationTypeFilterData');
+	Route::get('/estimation-type/get-filter-data', 'EstimationTypeController@getEstimationTypeFilter')->name('getEstimationTypeFilter');
 
 	//Gate Pass
 	Route::get('/gate-pass/get-list', 'GatePassController@getGatePassList')->name('getGatePassList');

@@ -5,16 +5,16 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/estimation-type/list" type="button" class="btn-back btn-img">
+                    <a href="#!/gigo-pkg/fault/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Estimation Type</b></h1>
+                    <h1 class="title"><b>{{$ctrl.action}} Fault</b></h1>
                     <p class="subtitle">
                         Masters /
-                        <a href="#!/gigo-pkg/estimation-type/list">
-                            Estimation Types
+                        <a href="#!/gigo-pkg/fault/list">
+                            Faults
                         </a> /
                         {{$ctrl.action}}
                     </p>
@@ -24,8 +24,8 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
-        <form id="estimation_type_form" autocomplete="off">
-            <input type="hidden" name="id" value="{{$ctrl.estimation_type.id}}">
+        <form id="fault_form" autocomplete="off">
+            <input type="hidden" name="id" value="{{$ctrl.fault.id}}">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
                     <div class="tab-form-header">
@@ -54,7 +54,7 @@
                                                     Code
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.estimation_type.code" name="code" placeholder="Enter Code" autofocus />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.fault.code" name="code" placeholder="Enter Code" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -63,16 +63,7 @@
                                                     Name
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.estimation_type.name" name="name" placeholder="Enter Name" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Minimum Amount
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control required" ng-model="$ctrl.estimation_type.minimum_amount" name="minimum_amount" placeholder="Enter Minimum Amount" />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.fault.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -95,8 +86,12 @@
                             <div class="tab-pane-footer">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <a href="#!/gigo-pkg/estimation-type/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
-                                        <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
+                                        <a href="#!/gigo-pkg/fault/list" class="btn btn-secondary btn-prev my-tooltip">
+                                            Cancel
+                                        </a>
+                                        <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">
+                                            Submit
+                                        </button>
                                     </div>
                                 </div>
                             </div><!-- Tab Footer -->

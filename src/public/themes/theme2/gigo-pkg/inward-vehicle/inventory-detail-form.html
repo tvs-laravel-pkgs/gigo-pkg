@@ -58,8 +58,10 @@
                                                         <div class="slider-container">
                                                             <input type="hidden" name="vehicle_inventory_items[{{index}}][inventory_item_id]" value="{{inventory.id}}" />
                                                             <input type="hidden" name="vehicle_inventory_items[{{index}}][is_available]" value="1" />
-                                                            <input type="range" min="0" max="100" id="slide_val" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').innerHTML = this.value" />
-                                                            <label id="range_val">{{inventory.remarks}}</label>
+                                                            <input type="range" min="0" max="100" id="slide_val" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').value = this.value" />
+                                                            <!-- <input type="range" min="0" max="100" id="slide_val" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').innerHTML = this.value" /> -->
+                                                            <!-- <label id="range_val">{{inventory.remarks}}</label> -->
+                                                            <input type="hidden" id="range_val">
                                                             <div class="slider-lower-fill"></div>
                                                             <div class="slider-upper-fill"></div>
                                                             <div class="grid">

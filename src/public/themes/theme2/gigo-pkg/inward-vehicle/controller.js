@@ -1079,14 +1079,95 @@ app.component('inwardVehicleUpdatejcForm', {
         // }
         self.angular_routes = angular_routes;
 
+        /* Image Uploadify Funtion */
+        $('.image_uploadify').imageuploadify();
+
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_order_id = $routeParams.job_order_id;
 
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/get-update-jc-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //SEND OTP TO CUSTOMER
+        $scope.approveBehalfCustomer = function() {
+            $(".approval_behalf").button('loading');
+            $.ajax({
+                url: base_url + '/api/vehicle-inward/send/customer/otp',
+                type: "POST",
+                data: {
+                    id: $routeParams.job_order_id,
+                },
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+                success: function(response) {
+                    $(".approval_behalf").button('loading');
+                    console.log(response);
+                    $('#otp').modal('show');
+                    $('#otp_no').val('');
+                    $('#otp').on('shown.bs.modal', function() {
+                        $(this).find('[autofocus]').focus();
+                    });
+                    $('.customer_mobile_no').html(response.customer_detail.mobile_no);
+                    $(".approval_behalf").button('reset');
+                },
+                error: function(textStatus, errorThrown) {
+                    $(".approval_behalf").button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                }
+            });
+        }
+
+        //RESEND OTP
+        $scope.ResendOtp = function() {
+            $.ajax({
+                url: base_url + '/api/vehicle-inward/send/customer/otp',
+                type: "POST",
+                data: {
+                    id: $routeParams.job_order_id,
+                },
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+                success: function(response) {
+                    console.log(response);
+                    custom_noty('success', response.message);
+                },
+                error: function(textStatus, errorThrown) {
+                    custom_noty('error', 'Something went wrong at server');
+                }
+            });
+        }
 
         //Save Form Data 
-        $scope.saveSchedule = function() {
+        $scope.saveJobCard = function() {
             var form_id = '#form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -1101,15 +1182,9 @@ app.component('inwardVehicleUpdatejcForm', {
                         required: true,
                     },
                 },
-                messages: {
-
-                },
-                invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check all tabs');
-                },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
-                    $('.submit').button('loading');
+                    $('.save_close').button('loading');
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/job-card/save',
                             method: "POST",
@@ -1122,22 +1197,107 @@ app.component('inwardVehicleUpdatejcForm', {
                         })
                         .done(function(res) {
                             if (!res.success) {
-                                $('.submit').button('reset');
+                                $('.save_close').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/update-jc/form/' + $scope.job_order.id);
+                            $location.path('/inward-vehicle/table-list');
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
-                            $('.submit').button('reset');
+                            $('.save_close').button('reset');
                             custom_noty('error', 'Something went wrong at server');
                         });
                 }
             });
         }
 
+        $scope.send_customer_approval = function() {
+            $(".send_to_customer_approval").button('loading');
+            $.ajax({
+                url: base_url + '/api/vehicle-inward/verify/otp',
+                type: "POST",
+                data: {
+                    job_order_id: $routeParams.job_order_id,
+                },
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+                success: function(response) {
+                    custom_noty('success', res.message);
+                    $(".send_to_customer_approval").button('reset');
+                    $location.path('/inward-vehicle/table-list');
+                    $scope.$apply();
+                },
+                error: function(textStatus, errorThrown) {
+                    $(".send_to_customer_approval").button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                }
+            });
+        }
+
+        //OTP SEND
+        var approve_behalf_customer_confirm = '#approve_behalf_customer_confirm';
+        var v = jQuery(approve_behalf_customer_confirm).validate({
+            ignore: '',
+            rules: {
+                'otp_no': {
+                    required: true,
+                    number: true,
+                    minlength: 6,
+                    maxlength: 6,
+                },
+            },
+            messages: {
+                'otp_no': {
+                    required: 'OTP is required',
+                    number: 'OTP Must be a number',
+                    minlength: 'OTP Minimum 6 Characters',
+                    maxlength: 'OTP Maximum 6 Characters',
+                },
+            },
+            submitHandler: function(form) {
+                let formData = new FormData($(approve_behalf_customer_confirm)[0]);
+                $('.submit_confirm').button('loading');
+                $.ajax({
+                        url: base_url + '/api/vehicle-inward/verify/otp',
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                    })
+                    .done(function(res) {
+                        console.log(res);
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            $('.submit_confirm').button('reset');
+                            $('#otp_no').val('');
+                            $('#otp_no').focus();
+                            return;
+                        }
+                        console.log(res);
+                        $('.submit_confirm').button('reset');
+                        custom_noty('success', res.message);
+                        $('#otp_no').val('');
+                        $('#otp').modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                        $location.path('/inward-vehicle/table-list');
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        console.log(xhr);
+                        $('#otp_no').val('');
+                        $('.submit_confirm').button('reset');
+                        showServerErrorNoty();
+                    });
+            }
+        });
 
         $scope.showVehicleForm = function() {
             $scope.show_vehicle_detail = false;
@@ -1949,12 +2109,12 @@ app.component('inwardVehicleCustomerDetail', {
                         maxlength: 6,
                     },
                     'gst_number': {
-                        minlength: 6,
-                        maxlength: 32,
+                        minlength: 15,
+                        maxlength: 15,
                     },
                     'pan_number': {
-                        minlength: 6,
-                        maxlength: 32,
+                        minlength: 10,
+                        maxlength: 10,
                     },
                     'ownership_type_id': {
                         required: true,
@@ -2202,6 +2362,10 @@ app.component('inwardVehicleOrderDetailForm', {
                         required: true,
                         number: true,
                     },
+                    'hr_reading': {
+                        required: true,
+                        maxlength: 10,
+                    },
                     'km_reading_type_id': {
                         required: true,
                     },
@@ -2227,20 +2391,6 @@ app.component('inwardVehicleOrderDetailForm', {
                         required: true,
                     },
                 },
-                messages: {
-                    'short_name': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 32 Characters',
-                    },
-                    'name': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 128 Characters',
-                    },
-                    'description': {
-                        minlength: 'Minimum 3 Characters',
-                        maxlength: 'Maximum 255 Characters',
-                    }
-                },
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all sections');
                 },
@@ -2265,7 +2415,7 @@ app.component('inwardVehicleOrderDetailForm', {
                             $scope.button_action(id, 2);
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
@@ -2397,8 +2547,7 @@ app.component('inwardVehicleInventoryDetailForm', {
 
         //Save Form Data 
         $scope.saveInventoryForm = function(id) {
-            $('#slide_val').val($('#range_val').text());
-            console.log($('#slide_val').val());
+            $('#slide_val').val($('#range_val').val());
             var form_id = '#inventory_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -2436,7 +2585,7 @@ app.component('inwardVehicleInventoryDetailForm', {
                             }
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);

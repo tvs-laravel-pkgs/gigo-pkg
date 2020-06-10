@@ -5,16 +5,16 @@ Content Wrap -->
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/service-type/list" type="button" class="btn-back btn-img">
+                    <a href="#!/gigo-pkg/compaigns/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Service Type</b></h1>
+                    <h1 class="title"><b>{{$ctrl.action}} Campaign</b></h1>
                     <p class="subtitle">
                         Masters /
-                        <a href="#!/gigo-pkg/service-type/list">
-                            Service Types
+                        <a href="#!/gigo-pkg/compaigns/list">
+                            Campaigns
                         </a> /
                         {{$ctrl.action}}
                     </p>
@@ -25,7 +25,7 @@ Content Wrap -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
         <form id="service_type_form" autocomplete="off">
-            <input type="hidden" name="id" value="{{$ctrl.service_type.id}}">
+            <input type="hidden" name="id" value="{{$ctrl.campaign.id}}">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
                     <div class="tab-form-header">
@@ -61,29 +61,75 @@ Content Wrap -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Code
+                                                    Authorization Number
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.service_type.code" name="code" placeholder="Enter Code" autofocus />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.campaign.authorisation_no" name="authorisation_no" placeholder="Enter Authorization Number" autofocus />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Name
+                                                    Complaint Code
                                                     <sup class="mandatory"></sup>
                                                 </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.service_type.name" name="name" placeholder="Enter Name" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.campaign.complaint_code" name="complaint_code" placeholder="Enter Complaint Code" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
-                                        <!-- <div class="col-md-3">
+                                        <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Description
+                                                    Fault Code
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.service_type.description" name="description" placeholder="Enter Name" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.campaign.fault_code" name="fault_code" placeholder="Enter Fault Code" />
                                             </div>
-                                        </div> -->
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Claim Type <sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.campaign.claim_type_id" placeholder="Select Type" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchDrink" type="search" placeholder="Select Type" class="demo-header-searchbox md-text">
+                                                    </md-select-header>
+                                                    <md-optgroup label="drinks">
+                                                        <md-option ng-repeat="val in $ctrl.claim_types" value="{{val.id}}">{{val.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="material required" id="claim_type_id" name="claim_type_id" value="{{$ctrl.campaign.claim_type_id}}">
+                                                <!-- <div id="error_jobcard_type_id"></div> -->
+                                            </div><!-- Feild -->
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Vehicle Model<sup class="mandatory">*</sup>
+                                                </label>
+                                                <md-autocomplete md-items="option in $ctrl.searchVehicleModel($ctrl.modelSearchText)" md-selected-item="$ctrl.campaign.vehicle_model" md-search-text="$ctrl.modelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Code / Name" class="customer_group_id">
+                                                    <md-item-template>
+                                                        <span>
+                                                            {{option.number}} - {{option.model_name}}
+                                                        </span>
+                                                    </md-item-template>
+                                                    <md-not-found>
+                                                        No Vehicle Model Found "{{$ctrl.modelSearchText}}" were found.
+                                                    </md-not-found>
+                                                </md-autocomplete>
+                                                <input type="hidden" id="" class="required" name="vehicle_model_id" value="{{$ctrl.campaign.vehicle_model.id}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Manufacture Date<sup class="mandatory">*</sup>
+                                                </label>
+                                                <div class="input-group date" data-provide="datepicker">
+                                                    <input type="text" name="manufacture_date" value="{{$ctrl.campaign.manufacture_date}}" readonly class="form-control required" placeholder="Select Date" />
+                                                    <div class="input-group-addon">
+                                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                    </div>
+                                                </div><!-- Input Group -->
+                                            </div>
+                                        </div>
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
@@ -111,14 +157,12 @@ Content Wrap -->
                                                         <tr>
                                                             <th class="width-250">Labour Detail</th>
                                                             <th class="width-200">Labour Type</th>
-                                                            <th class="width-60">Quantity</th>
-                                                            <th class="width-30">Labour Value</th>
-                                                            <th class="width-30">Is Free Service</th>
+                                                            <th class="width-60">Amount</th>
                                                             <th class="width-30"></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr ng-repeat="(index, repair_order) in $ctrl.service_type.service_type_labours">
+                                                        <tr ng-repeat="(index, repair_order) in $ctrl.campaign.campaign_labours">
                                                             <td>
                                                                 <md-autocomplete md-items="option in $ctrl.searchLabour(option.repair_order_search)" md-selected-item="repair_order.name" md-selected-item-change="getSelectedLabour(index,repair_order.name)" md-search-text="option.repair_order_search" md-item-text="option.code" md-min-length="3" placeholder="Repair Order code / Name" class="customer_group_id">
                                                                     <md-item-template>
@@ -133,16 +177,7 @@ Content Wrap -->
                                                                 <input type="hidden" id="" class="required" name="labours[{{index}}][id]" value="{{repair_order.name.id}}">
                                                             </td>
                                                             <td class="labour_type{{index}}">{{repair_order.name.repair_order_type}}</td>
-                                                            <td class="labour_quantity{{index}}">{{repair_order.name.hours}}</td>
-                                                            <td class="labour_value{{index}}">{{repair_order.name.amount}}</td>
-                                                            <td>
-                                                                <div class="tab-switch">
-                                                                    <md-switch ng-model="repair_order.name.switch_value" aria-label="Switch {{index}}" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn type-sm">
-                                                                        {{ repair_order.name.switch_value }}
-                                                                    </md-switch>
-                                                                    <input type="hidden" name="regions[{{index}}][status]" value="{{repair_order.name.switch_value}}">
-                                                                </div>
-                                                            </td>
+                                                            <td><input type="text" class="form-control required" id="labour_amount{{index}}" name="labours[{{index}}][amount]" value="{{repair_order.name.amount}}" /></td>
                                                             <td>
                                                                 <button type="button" class="btn btn-delete" ng-click="$ctrl.removeLabour(index)">
                                                                     <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
@@ -152,7 +187,7 @@ Content Wrap -->
                                                     </tbody>
                                                     <tfoot>
                                                         <tr>
-                                                            <td colspan="5">
+                                                            <td colspan="4">
                                                                 <button type="button" class="btn btn-primary-light btn-square" ng-click="$ctrl.addNewLabour()">+ Add More</button>
                                                             </td>
                                                         </tr>
@@ -173,14 +208,11 @@ Content Wrap -->
                                                         <tr>
                                                             <th class="width-250">Part Detail</th>
                                                             <th class="width-200">Tax Code Type</th>
-                                                            <th class="width-60">Rate</th>
-                                                            <th class="width-60">Quantity</th>
-                                                            <th class="width-30">Amount </th>
                                                             <th class="width-30"></th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr ng-repeat="(index, part) in $ctrl.service_type.service_type_parts">
+                                                        <tr ng-repeat="(index, part) in $ctrl.campaign.campaign_parts">
                                                             <td>
                                                                 <md-autocomplete md-items="option in $ctrl.searchPart(option.part_search)" md-selected-item="part.name" md-selected-item-change="getSelectedPart(index,part.name)" md-search-text="option.part_search" md-item-text="option.code" md-min-length="3" placeholder="Part code / Name" class="customer_group_id">
                                                                     <md-item-template>
@@ -195,9 +227,6 @@ Content Wrap -->
                                                                 <input type="hidden" id="" class="required" name="parts[{{index}}][id]" value="{{part.name.id}}">
                                                             </td>
                                                             <td class="part_type{{index}}">{{part.name.tax_code_type}}</td>
-                                                            <td class="part_amount{{index}}"><input type="text" class="form-control" readonly id="part_hour{{index}}" value="{{part.name.rate}}" /></td>
-                                                            <td><input type="text" class="form-control change_quantity required" id="part_qty{{index}}" maxlength="6" data-index="{{index}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="parts[{{index}}][qty]" value="{{part.name.quantity}}" /></td>
-                                                            <td><input type="text" class="form-control required" readonly id="part_amount{{index}}" name="parts[{{index}}][amount]" value="{{part.name.amount}}" /></td>
                                                             <td>
                                                                 <button type="button" class="btn btn-delete" ng-click="$ctrl.removePart(index)">
                                                                     <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
@@ -207,7 +236,7 @@ Content Wrap -->
                                                     </tbody>
                                                     <tfoot>
                                                         <tr>
-                                                            <td colspan="6">
+                                                            <td colspan="3">
                                                                 <button type="button" class="btn btn-primary-light btn-square" ng-click="$ctrl.addNewPart()">+ Add More</button>
                                                             </td>
                                                         </tr>
