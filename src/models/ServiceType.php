@@ -15,7 +15,7 @@ class ServiceType extends Model {
 	protected $table = 'service_types';
 	public $timestamps = true;
 	protected $fillable =
-		["id", "company_id", "code", "name"]
+		["company_id", "code", "name"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
@@ -27,11 +27,11 @@ class ServiceType extends Model {
 	}
 
 	public function serviceTypeLabours() {
-		return $this->belongsToMany('Abs\GigoPkg\RepairOrder', 'repair_order_service_type', 'service_type_id', 'repair_order_id');
+		return $this->belongsToMany('Abs\GigoPkg\RepairOrder', 'repair_order_service_type', 'service_type_id', 'repair_order_id')->withPivot(['is_free_service']);
 	}
 
 	public function serviceTypeParts() {
-		return $this->belongsToMany('Abs\PartPkg\Part', 'part_service_type', 'service_type_id', 'part_id')->withPivot(['quantity', 'amount']);
+		return $this->belongsToMany('Abs\PartPkg\Part', 'part_service_type', 'service_type_id', 'part_id')->withPivot(['quantity', 'amount', 'is_free_service']);
 	}
 
 	public static function createFromObject($record_data) {
