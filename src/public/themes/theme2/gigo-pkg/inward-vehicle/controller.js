@@ -491,7 +491,7 @@ app.component('inwardVehicleExportDiagnosisDetailForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/inspection-detail/form/' + $scope.job_order.id);
@@ -615,7 +615,7 @@ app.component('inwardVehicleInspectionDetailForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/dms-checklist/form/' + $scope.job_order.id);
@@ -3116,9 +3116,8 @@ app.component('inwardVehicleVocDetailForm', {
         $scope.job_order_id = $routeParams.job_order_id;
 
         //FETCH DATA
-        // $scope.fetchData = function() {
-        $rootScope.loading = true;
-        $.ajax({
+        $scope.fetchData = function() {
+            $.ajax({
                 url: base_url + '/api/vehicle-inward/voc/get-form-data',
                 method: "POST",
                 data: {
@@ -3129,7 +3128,6 @@ app.component('inwardVehicleVocDetailForm', {
                 },
             })
             .done(function(res) {
-                $rootScope.loading = false;
                 if (!res.success) {
                     showErrorNoty(res);
                     return;
@@ -3137,18 +3135,17 @@ app.component('inwardVehicleVocDetailForm', {
                 // self.job_order = $scope.job_order = res.job_order;
                 $scope.job_order = res.job_order;
                 $scope.extras = res.extras;
-                if (res.action == "Add") {
+                if (res.action == "add") {
                     $scope.addNewCustomerVoice();
                 }
                 $scope.action = res.action;
                 $scope.$apply();
             })
             .fail(function(xhr) {
-                $rootScope.loading = false;
                 custom_noty('error', 'Something went wrong at server');
             });
-        // }
-        // $scope.fetchData();
+        }
+        $scope.fetchData();
 
         //Save Form Data 
         $scope.saveVocDetailForm = function(id) {
@@ -3263,7 +3260,6 @@ app.component('inwardVehicleRoadTestDetailForm', {
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
         $scope.fetchData = function() {
-            $rootScope.loading = true;
             $.ajax({
                     url: base_url + '/api/vehicle-inward/road-test-observation/get-form-data',
                     method: "POST",
@@ -3275,7 +3271,6 @@ app.component('inwardVehicleRoadTestDetailForm', {
                     },
                 })
                 .done(function(res) {
-                    $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -3283,11 +3278,18 @@ app.component('inwardVehicleRoadTestDetailForm', {
                     $scope.gate_log_detail = res.gate_log_detail;
                     $scope.job_order = res.job_order;
 
+                    if(!$scope.job_order.is_road_test_required){
+                        $scope.job_order.is_road_test_required = 0;
+                    }
+
+                    if(!$scope.job_order.road_test_done_by_id){
+                        $scope.job_order.road_test_done_by_id = 8100;
+                    }
+
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
-                    $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
@@ -3306,6 +3308,9 @@ app.component('inwardVehicleRoadTestDetailForm', {
                         required: true,
                     },
                     'road_test_performed_by_id': {
+                        required: true,
+                    },
+                    'road_test_report': {
                         required: true,
                     },
                 },
@@ -3331,7 +3336,6 @@ app.component('inwardVehicleRoadTestDetailForm', {
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
-                    $rootScope.loading = true;
                     $scope.button_action(id, 1);
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/road-test-observation/save',
@@ -3343,14 +3347,13 @@ app.component('inwardVehicleRoadTestDetailForm', {
                         .done(function(res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
-                                $rootScope.loading = false;
                                 showErrorNoty(res);
                                 return;
                             }
 
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order_id);
@@ -3358,7 +3361,6 @@ app.component('inwardVehicleRoadTestDetailForm', {
                             }
                         })
                         .fail(function(xhr) {
-                            $rootScope.loading = false;
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
                         });

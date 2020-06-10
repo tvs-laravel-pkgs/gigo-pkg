@@ -671,7 +671,6 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
-
 			//My JobCard
 			[
 				'display_order' => 99,
@@ -679,7 +678,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'my-jobcard',
 				'display_name' => 'My JobCard List',
 			],
-			
+
 			//Job Order Repair Orders
 			[
 				'display_order' => 99,
@@ -1005,6 +1004,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'parent' => 'mobile-gate-in-entry',
 				'name' => 'mobile-material-gate-passes-own-only',
 				'display_name' => 'Own Only',
+			],
+
+			//Campaign
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'campaign',
+				'display_name' => 'Bays',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'campaign',
+				'name' => 'add-campaign',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'campaign',
+				'name' => 'edit-campaign',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'campaign',
+				'name' => 'delete-campaign',
+				'display_name' => 'Delete',
 			],
 
 		];
