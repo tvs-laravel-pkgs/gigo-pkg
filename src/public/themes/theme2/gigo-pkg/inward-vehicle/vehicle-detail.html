@@ -64,7 +64,7 @@
                                                         </span>
                                                         <span class="view-col-value">
                                                             <b>
-                                                                {{job_order.vehicle.model.name}}
+                                                                {{job_order.vehicle.model.model_name}}
                                                             </b>
                                                         </span>
                                                     </li>
@@ -133,10 +133,10 @@
                                                             Vehicle Model
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-autocomplete md-items="option in $ctrl.searchVehicleModel($ctrl.modelSearchText)" md-selected-item="job_order.vehicle.model" md-selected-item-change="selectedVehicleModel(job_order.vehicle.model.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                                        <md-autocomplete md-items="option in $ctrl.searchVehicleModel($ctrl.modelSearchText)" md-selected-item="job_order.vehicle.model" md-selected-item-change="selectedVehicleModel(job_order.vehicle.model.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
                                                             <md-item-template>
                                                                 <span>
-                                                                    {{option.name}}
+                                                                    {{option.model_name}}
                                                                 </span>
                                                             </md-item-template>
                                                             <md-not-found>
