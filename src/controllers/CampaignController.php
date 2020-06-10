@@ -6,6 +6,7 @@ use Abs\GigoPkg\RepairOrder;
 use Abs\PartPkg\Part;
 use App\Config;
 use App\Http\Controllers\Controller;
+use App\VehicleModel;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -42,23 +43,28 @@ class CompaignController extends Controller {
 				DB::raw('IF(compaigns.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->where('compaigns.company_id', Auth::user()->company_id)
-		// ->where(function ($query) use ($request) {
-		// 	if (!empty($request->authorisation_no)) {
-		// 		$query->where('compaigns.authorisation_no', 'LIKE', '%' . $request->authorisation_no . '%');
-		// 	}
-		// })
-		// ->where(function ($query) use ($request) {
-		// 	if (!empty($request->complaint_code)) {
-		// 		$query->where('complaint_code.complaint_code', 'LIKE', '%' . $request->complaint_code . '%');
-		// 	}
-		// })
-		// ->where(function ($query) use ($request) {
-		// 	if ($request->status == '1') {
-		// 		$query->whereNull('compaigns.deleted_at');
-		// 	} else if ($request->status == '0') {
-		// 		$query->whereNotNull('compaigns.deleted_at');
-		// 	}
-		// })
+			->where(function ($query) use ($request) {
+				if (!empty($request->authorisation_code)) {
+					$query->where('compaigns.authorisation_no', 'LIKE', '%' . $request->authorisation_no . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->complaint_code)) {
+					$query->where('compaigns.complaint_code', 'LIKE', '%' . $request->complaint_code . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->fault_code)) {
+					$query->where('compaigns.fault_code', 'LIKE', '%' . $request->fault_code . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if ($request->status == '1') {
+					$query->whereNull('compaigns.deleted_at');
+				} else if ($request->status == '0') {
+					$query->whereNotNull('compaigns.deleted_at');
+				}
+			})
 		;
 
 		return Datatables::of($compaigns)
@@ -86,23 +92,26 @@ class CompaignController extends Controller {
 	public function getCampaignFormData(Request $request) {
 		$id = $request->id;
 		if (!$id) {
-			$service_type = new Campaign;
-			$service_type->campaign_labours = [];
-			$service_type->campaign_parts = [];
+			$campaign = new Campaign;
+			$campaign->campaign_labours = [];
+			$campaign->campaign_parts = [];
 			$action = 'Add';
 		} else {
-			$service_type = Campaign::withTrashed()->find($id);
-			$service_type->campaign_labours = $labours = $service_type->campaignLabours()->select('id')->get();
-			if ($service_type->campaign_labours) {
+			$campaign = Campaign::withTrashed()->with([
+				'vehicleModel',
+			])->find($id);
+
+			$campaign->campaign_labours = $labours = $campaign->campaignLabours()->select('id')->get();
+			if ($campaign->campaign_labours) {
 				foreach ($labours as $key => $labour) {
-					$service_type->campaign_labours[$key]->name = RepairOrder::join('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')->join('compaign_repair_order', 'compaign_repair_order.repair_order_id', 'repair_orders.id')->where('compaign_repair_order.compaign_id', $id)->where('repair_orders.id', $labour->id)->select('repair_orders.id', 'repair_orders.code', 'compaign_repair_order.amount', 'repair_order_types.name as repair_order_type')->first();
+					$campaign->campaign_labours[$key]->name = RepairOrder::join('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')->join('compaign_repair_order', 'compaign_repair_order.repair_order_id', 'repair_orders.id')->where('compaign_repair_order.compaign_id', $id)->where('repair_orders.id', $labour->id)->select('repair_orders.id', 'repair_orders.code', 'compaign_repair_order.amount', 'repair_order_types.name as repair_order_type')->first();
 				}
 			}
 
-			$service_type->campaign_parts = $parts = $service_type->campaignParts()->select('id')->get();
-			if ($service_type->campaign_parts) {
+			$campaign->campaign_parts = $parts = $campaign->campaignParts()->select('id')->get();
+			if ($campaign->campaign_parts) {
 				foreach ($parts as $key => $part) {
-					$service_type->campaign_parts[$key]->name = Part::join('tax_codes', 'tax_codes.id', 'parts.tax_code_id')->join('compaign_part', 'compaign_part.part_id', 'parts.id')->where('parts.id', $part->id)->where('compaign_part.compaign_id', $id)->select('parts.id', 'parts.code', 'parts.name', 'tax_codes.code as tax_code_type')->first();
+					$campaign->campaign_parts[$key]->name = Part::join('tax_codes', 'tax_codes.id', 'parts.tax_code_id')->join('compaign_part', 'compaign_part.part_id', 'parts.id')->where('parts.id', $part->id)->where('compaign_part.compaign_id', $id)->select('parts.id', 'parts.code', 'parts.name', 'tax_codes.code as tax_code_type')->first();
 				}
 			}
 
@@ -116,7 +125,7 @@ class CompaignController extends Controller {
 		];
 
 		$this->data['success'] = true;
-		$this->data['service_type'] = $service_type;
+		$this->data['campaign'] = $campaign;
 		$this->data['claim_types'] = Config::getDropDownList($params);
 		$this->data['action'] = $action;
 		return response()->json($this->data);
@@ -133,7 +142,8 @@ class CompaignController extends Controller {
 				'complaint_code.max' => 'Complaint Code is Maximum 32 Charachers',
 				'fault_code.min' => 'Fault Code is Minimum 3 Charachers',
 				'fault_code.max' => 'Fault Code is Maximum 32 Charachers',
-
+				'manufacture_date.required' => 'Manufacture Date is Required',
+				'vehicle_model_id.required' => 'Vehicle Model is Required',
 			];
 			$validator = Validator::make($request->all(), [
 				'authorisation_no' => [
@@ -164,6 +174,12 @@ class CompaignController extends Controller {
 					'exists:parts,id',
 					'distinct',
 				],
+				'vehicle_model_id' => [
+					'required',
+					'integer',
+					'exists:models,id',
+				],
+				'manufacture_date' => 'required|date',
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
@@ -171,28 +187,28 @@ class CompaignController extends Controller {
 
 			DB::beginTransaction();
 			if (!$request->id) {
-				$service_type = new Campaign;
-				$service_type->created_by_id = Auth::user()->id;
-				$service_type->created_at = Carbon::now();
-				$service_type->updated_at = NULL;
+				$campaign = new Campaign;
+				$campaign->created_by_id = Auth::user()->id;
+				$campaign->created_at = Carbon::now();
+				$campaign->updated_at = NULL;
 			} else {
-				$service_type = Campaign::withTrashed()->find($request->id);
-				$service_type->updated_by_id = Auth::user()->id;
-				$service_type->updated_at = Carbon::now();
+				$campaign = Campaign::withTrashed()->find($request->id);
+				$campaign->updated_by_id = Auth::user()->id;
+				$campaign->updated_at = Carbon::now();
 			}
-			$service_type->fill($request->all());
-			$service_type->company_id = Auth::user()->company_id;
+			$campaign->fill($request->all());
+			$campaign->company_id = Auth::user()->company_id;
 			if ($request->status == 'Inactive') {
-				$service_type->deleted_at = Carbon::now();
-				$service_type->deleted_by_id = Auth::user()->id;
+				$campaign->deleted_at = Carbon::now();
+				$campaign->deleted_by_id = Auth::user()->id;
 			} else {
-				$service_type->deleted_by_id = NULL;
-				$service_type->deleted_at = NULL;
+				$campaign->deleted_by_id = NULL;
+				$campaign->deleted_at = NULL;
 			}
-			$service_type->save();
+			$campaign->save();
 
-			$service_type->campaignLabours()->sync([]);
-			$service_type->campaignParts()->sync([]);
+			$campaign->campaignLabours()->sync([]);
+			$campaign->campaignParts()->sync([]);
 
 			if ($request->labours) {
 				$total_labours = array_column($request->labours, 'id');
@@ -202,7 +218,7 @@ class CompaignController extends Controller {
 				}
 
 				foreach ($request->labours as $labour) {
-					$service_type->campaignLabours()->attach($labour['id'], ['amount' => $labour['amount']]);
+					$campaign->campaignLabours()->attach($labour['id'], ['amount' => $labour['amount']]);
 				}
 			}
 
@@ -214,7 +230,7 @@ class CompaignController extends Controller {
 				}
 
 				foreach ($request->parts as $parts) {
-					$service_type->campaignParts()->attach($parts['id']);
+					$campaign->campaignParts()->attach($parts['id']);
 				}
 			}
 
@@ -252,5 +268,9 @@ class CompaignController extends Controller {
 			DB::rollBack();
 			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
 		}
+	}
+
+	public function getVehicleModelSearchList(Request $request) {
+		return VehicleModel::searchVehicleModel($request);
 	}
 }
