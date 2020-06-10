@@ -85,9 +85,9 @@
                                                             Select Driver For Road Test
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="job_order.road_test_performed_by_id" placeholder="Select Employee" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select ng-model="job_order.road_test_performed_by_id" placeholder="Select Driver" data-md-container-class="selectdemoSelectHeader">
                                                             <md-select-header class="demo-select-header">
-                                                                <input ng-model="searchDriver" type="search" placeholder="Search for a employee.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                <input ng-model="searchDriver" type="search" placeholder="Search for a Driver.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
                                                             <md-optgroup>
                                                                 <md-option ng-value="employee.id" ng-repeat="employee in extras.user_list | filter:searchDriver">

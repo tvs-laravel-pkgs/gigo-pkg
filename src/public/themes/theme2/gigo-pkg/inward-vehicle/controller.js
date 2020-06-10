@@ -491,7 +491,7 @@ app.component('inwardVehicleExportDiagnosisDetailForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/inspection-detail/form/' + $scope.job_order.id);
@@ -615,7 +615,7 @@ app.component('inwardVehicleInspectionDetailForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/dms-checklist/form/' + $scope.job_order.id);
@@ -3281,7 +3281,7 @@ app.component('inwardVehicleRoadTestDetailForm', {
                     if(!$scope.job_order.is_road_test_required){
                         $scope.job_order.is_road_test_required = 0;
                     }
-                    
+
                     if(!$scope.job_order.road_test_done_by_id){
                         $scope.job_order.road_test_done_by_id = 8100;
                     }
@@ -3336,7 +3336,6 @@ app.component('inwardVehicleRoadTestDetailForm', {
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
-                    $rootScope.loading = true;
                     $scope.button_action(id, 1);
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/road-test-observation/save',
@@ -3348,14 +3347,13 @@ app.component('inwardVehicleRoadTestDetailForm', {
                         .done(function(res) {
                             $scope.button_action(id, 2);
                             if (!res.success) {
-                                $rootScope.loading = false;
                                 showErrorNoty(res);
                                 return;
                             }
 
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order_id);
@@ -3363,7 +3361,6 @@ app.component('inwardVehicleRoadTestDetailForm', {
                             }
                         })
                         .fail(function(xhr) {
-                            $rootScope.loading = false;
                             $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
                         });
