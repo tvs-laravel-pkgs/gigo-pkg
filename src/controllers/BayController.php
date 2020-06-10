@@ -71,8 +71,8 @@ class BayController extends Controller {
 				}
 			})
 			->where(function ($query) use ($request) {
-				if (!empty($request->area_type_id)) {
-					$query->where('bays.area_type_id', $request->area_type_id);
+				if (!empty($request->area_type)) {
+					$query->where('bays.area_type_id', $request->area_type);
 				}
 			})
 			->where(function ($query) use ($request) {

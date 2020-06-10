@@ -51,7 +51,7 @@ app.component('bayList', {
                     d.short_name = $('#short_name').val();
                     d.name = $('#name').val();
                     d.outlet = $('#outlet').val();
-                    d.area_type_id = $('#area_type_id').val();
+                    d.area_type = $('#area_type').val();
                     d.status = $("#status").val();
                 },
             },
@@ -126,7 +126,7 @@ app.component('bayList', {
             $('#outlet').val(outlet_selected);
         }
         $scope.onSelectedAreaType = function(area_type_selected) {
-            $('#area_type_id').val(area_type_selected);
+            $('#area_type').val(area_type_selected);
         }
         // $scope.onSelectedJobOrder = function(job_order_selected) {
         //     $('#job_order').val(job_order_selected);
@@ -156,7 +156,7 @@ app.component('bayList', {
             $("#short_name").val('');
             $("#name").val('');
             $("#outlet").val('');
-            $("#area_type_id").val('');
+            $("#area_type").val('');
             $("#status").val('');
         }
 
