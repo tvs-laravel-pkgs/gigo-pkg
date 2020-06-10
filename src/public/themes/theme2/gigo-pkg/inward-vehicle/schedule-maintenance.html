@@ -29,7 +29,7 @@
                                     <form id="form">
                                         <input type="hidden" name="job_order_id" value="{{job_order_id}}">
                                         <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>Scheduled Maintenance (1st Free Service - BSIV)</b></h5>
+                                            <h5 class="color-primary mb-10"><b>Scheduled Maintenance ({{job_order.service_type.name}})</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="table-responsive">
                                                 <table class="table table-dark-grey">
@@ -47,34 +47,39 @@
                                                             <th class="wid-180 white-space text-right">
                                                                 Labour Value
                                                             </th>
-                                                            <th class="wid-100"></th>
+                                                            <!-- <th class="wid-100"></th> -->
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr class="ptb-12" ng-repeat="(index, labour_details) in labour_details" id="tr_{{index}}">
                                                             <td>
-                                                                {{labour_details.code}}|{{labour_details.name}}
+                                                                {{labour_details.name}}
                                                                 <input type="hidden" class="lab_amount" id="labour_amount_{{index}}" name="job_order_repair_orders[{{index}}][amount]" value="{{labour_details.amount}}">
                                                                 <input type="hidden" name="job_order_repair_orders[{{index}}][repair_order_id]" value="{{labour_details.id}}">
                                                                 <input type="hidden" name="job_order_repair_orders[{{index}}][qty]" value="{{labour_details.qty}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][amount]" value="{{labour_details.amount}}">
                                                                 <input type="hidden" name="job_order_repair_orders[{{index}}][remarks]" value="{{labour_details.remarks}}">
                                                                 <input type="hidden" name="job_order_repair_orders[{{index}}][observation]" value="{{labour_details.observation}}">
+                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][is_free_service]" value="{{labour_details.is_free_service}}">
                                                                 <input type="hidden" name="job_order_repair_orders[{{index}}][action_taken]" value="{{labour_details.action_taken}}">
                                                             </td>
                                                             <td>
                                                                 {{labour_details.name}}
                                                             </td>
                                                             <td class="text-right">
-                                                                {{labour_details.hours}}
+                                                                {{labour_details.qty}}
                                                             </td>
-                                                            <td class="wid-180 white-space text-right">
+                                                            <td class="wid-180 white-space text-right" ng-if="labour_details.is_free_service == 1">
+                                                                <p class="text-danger">{{labour_details.amount}}</p>
+                                                            </td>
+                                                            <td class="wid-180 white-space text-right" ng-if="labour_details.is_free_service != 1">
                                                                 {{labour_details.amount}}
                                                             </td>
-                                                            <td class="wid-100">
+                                                            <!-- <td class="wid-100">
                                                                 <button type="button" class="btn img-btn btn-delete">
                                                                     <img href="javascript:;" data-toggle="modal" data-target="#delete_labour_details" ng-click="$ctrl.removeLabourDetails(index,labour_details.id)" class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
-                                                            </td>
+                                                            </td> -->
                                                         </tr>
                                                         <tr>
                                                             <td colspan="3" class="text-right">
@@ -88,8 +93,8 @@
                                                                     {{labour_amount}}
                                                                 </b>
                                                             </td>
-                                                            <td class="wid-100">
-                                                            </td>
+                                                            <!-- <td class="wid-100">
+                                                            </td> -->
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -114,34 +119,39 @@
                                                             <th class="wid-180 white-space text-right">
                                                                 Amount
                                                             </th>
-                                                            <th class="wid-100"></th>
+                                                            <!-- <th class="wid-100"></th> -->
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <tr class="ptb-12" ng-repeat="(index, part_details) in part_details" id="tp_{{index}}">
                                                             <td>
-                                                                {{part_details.name}} | {{part_details.code}}
-                                                            </td>
-                                                            <td>
                                                                 {{part_details.name}}
                                                             </td>
+                                                            <td>
+                                                                {{part_details.type}}
+                                                            </td>
                                                             <td class="text-right">
-                                                                {{part_details.amount}}
+                                                                {{part_details.rate}}
                                                             </td>
                                                             <td class="text-right">
                                                                 {{part_details.qty}}
                                                                 <input type="hidden" name="job_order_parts[{{index}}][part_id]" value="{{part_details.id}}">
                                                                 <input type="hidden" name="job_order_parts[{{index}}][qty]" value="{{part_details.qty}}">
                                                                 <input type="hidden" id="part_amount_{{index}}" class="parts_rate" name="job_order_parts[{{index}}][rate]" value="{{part_details.rate}}">
+                                                                <input type="hidden" id="part_amount_{{index}}" class="parts_amount" name="job_order_parts[{{index}}][amount]" value="{{part_details.amount}}">
+                                                                <input type="hidden" name="job_order_parts[{{index}}][is_free_service]" value="{{part_details.is_free_service}}">
                                                             </td>
-                                                            <td class="wid-180 white-space text-right">
-                                                                {{part_details.rate}}
+                                                            <td class="wid-180 white-space text-right" ng-if="part_details.is_free_service == 1">
+                                                                <p class="text-danger">{{part_details.amount}}</p>
                                                             </td>
-                                                            <td class="wid-100">
+                                                            <td class="wid-180 white-space text-right" ng-if="part_details.is_free_service != 1">
+                                                                {{part_details.amount}}
+                                                            </td>
+                                                            <!--  <td class="wid-100">
                                                                 <button type="button" class="btn img-btn btn-delete">
                                                                     <img href="javascript:;" data-toggle="modal" data-target="#delete_parts_details" ng-click="$ctrl.delete_parts_details(index,part_details.id)" class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
-                                                            </td>
+                                                            </td> -->
                                                         </tr>
                                                         <tr>
                                                             <td colspan="4" class="text-right">
@@ -155,8 +165,8 @@
                                                                     {{parts_rate}}
                                                                 </b>
                                                             </td>
-                                                            <td class="wid-100">
-                                                            </td>
+                                                            <!-- <td class="wid-100">
+                                                            </td> -->
                                                         </tr>
                                                     </tbody>
                                                 </table>

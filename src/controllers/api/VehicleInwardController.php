@@ -1315,6 +1315,11 @@ class VehicleInwardController extends Controller {
 					'vehicle.model',
 					'vehicle.status',
 					'status',
+					'serviceType',
+					'serviceType.serviceTypeLabours',
+					'serviceType.serviceTypeLabours.repairOrderType',
+					'serviceType.serviceTypeParts',
+					'serviceType.serviceTypeParts.taxCode',
 				])
 				->select([
 					'job_orders.*',
@@ -1332,44 +1337,110 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
+
+			if (!$job_order->service_type_id) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Order details not found',
+					],
+				]);
+			}
+
+			$labour_amount = 0;
+			$parts_rate = 0;
+
 			$job_order_parts = JobOrderPart::where('job_order_id', $r->id)->first();
 			$job_order_repair_orders = JobOrderRepairOrder::where('job_order_id', $r->id)->first();
-			if (!$job_order_parts) {
-				$part_details = Part::with([
-					'uom',
-					'taxCode',
-				])->get();
 
-				$labour_details = RepairOrder::with([
-					'repairOrderType',
-					'uom',
-					'taxCode',
-					'skillLevel',
-				])->get();
+			if (!$job_order_repair_orders) {
+				if ($job_order->serviceType->serviceTypeLabours) {
+					$labour_details = array();
+					foreach ($job_order->serviceType->serviceTypeLabours as $key => $value) {
+						$labour_details[$key]['id'] = $value->id;
+						$labour_details[$key]['name'] = $value->code . ' | ' . $value->name;
+						$labour_details[$key]['type'] = $value->repairOrderType ? $value->repairOrderType->short_name : '-';
+						$labour_details[$key]['qty'] = $value->hours;
+						$labour_details[$key]['amount'] = $value->amount;
+						$labour_details[$key]['is_free_service'] = $value->pivot->is_free_service;
+						if ($value->pivot->is_free_service != 1) {
+							$labour_amount += $value->amount;
+						}
+					}
+				}
 			} else {
-				$part_details = JobOrderPart::select('parts.id as id', 'parts.name', 'parts.code', 'job_order_parts.rate', 'job_order_parts.qty', 'job_order_parts.amount')
-					->leftJoin('parts', 'parts.id', 'job_order_parts.part_id', 'job_order_parts.id as del_part_id')->where('job_order_parts.job_order_id', $r->id)->get();
-
-				$labour_details = JobOrderRepairOrder::select('repair_orders.id', 'job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id', 'job_order_repair_orders.qty')
-					->leftJoin('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')
-					->leftJoin('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')
+				$repair_order_details = JobOrderRepairOrder::with([
+					'repairOrder',
+					'repairOrder.repairOrderType',
+				])
 					->where('job_order_repair_orders.job_order_id', $r->id)->get();
+
+				$labour_details = array();
+				if ($repair_order_details) {
+					foreach ($repair_order_details as $key => $value) {
+						$labour_details[$key]['id'] = $value->repair_order_id;
+						$labour_details[$key]['name'] = $value->repairOrder->code . ' | ' . $value->repairOrder->name;
+						$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
+						$labour_details[$key]['qty'] = $value->qty;
+						$labour_details[$key]['amount'] = $value->amount;
+						$labour_details[$key]['remarks'] = $value->remarks;
+						$labour_details[$key]['observation'] = $value->observation;
+						$labour_details[$key]['action_taken'] = $value->action_taken;
+						$labour_details[$key]['is_free_service'] = $value->is_free_service;
+						if ($value->is_free_service != 1) {
+							$labour_amount += $value->amount;
+						}
+					}
+				}
+				// $labour_details1 = JobOrderRepairOrder::select('repair_orders.id', 'job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id', 'job_order_repair_orders.qty')
+				// 	->leftJoin('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')
+				// 	->leftJoin('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')
+				// 	->where('job_order_repair_orders.job_order_id', $r->id)->get();
 			}
 
-			$parts_rate = 0;
-			$labour_amount = 0;
-			$total_amount = 0;
+			if (!$job_order_parts) {
+				if ($job_order->serviceType->serviceTypeParts) {
+					$part_details = array();
+					foreach ($job_order->serviceType->serviceTypeParts as $key => $value) {
+						$part_details[$key]['id'] = $value->id;
+						$part_details[$key]['name'] = $value->code . ' | ' . $value->name;
+						$part_details[$key]['type'] = $value->taxCode ? $value->taxCode->code : '-';
+						$part_details[$key]['rate'] = $value->rate;
+						$part_details[$key]['qty'] = $value->pivot->quantity;
+						$part_details[$key]['amount'] = $value->pivot->amount;
+						$part_details[$key]['is_free_service'] = $value->pivot->is_free_service;
+						if ($value->pivot->is_free_service != 1) {
+							$parts_rate += $value->pivot->amount;
+						}
+					}
+				}
+			} else {
+				$parts_details = JobOrderPart::with([
+					'part',
+					'part.taxCode',
+				])
+					->where('job_order_parts.job_order_id', $r->id)->get();
 
-			if ($labour_details) {
-				foreach ($labour_details as $key => $labour) {
-					$labour_amount += $labour->amount;
+				$part_details = array();
+				if ($parts_details) {
+					foreach ($parts_details as $key => $value) {
+						$part_details[$key]['id'] = $value->part_id;
+						$part_details[$key]['name'] = $value->part->code . ' | ' . $value->part->name;
+						$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
+						$part_details[$key]['rate'] = $value->rate;
+						$part_details[$key]['qty'] = $value->qty;
+						$part_details[$key]['amount'] = $value->amount;
+						$part_details[$key]['is_free_service'] = $value->is_free_service;
+						if ($value->is_free_service != 1) {
+							$parts_rate += $value->amount;
+						}
+					}
 				}
+				// $part_details1 = JobOrderPart::select('parts.id as id', 'parts.name', 'parts.code', 'job_order_parts.rate', 'job_order_parts.qty', 'job_order_parts.amount')
+				// 	->leftJoin('parts', 'parts.id', 'job_order_parts.part_id', 'job_order_parts.id as del_part_id')->where('job_order_parts.job_order_id', $r->id)->get();
 			}
-			if ($part_details) {
-				foreach ($part_details as $key => $part) {
-					$parts_rate += $part->rate;
-				}
-			}
+
 			$total_amount = $parts_rate + $labour_amount;
 
 			return response()->json([
@@ -1445,16 +1516,16 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
-			//Remove Schedule Part Details
-			if (!empty($request->parts_removal_ids)) {
-				$parts_removal_ids = json_decode($request->parts_removal_ids, true);
-				JobOrderPart::whereIn('part_id', $parts_removal_ids)->where('job_order_id', $request->job_order_id)->forceDelete();
-			}
-			//Remove Schedule Labour Details
-			if (!empty($request->labour_removal_ids)) {
-				$labour_removal_ids = json_decode($request->labour_removal_ids, true);
-				JobOrderRepairOrder::whereIn('repair_order_id', $labour_removal_ids)->where('job_order_id', $request->job_order_id)->forceDelete();
-			}
+			// //Remove Schedule Part Details
+			// if (!empty($request->parts_removal_ids)) {
+			// 	$parts_removal_ids = json_decode($request->parts_removal_ids, true);
+			// 	JobOrderPart::whereIn('part_id', $parts_removal_ids)->where('job_order_id', $request->job_order_id)->forceDelete();
+			// }
+			// //Remove Schedule Labour Details
+			// if (!empty($request->labour_removal_ids)) {
+			// 	$labour_removal_ids = json_decode($request->labour_removal_ids, true);
+			// 	JobOrderRepairOrder::whereIn('repair_order_id', $labour_removal_ids)->where('job_order_id', $request->job_order_id)->forceDelete();
+			// }
 
 			if (isset($request->job_order_parts) && count($request->job_order_parts) > 0) {
 				//Inserting Job order parts
@@ -1466,10 +1537,8 @@ class VehicleInwardController extends Controller {
 						'job_order_id' => $request->job_order_id,
 					]);
 					$job_order_part->fill($part);
-					$job_order_part->job_order_id = $request->job_order_id;
 					$job_order_part->split_order_type_id = NULL;
 					$job_order_part->is_oem_recommended = 1;
-					$job_order_part->amount = $part['qty'] * $part['rate'];
 					$job_order_part->status_id = 8200; //Customer Approval Pending
 					$job_order_part->save();
 				}
@@ -1483,7 +1552,6 @@ class VehicleInwardController extends Controller {
 						'job_order_id' => $request->job_order_id,
 					]);
 					$job_order_repair_order->fill($repair);
-					$job_order_repair_order->job_order_id = $request->job_order_id;
 					$job_order_repair_order->split_order_type_id = NULL;
 					$job_order_repair_order->is_recommended_by_oem = 1;
 					$job_order_repair_order->is_customer_approved = 0;
