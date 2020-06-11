@@ -158,6 +158,8 @@ app.component('bayList', {
             $("#outlet").val('');
             $("#area_type").val('');
             $("#status").val('');
+            dataTables.fnFilter();
+            $('#bay-filter-modal').modal('hide');
         }
 
         $rootScope.loading = false;
@@ -236,7 +238,7 @@ app.component('bayForm', {
                 // },
             },
             invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
+                custom_noty('error', 'You have errors, Please check the tab');
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
