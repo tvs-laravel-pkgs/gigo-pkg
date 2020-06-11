@@ -92,7 +92,7 @@
                                                 </div><!-- Box Right -->
                                             </div><!-- Box List -->
                                             <div class="card-box-content mb-8" ng-if="gate_log.customer_name">
-                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <img class="img-responsive" src="./public/theme/img/content/jc_profile.svg" alt="Image" />
                                                 <span class="card-box-content-value">
                                                     <b>
                                                         {{gate_log.customer_name}}
@@ -100,7 +100,7 @@
                                                 </span>
                                             </div>
                                             <div class="card-box-content" ng-if="gate_log.amc_policies">
-                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                                <img class="img-responsive" src="./public/theme/img/content/jc_membership.svg" alt="Image" />
                                                 <span class="card-box-content-value">
                                                     {{gate_log.amc_policies}}
                                                 </span>
@@ -210,10 +210,10 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Vehicle Model</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
                                     <md-item-template>
                                         <span>
-                                            {{option.name}}
+                                            {{option.model_name}}
                                         </span>
                                     </md-item-template>
                                     <md-not-found>

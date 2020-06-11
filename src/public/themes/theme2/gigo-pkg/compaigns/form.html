@@ -24,7 +24,7 @@ Content Wrap -->
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
-        <form id="service_type_form" autocomplete="off">
+        <form id="campaign_form" autocomplete="off">
             <input type="hidden" name="id" value="{{$ctrl.campaign.id}}">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
@@ -69,19 +69,30 @@ Content Wrap -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
-                                                <label>
-                                                    Complaint Code
-                                                    <sup class="mandatory"></sup>
-                                                </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.campaign.complaint_code" name="complaint_code" placeholder="Enter Complaint Code" />
+                                                <label>Complaint Type <sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.campaign.complaint_id" placeholder="Select Complaint Type" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchDrink" type="search" placeholder="Select Complaint Type" class="demo-header-searchbox md-text">
+                                                    </md-select-header>
+                                                    <md-optgroup label="drinks">
+                                                        <md-option ng-repeat="val in $ctrl.complaint_types" value="{{val.id}}">{{val.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="material" id="complaint_id" name="complaint_id" value="{{$ctrl.campaign.complaint_id}}">
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
-                                                <label>
-                                                    Fault Code
-                                                </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.campaign.fault_code" name="fault_code" placeholder="Enter Fault Code" />
+                                                <label> Fault Type <sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.campaign.fault_id" placeholder="Select Fault Type" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchDrink" type="search" placeholder="Select Fault Type" class="demo-header-searchbox md-text">
+                                                    </md-select-header>
+                                                    <md-optgroup label="drinks">
+                                                        <md-option ng-repeat="val in $ctrl.fault_types" value="{{val.id}}">{{val.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="material required" id="fault_id" name="fault_id" value="{{$ctrl.campaign.fault_id}}">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -96,7 +107,6 @@ Content Wrap -->
                                                     </md-optgroup>
                                                 </md-select>
                                                 <input type="hidden" class="material required" id="claim_type_id" name="claim_type_id" value="{{$ctrl.campaign.claim_type_id}}">
-                                                <!-- <div id="error_jobcard_type_id"></div> -->
                                             </div><!-- Feild -->
                                         </div>
                                         <div class="col-md-3">
@@ -114,13 +124,13 @@ Content Wrap -->
                                                         No Vehicle Model Found "{{$ctrl.modelSearchText}}" were found.
                                                     </md-not-found>
                                                 </md-autocomplete>
-                                                <input type="hidden" id="" class="required" name="vehicle_model_id" value="{{$ctrl.campaign.vehicle_model.id}}">
+                                                <input type="hidden" id="vehicle_model_id" class="required" name="vehicle_model_id" value="{{$ctrl.campaign.vehicle_model.id}}">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Manufacture Date<sup class="mandatory">*</sup>
+                                                    Manufacturing Date<sup class="mandatory">*</sup>
                                                 </label>
                                                 <div class="input-group date" data-provide="datepicker">
                                                     <input type="text" name="manufacture_date" value="{{$ctrl.campaign.manufacture_date}}" readonly class="form-control required" placeholder="Select Date" />
@@ -177,7 +187,7 @@ Content Wrap -->
                                                                 <input type="hidden" id="" class="required" name="labours[{{index}}][id]" value="{{repair_order.name.id}}">
                                                             </td>
                                                             <td class="labour_type{{index}}">{{repair_order.name.repair_order_type}}</td>
-                                                            <td><input type="text" class="form-control required" id="labour_amount{{index}}" name="labours[{{index}}][amount]" value="{{repair_order.name.amount}}" /></td>
+                                                            <td><input type="text" class="form-control required" id="labour_amount{{index}}" name="labours[{{index}}][amount]" value="{{repair_order.name.amount}}" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/></td>
                                                             <td>
                                                                 <button type="button" class="btn btn-delete" ng-click="$ctrl.removeLabour(index)">
                                                                     <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />

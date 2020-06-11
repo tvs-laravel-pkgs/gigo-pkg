@@ -153,7 +153,7 @@ class JobOrder extends Model {
 	}
 
 	public function serviceType() {
-		return $this->belongsTo('App\ServiceType', 'service_type_id')
+		return $this->belongsTo('Abs\GigoPkg\ServiceType', 'service_type_id')
 		// ->where('company_id', Auth::user()->company_id)
 		;
 	}

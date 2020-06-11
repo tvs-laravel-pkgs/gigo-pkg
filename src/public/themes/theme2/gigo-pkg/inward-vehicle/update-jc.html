@@ -1,0 +1,114 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/inward-vehicle/card-list" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">
+                        Update Job Card
+                    </h1>
+                    <p class="subtitle">
+                        <a href="#!/inward-vehicle/card-list">Inward Vehicle</a> / Job card / Update
+                    </p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form-top type-2">
+            <div class="page-tab-form-top-left">
+                <div class="page-tab-form-top-left-info pad-lf-rt">
+                    <span class="page-tab-form-top-left-info-content">
+                        <b>Gate In No: {{job_order.gate_log.number}} | {{job_order.vehicle.registration_number}} |</b> {{job_order.vehicle.model.model_name}} | {{job_order.job_card_creation_date}}, {{job_order.job_card_creation_time}}
+                    </span>
+                </div>
+            </div><!-- Page Tab Form Top Left -->
+            <div class="page-tab-form-top-right">
+                <div class="page-tab-form-top-right-info">
+                    Status : {{job_order.gate_log.status.name}}
+                </div>
+            </div><!-- Page Tab Form Top Right -->
+        </div><!-- Page Tab Form Top -->
+        <form id="form">
+            <input type="hidden" name="job_order_id" value="{{job_order_id}}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60 mt-30">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Job Card Number <sup class="mandatory">*</sup></label>
+                                        <input ng-model="job_order.job_card.job_card_number" type="text" class="form-control" placeholder="Enter Job Card Number" autocomplete="off" value="{{job_order.job_card.job_card_number}}" name="job_card_number" />
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Job Card Date <sup class="mandatory">*</sup></label>
+                                        <div class="input-group date" data-provide="datepicker">
+                                            <input ng-model="job_order.job_card.job_card_date" type="text" class="form-control" placeholder="Select Invoice Date" name="job_card_date" value="job_order.job_card.job_card_date" />
+                                            <div class="input-group-addon">
+                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                            </div>
+                                        </div><!-- Input Group -->
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-12">
+                                    <label>Job Card Photo <sup class="mandatory">*</sup></label>
+                                    <div class="update-img" ng-if="job_order.job_card.attachment == NULL">
+                                        <input type="file" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" name="job_card_photo" />
+                                    </div>
+                                    <div class="update-img" ng-if="job_order.job_card.attachment != NULL">
+                                        <a href="{{job_order.attachment_path}}/{{job_order.attachment.name}}" target="_blank" alt="img">{{job_order.job_card.attachment.name}}
+                                        </a>
+                                    </div>
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Page Form -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <div class="page-form-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button class="btn btn-red btn-min-wdth save_close" ng-click="saveJobCard()">Save & Close</button>
+                            <button class="btn btn-bordered btn-grey btn-min-wdth approval_behalf" ng-click="approveBehalfCustomer()">Approve on behalf of Customer</button>
+                            <button class="btn btn-secondary-dark btn-min-wdth send_to_customer_approval" ng-click="send_customer_approval()">Send to Customer for Approval</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Page Form Footer -->
+            </div><!-- Container -->
+        </form>
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+
+<!-- Modal -->
+<div class="modal modal-otp alert-modal fade" id="otp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="approve_behalf_customer_confirm">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <h6 class="title">ENTER OTP</h6>
+                    <p class="info">Received in Customer Mobile +91<span class="customer_mobile_no"></span></p>
+                    <div class="form-group">
+                        <input type="text" autofocus name="otp_no" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
+                        <input type="hidden" name="job_order_id" id="job_order_id" value="{{job_order.id}}" />
+                        <input type="hidden" name="verify_otp" id="id" value="1" />
+                    </div><!-- Feild -->
+                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm">SUBMIT</button>
+                    <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
+                </div><!-- Modal Body -->
+            </form>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<script src="./public/theme/js/imageuploadify-updatejc.min.js"></script>

@@ -14,7 +14,7 @@ class JobOrderPart extends Model {
 	protected $table = 'job_order_parts';
 	public $timestamps = true;
 	protected $fillable =
-		["id","job_order_id","part_id","qty","split_order_type_id","rate","amount","status_id"]
+		["id", "job_order_id", "part_id", "qty", "split_order_type_id", "rate", "amount", "status_id", "is_free_service"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
@@ -25,13 +25,13 @@ class JobOrderPart extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 	public function part() {
-		return $this->belongsTo('App\Part','part_id');
+		return $this->belongsTo('App\Part', 'part_id');
 	}
 	public function splitOrderType() {
-		return $this->belongsTo('App\SplitOrderType','split_order_type_id');
+		return $this->belongsTo('App\SplitOrderType', 'split_order_type_id');
 	}
 	public function status() {
-		return $this->belongsTo('App\Config','status_id');
+		return $this->belongsTo('App\Config', 'status_id');
 	}
 	public static function createFromObject($record_data) {
 

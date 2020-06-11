@@ -97,14 +97,20 @@ class ServiceTypeController extends Controller {
 			$service_type->service_type_labours = $labours = $service_type->serviceTypeLabours()->select('id')->get();
 			if ($service_type->service_type_labours) {
 				foreach ($labours as $key => $labour) {
-					$service_type->service_type_labours[$key]->name = RepairOrder::join('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')->join('repair_order_service_type', 'repair_order_service_type.repair_order_id', 'repair_orders.id')->where('repair_order_service_type.service_type_id', $id)->where('repair_orders.id', $labour->id)->select('repair_orders.id', 'repair_orders.code', 'repair_orders.hours', 'repair_orders.amount', 'repair_order_types.name as repair_order_type')->first();
+					$service_type->service_type_labours[$key]->name = $switch_value = RepairOrder::join('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')->join('repair_order_service_type', 'repair_order_service_type.repair_order_id', 'repair_orders.id')->where('repair_order_service_type.service_type_id', $id)->where('repair_orders.id', $labour->id)->select('repair_orders.id', 'repair_orders.code', 'repair_orders.hours', 'repair_orders.amount', 'repair_order_types.name as repair_order_type',
+						DB::raw('IF(repair_order_service_type.is_free_service =1,"Yes","No") as switch_value'))
+						->first();
+					$service_type->service_type_labours[$key]->switch_value = $switch_value->switch_value;
 				}
 			}
 
 			$service_type->service_type_parts = $parts = $service_type->serviceTypeParts()->select('id')->get();
 			if ($service_type->service_type_parts) {
 				foreach ($parts as $key => $part) {
-					$service_type->service_type_parts[$key]->name = Part::join('tax_codes', 'tax_codes.id', 'parts.tax_code_id')->join('part_service_type', 'part_service_type.part_id', 'parts.id')->where('parts.id', $part->id)->where('part_service_type.service_type_id', $id)->select('parts.id', 'parts.code', 'parts.name', 'parts.rate', 'tax_codes.code as tax_code_type', 'part_service_type.quantity', 'part_service_type.amount')->first();
+					$service_type->service_type_parts[$key]->name = $switch_value = Part::join('tax_codes', 'tax_codes.id', 'parts.tax_code_id')->join('part_service_type', 'part_service_type.part_id', 'parts.id')->where('parts.id', $part->id)->where('part_service_type.service_type_id', $id)->select('parts.id', 'parts.code', 'parts.name', 'parts.rate', 'tax_codes.code as tax_code_type', 'part_service_type.quantity', 'part_service_type.amount',
+						DB::raw('IF(part_service_type.is_free_service =1,"Yes","No") as switch_value')
+					)->first();
+					$service_type->service_type_parts[$key]->switch_value = $switch_value->switch_value;
 				}
 			}
 
@@ -190,7 +196,7 @@ class ServiceTypeController extends Controller {
 				}
 
 				foreach ($request->labours as $labour) {
-					$service_type->serviceTypeLabours()->attach($labour['id']);
+					$service_type->serviceTypeLabours()->attach($labour['id'], ['is_free_service' => $labour['status'] == 'Yes' ? '1' : '0']);
 				}
 			}
 
@@ -202,7 +208,7 @@ class ServiceTypeController extends Controller {
 				}
 
 				foreach ($request->parts as $parts) {
-					$service_type->serviceTypeParts()->attach($parts['id'], ['quantity' => $parts['qty'], 'amount' => $parts['amount']]);
+					$service_type->serviceTypeParts()->attach($parts['id'], ['quantity' => $parts['qty'], 'amount' => $parts['amount'], 'is_free_service' => $parts['status'] == 'Yes' ? '1' : '0']);
 				}
 			}
 

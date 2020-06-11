@@ -57,9 +57,10 @@ app.component('compaignsList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
+                { data: 'vehicle_model', name: 'models.model_name', searchable: true },
                 { data: 'authorisation_no', name: 'compaigns.authorisation_no', searchable: true },
-                { data: 'complaint_code', name: 'compaigns.complaint_code', searchable: true },
-                { data: 'fault_code', name: 'compaigns.fault_code', searchable: true },
+                { data: 'complaint_type', name: 'complaints.name', searchable: true },
+                { data: 'fault_type', name: 'faults.name', searchable: true },
                 { data: 'claim_type_name', name: 'configs.name', searchable: true },
                 { data: 'status', name: '' },
             ],
@@ -87,13 +88,13 @@ app.component('compaignsList', {
         });
 
         //DELETE
-        $scope.deleteServiceType = function($id) {
-            $('#service_type_id').val($id);
+        $scope.deleteCampaign = function($id) {
+            $('#campaign_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#service_type_id').val();
+            $id = $('#campaign_id').val();
             $http.get(
-                laravel_routes['deleteServiceType'], {
+                laravel_routes['deleteCampaign'], {
                     params: {
                         id: $id,
                     }
@@ -101,7 +102,7 @@ app.component('compaignsList', {
             ).then(function(response) {
                 if (response.data.success) {
                     custom_noty('success', 'Compaign Deleted Successfully');
-                    $('#service_types_list').DataTable().ajax.reload(function(json) {});
+                    $('#campaigns_list').DataTable().ajax.reload(function(json) {});
                     $location.path('/gigo-pkg/compaigns/list');
                 }
             });
@@ -168,6 +169,8 @@ app.component('compaignsForm', {
         ).then(function(response) {
             self.campaign = response.data.campaign;
             self.claim_types = response.data.claim_types;
+            self.fault_types = response.data.fault_types;
+            self.complaint_types = response.data.complaint_types;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
@@ -278,18 +281,26 @@ app.component('compaignsForm', {
         }
 
         //Save Form Data 
-        var form_id = '#service_type_form';
+        var form_id = '#campaign_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'code': {
+                'authorisation_no': {
                     required: true,
                     minlength: 3,
                     maxlength: 32,
                 },
-                'name': {
-                    minlength: 3,
-                    maxlength: 191,
+                'complaint_id': {
+                    required: true,
+                },
+                'fault_id': {
+                    required: true,
+                },
+                'claim_type_id': {
+                    required: true,
+                },
+                'vehicle_model_id': {
+                    required: true,
                 },
                 'manufacture_date': {
                     required: true,

@@ -179,7 +179,7 @@ app.component('serviceTypeForm', {
         //Add New Labour
         self.addNewLabour = function() {
             self.service_type.service_type_labours.push({
-                pivot: [],
+                switch_value: 'No',
             });
         }
 
@@ -221,9 +221,10 @@ app.component('serviceTypeForm', {
         //Add New Part
         self.addNewPart = function() {
             self.service_type.service_type_parts.push({
-                pivot: [],
+                switch_value: 'No',
             });
         }
+
         //Search Part
         self.searchPart = function(query) {
             if (query) {

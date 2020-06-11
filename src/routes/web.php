@@ -2,6 +2,27 @@
 
 Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'prefix' => 'gigo-pkg'], function () {
 
+	//Fault
+	Route::get('/fault/get-list', 'FaultController@getFaultList')->name('getFaultList');
+	Route::get('/fault/get-form-data', 'FaultController@getFaultFormData')->name('getFaultFormData');
+	Route::post('/fault/save', 'FaultController@saveFault')->name('saveFault');
+	Route::get('/fault/delete', 'FaultController@deleteFault')->name('deleteFault');
+	Route::get('/fault/get-filter-data', 'FaultController@getFaultFilter')->name('getFaultFilter');
+
+	//Complaint Group
+	Route::get('/complaint-group/get-list', 'ComplaintGroupController@getComplaintGroupList')->name('getComplaintGroupList');
+	Route::get('/complaint-group/get-form-data', 'ComplaintGroupController@getComplaintGroupFormData')->name('getComplaintGroupFormData');
+	Route::post('/complaint-group/save', 'ComplaintGroupController@saveComplaintGroup')->name('saveComplaintGroup');
+	Route::get('/complaint-group/delete', 'ComplaintGroupController@deleteComplaintGroup')->name('deleteComplaintGroup');
+	Route::get('/complaint-group/get-filter-data', 'ComplaintGroupController@getComplaintGroupFilterData')->name('getComplaintGroupFilterData');
+
+	//Complaint
+	Route::get('/complaint/get-list', 'ComplaintController@getComplaintList')->name('getComplaintList');
+	Route::get('/complaint/get-form-data', 'ComplaintController@getComplaintFormData')->name('getComplaintFormData');
+	Route::post('/complaint/save', 'ComplaintController@saveComplaint')->name('saveComplaint');
+	Route::get('/complaint/delete', 'ComplaintController@deleteComplaint')->name('deleteComplaint');
+	Route::get('/complaint/get-filter-data', 'ComplaintController@getComplaintFilterData')->name('getComplaintFilterData');
+
 	//Parts Indent
 	Route::get('/parts-indent/get-list', 'PartsIndentController@getPartsindentList')->name('getPartsindentList');
 	Route::get('/parts-indent/get-filter-data', 'PartsIndentController@getPartsIndentFilter')->name('getPartsIndentFilter');

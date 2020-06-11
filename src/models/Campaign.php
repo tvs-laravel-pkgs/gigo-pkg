@@ -12,7 +12,7 @@ class Campaign extends Model {
 	protected $table = 'compaigns';
 	public $timestamps = true;
 	protected $fillable =
-		["company_id", "authorisation_no", "complaint_code", "fault_code", "claim_type_id", "manufacture_date", "vehicle_model_id"]
+		["company_id", "authorisation_no", "complaint_id", "fault_id", "claim_type_id", "manufacture_date", "vehicle_model_id"]
 	;
 
 	public function getManufactureDateAttribute($value) {
@@ -25,6 +25,18 @@ class Campaign extends Model {
 
 	public function vehicleModel() {
 		return $this->belongsTo('App\VehicleModel', 'vehicle_model_id');
+	}
+
+	public function claimType() {
+		return $this->belongsTo('App\Config', 'claim_type_id');
+	}
+
+	public function faultType() {
+		return $this->belongsTo('Abs\GigoPkg\Fault', 'fault_id');
+	}
+
+	public function complaintType() {
+		return $this->belongsTo('Abs\GigoPkg\Complaint', 'fault_id');
 	}
 
 	public function campaignLabours() {

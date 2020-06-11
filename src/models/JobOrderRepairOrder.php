@@ -13,7 +13,7 @@ class JobOrderRepairOrder extends Model {
 	protected $table = 'job_order_repair_orders';
 	public $timestamps = true;
 	protected $fillable =
-		["job_order_id", "repair_order_id", "is_recommended_by_oem", "is_customer_approved", "split_order_type_id", "qty", "amount", "failure_date", "status_id", "remarks", "observation", "action_taken"]
+		["job_order_id", "repair_order_id", "is_recommended_by_oem", "is_customer_approved", "split_order_type_id", "qty", "amount", "failure_date", "status_id", "remarks", "observation", "action_taken", "is_free_service"]
 	;
 
 	public function getFailureDateAttribute($value) {
@@ -28,9 +28,9 @@ class JobOrderRepairOrder extends Model {
 	}
 
 	public function repairOrderMechanics() {
-		return $this->hasMany('Abs\GigoPkg\RepairOrderMechanic','job_order_repair_order_id');
+		return $this->hasMany('Abs\GigoPkg\RepairOrderMechanic', 'job_order_repair_order_id');
 	}
-	
+
 	public function splitOrderType() {
 		return $this->belongsTo('App\SplitOrderType', 'split_order_type_id');
 	}
