@@ -76,9 +76,9 @@
                                                                         </li>
                                                                     </ul>
                                                                     <div class="text-center">
-                                                                        <a href="#!/inward-vehicle/scheduled-maintenance/form/{{job_order.id}}" class="btn-link color-secondary-dark font-sm">
-                                                                            Edit
-                                                                        </a>
+                                                                        <button class="btn-link color-secondary-dark font-sm"><a href="#!/inward-vehicle/scheduled-maintenance/form/{{job_order.id}}" class="btn-link color-secondary-dark font-sm">
+                                                                                Edit
+                                                                            </a></button>
                                                                     </div>
                                                                 </div><!-- Dark Box Body -->
                                                             </div><!-- Dark Box Wrap -->
@@ -125,9 +125,10 @@
                                                                         </li>
                                                                     </ul>
                                                                     <div class="text-center">
-                                                                        <a href="#!/inward-vehicle/payable-labour-part-detail/form/{{job_order.id}}" class="btn-link color-secondary-dark font-sm">
-                                                                            Edit
-                                                                        </a>
+                                                                        <button class="btn-link color-secondary-dark font-sm"><a href="#!/inward-vehicle/payable-labour-part-detail/form/{{job_order.id}}" class="btn-link color-secondary-dark font-sm">
+                                                                                Edit
+                                                                            </a>
+                                                                        </button>
                                                                     </div>
                                                                 </div><!-- Dark Box Body -->
                                                             </div><!-- Dark Box Wrap -->
@@ -174,9 +175,9 @@
                                                                         </li>
                                                                     </ul>
                                                                     <div class="text-center">
-                                                                        <a href="" class="btn-link font-sm">
+                                                                        <button class="btn-link font-sm">
                                                                             Amount Exclusive of Taxes
-                                                                        </a>
+                                                                        </button>
                                                                     </div>
                                                                 </div><!-- Dark Box Body -->
                                                             </div><!-- Dark Box Wrap -->
@@ -201,9 +202,9 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="common-checkbox type-2">
-                                                            <input type="checkbox" id="check_agree" ng-value="1" ng-checked="job_order.is_customer_agreed == 1"  ng-click="$ctrl.checkbox()" />
+                                                            <input type="checkbox" id="check_agree" ng-value="1" ng-checked="job_order.is_customer_agreed == 1" ng-click="$ctrl.checkbox()" />
                                                             <label for="check_agree">Customer Agreed?</label>
-                                                            <input type="hidden" name="is_customer_agreed"  id="is_customer_agreed"/>
+                                                            <input type="hidden" name="is_customer_agreed" id="is_customer_agreed" />
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
@@ -215,7 +216,7 @@
                                                     <button type="submit" class="btn btn-red submit" ng-click="saveEstimate(1)">
                                                         Save & Close
                                                     </button>
-                                                    <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" >Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}">Previous</a>
                                                     <button ng-click="saveEstimate(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Next
                                                     </button>
