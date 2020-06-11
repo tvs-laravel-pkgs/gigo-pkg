@@ -137,7 +137,8 @@ app.component('quoteTypeList', {
             $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
-            //dataTables.fnFilter();
+            dataTables.fnFilter();
+            $('#quote-type-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }

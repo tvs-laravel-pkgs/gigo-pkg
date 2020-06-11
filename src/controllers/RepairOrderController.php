@@ -164,6 +164,7 @@ class RepairOrderController extends Controller {
 				'name.max' => 'Name is Maximum 128 Charachers',
 				'hours.required' => 'Hours is Required',
 				'amount.required' => 'Amount is Required',
+				'skill_level_id.requried' =>'Skill Level is Requried',
 			];
 			$validator = Validator::make($request->all(), [
 				'type_id' => 'required',
@@ -184,7 +185,7 @@ class RepairOrderController extends Controller {
 					'min:3',
 					'max:128',
 				],
-				//'skill_level_id' => 'required',
+				'skill_level_id' => 'required',
 				'hours' => 'required',
 				'amount' => 'required',
 				//'tax_code_id' => 'required',

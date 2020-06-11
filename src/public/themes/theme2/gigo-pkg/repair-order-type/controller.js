@@ -143,7 +143,8 @@ app.component('repairOrderTypeList', {
             $("#name").val('');
             $("#short_name").val('');
             $("#status").val('');
-            //dataTables.fnFilter();
+            dataTables.fnFilter();
+            $('#repair-order-type-filter-modal').modal('hide');
         }
 
         $rootScope.loading = false;

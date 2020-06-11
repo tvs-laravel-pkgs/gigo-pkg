@@ -356,11 +356,13 @@ app.component('partsIndentEditParts', {
                             $("#job_order_part_id").val(self.parts_details.id);
                             $("#req_qty").text(self.parts_details.qty+" "+"nos");
                             $("#issue_qty").text(self.parts_details.issued_qty+" "+"nos");
+                            $("#al_issued_qty").val(self.parts_details.issued_qty);
                             issued_qty = self.parts_details.issued_qty;
                             if(issued_qty == null)
                             {
                              issued_qty = 0;
                              $("#issue_qty").text(issued_qty+" "+"nos");
+                             $("#al_issued_qty").text(issued_qty);
                             }
                             balance_qty = parseInt(self.parts_details.qty)-parseInt(issued_qty);
                             $("#balance_qty").text(balance_qty+" "+"nos");

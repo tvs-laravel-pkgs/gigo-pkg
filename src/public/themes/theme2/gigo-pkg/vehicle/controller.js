@@ -169,6 +169,8 @@ app.component('vehicleList', {
             $("#registration_numbers").val('');
             $("#vin_numbers").val('');
             $("#status").val('');
+            dataTables.fnFilter();
+            $('#vehicle-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }
