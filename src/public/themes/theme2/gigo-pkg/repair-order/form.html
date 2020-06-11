@@ -91,8 +91,8 @@
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
-                                                <label>Skill Level<sup class="mandatory"></sup></label>
-                                                <md-select ng-model="$ctrl.repair_order.skill_level_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Skil Level">
+                                                <label>Skill Level<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.repair_order.skill_level_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Skill Level">
                                                     <md-select-header class="demo-select-header">
                                                         <input ng-model="searchTerm" type="search" placeholder="Search Skil Level" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
@@ -100,7 +100,7 @@
                                                         <md-option ng-value="skill_level.id" ng-repeat="skill_level in $ctrl.skill_level | filter:searchTerm">{{skill_level.name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
-                                                <input type="hidden" class="form-control" name="skill_level_id" id="skill_level_id" value="{{$ctrl.repair_order.skill_level_id}}">
+                                                <input type="hidden" class="form-control requried" name="skill_level_id" id="skill_level_id" value="{{$ctrl.repair_order.skill_level_id}}">
                                             </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">

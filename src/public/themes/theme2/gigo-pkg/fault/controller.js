@@ -137,7 +137,8 @@ app.component('faultList', {
             $("#code").val('');
             $("#name").val('');
             $("#status").val('');
-            // dataTables.fnFilter();
+            dataTables.fnFilter();
+            $('#fault-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }
@@ -206,7 +207,9 @@ app.component('faultForm', {
                     maxlength: 'Maximum 191 Characters',
                 },
             },
-
+            invalidHandler: function(event, validator) {
+                custom_noty('error', 'You have errors, Please check the tab');
+            },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');

@@ -44,7 +44,8 @@ class BayController extends Controller {
 				'bays.id',
 				'bays.name',
 				// 'outlet',
-				'outlets.code as outlet',
+				'outlets.code as outlet_code',
+				'outlets.name as outlet_name',
 				'configs.name as bay_status',
 				'area_type.name as area_type',
 
@@ -86,9 +87,9 @@ class BayController extends Controller {
 		;
 
 		return Datatables::of($bays)
-			// ->addColumn('outlet', function ($bays) {
-			// 	return $bays->code."/".$bays->name;
-			// })
+			->addColumn('outlet', function ($bays) {
+				return $bays->outlet_code."/".$bays->outlet_name;
+			})
 			->addColumn('status', function ($bays) {
 				$status = $bays->status == 'Active' ? 'green' : 'red';
 				return '<span class="status-indigator ' . $status . '"></span>' . $bays->status;

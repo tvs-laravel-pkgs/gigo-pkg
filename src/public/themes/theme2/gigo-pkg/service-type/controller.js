@@ -135,7 +135,8 @@ app.component('serviceTypeList', {
             $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
-            //dataTables.fnFilter();
+            dataTables.fnFilter();
+            $('#service-type-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }

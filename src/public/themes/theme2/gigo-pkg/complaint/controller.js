@@ -153,7 +153,8 @@ app.component('complaintList', {
             $("#kms").val('');
             $("#month").val('');
             $("#status").val('');
-            //dataTables.fnFilter();
+            dataTables.fnFilter();
+            $('#complaint-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }

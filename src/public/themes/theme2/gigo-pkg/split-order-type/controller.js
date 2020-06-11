@@ -137,7 +137,8 @@ app.component('splitOrderTypeList', {
             $("#code").val('');
             $("#name").val('');
             $("#status").val('');
-            // dataTables.fnFilter();
+            dataTables.fnFilter();
+            $('#split-order-type-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }
@@ -205,9 +206,9 @@ app.component('splitOrderTypeForm', {
                     maxlength: 'Maximum 191 Characters',
                 },
             },
-            // invalidHandler: function(event, validator) {
-            //     custom_noty('error', 'You have errors, Please check all tabs');
-            // },
+            invalidHandler: function(event, validator) {
+                custom_noty('error', 'You have errors, Please check the tabs');
+            },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');

@@ -127,15 +127,20 @@ app.component('customerVoiceList', {
         $scope.onSelectedStatus = function(id) {
             $('#status').val(id);
         }
+
         //APPLY FILTER
         $scope.apply_filter = function() {
+            // $('#status').val(id);
             dataTables.fnFilter();
+            $('#customer-voice-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
             $("#code").val('');
             $("#name").val('');
             $("#status").val('');
-            // dataTables.fnFilter();
+            dataTables.fnFilter();
+            $('#customer-voice-filter-modal').modal('hide');
+
         }
         $rootScope.loading = false;
     }
@@ -201,6 +206,9 @@ app.component('customerVoiceForm', {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 191 Characters',
                 },
+            },
+            invalidHandler: function(event, validator) {
+                custom_noty('error', 'You have errors, Please check the tab');
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);

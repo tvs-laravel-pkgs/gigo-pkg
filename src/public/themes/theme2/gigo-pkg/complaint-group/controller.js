@@ -136,7 +136,8 @@ app.component('complaintGroupList', {
             $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
-            //dataTables.fnFilter();
+            dataTables.fnFilter();
+            $('#complaint-group-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }
