@@ -164,10 +164,12 @@ app.component('repairOrderList', {
             $("#dbm_code").val('');
             $("#dms_code").val('');
             $("#type").val('');
-            $("#hours").val('');
+            $("#skill_level").val('');
             $("#amount").val('');
             $("#tax_code").val('');
             $("#status").val('');
+            dataTables.fnFilter();
+            $('#repair-order-filter-modal').modal('hide');
         }
 
         $rootScope.loading = false;
@@ -233,9 +235,9 @@ app.component('repairOrderForm', {
                     minlength: 3,
                     maxlength: 128,
                 },
-                /*'skill_level_id':{
+                'skill_level_id':{
                     required:true,
-                },*/
+                },
                 'hours':{
                     required:true,
                 },

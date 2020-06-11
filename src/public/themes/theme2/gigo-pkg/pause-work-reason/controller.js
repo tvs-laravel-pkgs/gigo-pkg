@@ -128,6 +128,8 @@ app.component('pauseWorkReasonList', {
         $scope.reset_filter = function() {
             $("#name").val('');
             $("#status").val('');
+            dataTables.fnFilter();
+            $('#pause_work_reason-filter-modal').modal('hide');
         }
 
         $rootScope.loading = false;
