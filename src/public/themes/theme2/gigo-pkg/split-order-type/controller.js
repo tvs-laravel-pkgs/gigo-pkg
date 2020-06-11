@@ -207,7 +207,7 @@ app.component('splitOrderTypeForm', {
                 },
             },
             invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check the tabs');
+                custom_noty('error', 'You have errors, Please check the tab');
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);

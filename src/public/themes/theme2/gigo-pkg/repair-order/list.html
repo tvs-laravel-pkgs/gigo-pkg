@@ -100,7 +100,7 @@
                                 <label>Type</label>
                                 <md-select ng-model="$ctrl.repair_order_type_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedtype($ctrl.repair_order_type_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Repair Order Type">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchType" type="search" placeholder="Search Type" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchType" type="search" placeholder="Search Repair Order Type" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
                                         <md-option ng-value="repair_order_type.id" ng-repeat="repair_order_type in $ctrl.repair_order_type | filter:searchType">{{repair_order_type.short_name}}</md-option>

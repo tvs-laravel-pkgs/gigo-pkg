@@ -28,8 +28,12 @@ class JobCard extends Model {
 		"status_id",
 	];
 
-	public function getDateOfJoinAttribute($value) {
+	public function getDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
+	public function getCreatedAtAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y H:i A', strtotime($value));
 	}
 
 	public function setDateOfJoinAttribute($date) {

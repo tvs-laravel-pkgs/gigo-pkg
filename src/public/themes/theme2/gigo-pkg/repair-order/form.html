@@ -94,7 +94,7 @@
                                                 <label>Skill Level<sup class="mandatory">*</sup></label>
                                                 <md-select ng-model="$ctrl.repair_order.skill_level_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Skill Level">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search Skil Level" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search Skill Level" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
                                                     <md-optgroup>
                                                         <md-option ng-value="skill_level.id" ng-repeat="skill_level in $ctrl.skill_level | filter:searchTerm">{{skill_level.name}}</md-option>

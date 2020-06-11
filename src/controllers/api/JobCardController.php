@@ -160,7 +160,6 @@ class JobCardController extends Controller {
 	}
 
 	public function getUpdateJcFormData(Request $r) {
-		// dd($r->all());
 		try {
 			$job_order = JobOrder::with([
 				'gateLog',
@@ -179,10 +178,7 @@ class JobCardController extends Controller {
 				]);
 			}
 
-			$job_order->jobCard['job_card_date'] = date('d-m-Y', strtotime($job_order->jobCard->date));
-			$job_order->jobCard['job_card_creation_date'] = date('d/m/Y', strtotime($job_order->jobCard->created_at));
-			$job_order->jobCard['job_card_creation_time'] = date('h:sa', strtotime($job_order->jobCard->created_at));
-			$job_order->jobCard['attachment_path'] = 'storage/app/public/gigo/job_card/attachments';
+			$job_order->attachment_path = 'storage/app/public/gigo/job_card/attachments';
 
 			return response()->json([
 				'success' => true,
@@ -198,7 +194,6 @@ class JobCardController extends Controller {
 	}
 
 	public function saveJobCard(Request $request) {
-		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -238,13 +233,14 @@ class JobCardController extends Controller {
 				->find($request->job_order_id);
 
 			DB::beginTransaction();
+
 			//JOB Card SAVE
 			$job_card = JobCard::firstOrNew([
 				'job_order_id' => $request->job_order_id,
 			]);
 			$job_card->job_card_number = $request->job_card_number;
 			$job_card->date = date('Y-m-d', strtotime($request->job_card_date));
-			//$job_card->outlet_id = 32;
+			$job_card->outlet_id = $job_order->outlet_id;
 			$job_card->status_id = 8220; //Floor Supervisor not Assigned
 			$job_card->company_id = Auth::user()->company_id;
 			$job_card->created_by = Auth::user()->id;
@@ -264,22 +260,10 @@ class JobCardController extends Controller {
 			}
 
 			//UPDATE JOB ORDER REPAIR ORDER STATUS
-			foreach ($job_order->jobOrderRepairOrders as $job_order_repair_order) {
-				$job_order_repair_order_update_status = JobOrderRepairOrder::find($job_order_repair_order->id);
-				$job_order_repair_order_update_status->status_id = 8180; //Customer Approval Pending
-				$job_order_repair_order_update_status->updated_by_id = Auth::user()->id;
-				$job_order_repair_order_update_status->updated_at = Carbon::now();
-				$job_order_repair_order_update_status->save();
-			}
+			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->update(['status_id' => 8180, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			//UPDATE JOB ORDER PARTS STATUS
-			foreach ($job_order->jobOrderParts as $job_order_part) {
-				$job_order_part_update_status = JobOrderPart::find($job_order_part->id);
-				$job_order_part_update_status->status_id = 8200; //Customer Approval Pending
-				$job_order_part_update_status->updated_by_id = Auth::user()->id;
-				$job_order_part_update_status->updated_at = Carbon::now();
-				$job_order_part_update_status->save();
-			}
+			JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8200, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			DB::commit();
 
@@ -300,7 +284,6 @@ class JobCardController extends Controller {
 	}
 
 	public function sendCustomerOtp(Request $request) {
-		// dd($request->all());
 		try {
 			$job_order = JobOrder::with([
 				'jobCard',
@@ -321,7 +304,7 @@ class JobCardController extends Controller {
 				->where('job_cards.id', $job_order->jobCard->id)
 				->orderBy('vehicle_owners.from_date', 'DESC')
 				->first();
-			// dd($customer_detail);
+
 			if (!$customer_detail) {
 				return response()->json([
 					'success' => false,
@@ -330,6 +313,7 @@ class JobCardController extends Controller {
 			}
 
 			DB::beginTransaction();
+
 			$job_card_otp_update = JobCard::where('id', $job_order->jobCard->id)
 				->update([
 					'otp_no' => mt_rand(111111, 999999),
@@ -348,10 +332,9 @@ class JobCardController extends Controller {
 
 			$otp = $job_card->otp_no;
 			$mobile_number = $customer_detail->mobile_no;
-			$mobile_number = '9787516244'; //Vijay mobile for testing
-			// dump($mobile_number);
-			// dd($otp, $job_card->otp_no);
+
 			$message = 'OTP is ' . $otp . ' for Job Card Approve On Behalf of Customer. Please enter OTP to verify your Job Card Approval';
+
 			if (!$mobile_number) {
 				return response()->json([
 					'success' => false,
@@ -359,7 +342,6 @@ class JobCardController extends Controller {
 				]);
 			}
 			$msg = sendSMSNotification($mobile_number, $message);
-			//dd($msg);
 			//Enable After Sms Issue Resloved
 			/*if(!$msg){
 				return response()->json([
@@ -382,7 +364,7 @@ class JobCardController extends Controller {
 	}
 
 	public function verifyOtp(Request $request) {
-		dd($request->all());
+		// dd($request->all());
 		try {
 			if ($request->verify_otp) {
 				$validator = Validator::make($request->all(), [
@@ -471,19 +453,15 @@ class JobCardController extends Controller {
 				}
 
 				$mobile_number = $customer_detail->mobile_no;
-				$mobile_number = '9787516244'; //Vijay mobile for testing
-				// dump($mobile_number);
-				// dd($otp, $job_card->otp_no);
 				$approval_link = url('/vehicle-inward/show-payment-detail/for-approval/' . $request->job_order_id);
-				// dd($approval_link);
 				$message = 'Click <a href="' . url($approval_link) . '">Here</a> to Approval for Inward Vehicle Information.';
+
 				if (!$mobile_number) {
 					return response()->json([
 						'success' => false,
 						'error' => 'Customer Mobile Number Not Found',
 					]);
 				}
-				dd($mobile_number, $message);
 				$msg = sendSMSNotification($mobile_number, $message);
 				// dd($msg);
 				//Enable After Sms Issue Resloved
@@ -508,28 +486,18 @@ class JobCardController extends Controller {
 			$gate_log_status_update->save();
 
 			//UPDATE JOB ORDER REPAIR ORDER STATUS
-			foreach ($job_order->jobOrderRepairOrders as $job_order_repair_order) {
-				$job_order_repair_order_update_status = JobOrderRepairOrder::find($job_order_repair_order->id);
-				$job_order_repair_order_update_status->status_id = 8181; //Mechanic Not Assigned
-				// $job_order_repair_order_update_status->updated_by_id = Auth::user()->id;
-				$job_order_repair_order_update_status->updated_at = Carbon::now();
-				$job_order_repair_order_update_status->save();
-			}
+			//Mechanic Not Assigned - 8181
+			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->update(['status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			//UPDATE JOB ORDER PARTS STATUS
-			foreach ($job_order->jobOrderParts as $job_order_part) {
-				$job_order_part_update_status = JobOrderPart::find($job_order_part->id);
-				$job_order_part_update_status->status_id = 8201; //Not Issued
-				// $job_order_part_update_status->updated_by_id = Auth::user()->id;
-				$job_order_part_update_status->updated_at = Carbon::now();
-				$job_order_part_update_status->save();
-			}
+			//Not Issued - 8201
+			JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			DB::commit();
 
 			return response()->json([
 				'success' => true,
-				'message' => 'Customer Approved Successfully',
+				'message' => 'URL send to Customer Successfully',
 			]);
 		} catch (Exception $e) {
 			return response()->json([
