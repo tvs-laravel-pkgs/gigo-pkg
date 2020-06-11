@@ -289,10 +289,17 @@ app.component('gateLogForm', {
                     maxlength: 'Maximum 191 Characters',
                 }
             },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
+            errorPlacement: function(error, element) {
+                if (element.hasClass("vehicle_photo")) {
+                    custom_noty('error', 'Vehicle Photo is Required')
+                }else if (element.hasClass("km_reading_photo")) {
+                    custom_noty('error', 'KM Reading Photo is Required')
+                }else if (element.hasClass("driver_photo")) {
+                    custom_noty('error', 'Driver Photo is Required')
+                }else{
+                    error.insertAfter(element)
+                }
             },
-
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
                 $('#submit').button('loading');

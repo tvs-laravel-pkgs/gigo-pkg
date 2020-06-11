@@ -670,6 +670,24 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'delete-vehicle-inward',
 				'display_name' => 'Delete',
 			],
+			[
+				'display_order' => 4,
+				'parent' => 'inward-vehicle',
+				'name' => 'view-own-outlet-vehicle-inward',
+				'display_name' => 'View Own Outlet',
+			],
+			[
+				'display_order' => 5,
+				'parent' => 'inward-vehicle',
+				'name' => 'view-mapped-outlet-vehicle-inward',
+				'display_name' => 'View Mapped Outlets',
+			],
+			[
+				'display_order' => 6,
+				'parent' => 'inward-vehicle',
+				'name' => 'view-overall-outlets-vehicle-inward',
+				'display_name' => 'View Overall Outlets',
+			],
 
 			//My JobCard
 			[

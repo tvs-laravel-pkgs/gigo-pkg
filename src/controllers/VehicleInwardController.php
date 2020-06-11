@@ -7,7 +7,9 @@ use App\Customer;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
 use App\VehicleModel;
+use Auth;
 use DB;
+use Entrust;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
@@ -35,7 +37,6 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function getVehicleInwardList(Request $request) {
-
 		$vehicle_inwards = JobOrder::company('job_orders')
 			->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
 			->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
@@ -62,7 +63,6 @@ class VehicleInwardController extends Controller {
 				'configs.name as status',
 				DB::raw('COALESCE(customers.name, "-") as customer_name')
 			)
-			->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')")
 			->where(function ($query) use ($request) {
 				if (!empty($request->gate_in_date)) {
 					$query->whereDate('gate_logs.gate_in_date', date('Y-m-d', strtotime($request->gate_in_date)));
@@ -102,7 +102,19 @@ class VehicleInwardController extends Controller {
 				if (!empty($request->status_id)) {
 					$query->where('gate_logs.status_id', $request->status_id);
 				}
-			})
+			});
+
+		if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
+			if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
+				$vehicle_inwards->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+			} else if (Entrust::can('view-own-outlet-vehicle-inward')) {
+				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+			} else {
+				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+			}
+		}
+
+		$vehicle_inwards->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')")
 			->groupBy('job_orders.id');
 
 		return Datatables::of($vehicle_inwards)
