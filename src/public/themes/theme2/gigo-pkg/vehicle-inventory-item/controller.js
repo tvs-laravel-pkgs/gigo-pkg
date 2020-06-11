@@ -148,6 +148,8 @@ app.component('vehicleInventoryItemList', {
             $("#name").val('');
             $("#field_type").val('');
             $("#status").val('');
+            $('#vehicle-inventory-item-filter-modal').modal('hide');
+            dataTables.fnFilter();
         }
         // $scope.apply_filter = function() {
         //     dataTables.fnFilter();
