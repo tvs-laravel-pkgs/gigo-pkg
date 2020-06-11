@@ -26,4 +26,8 @@ class Bay extends Model {
 		return $this->belongsTo('App\JobOrder', 'job_order_id');
 	}
 
+	public function outlet() {
+		return $this->belongsTo('App\Outlet', 'outlet_id');
+	}
+
 }
