@@ -29,7 +29,7 @@ class BayController extends Controller {
 			],
 		];
 
-		$this->data['outlet_list'] = collect(Outlet::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']);
+		$this->data['outlet_list'] = collect(Outlet::select('id', 'code', 'name')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet Code', 'name' => 'Name']);
 
 		$this->data['area_type_list'] = collect(Config::select('id', 'name')->where('config_type_id',120)->get())->prepend(['id' => '', 'name' => 'Select Area Type']);
 
@@ -43,6 +43,7 @@ class BayController extends Controller {
 				'bays.short_name',
 				'bays.id',
 				'bays.name',
+				// 'outlet',
 				'outlets.code as outlet',
 				'configs.name as bay_status',
 				'area_type.name as area_type',
@@ -85,6 +86,9 @@ class BayController extends Controller {
 		;
 
 		return Datatables::of($bays)
+			// ->addColumn('outlet', function ($bays) {
+			// 	return $bays->code."/".$bays->name;
+			// })
 			->addColumn('status', function ($bays) {
 				$status = $bays->status == 'Active' ? 'green' : 'red';
 				return '<span class="status-indigator ' . $status . '"></span>' . $bays->status;
@@ -117,7 +121,7 @@ class BayController extends Controller {
 			$action = 'Edit';
 		}
 		$this->data['extras'] = [
-			'outlet_list' => collect(Outlet::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']),
+			'outlet_list' => collect(Outlet::select('id', 'code', 'name')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet Code', 'name' => 'Name']),
 			'area_type_list' => collect(Config::select('id', 'name')->where('config_type_id',120)->get())->prepend(['id' => '', 'name' => 'Select Area Type']),
 		];
 

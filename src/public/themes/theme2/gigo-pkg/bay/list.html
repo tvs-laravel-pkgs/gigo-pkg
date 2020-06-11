@@ -87,22 +87,22 @@
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
-                        <div class="col-md-6">
+                        <!-- <div class="col-md-6">
                             <div class="form-group">
                                 <label>
                                     Short Name
                                 </label>
                                 <input type="text" class="form-control" id="short_name" name="short_name" placeholder="Enter Short Name" autocomplete="off">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>
                                     Name
                                 </label>
                                 <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" autocomplete="off">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
+                            </div>
+                        </div> -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Outlet</label>
@@ -111,7 +111,7 @@
                                         <input ng-model="searchTerm3" type="search" placeholder="Search for a Outlet" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="outlet.id" ng-repeat="outlet in $ctrl.outlet_list | filter:searchTerm3">{{outlet.code}}</md-option>
+                                        <md-option ng-value="outlet.id" ng-repeat="outlet in $ctrl.outlet_list | filter:searchTerm3">{{outlet.code}}/{{outlet.name}}</md-option>
                                     </md-optgroup>
                                 </md-select>
                                 <input type="hidden" class="form-control type-sm" name="outlet" id="outlet" value="">

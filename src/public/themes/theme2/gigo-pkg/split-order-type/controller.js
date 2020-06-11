@@ -227,6 +227,7 @@ app.component('splitOrderTypeForm', {
                             if (!res.success == true) {
                                 $('.submit').button('reset');
                                 showErrorNoty(res);
+                                // return;
                             } else {
                                 $('.submit').button('reset');
                                 $location.path('/gigo-pkg/split-order-type/list');

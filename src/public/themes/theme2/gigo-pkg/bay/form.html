@@ -73,7 +73,7 @@ Content Wrap -->
                                                         <input ng-model="searchTerm" type="search" placeholder="Search for a Outlet" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                     </md-select-header>
                                                     <md-optgroup>
-                                                        <md-option ng-value="outlet.id" ng-repeat="outlet in $ctrl.extras.outlet_list | filter:searchTerm">{{outlet.code}}</md-option>
+                                                        <md-option ng-value="outlet.id" ng-repeat="outlet in $ctrl.extras.outlet_list | filter:searchTerm">{{outlet.code}}/{{outlet.name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
                                                 <input type="hidden" class="form-control required" name="outlet_id" id="outlet_id" value="{{$ctrl.bay.outlet_id}}">
