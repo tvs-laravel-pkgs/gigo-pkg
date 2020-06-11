@@ -8,27 +8,16 @@ use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class AmcMember extends Model {
+class VehiclePrimaryApplication extends Model {
 	use SeederTrait;
 	use SoftDeletes;
-	protected $table = 'amc_members';
+	protected $table = 'vehicle_primary_applications';
 	public $timestamps = true;
 	protected $fillable = [
 		"id",
-		"vehicle_id",
-		"policy_id",
-		"number",
-		"expiry_date",
-		"company_id",
+		"code",
+		"name",
 	];
-
-	public function getDateOfJoinAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y', strtotime($value));
-	}
-
-	public function setDateOfJoinAttribute($date) {
-		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
-	}
 
 	public static function createFromObject($record_data) {
 
