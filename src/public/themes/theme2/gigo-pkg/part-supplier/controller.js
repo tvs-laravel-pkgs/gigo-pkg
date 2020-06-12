@@ -1,20 +1,20 @@
-app.component('vehicleSecoundaryApplicationList', {
-    templateUrl: vehicle_secoundary_app_list_template_url,
+app.component('partSupplierList', {
+    templateUrl: part_supplier_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_vehicle_secoundary_app').focus();
+        $('#search_part_supplier').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('vehicle-secoundary-applications')) {
+        if (!self.hasPermission('part-suppliers')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-vehicle-secoundary-application');
+        self.add_permission = self.hasPermission('add-part-supplier');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#vehicle_sec_app_list').DataTable({
+        var dataTable = $('#part_supplier_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -33,7 +33,7 @@ app.component('vehicleSecoundaryApplicationList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_vehicle_secoundary_app').val(state_save_val.search.search);
+                    $('#search_part_supplier').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -43,7 +43,7 @@ app.component('vehicleSecoundaryApplicationList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getVehicleSecoundaryAppList'],
+                url: laravel_routes['getPartSupplierList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
@@ -56,8 +56,8 @@ app.component('vehicleSecoundaryApplicationList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'vehicle_secondary_applications.code',searchable: true },
-                { data: 'name', name: 'vehicle_secondary_applications.name' ,searchable: true },
+                { data: 'code', name: 'part_suppliers.code',searchable: true },
+                { data: 'name', name: 'part_suppliers.name' ,searchable: true },
                 { data: 'status', name: '' },
 
             ],
@@ -72,42 +72,42 @@ app.component('vehicleSecoundaryApplicationList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_vehicle_secoundary_app').val('');
-            $('#vehicle_sec_app_list').DataTable().search('').draw();
+            $('#search_part_supplier').val('');
+            $('#part_supplier_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#vehicle_sec_app_list').DataTable().ajax.reload();
+            $('#part_supplier_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#vehicle_sec_app_list').dataTable();
-        $("#search_vehicle_secoundary_app").keyup(function() {
+        var dataTables = $('#part_supplier_list').dataTable();
+        $("#search_part_supplier").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
-        $scope.deleteVehicleSecApp = function($id) {
-            $('#vehicle_app_id').val($id);
+        $scope.deletePartSupplier = function($id) {
+            $('#part_suplier_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#vehicle_app_id').val();
+            $id = $('#part_suplier_id').val();
             $http.get(
-                laravel_routes['deleteVehicleSecoundaryApp'], {
+                laravel_routes['deletePartSupplier'], {
                     params: {
                         id: $id,
                     }
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Vehicle Secoundary Application Deleted Successfully');
-                    $('#vehicle_sec_app_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/vehicle-secoundary-application/list');
+                    custom_noty('success', 'Part Supplier Deleted Successfully');
+                    $('#part_supplier_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/gigo-pkg/part-supplier/list');
                 }
             });
         }
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getVehicleSecoundaryAppFilterData']
+            laravel_routes['getPartSupplierFilterData']
         ).then(function(response) {
             // console.log(response);
             self.extras = response.data.extras;
@@ -130,14 +130,14 @@ app.component('vehicleSecoundaryApplicationList', {
         $scope.applyFilter = function() {
             $('#status').val(self.status);
             dataTables.fnFilter();
-            $('#vehicle-sec-app-filter-modal').modal('hide');
+            $('#part-supplier-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
             $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
             dataTables.fnFilter();
-            $('#vehicle-sec-app-filter-modal').modal('hide');
+            $('#part-supplier-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }
@@ -146,29 +146,29 @@ app.component('vehicleSecoundaryApplicationList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.component('vehicleSecoundaryApplicationForm', {
-    templateUrl: vehicle_secoundary_app_form_template_url,
+app.component('partSupplierForm', {
+    templateUrl: part_supplier_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-vehicle-secoundary-application') || !self.hasPermission('edit-vehicle-secoundary-application')) {
+        if (!self.hasPermission('add-part-supplier') || !self.hasPermission('edit-part-supplier')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
         self.angular_routes = angular_routes;
         $http.get(
-            laravel_routes['getVehicleSecoundaryAppFormData'], {
+            laravel_routes['getPartSupplierFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
             }
         ).then(function(response) {
-            self.vehicle_secondary_applications = response.data.vehicle_secondary_applications;
+            self.part_suppliers = response.data.part_suppliers;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
-                if (self.vehicle_secondary_applications.deleted_at) {
+                if (self.part_suppliers.deleted_at) {
                     self.switch_value = 'Inactive';
                 } else {
                     self.switch_value = 'Active';
@@ -179,7 +179,7 @@ app.component('vehicleSecoundaryApplicationForm', {
         });
 
         //Save Form Data 
-        var form_id = '#vec_app_form';
+        var form_id = '#part_suppliers';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
@@ -189,6 +189,7 @@ app.component('vehicleSecoundaryApplicationForm', {
                     maxlength: 32,
                 },
                 'name': {
+                    required: true,
                     minlength: 3,
                     maxlength: 191,
                 },
@@ -210,7 +211,7 @@ app.component('vehicleSecoundaryApplicationForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveVehicleSecoundaryApp'],
+                        url: laravel_routes['savePartSupplier'],
                         method: "POST",
                         data: formData,
                         processData: false,
@@ -219,7 +220,7 @@ app.component('vehicleSecoundaryApplicationForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/vehicle-secoundary-application/list');
+                            $location.path('/gigo-pkg/part-supplier/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -227,7 +228,7 @@ app.component('vehicleSecoundaryApplicationForm', {
                                 showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/gigo-pkg/vehicle-secoundary-application/list');
+                                $location.path('/gigo-pkg/part-supplier/list');
                                 $scope.$apply();
                             }
                         }
