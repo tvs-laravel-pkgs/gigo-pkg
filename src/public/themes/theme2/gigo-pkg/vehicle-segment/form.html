@@ -14,7 +14,7 @@
                     <p class="subtitle">
                         Masters /
                         <a href="#!/gigo-pkg/vehicle-segment/list">
-                            Vehicle Segment
+                            Vehicle Segments
                         </a> /
                         {{$ctrl.action}}
                     </p>
@@ -65,6 +65,23 @@
                                                 </label>
                                                 <input type="text" class="form-control" ng-model="$ctrl.vehicle_segment.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Vehicle Make
+                                                    <!-- <sup class="mandatory"></sup> -->
+                                                </label>
+                                                <md-select ng-model="$ctrl.vehicle_segment.vehicle_make_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Model">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search Vehicle Make" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="make_list.id" ng-repeat="make_list in $ctrl.make_list | filter:searchTerm">{{make_list.code}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control" name="vehicle_make_id" value="{{$ctrl.vehicle_segment.vehicle_make_id}}">
+                                            </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">

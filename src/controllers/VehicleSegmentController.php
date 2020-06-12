@@ -4,6 +4,7 @@ namespace Abs\GigoPkg;
 
 use App\Http\Controllers\Controller;
 use Abs\GigoPkg\VehicleSegment;
+use Abs\VehiclePkg\VehicleMake;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -26,6 +27,8 @@ class VehicleSegmentController extends Controller {
 				['id' => '0', 'name' => 'Inactive'],
 			],
 		];
+		$this->data['make_list'] = collect(VehicleMake::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Vehicle Make Code']);
+
 		return response()->json($this->data);
 	}
 
@@ -35,9 +38,11 @@ class VehicleSegmentController extends Controller {
 				'vehicle_segments.id',
 				'vehicle_segments.code',
 				'vehicle_segments.name',
+				'vehicle_makes.code as make',
 
 				DB::raw('IF(vehicle_segments.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
+			->leftJoin('vehicle_makes','vehicle_makes.id','vehicle_segments.vehicle_make_id')
 			->where('vehicle_segments.company_id', Auth::user()->company_id)
 
 			->where(function ($query) use ($request) {
@@ -49,6 +54,12 @@ class VehicleSegmentController extends Controller {
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('vehicle_segments.name', 'LIKE', '%' . $request->name . '%');
+				}
+			})
+
+			->where(function ($query) use ($request) {
+				if (!empty($request->vehicle_make)) {
+					$query->where('vehicle_segments.vehicle_make_id', $request->vehicle_make);
 				}
 			})
 
@@ -96,6 +107,7 @@ class VehicleSegmentController extends Controller {
 			$vehicle_segment = VehicleSegment::withTrashed()->find($id);
 			$action = 'Edit';
 		}
+		$this->data['make_list'] = collect(VehicleMake::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Vehicle Make Code']);
 		$this->data['success'] = true;
 		$this->data['vehicle_segment'] = $vehicle_segment;
 		$this->data['action'] = $action;
