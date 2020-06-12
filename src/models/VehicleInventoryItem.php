@@ -110,7 +110,7 @@ class VehicleInventoryItem extends Model {
 				if (isset($list[$value['id']])) {
 					$list[$value['id']]->checked = true;
 					$list[$value['id']]->is_available = 1;
-					if ($value['pivot']['remarks']) {
+					if (isset($value['pivot']['remarks'])) {
 						$list[$value['id']]->remarks = $value['pivot']['remarks'];
 					}
 				}
