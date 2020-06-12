@@ -189,15 +189,15 @@ class JobOrder extends Model {
 	}
 
 	public function warrentyPolicyAttachment() {
-		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 256);
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 256);
 	}
 
 	public function EWPAttachment() {
-		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 257);
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 257);
 	}
 
 	public function AMCAttachment() {
-		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 258);
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 258);
 	}
 
 	public function driverLicenseAttachment() {

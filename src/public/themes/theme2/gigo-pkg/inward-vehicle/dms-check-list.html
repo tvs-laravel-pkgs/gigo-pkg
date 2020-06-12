@@ -35,7 +35,23 @@
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo">
-                                                            <input type="file" name="warranty_expiry_attachment" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" />
+                                                            <div class="avatar-upload type-3">
+                                                                <div class="avatar-edit" ng-class="{'in': job_order.warrenty_policy_attachment != NULL}">
+                                                                    <input type="file" class="profile-img-upload warranty_expiry_attachment" name="warranty_expiry_attachment" id="warranty_expiry_attachment" accept=".png, .jpg, .jpeg, .svg" />
+                                                                    <label for="warranty_expiry_attachment">
+                                                                        <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
+                                                                    </label>
+                            
+                                                                </div>
+                                                                <div class="avatar-preview in" ng-if="job_order.warrenty_policy_attachment != NULL">
+                                                                    <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.warrenty_policy_attachment.name}}')">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="avatar-preview" ng-if="job_order.warrenty_policy_attachment == NULL">
+                                                                    <div class="avatar-img" id="imagePreview" style="">
+                                                                    </div>
+                                                                </div><!-- Avatar Preview -->
+                                                            </div><!-- Avatar Upload -->
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -58,7 +74,23 @@
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo">
-                                                            <input type="file" name="ewp_expiry_attachment" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" />
+                                                            <div class="avatar-upload type-3">
+                                                                <div class="avatar-edit" ng-class="{'in': job_order.e_w_p_attachment != NULL}">
+                                                                    <input type="file" class="profile-img-upload ewp_expiry_attachment" name="ewp_expiry_attachment" id="ewp_expiry_attachment" accept=".png, .jpg, .jpeg, .svg" />
+                                                                    <label for="ewp_expiry_attachment">
+                                                                        <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
+                                                                    </label>
+                            
+                                                                </div>
+                                                                <div class="avatar-preview in" ng-if="job_order.e_w_p_attachment != NULL">
+                                                                    <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.e_w_p_attachment.name}}')">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="avatar-preview" ng-if="job_order.e_w_p_attachment == NULL">
+                                                                    <div class="avatar-img" id="imagePreview" style="">
+                                                                    </div>
+                                                                </div><!-- Avatar Preview -->
+                                                            </div><!-- Avatar Upload -->
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -81,7 +113,23 @@
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo">
-                                                            <input type="file" name="membership_attachment" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" />
+                                                            <div class="avatar-upload type-3">
+                                                                <div class="avatar-edit" ng-class="{'in': job_order.a_m_c_attachment != NULL}">
+                                                                    <input type="file" class="profile-img-upload membership_attachment" name="membership_attachment" id="membership_attachment" accept=".png, .jpg, .jpeg, .svg" />
+                                                                    <label for="membership_attachment">
+                                                                        <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
+                                                                    </label>
+                            
+                                                                </div>
+                                                                <div class="avatar-preview in" ng-if="job_order.a_m_c_attachment != NULL">
+                                                                    <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.a_m_c_attachment.name}}')">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="avatar-preview" ng-if="job_order.a_m_c_attachment == NULL">
+                                                                    <div class="avatar-img" id="imagePreview" style="">
+                                                                    </div>
+                                                                </div><!-- Avatar Preview -->
+                                                            </div><!-- Avatar Upload -->
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">

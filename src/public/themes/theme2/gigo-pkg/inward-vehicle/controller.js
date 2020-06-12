@@ -756,6 +756,17 @@ app.component('inwardVehicleDmsCheckListForm', {
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
                 },
+                errorPlacement: function(error, element) {
+                    if (element.hasClass("warranty_expiry_attachment")) {
+                        custom_noty('error', 'Warranty Photo is Required')
+                    }else if (element.hasClass("ewp_expiry_attachment")) {
+                        custom_noty('error', 'Extended Warranty Photo is Required')
+                    }else if (element.hasClass("membership_attachment")) {
+                        custom_noty('error', 'Membership Photo is Required')
+                    }else{
+                        error.insertAfter(element)
+                    }
+                },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
                     $scope.button_action(id, 1);
