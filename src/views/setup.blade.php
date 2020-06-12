@@ -886,8 +886,8 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Inward Vehicle - Road Test Observations',
 	    }).
 	    when('/inward-vehicle/expert-diagnosis-detail/form/:job_order_id', {
-	        template: '<inward-vehicle-export-diagnosis-detail-form></inward-vehicle-export-diagnosis-detail-form>',
-	        title: 'Inward Vehicle - Export Diagnosis Detail',
+	        template: '<inward-vehicle-expert-diagnosis-detail-form></inward-vehicle-expert-diagnosis-detail-form>',
+	        title: 'Inward Vehicle - Expert Diagnosis Detail',
 	    }).
 	    when('/inward-vehicle/inspection-detail/form/:job_order_id', {
 	        template: '<inward-vehicle-inspection-detail-form></inward-vehicle-inspection-detail-form>',

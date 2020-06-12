@@ -406,7 +406,7 @@ app.component('inwardVehicleTableList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 //Vehicle Diagonis Details
-app.component('inwardVehicleExportDiagnosisDetailForm', {
+app.component('inwardVehicleExpertDiagnosisDetailForm', {
     templateUrl: inward_vehicle_export_diagnosis_details_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         $element.find('input').on('keydown', function(ev) {

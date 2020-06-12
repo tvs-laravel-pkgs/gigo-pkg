@@ -2230,7 +2230,11 @@ class VehicleInwardController extends Controller {
 				$action = 'add';
 			}
 
-			$customer_voice_list = CustomerVoice::where('company_id', Auth::user()->company_id)
+			$customer_voice_list = CustomerVoice::select(
+				DB::raw('CONCAT(code,"/",name) as code'),
+				'id'
+			)
+				->where('company_id', Auth::user()->company_id)
 				->get();
 			$extras = [
 				'customer_voice_list' => $customer_voice_list,
@@ -2268,7 +2272,7 @@ class VehicleInwardController extends Controller {
 					'required',
 					'integer',
 					'exists:customer_voices,id',
-					'distinct',
+					// 'distinct',
 				],
 				'customer_voices.*.details' => [
 					'nullable',
@@ -2287,6 +2291,18 @@ class VehicleInwardController extends Controller {
 			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->customerVoices()->sync([]);
 			if (!empty($request->customer_voices)) {
+				//UNIQUE CHECK
+				$customer_voices = collect($request->customer_voices)->pluck('id')->count();
+				$unique_customer_voices = collect($request->customer_voices)->pluck('id')->unique()->count();
+				if ($customer_voices != $unique_customer_voices) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Voice Of Customer already taken',
+						],
+					]);
+				}
 				foreach ($request->customer_voices as $key => $voice) {
 					$job_order->customerVoices()->attach($voice['id'], [
 						'details' => isset($voice['details']) ? $voice['details'] : NULL,
@@ -2340,11 +2356,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$params['config_type_id'] = 36;
-			$params['add_default'] = false;
 			$extras = [
-				'road_test_by' => Config::getDropDownList($params), //ROAD TEST DONE BY
-				'user_list' => User::getUserEmployeeList(),
+				'road_test_by' => Config::getDropDownList(['config_type_id' => 36, 'add_default' => false]), //ROAD TEST DONE BY
+				'user_list' => User::getUserEmployeeList(['road_test' => true]),
 			];
 
 			return response()->json([
@@ -2480,7 +2494,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 			$extras = [
-				'user_list' => User::getUserEmployeeList(),
+				'user_list' => User::getUserEmployeeList(['road_test' => false]),
 			];
 
 			return response()->json([
