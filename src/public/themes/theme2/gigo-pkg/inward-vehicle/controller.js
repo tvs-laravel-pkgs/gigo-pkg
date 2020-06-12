@@ -1458,10 +1458,20 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                 },
                 rules: {
                     'customer_photo': {
-                        required: true,
+                        required: function(element) {
+                            if ($scope.job_order.customer_approval_attachment.length == 0) {
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                     'customer_e_sign': {
-                        customer_e_sign: true,
+                        required: function(element) {
+                            if ($scope.job_order.customer_e_sign.length == 0) {
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                 },
                 invalidHandler: function(event, validator) {
