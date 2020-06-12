@@ -255,7 +255,7 @@ app.component('gateLogForm', {
                 'vin_number': {
                     required: true,
                     minlength: 17,
-                    maxlength: 32,
+                    maxlength: 17,
                 },
                 'gate_in_remarks': {
                     minlength: 3,
