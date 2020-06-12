@@ -366,47 +366,30 @@ class JobCardController extends Controller {
 	public function verifyOtp(Request $request) {
 		// dd($request->all());
 		try {
-			if ($request->verify_otp) {
-				$validator = Validator::make($request->all(), [
-					'job_order_id' => [
-						'required',
-						'exists:job_orders,id',
-						'integer',
-					],
-					'otp_no' => [
-						'required',
-						'min:8',
-						'integer',
-					],
-					'verify_otp' => [
-						'required',
-						'integer',
-					],
-				]);
 
-				if ($validator->fails()) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => $validator->errors()->all(),
-					]);
-				}
-			} else {
-				$validator = Validator::make($request->all(), [
-					'job_order_id' => [
-						'required',
-						'exists:job_orders,id',
-						'integer',
-					],
-				]);
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'exists:job_orders,id',
+					'integer',
+				],
+				'otp_no' => [
+					'required',
+					'min:8',
+					'integer',
+				],
+				'verify_otp' => [
+					'required',
+					'integer',
+				],
+			]);
 
-				if ($validator->fails()) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => $validator->errors()->all(),
-					]);
-				}
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
 			}
 
 			$job_order = JobOrder::with([
@@ -425,52 +408,15 @@ class JobCardController extends Controller {
 			}
 
 			DB::beginTransaction();
-			if ($request->verify_otp) {
-				$otp_validate = JobCard::where('id', $job_order->jobCard->id)
-					->where('otp_no', '=', $request->otp_no)
-					->first();
-				if (!$otp_validate) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Job Card Approve Behalf of Customer OTP is worng. Please try again.',
-					]);
-				}
-			} else {
-				$customer_detail = Customer::select('name', 'mobile_no')
-					->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
-					->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
-					->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
-					->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')
-					->where('job_cards.id', $job_order->jobCard->id)
-					->orderBy('vehicle_owners.from_date', 'DESC')
-					->first();
-				// dd($customer_detail);
-				if (!$customer_detail) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Customer Details Not Found!',
-					]);
-				}
 
-				$mobile_number = $customer_detail->mobile_no;
-				$approval_link = url('/vehicle-inward/show-payment-detail/for-approval/' . $request->job_order_id);
-				$message = 'Click <a href="' . url($approval_link) . '">Here</a> to Approval for Inward Vehicle Information.';
-
-				if (!$mobile_number) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Customer Mobile Number Not Found',
-					]);
-				}
-				$msg = sendSMSNotification($mobile_number, $message);
-				// dd($msg);
-				//Enable After Sms Issue Resloved
-				/*if(!$msg){
+			$otp_validate = JobCard::where('id', $job_order->jobCard->id)
+				->where('otp_no', '=', $request->otp_no)
+				->first();
+			if (!$otp_validate) {
 				return response()->json([
 					'success' => false,
-					'error' => 'OTP SMS Not Sent.Please Try again ',
+					'error' => 'Job Card Approve Behalf of Customer OTP is worng. Please try again.',
 				]);
-			}*/
 			}
 
 			//UPDATE JOB ORDER STATUS
@@ -492,6 +438,105 @@ class JobCardController extends Controller {
 			//UPDATE JOB ORDER PARTS STATUS
 			//Not Issued - 8201
 			JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'URL send to Customer Successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function generateUrl(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'exists:job_orders,id',
+					'integer',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			$job_order = JobOrder::with([
+				'gateLog',
+				'jobCard',
+				'jobOrderRepairOrders',
+				'jobOrderParts',
+			])
+				->find($request->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$customer_detail = Customer::select('name', 'mobile_no')
+				->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
+				->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
+				->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
+				->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')
+				->where('job_cards.id', $job_order->jobCard->id)
+				->orderBy('vehicle_owners.from_date', 'DESC')
+				->first();
+			// dd($customer_detail);
+			if (!$customer_detail) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Customer Details Not Found!',
+				]);
+			}
+
+			$job_card_otp = JobCard::where('id', $job_order->jobCard->id)
+				->update([
+					'otp_no' => mt_rand(111111, 999999),
+					'updated_by' => Auth::user()->id,
+					'updated_at' => Carbon::now(),
+				]);
+
+			$job_card = JobCard::find($job_order->jobCard->id);
+
+			$mobile_number = $customer_detail->mobile_no;
+
+			$approval_link = url('/vehicle-inward/estimate/customer/view/' . $request->job_order_id . '/' . $job_card->otp_no);
+
+			$message = 'Click <a href="' . url($approval_link) . '">Here</a> to Approval for Inward Vehicle Information.';
+
+			if (!$mobile_number) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Customer Mobile Number Not Found',
+				]);
+			}
+			$msg = sendSMSNotification($mobile_number, $message);
+			// dd($msg);
+			//Enable After Sms Issue Resloved
+			/*if(!$msg){
+				return response()->json([
+					'success' => false,
+					'error' => 'OTP SMS Not Sent.Please Try again ',
+				]);
+			}*/
 
 			DB::commit();
 
