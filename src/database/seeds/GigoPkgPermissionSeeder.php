@@ -13,6 +13,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 	public function run() {
 		$permissions = [
 
+			//Vehicle Segment
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'vehicle-segments',
+				'display_name' => 'Vehicle Segments',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'vehicle-segments',
+				'name' => 'add-vehicle-segment',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'vehicle-segments',
+				'name' => 'edit-vehicle-segment',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicle-segments',
+				'name' => 'delete-vehicle-segment',
+				'display_name' => 'Delete',
+			],
+
 			//Vehicle Primary Application
 			[
 				'display_order' => 99,
