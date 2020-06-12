@@ -696,6 +696,7 @@ class VehicleInwardController extends Controller {
 				// $vehicle_owner->created_by_id = Auth::id();
 				$vehicle_owner->vehicle_id = $vehicle->id;
 				$vehicle_owner->from_date = date('Y-m-d');
+				$vehicle_owner->created_by_id = Auth::id();
 			} else {
 				//NEW OWNER
 				$vehicle_owner = VehicleOwner::where([
