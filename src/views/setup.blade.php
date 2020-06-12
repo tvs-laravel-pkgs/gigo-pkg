@@ -186,6 +186,21 @@
 	    }).
 
 
+	    //Vehicle Secoundary Application
+	     when('/gigo-pkg/vehicle-secoundary-application/list', {
+	        template: '<vehicle-secoundary-application-list></vehicle-secoundary-application-list>',
+	        title: 'Vehicle Secoundary Application',
+	    }).
+	    when('/gigo-pkg/vehicle-secoundary-application/add', {
+	        template: '<vehicle-secoundary-application-form></vehicle-secoundary-application-form>',
+	        title: 'Add Vehicle Secoundary Application',
+	    }).
+	    when('/gigo-pkg/vehicle-secoundary-application/edit/:id', {
+	        template: '<vehicle-secoundary-application-form></vehicle-secoundary-application-form>',
+	        title: 'Edit Vehicle Secoundary Application',
+	    }).
+
+
 	    //Kanban App
 	     when('/gigo-pkg/kanban-app', {
 	        template: '<kanban-app></kanban-app>',
@@ -233,6 +248,10 @@
     var complaint_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint/list.html')}}";
     var complaint_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint/form.html')}}";
 
+    //Vehicle Secoundary Aplication
+    var vehicle_secoundary_app_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-secoundary-application/list.html')}}";
+    var vehicle_secoundary_app_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-secoundary-application/form.html')}}";
+
      //Vehicle
     var vehicle_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/list.html')}}";
     var vehicle_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle/form.html')}}";
@@ -269,6 +288,7 @@
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint-group/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/complaint/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-secoundary-application/controller.js')}}"></script>
 
 
 <script type='text/javascript'>

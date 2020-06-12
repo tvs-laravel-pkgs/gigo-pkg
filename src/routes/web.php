@@ -2,6 +2,13 @@
 
 Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'prefix' => 'gigo-pkg'], function () {
 
+	//Vehicle Secoundary Application
+	Route::get('/vehicle-secoundary-application/get-list', 'VehicleSecoundaryApplicationController@getVehicleSecoundaryAppList')->name('getVehicleSecoundaryAppList');
+	Route::get('/vehicle-secoundary-application/get-form-data', 'VehicleSecoundaryApplicationController@getVehicleSecoundaryAppFormData')->name('getVehicleSecoundaryAppFormData');
+	Route::post('/vehicle-secoundary-application/save', 'VehicleSecoundaryApplicationController@saveVehicleSecoundaryApp')->name('saveVehicleSecoundaryApp');
+	Route::get('/vehicle-secoundary-application/delete', 'VehicleSecoundaryApplicationController@deleteVehicleSecoundaryApp')->name('deleteVehicleSecoundaryApp');
+	Route::get('/vehicle-secoundary-application/get-filter-data', 'VehicleSecoundaryApplicationController@getVehicleSecoundaryAppFilterData')->name('getVehicleSecoundaryAppFilterData');
+
 	//Fault
 	Route::get('/fault/get-list', 'FaultController@getFaultList')->name('getFaultList');
 	Route::get('/fault/get-form-data', 'FaultController@getFaultFormData')->name('getFaultFormData');
