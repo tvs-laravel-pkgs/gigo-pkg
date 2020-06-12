@@ -743,6 +743,9 @@ class VehicleInwardController extends Controller {
 					'serviceType',
 					'kmReadingType',
 					'status',
+					'driverLicenseAttachment',
+					'insuranceAttachment',
+					'rcBookAttachment',
 				])
 				->select([
 					'job_orders.*',

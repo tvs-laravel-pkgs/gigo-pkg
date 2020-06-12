@@ -575,9 +575,9 @@
                                                             </div><!-- View Data -->
                                                             <div class="mb-15"></div><!-- Spacing -->
                                                             <div class="multi-docs">
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment[0].name}}" alt="Driver License">
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment[0].name}}" alt="Insurance" />
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment[0].name}}" alt="RC Book" />
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}" alt="Driver License">
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment.name}}" alt="Insurance" />
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}" alt="RC Book" />
                                                             </div>
                                                             <div class="mb-10"></div><!-- Spacing -->
                                                             <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
