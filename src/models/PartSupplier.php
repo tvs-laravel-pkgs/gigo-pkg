@@ -3,21 +3,23 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\Company;
+use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 
-class Fault extends Model {
+class PartSupplier extends Model {
 	use SeederTrait;
 	use SoftDeletes;
-	protected $table = 'faults';
+	protected $table = 'part_suppliers';
 	public $timestamps = true;
 	protected $fillable = [
 		"id",
-		"company_id",
 		"code",
 		"name",
 	];
+
 
 	public static function validate($data, $user) {
 		$error_messages = [
@@ -91,8 +93,8 @@ class Fault extends Model {
 			'success' => true,
 		];
 	}
-	
-	public static function getList($params = [], $add_default = true, $default_text = 'Select Fault Type') {
+
+	public static function getList($params = [], $add_default = true, $default_text = 'Select Amc Member') {
 		$list = Collect(Self::select([
 			'id',
 			'name',
@@ -104,4 +106,5 @@ class Fault extends Model {
 		}
 		return $list;
 	}
+
 }
