@@ -49,6 +49,7 @@ app.component('vehicleSegmentList', {
                 data: function(d) {
                     d.code = $("#code").val();
                     d.name = $("#name").val();
+                    d.vehicle_make = $("#vehicle_make_id").val();
                     d.status = $("#status").val();
                 },
             },
@@ -57,6 +58,7 @@ app.component('vehicleSegmentList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'code', name: 'vehicle_segments.code' },
                 { data: 'name', name: 'vehicle_segments.name' },
+                { data: 'make', name: 'vehicle_makes.code' },
                 { data: 'status', name: '' },
 
             ],
@@ -109,8 +111,13 @@ app.component('vehicleSegmentList', {
             laravel_routes['getVehicleSegmentFilter']
         ).then(function(response) {
             // console.log(response);
+            self.make_list = response.data.make_list;
             self.extras = response.data.extras;
         });
+        $scope.SelectedMake = function(vehicle_make_selected) {
+            // alert(vehicle_make_selected);
+            $('#vehicle_make_id').val(vehicle_make_selected);
+        }
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -137,6 +144,7 @@ app.component('vehicleSegmentList', {
             $("#code").val('');
             $("#name").val('');
             $("#status").val('');
+            $("#vehicle_make_id").val('');
             dataTables.fnFilter();
             $('#vehicle-segment-filter-modal').modal('hide');
         }
@@ -168,6 +176,7 @@ app.component('vehicleSegmentForm', {
             }
         ).then(function(response) {
             self.vehicle_segment = response.data.vehicle_segment;
+            self.make_list = response.data.make_list;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {

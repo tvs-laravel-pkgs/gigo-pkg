@@ -96,6 +96,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/job-card/save', 'JobCardController@saveJobCard');
 		Route::post('vehicle-inward/send/customer/otp', 'JobCardController@sendCustomerOtp');
 		Route::post('vehicle-inward/verify/otp', 'JobCardController@verifyOtp');
+		Route::post('vehicle-inward/estimate/link/generate', 'JobCardController@generateUrl');
 
 		//GET BAY ASSIGNMENT FORM DATA
 		Route::post('job-card/bay/get-form-data', 'JobCardController@getBayFormData');

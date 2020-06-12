@@ -18,6 +18,7 @@ class VehicleSegment extends Model {
 		"id",
 		"code",
 		"name",
+		"vehicle_make_id",
 	];
 
 

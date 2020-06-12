@@ -298,29 +298,6 @@ class VehicleInwardController extends Controller {
 
 			$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
 
-			// $schedule_maintenance_part_amount = 0;
-			// $schedule_maintenance_labour_amount = 0;
-			// $schedule_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 1)->get();
-			// if (!empty($schedule_maintenance['labour_details'])) {
-			// 	foreach ($schedule_maintenance['labour_details'] as $key => $value) {
-			// 		$schedule_maintenance_labour_amount += $value->amount;
-			// 		$value->repair_order = $value->repairOrder;
-			// 		$value->repair_order_type = $value->repairOrder->repairOrderType;
-			// 	}
-			// }
-			// $schedule_maintenance['labour_amount'] = $schedule_maintenance_labour_amount;
-
-			// $schedule_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 1)->get();
-			// if (!empty($schedule_maintenance['part_details'])) {
-			// 	foreach ($schedule_maintenance['part_details'] as $key => $value) {
-			// 		$schedule_maintenance_part_amount += $value->amount;
-			// 		$value->part = $value->part;
-			// 	}
-			// }
-			// $schedule_maintenance['part_amount'] = $schedule_maintenance_part_amount;
-
-			// // dd($schedule_maintenance['labour_details']);
-
 			//PAYABLE LABOUR AND PART
 			$payable_part_amount = 0;
 			$payable_labour_amount = 0;
