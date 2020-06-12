@@ -144,7 +144,8 @@ app.component('vehicleInspectionItemList', {
             $("#name").val('');
             $("#status").val('');
             $("#vehicle_inspection_item_group_id").val('');
-            // dataTables.fnFilter();
+            $("#vehicle-inspection-item-filter-modal").modal('hide');
+            dataTables.fnFilter();
         }
         $rootScope.loading = false;
     }
