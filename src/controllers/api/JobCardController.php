@@ -2292,6 +2292,8 @@ class JobCardController extends Controller {
 			}
 			DB::beginTransaction();
 
+			$item_detail_id = [];
+			
 			foreach ($request->item_details as $key => $item_detail) {
 				$gate_pass_item = GatePassItem::firstOrNew([
 					'gate_pass_id' => $request->gate_pass_id,
@@ -2299,6 +2301,8 @@ class JobCardController extends Controller {
 				]);
 				$gate_pass_item->fill($item_detail);
 				$gate_pass_item->save();
+
+				array_push($item_detail_id,$gate_pass_item->id);
 			}
 
 			//CREATE DIRECTORY TO STORAGE PATH
@@ -2307,10 +2311,10 @@ class JobCardController extends Controller {
 
 			//SAVE MATERIAL OUTWARD ATTACHMENT
 			if (!empty($request->material_outward_attachments)) {
-				foreach ($request->material_outward_attachments as $material_outward_attachment) {
+				foreach ($request->material_outward_attachments as $key => $material_outward_attachment) {
 					//dump($material_outward_attachment);
 					$attachment = $material_outward_attachment;
-					$entity_id = $gate_pass_item->id;
+					$entity_id = $item_detail_id[$key];
 					$attachment_of_id = 231; //Material Gate Pass
 					$attachment_type_id = 238; //Material Gate Pass
 					saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);

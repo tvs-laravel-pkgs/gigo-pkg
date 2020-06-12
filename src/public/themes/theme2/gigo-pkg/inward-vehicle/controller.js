@@ -406,7 +406,7 @@ app.component('inwardVehicleTableList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 //Vehicle Diagonis Details
-app.component('inwardVehicleExportDiagnosisDetailForm', {
+app.component('inwardVehicleExpertDiagnosisDetailForm', {
     templateUrl: inward_vehicle_export_diagnosis_details_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         $element.find('input').on('keydown', function(ev) {
@@ -1923,7 +1923,17 @@ app.component('inwardVehicleVehicleDetail', {
                     },
                     'registration_number': {
                         required: true,
-                        minlength: 3,
+                        minlength: 10,
+                        maxlength: 10,
+                    },
+                    'plate_number': {
+                        // required: function(element) {
+                        //     if(self.is_registered == '0'){
+                        //         return true;
+                        //     }
+                        //     return false;
+                        // },
+                        minlength: 10,
                         maxlength: 10,
                     },
                     'model_id': {
@@ -1932,7 +1942,7 @@ app.component('inwardVehicleVehicleDetail', {
                     'vin_number': {
                         required: true,
                         minlength: 17,
-                        maxlength: 32,
+                        maxlength: 17,
                     },
                     'engine_number': {
                         required: true,

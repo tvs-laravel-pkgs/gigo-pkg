@@ -2,6 +2,13 @@
 
 Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'prefix' => 'gigo-pkg'], function () {
 
+	//Part Supplier
+	Route::get('/part-supplier/get-list', 'PartSupplierController@getPartSupplierList')->name('getPartSupplierList');
+	Route::get('/part-supplier/get-form-data', 'PartSupplierController@getPartSupplierFormData')->name('getPartSupplierFormData');
+	Route::post('/part-supplier/save', 'PartSupplierController@savePartSupplier')->name('savePartSupplier');
+	Route::get('/part-supplier/delete', 'PartSupplierController@deletePartSupplier')->name('deletePartSupplier');
+	Route::get('/part-supplier/get-filter-data', 'PartSupplierController@getPartSupplierFilterData')->name('getPartSupplierFilterData');
+
 	//Vehicle Primary Application
 	Route::get('/vehicle-primary-application/get-list', 'VehiclePrimaryApplicationController@getVehiclePrimaryApplicationList')->name('getVehiclePrimaryApplicationList');
 	Route::get('/vehicle-primary-application/get-form-data', 'VehiclePrimaryApplicationController@getVehiclePrimaryApplicationFormData')->name('getVehiclePrimaryApplicationFormData');

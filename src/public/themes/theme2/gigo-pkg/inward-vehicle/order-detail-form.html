@@ -34,6 +34,8 @@
                                     <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                                     <div class="row">
                                         <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Order Details</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
                                             <div class="panel-group" id="accordion">
                                                 <div class="panel panel-default type-3">
                                                     <div class="panel-heading">
@@ -60,7 +62,7 @@
                                                                             Mobile Number
                                                                             <sup class="mandatory">*</sup>
                                                                         </label>
-                                                                        <input type="text" class="form-control" placeholder="Enter Mobile No" autocomplete="off" ng-model="job_order.driver_mobile_number" name="driver_mobile_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
+                                                                        <input type="text" class="form-control" placeholder="Enter Mobile No" minlength="10" maxlength="10" autocomplete="off" ng-model="job_order.driver_mobile_number" name="driver_mobile_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
                                                                     </div><!-- Feild -->
                                                                 </div><!-- Column -->
                                                             </div><!-- Row -->
@@ -189,21 +191,21 @@
                                                                                 *
                                                                             </sup>
                                                                         </label>
-                                                                        <input type="text" class="form-control" placeholder="Enter Service Contact No" autocomplete="off" ng-model="job_order.contact_number" name="contact_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
+                                                                        <input type="text" class="form-control" placeholder="Enter Service Contact No" autocomplete="off" minlength="10" maxlength="10" ng-model="job_order.contact_number" name="contact_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
                                                                     </div><!-- Feild -->
                                                                 </div><!-- Column -->
                                                             </div><!-- Row -->
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
-                                                <div class="panel panel-default type-3" ng-if="job_order.vehicle.lastJobOrder">
+                                                <div class="panel panel-default type-3" >
                                                     <div class="panel-heading">
                                                         <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
                                                             Previous Job Card Details
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
-                                                    <div id="collapse3" class="panel-collapse collapse">
+                                                    <div id="collapse3" class="panel-collapse collapse" ng-if="job_order.vehicle.lastJobOrder">
                                                         <div class="panel-body">
                                                             <div class="view-details mb-no" ng-if="job_order.vehicle.last_job_order">
                                                                 <ul class="view-row pb-none">
@@ -264,22 +266,64 @@
                                                                     <div class="input-text form-group">
                                                                         <ul class="gatein-img-list">
                                                                             <li class="gatein-img-list-item driver-licence-img">
-                                                                                <label>
-                                                                                    Driver License
-                                                                                </label>
-                                                                                <input type="file" name="driving_license_image" class="image_uploadify" accept="image/*" />
+                                                                                <label>Driver Licence</label>
+                                                                                <div class="avatar-upload type-2">
+                                                                                    <div class="avatar-edit" ng-class="{'in': job_order.driver_license_attachment != NULL}">
+                                                                                        <input type="file" class="profile-img-upload" name="driving_license_image" id="driving_license_image" accept=".png, .jpg, .jpeg, .svg" />
+                                                                                        <label for="driving_license_image">
+                                                                                            <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
+                                                                                        </label>
+                                                
+                                                                                    </div>
+                                                                                    <div class="avatar-preview in" ng-if="job_order.driver_license_attachment != NULL">
+                                                                                        <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}')">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="avatar-preview" ng-if="job_order.driver_license_attachment == NULL">
+                                                                                        <div class="avatar-img" id="imagePreview" style="">
+                                                                                        </div>
+                                                                                    </div><!-- Avatar Preview -->
+                                                                                </div><!-- Avatar Upload -->
                                                                             </li>
                                                                             <li class="gatein-img-list-item insurance-img">
-                                                                                <label>
-                                                                                    Insurance
-                                                                                </label>
-                                                                                <input type="file" class="image_uploadify" accept="image/*" name="insurance_image" />
+                                                                                <label>Insurance</label>
+                                                                                <div class="avatar-upload type-2">
+                                                                                    <div class="avatar-edit" ng-class="{'in': job_order.insurance_attachment != NULL}">
+                                                                                        <input type="file" class="profile-img-upload" name="insurance_image" id="insurance_image" accept=".png, .jpg, .jpeg, .svg" />
+                                                                                        <label for="insurance_image">
+                                                                                            <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
+                                                                                        </label>
+                                                
+                                                                                    </div>
+                                                                                    <div class="avatar-preview in" ng-if="job_order.insurance_attachment != NULL">
+                                                                                        <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment.name}}')">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="avatar-preview" ng-if="job_order.insurance_attachment == NULL">
+                                                                                        <div class="avatar-img" id="imagePreview" style="">
+                                                                                        </div>
+                                                                                    </div><!-- Avatar Preview -->
+                                                                                </div><!-- Avatar Upload -->
                                                                             </li>
                                                                             <li class="gatein-img-list-item rc-book-img">
-                                                                                <label>
-                                                                                    RC Book
-                                                                                </label>
-                                                                                <input type="file" class="image_uploadify" accept="image/*" name="rc_book_image" />
+                                                                                <label>RC Book</label>
+                                                                                <div class="avatar-upload type-2">
+                                                                                    <div class="avatar-edit" ng-class="{'in': job_order.rc_book_attachment != NULL}">
+                                                                                        <input type="file" class="profile-img-upload" name="rc_book_image" id="rc_book_image" accept=".png, .jpg, .jpeg, .svg" />
+                                                                                        <label for="rc_book_image">
+                                                                                            <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
+                                                                                        </label>
+                                                
+                                                                                    </div>
+                                                                                    <div class="avatar-preview in" ng-if="job_order.rc_book_attachment != NULL">
+                                                                                        <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}')">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="avatar-preview" ng-if="job_order.rc_book_attachment == NULL">
+                                                                                        <div class="avatar-img" id="imagePreview" style="">
+                                                                                        </div>
+                                                                                    </div><!-- Avatar Preview -->
+                                                                                </div><!-- Avatar Upload -->
                                                                             </li>
                                                                         </ul>
                                                                     </div><!-- Field -->

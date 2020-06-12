@@ -98,7 +98,7 @@ app.component('vehicleSecoundaryApplicationList', {
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Quote Type Deleted Successfully');
+                    custom_noty('success', 'Vehicle Secoundary Application Deleted Successfully');
                     $('#vehicle_sec_app_list').DataTable().ajax.reload(function(json) {});
                     $location.path('/gigo-pkg/vehicle-secoundary-application/list');
                 }
