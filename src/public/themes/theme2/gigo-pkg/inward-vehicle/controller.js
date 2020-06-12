@@ -1458,10 +1458,20 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                 },
                 rules: {
                     'customer_photo': {
-                        required: true,
+                        required: function(element) {
+                            if ($scope.job_order.customer_approval_attachment.length == 0) {
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                     'customer_e_sign': {
-                        customer_e_sign: true,
+                        required: function(element) {
+                            if ($scope.job_order.customer_e_sign.length == 0) {
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                 },
                 invalidHandler: function(event, validator) {
@@ -1913,7 +1923,17 @@ app.component('inwardVehicleVehicleDetail', {
                     },
                     'registration_number': {
                         required: true,
-                        minlength: 3,
+                        minlength: 10,
+                        maxlength: 10,
+                    },
+                    'plate_number': {
+                        // required: function(element) {
+                        //     if(self.is_registered == '0'){
+                        //         return true;
+                        //     }
+                        //     return false;
+                        // },
+                        minlength: 10,
                         maxlength: 10,
                     },
                     'model_id': {
@@ -1922,7 +1942,7 @@ app.component('inwardVehicleVehicleDetail', {
                     'vin_number': {
                         required: true,
                         minlength: 17,
-                        maxlength: 32,
+                        maxlength: 17,
                     },
                     'engine_number': {
                         required: true,

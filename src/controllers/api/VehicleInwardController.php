@@ -30,6 +30,7 @@ use App\VehicleOwner;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use Entrust;
 use File;
 use Illuminate\Http\Request;
 use Storage;
@@ -135,10 +136,19 @@ class VehicleInwardController extends Controller {
 					if (!empty($request->status_id)) {
 						$query->where('gate_logs.status_id', $request->status_id);
 					}
-				})
-			// ->where('gate_logs.status_id', 8120) //Gate In Completed
-				->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')")
-				->groupBy('job_orders.id');
+				});
+			if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
+				if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
+					$vehicle_inward_list_get->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+				} else if (Entrust::can('view-own-outlet-vehicle-inward')) {
+					$vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
+						->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
+				} else {
+					$vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
+						->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
+				}
+			}
+			$vehicle_inward_list_get->groupBy('job_orders.id');
 
 			$total_records = $vehicle_inward_list_get->get()->count();
 
@@ -686,6 +696,7 @@ class VehicleInwardController extends Controller {
 				// $vehicle_owner->created_by_id = Auth::id();
 				$vehicle_owner->vehicle_id = $vehicle->id;
 				$vehicle_owner->from_date = date('Y-m-d');
+				$vehicle_owner->created_by_id = Auth::id();
 			} else {
 				//NEW OWNER
 				$vehicle_owner = VehicleOwner::where([

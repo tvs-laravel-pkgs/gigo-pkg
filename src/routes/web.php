@@ -2,6 +2,20 @@
 
 Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'prefix' => 'gigo-pkg'], function () {
 
+	//Vehicle Primary Application
+	Route::get('/vehicle-primary-application/get-list', 'VehiclePrimaryApplicationController@getVehiclePrimaryApplicationList')->name('getVehiclePrimaryApplicationList');
+	Route::get('/vehicle-primary-application/get-form-data', 'VehiclePrimaryApplicationController@getVehiclePrimaryApplicationFormData')->name('getVehiclePrimaryApplicationFormData');
+	Route::post('/vehicle-primary-application/save', 'VehiclePrimaryApplicationController@saveVehiclePrimaryApplication')->name('saveVehiclePrimaryApplication');
+	Route::get('/vehicle-primary-application/delete', 'VehiclePrimaryApplicationController@deleteVehiclePrimaryApplication')->name('deleteVehiclePrimaryApplication');
+	Route::get('/vehicle-primary-application/get-filter-data', 'VehiclePrimaryApplicationController@getVehiclePrimaryApplicationFilter')->name('getVehiclePrimaryApplicationFilter');
+
+	//Vehicle Secoundary Application
+	Route::get('/vehicle-secoundary-application/get-list', 'VehicleSecoundaryApplicationController@getVehicleSecoundaryAppList')->name('getVehicleSecoundaryAppList');
+	Route::get('/vehicle-secoundary-application/get-form-data', 'VehicleSecoundaryApplicationController@getVehicleSecoundaryAppFormData')->name('getVehicleSecoundaryAppFormData');
+	Route::post('/vehicle-secoundary-application/save', 'VehicleSecoundaryApplicationController@saveVehicleSecoundaryApp')->name('saveVehicleSecoundaryApp');
+	Route::get('/vehicle-secoundary-application/delete', 'VehicleSecoundaryApplicationController@deleteVehicleSecoundaryApp')->name('deleteVehicleSecoundaryApp');
+	Route::get('/vehicle-secoundary-application/get-filter-data', 'VehicleSecoundaryApplicationController@getVehicleSecoundaryAppFilterData')->name('getVehicleSecoundaryAppFilterData');
+
 	//Fault
 	Route::get('/fault/get-list', 'FaultController@getFaultList')->name('getFaultList');
 	Route::get('/fault/get-form-data', 'FaultController@getFaultFormData')->name('getFaultFormData');

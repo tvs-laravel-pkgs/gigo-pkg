@@ -30,13 +30,13 @@
                                     <div class="input-text">
                                         <ul class="gatein-img-list">
                                             <li class="gatein-img-list-item vehicle-img">
-                                                <input type="file" name="vehicle_photo" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple />
+                                                <input type="file" name="vehicle_photo" class="vehicle_photo image_uploadify" accept=".png, .jpg, .jpeg" />
                                             </li>
                                             <li class="gatein-img-list-item km-img">
-                                                <input type="file" name="km_reading_photo" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple />
+                                                <input type="file" name="km_reading_photo" class="km_reading_photo image_uploadify" accept=".png, .jpg, .jpeg" />
                                             </li>
                                             <li class="gatein-img-list-item driver-img">
-                                                <input type="file" name="driver_photo" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple />
+                                                <input type="file" name="driver_photo" class="driver_photo image_uploadify" accept=".png, .jpg, .jpeg"/>
                                             </li>
                                         </ul>
                                     </div><!-- Field -->
@@ -59,7 +59,7 @@
                                         <label>
                                             Vehicle Registration Number
                                             <sup class="mandatory">*</sup></label>
-                                        <input type="text" class="form-control" placeholder="Enter Vehicle Registration Number" value="" autocomplete="off" name="registration_number" />
+                                        <input type="text" class="form-control" minlength="10" maxlength="10"placeholder="Enter Vehicle Registration Number" value="" autocomplete="off" name="registration_number" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-4 col-lg-3" ng-if="$ctrl.is_registered == 0">
@@ -67,7 +67,7 @@
                                         <label>
                                             Trade Plate Number
                                         </label>
-                                        <input type="text" class="form-control" placeholder="Enter Trade Plate Number" value="" autocomplete="off" name="plate_number" />
+                                        <input type="text" class="form-control" minlength="10" maxlength="10" placeholder="Enter Trade Plate Number" value="" autocomplete="off" name="plate_number" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-4 col-lg-3">
@@ -76,7 +76,7 @@
                                             VIN Number
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter VIN No" autocomplete="off" name="vin_number" />
+                                        <input type="text" class="form-control" minlength="17" maxlength="17" placeholder="Enter VIN No" autocomplete="off" name="vin_number" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-4 col-lg-3">
@@ -129,7 +129,7 @@
                                         <label>
                                             Driver Mobile
                                         </label>
-                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Driver Name" value="" autocomplete="off" name="driver_mobile_number" />
+                                        <input type="text" class="form-control" minlength="10" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Driver Name" value="" autocomplete="off" name="driver_mobile_number" />
                                     </div><!-- Form Group -->
                                 </div><!-- Column -->
                                 <div class="col-md-4 col-lg-3">

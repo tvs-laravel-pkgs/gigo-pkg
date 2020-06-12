@@ -116,7 +116,7 @@
                                                             Registration Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Registration No" autocomplete="off" ng-model="job_order.vehicle.registration_number" name="registration_number" />
+                                                        <input type="text" class="form-control" minlength="10" maxlength="10" placeholder="Enter Registration No" autocomplete="off" ng-model="job_order.vehicle.registration_number" name="registration_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3" ng-if="job_order.vehicle.is_registered == 0">
@@ -124,7 +124,7 @@
                                                         <label>
                                                             Trade Plate Number
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Trade Plate No" autocomplete="off" ng-model="job_order.vehicle.registration_number" name="plate_number" />
+                                                        <input type="text" class="form-control" minlength="10" maxlength="10" placeholder="Enter Trade Plate No" autocomplete="off" ng-model="job_order.vehicle.registration_number" name="plate_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -152,7 +152,7 @@
                                                             VIN Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter VIN No" autocomplete="off" ng-model="job_order.vehicle.vin_number" name="vin_number" />
+                                                        <input type="text" class="form-control" minlength="17" maxlength="17" placeholder="Enter VIN No" autocomplete="off" ng-model="job_order.vehicle.vin_number" name="vin_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -161,7 +161,7 @@
                                                             Engine Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Engine No" autocomplete="off" ng-model="job_order.vehicle.engine_number" name="engine_number" />
+                                                        <input type="text" class="form-control" minlength="7" placeholder="Enter Engine No" autocomplete="off" ng-model="job_order.vehicle.engine_number" name="engine_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -170,7 +170,7 @@
                                                             Chassis Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" placeholder="Enter Chasis No" autocomplete="off" ng-model="job_order.vehicle.chassis_number" name="chassis_number" />
+                                                        <input type="text" class="form-control" minlength="10" placeholder="Enter Chasis No" autocomplete="off" ng-model="job_order.vehicle.chassis_number" name="chassis_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
