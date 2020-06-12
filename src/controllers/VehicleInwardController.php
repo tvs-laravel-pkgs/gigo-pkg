@@ -108,14 +108,14 @@ class VehicleInwardController extends Controller {
 			if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
 				$vehicle_inwards->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 			} else if (Entrust::can('view-own-outlet-vehicle-inward')) {
-				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
+					->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
 			} else {
-				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
+					->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
 			}
 		}
-
-		$vehicle_inwards->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')")
-			->groupBy('job_orders.id');
+		$vehicle_inwards->groupBy('job_orders.id');
 
 		return Datatables::of($vehicle_inwards)
 			->rawColumns(['status', 'action'])

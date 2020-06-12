@@ -131,6 +131,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//Vehicle Secoundary Application
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'vehicle-secoundary-applications',
+				'display_name' => 'Vehicle Secounday Application',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'vehicle-secoundary-applications',
+				'name' => 'add-vehicle-secoundary-application',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'vehicle-secoundary-applications',
+				'name' => 'edit-vehicle-secoundary-application',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicle-secoundary-applications',
+				'name' => 'delete-vehicle-secoundary-application',
+				'display_name' => 'Delete',
+			],
+
 			//Pause Work Reason
 			[
 				'display_order' => 99,
