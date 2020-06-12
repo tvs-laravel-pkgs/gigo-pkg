@@ -14,9 +14,6 @@
                 <b>
                     {{job_order.vehicle.registration_number}}
                 </b>
-                <a class="page-tab-form-top-left-info-link" data-toggle="modal" data-target="#search_vehicle_modal" style="margin-left: 0;">
-                    <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
-                </a>
                 <span ng-if="job_order.vehicle.model.model_number">
                     | {{job_order.vehicle.model.model_number}}
                 </span>
@@ -25,6 +22,9 @@
                 </span>
                 | {{job_order.date}}, {{job_order.time}}
             </span>
+            <a class="page-tab-form-top-left-info-link" data-toggle="modal" data-target="#search_vehicle_modal">
+                <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
+            </a>
         </div>
     </div><!-- Page Tab Form Top Left -->
     <div class="page-tab-form-top-right">
