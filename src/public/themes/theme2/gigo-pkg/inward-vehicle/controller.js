@@ -406,7 +406,7 @@ app.component('inwardVehicleTableList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 //Vehicle Diagonis Details
-app.component('inwardVehicleExportDiagnosisDetailForm', {
+app.component('inwardVehicleExpertDiagnosisDetailForm', {
     templateUrl: inward_vehicle_export_diagnosis_details_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         $element.find('input').on('keydown', function(ev) {
@@ -1236,7 +1236,7 @@ app.component('inwardVehicleUpdatejcForm', {
         $scope.send_customer_approval = function() {
             $(".send_to_customer_approval").button('loading');
             $.ajax({
-                url: base_url + '/api/vehicle-inward/verify/otp',
+                url: base_url + '/api/vehicle-inward/estimate/link/generate',
                 type: "POST",
                 data: {
                     job_order_id: $routeParams.job_order_id,

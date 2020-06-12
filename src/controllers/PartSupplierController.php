@@ -110,7 +110,7 @@ class PartSupplierController extends Controller {
 				'code.unique' => 'Code is already taken',
 				'code.min' => 'Code is Minimum 3 Charachers',
 				'code.max' => 'Code is Maximum 32 Charachers',
-				// 'name.required' => 'Name is Required',
+				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
