@@ -490,14 +490,14 @@
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
-                                                <div class="panel panel-default type-3" ng-if="job_order.vehicle.lastJobOrder">
+                                                <div class="panel panel-default type-3">
                                                     <div class="panel-heading">
                                                         <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
-                                                            Last Job Card Details
+                                                            Previous Job Card Details
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
-                                                    <div id="collapse3" class="panel-collapse collapse">
+                                                    <div id="collapse3" class="panel-collapse collapse" ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
                                                         <div class="panel-body">
                                                             <div class="view-details mb-no">
                                                                 <ul class="view-row pb-none">

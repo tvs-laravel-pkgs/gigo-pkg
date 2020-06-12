@@ -205,9 +205,9 @@
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
-                                                    <div id="collapse3" class="panel-collapse collapse" ng-if="job_order.vehicle.lastJobOrder">
+                                                    <div id="collapse3" class="panel-collapse collapse" ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
                                                         <div class="panel-body">
-                                                            <div class="view-details mb-no" ng-if="job_order.vehicle.last_job_order">
+                                                            <div class="view-details mb-no">
                                                                 <ul class="view-row pb-none">
                                                                     <li class="view-col-3">
                                                                         <span class="view-col-label">
