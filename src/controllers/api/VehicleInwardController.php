@@ -879,6 +879,13 @@ class VehicleInwardController extends Controller {
 
 			//JOB ORDER SAVE
 			$job_order = JobOrder::find($request->job_order_id);
+
+			//Check Service Type changed or not.If changed remove all schedule maintenace
+			if ($job_order->service_type_id != $request->service_type_id) {
+				JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_oem_recommended', 1)->forceDelete();
+				JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_recommended_by_oem', 1)->forceDelete();
+			}
+
 			$job_order->fill($request->all());
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
