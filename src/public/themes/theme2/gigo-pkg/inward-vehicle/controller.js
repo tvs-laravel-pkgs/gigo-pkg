@@ -1257,7 +1257,7 @@ app.component('inwardVehicleUpdatejcForm', {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                 },
                 success: function(response) {
-                    custom_noty('success', res.message);
+                    custom_noty('success', response.message);
                     $(".send_to_customer_approval").button('reset');
                     $location.path('/inward-vehicle/table-list');
                     $scope.$apply();

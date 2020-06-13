@@ -2293,7 +2293,7 @@ class JobCardController extends Controller {
 			DB::beginTransaction();
 
 			$item_detail_id = [];
-			
+
 			foreach ($request->item_details as $key => $item_detail) {
 				$gate_pass_item = GatePassItem::firstOrNew([
 					'gate_pass_id' => $request->gate_pass_id,
@@ -2302,7 +2302,7 @@ class JobCardController extends Controller {
 				$gate_pass_item->fill($item_detail);
 				$gate_pass_item->save();
 
-				array_push($item_detail_id,$gate_pass_item->id);
+				array_push($item_detail_id, $gate_pass_item->id);
 			}
 
 			//CREATE DIRECTORY TO STORAGE PATH
