@@ -91,23 +91,9 @@ class JobOrder extends Model {
 		return $this->belongsToMany('App\VehicleInventoryItem', 'job_order_vehicle_inventory_item', 'job_order_id', 'vehicle_inventory_item_id')->withPivot(['is_available', 'remarks']);
 	}
 
-	//issue: naming
-	// public function jobOrderPart() {
-	// 	return $this->hasMany('App\JobOrderPart');
-	// }
-	//issue: naming
-	// public function jobOrderRepairOrder() {
-	// 	return $this->hasMany('App\JobOrderRepairOrder');
-	// }
-
-	//issue: naming
-	// public function getEomRecomentation() {
-	// 	return $this->hasMany('App\JobOrderRepairOrder', 'job_order_id', 'id');
-	// }
-	//issue: naming
-	// public function getAdditionalRotAndParts() {
-	// 	return $this->hasMany('App\JobOrderPart', 'job_order_id', 'id');
-	// }
+	public function inwardProcessChecks() {
+		return $this->belongsToMany('App\Config', 'inward_process_check', 'job_order_id', 'tab_id')->withPivot(['is_form_filled']);
+	}
 
 	public function jobOrderRepairOrders() {
 		return $this->hasMany('App\JobOrderRepairOrder', 'job_order_id');

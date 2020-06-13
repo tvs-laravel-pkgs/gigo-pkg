@@ -23,7 +23,7 @@ class ComplaintsU2 extends Migration {
 	 */
 	public function down() {
 		Schema::table('complaints', function (Blueprint $table) {
-			// $table->unique(["company_id", "group_id", "name"]);
+			$table->unique(["company_id", "group_id", "name"]);
 		});
 	}
 }

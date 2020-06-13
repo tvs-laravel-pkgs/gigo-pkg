@@ -480,6 +480,13 @@ class VehicleInwardController extends Controller {
 			//UPDATE GATE LOG STATUS
 			$job_order->gateLog()->update(['status_id' => 8121]);
 
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
+			}
 			//Job card details need to get future
 			return response()->json([
 				'success' => true,
@@ -531,6 +538,13 @@ class VehicleInwardController extends Controller {
 						'Job Order Not Found!',
 					],
 				]);
+			}
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
 			}
 
 			return response()->json([
@@ -687,6 +701,9 @@ class VehicleInwardController extends Controller {
 			$vehicle_owner->ownership_id = $request->ownership_type_id;
 			$vehicle_owner->save();
 
+			// INWARD PROCESS CHECK - CUSTOMER DETAIL
+			$job_order->inwardProcessChecks()->where('tab_id', 8701)->update(['is_form_filled' => 1]);
+
 			DB::commit();
 
 			return response()->json([
@@ -738,6 +755,13 @@ class VehicleInwardController extends Controller {
 						'Order Not Found!',
 					],
 				]);
+			}
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
 			}
 
 			$extras = [
@@ -888,6 +912,9 @@ class VehicleInwardController extends Controller {
 				$attachment_type_id = 250; //RC Book
 				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
+
+			// INWARD PROCESS CHECK - ORDER DETAIL
+			$job_order->inwardProcessChecks()->where('tab_id', 8702)->update(['is_form_filled' => 1]);
 
 			DB::commit();
 
@@ -1069,6 +1096,13 @@ class VehicleInwardController extends Controller {
 			$extras = [
 				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order->id, $params),
 			];
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
+			}
 
 			return response()->json([
 				'success' => true,
@@ -1213,7 +1247,7 @@ class VehicleInwardController extends Controller {
 	public function getDmsCheckListFormData(Request $r) {
 		try {
 
-			$attachment = JobOrder::
+			$job_order = JobOrder::
 				with([
 				'vehicle',
 				'vehicle.model',
@@ -1242,9 +1276,17 @@ class VehicleInwardController extends Controller {
 				])
 				->find($r->id);
 
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
+			}
+
 			return response()->json([
 				'success' => true,
-				'attachment' => $attachment,
+				'job_order' => $job_order,
 				'attachement_path' => url('storage/app/public/gigo/job_order/attachments/'),
 			]);
 		} catch (\Exception $e) {
@@ -1333,6 +1375,10 @@ class VehicleInwardController extends Controller {
 				$attachment_type_id = 258; //AMC
 				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
+
+			// INWARD PROCESS CHECK - DMS CHECKLIST
+			$job_order->inwardProcessChecks()->where('tab_id', 8704)->update(['is_form_filled' => 1]);
+
 			DB::commit();
 			return response()->json([
 				'success' => true,
@@ -1491,6 +1537,14 @@ class VehicleInwardController extends Controller {
 
 			$total_amount = $parts_rate + $labour_amount;
 
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
+			}
+
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
@@ -1604,6 +1658,10 @@ class VehicleInwardController extends Controller {
 					$job_order_repair_order->save();
 				}
 			}
+			// INWARD PROCESS CHECK - Schedule Maintenance
+			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->inwardProcessChecks()->where('tab_id', 8705)->update(['is_form_filled' => 1]);
+
 			DB::commit();
 			return response()->json([
 				'success' => true,
@@ -1674,6 +1732,15 @@ class VehicleInwardController extends Controller {
 				}
 			}
 			$total_amount = $parts_total_amount + $labour_total_amount;
+
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
+			}
+
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
@@ -1731,8 +1798,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1762,7 +1831,9 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => false,
 				'error' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 
@@ -2217,6 +2288,14 @@ class VehicleInwardController extends Controller {
 				'customer_voice_list' => $customer_voice_list,
 			];
 
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
+			}
+
 			return response()->json([
 				'success' => true,
 				'extras' => $extras,
@@ -2331,6 +2410,13 @@ class VehicleInwardController extends Controller {
 						'Job Order Not Found',
 					],
 				]);
+			}
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
 			}
 
 			$extras = [
@@ -2470,6 +2556,14 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
+			}
+
 			$extras = [
 				'user_list' => User::getUserEmployeeList(['road_test' => false]),
 			];
@@ -2527,6 +2621,9 @@ class VehicleInwardController extends Controller {
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
+
+			// INWARD PROCESS CHECK - EXPERT DIAGNOSIS REPORT
+			$job_order->inwardProcessChecks()->where('tab_id', 8703)->update(['is_form_filled' => 1]);
 
 			DB::commit();
 
@@ -2596,6 +2693,14 @@ class VehicleInwardController extends Controller {
 				$item_group['vehicle_inspection_items'] = $inspection_items;
 
 				$vehicle_inspection_item_groups[] = $item_group;
+			}
+
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
 			}
 
 			$params['config_type_id'] = 32;
@@ -2769,6 +2874,14 @@ class VehicleInwardController extends Controller {
 			$job_order->total_estimate_parts_amount = $oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount;
 			$job_order->total_estimate_amount = (($oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount) + ($oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount));
 
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
+			}
+
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
@@ -2814,12 +2927,30 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			//CHECK ALL INWARD MANDATORY FORM ARE FILLED
 			$job_order = jobOrder::find($request->job_order_id);
+			$inward_process_check = $job_order->inwardProcessChecks()
+				->where('tab_id', '!=', 8706)
+				->where('is_form_filled', 0)
+				->first();
+			if ($inward_process_check) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Validation Error',
+					'errors' => [
+						'Kindly Save ' . $inward_process_check->name,
+					],
+				]);
+			}
+
 			$job_order->estimated_delivery_date = date('Y-m-d H:i:s', strtotime($request->estimated_delivery_date));
 			$job_order->is_customer_agreed = $request->is_customer_agreed;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
+
+			// INWARD PROCESS CHECK - ESTIMATE
+			$job_order->inwardProcessChecks()->where('tab_id', 8706)->update(['is_form_filled' => 1]);
 
 			DB::commit();
 
@@ -2877,6 +3008,14 @@ class VehicleInwardController extends Controller {
 					->where('company_id', Auth::user()->company_id)
 					->get())
 				->prepend(['id' => '', 'name' => 'Select Estimation Type', 'minimum_amount' => '']);
+
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
+			}
 
 			return response()->json([
 				'success' => true,
@@ -2984,6 +3123,14 @@ class VehicleInwardController extends Controller {
 			$extras = [
 				'base_url' => url('/'),
 			];
+
+			//ENABLE ESTIMATE STATUS
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			if ($inward_process_check) {
+				$job_order->enable_estimate_status = false;
+			} else {
+				$job_order->enable_estimate_status = true;
+			}
 
 			return response()->json([
 				'success' => true,

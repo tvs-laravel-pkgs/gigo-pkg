@@ -702,7 +702,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    $scope.job_order = res.attachment;
+                    $scope.job_order = res.job_order;
                     $scope.job_order_id = $routeParams.job_order_id;
                     $scope.$apply();
 
@@ -2444,7 +2444,7 @@ app.component('inwardVehicleOrderDetailForm', {
                     },
                 },
                 invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check all sections');
+                    custom_noty('error', 'You have errors, Please check all tabs');
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);

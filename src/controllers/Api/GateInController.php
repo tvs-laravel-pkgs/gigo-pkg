@@ -42,6 +42,7 @@ class GateInController extends Controller {
 	}
 
 	public function createGateInEntry(Request $request) {
+		DB::beginTransaction();
 		try {
 			//REMOVE WHITE SPACE BETWEEN REGISTRATION NUMBER
 			$request->registration_number = str_replace(' ', '', $request->registration_number);
@@ -99,12 +100,6 @@ class GateInController extends Controller {
 					'required_if:is_registered,==,1',
 					'max:10',
 				],
-				'vin_number' => [
-					'required',
-					'min:17',
-					'max:32',
-					'string',
-				],
 				'km_reading_type_id' => [
 					'required',
 					'integer',
@@ -145,7 +140,6 @@ class GateInController extends Controller {
 				]);
 			}
 
-			DB::beginTransaction();
 			//VEHICLE GATE ENTRY DETAILS
 			// UNREGISTRED VEHICLE DIFFERENT FLOW WAITING FOR REQUIREMENT
 			if (!$request->is_registered == 1) {
@@ -160,10 +154,44 @@ class GateInController extends Controller {
 				'company_id' => Auth::user()->company_id,
 				'registration_number' => $request->registration_number,
 			]);
+			//NEW
+			if (!$vehicle->exists) {
+				$vehicle_form_filled = 0;
+				$vehicle->status_id = 8140; //NEW
+				$vehicle->company_id = Auth::user()->company_id;
+				$vehicle->created_by_id = Auth::user()->id;
+			} else {
+				$vehicle_form_filled = 1;
+				if ($vehicle->currentOwner) {
+					$customer_form_filled = 1;
+					$vehicle->status_id = 8142; //COMPLETED
+				} else {
+					$customer_form_filled = 0;
+					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
+				}
+				$vehicle->updated_by_id = Auth::user()->id;
+			}
+			$vehicle->save();
+			$request->vehicle_id = $vehicle->id;
+			//VEHICLE VIN NUMBER VALIDATION
+			$validator1 = Validator::make($request->all(), [
+				'vin_number' => [
+					'required',
+					'min:17',
+					'max:32',
+					'string',
+					'unique:vehicles,vin_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+				],
+			]);
+
+			if ($validator1->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator1->errors()->all(),
+				]);
+			}
 			$vehicle->fill($request->all());
-			$vehicle->status_id = 8140; //NEW
-			$vehicle->company_id = Auth::user()->company_id;
-			$vehicle->created_by_id = Auth::user()->id;
 			$vehicle->save();
 
 			$job_order = new JobOrder;
@@ -222,6 +250,30 @@ class GateInController extends Controller {
 				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
 
+			//INWARD PROCESS CHECK
+			$inward_mandatory_tabs = Config::getDropDownList([
+				'config_type_id' => 122,
+				'orderBy' => 'id',
+				'add_default' => false,
+			]);
+			$job_order->inwardProcessChecks()->sync([]);
+			if (!empty($inward_mandatory_tabs)) {
+				foreach ($inward_mandatory_tabs as $key => $inward_mandatory_tab) {
+					//VEHICLE DETAILS TAB
+					if ($inward_mandatory_tab->id == 8700) {
+						$is_form_filled = $vehicle_form_filled;
+					} elseif ($inward_mandatory_tab->id == 8701) {
+						//CUSTOMER DETAILS TAB
+						$is_form_filled = $customer_form_filled;
+					} else {
+						$is_form_filled = 0;
+					}
+					$job_order->inwardProcessChecks()->attach($inward_mandatory_tab->id, [
+						'is_form_filled' => $is_form_filled,
+					]);
+				}
+			}
+
 			DB::commit();
 			$gate_in_data['number'] = $gate_log->number;
 			$gate_in_data['registration_number'] = $vehicle->registration_number;
@@ -232,7 +284,8 @@ class GateInController extends Controller {
 				'message' => 'Gate Entry Saved Successfully!!',
 			]);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
+			DB::rollBack();
 			return response()->json([
 				'success' => false,
 				'error' => 'Server Error',
