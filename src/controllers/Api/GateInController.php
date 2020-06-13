@@ -157,6 +157,7 @@ class GateInController extends Controller {
 			//NEW
 			if (!$vehicle->exists) {
 				$vehicle_form_filled = 0;
+				$customer_form_filled = 0;
 				$vehicle->status_id = 8140; //NEW
 				$vehicle->company_id = Auth::user()->company_id;
 				$vehicle->created_by_id = Auth::user()->id;
