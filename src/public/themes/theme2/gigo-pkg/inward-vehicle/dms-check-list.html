@@ -148,7 +148,7 @@
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
                                             <hr class="hr-15"><!-- Separater -->
-                                            <h6 class="color-secondary-dark mb-10"><b>Campaign Job Details</b></h6>
+                                            <h6 class="color-secondary-dark mb-10" ng-if="job_order.vehicle.model.campaign.length > 0"><b>Campaign Job Details</b></h6>
                                             <div class="panel-group" id="accordion_1">
                                                 <div class="panel panel-default type-3" ng-repeat="(index, campaign) in job_order.vehicle.model.campaign">
                                                     <div class="panel-heading">

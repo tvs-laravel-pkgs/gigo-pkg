@@ -2938,7 +2938,7 @@ class VehicleInwardController extends Controller {
 					'success' => false,
 					'message' => 'Validation Error',
 					'errors' => [
-						'Kindly Save ' . $inward_process_check->name,
+						'Please Save ' . $inward_process_check->name,
 					],
 				]);
 			}
