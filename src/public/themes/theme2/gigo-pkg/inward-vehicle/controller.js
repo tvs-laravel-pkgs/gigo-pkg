@@ -3718,6 +3718,9 @@ app.component('inwardVehicleView', {
         $scope.btnNxt = function() {}
         $scope.prev = function() {}
 
+        /* Dropdown Arrow Function */
+        arrowDropdown();
+
         //Save Form Data 
         var form_id = '#inward_vehicle_form';
         var v = jQuery(form_id).validate({
