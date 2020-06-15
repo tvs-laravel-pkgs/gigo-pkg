@@ -46,7 +46,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Job Card Number <sup class="mandatory">*</sup></label>
-                                        <input ng-model="job_order.job_card.job_card_number" type="text" class="form-control" placeholder="Enter Job Card Number" autocomplete="off" value="{{job_order.job_card.job_card_number}}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="job_card_number" />
+                                        <input ng-model="job_order.job_card.job_card_number" type="text" class="form-control" placeholder="Enter Job Card Number" autocomplete="off" value="{{job_order.job_card.job_card_number}}" maxlength="191" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="job_card_number" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
@@ -61,13 +61,27 @@
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-12">
-                                    <label>Job Card Photo <sup class="mandatory">*</sup></label>
-                                    <div class="update-img" ng-if="job_order.job_card.attachment == NULL">
-                                        <input type="file" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" name="job_card_photo" />
-                                    </div>
-                                    <div class="update-img" ng-if="job_order.job_card.attachment != NULL">
-                                        <a href="{{job_order.attachment_path}}/{{job_order.job_card.attachment.name}}" target="_blank" alt="img">{{job_order.job_card.attachment.name}}
-                                        </a>
+                                    <div class="input-text form-group">
+                                        <label>Job Card Photo <sup class="mandatory">*</sup></label>
+                                        <div class="avatar-upload type-4">
+                                            <div class="avatar-edit" ng-class="{'in': job_order.job_card.attachment != NULL}">
+                                                <input type="file" class="profile-img-upload" name="job_card_photo" id="image_Upload_5" accept=".png, .jpg, .jpeg" />
+                                                <label for="image_Upload_5">
+                                                    <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
+                                                </label>
+                                            </div>
+                                            <div class="avatar-preview in" ng-if="job_order.job_card.attachment != NULL">
+                                                <div class="avatar-img" id="imagePreview" style="background-image:url('./{{job_order.attachment_path}}/{{job_order.job_card.attachment.name}}')">
+                                                </div>
+                                                <input type="hidden" name="saved_attachment" value="1">
+                                            </div>
+                                            <div class="avatar-preview" ng-if="job_order.job_card.attachment == NULL">
+                                                <div class="avatar-img" id="imagePreview" style="">
+                                                </div>
+                                                <input type="hidden" name="saved_attachment" value="0">
+                                            </div><!-- Avatar Preview -->
+                                        </div><!-- Avatar Upload -->
+                                        <div class="attachment_error"></div>
                                     </div>
                                 </div><!-- Column -->
                             </div><!-- Row -->
@@ -78,8 +92,8 @@
                     <div class="row">
                         <div class="col-md-12">
                             <button class="btn btn-red btn-min-wdth save_close" ng-click="saveJobCard(1)">Save & Close</button>
-                            <button class="btn btn-bordered btn-grey btn-min-wdth approval_behalf" ng-click="saveJobCard(2)" >Approve on behalf of Customer</button>
-                            <button class="btn btn-secondary-dark btn-min-wdth send_to_customer_approval" ng-click="saveJobCard(3)" >Send to Customer for Approval</button>
+                            <button class="btn btn-bordered btn-grey btn-min-wdth approval_behalf" ng-click="saveJobCard(2)">Approve on behalf of Customer</button>
+                            <button class="btn btn-secondary-dark btn-min-wdth send_to_customer_approval" ng-click="saveJobCard(3)">Send to Customer for Approval</button>
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Page Form Footer -->
@@ -87,7 +101,6 @@
         </form>
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-
 <!-- Modal -->
 <div class="modal modal-otp alert-modal fade" id="otp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">

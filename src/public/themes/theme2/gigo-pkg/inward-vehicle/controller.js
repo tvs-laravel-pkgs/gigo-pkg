@@ -759,11 +759,11 @@ app.component('inwardVehicleDmsCheckListForm', {
                 errorPlacement: function(error, element) {
                     if (element.hasClass("warranty_expiry_attachment")) {
                         custom_noty('error', 'Warranty Photo is Required')
-                    }else if (element.hasClass("ewp_expiry_attachment")) {
+                    } else if (element.hasClass("ewp_expiry_attachment")) {
                         custom_noty('error', 'Extended Warranty Photo is Required')
-                    }else if (element.hasClass("membership_attachment")) {
+                    } else if (element.hasClass("membership_attachment")) {
                         custom_noty('error', 'Membership Photo is Required')
-                    }else{
+                    } else {
                         error.insertAfter(element)
                     }
                 },
@@ -1201,11 +1201,23 @@ app.component('inwardVehicleUpdatejcForm', {
                         minlength: 10,
                     },
                     'job_card_photo': {
-                        required: true,
+                        required: function(element) {
+                            if (!$scope.job_order.job_card.attachment) {
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                     'job_card_date': {
                         required: true,
                     },
+                },
+                errorPlacement: function(error, element) {
+                    if (element.attr('name') == 'job_card_photo') {
+                        error.appendTo($('.attachment_error'));
+                    } else {
+                        error.insertAfter(element);
+                    }
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
