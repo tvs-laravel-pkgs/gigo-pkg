@@ -1838,6 +1838,74 @@ app.component('jobCardBillDetailView', {
     }
 });
 
+
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//Split Order Details
+app.component('jobCardSplitOrder', {
+    templateUrl: job_card_split_order_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/job-card/split-order/view',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_card = res.job_card;
+                    $scope.extras = res.extras;
+                    console.log($scope.job_card);
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+
+        function dragstart_handler(ev) {
+            // Add the target element's id to the data transfer object
+            ev.dataTransfer.setData("application/my-app", ev.target.id);
+            ev.dataTransfer.dropEffect = "move";
+        }
+
+        function dragover_handler(ev) {
+            ev.preventDefault();
+            ev.dataTransfer.dropEffect = "move"
+        }
+
+        function drop_handler(ev) {
+            ev.preventDefault();
+            // Get the id of the target and add the moved element to the target's DOM
+            const data = ev.dataTransfer.getData("application/my-app");
+            ev.target.appendChild(document.getElementById(data));
+        }
+    }
+});
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
 //Update Bill Details

@@ -191,6 +191,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('job-card/bill-update/get-form-data', 'JobCardController@getBillDetailFormData');
 		Route::post('job-card/bill-update/', 'JobCardController@updateBillDetails');
 
+		//SPLIT ORDER DETAILS
+		Route::post('job-card/split-order/view', 'JobCardController@viewSplitOrderDetails');
+
 		//VEHICLE GATE PASS LIST
 		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');
 		Route::get('view-vehicle-gate-pass/{gate_log_id}', 'VehicleGatePassController@viewVehicleGatePass');
