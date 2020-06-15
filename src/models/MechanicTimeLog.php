@@ -14,7 +14,7 @@ class MechanicTimeLog extends Model {
 	protected $table = 'mechanic_time_logs';
 	public $timestamps = true;
 	protected $fillable =
-		["id","repair_order_mechanic_id","start_date_time","end_date_time","status_id"]
+		["id", "repair_order_mechanic_id", "start_date_time", "end_date_time", "status_id"]
 	;
 
 	public function getDateOfJoinAttribute($value) {
@@ -28,6 +28,15 @@ class MechanicTimeLog extends Model {
 	public function status() {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
+
+	public function reason() {
+		return $this->belongsTo('App\PauseWorkReason', 'reason_id');
+	}
+
+	public function repairOrderMechanic() {
+		return $this->belongsTo('App\RepairOrderMechanic', 'repair_order_mechanic_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];

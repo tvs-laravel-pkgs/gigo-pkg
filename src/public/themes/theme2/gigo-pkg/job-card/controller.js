@@ -1764,6 +1764,38 @@ app.component('jobCardScheduleForm', {
                 }
             });
         }
+
+        //GET SINGLE MECHANIC TIME LOG
+        $scope.getMechanicTimeLog = function(repair_order_mechanic_id, repair_order_id) {
+            $.ajax({
+                    url: base_url + '/api/job-card/mechanic-time-log',
+                    method: "POST",
+                    data: {
+                        // id: $routeParams.job_card_id,
+                        repair_order_mechanic_id: repair_order_mechanic_id,
+                        repair_order_id: repair_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.repair_order_mechanic_time_logs = res.data.repair_order_mechanic_time_logs;
+                    $scope.repair_order_detail = res.data.repair_order;
+                    $scope.total_duration = res.data.total_duration;
+                    // $scope.employee_details = res.employee_details;
+                    // console.log($scope.job_card);
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
     }
 });
 
