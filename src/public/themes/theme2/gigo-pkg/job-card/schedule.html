@@ -54,14 +54,16 @@
                                             <div class="assigned-info" ng-if="job_order_repair_order.repair_order_mechanics.length > 0">
                                                 <span class="title">Assigned To</span>
                                                 <ul class="flex-row type-2 assigned-info-list">
-                                                    <li class="flex-col-3" ng-repeat="(key,repair_order_mechanics) in job_order_repair_order.repair_order_mechanics">
+                                                    <li class="flex-col-3" ng-repeat="(key,repair_order_mechanic) in job_order_repair_order.repair_order_mechanics">
                                                         <div class="assigned-info-list-item">
-                                                            <span class="title">{{repair_order_mechanics.mechanic.name}}</span>
+                                                            <span class="title">{{repair_order_mechanic.mechanic.name}}</span>
                                                             <span class="info">
-                                                                0h 15m |
+                                                                <a ng-click="getMechanicTimeLog(repair_order_mechanic.id,job_order_repair_order.repair_order.id)" data-toggle="modal" data-target="#time_log_modal">
+                                                                {{repair_order_mechanic.total_duration}} |
                                                                 <span class="color-red">
                                                                     View Time Log
                                                                 </span>
+                                                            </a>
                                                             </span>
                                                         </div><!-- Assigned Info List Item -->
                                                     </li>
@@ -118,6 +120,54 @@
                 </div><!-- Modal Body -->
             </div><!-- Modal Content -->
         </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
+
+<!-- Modal -->
+<div class="modal modal-center time-log-modal-wrap fade" id="time_log_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title">View Time Log</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="time-log-modal">
+                    <div class="title-wrap border-bottom">
+                        <span class="info">
+                            {{repair_order_detail.code}}
+                        </span>
+                        <span class="title">
+                            {{repair_order_detail.name}}
+                        </span>
+                    </div><!-- Title Wrap -->
+                    <div class="name-wrap">
+                        <span class="heading">{{repair_order_detail.repair_order_mechanic.mechanic.name}}</span>
+                        <span class="data">Total Working Hours - {{total_duration}}</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table time-log-table">
+                            <thead>
+                                <th>Date</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Duration</th>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="(key,repair_order_mechanic_time_log) in repair_order_mechanic_time_logs">
+                                    <td>{{repair_order_mechanic_time_log.date}}</td>
+                                    <td>{{repair_order_mechanic_time_log.start_time}}</td>
+                                    <td>{{repair_order_mechanic_time_log.end_time}} {{repair_order_mechanic_time_log.reason.name}}
+                                    </td>
+                                    <td>{{repair_order_mechanic_time_log.duration_difference}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div><!-- Table Responsive -->
+                </div><!-- Time Log Modal -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->
 <!-- Modal -->
