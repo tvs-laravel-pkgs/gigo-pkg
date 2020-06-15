@@ -1315,28 +1315,28 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:job_orders,id',
 				],
-				'warranty_expiry_date' => [
-					'nullable',
-					'date_format:"d-m-Y',
-				],
-				'ewp_expiry_date' => [
-					'nullable',
-					'date_format:"d-m-Y',
-				],
-				'warranty_expiry_attachment' => [
-					'nullable',
-					'mimes:jpeg,jpg,png',
-				],
-				'ewp_expiry_attachment' => [
-					'nullable',
-					'mimes:jpeg,jpg,png',
-				],
-				'membership_attachment' => [
-					'nullable',
-					'mimes:jpeg,jpg,png',
-				],
+				// 'warranty_expiry_date' => [
+				// 	'nullable',
+				// 	'date_format:"d-m-Y',
+				// ],
+				// 'ewp_expiry_date' => [
+				// 	'nullable',
+				// 	'date_format:"d-m-Y',
+				// ],
+				// 'warranty_expiry_attachment' => [
+				// 	'nullable',
+				// 	'mimes:jpeg,jpg,png',
+				// ],
+				// 'ewp_expiry_attachment' => [
+				// 	'nullable',
+				// 	'mimes:jpeg,jpg,png',
+				// ],
+				// 'membership_attachment' => [
+				// 	'nullable',
+				// 	'mimes:jpeg,jpg,png',
+				// ],
 				'is_verified' => [
-					'nullable',
+					// 'nullable',
 					'numeric',
 				],
 			]);

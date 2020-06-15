@@ -734,21 +734,21 @@ app.component('inwardVehicleDmsCheckListForm', {
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    'warranty_expiry_date': {
-                        required: true,
-                    },
-                    'ewp_expiry_date': {
-                        required: true,
-                    },
-                    'warranty_expiry_attachment': {
-                        required: true,
-                    },
-                    'ewp_expiry_attachment': {
-                        required: true,
-                    },
-                    'membership_attachment': {
-                        required: true,
-                    },
+                    // 'warranty_expiry_date': {
+                    //     required: true,
+                    // },
+                    // 'ewp_expiry_date': {
+                    //     required: true,
+                    // },
+                    // 'warranty_expiry_attachment': {
+                    //     required: true,
+                    // },
+                    // 'ewp_expiry_attachment': {
+                    //     required: true,
+                    // },
+                    // 'membership_attachment': {
+                    //     required: true,
+                    // },
                 },
                 messages: {
 
