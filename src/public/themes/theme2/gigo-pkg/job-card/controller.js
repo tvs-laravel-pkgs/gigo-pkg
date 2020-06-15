@@ -887,7 +887,8 @@ app.component('jobCardMaterialGatepassForm', {
                         return;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
-                    $scope.view_metrial_gate_pass = res.view_metrial_gate_pass;
+                    $scope.job_card = res.view_metrial_gate_pass;
+                    $scope.job_order = res.job_order;
                     $scope.$apply();
 
                 })
@@ -1170,6 +1171,7 @@ app.component('jobCardRoadTestObservationForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1216,6 +1218,7 @@ app.component('jobCardExpertDiagnosisForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1264,6 +1267,7 @@ app.component('jobCardVehicleInspectionForm', {
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
                     $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1310,6 +1314,7 @@ app.component('jobCardDmsChecklistForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1359,6 +1364,8 @@ app.component('jobCardPartIndentForm', {
                     self.part_list = res.part_list;
                     self.mechanic_list = res.mechanic_list;
                     self.issued_mode = res.issued_mode;
+                    $scope.job_order = res.job_order;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1528,6 +1535,7 @@ app.component('jobCardScheduleMaintenanceForm', {
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
                     $scope.schedule_maintenance = res.schedule_maintenance;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1579,6 +1587,7 @@ app.component('jobCardPayableLabourPartsForm', {
                     $scope.total_amount = res.total_amount;
                     $scope.parts_total_amount = res.parts_total_amount;
                     $scope.labour_total_amount = res.labour_total_amount;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1998,7 +2007,7 @@ app.component('jobCardEstimateForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
-
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -2047,6 +2056,7 @@ app.component('jobCardEstimateStatusForm', {
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
                     $scope.attachement_path = res.attachement_path;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
