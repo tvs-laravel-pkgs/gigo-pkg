@@ -105,7 +105,7 @@
                                         <label>
                                             KM Reading
                                             <sup class="mandatory">*</sup></label>
-                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter KM Reading" value="" autocomplete="off" name="km_reading" />
+                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="6" placeholder="Enter KM Reading" value="" autocomplete="off" name="km_reading" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-4 col-lg-3" ng-if="$ctrl.reading_type.id == 8041">
@@ -113,7 +113,7 @@
                                         <label>
                                             HR Reading
                                             <sup class="mandatory">*</sup></label>
-                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter HR Reading" value="" autocomplete="off" name="hr_reading" />
+                                        <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="6" placeholder="Enter HR Reading" value="" autocomplete="off" name="hr_reading" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-4 col-lg-3">

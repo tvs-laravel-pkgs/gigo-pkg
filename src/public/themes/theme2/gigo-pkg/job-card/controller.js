@@ -887,7 +887,8 @@ app.component('jobCardMaterialGatepassForm', {
                         return;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
-                    $scope.view_metrial_gate_pass = res.view_metrial_gate_pass;
+                    $scope.job_card = res.view_metrial_gate_pass;
+                    $scope.job_order = res.job_order;
                     $scope.$apply();
 
                 })
@@ -1170,6 +1171,7 @@ app.component('jobCardRoadTestObservationForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1216,6 +1218,7 @@ app.component('jobCardExpertDiagnosisForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1264,6 +1267,7 @@ app.component('jobCardVehicleInspectionForm', {
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
                     $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1310,6 +1314,7 @@ app.component('jobCardDmsChecklistForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1359,6 +1364,8 @@ app.component('jobCardPartIndentForm', {
                     self.part_list = res.part_list;
                     self.mechanic_list = res.mechanic_list;
                     self.issued_mode = res.issued_mode;
+                    $scope.job_order = res.job_order;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1528,6 +1535,7 @@ app.component('jobCardScheduleMaintenanceForm', {
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
                     $scope.schedule_maintenance = res.schedule_maintenance;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1579,6 +1587,7 @@ app.component('jobCardPayableLabourPartsForm', {
                     $scope.total_amount = res.total_amount;
                     $scope.parts_total_amount = res.parts_total_amount;
                     $scope.labour_total_amount = res.labour_total_amount;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1626,7 +1635,6 @@ app.component('jobCardScheduleForm', {
                     console.log(res);
                     $scope.job_card = res.job_card_view;
                     // $scope.employee_details = res.employee_details;
-                    console.log($scope.job_card);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1642,7 +1650,7 @@ app.component('jobCardScheduleForm', {
         //     $scope.job_card.repair_order_name = name;
         // }
         $scope.assignMechanic = function(repair_order_id) {
-            console.log(repair_order_id);
+            // console.log(repair_order_id);
             $.ajax({
                     url: base_url + '/api/job-card/get-mechanic',
                     method: "POST",
@@ -1684,7 +1692,7 @@ app.component('jobCardScheduleForm', {
 
         self.selectedEmployee_ids = [];
         $scope.selectedEmployee = function(id) {
-            console.log(id);
+            // console.log(id);
             if ($('.check_uncheck_' + id).hasClass('bg-dark')) {
                 console.log("1");
                 $('.check_uncheck_' + id).removeClass('bg-dark');
@@ -1692,20 +1700,20 @@ app.component('jobCardScheduleForm', {
                 self.selectedEmployee_ids = jQuery.grep(self.selectedEmployee_ids, function(value) {
                     return value != id;
                 });
-                console.log(self.selectedEmployee_ids);
+                // console.log(self.selectedEmployee_ids);
                 $('#selectedMachanic').val(self.selectedEmployee_ids);
             } else {
-                console.log("2");
+                // console.log("2");
                 $('.check_uncheck_' + id).addClass('bg-dark');
                 $('.check_uncheck_' + id).find('img').attr('src', './public/theme/img/content/icons/check-white.svg');
                 if (self.selectedEmployee_ids.includes(id)) {
                     $('#selectedMachanic').val(self.selectedEmployee_ids);
                 } else {
-                    console.log("2");
+                    // console.log("2");
                     self.selectedEmployee_ids.push(id);
                     $('#selectedMachanic').val(self.selectedEmployee_ids);
                 }
-                console.log(self.selectedEmployee_ids);
+                // console.log(self.selectedEmployee_ids);
             }
         }
         //SAVE MECHANIC
@@ -1781,6 +1789,35 @@ app.component('jobCardScheduleForm', {
                     $scope.total_duration = res.data.total_duration;
                     // $scope.employee_details = res.employee_details;
                     // console.log($scope.job_card);
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        $scope.viewTimeLog = function(repair_order_id) {
+            // console.log(repair_order_id);
+            // return;
+            $.ajax({
+                    url: base_url + '/api/get-job-card-time-log',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                        repair_order_id: repair_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_order_repair_order_time_log = res.job_order_repair_order_time_log;
+                    // $("#selectedMachanic").;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -2038,7 +2075,7 @@ app.component('jobCardEstimateForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
-
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -2087,6 +2124,7 @@ app.component('jobCardEstimateStatusForm', {
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
                     $scope.attachement_path = res.attachement_path;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {

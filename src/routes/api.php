@@ -126,7 +126,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('job-card/get', 'JobCardController@getJobCardList');
 
 		// JOB CARD TIME LOG
-		Route::get('get-job-card-time-log/{job_card_id}', 'JobCardController@getJobCardTimeLog');
+		Route::post('get-job-card-time-log', 'JobCardController@getJobCardTimeLog');
 
 		// JOB CARD MATRIAL GATE PASS VIEW
 		Route::post('view-material-gate-pass', 'JobCardController@viewMeterialGatePass');
