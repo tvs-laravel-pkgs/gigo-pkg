@@ -40,14 +40,15 @@
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="photo-sign-wrap" style="width: 100%;height: 500px">
                                                 <div class="photo-sign-caption">Customer Photo</div>
-                                                <br>
-                                                <div class="col-md-6">
-                                                    <video ng-show="$ctrl.video" title="Capture Image" id="video" width="100%" height="360" ng-click="snapshot()"></video>
-                                                    <span id="eror_customer_photo"></span>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <img ng-if="job_order.customer_approval_attachment.length > 0" src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_approval_attachment[0].name}}" id="customer_pic" height="360" width="100%">
-                                                    <canvas ng-show="$ctrl.screenShot" id="canvas" width="550" height="360"></canvas>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <video ng-show="$ctrl.video" title="Click to Capture Image" id="video" width="100%" height="360" ng-click="snapshot()"></video>
+                                                        <span id="eror_customer_photo"></span>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <img ng-if="job_order.customer_approval_attachment.length > 0" src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_approval_attachment[0].name}}" id="customer_pic" height="360" width="100%">
+                                                        <canvas ng-show="$ctrl.screenShot" id="canvas" width="550" height="360"></canvas>
+                                                    </div>
                                                 </div>
                                                 <!-- <div class="col-md-12">
                                                     <video ng-show="$ctrl.video" title="Capture Image" id="video" width="640" height="360" ng-click="snapshot()"></video>
@@ -90,10 +91,10 @@
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
+                                                <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/estimate/{{job_order_id}}">Previous</a>
                                                 <button type="submit" class="btn btn-red submit" ng-click="saveForm()">
                                                     Save
                                                 </button>
-                                                <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/estimate/{{job_order_id}}" >Previous</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->

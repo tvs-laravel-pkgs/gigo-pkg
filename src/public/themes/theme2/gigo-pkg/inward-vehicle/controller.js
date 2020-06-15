@@ -3552,6 +3552,8 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                     }
                     $scope.estimation_type = res.estimation_type;
                     $scope.minimum_payable_amount = $scope.job_order.minimum_payable_amount;
+
+                    $scope.getSelectedEstimationType($scope.job_order.estimation_type_id,1);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -3560,10 +3562,17 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
         }
         $scope.fetchData();
 
-        $scope.getSelectedEstimationType = function(estimation_type_id) {
+        $(document).on("wheel", "input[type=number]", function(e) {
+            $(this).blur();
+        });
+
+        $scope.getSelectedEstimationType = function(estimation_type_id, type) {
             $.each($scope.estimation_type, function(key, val) {
                 if (estimation_type_id == val['id']) {
-                    $scope.minimum_payable_amount = val['minimum_amount'];
+                    if (type != 1) {
+                        $scope.minimum_payable_amount = val['minimum_amount'];
+                    }
+                    $scope.minimum_amount = val['minimum_amount'];
                     return;
                 }
             });
