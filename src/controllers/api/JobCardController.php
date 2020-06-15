@@ -207,7 +207,7 @@ class JobCardController extends Controller {
 					'integer',
 				],
 				'job_card_photo' => [
-					'required',
+					'required_if:saved_attachment,0',
 					'mimes:jpeg,jpg,png',
 				],
 				'job_card_date' => [
