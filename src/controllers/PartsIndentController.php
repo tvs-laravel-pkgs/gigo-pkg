@@ -231,11 +231,11 @@ class PartsIndentController extends Controller {
 			}}
 			else
 			{
-			$total_qtys = $request->al_issued_qty - $request->issued_qty;
-			 	
-			$total_qty = $total_qtys+$request->bal_qty;
-			//dd($total_qty);
-			if($total_qty < $request->issued_qty)
+			$tot = ($request->al_issued_qty-$request->edit_qty)+$request->issued_qty;
+
+			//dd($tot." ".$request->tot_qty);
+
+			if($request->tot_qty < $tot)
 			{
 				return response()->json(['success' => false, 'errors' => ['Exception Error' => 'Transfered Quantity Exceed Requested Quantity']]);
 			}
