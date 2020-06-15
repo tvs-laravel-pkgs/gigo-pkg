@@ -15,14 +15,22 @@ class VehicleOwnersC extends Migration {
 		if (!Schema::hasTable('vehicle_owners')) {
 			Schema::create('vehicle_owners', function (Blueprint $table) {
 
+				$table->increments('id');
 				$table->unsignedInteger('vehicle_id');
 				$table->unsignedInteger('customer_id');
 				$table->date('from_date');
 				$table->unsignedTinyInteger('ownership_number');
-				$table->increments('id');
+				$table->unsignedInteger("created_by_id")->nullable();
+				$table->unsignedInteger("updated_by_id")->nullable();
+				$table->unsignedInteger("deleted_by_id")->nullable();
+				$table->timestamps();
+				$table->softDeletes();
 
 				$table->foreign("vehicle_id")->references("id")->on("vehicles")->onDelete("CASCADE")->onUpdate("CASCADE");
 				$table->foreign("customer_id")->references("id")->on("customers")->onDelete("CASCADE")->onUpdate("CASCADE");
+				$table->foreign("created_by_id")->references("id")->on("users")->onDelete("SET NULL")->onUpdate("cascade");
+				$table->foreign("updated_by_id")->references("id")->on("users")->onDelete("SET NULL")->onUpdate("cascade");
+				$table->foreign("deleted_by_id")->references("id")->on("users")->onDelete("SET NULL")->onUpdate("cascade");
 
 				$table->unique(["vehicle_id", "customer_id"]);
 				$table->unique(["vehicle_id", "ownership_number"]);
