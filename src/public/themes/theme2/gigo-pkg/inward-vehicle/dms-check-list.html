@@ -41,7 +41,6 @@
                                                                     <label for="warranty_expiry_attachment">
                                                                         <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
                                                                     </label>
-                            
                                                                 </div>
                                                                 <div class="avatar-preview in" ng-if="job_order.warrenty_policy_attachment != NULL">
                                                                     <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.warrenty_policy_attachment.name}}')">
@@ -80,7 +79,6 @@
                                                                     <label for="ewp_expiry_attachment">
                                                                         <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
                                                                     </label>
-                            
                                                                 </div>
                                                                 <div class="avatar-preview in" ng-if="job_order.e_w_p_attachment != NULL">
                                                                     <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.e_w_p_attachment.name}}')">
@@ -119,7 +117,6 @@
                                                                     <label for="membership_attachment">
                                                                         <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
                                                                     </label>
-                            
                                                                 </div>
                                                                 <div class="avatar-preview in" ng-if="job_order.a_m_c_attachment != NULL">
                                                                     <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.a_m_c_attachment.name}}')">
@@ -148,137 +145,105 @@
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
                                             <hr class="hr-15"><!-- Separater -->
+                                            <div class="col-md-12">
+                                            </div><!-- Column -->
                                             <h6 class="color-secondary-dark mb-10" ng-if="job_order.vehicle.model.campaign.length > 0"><b>Campaign Job Details</b></h6>
-                                            <div class="panel-group" id="accordion_1">
-                                                <div class="panel panel-default type-3" ng-repeat="(index, campaign) in job_order.vehicle.model.campaign">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title in" data-toggle="collapse" data-parent="#accordion_1" data-target="#{{index}}">
-                                                            <div class="table-responsive">
-                                                                <table class="table table-dark-grey table-md">
-                                                                    <tbody>
+                                            <div class="table-responsive">
+                                                <table class="table table-form jc-view-bill-table-wrap" ng-repeat="(index, campaign) in job_order.vehicle.model.campaign">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan="2">Claim Type : {{campaign.claim_type.name}}</th>
+                                                            <th colspan="2"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>
+                                                                <b>
+                                                                    Date
+                                                                </b>
+                                                            </td>
+                                                            <td>
+                                                                {{campaign.manufacture_date}}
+                                                            </td>
+                                                            <td>
+                                                                <b>
+                                                                    Authorization No
+                                                                </b>
+                                                            </td>
+                                                            <td>
+                                                                {{campaign.authorisation_no}}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <b>
+                                                                    Complaint Code
+                                                                </b>
+                                                            </td>
+                                                            <td>
+                                                                {{campaign.complaint_type.code}}
+                                                            </td>
+                                                            <td>
+                                                                <b>
+                                                                    Fault Code
+                                                                </b>
+                                                            </td>
+                                                            <td>
+                                                                {{campaign.fault_type.code}}
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2" class="bg-white">
+                                                                <table class="table table-form jc-view-bill-table">
+                                                                    <thead>
                                                                         <tr>
-                                                                            <td>
-                                                                                <b>
-                                                                                    Date
-                                                                                </b>
-                                                                            </td>
-                                                                            <td>
-                                                                                : {{campaign.manufacture_date}}
-                                                                            </td>
-                                                                            <td>
-                                                                                <b>
-                                                                                    Authorization No
-                                                                                </b>
-                                                                            </td>
-                                                                            <td>
-                                                                                : {{campaign.authorisation_no}}
-                                                                            </td>
-                                                                            <td>
-                                                                                <b>
-                                                                                    Complaint Code
-                                                                                </b>
-                                                                            </td>
-                                                                            <td>
-                                                                                : {{campaign.complaint_type.code}}
-                                                                            </td>
+                                                                            <th>
+                                                                                ROT
+                                                                            </th>
+                                                                            <th>
+                                                                                ROT Amount
+                                                                            </th>
                                                                         </tr>
-                                                                        <tr>
-                                                                            <td>
-                                                                                <b>
-                                                                                    Fault Code
-                                                                                </b>
-                                                                            </td>
-                                                                            <td>
-                                                                                : {{campaign.fault_type.code}}
-                                                                            </td>
-                                                                            <td>
-                                                                                <b>
-                                                                                    Claim Type
-                                                                                </b>
-                                                                            </td>
-                                                                            <td>
-                                                                                : {{campaign.claim_type.name}}
-                                                                            </td>
-                                                                            <td>
-                                                                            </td>
-                                                                            <td>
-                                                                            </td>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr ng-repeat="(index, campaign_labour) in campaign.campaign_labours">
+                                                                            <td>{{campaign_labour.code}}</td>
+                                                                            <td>{{campaign_labour.pivot.amount}}</td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
-                                                            </div>
-                                                            <span class="arrow"></span>
-                                                        </a>
-                                                    </div>
-                                                    <div id="{{index}}" class="panel-collapse collapse in">
-                                                        <div class="panel-body">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label>ROT Details</label>
-                                                                        <div class="table-responsive">
-                                                                            <table class="table table-dark-grey table-md">
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th>
-                                                                                            <b>
-                                                                                                ROT 
-                                                                                            </b>
-                                                                                        </th>
-                                                                                        <th>
-                                                                                            ROT Amount
-                                                                                        </th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    <tr ng-repeat="(index, campaign_labour) in campaign.campaign_labours">
-                                                                                        <td>{{campaign_labour.code}}</td>  
-                                                                                        <td>{{campaign_labour.pivot.amount}}</td>  
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    </div><!-- Feild -->
-                                                                </div><!-- Column -->
-                                                                <div class="col-md-6">
-                                                                    <div class="form-group">
-                                                                        <label>Part Details</label>
-                                                                        <div class="table-responsive">
-                                                                            <table class="table table-dark-grey table-md">
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th>
-                                                                                            <b>
-                                                                                                Part Number 
-                                                                                            </b>
-                                                                                        </th>
-                                                                                        <th>
-                                                                                            <b>
-                                                                                                Part Code 
-                                                                                            </b>
-                                                                                        </th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    <tr ng-repeat="(index, campaign_part) in campaign.campaign_parts">
-                                                                                        <td>{{campaign_part.code}}</td>  
-                                                                                        <td>{{campaign_part.name}}</td>  
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    </div><!-- Feild -->
-                                                                </div><!-- Column -->
-                                                            </div><!-- Row -->
-                                                        </div><!-- Panel Body -->
-                                                    </div><!-- Panel Collapse -->
-                                                </div><!-- Panel -->
-                                            </div><!-- Panel Group -->
+                                                            </td>
+                                                            <td colspan="2" class="bg-white">
+                                                                <table class="table table-form jc-view-bill-table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>
+                                                                                Part Code
+                                                                            </th>
+                                                                            <th>
+                                                                                Part Number 
+                                                                            </th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr ng-repeat="(index, campaign_part) in campaign.campaign_parts">
+                                                                            <td>{{campaign_part.code}}</td>
+                                                                            <td>{{campaign_part.name}}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div><!-- Table Responsive -->
+                                            <br>
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="common-checkbox type-2">
-                                                            <input type="checkbox" id="check_verify" ng-value="1" ng-checked="job_order.is_dms_verified == 1"  ng-click="$ctrl.checkbox()" />
+                                                            <input type="checkbox" id="check_verify" ng-value="1" ng-checked="job_order.is_dms_verified == 1" ng-click="$ctrl.checkbox()" />
                                                             <label for="check_verify">
                                                                 <b>
                                                                     Verified in DMS
