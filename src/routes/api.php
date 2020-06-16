@@ -118,6 +118,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('job-card/labour-assignment/get-form-data', 'JobCardController@LabourAssignmentFormData');
 		Route::post('job-card/get-mechanic', 'JobCardController@getMechanic');
 		Route::post('job-card/save-mechanic', 'JobCardController@saveMechanic');
+		Route::post('job-card/mechanic-time-log', 'JobCardController@getMechanicTimeLog');
 
 		//JobOrder Repair order form save
 		Route::post('labour-assignment-form-save', 'JobCardController@LabourAssignmentFormSave');
@@ -132,7 +133,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('job-card/get', 'JobCardController@getJobCardList');
 
 		// JOB CARD TIME LOG
-		Route::get('get-job-card-time-log/{job_card_id}', 'JobCardController@getJobCardTimeLog');
+		Route::post('get-job-card-time-log', 'JobCardController@getJobCardTimeLog');
 
 		// JOB CARD MATRIAL GATE PASS VIEW
 		Route::post('view-material-gate-pass', 'JobCardController@viewMeterialGatePass');
@@ -196,6 +197,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('job-card/bill-detail/view', 'JobCardController@viewBillDetails');
 		Route::post('job-card/bill-update/get-form-data', 'JobCardController@getBillDetailFormData');
 		Route::post('job-card/bill-update/', 'JobCardController@updateBillDetails');
+
+		//SPLIT ORDER DETAILS
+		Route::post('job-card/split-order/view', 'JobCardController@viewSplitOrderDetails');
 
 		//VEHICLE GATE PASS LIST
 		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');

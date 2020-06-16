@@ -132,6 +132,7 @@ app.component('myJobcardView', {
                     $scope.job_order_repair_orders = res.job_order_repair_orders;
                     $scope.pass_work_reasons = res.pass_work_reasons;
                     $scope.getwork_status = res.getwork_status;
+                    $scope.total_labour = res.total_labour;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {

@@ -734,21 +734,21 @@ app.component('inwardVehicleDmsCheckListForm', {
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    'warranty_expiry_date': {
-                        required: true,
-                    },
-                    'ewp_expiry_date': {
-                        required: true,
-                    },
-                    'warranty_expiry_attachment': {
-                        required: true,
-                    },
-                    'ewp_expiry_attachment': {
-                        required: true,
-                    },
-                    'membership_attachment': {
-                        required: true,
-                    },
+                    // 'warranty_expiry_date': {
+                    //     required: true,
+                    // },
+                    // 'ewp_expiry_date': {
+                    //     required: true,
+                    // },
+                    // 'warranty_expiry_attachment': {
+                    //     required: true,
+                    // },
+                    // 'ewp_expiry_attachment': {
+                    //     required: true,
+                    // },
+                    // 'membership_attachment': {
+                    //     required: true,
+                    // },
                 },
                 messages: {
 
@@ -759,11 +759,11 @@ app.component('inwardVehicleDmsCheckListForm', {
                 errorPlacement: function(error, element) {
                     if (element.hasClass("warranty_expiry_attachment")) {
                         custom_noty('error', 'Warranty Photo is Required')
-                    }else if (element.hasClass("ewp_expiry_attachment")) {
+                    } else if (element.hasClass("ewp_expiry_attachment")) {
                         custom_noty('error', 'Extended Warranty Photo is Required')
-                    }else if (element.hasClass("membership_attachment")) {
+                    } else if (element.hasClass("membership_attachment")) {
                         custom_noty('error', 'Membership Photo is Required')
-                    }else{
+                    } else {
                         error.insertAfter(element)
                     }
                 },
@@ -1201,11 +1201,23 @@ app.component('inwardVehicleUpdatejcForm', {
                         minlength: 10,
                     },
                     'job_card_photo': {
-                        required: true,
+                        required: function(element) {
+                            if (!$scope.job_order.job_card.attachment) {
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                     'job_card_date': {
                         required: true,
                     },
+                },
+                errorPlacement: function(error, element) {
+                    if (element.attr('name') == 'job_card_photo') {
+                        error.appendTo($('.attachment_error'));
+                    } else {
+                        error.insertAfter(element);
+                    }
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
@@ -2454,13 +2466,13 @@ app.component('inwardVehicleOrderDetailForm', {
                             contentType: false,
                         })
                         .done(function(res) {
+                            $scope.button_action(id, 2);
                             if (!res.success) {
                                 $rootScope.loading = false;
                                 $('.submit').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }
-                            $scope.button_action(id, 2);
                             if (id == 1) {
                                 custom_noty('success', res.message);
                                 $location.path('/inward-vehicle/card-list');
@@ -3540,6 +3552,8 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                     }
                     $scope.estimation_type = res.estimation_type;
                     $scope.minimum_payable_amount = $scope.job_order.minimum_payable_amount;
+
+                    $scope.getSelectedEstimationType($scope.job_order.estimation_type_id,1);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -3548,10 +3562,17 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
         }
         $scope.fetchData();
 
-        $scope.getSelectedEstimationType = function(estimation_type_id) {
+        $(document).on("wheel", "input[type=number]", function(e) {
+            $(this).blur();
+        });
+
+        $scope.getSelectedEstimationType = function(estimation_type_id, type) {
             $.each($scope.estimation_type, function(key, val) {
                 if (estimation_type_id == val['id']) {
-                    $scope.minimum_payable_amount = val['minimum_amount'];
+                    if (type != 1) {
+                        $scope.minimum_payable_amount = val['minimum_amount'];
+                    }
+                    $scope.minimum_amount = val['minimum_amount'];
                     return;
                 }
             });

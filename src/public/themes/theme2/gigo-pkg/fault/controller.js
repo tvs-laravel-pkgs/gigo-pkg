@@ -188,7 +188,7 @@ app.component('faultForm', {
             rules: {
                 'code': {
                     required: true,
-                    minlength: 3,
+                    minlength: 2,
                     maxlength: 32,
                 },
                 'name': {
@@ -199,7 +199,7 @@ app.component('faultForm', {
             },
             messages: {
                 'code': {
-                    minlength: 'Minimum 3 Characters',
+                    minlength: 'Minimum 2 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
                 'name': {
