@@ -795,6 +795,24 @@ class VehicleInwardController extends Controller {
 	public function saveOrderDetail(Request $request) {
 		// dd($request->all());
 		try {
+
+			//JOB ORDER SAVE
+			$job_order = JobOrder::find($request->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
+				]);
+			}
+
+			$error_messages = [
+				'service_type_id.unique' => "Service Type is already Processed",
+			];
+
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
 					'required',
@@ -839,6 +857,7 @@ class VehicleInwardController extends Controller {
 					'required',
 					'integer',
 					'exists:service_types,id',
+					'unique:job_orders,service_type_id,' . $request->job_order_id . ',id,vehicle_id,' . $job_order->vehicle_id,
 				],
 				'contact_number' => [
 					'nullable',
@@ -865,7 +884,7 @@ class VehicleInwardController extends Controller {
 					'nullable',
 					'mimes:jpeg,jpg,png',
 				],
-			]);
+			], $error_messages);
 
 			if ($validator->fails()) {
 				return response()->json([
@@ -876,9 +895,6 @@ class VehicleInwardController extends Controller {
 			}
 
 			DB::beginTransaction();
-
-			//JOB ORDER SAVE
-			$job_order = JobOrder::find($request->job_order_id);
 
 			//Check Service Type changed or not.If changed remove all schedule maintenace
 			if ($job_order->service_type_id != $request->service_type_id) {

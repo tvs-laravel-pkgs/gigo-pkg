@@ -2,8 +2,8 @@
 
 namespace Abs\GigoPkg;
 
-use App\Http\Controllers\Controller;
 use Abs\GigoPkg\Fault;
+use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -108,7 +108,7 @@ class FaultController extends Controller {
 			$error_messages = [
 				'code.required' => 'Code is Required',
 				'code.unique' => 'Code is already taken',
-				'code.min' => 'Code is Minimum 3 Charachers',
+				'code.min' => 'Code is Minimum 2 Charachers',
 				'code.max' => 'Code is Maximum 32 Charachers',
 				'name.required' => 'Name is Required',
 				'name.unique' => 'Name is already taken',
@@ -118,7 +118,7 @@ class FaultController extends Controller {
 			$validator = Validator::make($request->all(), [
 				'code' => [
 					'required:true',
-					'min:3',
+					'min:2',
 					'max:32',
 					'unique:faults,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
@@ -145,7 +145,7 @@ class FaultController extends Controller {
 				$fault->updated_by_id = Auth::user()->id;
 			}
 			$fault->company_id = Auth::user()->company_id;
-			
+
 			$fault->fill($request->all());
 			if ($request->status == 'Inactive') {
 				$fault->deleted_at = Carbon::now();

@@ -2466,13 +2466,13 @@ app.component('inwardVehicleOrderDetailForm', {
                             contentType: false,
                         })
                         .done(function(res) {
+                            $scope.button_action(id, 2);
                             if (!res.success) {
                                 $rootScope.loading = false;
                                 $('.submit').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }
-                            $scope.button_action(id, 2);
                             if (id == 1) {
                                 custom_noty('success', res.message);
                                 $location.path('/inward-vehicle/card-list');
