@@ -1260,7 +1260,7 @@ class JobCardController extends Controller {
 				->whereIn('id', $job_order_repair_order_ids)
 				->get();
 
-			$status = RepairOrderMechanic::select('repair_order_mechanics.id', 'repair_order_mechanics.status_id', 'repair_order_mechanics.job_order_repair_order_id')
+			$status = RepairOrderMechanic::select('repair_order_mechanics.id', 'repair_order_mechanics.status_id', 'repair_order_mechanics.job_order_repair_order_id',(DB::raw('DATE_FORMAT(repair_order_mechanics.updated_at,"%h:%i %p") as time')))
 				->whereIn('job_order_repair_order_id', $job_order_repair_order_ids)
 				->orderby('repair_order_mechanics.id', 'ASC')->groupBy('repair_order_mechanics.job_order_repair_order_id')->get();
 

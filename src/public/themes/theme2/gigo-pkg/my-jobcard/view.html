@@ -168,9 +168,9 @@
                                                     <span class="data">
                                                         Paused
                                                     </span>
-                                                    <!-- <span class="data small">
-                                                        11:00 am
-                                                    </span>  -->
+                                                    <span class="data small">
+                                                       {{getwork_status[key].time}}
+                                                    </span> 
                                                     <span class="time txt-white" ng-click="StartWork(8264,key)">
                                                         Start Again
                                                     </span> 
@@ -193,9 +193,9 @@
                                                             Work Finished
                                                         </b>
                                                     </span>
-                                                    <!-- <span class="time">
-                                                        01:20:30
-                                                    </span>  -->
+                                                    <span class="time">
+                                                        {{getwork_status[key].time}}
+                                                    </span> 
                                                 </div>  
                                             </span>
                                         </div><!-- Card Box Body -->
