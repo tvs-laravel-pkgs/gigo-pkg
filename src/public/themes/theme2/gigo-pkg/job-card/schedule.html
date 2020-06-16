@@ -1,3 +1,8 @@
+<style type="text/css">
+.my-disable {
+    pointer-events: none;
+}
+</style>
 <!-- Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
@@ -39,16 +44,15 @@
                                                 <div class="schedules-right-wrap">
                                                     <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id == 8181" data-toggle="modal" data-target="#assign_labours" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Assign</a>
                                                     <!-- ng-click="assign_mechanic(job_order_repair_order.repair_order.code,job_order_repair_order.repair_order.name)" -->
-                                                    <a class="btn btn-bordered btn-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id !=8182">View Time Log</a>
+                                                    <a class="btn btn-bordered btn-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id !=8182" ng-click="viewTimeLog(job_order_repair_order.id)" data-target="#view_time_log_modal" data-toggle="modal">View Time Log</a>
                                                     <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185">Review</a>
                                                     <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181" data-toggle="modal" data-target="#assign_labours" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Edit</a>
                                                 </div>
                                             </div><!-- Left Wrap -->
                                             <div class="right-wrap">
-                                                <span ng-class="{'bg-blue type-2': (job_order_repair_order.status_id == 8183) , 'bg-red': (job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182) ,'bg-yellow type-2':(job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185),'bg-green type-2':(job_order_repair_order.status_id == 8185)} "
-                                                class="status {{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? 'bg-red ' :(job_order_repair_order.status_id == 8185)}}">
-                                                    {{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? 'Pending' : 'job_order_repair_order.status.name'}}
-                                                    <span class="time">{{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? '': '2Hrs'}}</span>
+                                                <span ng-class="{'bg-blue type-2': (job_order_repair_order.status_id == 8183 || job_order_repair_order.status_id == 8184) , 'bg-red': (job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182) ,'bg-yellow type-2':(job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185),'bg-green type-2':(job_order_repair_order.status_id == 8185)} " class="status {{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? 'bg-red ' :(job_order_repair_order.status_id == 8185)}}">
+                                                    {{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? 'Pending' : job_order_repair_order.status.name}}
+                                                    <span class="time">{{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? '': job_order_repair_order.overall_total_duration}}</span>
                                                 </span>
                                             </div><!-- Right Wrap -->
                                             <div class="assigned-info" ng-if="job_order_repair_order.repair_order_mechanics.length > 0">
@@ -59,11 +63,11 @@
                                                             <span class="title">{{repair_order_mechanic.mechanic.name}}</span>
                                                             <span class="info">
                                                                 <a ng-click="getMechanicTimeLog(repair_order_mechanic.id,job_order_repair_order.repair_order.id)" data-toggle="modal" data-target="#time_log_modal">
-                                                                {{repair_order_mechanic.total_duration}} |
-                                                                <span class="color-red">
-                                                                    View Time Log
-                                                                </span>
-                                                            </a>
+                                                                    {{repair_order_mechanic.total_duration}} |
+                                                                    <span class="color-red">
+                                                                        View Time Log
+                                                                    </span>
+                                                                </a>
                                                             </span>
                                                         </div><!-- Assigned Info List Item -->
                                                     </li>
@@ -105,8 +109,8 @@
                         </span>
                     </div><!-- Title Wrap -->
                     <ul class="assign-labour-list">
-                        <li class="assign-labour-list-item check_uncheck_{{employee.id}} " ng-repeat="(key,employee) in employee_details" ng-click="selectedEmployee(employee.id,key)" ng-class="{'disabled':employee.user_id}">
-                            <div class="left-wrap">
+                        <li class="assign-labour-list-item check_uncheck_{{employee.id}} " ng-repeat="(key,employee) in employee_details" ng-click="selectedEmployee(employee.id,key)" ng-class="{'my-disable':!employee.user_id}">
+                            <div class="left-wrap" ng-class="{'my-disable':!employee.user_id}">
                                 <h4 class="title">{{employee.user_name}}</h4>
                                 <p class="info {{employee.user_id ? '' : 'color-red'}}">{{employee.user_id ? 'Present' : 'Absent'}} | {{employee.deputed_outlet_code ? employee.deputed_outlet_code : employee.outlet_code}}</p>
                             </div>
@@ -123,7 +127,6 @@
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->
 <!-- Modal -->
-
 <!-- Modal -->
 <div class="modal modal-center time-log-modal-wrap fade" id="time_log_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
@@ -166,6 +169,73 @@
                         </table>
                     </div><!-- Table Responsive -->
                 </div><!-- Time Log Modal -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
+<!-- Modal -->
+<div class="modal modal-center time-log-modal-wrap fade" id="view_time_log_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title">View Time Log</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="time-log-modal">
+                    <div class="title-wrap">
+                        <div class="left-wrap">
+                            <span class="info">
+                                {{job_order_repair_order_time_log.repair_order.code}}
+                            </span>
+                            <span class="title">
+                                {{job_order_repair_order_time_log.repair_order.name}}
+                            </span>
+                        </div><!-- Left Wrap -->
+                        <span class="time">
+                            {{job_order_repair_order_time_log.overall_total_duration}}
+                        </span>
+                    </div><!-- Title Wrap -->
+                    <div class="panel-group" id="accordion1" ng-repeat="(key,repair_order_mechanic) in job_order_repair_order_time_log.repair_order_mechanics">
+                        <div class="panel panel-default type-5">
+                            <div class="panel-heading">
+                                <a class="panel-title in" data-toggle="collapse" data-parent="#accordion1" data-target="#{{repair_order_mechanic.mechanic.id}}">
+                                    {{repair_order_mechanic.mechanic.name}} - Total Worked Hours - {{repair_order_mechanic.total_duration}}
+                                    <span class="arrow"></span>
+                                </a>
+                            </div>
+                            <div id="{{repair_order_mechanic.mechanic.id}}" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive">
+                                                <table class="table time-log-table">
+                                                    <thead>
+                                                        <th>Date</th>
+                                                        <th>Start Time</th>
+                                                        <th>End Time</th>
+                                                        <th>Duration</th>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="(key,mechanic_time_log) in repair_order_mechanic.mechanic_time_logs">
+                                                            <td>{{mechanic_time_log.date}}</td>
+                                                            <td>{{mechanic_time_log.start_time}}</td>
+                                                            <td>{{mechanic_time_log.end_time ? mechanic_time_log.end_time : '-'}}
+                                                                {{mechanic_time_log.reason.name}}
+                                                            </td>
+                                                            <td>{{mechanic_time_log.duration_difference ? mechanic_time_log.duration_difference : '-'}}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div><!-- Table Responsive -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                </div><!-- Panel Body -->
+                            </div><!-- Panel Collapse -->
+                        </div><!-- Panel -->
+                    </div><!-- Panel Group -->
+                </div><!-- time Log Modal -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->

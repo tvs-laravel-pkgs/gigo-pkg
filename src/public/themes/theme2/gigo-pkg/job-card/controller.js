@@ -1635,7 +1635,6 @@ app.component('jobCardScheduleForm', {
                     console.log(res);
                     $scope.job_card = res.job_card_view;
                     // $scope.employee_details = res.employee_details;
-                    console.log($scope.job_card);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1651,7 +1650,7 @@ app.component('jobCardScheduleForm', {
         //     $scope.job_card.repair_order_name = name;
         // }
         $scope.assignMechanic = function(repair_order_id) {
-            console.log(repair_order_id);
+            // console.log(repair_order_id);
             $.ajax({
                     url: base_url + '/api/job-card/get-mechanic',
                     method: "POST",
@@ -1693,7 +1692,7 @@ app.component('jobCardScheduleForm', {
 
         self.selectedEmployee_ids = [];
         $scope.selectedEmployee = function(id) {
-            console.log(id);
+            // console.log(id);
             if ($('.check_uncheck_' + id).hasClass('bg-dark')) {
                 console.log("1");
                 $('.check_uncheck_' + id).removeClass('bg-dark');
@@ -1701,20 +1700,20 @@ app.component('jobCardScheduleForm', {
                 self.selectedEmployee_ids = jQuery.grep(self.selectedEmployee_ids, function(value) {
                     return value != id;
                 });
-                console.log(self.selectedEmployee_ids);
+                // console.log(self.selectedEmployee_ids);
                 $('#selectedMachanic').val(self.selectedEmployee_ids);
             } else {
-                console.log("2");
+                // console.log("2");
                 $('.check_uncheck_' + id).addClass('bg-dark');
                 $('.check_uncheck_' + id).find('img').attr('src', './public/theme/img/content/icons/check-white.svg');
                 if (self.selectedEmployee_ids.includes(id)) {
                     $('#selectedMachanic').val(self.selectedEmployee_ids);
                 } else {
-                    console.log("2");
+                    // console.log("2");
                     self.selectedEmployee_ids.push(id);
                     $('#selectedMachanic').val(self.selectedEmployee_ids);
                 }
-                console.log(self.selectedEmployee_ids);
+                // console.log(self.selectedEmployee_ids);
             }
         }
         //SAVE MECHANIC
@@ -1796,6 +1795,35 @@ app.component('jobCardScheduleForm', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
+
+        $scope.viewTimeLog = function(repair_order_id) {
+            // console.log(repair_order_id);
+            // return;
+            $.ajax({
+                    url: base_url + '/api/get-job-card-time-log',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                        repair_order_id: repair_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_order_repair_order_time_log = res.job_order_repair_order_time_log;
+                    // $("#selectedMachanic").;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
     }
 });
 
@@ -1847,6 +1875,74 @@ app.component('jobCardBillDetailView', {
     }
 });
 
+
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//Split Order Details
+app.component('jobCardSplitOrder', {
+    templateUrl: job_card_split_order_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/job-card/split-order/view',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_card = res.job_card;
+                    $scope.extras = res.extras;
+                    console.log($scope.job_card);
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+
+        function dragstart_handler(ev) {
+            // Add the target element's id to the data transfer object
+            ev.dataTransfer.setData("application/my-app", ev.target.id);
+            ev.dataTransfer.dropEffect = "move";
+        }
+
+        function dragover_handler(ev) {
+            ev.preventDefault();
+            ev.dataTransfer.dropEffect = "move"
+        }
+
+        function drop_handler(ev) {
+            ev.preventDefault();
+            // Get the id of the target and add the moved element to the target's DOM
+            const data = ev.dataTransfer.getData("application/my-app");
+            ev.target.appendChild(document.getElementById(data));
+        }
+    }
+});
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
 //Update Bill Details
