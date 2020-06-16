@@ -1554,3 +1554,28 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/material-gate-pass/controller.js')}}'></script>
 <link rel="stylesheet" type="text/css" href="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/mobile/mobile.css')}}">
+
+
+<script type='text/javascript'>
+	//WARRANTY JOB ORDER REQUEST
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    when('/warranty-job-order-request/card-list', {
+	        template: '<warranty-job-order-request-card-list></warranty-job-order-request-card-list>',
+	        title: 'Warranty Job Order Requests'
+	    }).
+	    when('/warranty-job-order-request/ppr-form/:job_order_id', {
+	        template: '<warranty-job-order-request-ppr-form></warranty-job-order-request-ppr-form>',
+	        title: 'Warranty Job Order Request - PPR Form'
+	    });
+	}]);
+
+    var warrantyJobOrderRequestCardList = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/card-list.html")}}';
+    var warrantyJobOrderRequestPPRForm = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/ppr-form.html")}}';
+    var warrantyJobOrderRequestEstimateForm = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/estimate-form.html")}}';
+
+	//partials
+    var warrantyJobOrderRequestFormTabs = "{{asset($gigo_pkg_prefix.'/public/design-input/warranty-job-order-request/partials/warranty-job-order-request-form-tabs.html')}}";
+</script>
+<script type="text/javascript" src='{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/controller.js")}}'></script>
+

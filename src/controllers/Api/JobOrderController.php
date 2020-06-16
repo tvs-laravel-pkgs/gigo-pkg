@@ -9,7 +9,6 @@ use Abs\GigoPkg\GatePassDetail;
 use Abs\GigoPkg\GatePassItem;
 use Abs\GigoPkg\JobCard;
 use Abs\GigoPkg\JobCardReturnableItem;
-use Abs\GigoPkg\JobOrder;
 use Abs\GigoPkg\JobOrderIssuedPart;
 use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\MechanicTimeLog;
@@ -24,6 +23,7 @@ use App\Customer;
 use App\Employee;
 use App\GateLog;
 use App\Http\Controllers\Controller;
+use App\JobOrder;
 use App\JobOrderPart;
 use App\VehicleInspectionItem;
 use App\VehicleInspectionItemGroup;
@@ -36,9 +36,9 @@ use Illuminate\Http\Request;
 use Storage;
 use Validator;
 
-class JobCardController extends Controller {
+class JobOrderController extends Controller {
 	use CrudTrait;
-	public $model = JobCard::class;
+	public $model = JobOrder::class;
 	public $successStatus = 200;
 
 	public function getJobCardList(Request $request) {

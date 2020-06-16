@@ -2,12 +2,12 @@
 
 namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\BaseModel;
 use App\Company;
 use App\Config;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class JobOrder extends Model {
+class JobOrder extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'job_orders';
@@ -44,6 +44,18 @@ class JobOrder extends Model {
 		"service_advisor_id",
 		"floor_supervisor_id",
 	];
+
+	public static function relationships($action = '') {
+		$relationships = [
+			'type',
+			'outlet',
+			'vehicle',
+			'serviceType',
+			'status',
+		];
+
+		return $relationships;
+	}
 
 	public function getDriverLicenseExpiryDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -205,6 +217,26 @@ class JobOrder extends Model {
 	public function customerESign() {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 253);
 	}
+
+	// Query Scopes --------------------------------------------------------------
+
+	public function scopeFilterSearch($query, $term) {
+		if (strlen($term)) {
+			$query->where(function (Builder $query) use ($term) {
+				$query->orWhere('number', 'LIKE', '%' . $term . '%');
+				$query->orWhere('driver_name', 'LIKE', '%' . $term . '%');
+				$query->orWhere('contact_number', 'LIKE', '%' . $term . '%');
+			});
+		}
+	}
+
+	public function scopeFilterTypeIn($query, $typeIds) {
+		$query->whereIn('type_id', $typeIds);
+	}
+
+	// Operations --------------------------------------------------------------
+
+	// Static Operations --------------------------------------------------------------
 
 	public static function createFromObject($record_data) {
 

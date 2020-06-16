@@ -2,6 +2,13 @@
 Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:api']], function () {
 	Route::group(['prefix' => 'api'], function () {
 
+		Route::get('job-order/index', JobOrderController::class . '@index');
+		Route::get('job-order/read/{id}', JobOrderController::class . '@read');
+
+		Route::get('job-card/index', JobCardController::class . '@index');
+
+		Route::get('service-type/options', ServiceTypeController::class . '@options');
+
 		//SAVE GATE IN ENTRY
 		Route::get('gate-in-entry/get-form-data', 'GateInController@getFormData');
 		Route::post('gate-in-entry/create', 'GateInController@createGateInEntry');

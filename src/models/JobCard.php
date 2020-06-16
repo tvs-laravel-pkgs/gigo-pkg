@@ -3,6 +3,7 @@
 namespace Abs\GigoPkg;
 use Abs\GigoPkg\JobOrder;
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\BaseModel;
 use App\Company;
 use App\Config;
 use Auth;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 // use Illuminate\Database\Eloquent\SoftDeletes;
 
-class JobCard extends Model {
+class JobCard extends BaseModel {
 	use SeederTrait;
 	// use SoftDeletes;
 	protected $table = 'job_cards';
@@ -91,6 +92,30 @@ class JobCard extends Model {
 	public function attachment() {
 		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 228)->where('attachment_type_id', 255);
 	}
+
+	// Query Scopes --------------------------------------------------------------
+
+	public function scopeFilterSearch($query, $term) {
+		if (strlen($term)) {
+			$query->where(function (Builder $query) use ($term) {
+				$query->orWhereRaw("TRIM(CONCAT(full_name, ' ', surname)) LIKE ?", [
+					"%{$term}%",
+				]);
+				$query->orWhere('additional_name', 'LIKE', '%' . $term . '%');
+				$query->orWhere('alias', 'LIKE', '%' . $term . '%');
+				$query->orWhere('end_date', 'LIKE', '%' . $term . '%');
+				$query->orWhere('address_1', 'LIKE', '%' . $term . '%');
+				$query->orWhere('city', 'LIKE', '%' . $term . '%');
+				$query->orWhere('county', 'LIKE', '%' . $term . '%');
+				$query->orWhereRaw("REPLACE(postcode, ' ', '') LIKE ?", ['%' . str_replace(' ', '', $term) . '%']);
+				$query->orWhere('tel_h', 'LIKE', '%' . $term . '%');
+				$query->orWhere('tel_m', 'LIKE', '%' . $term . '%');
+				$query->orWhere('email', 'LIKE', '%' . $term . '%');
+			});
+		}
+	}
+
+	// Operations --------------------------------------------------------------
 
 	public static function createFromObject($record_data) {
 

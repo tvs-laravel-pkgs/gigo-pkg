@@ -3,13 +3,13 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\BaseModel;
 use App\Company;
 use App\Config;
 use Auth;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ServiceType extends Model {
+class ServiceType extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'service_types';

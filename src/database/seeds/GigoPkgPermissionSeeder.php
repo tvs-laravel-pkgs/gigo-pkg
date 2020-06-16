@@ -1154,6 +1154,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//WARRANTY JOB ORDER REQUEST
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'warranty-job-order-requests',
+				'display_name' => 'Warranty Job Order Request',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'warranty-job-order-requests',
+				'name' => 'add-warranty-job-order-request',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'warranty-job-order-requests',
+				'name' => 'edit-warranty-job-order-requests',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'warranty-job-order-requests',
+				'name' => 'delete-warranty-job-order-request',
+				'display_name' => 'Delete',
+			],
+
 		];
 		Permission::createFromArrays($permissions);
 	}
