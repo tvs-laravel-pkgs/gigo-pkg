@@ -1260,6 +1260,8 @@ class JobCardController extends Controller {
 				->whereIn('id', $job_order_repair_order_ids)
 				->get();
 
+			$total_labour = RepairOrderMechanic::distinct('mechanic_id')->count('mechanic_id');	
+
 			$status = RepairOrderMechanic::select('repair_order_mechanics.id', 'repair_order_mechanics.status_id', 'repair_order_mechanics.job_order_repair_order_id',(DB::raw('DATE_FORMAT(repair_order_mechanics.updated_at,"%h:%i %p") as time')))
 				->whereIn('job_order_repair_order_id', $job_order_repair_order_ids)
 				->orderby('repair_order_mechanics.id', 'ASC')->groupBy('repair_order_mechanics.job_order_repair_order_id')->get();
@@ -1273,6 +1275,7 @@ class JobCardController extends Controller {
 				'user_details' => $user_details,
 				'my_job_card_details' => $my_job_card_details,
 				'getwork_status' => $status,
+				'total_labour' =>$total_labour,
 
 			]);
 
