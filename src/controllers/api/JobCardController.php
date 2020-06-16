@@ -2960,7 +2960,7 @@ public function viewSplitOrderDetails(Request $request) {
 				'job_card' => $job_card,
 				'extras'=>$extras,
 				'taxes'=>$taxes,
-				'part_details'=>$part_details
+				'part_details'=>$part_details,
 				'labour_details'=>$labour_details,
 				'parts_total_amount' =>number_format($parts_amount, 2),
 				'labour_total_amount' =>number_format($labour_amount, 2),
