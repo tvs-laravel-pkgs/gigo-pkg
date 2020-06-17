@@ -1911,10 +1911,45 @@ app.component('jobCardSplitOrder', {
                         showErrorNoty(res);
                         return;
                     }
-                    console.log(res);
+                    //console.log(res);
                     $scope.job_card = res.job_card;
+                    $scope.labour_details = res.labour_details;
+                    $scope.part_details = res.part_details;
                     $scope.extras = res.extras;
-                    console.log($scope.job_card);
+                    $scope.unassigned_total_amount = res.unassigned_total_amount;
+                    $scope.unassigned_total_count = res.unassigned_total_count;
+                    //console.log($scope.job_card);
+                    //console.log($scope.job_card);
+                    //console.log($scope.extras);
+                    //console.log($scope.labour_details);
+                    //console.log($scope.part_details);
+                   // var unassigned_total_amount=0;
+                    // var unassigned_total_items=0;
+                    // var labour_ids=[];
+                    // var part_ids =[];
+                    angular.forEach($scope.extras.split_order_types, function(split_order, key) {
+                        split_order.total_amount=0;
+                        split_order.total_items=0;
+                        angular.forEach($scope.labour_details, function(labour, key1) {
+                            if(split_order.id==labour.split_order_type_id){
+                                split_order.total_amount +=parseInt(labour.total_amount);
+                                split_order.total_items +=1;
+                            }
+                        });
+
+                        angular.forEach($scope.part_details, function(part, key2) {
+                           if(split_order.id==part.split_order_type_id){
+                                split_order.total_amount +=parseInt(part.total_amount);
+                                split_order.total_items +=1; 
+                            }    
+                        });
+
+                    });
+                    // console.log(part_ids);
+                    // console.log(labour_ids);
+                    //$scope.unassigned_total_amount = parseFloat(unassigned_total_amount).toFixed(2);
+                    //$scope.unassigned_total_items = unassigned_total_items;*/
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1924,7 +1959,132 @@ app.component('jobCardSplitOrder', {
         $scope.fetchData();
 
 
-        function dragstart_handler(ev) {
+
+ /*$tabs = $(".tabbable");
+
+    $('.nav-tabs a').click(function(e) {
+        e.preventDefault();
+        $(this).tab('show');
+    })
+    
+    $( "tbody.connectedSortable" )
+        .sortable({
+            connectWith: ".connectedSortable",
+            items: "> tr:not(:first)",
+            appendTo: $tabs,
+            helper:"clone",
+            zIndex: 999990,
+            start: function(){ $tabs.addClass("dragging") },
+            stop: function(){ $tabs.removeClass("dragging") }
+        })
+        .disableSelection()
+    ;
+
+
+    $("#table1 .childgrid tr, #table2 .childgrid tr").draggable({
+      helper: function(){
+          var selected = $('.childgrid tr.selectedRow');
+        if (selected.length === 0) {
+          selected = $(this).addClass('selectedRow');
+        }
+        var container = $('<div/>').attr('id', 'draggingContainer');
+    container.append(selected.clone().removeClass("selectedRow"));
+    return container;
+      }
+ });
+
+$("#table1 .childgrid, #table2 .childgrid").droppable({
+    drop: function (event, ui) {
+    $(this).append(ui.helper.children());
+    $('.selectedRow').remove();
+    }
+});
+
+$(document).on("click", ".childgrid tr", function () {
+    $(this).toggleClass("selectedRow");
+});*/
+
+    
+    /*var $tab_items = $( ".nav-tabs > li", $tabs ).droppable({
+      accept: ".connectedSortable tr",
+      hoverClass: "ui-state-hover",
+      over: function( event, ui ) {
+        var $item = $( this );
+        $item.find("a").tab("show");
+        
+      },
+      drop: function( event, ui ) {
+        return false;
+      }
+    });*/
+
+        //$(".listitems" ).draggable();
+
+                 /*   var index_value = ui.item.index();
+                    var count_value = ui.item.closest("tbody").find(".tr_scheme_priorities").length;
+                    var inc_index_value = index_value + 1;
+                    // console.log(' == total ===' + count_value);
+    //DOWN
+                    for (var i = inc_index_value; i < count_value; i++) {
+                        var scheme_type_id = ui.item.closest("tbody").find(".tr_scheme_priorities").eq(i).attr('data-scheme_type_id');
+                        var down_sorting_data = 'scheme_type_id=' + scheme_type_id + '&priority=' + i;
+                        // console.log(' == down === scheme_type_id ==' + scheme_type_id + ' == priority=' + i);
+                        $.ajax({
+                                url: update_scheme_type_priority_ajax_url,
+                                type: "POST",
+                                async: false,
+                                data: down_sorting_data,
+                                processData: false,
+                            })
+                            .done(function(data) {
+
+                            }).fail(function(xhr) {
+                                custom_noty('error', 'Something went wrong at server');
+                            });
+                    }
+    //UP
+                    for (var i = 0; i < index_value; i++) {
+                        var scheme_type_id = ui.item.closest("tbody").find(".tr_scheme_priorities").eq(i).attr('data-scheme_type_id');
+                        var up_sorting_data = 'scheme_type_id=' + scheme_type_id + '&priority=' + i;
+                        // console.log(' == up === scheme_type_id ==' + scheme_type_id + '===priority=' + i);
+                        $.ajax({
+                                url: update_scheme_type_priority_ajax_url,
+                                type: "POST",
+                                async: false,
+                                data: up_sorting_data,
+                                processData: false,
+                            })
+                            .done(function(data) {
+
+                            }).fail(function(xhr) {
+                                custom_noty('error', 'Something went wrong at server');
+                            });
+                    }
+//CURRENT
+                    var current_scheme_type_id = ui.item.attr('data-scheme_type_id');
+                    var current_data = 'scheme_type_id=' + current_scheme_type_id + '&priority=' + index_value;
+                    // console.log(' == current === scheme_type_id ==' + current_scheme_type_id + ' == priority=' + index_value);
+                    $.ajax({
+                            url: update_scheme_type_priority_ajax_url,
+                            type: "POST",
+                            async: false,
+                            data: current_data,
+                            processData: false,
+                        })
+                        .done(function(data) {
+                            if (data.success) {
+                                get_list();
+                                $('#sortable tbody').sortable('option', 'disabled', false);
+                                custom_noty('success', 'Scheme Priorities updated successfully');
+                            } else {
+                                custom_noty('error', 'Something went wrong at server');
+                            }
+
+                        }).fail(function(xhr) {
+                            custom_noty('error', 'Something went wrong at server');
+                        });*/
+
+        /*function dragstart_handler(ev) {
             // Add the target element's id to the data transfer object
             ev.dataTransfer.setData("application/my-app", ev.target.id);
             ev.dataTransfer.dropEffect = "move";
@@ -1940,7 +2100,7 @@ app.component('jobCardSplitOrder', {
             // Get the id of the target and add the moved element to the target's DOM
             const data = ev.dataTransfer.getData("application/my-app");
             ev.target.appendChild(document.getElementById(data));
-        }
+        }*/
     }
 });
 //---------------------------------------------------------------------------------------------

@@ -34,11 +34,11 @@
                                             <div class="panel panel-default type-4">
                                                 <div class="panel-heading">
                                                     <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
-                                                        000000 - Unassigned Items - 4 Items
+                                                        000000 - Unassigned Items - {{unassigned_total_count}} Items
                                                         <span class="arrow"></span>
                                                         <span class="title-right">
                                                             <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
-                                                            1600.00
+                                                            {{unassigned_total_amount}}
                                                         </span>
                                                     </a>
                                                 </div>
@@ -47,7 +47,8 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="table-responsive">
-                                                                    <table class="table split-order-table table-form">
+                                                                    <div id="table1" class="bitacoratable">
+                                                                        <table id="table1" class="table split-order-table table-form  childgrid">
                                                                         <thead>
                                                                             <tr>
                                                                                 <th>Item Type</th>
@@ -64,83 +65,59 @@
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                            <tr draggable="true">
-                                                                                <td>Part</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Part</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
+                                                                            <tr  draggable="true"  data-itemid="labour.id"  data-split_id="split_order_type.id"  ng-if="labour.split_order_type_id == null" ng-repeat="(key,labour) in labour_details">
                                                                                 <td>Labour</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
+                                                                                <td>{{labour.name}}</td>
+                                                                                <td>{{labour.qty}}</td>
+                                                                                <td class="text-right">{{labour.amount}}</td>
                                                                                 <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
+                                                                                <td class="text-right">{{labour.amount}}</td>
+                                                                                <td class="text-right" >{{labour.tax_amount}}</td>
+                                                                                <td class="text-right">{{labour.tax_values[0]  ? labour.tax_values[0] : '0.00'}}</td>
+                                                                                <td class="text-right" >{{labour.tax_values[1] ? labour.tax_values[1] : '0.00' }}</td>
+                                                                                <td class="text-right" >{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
+                                                                                <td class="text-right">{{labour.total_amount}}</td>
                                                                             </tr>
-                                                                            <tr>
-                                                                                <td>Labour</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
+                                                                            <tr draggable="true"  data-itemid="part.id"  data-split_id="split_order_type.id"  ng-if="part.split_order_type_id == null" ng-repeat="(key,part) in part_details">
+                                                                                <td>Part</td>
+                                                                                <td>{{part.name}}</td>
+                                                                                <td>{{part.qty}}</td>
+                                                                                <td class="text-right">{{part.rate}}</td>
                                                                                 <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
+                                                                                <td class="text-right">{{part.amount}}</td>
+                                                                                <td class="text-right" >{{part.tax_amount}}</td>
+                                                                                <td class="text-right" >{{part.tax_values[0] ? part.tax_values[0]: '0.00'}}</td>
+                                                                                <td class="text-right" >{{part.tax_values[1] ? part.tax_values[1]: '0.00' }}</td>
+                                                                                <td class="text-right" >{{part.tax_values[2]  ? part.tax_values[2] : '0.00'}}</td>
+                                                                                <td class="text-right">{{part.total_amount}}</td>
                                                                             </tr>
                                                                         </tbody>
-                                                                    </table>
+                                                                        </table>
+                                                                    </div>
                                                                 </div><!-- Table Responsive -->
                                                             </div><!-- Column -->
                                                         </div><!-- Row -->
                                                     </div><!-- Panel Body -->
                                                 </div><!-- Panel Collapse -->
                                             </div><!-- Panel -->
-                                            <div class="panel panel-default type-4" ng-repeat="split_order_type in extras.split_order_types">
+                                            <div class="panel panel-default type-4" ng-repeat="(key,split_order_type) in extras.split_order_types">
                                                 <div class="panel-heading">
-                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
-                                                        {{split_order_type.code}} - {{split_order_type.name}} - 4 Items
+                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse{{key}}">
+                                                        {{split_order_type.code}} - {{split_order_type.name}} -  {{split_order_type.total_items}} Items
                                                         <span class="arrow"></span>
                                                         <span class="title-right">
                                                             <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
-                                                            1600.00
+                                                             {{split_order_type.total_amount}}
                                                         </span>
                                                     </a>
                                                 </div>
-                                                <div id="collapse2" class="panel-collapse collapse">
+                                                <div id="collapse{{key}}" class="panel-collapse collapse">
                                                     <div class="panel-body">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="table-responsive">
-                                                                    <table class="table split-order-table table-form">
+                                                                    <div id="table2" class="bitacoratable">
+                                                                    <table id="table2" class="table split-order-table table-form childgrid"  >
                                                                         <thead>
                                                                             <tr>
                                                                                 <th>Item Type</th>
@@ -157,339 +134,35 @@
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
-                                                                            <tr>
-                                                                                <td>Part</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Part</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
+                                                                            <tr droppable="true"  data-itemid="part.id"  data-split_id="split_order_type.id"  class="listitems" ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(key,Labour) in labour_details">
                                                                                 <td>Labour</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
+                                                                                <td>{{labour.name}}</td>
+                                                                                <td>{{labour.qty}}</td>
+                                                                                <td class="text-right">{{labour.amount}}</td>
                                                                                 <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
+                                                                                <td class="text-right">{{labour.amount}}</td>
+                                                                                 <td class="text-right" >{{labour.tax_amount}}</td>
+                                                                                <td class="text-right">{{labour.tax_values[0]  ? labour.tax_values[0] : '0.00'}}</td>
+                                                                                <td class="text-right" >{{labour.tax_values[1] ? labour.tax_values[1] : '0.00' }}</td>
+                                                                                <td class="text-right" >{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
+                                                                                <td class="text-right">{{labour.total_amount}}</td>
                                                                             </tr>
-                                                                            <tr>
-                                                                                <td>Labour</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
+                                                                            <tr draggable="true"   ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(key,part) in part_details">
+                                                                                <td>Part</td>
+                                                                                <td>{{part.name}}</td>
+                                                                                <td>{{part.qty}}</td>
+                                                                                <td class="text-right">{{part.rate}}</td>
                                                                                 <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
+                                                                                <td class="text-right">{{part.amount}}</td>
+                                                                                <td class="text-right" >{{part.tax_amount}}</td>
+                                                                                <td class="text-right" >{{part.tax_values[0] ? part.tax_values[0]: '0.00'}}</td>
+                                                                                <td class="text-right" >{{part.tax_values[1] ? part.tax_values[1]: '0.00' }}</td>
+                                                                                <td class="text-right" >{{part.tax_values[2]  ? part.tax_values[2] : '0.00'}}</td>
+                                                                                <td class="text-right">{{part.total_amount}}</td>
                                                                             </tr>
                                                                         </tbody>
                                                                     </table>
-                                                                </div><!-- Table Responsive -->
-                                                            </div><!-- Column -->
-                                                        </div><!-- Row -->
-                                                    </div><!-- Panel Body -->
-                                                </div><!-- Panel Collapse -->
-                                            </div><!-- Panel -->
-                                            <div class="panel panel-default type-4">
-                                                <div class="panel-heading">
-                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
-                                                        000201 - Free Service - 1 Item
-                                                        <span class="arrow"></span>
-                                                        <span class="title-right">
-                                                            <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
-                                                            1600.00
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                                <div id="collapse3" class="panel-collapse collapse">
-                                                    <div class="panel-body">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="table-responsive">
-                                                                    <table class="table split-order-table table-form">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>Item Type</th>
-                                                                                <th>Item</th>
-                                                                                <th>Qty</th>
-                                                                                <th class="text-right">Rate</th>
-                                                                                <th class="text-right">Discount</th>
-                                                                                <th class="text-right">Amount</th>
-                                                                                <th class="text-right">Taxable Amount</th>
-                                                                                <th class="text-right">CGST (9%)</th>
-                                                                                <th class="text-right">SGST (9%)</th>
-                                                                                <th class="text-right">IGST (0%)</th>
-                                                                                <th class="text-right">Total Amount</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td>Part</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Part</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Labour</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Labour</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div><!-- Table Responsive -->
-                                                            </div><!-- Column -->
-                                                        </div><!-- Row -->
-                                                    </div><!-- Panel Body -->
-                                                </div><!-- Panel Collapse -->
-                                            </div><!-- Panel -->
-                                            <div class="panel panel-default type-4">
-                                                <div class="panel-heading">
-                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse4">
-                                                        000301 - Post Warranty / Paid Order - 2 Items
-                                                        <span class="arrow"></span>
-                                                        <span class="title-right">
-                                                            <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
-                                                            1600.00
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                                <div id="collapse4" class="panel-collapse collapse">
-                                                    <div class="panel-body">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="table-responsive">
-                                                                    <table class="table split-order-table table-form">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>Item Type</th>
-                                                                                <th>Item</th>
-                                                                                <th>Qty</th>
-                                                                                <th class="text-right">Rate</th>
-                                                                                <th class="text-right">Discount</th>
-                                                                                <th class="text-right">Amount</th>
-                                                                                <th class="text-right">Taxable Amount</th>
-                                                                                <th class="text-right">CGST (9%)</th>
-                                                                                <th class="text-right">SGST (9%)</th>
-                                                                                <th class="text-right">IGST (0%)</th>
-                                                                                <th class="text-right">Total Amount</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td>Part</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Part</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Labour</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Labour</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div><!-- Table Responsive -->
-                                                            </div><!-- Column -->
-                                                        </div><!-- Row -->
-                                                    </div><!-- Panel Body -->
-                                                </div><!-- Panel Collapse -->
-                                            </div><!-- Panel -->
-                                            <div class="panel panel-default type-4">
-                                                <div class="panel-heading">
-                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse5">
-                                                        000802 - AMC Order - 0 Item
-                                                        <span class="arrow"></span>
-                                                        <span class="title-right">
-                                                            <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
-                                                            0.00
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                                <div id="collapse5" class="panel-collapse collapse">
-                                                    <div class="panel-body">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="table-responsive">
-                                                                    <table class="table split-order-table table-form">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>Item Type</th>
-                                                                                <th>Item</th>
-                                                                                <th>Qty</th>
-                                                                                <th class="text-right">Rate</th>
-                                                                                <th class="text-right">Discount</th>
-                                                                                <th class="text-right">Amount</th>
-                                                                                <th class="text-right">Taxable Amount</th>
-                                                                                <th class="text-right">CGST (9%)</th>
-                                                                                <th class="text-right">SGST (9%)</th>
-                                                                                <th class="text-right">IGST (0%)</th>
-                                                                                <th class="text-right">Total Amount</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td>Part</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Part</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Labour</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Labour</td>
-                                                                                <td>ENH130 | R and R Rocker Cover Gasket</td>
-                                                                                <td>1 No.</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">245.82</td>
-                                                                                <td class="text-right">300.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">50.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">400.00</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
+                                                                </div>
                                                                 </div><!-- Table Responsive -->
                                                             </div><!-- Column -->
                                                         </div><!-- Row -->

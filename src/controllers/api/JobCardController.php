@@ -29,6 +29,7 @@ use App\JobOrderPart;
 use App\VehicleInspectionItem;
 use App\VehicleInspectionItemGroup;
 use App\Vendor;
+use Abs\TaxPkg\Tax;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -2869,6 +2870,8 @@ public function viewSplitOrderDetails(Request $request) {
 			$labour_amount = 0;
 			$total_amount = 0;
 
+			//dd($job_card->jobOrder->outlet);
+
 			//Check which tax applicable for customer
 			if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
 				$tax_type = 1160; //Within State
@@ -2883,11 +2886,13 @@ public function viewSplitOrderDetails(Request $request) {
 			if ($job_card->jobOrder->jobOrderRepairOrders) {
 				foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $labour) {
 					$total_amount = 0;
+					$labour_details[$key]['id']=$labour->repairOrder->id;
 					$labour_details[$key]['name'] = $labour->repairOrder->code . ' | ' . $labour->repairOrder->name;
 					$labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
 					$labour_details[$key]['qty'] = $labour->qty;
 					$labour_details[$key]['amount'] = $labour->amount;
 					$labour_details[$key]['is_free_service'] = $labour->is_free_service;
+					$labour_details[$key]['split_order_type_id']=$labour->split_order_type_id;
 					$tax_amount = 0;
 					$tax_values = array();
 					if ($labour->repairOrder->taxCode) {
@@ -2907,12 +2912,14 @@ public function viewSplitOrderDetails(Request $request) {
 					}
 
 					$labour_details[$key]['tax_values'] = $tax_values;
+					
 					$total_amount = $tax_amount + $labour->amount;
 					$total_amount = number_format((float) $total_amount, 2, '.', '');
 					if ($labour->is_free_service != 1) {
 						$labour_amount += $total_amount;
 					}
 					$labour_details[$key]['total_amount'] = $total_amount;
+					$labour_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
 				}
 			}
 
@@ -2920,12 +2927,14 @@ public function viewSplitOrderDetails(Request $request) {
 			if ($job_card->jobOrder->jobOrderParts) {
 				foreach ($job_card->jobOrder->jobOrderParts as $key => $parts) {
 					$total_amount = 0;
+					$part_details[$key]['id']=$parts->part->id;
 					$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
 					$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
 					$part_details[$key]['qty'] = $parts->qty;
 					$part_details[$key]['rate'] = $parts->rate;
 					$part_details[$key]['amount'] = $parts->amount;
 					$part_details[$key]['is_free_service'] = $parts->is_free_service;
+					$part_details[$key]['split_order_type_id']=$parts->split_order_type_id;
 					$tax_amount = 0;
 					$tax_values = array();
 					if ($parts->part->taxCode) {
@@ -2945,21 +2954,43 @@ public function viewSplitOrderDetails(Request $request) {
 					}
 
 					$part_details[$key]['tax_values'] = $tax_values;
+					
 					$total_amount = $tax_amount + $parts->amount;
 					$total_amount = number_format((float) $total_amount, 2, '.', '');
 					if ($parts->is_free_service != 1) {
 						$parts_amount += $total_amount;
 					}
 					$part_details[$key]['total_amount'] = $total_amount;
+					$part_details[$key]['tax_amount'] =number_format((float) $tax_amount, 2, '.', '');
 				}
 			}
 
 			$total_amount = $parts_amount + $labour_amount;
-
+			$unassigned_part_count=0;
+			$unassigned_part_amount=0;
+			foreach ($part_details as $key => $part) {
+			//	dd($part);
+				if(!$part['split_order_type_id']){
+					$unassigned_part_count +=1;
+					$unassigned_part_amount +=$part['total_amount'];
+				}
+			}
+			$unassigned_labour_count=0;
+			$unassigned_labour_amount=0;
+			foreach ($labour_details as $key => $labour) {
+				if(!$labour['split_order_type_id']){
+					$unassigned_labour_count +=1;
+					$unassigned_labour_amount +=$labour['total_amount'];
+				}
+			}
+			$unassigned_total_count = $unassigned_labour_count+$unassigned_part_count;
+			$unassigned_total_amount = $unassigned_labour_amount+$unassigned_part_amount;
 
 			$extras = [
-				'split_order_types' => SplitOrderType::getList(),
+				'split_order_types' => SplitOrderType::get(),
 			];
+
+
 
 			return response()->json([
 				'success' => true,
@@ -2971,6 +3002,8 @@ public function viewSplitOrderDetails(Request $request) {
 				'parts_total_amount' =>number_format($parts_amount, 2),
 				'labour_total_amount' =>number_format($labour_amount, 2),
 				'total_amount' =>number_format($total_amount, 2),
+				'unassigned_total_amount' =>number_format($unassigned_total_amount,2),
+				'unassigned_total_count' =>$unassigned_total_count,
 			]);
 
 		} catch (Exception $e) {
