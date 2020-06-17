@@ -8,7 +8,7 @@ app.directive('warrantyJobOrderRequestFormTabs', function() {
 //------------------------------------------------------------------------------------------------------------------------
 app.component('warrantyJobOrderRequestCardList', {
     templateUrl: warrantyJobOrderRequestCardList,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+    controller: function($http, $location, HelperService, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect) {
         $rootScope.loading = true;
         $('#search').focus();
         var self = this;
@@ -25,47 +25,23 @@ app.component('warrantyJobOrderRequestCardList', {
             ev.stopPropagation();
         });
 
+        var params = {
+            page: 1, // show first page
+            count: 100, // count per page
+            sorting: {
+                created_at: 'asc' // initial sorting
+            },
+            filter: {
+                search: '',
+                typeIn: [2, 5], //warranty & free service orders
+            },
+        };
+
         //FETCH DATA
         $scope.fetchData = function() {
-            $.ajax({
-                    url: base_url + '/api/job-order/index',
-                    method: "GET",
-                    data: {
-                        page: 1, // show first page
-                        count: 100, // count per page
-                        sorting: {
-                            created_at: 'asc' // initial sorting
-                        },
-                        filter: {
-                            search: '',
-                            typeIn: [2, 5], //warranty & free service orders
-                        },
-                        search_key: self.search_key,
-                        date: self.date,
-                        reg_no: self.reg_no,
-                        job_card_no: self.job_card_no,
-                        gate_in_no: self.gate_in_no,
-                        customer_id: self.customer_id,
-                        model_id: self.model_id,
-                        service_type_id: self.service_type_id,
-                        quote_type_id: self.quote_type_id,
-                        job_order_type_id: self.job_order_type_id,
-                        status_id: self.status_id,
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.job_orders = res.job_order_collection;
-                    $scope.$apply();
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
+            JobOrderSvc.index(params)
+                .then(function(response) {
+                    $scope.job_orders = response.data.job_order_collection;
                 });
         }
         $scope.fetchData();
@@ -78,7 +54,7 @@ app.component('warrantyJobOrderRequestCardList', {
 
 app.component('warrantyJobOrderRequestPprForm', {
     templateUrl: warrantyJobOrderRequestPPRForm,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+    controller: function($http, $location, HelperService, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc) {
         $rootScope.loading = true;
         $('#search').focus();
         var self = this;
@@ -95,74 +71,58 @@ app.component('warrantyJobOrderRequestPprForm', {
         $scope.user = HelperService.getLoggedUser();
 
         $scope.init = function() {
-            $.ajax({
-                    url: base_url + '/api/service-type/options',
-                    method: "GET",
-                    data: {},
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.service_type_options = res.options;
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
+            $rootScope.loading = true;
+
+            let promises = {
+                service_type_options: ServiceTypeSvc.options(),
+                vehicle_primary_application_options: VehiclePrimaryApplicationSvc.options(),
+                vehicle_secondary_application_options: VehicleSecondaryApplicationSvc.options(),
+                vehicle_operating_condition_options: ConfigSvc.options({ filter: { configType: 300 } }),
+                road_condition_options: ConfigSvc.options({ filter: { configType: 301 } }),
+                job_order_read: JobOrderSvc.read($routeParams.job_order_id),
+            };
+
+            $scope.options = {};
+            $q.all(promises)
+                .then(function(responses) {
+                    $scope.options.service_types = responses.service_type_options.data.options;
+                    $scope.options.vehicle_primary_applications = responses.vehicle_primary_application_options.data.options;
+                    $scope.options.vehicle_secondary_applications = responses.vehicle_secondary_application_options.data.options;
+                    $scope.options.vehicle_operating_conditions = responses.vehicle_operating_condition_options.data.options;
+                    $scope.options.road_conditions = responses.road_condition_options.data.options;
+                    $scope.job_order = responses.job_order_read.data.job_order;
+                    $rootScope.loading = true;
                 });
         };
         $scope.init();
 
-
-        //FETCH DATA
-        $scope.fetchData = function() {
-            $.ajax({
-                    url: base_url + '/api/job-order/read/' + $routeParams.job_order_id,
-                    method: "GET",
-                    data: {},
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.job_order = res.job_order;
-                    $scope.$apply();
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });
-        }
-        $scope.fetchData();
-
         $scope.searchCompaints = function(query) {
-            var results = query ? $scope.extras.complaints.filter(createFilterFor(query)) : $scope.extras.complaints,
-                deferred;
-            return results;
-        }
+            return new Promise(function(resolve, reject) {
+                ComplaintSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
 
+        }
 
         $scope.searchFaults = function(query) {
-            var results = query ? $scope.extras.faults.filter(createFilterFor(query)) : $scope.extras.faults,
-                deferred;
-            return results;
+            return new Promise(function(resolve, reject) {
+                FaultSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
         }
 
-        function createFilterFor(query) {
-            var lowercaseQuery = query.toLowerCase();
-            return function filterFn(item) {
-                return (item.code.indexOf(lowercaseQuery) === 0);
-            };
-
+        $scope.searchPartSuppliers = function(query) {
+            return new Promise(function(resolve, reject) {
+                PartSupplierSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
         }
-        // $scope.gate_logs = res.gate_logs;
-        $rootScope.loading = false;
     }
 });
 

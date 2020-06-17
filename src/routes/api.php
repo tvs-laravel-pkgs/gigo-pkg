@@ -2,12 +2,60 @@
 Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:api']], function () {
 	Route::group(['prefix' => 'api'], function () {
 
-		Route::get('job-order/index', JobOrderController::class . '@index');
-		Route::get('job-order/read/{id}', JobOrderController::class . '@read');
+		Route::group(['prefix' => 'job-order'], function () {
+			$controller = 'JobOrderController';
+			Route::get('index', $controller . '@index');
+			Route::get('read/{id}', $controller . '@read');
+		});
 
 		Route::get('job-card/index', JobCardController::class . '@index');
 
 		Route::get('service-type/options', ServiceTypeController::class . '@options');
+
+		Route::group(['prefix' => 'vehicle-primary-application'], function () {
+			$controller = 'VehiclePrimaryApplicationController';
+			Route::get('index', $controller . '@index');
+			Route::get('read/{id}', $controller . '@read');
+			Route::post('save', $controller . '@save');
+			Route::post('remove', $controller . '@remove');
+			Route::get('options', $controller . '@options');
+		});
+
+		Route::group(['prefix' => 'vehicle-secondary-application'], function () {
+			$controller = 'VehicleSecondaryApplicationController';
+			Route::get('index', $controller . '@index');
+			Route::get('read/{id}', $controller . '@read');
+			Route::post('save', $controller . '@save');
+			Route::post('remove', $controller . '@remove');
+			Route::get('options', $controller . '@options');
+		});
+
+		Route::group(['prefix' => 'part-supplier'], function () {
+			$controller = 'PartSupplierController';
+			Route::get('index', $controller . '@index');
+			Route::get('read/{id}', $controller . '@read');
+			Route::post('save', $controller . '@save');
+			Route::post('remove', $controller . '@remove');
+			Route::get('options', $controller . '@options');
+		});
+
+		Route::group(['prefix' => 'complaint'], function () {
+			$controller = 'ComplaintController';
+			Route::get('index', $controller . '@index');
+			Route::get('read/{id}', $controller . '@read');
+			Route::post('save', $controller . '@save');
+			Route::post('remove', $controller . '@remove');
+			Route::get('options', $controller . '@options');
+		});
+
+		Route::group(['prefix' => 'fault'], function () {
+			$controller = 'FaultController';
+			Route::get('index', $controller . '@index');
+			Route::get('read/{id}', $controller . '@read');
+			Route::post('save', $controller . '@save');
+			Route::post('remove', $controller . '@remove');
+			Route::get('options', $controller . '@options');
+		});
 
 		//SAVE GATE IN ENTRY
 		Route::get('gate-in-entry/get-form-data', 'GateInController@getFormData');

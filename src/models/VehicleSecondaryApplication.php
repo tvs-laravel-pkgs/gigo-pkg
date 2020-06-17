@@ -3,13 +3,12 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\BaseModel;
 use App\Company;
-use App\Config;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 
-class VehicleSecondaryApplication extends Model {
+class VehicleSecondaryApplication extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'vehicle_secondary_applications';
@@ -19,6 +18,19 @@ class VehicleSecondaryApplication extends Model {
 		"code",
 		"name",
 	];
+
+	// Query Scopes --------------------------------------------------------------
+
+	public function scopeFilterSearch($query, $term) {
+		if (strlen($term)) {
+			$query->where(function ($query) use ($term) {
+				$query->orWhere('code', 'LIKE', '%' . $term . '%');
+				$query->orWhere('name', 'LIKE', '%' . $term . '%');
+			});
+		}
+	}
+
+	// Static Operations --------------------------------------------------------------
 
 	public static function validate($data, $user) {
 		$error_messages = [
@@ -91,19 +103,6 @@ class VehicleSecondaryApplication extends Model {
 		return [
 			'success' => true,
 		];
-	}
-
-	public static function getList($params = [], $add_default = true, $default_text = 'Select Amc Member') {
-		$list = Collect(Self::select([
-			'id',
-			'name',
-		])
-				->orderBy('name')
-				->get());
-		if ($add_default) {
-			$list->prepend(['id' => '', 'name' => $default_text]);
-		}
-		return $list;
 	}
 
 }

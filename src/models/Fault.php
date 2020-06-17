@@ -3,11 +3,11 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 
-class Fault extends Model {
+class Fault extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'faults';
@@ -18,6 +18,19 @@ class Fault extends Model {
 		"code",
 		"name",
 	];
+
+	// Query Scopes --------------------------------------------------------------
+
+	public function scopeFilterSearch($query, $term) {
+		if (strlen($term)) {
+			$query->where(function ($query) use ($term) {
+				$query->orWhere('code', 'LIKE', '%' . $term . '%');
+				$query->orWhere('name', 'LIKE', '%' . $term . '%');
+			});
+		}
+	}
+
+	// Static Operations --------------------------------------------------------------
 
 	public static function validate($data, $user) {
 		$error_messages = [
@@ -91,7 +104,7 @@ class Fault extends Model {
 			'success' => true,
 		];
 	}
-	
+
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Fault Type') {
 		$list = Collect(Self::select([
 			'id',

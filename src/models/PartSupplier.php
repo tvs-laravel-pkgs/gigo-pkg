@@ -3,13 +3,12 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\BaseModel;
 use App\Company;
-use App\Config;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 
-class PartSupplier extends Model {
+class PartSupplier extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'part_suppliers';
@@ -20,6 +19,18 @@ class PartSupplier extends Model {
 		"name",
 	];
 
+	// Query Scopes --------------------------------------------------------------
+
+	public function scopeFilterSearch($query, $term) {
+		if (strlen($term)) {
+			$query->where(function ($query) use ($term) {
+				$query->orWhere('code', 'LIKE', '%' . $term . '%');
+				$query->orWhere('name', 'LIKE', '%' . $term . '%');
+			});
+		}
+	}
+
+	// Static Operations --------------------------------------------------------------
 
 	public static function validate($data, $user) {
 		$error_messages = [
@@ -74,8 +85,16 @@ class PartSupplier extends Model {
 			];
 		}
 
-		$validation = Self::validate($original_record, $admin);
-		if (count($validation['success']) > 0 || count($errors) > 0) {
+		$group = ComplaintGroup::where([
+			'company_id' => $admin->company_id,
+			'code' => $record_data->group_id,
+		])->first();
+		if (!$group) {
+			$errors[] = 'Group not found : ' . $record_data->group_id;
+		}
+
+		$validation = Self::validate($record_data->toArray(), $admin);
+		if (count($validation['errors']) > 0 || count($errors) > 0) {
 			return [
 				'success' => false,
 				'errors' => array_merge($validation['errors'], $errors),
@@ -84,27 +103,18 @@ class PartSupplier extends Model {
 
 		$record = self::firstOrNew([
 			'company_id' => $company->id,
+			'group_id' => $group->id,
 			'code' => $record_data->code,
 		]);
 		$record->name = $record_data->name;
+		$record->hours = $record_data->hours;
+		$record->kms = $record_data->kms;
+		$record->months = $record_data->months;
 		$record->created_by_id = $admin->id;
 		$record->save();
 		return [
 			'success' => true,
 		];
-	}
-
-	public static function getList($params = [], $add_default = true, $default_text = 'Select Amc Member') {
-		$list = Collect(Self::select([
-			'id',
-			'name',
-		])
-				->orderBy('name')
-				->get());
-		if ($add_default) {
-			$list->prepend(['id' => '', 'name' => $default_text]);
-		}
-		return $list;
 	}
 
 }

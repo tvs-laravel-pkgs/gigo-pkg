@@ -222,7 +222,7 @@ class JobOrder extends BaseModel {
 
 	public function scopeFilterSearch($query, $term) {
 		if (strlen($term)) {
-			$query->where(function (Builder $query) use ($term) {
+			$query->where(function ($query) use ($term) {
 				$query->orWhere('number', 'LIKE', '%' . $term . '%');
 				$query->orWhere('driver_name', 'LIKE', '%' . $term . '%');
 				$query->orWhere('contact_number', 'LIKE', '%' . $term . '%');

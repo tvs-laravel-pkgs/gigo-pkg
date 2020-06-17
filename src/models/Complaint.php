@@ -3,12 +3,12 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\BaseModel;
 use App\Company;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 
-class Complaint extends Model {
+class Complaint extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'complaints';
@@ -17,13 +17,18 @@ class Complaint extends Model {
 		["company_id", "code", "name", "group_id", "hours", "kms", "months"]
 	;
 
-	public function getDateOfJoinAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	// Query Scopes --------------------------------------------------------------
+
+	public function scopeFilterSearch($query, $term) {
+		if (strlen($term)) {
+			$query->where(function ($query) use ($term) {
+				$query->orWhere('code', 'LIKE', '%' . $term . '%');
+				$query->orWhere('name', 'LIKE', '%' . $term . '%');
+			});
+		}
 	}
 
-	public function setDateOfJoinAttribute($date) {
-		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
-	}
+	// Static Operations --------------------------------------------------------------
 
 	public static function validate($data, $user) {
 		$error_messages = [

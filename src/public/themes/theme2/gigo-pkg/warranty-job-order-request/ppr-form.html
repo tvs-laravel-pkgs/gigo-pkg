@@ -39,6 +39,14 @@
                                             </b>
                                         </h5>
                                         <ul class="view-row mb-no">
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Vehicle Sold
+                                                </span>
+                                                <span class="view-col-value">
+                                                    {{job_order.vehicle.is_sold ? 'Yes' : 'No'}}
+                                                </span>
+                                            </li>
                                             <li class="view-col-3" ng-if1="!solo_form">
                                                 <span class="view-col-label">
                                                     Sold Date
@@ -185,12 +193,12 @@
                                                                     <label>Free Service Done
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-select multiple ng-model="service_types" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                                    <md-select multiple ng-model="job_order.warranty_job_order_request.service_types" placeholder="Select compled free services" data-md-container-class="selectdemoSelectHeader">
                                                                         <md-select-header class="demo-select-header">
-                                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                                            <input ng-model="searchServiceTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                                                         </md-select-header>
-                                                                        <md-optgroup label="drinks">
-                                                                            <md-option ng-value="service_type" ng-repeat="service_type in extras.service_types | filter:searchDrink">
+                                                                        <md-optgroup>
+                                                                            <md-option ng-value="service_type" ng-repeat="service_type in options.service_types | filter:searchServiceTypeKey">
                                                                                 {{service_type.name}}
                                                                             </md-option>
                                                                         </md-optgroup>
@@ -203,15 +211,17 @@
                                                                         Complaint code
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-autocomplete md-selected-item="complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code" md-min-length="0" md-escape-options="clear" placeholder="Ex. 01C4">
+                                                                    <md-autocomplete md-selected-item="job_order.warranty_job_order_request.complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. 01C4">
                                                                         <md-item-template>
                                                                             <span>
-                                                                                {{complaint.code}}</span>
+                                                                                {{complaint.code}}
+                                                                            </span>
                                                                         </md-item-template>
                                                                         <md-not-found>
                                                                             No complaints matching "{{complaintSearchKey}}" were found.
                                                                         </md-not-found>
                                                                     </md-autocomplete>
+                                                                    <input type="hidden" name="complain_id" value="{{job_order.warranty_job_order_request.complaint.id}}">
                                                                 </div><!-- Feild -->
                                                             </li>
                                                             <li class="view-col-3">
@@ -219,7 +229,7 @@
                                                                     Complaint description:
                                                                 </span>
                                                                 <span class="view-col-value">
-                                                                    {{complaint.name}}
+                                                                    {{job_order.warranty_job_order_request.complaint.name}}
                                                                 </span>
                                                             </li>
                                                             <li class="view-col-3">
@@ -228,7 +238,7 @@
                                                                         Fault code
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-autocomplete md-selected-item="fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code" md-min-length="0" md-escape-options="clear" placeholder="Ex. AA">
+                                                                    <md-autocomplete md-selected-item="job_order.warranty_job_order_request.fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. AA">
                                                                         <md-item-template>
                                                                             <span>
                                                                                 {{fault.code}}
@@ -238,6 +248,7 @@
                                                                             No faults matching "{{faultSearchKey}}" were found.
                                                                         </md-not-found>
                                                                     </md-autocomplete>
+                                                                    <input type="hidden" name="fault_id" value="{{job_order.warranty_job_order_request.fault.id}}">
                                                                 </div><!-- Feild -->
                                                             </li>
                                                             <li class="view-col-3">
@@ -245,7 +256,7 @@
                                                                     Fault description:
                                                                 </span>
                                                                 <span class="view-col-value">
-                                                                    {{fault.name}}
+                                                                    {{job_order.warranty_job_order_request.fault.name}}
                                                                 </span>
                                                             </li>
                                                             <li class="view-col-3">
@@ -254,7 +265,17 @@
                                                                         Supplier Code
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <input type="text" class="form-control" autocomplete="off" />
+                                                                    <md-autocomplete md-selected-item="job_order.warranty_job_order_request.supplier" md-search-text="supplierSearchKey" md-items="supplier in searchPartSuppliers(supplierSearchKey)" md-item-text="supplier.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. Kumar Auto Eng.">
+                                                                        <md-item-template>
+                                                                            <span>
+                                                                                {{supplier.code}}
+                                                                            </span>
+                                                                        </md-item-template>
+                                                                        <md-not-found>
+                                                                            No faults matching "{{supplierSearchKey}}" were found.
+                                                                        </md-not-found>
+                                                                    </md-autocomplete>
+                                                                    <input type="hidden" name="supplier_id" value="{{job_order.warranty_job_order_request.supplier.id}}">
                                                                 </div><!-- Feild -->
                                                             </li>
                                                             <li class="view-col-3">
@@ -262,7 +283,7 @@
                                                                     Supplier Name
                                                                 </span>
                                                                 <span class="view-col-value">
-                                                                    MERITOR
+                                                                    {{job_order.warranty_job_order_request.supplier.name}}
                                                                 </span>
                                                             </li>
                                                             <li class="view-col-3">
@@ -270,7 +291,7 @@
                                                                     Servicing dealer name
                                                                 </span>
                                                                 <span class="view-col-value">
-                                                                    TVS-PADAPPAI
+                                                                    {{job_order.outlet.name}}
                                                                 </span>
                                                             </li>
                                                             <li class="view-col-3">
@@ -278,7 +299,7 @@
                                                                     Servicing Dealer Code
                                                                 </span>
                                                                 <span class="view-col-value">
-                                                                    30209
+                                                                    {{job_order.outlet.code}}
                                                                 </span>
                                                             </li>
                                                             <li class="view-col-3">
@@ -287,14 +308,17 @@
                                                                         Primary Segment
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                                    <md-select ng-model="job_order.warranty_job_order_request.primary_segment" placeholder="Select Primary Segment" data-md-container-class="selectdemoSelectHeader">
                                                                         <md-select-header class="demo-select-header">
-                                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                                            <input ng-model="searchPrimarySegment" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                                                         </md-select-header>
-                                                                        <md-optgroup label="drinks">
-                                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                                        <md-optgroup>
+                                                                            <md-option ng-value="option" ng-repeat="option in options.vehicle_primary_applications | filter:searchPrimarySegment">
+                                                                                {{option.name}}
+                                                                            </md-option>
                                                                         </md-optgroup>
                                                                     </md-select>
+                                                                    <input type="hidden" name="primary_segment_id" value="{{job_order.warranty_job_order_request.primary_segment.id}}">
                                                                 </div><!-- Feild -->
                                                             </li>
                                                             <li class="view-col-3">
@@ -303,14 +327,17 @@
                                                                         Secondary Segment
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                                    <md-select ng-model="job_order.warranty_job_order_request.secondary_segment" placeholder="Select Secondary Segment" data-md-container-class="selectdemoSelectHeader">
                                                                         <md-select-header class="demo-select-header">
-                                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                                            <input ng-model="searchSecondarySegment" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                                                         </md-select-header>
-                                                                        <md-optgroup label="drinks">
-                                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                                        <md-optgroup>
+                                                                            <md-option ng-value="option" ng-repeat="option in options.vehicle_secondary_applications | filter:searchSecondarySegment">
+                                                                                {{option.name}}
+                                                                            </md-option>
                                                                         </md-optgroup>
                                                                     </md-select>
+                                                                    <input type="hidden" name="secondary_segment_id" value="{{job_order.warranty_job_order_request.secondary_segment.id}}">
                                                                 </div><!-- Feild -->
                                                             </li>
                                                             <li class="view-col-3">
@@ -318,7 +345,8 @@
                                                                     Customer Name and Address
                                                                 </span>
                                                                 <span class="view-col-value">
-                                                                    SATHEEMURUGAN.C ,Red Hills Bazaar,Chennai,Tamil Nadu,India,60005
+                                                                    {{job_order.customer.name}}
+                                                                    {{job_order.customer.address.formatted_address}}
                                                                 </span>
                                                             </li>
                                                         </ul>
@@ -338,45 +366,38 @@
                                                             <li class="view-col-3">
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        Vehicle Sold
-                                                                        <sup class="mandatory">*</sup>
-                                                                    </label>
-                                                                    <div class="common-radio-button type-4">
-                                                                        <input type="radio" id="radio_yes" name="is_registered" ng-model="job_order.vehicle.is_registered" ng-value="1">
-                                                                        <label for="radio_yes">Yes</label>
-                                                                        <input type="radio" id="radio_no" name="is_registered" ng-model="job_order.vehicle.is_registered" ng-value="0">
-                                                                        <label for="radio_no">No</label>
-                                                                    </div>
-                                                                </div><!-- Feild -->
-                                                            </li>
-                                                            <li class="view-col-3">
-                                                                <div class="form-group">
-                                                                    <label>
                                                                         Goodwill Flag
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
                                                                     <div class="common-radio-button type-4">
-                                                                        <input type="radio" id="radio_yes" name="is_registered" ng-model="job_order.vehicle.is_registered" ng-value="1">
-                                                                        <label for="radio_yes">Yes</label>
-                                                                        <input type="radio" id="radio_no" name="is_registered" ng-model="job_order.vehicle.is_registered" ng-value="0">
-                                                                        <label for="radio_no">No</label>
+                                                                        <input type="radio" id="has_goodwill_yes" name="has_goodwill" ng-model="job_order.warranty_job_order_request.has_goodwill" ng-value="1">
+                                                                        <label for="has_goodwill_yes">
+                                                                            Yes
+                                                                        </label>
+                                                                        <input type="radio" id="has_goodwill_no" name="has_goodwill" ng-model="job_order.warranty_job_order_request.has_goodwill" ng-value="0">
+                                                                        <label for="has_goodwill_no">
+                                                                            No
+                                                                        </label>
                                                                     </div>
                                                                 </div><!-- Feild -->
                                                             </li>
                                                             <li class="view-col-3">
                                                                 <div class="form-group">
                                                                     <label>
-                                                                        Operating Conditions
+                                                                        Operating Condition
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                                    <md-select ng-model="job_order.warranty_job_order_request.operating_condition" placeholder="Select Operating Condition" data-md-container-class="selectdemoSelectHeader">
                                                                         <md-select-header class="demo-select-header">
-                                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                                            <input ng-model="searchOperatingCondition" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                                                         </md-select-header>
-                                                                        <md-optgroup label="drinks">
-                                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                                        <md-optgroup>
+                                                                            <md-option ng-value="option" ng-repeat="option in options.vehicle_operating_conditions | filter:searchOperatingCondition">
+                                                                                {{option.name}}
+                                                                            </md-option>
                                                                         </md-optgroup>
                                                                     </md-select>
+                                                                    <input type="hidden" name="operating_condition_id" value="{{job_order.warranty_job_order_request.operating_condition.id}}">
                                                                 </div><!-- Feild -->
                                                             </li>
                                                             <li class="view-col-3">
@@ -385,14 +406,17 @@
                                                                         Road Conditions Normal use:
                                                                         <sup class="mandatory">*</sup>
                                                                     </label>
-                                                                    <md-select ng-model="selectedDrinks" placeholder="Select any one" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                                    <md-select ng-model="job_order.warranty_job_order_request.road_condition" placeholder="Select Road Condition" data-md-container-class="selectdemoSelectHeader">
                                                                         <md-select-header class="demo-select-header">
-                                                                            <input ng-model="searchDrink" type="search" placeholder="Search for a drink.." class="demo-header-searchbox md-text">
+                                                                            <input ng-model="searchRoadCondition" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                                                         </md-select-header>
-                                                                        <md-optgroup label="drinks">
-                                                                            <md-option ng-value="drink" ng-repeat="drink in drinks | filter:searchDrink">{{drink}}</md-option>
+                                                                        <md-optgroup>
+                                                                            <md-option ng-value="option" ng-repeat="option in options.road_conditions | filter:searchRoadCondition">
+                                                                                {{option.name}}
+                                                                            </md-option>
                                                                         </md-optgroup>
                                                                     </md-select>
+                                                                    <input type="hidden" name="road_condition_id" value="{{job_order.warranty_job_order_request.road_condition.id}}">
                                                                 </div><!-- Feild -->
                                                             </li>
                                                             <li class="view-col-3">

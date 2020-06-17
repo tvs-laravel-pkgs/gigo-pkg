@@ -1586,4 +1586,5 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var warrantyJobOrderRequestFormTabs = "{{asset($gigo_pkg_prefix.'/public/design-input/warranty-job-order-request/partials/warranty-job-order-request-form-tabs.html')}}";
 </script>
 <script type="text/javascript" src='{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/controller.js")}}'></script>
+<script type="text/javascript" src='{{asset($gigo_pkg_prefix."/public/services/gigo-pkg-services.js")}}'></script>
 
