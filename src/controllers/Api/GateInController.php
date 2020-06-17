@@ -78,7 +78,6 @@ class GateInController extends Controller {
 				}
 			}
 
-			dd();
 			$validator = Validator::make($request->all(), [
 				'vehicle_photo' => [
 					'required',
