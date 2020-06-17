@@ -62,7 +62,7 @@ app.component('jobCardTableList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'date', },
+                { data: 'created_at', },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'customer_name', name: 'customers.name' },
@@ -1796,7 +1796,7 @@ app.component('jobCardScheduleForm', {
                 });
         }
 
-        $scope.viewTimeLog = function(repair_order_id) {
+        $scope.viewTimeLog = function(job_order_repair_order_id) {
             // console.log(repair_order_id);
             // return;
             $.ajax({
@@ -1804,7 +1804,7 @@ app.component('jobCardScheduleForm', {
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id,
-                        repair_order_id: repair_order_id
+                        job_order_repair_order_id: job_order_repair_order_id
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -1824,6 +1824,103 @@ app.component('jobCardScheduleForm', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
+    }
+});
+
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//Schedule Review
+app.component('jobCardLabourReview', {
+    templateUrl: job_card_labour_review_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        $scope.job_order_repair_order_id = $routeParams.job_order_repair_order_id;
+
+        //FETCH DATA
+        $scope.fetchLabourReviewData = function() {
+            // console.log(1);
+            $.ajax({
+                    url: base_url + '/api/get-labour-review',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                        job_order_repair_order_id: $routeParams.job_order_repair_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.labour_review_data = res.labour_review_data;
+                    $scope.job_order_repair_order = res.job_order_repair_order;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchLabourReviewData();
+
+
+        var form_id = '#form';
+        var v = jQuery(form_id).validate({
+            ignore: '',
+            rules: {
+                'status_id': {
+                    required: true,
+                    maxlength: 4,
+                },
+                'observation': {
+                    required: true,
+                },
+                'action_taken': {
+                    required: true,
+                },
+            },
+            submitHandler: function(form) {
+                let formData = new FormData($(form_id)[0]);
+                $('.submit').button('loading');
+                $.ajax({
+                        url: base_url + '/api/labour-review-save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            $('.submit').button('reset');
+                            showErrorNoty(res);
+                            return;
+                        }
+                        custom_noty('success', res.message);
+                        $location.path('/gigo-pkg/job-card/schedule/' + $routeParams.job_card_id);
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        $('.submit').button('reset');
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
+        });
     }
 });
 

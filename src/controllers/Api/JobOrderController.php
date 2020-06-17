@@ -446,7 +446,7 @@ class JobOrderController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'message' => 'URL send to Customer Successfully',
+				'message' => 'Customer Approved Successfully',
 			]);
 		} catch (Exception $e) {
 			return response()->json([
@@ -482,7 +482,7 @@ class JobOrderController extends Controller {
 				'jobOrderRepairOrders',
 				'jobOrderParts',
 			])
-				->find($request->job_order_id);
+				->find($request->id);
 
 			if (!$job_order) {
 				return response()->json([

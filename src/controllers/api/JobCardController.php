@@ -22,10 +22,10 @@ use App\Attachment;
 use App\Config;
 use App\Customer;
 use App\Employee;
-use App\SplitOrderType;
 use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrderPart;
+use App\SplitOrderType;
 use App\VehicleInspectionItem;
 use App\VehicleInspectionItemGroup;
 use App\Vendor;
@@ -448,7 +448,7 @@ class JobCardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'message' => 'URL send to Customer Successfully',
+				'message' => 'Customer Approved Successfully',
 			]);
 		} catch (Exception $e) {
 			return response()->json([
@@ -484,7 +484,7 @@ class JobCardController extends Controller {
 				'jobOrderRepairOrders',
 				'jobOrderParts',
 			])
-				->find($request->job_order_id);
+				->find($request->id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -582,13 +582,11 @@ class JobCardController extends Controller {
 				->get();
 			foreach ($bay_list as $key => $bay) {
 				if ($bay->status_id == 8241 && $bay->id == $job_card->bay_id) {
-					//dd($bay->id);
 					$bay->selected = true;
 				} else {
 					$bay->selected = false;
 				}
 			}
-			//dd($bay_list);
 
 			$extras = [
 				'bay_list' => $bay_list,
@@ -609,7 +607,7 @@ class JobCardController extends Controller {
 	}
 
 	public function saveBay(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -650,16 +648,21 @@ class JobCardController extends Controller {
 			}
 			$job_card->floor_supervisor_id = $request->floor_supervisor_id;
 			if ($job_card->bay_id) {
+
 				//Exists bay checking and Bay status update
 				if ($job_card->bay_id != $request->bay_id) {
 					$bay = Bay::find($job_card->bay_id);
 					$bay->status_id = 8240; //Free
+					$bay->job_order_id = NULL;
 					$bay->updated_by_id = Auth::user()->id;
 					$bay->updated_at = Carbon::now();
 					$bay->save();
 				}
 			}
 			$job_card->bay_id = $request->bay_id;
+			if ($job_card->status_id == 8220) {
+				$job_card->status_id = 8221; //Work In Progress
+			}
 			$job_card->updated_by = Auth::user()->id;
 			$job_card->updated_at = Carbon::now();
 			$job_card->save();
@@ -1264,9 +1267,9 @@ class JobCardController extends Controller {
 				->whereIn('id', $job_order_repair_order_ids)
 				->get();
 
-			$total_labour = RepairOrderMechanic::distinct('mechanic_id')->count('mechanic_id');	
+			$total_labour = RepairOrderMechanic::distinct('mechanic_id')->count('mechanic_id');
 
-			$status = RepairOrderMechanic::select('repair_order_mechanics.id', 'repair_order_mechanics.status_id', 'repair_order_mechanics.job_order_repair_order_id',(DB::raw('DATE_FORMAT(repair_order_mechanics.updated_at,"%h:%i %p") as time')))
+			$status = RepairOrderMechanic::select('repair_order_mechanics.id', 'repair_order_mechanics.status_id', 'repair_order_mechanics.job_order_repair_order_id', (DB::raw('DATE_FORMAT(repair_order_mechanics.updated_at,"%h:%i %p") as time')))
 				->whereIn('job_order_repair_order_id', $job_order_repair_order_ids)
 				->orderby('repair_order_mechanics.id', 'ASC')->groupBy('repair_order_mechanics.job_order_repair_order_id')->get();
 
@@ -1279,7 +1282,7 @@ class JobCardController extends Controller {
 				'user_details' => $user_details,
 				'my_job_card_details' => $my_job_card_details,
 				'getwork_status' => $status,
-				'total_labour' =>$total_labour,
+				'total_labour' => $total_labour,
 
 			]);
 
@@ -1292,18 +1295,14 @@ class JobCardController extends Controller {
 		}
 	}
 
-	public function getLabourReviewData($id) {
+	public function getLabourReviewData(Request $request) {
+		// dd($request->all());
 		try {
-			$job_card = JobCard::find($id);
-			if (!$job_card) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Job Card Not Found!',
-				]);
-			}
-
 			$labour_review_data = JobCard::with([
+				'status',
 				'jobOrder',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
 				'jobOrder.JobOrderRepairOrders',
 				'jobOrder.JobOrderRepairOrders.status',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics',
@@ -1311,50 +1310,115 @@ class JobCardController extends Controller {
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.status',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanicTimeLogs',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanicTimeLogs.status',
-
 			])
-				->find($job_card->id);
+				->find($request->id);
+
+			if (!$labour_review_data) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Card Not Found!',
+				]);
+			}
+
+			//REPAIR ORDER
+			$job_order_repair_order = JobOrderRepairOrder::with([
+				'repairOrder',
+				'repairOrderMechanics',
+				'repairOrderMechanics.mechanic',
+				'repairOrderMechanics.status',
+				'repairOrderMechanics.mechanicTimeLogs',
+				'repairOrderMechanics.mechanicTimeLogs.status',
+				'repairOrderMechanics.mechanicTimeLogs.reason',
+			])
+				->find($request->job_order_repair_order_id);
+
+			if (!$job_order_repair_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Order Repair Order Not found!',
+				]);
+			}
 
 			$job_card_repair_order_details = $labour_review_data->jobOrder->JobOrderRepairOrders;
 			//dd($job_card_repair_order_details);
-			$total_duration = 0;
-			if ($job_card_repair_order_details) {
-				foreach ($job_card_repair_order_details as $key => $job_card_repair_order) {
-					$duration = [];
-					//$total_duration=0;
-					if ($job_card_repair_order->repairOrderMechanics) {
-						foreach ($job_card_repair_order->repairOrderMechanics as $key1 => $repair_order_mechanic) {
-							if ($repair_order_mechanic->mechanicTimeLogs) {
-								foreach ($repair_order_mechanic->mechanicTimeLogs as $key2 => $mechanic_time_log) {
-									$time1 = strtotime($mechanic_time_log->start_date_time);
-									$time2 = strtotime($mechanic_time_log->end_date_time);
-									if ($time2 < $time1) {
-										$time2 += 86400;
-									}
-									$duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
 
+			$total_duration = 0;
+			$overall_total_duration = [];
+			if (!empty($job_order_repair_order->repairOrderMechanics)) {
+				foreach ($job_order_repair_order->repairOrderMechanics as $repair_order_mechanic) {
+					$duration = [];
+					if ($repair_order_mechanic->mechanicTimeLogs) {
+						$duration_difference = []; //FOR START TIME AND END TIME DIFFERENCE
+						foreach ($repair_order_mechanic->mechanicTimeLogs as $key2 => $mechanic_time_log) {
+							// PERTICULAR MECHANIC DATE
+							$mechanic_time_log->date = date('d/m/Y', strtotime($mechanic_time_log->start_date_time));
+
+							//PERTICULAR MECHANIC STATR TIME
+							$mechanic_time_log->start_time = date('h:i a', strtotime($mechanic_time_log->start_date_time));
+
+							//PERTICULAR MECHANIC END TIME
+							$mechanic_time_log->end_time = $mechanic_time_log->end_date_time ? date('h:i a', strtotime($mechanic_time_log->end_date_time)) : '-';
+
+							if ($mechanic_time_log->end_date_time) {
+								// dump('if');
+								$time1 = strtotime($mechanic_time_log->start_date_time);
+								$time2 = strtotime($mechanic_time_log->end_date_time);
+								if ($time2 < $time1) {
+									$time2 += 86400;
 								}
+
+								//TIME DURATION DIFFERENCE PERTICULAR MECHANIC DURATION
+								$duration_difference[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
+								//TOTAL DURATION FOR PARTICLUAR EMPLOEE
+								$duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
+								//OVERALL TOTAL WORKING DURATION
+								$overall_total_duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
+								$mechanic_time_log->duration_difference = sum_mechanic_duration($duration_difference);
+								unset($duration_difference);
+							} else {
+								//TOTAL DURATION FOR PARTICLUAR EMPLOEE
+								$duration[] = '-';
 							}
 						}
+						//TOTAL WORKING HOURS PER EMPLOYEE
 						$total_duration = sum_mechanic_duration($duration);
-						//dd($total_duration);
 						$total_duration = date("H:i:s", strtotime($total_duration));
+						// dd($total_duration);
 						$format_change = explode(':', $total_duration);
 						$hour = $format_change[0] . 'h';
 						$minutes = $format_change[1] . 'm';
 						$seconds = $format_change[2] . 's';
-						$job_card_repair_order['total_duration'] = $hour . ' ' . $minutes . ' ' . $seconds;
+						$repair_order_mechanic['total_duration'] = $hour . ' ' . $minutes; // . ' ' . $seconds;
 						unset($duration);
 					} else {
-						$job_card_repair_order['total_duration'] = '';
+						$repair_order_mechanic['total_duration'] = '';
 					}
 				}
 			}
-			//dd($labour_review_data);
+			//OVERALL WORKING HOURS
+			$overall_total_duration = sum_mechanic_duration($overall_total_duration);
+			$overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
+			// dd($total_duration);
+			$format_change = explode(':', $overall_total_duration);
+			$hour = $format_change[0] . 'h';
+			$minutes = $format_change[1] . 'm';
+			$seconds = $format_change[2] . 's';
+
+			$labour_review_data->jobOrder['overall_total_duration'] = $hour . ' ' . $minutes; // . ' ' . $seconds;
+			unset($overall_total_duration);
+
+			$labour_review_data['creation_date'] = date('d/m/Y', strtotime($labour_review_data->created_at));
+			$labour_review_data['creation_time'] = date('h:s a', strtotime($labour_review_data->created_at));
+
+			// dd($labour_review_data);
 
 			$status_ids = Config::where('config_type_id', 40)
-				->where('id', '!=', 8185)
-				->pluck('id')->toArray();
+				->where('id', '!=', 8185) // REVIEW PENDING
+				->pluck('id')
+				->toArray();
 			if ($job_card_repair_order_details) {
 				$save_enabled = true;
 				foreach ($job_card_repair_order_details as $key => $job_card_repair_order) {
@@ -1367,6 +1431,7 @@ class JobCardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'labour_review_data' => $labour_review_data,
+				'job_order_repair_order' => $job_order_repair_order,
 				'save_enabled' => $save_enabled,
 			]);
 
@@ -1380,21 +1445,75 @@ class JobCardController extends Controller {
 	}
 
 	public function LabourReviewSave(Request $request) {
-		$job_card = JobCard::find($request->job_card_id);
-		if (!$job_card) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_card_id' => [
+					'required',
+					'integer',
+					'exists:job_cards,id',
+				],
+				'job_order_repair_order_id' => [
+					'required',
+					'integer',
+					'exists:job_order_repair_orders,id',
+				],
+				'status_id' => [
+					'required',
+					'integer',
+					'exists:configs,id',
+				],
+				'observation' => [
+					'required',
+					'string',
+				],
+				'action_taken' => [
+					'required',
+					'string',
+				],
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			//UPDATE JOB CARD STATUS
+			// $job_card = JobCard::where('id', $job_card->id)
+			// 	->update([
+			// 		'status_id' => 8223, //Ready for Billing
+			// 		'updated_by' => Auth::user()->id,
+			// 		'updated_at' => Carbon::now(),
+			// 	]);
+
+			$job_order_repair_order = JobOrderRepairOrder::find($request->job_order_repair_order_id);
+			$job_order_repair_order->fill($request->all());
+			$job_order_repair_order->updated_at = Carbon::now();
+			$job_order_repair_order->updated_by_id = Auth::user()->id;
+
+			$job_order_repair_order->save();
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Review Updated Successfully!!',
+			]);
+
+		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Job Card Not Found!',
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
 			]);
 		}
-		//UPDATE JOB CARD STATUS
-		$job_card = JobCard::where('id', $job_card->id)->update(['status_id' => 8223, 'updated_by' => Auth::user()->id, 'updated_at' => Carbon::now()]); //Ready for Billing
-
-		return response()->json([
-			'success' => true,
-			'message' => 'Job Card Updated successfully!!',
-		]);
-
 	}
 
 	public function getRoadTestObservation(Request $request) {
@@ -1426,7 +1545,7 @@ class JobCardController extends Controller {
 		return response()->json([
 			'success' => true,
 			'job_order' => $job_order,
-			'job_card' =>$job_card,
+			'job_card' => $job_card,
 		]);
 
 	}
@@ -1442,9 +1561,9 @@ class JobCardController extends Controller {
 		}
 
 		$job_order = JobOrder::company()->with([
-			    'vehicle',
-				'vehicle.model',
-				'vehicle.status',
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
 			'expertDiagnosisReportBy',
 		])
 			->select([
@@ -1457,7 +1576,7 @@ class JobCardController extends Controller {
 		return response()->json([
 			'success' => true,
 			'job_order' => $job_order,
-			'job_card' =>$job_card,
+			'job_card' => $job_card,
 		]);
 	}
 
@@ -1473,8 +1592,8 @@ class JobCardController extends Controller {
 
 		$job_order = JobOrder::company()->with([
 			'vehicle',
-				'vehicle.model',
-				'vehicle.status',
+			'vehicle.model',
+			'vehicle.status',
 			'warrentyPolicyAttachment',
 			'EWPAttachment',
 			'AMCAttachment',
@@ -1489,7 +1608,7 @@ class JobCardController extends Controller {
 		return response()->json([
 			'success' => true,
 			'job_order' => $job_order,
-			'job_card' =>$job_card,
+			'job_card' => $job_card,
 		]);
 
 	}
@@ -1521,8 +1640,8 @@ class JobCardController extends Controller {
 
 		$job_order = JobOrder::company()->with([
 			'vehicle',
-				'vehicle.model',
-				'vehicle.status',
+			'vehicle.model',
+			'vehicle.status',
 			'customerApprovalAttachment',
 			'customerESign',
 		])
@@ -1537,7 +1656,7 @@ class JobCardController extends Controller {
 			'success' => true,
 			'job_order' => $job_order,
 			'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
-			'job_card' =>$job_card,
+			'job_card' => $job_card,
 		]);
 
 	}
@@ -1554,8 +1673,8 @@ class JobCardController extends Controller {
 
 		$job_order = JobOrder::company()->with([
 			'vehicle',
-				'vehicle.model',
-				'vehicle.status',
+			'vehicle.model',
+			'vehicle.status',
 		])
 			->select([
 				'job_orders.*',
@@ -1610,7 +1729,7 @@ class JobCardController extends Controller {
 		return response()->json([
 			'success' => true,
 			'job_order' => $job_order,
-			'job_card' =>$job_card,
+			'job_card' => $job_card,
 		]);
 
 	}
@@ -1627,8 +1746,8 @@ class JobCardController extends Controller {
 
 		$job_order = JobOrder::company()->with([
 			'vehicle',
-				'vehicle.model',
-				'vehicle.status',
+			'vehicle.model',
+			'vehicle.status',
 		])
 			->select([
 				'job_orders.*',
@@ -1657,7 +1776,7 @@ class JobCardController extends Controller {
 			'mechanic_list' => $mechanic_list,
 			'issued_mode' => $issued_mode,
 			'job_order' => $job_order,
-			'job_card' =>$job_card,
+			'job_card' => $job_card,
 		]);
 
 	}
@@ -1673,10 +1792,10 @@ class JobCardController extends Controller {
 		}
 
 		$job_order = JobOrder::with([
-			        'vehicle',
-					'vehicle.model',
-					'vehicle.status'])
-		    ->select([
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status'])
+			->select([
 				'job_orders.*',
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
@@ -2050,6 +2169,7 @@ class JobCardController extends Controller {
 							$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
 							$extension = $returnable_item_attachment->getClientOriginalExtension();
 							$name = $returnable_item->id . '_' . $file_name . '.' . $extension;
+							$name = str_replace(' ', '-', $name); // Replaces all spaces with hyphens.
 							$returnable_item_attachment->move($attachment_path, $name);
 							$attachement = new Attachment;
 							$attachement->attachment_of_id = 232; //Job Card Returnable Item
@@ -2222,7 +2342,7 @@ class JobCardController extends Controller {
 			$total_duration = 0;
 			$overall_total_duration = [];
 			//REPAIR ORDER BASED TIME LOG ONLY FOR WEB
-			if (!empty($request->repair_order_id)) {
+			if (!empty($request->job_order_repair_order_id)) {
 				$job_order_repair_order = JobOrderRepairOrder::with([
 					'repairOrder',
 					'repairOrderMechanics',
@@ -2232,7 +2352,7 @@ class JobCardController extends Controller {
 					'repairOrderMechanics.mechanicTimeLogs.status',
 					'repairOrderMechanics.mechanicTimeLogs.reason',
 				])
-					->find($request->repair_order_id);
+					->find($request->job_order_repair_order_id);
 
 				if (!$job_order_repair_order) {
 					return response()->json([
@@ -2367,7 +2487,7 @@ class JobCardController extends Controller {
 			$hour = $format_change[0] . 'h';
 			$minutes = $format_change[1] . 'm';
 			$seconds = $format_change[2] . 's';
-			if (!empty($request->repair_order_id)) {
+			if (!empty($request->job_order_repair_order_id)) {
 
 				$job_order_repair_order['overall_total_duration'] = $hour . ' ' . $minutes; // . ' ' . $seconds;
 			} else {
@@ -2377,7 +2497,7 @@ class JobCardController extends Controller {
 
 			$job_card_time_log->no_of_ROT = count($job_card_time_log->jobOrder->JobOrderRepairOrders);
 
-			if (!empty($request->repair_order_id)) {
+			if (!empty($request->job_order_repair_order_id)) {
 				return response()->json([
 					'success' => true,
 					'job_order_repair_order_time_log' => $job_order_repair_order,
@@ -2835,7 +2955,7 @@ class JobCardController extends Controller {
 		}
 	}
 
-public function viewSplitOrderDetails(Request $request) {
+	public function viewSplitOrderDetails(Request $request) {
 		// dd($request->all());
 		try {
 			$job_card = JobCard::with([
@@ -2865,7 +2985,7 @@ public function viewSplitOrderDetails(Request $request) {
 
 			$job_card['creation_date'] = date('d/m/Y', strtotime($job_card->created_at));
 			$taxes = Tax::get();
-			
+
 			$parts_amount = 0;
 			$labour_amount = 0;
 			$total_amount = 0;
@@ -2966,6 +3086,7 @@ public function viewSplitOrderDetails(Request $request) {
 			}
 
 			$total_amount = $parts_amount + $labour_amount;
+
 			$unassigned_part_count=0;
 			$unassigned_part_amount=0;
 			foreach ($part_details as $key => $part) {
@@ -2990,11 +3111,10 @@ public function viewSplitOrderDetails(Request $request) {
 				'split_order_types' => SplitOrderType::get(),
 			];
 
-
-
 			return response()->json([
 				'success' => true,
 				'job_card' => $job_card,
+
 				'extras'=>$extras,
 				'taxes'=>$taxes,
 				'part_details'=>$part_details,
@@ -3014,7 +3134,6 @@ public function viewSplitOrderDetails(Request $request) {
 			]);
 		}
 	}
-
 
 	public function viewBillDetails(Request $request) {
 		// dd($request->all());
@@ -3043,8 +3162,6 @@ public function viewSplitOrderDetails(Request $request) {
 			}
 
 			$job_card['creation_date'] = date('d/m/Y', strtotime($job_card->created_at));
-
-		
 
 			return response()->json([
 				'success' => true,
