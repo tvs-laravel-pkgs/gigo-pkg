@@ -446,7 +446,7 @@ class JobOrderController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'message' => 'URL send to Customer Successfully',
+				'message' => 'Customer Approved Successfully',
 			]);
 		} catch (Exception $e) {
 			return response()->json([
