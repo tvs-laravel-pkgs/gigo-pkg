@@ -62,7 +62,7 @@ app.component('jobCardTableList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'date', },
+                { data: 'created_at', },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'customer_name', name: 'customers.name' },

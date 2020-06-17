@@ -1262,7 +1262,7 @@ app.component('inwardVehicleUpdatejcForm', {
                 url: base_url + '/api/vehicle-inward/estimate/link/generate',
                 type: "POST",
                 data: {
-                    job_order_id: $routeParams.job_order_id,
+                    id: $routeParams.job_order_id,
                 },
                 dataType: "json",
                 beforeSend: function(xhr) {

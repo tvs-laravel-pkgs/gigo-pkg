@@ -447,7 +447,7 @@ class JobCardController extends Controller {
 
 			return response()->json([
 				'success' => true,
-				'message' => 'URL send to Customer Successfully',
+				'message' => 'Customer Approved Successfully',
 			]);
 		} catch (Exception $e) {
 			return response()->json([
@@ -483,7 +483,7 @@ class JobCardController extends Controller {
 				'jobOrderRepairOrders',
 				'jobOrderParts',
 			])
-				->find($request->job_order_id);
+				->find($request->id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -581,13 +581,11 @@ class JobCardController extends Controller {
 				->get();
 			foreach ($bay_list as $key => $bay) {
 				if ($bay->status_id == 8241 && $bay->id == $job_card->bay_id) {
-					//dd($bay->id);
 					$bay->selected = true;
 				} else {
 					$bay->selected = false;
 				}
 			}
-			//dd($bay_list);
 
 			$extras = [
 				'bay_list' => $bay_list,
@@ -608,7 +606,7 @@ class JobCardController extends Controller {
 	}
 
 	public function saveBay(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -649,16 +647,21 @@ class JobCardController extends Controller {
 			}
 			$job_card->floor_supervisor_id = $request->floor_supervisor_id;
 			if ($job_card->bay_id) {
+
 				//Exists bay checking and Bay status update
 				if ($job_card->bay_id != $request->bay_id) {
 					$bay = Bay::find($job_card->bay_id);
 					$bay->status_id = 8240; //Free
+					$bay->job_order_id = NULL;
 					$bay->updated_by_id = Auth::user()->id;
 					$bay->updated_at = Carbon::now();
 					$bay->save();
 				}
 			}
 			$job_card->bay_id = $request->bay_id;
+			if ($job_card->status_id == 8220) {
+				$job_card->status_id = 8221; //Work In Progress
+			}
 			$job_card->updated_by = Auth::user()->id;
 			$job_card->updated_at = Carbon::now();
 			$job_card->save();
@@ -2165,6 +2168,7 @@ class JobCardController extends Controller {
 							$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
 							$extension = $returnable_item_attachment->getClientOriginalExtension();
 							$name = $returnable_item->id . '_' . $file_name . '.' . $extension;
+							$name = str_replace(' ', '-', $name); // Replaces all spaces with hyphens.
 							$returnable_item_attachment->move($attachment_path, $name);
 							$attachement = new Attachment;
 							$attachement->attachment_of_id = 232; //Job Card Returnable Item

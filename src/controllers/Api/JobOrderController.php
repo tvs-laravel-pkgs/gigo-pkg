@@ -482,7 +482,7 @@ class JobOrderController extends Controller {
 				'jobOrderRepairOrders',
 				'jobOrderParts',
 			])
-				->find($request->job_order_id);
+				->find($request->id);
 
 			if (!$job_order) {
 				return response()->json([
