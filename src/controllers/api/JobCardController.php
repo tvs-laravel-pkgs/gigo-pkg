@@ -659,6 +659,9 @@ class JobCardController extends Controller {
 				}
 			}
 			$job_card->bay_id = $request->bay_id;
+			if ($job_card->status_id == 8220) {
+				$job_card->status_id = 8221; //Work In Progress
+			}
 			$job_card->updated_by = Auth::user()->id;
 			$job_card->updated_at = Carbon::now();
 			$job_card->save();
@@ -2049,6 +2052,7 @@ class JobCardController extends Controller {
 							$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
 							$extension = $returnable_item_attachment->getClientOriginalExtension();
 							$name = $returnable_item->id . '_' . $file_name . '.' . $extension;
+							$name = str_replace(' ', '-', $name); // Replaces all spaces with hyphens.
 							$returnable_item_attachment->move($attachment_path, $name);
 							$attachement = new Attachment;
 							$attachement->attachment_of_id = 232; //Job Card Returnable Item
