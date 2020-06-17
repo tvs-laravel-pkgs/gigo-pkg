@@ -1481,6 +1481,8 @@ class VehicleInwardController extends Controller {
 						$labour_details[$key]['is_free_service'] = $value->pivot->is_free_service;
 						if ($value->pivot->is_free_service != 1) {
 							$labour_amount += $value->amount;
+						} else {
+							$labour_details[$key]['amount'] = "0.00";
 						}
 					}
 				}
@@ -1506,13 +1508,11 @@ class VehicleInwardController extends Controller {
 						$labour_details[$key]['is_free_service'] = $value->is_free_service;
 						if ($value->is_free_service != 1) {
 							$labour_amount += $value->amount;
+						} else {
+							$labour_details[$key]['amount'] = "0.00";
 						}
 					}
 				}
-				// $labour_details1 = JobOrderRepairOrder::select('repair_orders.id', 'job_order_repair_orders.amount', 'repair_orders.hours', 'repair_orders.code', 'repair_orders.name as repair_order_name', 'repair_order_types.short_name', 'repair_order_types.name', 'job_order_repair_orders.remarks', 'job_order_repair_orders.observation', 'job_order_repair_orders.action_taken', 'job_order_repair_orders.id as job_repair_order_id', 'job_order_repair_orders.qty')
-				// 	->leftJoin('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')
-				// 	->leftJoin('repair_order_types', 'repair_order_types.id', 'repair_orders.type_id')
-				// 	->where('job_order_repair_orders.job_order_id', $r->id)->get();
 			}
 
 			if (!$job_order_parts) {
@@ -1528,6 +1528,8 @@ class VehicleInwardController extends Controller {
 						$part_details[$key]['is_free_service'] = $value->pivot->is_free_service;
 						if ($value->pivot->is_free_service != 1) {
 							$parts_rate += $value->pivot->amount;
+						} else {
+							$part_details[$key]['amount'] = "0.00";
 						}
 					}
 				}
@@ -1551,11 +1553,11 @@ class VehicleInwardController extends Controller {
 						$part_details[$key]['is_free_service'] = $value->is_free_service;
 						if ($value->is_free_service != 1) {
 							$parts_rate += $value->amount;
+						} else {
+							$part_details[$key]['amount'] = "0.00";
 						}
 					}
 				}
-				// $part_details1 = JobOrderPart::select('parts.id as id', 'parts.name', 'parts.code', 'job_order_parts.rate', 'job_order_parts.qty', 'job_order_parts.amount')
-				// 	->leftJoin('parts', 'parts.id', 'job_order_parts.part_id', 'job_order_parts.id as del_part_id')->where('job_order_parts.job_order_id', $r->id)->get();
 			}
 
 			$total_amount = $parts_rate + $labour_amount;
