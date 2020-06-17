@@ -45,12 +45,12 @@
                                                     <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id == 8181" data-toggle="modal" data-target="#assign_labours" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Assign</a>
                                                     <!-- ng-click="assign_mechanic(job_order_repair_order.repair_order.code,job_order_repair_order.repair_order.name)" -->
                                                     <a class="btn btn-bordered btn-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id !=8182" ng-click="viewTimeLog(job_order_repair_order.id)" data-target="#view_time_log_modal" data-toggle="modal">View Time Log</a>
-                                                    <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185">Review</a>
+                                                    <a href="#!/gigo-pkg/job-card/labour-review/{{job_card_id}}/{{job_order_repair_order.id}}" class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185">Review</a>
                                                     <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181" data-toggle="modal" data-target="#assign_labours" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Edit</a>
                                                 </div>
                                             </div><!-- Left Wrap -->
                                             <div class="right-wrap">
-                                                <span ng-class="{'bg-blue type-2': (job_order_repair_order.status_id == 8183 || job_order_repair_order.status_id == 8184) , 'bg-red': (job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182) ,'bg-yellow type-2':(job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185),'bg-green type-2':(job_order_repair_order.status_id == 8185)} " class="status {{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? 'bg-red ' :(job_order_repair_order.status_id == 8185)}}">
+                                                <span ng-class="{'bg-blue type-2': (job_order_repair_order.status_id == 8183 || job_order_repair_order.status_id == 8184) , 'bg-red': (job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182) ,'bg-yellow type-2':(job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185),'bg-yellow type-2':(job_order_repair_order.status_id == 8185),'bg-red type-2':(job_order_repair_order.status_id == 8186),'bg-green type-2':(job_order_repair_order.status_id == 8187)} " class="status">
                                                     {{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? 'Pending' : job_order_repair_order.status.name}}
                                                     <span class="time">{{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 ? '': job_order_repair_order.overall_total_duration}}</span>
                                                 </span>
@@ -63,7 +63,7 @@
                                                             <span class="title">{{repair_order_mechanic.mechanic.name}}</span>
                                                             <span class="info">
                                                                 <a ng-click="getMechanicTimeLog(repair_order_mechanic.id,job_order_repair_order.repair_order.id)" data-toggle="modal" data-target="#time_log_modal">
-                                                                    {{repair_order_mechanic.total_duration}} |
+                                                                  {{repair_order_mechanic.status.name}} | {{repair_order_mechanic.total_duration}} |
                                                                     <span class="color-red">
                                                                         View Time Log
                                                                     </span>

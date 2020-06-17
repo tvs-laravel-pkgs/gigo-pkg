@@ -1,0 +1,156 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/gigo-pkg/job-card/schedule/{{job_card_id}}" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">
+                        Labour Review
+                    </h1>
+                    <p class="subtitle">
+                        <a href="#!/gigo-pkg/job-card/table-list">Job Cards</a> / Labour Review
+                    </p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form-top type-2">
+            <div class="page-tab-form-top-left">
+                <div class="page-tab-form-top-left-info pad-lf-rt">
+                    <span class="page-tab-form-top-left-info-content">
+                        <b>
+                            JC No: {{labour_review_data.job_card_number}} | {{labour_review_data.job_order.vehicle.registration_number}}
+                        </b>
+                        | {{labour_review_data.job_order.vehicle.model.model_number}} | {{labour_review_data.creation_date}}, {{labour_review_data.creation_time}}
+                    </span>
+                </div>
+            </div><!-- Page Tab Form Top Left -->
+            <div class="page-tab-form-top-right">
+                <div class="page-tab-form-top-right-info">
+                    Status : {{labour_review_data.status.name}}
+                </div>
+            </div><!-- Page Tab Form Top Right -->
+        </div><!-- Page Tab Form Top -->
+        <div class="container">
+            <form id="form">
+                <input type="hidden" name="job_card_id" value="{{job_card_id}}">
+                <input type="hidden" name="job_order_repair_order_id" value="{{job_order_repair_order_id}}">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60 mt-30">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="schedules-box-wrap bg-white">
+                                                <div class="left-wrap border-bottom type-2">
+                                                    <div class="schedules-left-wrap float-none">
+                                                        <span class="info">{{job_order_repair_order.repair_order.code}}</span>
+                                                        <span class="title">{{job_order_repair_order.repair_order.name}}</span>
+                                                    </div>
+                                                </div><!-- Left Wrap -->
+                                                <div class="right-wrap">
+                                                    <span class="status bg-grey">
+                                                        Total
+                                                        <span class="time">{{labour_review_data.job_order.overall_total_duration}}</span>
+                                                    </span>
+                                                </div><!-- Right Wrap -->
+                                                <div class="assigned-info">
+                                                    <span class="title small">Assigned to: </span>
+                                                    <span class="title small" ng-repeat="(key,repair_order_mechanic) in job_order_repair_order.repair_order_mechanics">{{repair_order_mechanic.mechanic.name}}{{$last ? '' : ', '}}</span>
+                                                </div>
+                                            </div>
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                    <h6 class="mt-30"><b>Time Log</b></h6>
+                                    <div class="panel-group" id="accordion">
+                                        <div class="panel panel-default type-5" ng-repeat="(key,repair_order_mechanic) in job_order_repair_order.repair_order_mechanics">
+                                            <div class="panel-heading">
+                                                <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#{{repair_order_mechanic.mechanic.id}}">
+                                                    {{repair_order_mechanic.mechanic.name}} - {{repair_order_mechanic.total_duration}}
+                                                    <span class="arrow"></span>
+                                                </a>
+                                            </div>
+                                            <div id="{{repair_order_mechanic.mechanic.id}}" class="panel-collapse collapse in">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-form type-3">
+                                                                    <thead>
+                                                                        <th>Date</th>
+                                                                        <th>Start Time</th>
+                                                                        <th>End Time</th>
+                                                                        <th>Duration</th>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr ng-repeat="(key,mechanic_time_log) in repair_order_mechanic.mechanic_time_logs">
+                                                                            <td>{{mechanic_time_log.date}}</td>
+                                                                            <td>{{mechanic_time_log.start_time}}</td>
+                                                                            <td>{{mechanic_time_log.end_time ? mechanic_time_log.end_time : '-'}}
+                                                                                {{mechanic_time_log.reason.name}}
+                                                                            </td>
+                                                                            <td>{{mechanic_time_log.duration_difference ? mechanic_time_log.duration_difference : '-'}}</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div><!-- Table Responsive -->
+                                                        </div><!-- Column -->
+                                                    </div><!-- Row -->
+                                                </div><!-- Panel Body -->
+                                            </div><!-- Panel Collapse -->
+                                        </div><!-- Panel -->
+                                    </div><!-- Panel Group -->
+                                </div><!-- Column -->
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Status</label>
+                                                <div class="common-radio-button type-4">
+                                                    <input type="radio" id="layer_yes" name="status_id" checked value="8187" />
+                                                    <label for="layer_yes">Completed</label>
+                                                    <input type="radio" id="layer_no" name="status_id" value="8186" />
+                                                    <label for="layer_no">Re-Schedule</label>
+                                                </div>
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Observations <sup class="mandatory">*</sup></label>
+                                                <textarea class="form-control" rows="4" placeholder="Enter Observations" name="observation"></textarea>
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Action Taken <sup class="mandatory">*</sup></label>
+                                                <textarea class="form-control" rows="4" placeholder="Enter Actions Taken" name="action_taken"></textarea>
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Page Form -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <div class="page-form-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="#!/gigo-pkg/job-card/schedule/{{job_card_id}}" class="btn btn-bordered btn-grey btn-min-wdth">Back</a>
+                            <button type="submit" class="btn btn-secondary-dark btn-min-wdth submit">Submit</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Page Form Footer -->
+            </form>
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
