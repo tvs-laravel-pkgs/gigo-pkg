@@ -724,7 +724,7 @@ app.component('jobCardReturnableItemList', {
                     $scope.returnable_items = res.returnable_items;
                     $scope.returnable_item_attachement_path = res.attachement_path;
                     console.log(res.returnable_items);
-                    console.log(res.attachement_path);
+                    console.log($scope.returnable_item_attachement_path);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -793,20 +793,18 @@ app.component('jobCardReturnableItemForm', {
                     'job_card_returnable_items[0][item_description]': {
                         required: true,
                     },
-                    'item_make': {
-                        required: true,
+                    'job_card_returnable_items[0][item_make]': {
+                        maxlength: 191,
                     },
-                    'item_model': {
-                        required: true,
+                    'job_card_returnable_items[0][item_model]': {
+                        maxlength: 191,
                     },
-                    'item_serial_no': {
-                        required: true,
-                    },
-                    'qty': {
-                        required: true,
+                    'job_card_returnable_items[0][item_serial_no]': {
+                        maxlength: 191,
                     },
                     'job_card_returnable_items[0][qty]': {
                         required: true,
+                        number:true,
                     },
                 },
                 messages: {

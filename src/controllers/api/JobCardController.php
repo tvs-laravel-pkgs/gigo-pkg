@@ -2020,7 +2020,7 @@ class JobCardController extends Controller {
 			'success' => true,
 			'job_card' => $job_card,
 			'returnable_items' => $returnable_items,
-			'attachement_path' => url('app/public/gigo/job_card/returnable_items/'),
+			'attachement_path' => url('storage/app/public/gigo/job_card/returnable_items/'),
 		]);
 
 	}
@@ -2062,7 +2062,7 @@ class JobCardController extends Controller {
 	}
 
 	public function ReturnableItemSave(Request $request) {
-		// dd($request->all());
+		 // dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_card_id' => [
@@ -2092,7 +2092,7 @@ class JobCardController extends Controller {
 				],
 				'job_card_returnable_items.*.qty' => [
 					'required',
-					'integer',
+					'numeric',
 					'regex:/^\d+(\.\d{1,2})?$/',
 				],
 				'job_card_returnable_items.*.remarks' => [
