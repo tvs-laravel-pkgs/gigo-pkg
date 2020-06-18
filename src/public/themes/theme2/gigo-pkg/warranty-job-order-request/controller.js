@@ -54,7 +54,7 @@ app.component('warrantyJobOrderRequestCardList', {
 
 app.component('warrantyJobOrderRequestPprForm', {
     templateUrl: warrantyJobOrderRequestPPRForm,
-    controller: function($http, $location, HelperService, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc) {
+    controller: function($http, $location, HelperService, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc) {
         $rootScope.loading = true;
         $('#search').focus();
         var self = this;
@@ -79,6 +79,8 @@ app.component('warrantyJobOrderRequestPprForm', {
                 vehicle_secondary_application_options: VehicleSecondaryApplicationSvc.options(),
                 vehicle_operating_condition_options: ConfigSvc.options({ filter: { configType: 300 } }),
                 road_condition_options: ConfigSvc.options({ filter: { configType: 301 } }),
+                load_range_options: ConfigSvc.options({ filter: { configType: 303 } }),
+                terrain_options: ConfigSvc.options({ filter: { configType: 304 } }),
                 job_order_read: JobOrderSvc.read($routeParams.job_order_id),
             };
 
@@ -90,8 +92,48 @@ app.component('warrantyJobOrderRequestPprForm', {
                     $scope.options.vehicle_secondary_applications = responses.vehicle_secondary_application_options.data.options;
                     $scope.options.vehicle_operating_conditions = responses.vehicle_operating_condition_options.data.options;
                     $scope.options.road_conditions = responses.road_condition_options.data.options;
+                    $scope.options.load_ranges = responses.load_range_options.data.options;
+                    $scope.options.terrains = responses.terrain_options.data.options;
                     $scope.job_order = responses.job_order_read.data.job_order;
                     $rootScope.loading = true;
+
+                    //for quick test
+                    $scope.job_order = {
+                        'warranty_job_order_request': {
+                            failure_date: '01-06-2020',
+                            has_warranty: 1,
+                            has_amc: 0,
+                            unit_serial_number: 'UNIT0001',
+                            // complaint: {
+                            //     id: 1
+                            // },
+                            // fault: {
+                            //     id: 2
+                            // },
+                            // supplier: {
+                            //     id: 1
+                            // },
+                            primary_segment: {
+                                id: 1
+                            },
+                            secondary_segment: {
+                                id: 1
+                            },
+                            has_goodwill: 1,
+                            load_at_failure: 100,
+                            runs_per_day: 1000,
+                            last_lube_changed: 800,
+                            load_carried: 1200,
+                            reading_type_id: 1200,
+                            failed_at: 1200,
+                            complaint_reported: 'Engine Noise',
+                            failure_observed: 'Engine screw is missing',
+                            investigation_findings: 'Engine screw is missing',
+                            cause_of_failure: 'Engine screw is missing',
+
+                        }
+                    };
+
                 });
         };
         $scope.init();
@@ -123,6 +165,135 @@ app.component('warrantyJobOrderRequestPprForm', {
                     });
             });
         }
+
+        // $scope.savePPRForm = function(next_action) {
+        var form_id = '#ppr-form';
+        var v = jQuery(form_id).validate({
+            ignore: '',
+            rules: {
+                'failure_date': {
+                    required: true,
+                },
+                'has_warranty': {
+                    required: true,
+                },
+                'has_amc': {
+                    required: true,
+                },
+                'unit_serial_number': {
+                    required: true,
+                    minlength: 2,
+                    maxlength: 32,
+                },
+                'complaint_id': {
+                    required: true,
+                },
+                'fault_id': {
+                    required: true,
+                },
+                'supplier_id': {
+                    required: true,
+                },
+                'primary_segment_id': {
+                    required: true,
+                },
+                'secondary_segment_id': {
+                    required: true,
+                },
+                'has_goodwill': {
+                    required: true,
+                },
+                'operating_condition_id': {
+                    required: true,
+                },
+                'normal_road_condition_id': {
+                    required: true,
+                },
+                'failure_road_condition_id': {
+                    required: true,
+                },
+                'load_carried_type_id': {
+                    required: true,
+                },
+                'load_carried': {
+                    required: true,
+                    // digits: true,
+                    minlength: 2,
+                    maxlength: 10,
+                },
+                'load_range_id': {
+                    required: true,
+                    // digits: true,
+                },
+                'load_at_failure': {
+                    required: true,
+                    // digits: true,
+                },
+                'last_lube_changed': {
+                    required: true,
+                    // digits: true,
+                    minlength: 2,
+                    maxlength: 10,
+                },
+                'load_carried': {
+                    required: true,
+                    // digits: true,
+                },
+                'load_carried_type_id': {
+                    required: true,
+                },
+                'terrain_at_failure_id': {
+                    required: true,
+                },
+                'reading_type_id': {
+                    required: true,
+                },
+                'runs_per_day': {
+                    required: true,
+                    // digits: true,
+                    minlength: 2,
+                    maxlength: 10,
+                },
+                'failed_at': {
+                    required: true,
+                    // digits: true,
+                    minlength: 2,
+                    maxlength: 10,
+                },
+                'complaint_reported': {
+                    required: true,
+                    minlength: 5,
+                },
+                'failure_observed': {
+                    required: true,
+                    minlength: 5,
+                },
+                'investigation_findings': {
+                    required: true,
+                    minlength: 5,
+                },
+                'cause_of_failure': {
+                    required: true,
+                    minlength: 5,
+                },
+            },
+            messages: {
+
+            },
+            invalidHandler: function(event, validator) {
+                custom_noty('error', 'You have errors, Please check all tabs');
+            },
+            submitHandler: function(form) {
+                let formData = new FormData($(form_id)[0]);
+                WarrantyJobOrderRequestSvc.save($scope.job_order.warranty_job_order_request)
+                    .then(function(response) {
+                        $location.path('/inward-vehicle/card-list');
+                        $scope.$apply();
+                    });
+            }
+        });
+        // }
+
     }
 });
 
