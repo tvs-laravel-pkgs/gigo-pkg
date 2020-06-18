@@ -755,25 +755,25 @@
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
 	    //Compaigns
-	    when('/gigo-pkg/compaigns/list', {
-	        template: '<compaigns-list></compaigns-list>',
-	        title: 'Compaigns',
+	    when('/gigo-pkg/campaign/list', {
+	        template: '<campaign-list></campaign-list>',
+	        title: 'Campaigns',
 	    }).
-	    when('/gigo-pkg/compaigns/add', {
-	        template: '<compaigns-form></compaigns-form>',
-	        title: 'Add Compaign',
+	    when('/gigo-pkg/campaign/add', {
+	        template: '<campaign-form></campaign-form>',
+	        title: 'Add Campaign',
 	    }).
-	    when('/gigo-pkg/compaigns/edit/:id', {
-	        template: '<compaigns-form></compaigns-form>',
-	        title: 'Edit Compaign',
+	    when('/gigo-pkg/campaign/edit/:id', {
+	        template: '<campaign-form></campaign-form>',
+	        title: 'Edit Campaign',
 	    });
 	}]);
 
-	//Compaigns
-    var compaigns_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/compaigns/list.html')}}';
-    var compaigns_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/compaigns/form.html')}}';
+	//Campaigns
+    var campaigns_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/campaign/list.html')}}';
+    var campaigns_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/campaign/form.html')}}';
 </script>
-<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/compaigns/controller.js?v=3')}}"></script>
+<script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/campaign/controller.js?v=3')}}"></script>
 
 
 <script type='text/javascript'>

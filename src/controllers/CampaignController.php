@@ -84,10 +84,10 @@ class CompaignController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('edit-service-type')) {
-					$output .= '<a href="#!/gigo-pkg/compaigns/edit/' . $compaigns->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				if (Entrust::can('edit-campaign')) {
+					$output .= '<a href="#!/gigo-pkg/campaign/edit/' . $compaigns->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
-				if (Entrust::can('delete-service-type')) {
+				if (Entrust::can('delete-campaign')) {
 					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#campaign-delete-modal" onclick="angular.element(this).scope().deleteCampaign(' . $compaigns->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
 				return $output;
@@ -275,8 +275,8 @@ class CompaignController extends Controller {
 	public function deleteCampaign(Request $request) {
 		DB::beginTransaction();
 		try {
-			$service_type = Campaign::withTrashed()->where('id', $request->id)->forceDelete();
-			if ($service_type) {
+			$campaign = Campaign::withTrashed()->where('id', $request->id)->forceDelete();
+			if ($campaign) {
 				DB::commit();
 				return response()->json(['success' => true, 'message' => 'Campaign Deleted Successfully']);
 			}

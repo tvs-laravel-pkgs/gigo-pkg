@@ -5,7 +5,7 @@ Content Wrap -->
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/compaigns/list" type="button" class="btn-back btn-img">
+                    <a href="#!/gigo-pkg/campaign/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
                     </a>
                 </div><!-- Page Header Content -->
@@ -13,7 +13,7 @@ Content Wrap -->
                     <h1 class="title"><b>{{$ctrl.action}} Campaign</b></h1>
                     <p class="subtitle">
                         Masters /
-                        <a href="#!/gigo-pkg/compaigns/list">
+                        <a href="#!/gigo-pkg/campaign/list">
                             Campaigns
                         </a> /
                         {{$ctrl.action}}
@@ -70,12 +70,12 @@ Content Wrap -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>Complaint Type <sup class="mandatory">*</sup></label>
-                                                <md-select ng-model="$ctrl.campaign.complaint_id" placeholder="Select Complaint Type" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
+                                                <md-select ng-model="$ctrl.campaign.complaint_id" placeholder="Select Complaint Type" md-on-close="clearSearchComplaintType()" data-md-container-class="selectdemoSelectHeader">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchDrink" type="search" placeholder="Select Complaint Type" class="demo-header-searchbox md-text">
+                                                        <input ng-model="ComplaintType" type="search" placeholder="Select Complaint Type" class="demo-header-searchbox md-text">
                                                     </md-select-header>
-                                                    <md-optgroup label="drinks">
-                                                        <md-option ng-repeat="val in $ctrl.complaint_types" value="{{val.id}}">{{val.name}}</md-option>
+                                                    <md-optgroup label="val">
+                                                        <md-option ng-repeat="val in $ctrl.complaint_types | filter:ComplaintType" value="{{val.id}}">{{val.name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
                                                 <input type="hidden" class="material" id="complaint_id" name="complaint_id" value="{{$ctrl.campaign.complaint_id}}">
@@ -86,10 +86,10 @@ Content Wrap -->
                                                 <label> Fault Type <sup class="mandatory">*</sup></label>
                                                 <md-select ng-model="$ctrl.campaign.fault_id" placeholder="Select Fault Type" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchDrink" type="search" placeholder="Select Fault Type" class="demo-header-searchbox md-text">
+                                                        <input ng-model="faultType" type="search" placeholder="Select Fault Type" class="demo-header-searchbox md-text">
                                                     </md-select-header>
-                                                    <md-optgroup label="drinks">
-                                                        <md-option ng-repeat="val in $ctrl.fault_types" value="{{val.id}}">{{val.name}}</md-option>
+                                                    <md-optgroup label="val">
+                                                        <md-option ng-repeat="val in $ctrl.fault_types | filter:faultType" value="{{val.id}}">{{val.name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
                                                 <input type="hidden" class="material required" id="fault_id" name="fault_id" value="{{$ctrl.campaign.fault_id}}">
@@ -100,10 +100,10 @@ Content Wrap -->
                                                 <label>Claim Type <sup class="mandatory">*</sup></label>
                                                 <md-select ng-model="$ctrl.campaign.claim_type_id" placeholder="Select Type" md-on-close="clearSearchDrink()" data-md-container-class="selectdemoSelectHeader">
                                                     <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchDrink" type="search" placeholder="Select Type" class="demo-header-searchbox md-text">
+                                                        <input ng-model="claimType" type="search" placeholder="Select Type" class="demo-header-searchbox md-text">
                                                     </md-select-header>
-                                                    <md-optgroup label="drinks">
-                                                        <md-option ng-repeat="val in $ctrl.claim_types" value="{{val.id}}">{{val.name}}</md-option>
+                                                    <md-optgroup label="val">
+                                                        <md-option ng-repeat="val in $ctrl.claim_types | filter:claimType" value="{{val.id}}">{{val.name}}</md-option>
                                                     </md-optgroup>
                                                 </md-select>
                                                 <input type="hidden" class="material required" id="claim_type_id" name="claim_type_id" value="{{$ctrl.campaign.claim_type_id}}">
@@ -260,7 +260,7 @@ Content Wrap -->
                             <div class="tab-pane-footer">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <a href="#!/gigo-pkg/service-type/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
+                                        <a href="#!/gigo-pkg/campaign/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
                                         <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
                                     </div>
                                 </div>

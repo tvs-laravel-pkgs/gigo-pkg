@@ -1,17 +1,17 @@
-app.component('compaignsList', {
-    templateUrl: compaigns_list_template_url,
+app.component('campaignList', {
+    templateUrl: campaigns_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_service_type').focus();
+        $('#search_campaign').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('service-types')) {
+        if (!self.hasPermission('campaigns')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-service-type');
+        self.add_permission = self.hasPermission('add-campaign');
         var table_scroll;
 
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
@@ -34,7 +34,7 @@ app.component('compaignsList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_service_type').val(state_save_val.search.search);
+                    $('#search_campaign').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -75,7 +75,7 @@ app.component('compaignsList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_service_type').val('');
+            $('#search_campaign').val('');
             $('#campaigns_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
@@ -83,7 +83,7 @@ app.component('compaignsList', {
         });
 
         var dataTables = $('#campaigns_list').dataTable();
-        $("#search_service_type").keyup(function() {
+        $("#search_campaign").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
@@ -101,9 +101,9 @@ app.component('compaignsList', {
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', 'Compaign Deleted Successfully');
+                    custom_noty('success', 'Campaign Deleted Successfully');
                     $('#campaigns_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/compaigns/list');
+                    $location.path('/gigo-pkg/campaign/list');
                 }
             });
         }
@@ -133,14 +133,15 @@ app.component('compaignsList', {
         $scope.applyFilter = function() {
             $('#status').val(self.status);
             dataTables.fnFilter();
-            $('#service-type-filter-modal').modal('hide');
+            $('#campaign-filter-modal').modal('hide');
         }
         $scope.reset_filter = function() {
             $("#authorization_code").val('');
             $("#complaint_code").val('');
             $("#fault_code").val('');
             $("#status").val('');
-            //dataTables.fnFilter();
+            dataTables.fnFilter();
+            $('#campaign-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }
@@ -149,13 +150,13 @@ app.component('compaignsList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.component('compaignsForm', {
-    templateUrl: compaigns_form_template_url,
+app.component('campaignForm', {
+    templateUrl: campaigns_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
         $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-service-type') || !self.hasPermission('edit-service-type')) {
+        if (!self.hasPermission('add-campaign') || !self.hasPermission('edit-campaign')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
@@ -280,6 +281,10 @@ app.component('compaignsForm', {
             self.campaign.campaign_parts.splice(index, 1);
         }
 
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
         //Save Form Data 
         var form_id = '#campaign_form';
         var v = jQuery(form_id).validate({
@@ -332,7 +337,7 @@ app.component('compaignsForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/compaigns/list');
+                            $location.path('/gigo-pkg/campaign/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -340,7 +345,7 @@ app.component('compaignsForm', {
                                 showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/gigo-pkg/compaigns/list');
+                                $location.path('/gigo-pkg/campaign/list');
                                 $scope.$apply();
                             }
                         }
