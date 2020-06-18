@@ -2,10 +2,13 @@
 
 namespace Abs\GigoPkg\Api;
 
+use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Config;
+use App\FinancialYear;
 use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
+use App\Outlet;
 use App\Vehicle;
 use Auth;
 use Carbon\Carbon;
@@ -94,6 +97,11 @@ class GateInController extends Controller {
 					'mimes:jpeg,jpg,png',
 					// 'max:3072',
 				],
+				'chassis_photo' => [
+					'required',
+					'mimes:jpeg,jpg,png',
+					// 'max:3072',
+				],
 				'is_registered' => [
 					'required',
 					'integer',
@@ -176,15 +184,22 @@ class GateInController extends Controller {
 			}
 			$vehicle->save();
 			$request->vehicle_id = $vehicle->id;
-			//VEHICLE VIN NUMBER VALIDATION
+			//VEHICLE DETAIL VALIDATION
 			$validator1 = Validator::make($request->all(), [
-				'vin_number' => [
+				'chassis_number' => [
 					'required',
-					'min:17',
-					'max:32',
+					'min:10',
+					'max:64',
 					'string',
-					'unique:vehicles,vin_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+					'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
 				],
+				// 'vin_number' => [
+				// 	'required',
+				// 	'min:17',
+				// 	'max:32',
+				// 	'string',
+				// 	'unique:vehicles,vin_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+				// ],
 			]);
 
 			if ($validator1->fails()) {
@@ -219,7 +234,61 @@ class GateInController extends Controller {
 			$gate_log->outlet_id = Auth::user()->employee->outlet_id;
 			$gate_log->save();
 
-			$gate_log->number = 'GI' . $gate_log->id;
+			//GATE IN NUMBER GENERATION & VALIDATION
+			if (date('m') > 3) {
+				$year = date('Y') + 1;
+			} else {
+				$year = date('Y');
+			}
+			//GET FINANCIAL YEAR ID
+			$financial_year = FinancialYear::where('from', $year)
+				->where('company_id', Auth::user()->company_id)
+				->first();
+			if (!$financial_year) {
+				return response()->json([
+					'success' => false,
+					'errors' => [
+						'Fiancial Year Not Found',
+					],
+				]);
+			}
+			//GET BRANCH/OUTLET
+			$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+
+			//SERIAL NUMBER CATEGORY TABLE - FOR GATE IN VEHICLE
+			$serial_number_category = 20;
+
+			//GENERATE GATE IN VEHICLE NUMBER
+			$generateNumber = SerialNumberGroup::generateNumber($serial_number_category, $financial_year->id, $branch->state_id, $branch->id);
+			if (!$generateNumber['success']) {
+				return response()->json([
+					'success' => false,
+					'errors' => [
+						'No Serial number found',
+					],
+				]);
+			}
+
+			$error_messages_1 = [
+				'number.required' => 'Serial number is required',
+				'number.unique' => 'Serial number is already taken',
+			];
+
+			$validator_1 = Validator::make($generateNumber, [
+				'number' => [
+					'required',
+					'unique:gate_logs,number,' . $gate_log->id . ',id,company_id,' . Auth::user()->company_id,
+				],
+			], $error_messages_1);
+
+			if ($validator_1->fails()) {
+				return response()->json([
+					'success' => false,
+					'errors' => $validator_1->errors()->all(),
+				]);
+			}
+
+			$gate_log->number = $generateNumber['number'];
 			$gate_log->save();
 
 			//CREATE DIRECTORY TO STORAGE PATH
@@ -250,6 +319,15 @@ class GateInController extends Controller {
 				$entity_id = $gate_log->id;
 				$attachment_of_id = 225; //GATE LOG
 				$attachment_type_id = 249; //DRIVER PHOTO
+				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+			}
+
+			//SAVE DRIVER PHOTO
+			if (!empty($request->chassis_photo)) {
+				$attachment = $request->chassis_photo;
+				$entity_id = $gate_log->id;
+				$attachment_of_id = 225; //GATE LOG
+				$attachment_type_id = 236; //CHASSIS PHOTO
 				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
 

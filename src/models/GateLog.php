@@ -58,13 +58,16 @@ class GateLog extends Model {
 	}
 
 	public function driverAttachment() {
-		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 225)->where('attachment_type_id', 249);
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 225)->where('attachment_type_id', 249);
 	}
 	public function kmAttachment() {
-		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 225)->where('attachment_type_id', 248);
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 225)->where('attachment_type_id', 248);
 	}
 	public function vehicleAttachment() {
-		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 225)->where('attachment_type_id', 247);
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 225)->where('attachment_type_id', 247);
+	}
+	public function chassisAttachment() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 225)->where('attachment_type_id', 236);
 	}
 
 	public static function createFromObject($record_data) {

@@ -1,0 +1,291 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/gigo-pkg/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Order Detail</b></h1>
+                    <p class="subtitle">Job Card / Order Details</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <jobcard-header></jobcard-header>
+            <div class="tab-form-wrap type-2">
+                <jobcard-tabs ng-init="active_tab = 'order-detail'"></jobcard-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                           <div class="tab-pane fade in active" id="order_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Order Details</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="panel-group" id="accordion">
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
+                                                            Driver Details
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse1" class="panel-collapse collapse in">
+                                                        <div class="panel-body">
+                                                            <div class="view-details mb-no">
+                                                                <ul class="view-row pb-none">
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Name
+                                                                        </span>
+                                                                        <span class="view-data-list-value">
+                                                                            <b>
+                                                                                {{job_order.driver_name}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Mobile No
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.driver_mobile_number}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div><!-- View Data -->
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order.id}}" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                                Edit
+                                                            </a>
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                                                            Job Order Details
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse2" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div class="view-details mb-no">
+                                                                <ul class="view-row pb-none">
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Job Order Type
+                                                                        </span>
+                                                                        <span class="view-data-list-value">
+                                                                            <b>
+                                                                                {{job_order.type.name}}
+                                                                            </b></span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Quote Type
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.quote_type.name}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Service Type
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.service_type.name}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            KM Reading
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.km_reading_type.name}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Service Contact No.
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.contact_number}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div><!-- View Data -->
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order.id}}" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                                Edit
+                                                            </a>
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
+                                                            Previous Job Card Details
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse3" class="panel-collapse collapse" ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
+                                                        <div class="panel-body">
+                                                            <div class="view-details mb-no">
+                                                                <ul class="view-row pb-none">
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Job Card No
+                                                                        </span>
+                                                                        <span class="view-data-list-value">
+                                                                            <b>
+                                                                                {{job_order.vehicle.last_job_order.job_card.number}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Date & Time
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.vehicle.last_job_order.created_at}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            KM Reading
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.vehicle.last_job_order.km_reading}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label"></span>
+                                                                        <span class="view-col-value"><b></b></span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div><!-- View Data -->
+                                                            <a href=".#!/job-card/view/{{job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a>
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                                <div class="panel panel-default type-3">
+                                                    <div class="panel-heading">
+                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse4">
+                                                            Documents
+                                                            <span class="arrow"></span>
+                                                        </a>
+                                                    </div>
+                                                    <div id="collapse4" class="panel-collapse collapse">
+                                                        <div class="panel-body">
+                                                            <div class="view-details mb-no">
+                                                                <ul class="view-row pb-none">
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Licence Expiry Date
+                                                                        </span>
+                                                                        <span class="view-data-list-value">
+                                                                            <b>
+                                                                                {{job_order.driver_license_expiry_date}}
+                                                                            </b></span>
+                                                                    </li>
+                                                                    <li class="view-col-3">
+                                                                        <span class="view-col-label">
+                                                                            Insurance Expiry Date
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.insurance_expiry_date }}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div><!-- View Data -->
+                                                            <div class="mb-15"></div><!-- Spacing -->
+                                                            <div class="multi-docs">
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}" alt="Driver License">
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment.name}}" alt="Insurance" />
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}" alt="RC Book" />
+                                                            </div>
+                                                            <div class="mb-10"></div><!-- Spacing -->
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order.id}}" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                                Edit
+                                                            </a>
+                                                        </div><!-- Panel Body -->
+                                                    </div><!-- Panel Collapse -->
+                                                </div><!-- Panel -->
+                                            </div><!-- Panel Group -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a href=".#!/gigo-pkg/job-card/customer-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a href=".#!/gigo-pkg/job-card/inventory/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xs" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title">Search Vehicle</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Registration Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Customer Code <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>VIN Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->

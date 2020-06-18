@@ -1262,11 +1262,21 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Edit Returnable Item',
 	    }).
 
+	    when('/gigo-pkg/job-card/gatein-detail/:job_card_id', {
+	        template: '<job-card-gatein-detail-form></job-card-gatein-detail-form>',
+	        title: 'Job Card Gate In Details',
+	    }).
+
 	    when('/gigo-pkg/job-card/material-gatepass/:job_card_id', {
 	        template: '<job-card-material-gatepass-form></job-card-material-gatepass-form>',
 	        title: 'Job Card Material Gate Pass',
 	    }).
 	    when('/gigo-pkg/job-card/material-outward/:job_card_id/:gatepass_id', {
+	        template: '<job-card-material-outward-form></job-card-material-outward-form>',
+	        title: 'Job Card Material Outward',
+
+	    }).
+	    when('/gigo-pkg/job-card/material-outward/:job_card_id', {
 	        template: '<job-card-material-outward-form></job-card-material-outward-form>',
 	        title: 'Job Card Material Outward',
 
@@ -1328,6 +1338,26 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        template: '<job-card-bill-detail-view></job-card-bill-detail-view>',
 	        title: 'Job Card Bill Detail',
 	    }).
+	    when('/gigo-pkg/job-card/vehicle-detail/:job_card_id', {
+	        template: '<job-card-vehicle-detail-view></job-card-vehicle-detail-view>',
+	        title: 'Job Card Vehicle Detail',
+	    }).
+	    when('/gigo-pkg/job-card/customer-detail/:job_card_id', {
+	        template: '<job-card-customer-detail-view></job-card-customer-detail-view>',
+	        title: 'Job Card Customer Detail',
+	    }).
+	    when('/gigo-pkg/job-card/order-detail/:job_card_id', {
+	        template: '<job-card-order-detail-view></job-card-order-detail-view>',
+	        title: 'Job Card Order Detail',
+	    }).
+	    when('/gigo-pkg/job-card/inventory/:job_card_id', {
+	        template: '<job-card-inventory-view></job-card-inventory-view>',
+	        title: 'Job Card Inventory',
+	    }).
+	    when('/gigo-pkg/job-card/capture-voc/:job_card_id', {
+	        template: '<job-card-capture-voc-view></job-card-capture-voc-view>',
+	        title: 'Job Card Capture Voc',
+	    }).
 	    when('/gigo-pkg/job-card/bill-detail-update/:job_card_id', {
 	        template: '<job-card-update-bill-detail></job-card-update-bill-detail>',
 	        title: 'Job Card Bill Detail Update',
@@ -1365,6 +1395,13 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_parts_labour_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/payable-labour-part.html')}}';
     var job_card_estimate_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/estimate.html')}}';
     var job_card_estimate_status_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/estimate-status.html')}}';
+    var job_card_gatein_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/gatein-detail.html')}}';
+    var job_card_vehicle_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/vehicle-detail.html')}}';
+    var job_card_customer_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/customer-detail.html')}}';
+    var job_card_order_detail_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/order-detail.html')}}';
+    var job_card_inventory_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/inventory.html')}}';
+    var job_card_capture_voc_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/capture-voc.html')}}';
+
 
 
 

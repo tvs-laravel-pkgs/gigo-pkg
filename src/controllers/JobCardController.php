@@ -3,7 +3,8 @@
 namespace Abs\GigoPkg;
 use App\Config;
 use App\Http\Controllers\Controller;
-use App\JobCard;
+use Abs\GigoPkg\JobCard;
+use App\Vendor;
 use App\QuoteType;
 use App\ServiceOrderType;
 use App\ServiceType;
@@ -132,7 +133,7 @@ class JobCardController extends Controller {
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
 				if (Entrust::can('job-cards')) {
-					$output .= '<a href="#!/gigo-pkg/job-card/material-gatepass/' . $job_card->job_card_id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
+					$output .= '<a href="#!/gigo-pkg/job-card/gatein-detail/' . $job_card->job_card_id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
 					if (!$job_card->bay_id) {
 						$output .= '<a href="#!/gigo-pkg/job-card/assign-bay/' . $job_card->job_card_id . '"  class="btn btn-secondary-dark btn-sm">Assign Bay</a>';
 					}
@@ -363,5 +364,15 @@ class JobCardController extends Controller {
 			'success' => true,
 			'job_cards' => $job_cards,
 		]);
+	}
+
+	public function getVendorCodeSearchList(Request $request) {
+		return Vendor::searchVendorCode($request);
+	}
+
+	public function getVendorDetails(Request $request) {
+		
+		$this->data['vendor_details'] = Vendor::with(['addresses'])->select('vendors.*')->where('vendors.id',$request->id)->first();
+		return response()->json($this->data);
 	}
 }

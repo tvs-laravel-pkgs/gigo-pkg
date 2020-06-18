@@ -1894,9 +1894,15 @@ app.component('inwardVehicleVehicleDetail', {
                     if ($scope.job_order.vehicle.status_id == 8140) {
                         $scope.show_vehicle_detail = false;
                         $scope.show_vehicle_form = true;
+                        self.is_sold = 0;
                     } else {
                         $scope.show_vehicle_detail = true;
                         $scope.show_vehicle_form = false;
+                        if($scope.job_order.vehicle.is_sold){
+                            self.is_sold = 1;
+                        }else{
+                            self.is_sold = 0;
+                        }
                     }
                     if ($routeParams.type_id == 1) {
                         $scope.show_vehicle_detail = false;
@@ -1954,6 +1960,14 @@ app.component('inwardVehicleVehicleDetail', {
                         // },
                         minlength: 10,
                         maxlength: 10,
+                    },
+                    'sold_date': {
+                        required: function(element) {
+                            if(self.is_sold){
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                     'model_id': {
                         required: true,
@@ -2098,9 +2112,11 @@ app.component('inwardVehicleCustomerDetail', {
                     if (!$scope.job_order.vehicle.current_owner) {
                         $scope.show_customer_detail = false;
                         $scope.show_customer_form = true;
+                        self.country = $scope.job_order.country;
                     } else {
                         $scope.show_customer_detail = true;
                         $scope.show_customer_form = false;
+                        self.country = $scope.job_order.vehicle.current_owner.customer.address.country;
                     }
                     if ($scope.type_id == 1) {
                         $scope.show_customer_detail = false;
@@ -2109,9 +2125,9 @@ app.component('inwardVehicleCustomerDetail', {
                     if ($scope.type_id == 2) {
                         $scope.show_customer_detail = false;
                         $scope.show_customer_form = true;
-                        $scope.job_order.vehicle.current_owner = ' ';
+                        $scope.job_order.vehicle.current_owner = '';
+                        self.country = $scope.job_order.country;
                     }
-
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
@@ -2280,50 +2296,58 @@ app.component('inwardVehicleCustomerDetail', {
         }
 
         $scope.countryChanged = function() {
-            $rootScope.loading = true;
             $.ajax({
                     url: base_url + '/api/state/get-drop-down-List',
                     method: "POST",
                     data: {
-                        country_id: $scope.job_order.vehicle.current_owner.customer.address.country.id,
+                        country_id: self.country.id,
                     },
                 })
                 .done(function(res) {
-                    $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
                     }
                     $scope.extras.state_list = res.state_list;
+
+                    //ADD NEW OWNER TYPE
+                    if ($scope.type_id == 2) {
+                            self.state = $scope.job_order.state;
+                    }else{
+                        if (!$scope.job_order.vehicle.current_owner) {
+                            self.state = $scope.job_order.state;
+                        } else {
+                            self.state = $scope.job_order.vehicle.current_owner.customer.address.state;
+                        }
+                    }
+
+                    $scope.$apply();
                 })
                 .fail(function(xhr) {
-                    $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
 
-        $scope.stateChanged = function() {
-            $rootScope.loading = true;
-            $.ajax({
-                    url: base_url + '/api/city/get-drop-down-List',
-                    method: "POST",
-                    data: {
-                        state_id: $scope.job_order.vehicle.current_owner.customer.address.state.id,
-                    },
-                })
-                .done(function(res) {
-                    $rootScope.loading = false;
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.extras.city_list = res.city_list;
-                })
-                .fail(function(xhr) {
-                    $rootScope.loading = false;
-                    custom_noty('error', 'Something went wrong at server');
-                });
-        }
+        // $scope.stateChanged = function() {
+        //     $.ajax({
+        //             url: base_url + '/api/city/get-drop-down-List',
+        //             method: "POST",
+        //             data: {
+        //                 state_id: self.state.id,
+        //             },
+        //         })
+        //         .done(function(res) {
+        //             if (!res.success) {
+        //                 showErrorNoty(res);
+        //                 return;
+        //             }
+        //             $scope.extras.city_list = res.city_list;
+        //             $scope.$apply();
+        //         })
+        //         .fail(function(xhr) {
+        //             custom_noty('error', 'Something went wrong at server');
+        //         });
+        // }
 
         $scope.button_action = function(id, type) {
             if (type == 1) {

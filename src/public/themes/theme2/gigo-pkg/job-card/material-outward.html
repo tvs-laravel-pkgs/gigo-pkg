@@ -93,20 +93,34 @@
                                                             </div>
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>OSL Vendor Code <sup class="mandatory">*</sup></label>
-                                                            <input type="text" value="{{gate_pass.gate_pass_detail.vendor.code}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
-                                                            <input type="hidden" name="vendor_id" value="{{gate_pass.gate_pass_detail.vendor_id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
-                                                            <input type="hidden" name="job_card_id" value="{{gate_pass.job_card_id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
-                                                            <input type="hidden" name="gate_pass_id" value="{{gate_pass.id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
 
-                                                        </div><!-- Feild -->
-                                                    </div><!-- Column -->
+                                                    <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            OSL Vendor Code
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-autocomplete md-items="option in $ctrl.searchVendorCode($ctrl.modelSearchText)" md-selected-item="$ctrl.vendor" md-selected-item-change="selectedVendorCode($ctrl.vendor.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.code" md-min-length="3" placeholder="OSL Vendor Code" md-autofocus>
+                                                            <md-item-template>
+                                                                <span>
+                                                                    {{option.code}}
+                                                                </span>
+                                                            </md-item-template>
+                                                            <md-not-found>
+                                                                No Vendor Code matching "{{$ctrl.modelSearchText}}" were found.
+                                                            </md-not-found>
+                                                        </md-autocomplete>
+                                                        <input type="hidden" name="vendor_id" value="{{$ctrl.vendor.id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+
+                                                            <input type="hidden" name="job_card_id" value="{{job_card_id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
+                                                            <input type="hidden" name="gate_pass_id" value="{{gate_pass.id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
+                                                       
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>Vendor Contact No <sup class="mandatory">*</sup></label>
-                                                            <input type="text" name="vendor_contact_no" value="{{gate_pass.gate_pass_detail.vendor_contact_no}}" class="form-control" placeholder="Enter Contact No" autocomplete="off" />
+                                                            <input type="text" id="vendor_contact" name="vendor_contact_no" value="{{gate_pass.gate_pass_detail.vendor_contact_no}}" class="form-control" placeholder="Enter Contact No" autocomplete="off" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-6">
@@ -129,11 +143,12 @@
                                                         <span class="title">Vendor Details</span>
                                                     </div>
                                                     <div class="grey-box-address-body">
-                                                        <span class="title">{{gate_pass.gate_pass_detail.vendor.name}}</span>
-                                                        <span class="info" ng-repeat="(key, address) in gate_pass.gate_pass_detail.vendor.addresses">  {{address.address_line1}},
+                                                        <span class="title" id="ven_name">{{gate_pass.gate_pass_detail.vendor.name}}</span>
+                                                        <p class="address"></p>
+                                                        <span class="info address" ng-repeat="(key, address) in gate_pass.gate_pass_detail.vendor.addresses">  {{address.address_line1}},
                                                         {{address.address_line2}}
                                                         {{address.pincode}}</span>
-                                                        <span class="info contact">+91 {{gate_pass.gate_pass_detail.vendor_contact_no}}</span>
+                                                        <span class="info contact" id="contact">{{gate_pass.gate_pass_detail.vendor_contact_no}}</span>
                                                     </div>
                                                 </div>
                                             </div><!-- Column -->                                        

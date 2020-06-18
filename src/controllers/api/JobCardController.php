@@ -18,6 +18,7 @@ use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
 use Abs\PartPkg\Part;
 use Abs\StatusPkg\Status;
+use Abs\TaxPkg\Tax;
 use App\Attachment;
 use App\Config;
 use App\Customer;
@@ -28,8 +29,8 @@ use App\JobOrderPart;
 use App\SplitOrderType;
 use App\VehicleInspectionItem;
 use App\VehicleInspectionItemGroup;
+use App\VehicleInventoryItem;
 use App\Vendor;
-use Abs\TaxPkg\Tax;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -727,7 +728,10 @@ class JobCardController extends Controller {
 		try {
 			//JOB CARD
 			$job_card = JobCard::with([
+				'status',
 				'jobOrder',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
 				'jobOrder.JobOrderRepairOrders',
 				'jobOrder.JobOrderRepairOrders.status',
 				'jobOrder.JobOrderRepairOrders.repairOrder',
@@ -789,7 +793,7 @@ class JobCardController extends Controller {
 					}
 					//OVERALL WORKING HOURS
 					$overall_total_duration = sum_mechanic_duration($overall_total_duration);
-					$overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
+					// $overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
 					// dd($total_duration);
 					$format_change = explode(':', $overall_total_duration);
 					$hour = $format_change[0] . 'h';
@@ -944,8 +948,9 @@ class JobCardController extends Controller {
 			}
 
 			$employee_details = Employee::select([
-				'employees.*',
+				'users.id',
 				'users.name as user_name',
+				'users.ecode as user_code',
 				'outlets.code as outlet_code',
 				'deputed_outlet.code as deputed_outlet_code',
 				'attendance_logs.user_id',
@@ -962,6 +967,7 @@ class JobCardController extends Controller {
 				->where('users.user_type_id', 1) //EMPLOYEE
 				->where('employees.outlet_id', $job_card->outlet_id)
 				->where('employees.skill_level_id', $repair_order->skill_level_id)
+				->orderBy('users.name', 'asc')
 				->get()
 			;
 
@@ -1334,7 +1340,10 @@ class JobCardController extends Controller {
 				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
-				'jobOrder.JobOrderRepairOrders',
+				// 'jobOrder.JobOrderRepairOrders',
+				'jobOrder.JobOrderRepairOrders' => function ($q) use ($request) {
+					$q->where('id', $request->job_order_repair_order_id);
+				},
 				'jobOrder.JobOrderRepairOrders.status',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanic',
@@ -1431,7 +1440,7 @@ class JobCardController extends Controller {
 			}
 			//OVERALL WORKING HOURS
 			$overall_total_duration = sum_mechanic_duration($overall_total_duration);
-			$overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
+			// $overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
 			// dd($total_duration);
 			$format_change = explode(':', $overall_total_duration);
 			$hour = $format_change[0] . 'h';
@@ -1531,6 +1540,18 @@ class JobCardController extends Controller {
 
 			$job_order_repair_order->save();
 
+			if ($request->status_id == 8187) {
+				$total_count = JobOrderRepairOrder::where('job_order_id', $job_order_repair_order->job_order_id)->where('status_id', '!=', 8187)->count();
+				if ($total_count == 0) {
+					$job_card = JobCard::where('id', $request->job_card_id)
+						->update([
+							'status_id' => 8222, //Ready for Review
+							'updated_by' => Auth::user()->id,
+							'updated_at' => Carbon::now(),
+						]);
+				}
+			}
+
 			DB::commit();
 
 			return response()->json([
@@ -1548,7 +1569,10 @@ class JobCardController extends Controller {
 	}
 
 	public function getRoadTestObservation(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['status', 'jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1582,7 +1606,10 @@ class JobCardController extends Controller {
 	}
 
 	public function getExpertDiagnosis(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['status', 'jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1612,7 +1639,10 @@ class JobCardController extends Controller {
 	}
 
 	public function getDmsCheckList(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['status', 'jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1625,9 +1655,256 @@ class JobCardController extends Controller {
 			'vehicle',
 			'vehicle.model',
 			'vehicle.status',
+			'vehicle.model.campaign',
+			'vehicle.model.campaign.claimType',
+			'vehicle.model.campaign.faultType',
+			'vehicle.model.campaign.complaintType',
+			'vehicle.model.campaign.campaignLabours',
+			'vehicle.model.campaign.campaignParts',
 			'warrentyPolicyAttachment',
 			'EWPAttachment',
 			'AMCAttachment',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_card->job_order_id);
+
+		return response()->json([
+			'success' => true,
+			'job_order' => $job_order,
+			'job_card' => $job_card,
+		]);
+
+	}
+
+	public function getGateInDetail(Request $request) {
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+
+		$job_order = JobOrder::company()->with([
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
+			'outlet',
+			'gateLog',
+			'gateLog.createdBy',
+			'gateLog.driverAttachment',
+			'gateLog.kmAttachment',
+			'gateLog.vehicleAttachment',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_card->job_order_id);
+
+		return response()->json([
+			'success' => true,
+			'job_order' => $job_order,
+			'job_card' => $job_card,
+		]);
+
+	}
+
+	public function getVehicleDetail(Request $request) {
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+
+		$job_order = JobOrder::company()->with([
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
+			'gateLog',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_card->job_order_id);
+
+		return response()->json([
+			'success' => true,
+			'job_order' => $job_order,
+			'job_card' => $job_card,
+		]);
+
+	}
+
+	public function getCustomerDetail(Request $request) {
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+
+		$job_order = JobOrder::company()->with([
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
+			'gateLog',
+			'vehicle.currentOwner.customer',
+			'vehicle.currentOwner.customer.address',
+			'vehicle.currentOwner.customer.address.country',
+			'vehicle.currentOwner.customer.address.state',
+			'vehicle.currentOwner.customer.address.city',
+			'vehicle.currentOwner.ownershipType',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_card->job_order_id);
+
+		return response()->json([
+			'success' => true,
+			'job_order' => $job_order,
+			'job_card' => $job_card,
+		]);
+
+	}
+
+	public function getOrderDetail(Request $request) {
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+
+		$job_order = JobOrder::company()->with([
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
+			'vehicle.currentOwner.ownershipType',
+			'vehicle.lastJobOrder',
+			'vehicle.lastJobOrder.jobCard',
+			'type',
+			'quoteType',
+			'serviceType',
+			'kmReadingType',
+			'status',
+			'gateLog',
+			'gateLog.createdBy',
+			'expertDiagnosisReportBy',
+			'estimationType',
+			'driverLicenseAttachment',
+			'insuranceAttachment',
+			'rcBookAttachment',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_card->job_order_id);
+
+		return response()->json([
+			'success' => true,
+			'job_order' => $job_order,
+			'job_card' => $job_card,
+		]);
+
+	}
+
+	public function getInventory(Request $request) {
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+
+		$job_order = JobOrder::company()->with([
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
+			'gateLog',
+			'vehicleInventoryItem',
+			'vehicleInspectionItems',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_card->job_order_id);
+
+		$inventory_params['field_type_id'] = [11, 12];
+
+		return response()->json([
+			'success' => true,
+			'job_order' => $job_order,
+			'job_card' => $job_card,
+			'inventory_list' => VehicleInventoryItem::getInventoryList($job_order->id, $inventory_params),
+		]);
+
+	}
+
+	public function getCaptureVoc(Request $request) {
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+
+		$job_order = JobOrder::company()->with([
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
+			'customerVoices',
+			'gateLog',
 		])
 			->select([
 				'job_orders.*',
@@ -1660,7 +1937,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getEstimateStatus(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1693,7 +1974,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getEstimate(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1766,7 +2051,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getPartsIndent(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1813,7 +2102,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getScheduleMaintenance(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1866,7 +2159,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getPayableLabourPart(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1954,7 +2251,11 @@ class JobCardController extends Controller {
 	public function getVehicleInspection(Request $request) {
 		try {
 
-			$job_card = JobCard::with(['status'])->find($request->id);
+			$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 			if (!$job_card) {
 				return response()->json([
 					'success' => false,
@@ -2093,7 +2394,7 @@ class JobCardController extends Controller {
 	}
 
 	public function ReturnableItemSave(Request $request) {
-		 // dd($request->all());
+		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_card_id' => [
@@ -2517,18 +2818,17 @@ class JobCardController extends Controller {
 
 			//OVERALL WORKING HOURS
 			$overall_total_duration = sum_mechanic_duration($overall_total_duration);
-			$overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
-			// dd($total_duration);
+			// $overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
 			$format_change = explode(':', $overall_total_duration);
 			$hour = $format_change[0] . 'h';
 			$minutes = $format_change[1] . 'm';
 			$seconds = $format_change[2] . 's';
 			if (!empty($request->job_order_repair_order_id)) {
-
 				$job_order_repair_order['overall_total_duration'] = $hour . ' ' . $minutes; // . ' ' . $seconds;
 			} else {
 				$job_card_time_log->jobOrder['overall_total_duration'] = $hour . ' ' . $minutes; // . ' ' . $seconds;
 			}
+
 			unset($overall_total_duration);
 
 			$job_card_time_log->no_of_ROT = count($job_card_time_log->jobOrder->JobOrderRepairOrders);
@@ -2560,6 +2860,10 @@ class JobCardController extends Controller {
 		try {
 			$view_metrial_gate_pass = JobCard::with([
 				'status',
+				'jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
 				'gatePasses' => function ($query) {
 					$query->where('gate_passes.type_id', 8281); //MATRIAL GATE PASS
 				},
@@ -2629,6 +2933,8 @@ class JobCardController extends Controller {
 	public function getMeterialGatePassOutwardDetail(Request $request) {
 		//dd($request->all());
 		try {
+			if(isset($request->gate_pass_id))
+			{
 			$gate_pass = GatePass::with([
 				'gatePassDetail',
 				'gatePassDetail.vendorType',
@@ -2645,6 +2951,17 @@ class JobCardController extends Controller {
 			}
 
 			$gate_pass_item = GatePassItem::where('gate_pass_id', $request->gate_pass_id)->get();
+
+			$gate_pass_detail = GatePassDetail::select('vendor_id')->where('gate_pass_id',$gate_pass->id)->first();
+			$vendor = Vendor::select('id','code')->where('id',$gate_pass_detail->vendor_id)->first();
+
+		    }
+		    else
+		    {
+		    	$gate_pass = '';
+		    	$gate_pass_item = [];
+		    	$vendor = [];
+		    }
 
 			$my_job_card_details = Employee::select([
 				'job_cards.job_card_number as jc_number',
@@ -2673,6 +2990,7 @@ class JobCardController extends Controller {
 				'gate_pass' => $gate_pass,
 				'my_job_card_details' => $my_job_card_details,
 				'gate_pass_item' => $gate_pass_item,
+				'vendor' => $vendor,
 			]);
 
 		} catch (Exception $e) {
@@ -2686,7 +3004,7 @@ class JobCardController extends Controller {
 
 	//Material GatePass Detail Save
 	public function saveMaterialGatePassDetail(Request $request) {
-		// dd($request->all());
+		 //dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -2746,6 +3064,8 @@ class JobCardController extends Controller {
 			]);
 			$gate_pass->type_id = 8281; //Material Gate Pass
 			$gate_pass->status_id = $status->id; //Gate Out Pending
+			$gate_pass->company_id = Auth::user()->company_id;
+			$gate_pass->job_card_id = $request->job_card_id;
 			$gate_pass->fill($request->all());
 			$gate_pass->save();
 
@@ -2753,6 +3073,8 @@ class JobCardController extends Controller {
 				'gate_pass_id' => $request->gate_pass_id,
 				'work_order_no' => $request->work_order_no,
 			]);
+			$gate_pass_detail->gate_pass_id = $gate_pass->id;
+			$gate_pass_detail->work_order_no = $request->work_order_no;
 			$gate_pass_detail->vendor_type_id = $request->vendor_type_id;
 			$gate_pass_detail->vendor_id = $request->vendor_id;
 			$gate_pass_detail->vendor_contact_no = $request->vendor_contact_no;
@@ -3042,13 +3364,13 @@ class JobCardController extends Controller {
 			if ($job_card->jobOrder->jobOrderRepairOrders) {
 				foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $labour) {
 					$total_amount = 0;
-					$labour_details[$key]['id']=$labour->repairOrder->id;
+					$labour_details[$key]['id'] = $labour->repairOrder->id;
 					$labour_details[$key]['name'] = $labour->repairOrder->code . ' | ' . $labour->repairOrder->name;
 					$labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
 					$labour_details[$key]['qty'] = $labour->qty;
 					$labour_details[$key]['amount'] = $labour->amount;
 					$labour_details[$key]['is_free_service'] = $labour->is_free_service;
-					$labour_details[$key]['split_order_type_id']=$labour->split_order_type_id;
+					$labour_details[$key]['split_order_type_id'] = $labour->split_order_type_id;
 					$tax_amount = 0;
 					$tax_values = array();
 					if ($labour->repairOrder->taxCode) {
@@ -3068,7 +3390,7 @@ class JobCardController extends Controller {
 					}
 
 					$labour_details[$key]['tax_values'] = $tax_values;
-					
+
 					$total_amount = $tax_amount + $labour->amount;
 					$total_amount = number_format((float) $total_amount, 2, '.', '');
 					if ($labour->is_free_service != 1) {
@@ -3083,14 +3405,14 @@ class JobCardController extends Controller {
 			if ($job_card->jobOrder->jobOrderParts) {
 				foreach ($job_card->jobOrder->jobOrderParts as $key => $parts) {
 					$total_amount = 0;
-					$part_details[$key]['id']=$parts->part->id;
+					$part_details[$key]['id'] = $parts->part->id;
 					$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
 					$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
 					$part_details[$key]['qty'] = $parts->qty;
 					$part_details[$key]['rate'] = $parts->rate;
 					$part_details[$key]['amount'] = $parts->amount;
 					$part_details[$key]['is_free_service'] = $parts->is_free_service;
-					$part_details[$key]['split_order_type_id']=$parts->split_order_type_id;
+					$part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
 					$tax_amount = 0;
 					$tax_values = array();
 					if ($parts->part->taxCode) {
@@ -3110,38 +3432,38 @@ class JobCardController extends Controller {
 					}
 
 					$part_details[$key]['tax_values'] = $tax_values;
-					
+
 					$total_amount = $tax_amount + $parts->amount;
 					$total_amount = number_format((float) $total_amount, 2, '.', '');
 					if ($parts->is_free_service != 1) {
 						$parts_amount += $total_amount;
 					}
 					$part_details[$key]['total_amount'] = $total_amount;
-					$part_details[$key]['tax_amount'] =number_format((float) $tax_amount, 2, '.', '');
+					$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
 				}
 			}
 
 			$total_amount = $parts_amount + $labour_amount;
 
-			$unassigned_part_count=0;
-			$unassigned_part_amount=0;
+			$unassigned_part_count = 0;
+			$unassigned_part_amount = 0;
 			foreach ($part_details as $key => $part) {
-			//	dd($part);
-				if(!$part['split_order_type_id']){
-					$unassigned_part_count +=1;
-					$unassigned_part_amount +=$part['total_amount'];
+				//	dd($part);
+				if (!$part['split_order_type_id']) {
+					$unassigned_part_count += 1;
+					$unassigned_part_amount += $part['total_amount'];
 				}
 			}
-			$unassigned_labour_count=0;
-			$unassigned_labour_amount=0;
+			$unassigned_labour_count = 0;
+			$unassigned_labour_amount = 0;
 			foreach ($labour_details as $key => $labour) {
-				if(!$labour['split_order_type_id']){
-					$unassigned_labour_count +=1;
-					$unassigned_labour_amount +=$labour['total_amount'];
+				if (!$labour['split_order_type_id']) {
+					$unassigned_labour_count += 1;
+					$unassigned_labour_amount += $labour['total_amount'];
 				}
 			}
-			$unassigned_total_count = $unassigned_labour_count+$unassigned_part_count;
-			$unassigned_total_amount = $unassigned_labour_amount+$unassigned_part_amount;
+			$unassigned_total_count = $unassigned_labour_count + $unassigned_part_count;
+			$unassigned_total_amount = $unassigned_labour_amount + $unassigned_part_amount;
 
 			$extras = [
 				'split_order_types' => SplitOrderType::get(),
@@ -3151,15 +3473,15 @@ class JobCardController extends Controller {
 				'success' => true,
 				'job_card' => $job_card,
 
-				'extras'=>$extras,
-				'taxes'=>$taxes,
-				'part_details'=>$part_details,
-				'labour_details'=>$labour_details,
-				'parts_total_amount' =>number_format($parts_amount, 2),
-				'labour_total_amount' =>number_format($labour_amount, 2),
-				'total_amount' =>number_format($total_amount, 2),
-				'unassigned_total_amount' =>number_format($unassigned_total_amount,2),
-				'unassigned_total_count' =>$unassigned_total_count,
+				'extras' => $extras,
+				'taxes' => $taxes,
+				'part_details' => $part_details,
+				'labour_details' => $labour_details,
+				'parts_total_amount' => number_format($parts_amount, 2),
+				'labour_total_amount' => number_format($labour_amount, 2),
+				'total_amount' => number_format($total_amount, 2),
+				'unassigned_total_amount' => number_format($unassigned_total_amount, 2),
+				'unassigned_total_count' => $unassigned_total_count,
 			]);
 
 		} catch (Exception $e) {
