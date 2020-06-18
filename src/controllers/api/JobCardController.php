@@ -2073,6 +2073,11 @@ class JobCardController extends Controller {
 					'integer',
 					'exists:job_cards,id',
 				],
+				'job_card_returnable_items.*.item_name' => [
+					'required',
+					'string',
+					'max:191',
+				],
 				'job_card_returnable_items.*.item_description' => [
 					'required',
 					'string',
