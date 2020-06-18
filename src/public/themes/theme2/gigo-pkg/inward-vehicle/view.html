@@ -237,6 +237,27 @@
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
+                                                        Is Sold ?
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b ng-if="job_order.vehicle.is_sold == 1">
+                                                            Yes
+                                                        </b>
+                                                        <b ng-if="job_order.vehicle.is_sold != 1">
+                                                            No
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3" ng-if="job_order.vehicle.is_sold == 1">
+                                                    <span class="view-col-label">
+                                                        Sold Date
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_order.vehicle.sold_date}}
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
                                                         Engine Number
                                                     </span>
                                                     <span class="view-col-value">

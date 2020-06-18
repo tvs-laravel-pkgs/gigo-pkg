@@ -1894,9 +1894,15 @@ app.component('inwardVehicleVehicleDetail', {
                     if ($scope.job_order.vehicle.status_id == 8140) {
                         $scope.show_vehicle_detail = false;
                         $scope.show_vehicle_form = true;
+                        self.is_sold = 0;
                     } else {
                         $scope.show_vehicle_detail = true;
                         $scope.show_vehicle_form = false;
+                        if($scope.job_order.vehicle.is_sold){
+                            self.is_sold = 1;
+                        }else{
+                            self.is_sold = 0;
+                        }
                     }
                     if ($routeParams.type_id == 1) {
                         $scope.show_vehicle_detail = false;
@@ -1954,6 +1960,14 @@ app.component('inwardVehicleVehicleDetail', {
                         // },
                         minlength: 10,
                         maxlength: 10,
+                    },
+                    'sold_date': {
+                        required: function(element) {
+                            if(self.is_sold){
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                     'model_id': {
                         required: true,
@@ -2111,7 +2125,8 @@ app.component('inwardVehicleCustomerDetail', {
                     if ($scope.type_id == 2) {
                         $scope.show_customer_detail = false;
                         $scope.show_customer_form = true;
-                        $scope.job_order.vehicle.current_owner = ' ';
+                        $scope.job_order.vehicle.current_owner = '';
+                        self.country = $scope.job_order.country;
                     }
                     $scope.extras = res.extras;
                     $scope.$apply();
@@ -2294,12 +2309,18 @@ app.component('inwardVehicleCustomerDetail', {
                         return;
                     }
                     $scope.extras.state_list = res.state_list;
-                    
-                    if (!$scope.job_order.vehicle.current_owner) {
-                        self.state = $scope.job_order.state;
-                    } else {
-                        self.state = $scope.job_order.vehicle.current_owner.customer.address.state;
+
+                    //ADD NEW OWNER TYPE
+                    if ($scope.type_id == 2) {
+                            self.state = $scope.job_order.state;
+                    }else{
+                        if (!$scope.job_order.vehicle.current_owner) {
+                            self.state = $scope.job_order.state;
+                        } else {
+                            self.state = $scope.job_order.vehicle.current_owner.customer.address.state;
+                        }
                     }
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
