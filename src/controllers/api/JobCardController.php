@@ -916,8 +916,9 @@ class JobCardController extends Controller {
 			}
 
 			$employee_details = Employee::select([
-				'employees.*',
+				'users.id',
 				'users.name as user_name',
+				'users.ecode as user_code',
 				'outlets.code as outlet_code',
 				'deputed_outlet.code as deputed_outlet_code',
 				'attendance_logs.user_id',
@@ -934,6 +935,7 @@ class JobCardController extends Controller {
 				->where('users.user_type_id', 1) //EMPLOYEE
 				->where('employees.outlet_id', $job_card->outlet_id)
 				->where('employees.skill_level_id', $repair_order->skill_level_id)
+				->orderBy('users.name', 'asc')
 				->get()
 			;
 
@@ -1306,7 +1308,10 @@ class JobCardController extends Controller {
 				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
-				'jobOrder.JobOrderRepairOrders',
+				// 'jobOrder.JobOrderRepairOrders',
+				'jobOrder.JobOrderRepairOrders' => function ($q) use ($request) {
+					$q->where('id', $request->job_order_repair_order_id);
+				},
 				'jobOrder.JobOrderRepairOrders.status',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanic',
@@ -1403,7 +1408,7 @@ class JobCardController extends Controller {
 			}
 			//OVERALL WORKING HOURS
 			$overall_total_duration = sum_mechanic_duration($overall_total_duration);
-			$overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
+			// $overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
 			// dd($total_duration);
 			$format_change = explode(':', $overall_total_duration);
 			$hour = $format_change[0] . 'h';
@@ -2489,18 +2494,17 @@ class JobCardController extends Controller {
 
 			//OVERALL WORKING HOURS
 			$overall_total_duration = sum_mechanic_duration($overall_total_duration);
-			$overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
-			// dd($total_duration);
+			// $overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
 			$format_change = explode(':', $overall_total_duration);
 			$hour = $format_change[0] . 'h';
 			$minutes = $format_change[1] . 'm';
 			$seconds = $format_change[2] . 's';
 			if (!empty($request->job_order_repair_order_id)) {
-
 				$job_order_repair_order['overall_total_duration'] = $hour . ' ' . $minutes; // . ' ' . $seconds;
 			} else {
 				$job_card_time_log->jobOrder['overall_total_duration'] = $hour . ' ' . $minutes; // . ' ' . $seconds;
 			}
+
 			unset($overall_total_duration);
 
 			$job_card_time_log->no_of_ROT = count($job_card_time_log->jobOrder->JobOrderRepairOrders);
