@@ -4,7 +4,6 @@ namespace Abs\GigoPkg\Api;
 
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\ServiceOrderType;
-use App\Address;
 use App\Attachment;
 use App\Config;
 use App\Country;
@@ -222,6 +221,7 @@ class VehicleInwardController extends Controller {
 				'gateLog.driverAttachment',
 				'gateLog.kmAttachment',
 				'gateLog.vehicleAttachment',
+				'gateLog.chassisAttachment',
 				'customerApprovalAttachment',
 				'customerESign',
 			])
@@ -546,6 +546,10 @@ class VehicleInwardController extends Controller {
 			} else {
 				$job_order->enable_estimate_status = true;
 			}
+			//DEDAULT COUNTRY
+			$job_order->country = Country::find(1);
+			//DEDAULT STATE
+			$job_order->state = State::find(Auth::user()->employee->outlet->state_id);
 
 			return response()->json([
 				'success' => true,
@@ -686,7 +690,7 @@ class VehicleInwardController extends Controller {
 				$vehicle_owner = new VehicleOwner;
 				// $vehicle_owner->created_by_id = Auth::id();
 				$vehicle_owner->vehicle_id = $vehicle->id;
-				$vehicle_owner->from_date = date('Y-m-d');
+				$vehicle_owner->from_date = Carbon::now();
 				$vehicle_owner->created_by_id = Auth::id();
 			} else {
 				//NEW OWNER
@@ -695,6 +699,7 @@ class VehicleInwardController extends Controller {
 					'customer_id' => $customer->id,
 				])->first();
 				$vehicle_owner->updated_by_id = Auth::id();
+				$vehicle_owner->updated_at = Carbon::now();
 			}
 
 			$vehicle_owner->customer_id = $customer->id;
@@ -703,6 +708,9 @@ class VehicleInwardController extends Controller {
 
 			// INWARD PROCESS CHECK - CUSTOMER DETAIL
 			$job_order->inwardProcessChecks()->where('tab_id', 8701)->update(['is_form_filled' => 1]);
+			//CUSTOMER MAPPING
+			$job_order->customer_id = $customer->id;
+			$job_order->save();
 
 			DB::commit();
 
@@ -2085,188 +2093,6 @@ class VehicleInwardController extends Controller {
 		$this->data = State::getCity($state_id);
 		$this->data['success'] = true;
 		return response()->json($this->data);
-	}
-
-	//CUSTOMER SAVE
-	public function saveCustomer(Request $request) {
-		// dd($request->all());
-		DB::beginTransaction();
-		try {
-			$validator = Validator::make($request->all(), [
-				'gate_log_id' => [
-					'required',
-					'exists:gate_logs,id',
-					'integer',
-				],
-				'name' => [
-					'required',
-					'min:3',
-					'string',
-					'max:255',
-				],
-				'mobile_no' => [
-					'required',
-					'min:10',
-					'max:10',
-				],
-				'email' => [
-					'nullable',
-					'max:255',
-					'string',
-				],
-				'address_line1' => [
-					'required',
-					'min:3',
-					'max:255',
-					'string',
-				],
-				'address_line2' => [
-					'nullable',
-					'max:255',
-					'string',
-				],
-				'country_id' => [
-					'required',
-					'exists:countries,id',
-					'integer',
-				],
-				'state_id' => [
-					'required',
-					'exists:states,id',
-					'integer',
-				],
-				'city_id' => [
-					'required',
-					'exists:cities,id',
-					'integer',
-				],
-				'pincode' => [
-					'required',
-					'min:6',
-					'max:6',
-				],
-				'gst_number' => [
-					'nullable',
-					'min:15',
-					'max:15',
-				],
-				'pan_number' => [
-					'nullable',
-					'min:10',
-					'max:10',
-				],
-				'ownership_id' => [
-					'required',
-					'exists:configs,id',
-					'integer',
-				],
-
-			]);
-
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
-				]);
-			}
-
-			//issue: relation naming
-			$gate_log = GateLog::with([
-				'vehicle',
-				'vehicle.vehicleOwner',
-			])
-				->find($request->gate_log_id);
-
-			if (empty($gate_log)) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Gate Log Not Found!',
-				]);
-			}
-			//issue: relation naming
-			//OWNERSHIP ALREADY EXIST OR NOT
-			$vehicle_owners_exist = VehicleOwner::where([
-				'vehicle_id' => $gate_log->vehicle->id,
-				'ownership_id' => $request->ownership_id,
-			])
-				->first();
-
-			if ($vehicle_owners_exist) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Ownership Alreay Taken in this Vehicle!',
-				]);
-			}
-
-			$customer = Customer::firstOrNew([
-				'name' => $request->name,
-				'mobile_no' => $request->mobile_no,
-			]);
-			if ($customer->exists) {
-				//FIRST
-				$customer->updated_at = Carbon::now();
-				$customer->updated_by_id = Auth::user()->id;
-
-				$address = Address::where('address_of_id', 24)->where('entity_id', $customer->id)->first();
-				//issue: relation naming
-				$vehicle_owner = VehicleOwner::where([
-					'vehicle_id' => $gate_log->vehicle->id,
-					'customer_id' => $customer->id,
-				])
-					->first();
-				// dd($vehicle_owner);
-			} else {
-				//NEW
-				$customer->created_at = Carbon::now();
-				$customer->created_by_id = Auth::user()->id;
-				$vehicle_owner = new VehicleOwner;
-				$address = new Address;
-			}
-			//issue : vijay : customer updated_at save missing, vehicle owner updated_at & updated_by_id save missing
-			$customer->code = mt_rand(1, 1000);
-			$customer->fill($request->all());
-			$customer->company_id = Auth::user()->company_id;
-			$customer->gst_number = $request->gst_number;
-			$customer->save();
-			$customer->code = 'CUS' . $customer->id;
-			$customer->save();
-
-			//issue: relation naming
-			$vehicle_owner->vehicle_id = $gate_log->vehicle->id;
-			$vehicle_owner->customer_id = $customer->id;
-			$vehicle_owner->from_date = Carbon::now();
-			$vehicle_owner->ownership_id = $request->ownership_id;
-			$vehicle_owner->save();
-
-			if (!$address) {
-				$address = new Address;
-			}
-			$address->fill($request->all());
-			$address->company_id = Auth::user()->company_id;
-			$address->address_of_id = 24; //CUSTOMER
-			$address->entity_id = $customer->id;
-			$address->address_type_id = 40; //PRIMART ADDRESS
-			$address->name = 'Primary Address';
-			$address->save();
-
-			DB::commit();
-
-			return response()->json([
-				'success' => true,
-				'message' => 'Vehicle Mapped with customer Successfully!!',
-			]);
-
-		} catch (\Exception $e) {
-			DB::rollBack();
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Error',
-				'errors' => [
-					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
-				],
-			]);
-		}
 	}
 
 	//VOICE OF CUSTOMER(VOC) GET FORM DATA

@@ -161,7 +161,7 @@ Content Wrap -->
                                                             Country
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="job_order.vehicle.current_owner.customer.address.country" placeholder="Select Country" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged()">
+                                                        <md-select ng-model="$ctrl.country" placeholder="Select Country" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged()">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchCountry" type="search" placeholder="Search for a country.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
@@ -171,7 +171,7 @@ Content Wrap -->
                                                                 </md-option>
                                                             </md-optgroup>
                                                         </md-select>
-                                                        <input type="hidden" name="country_id" value="{{job_order.vehicle.current_owner.customer.address.country.id}}">
+                                                        <input type="hidden" name="country_id" value="{{$ctrl.country.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -180,7 +180,7 @@ Content Wrap -->
                                                             State
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <md-select ng-model="job_order.vehicle.current_owner.customer.address.state" placeholder="Select State" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="stateChanged()">
+                                                        <md-select ng-model="$ctrl.state" placeholder="Select State" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchState" type="search" placeholder="Search for a state.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
@@ -190,7 +190,7 @@ Content Wrap -->
                                                                 </md-option>
                                                             </md-optgroup>
                                                         </md-select>
-                                                        <input type="hidden" name="state_id" value="{{job_order.vehicle.current_owner.customer.address.state.id}}">
+                                                        <input type="hidden" name="state_id" value="{{$ctrl.state.id}}">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">

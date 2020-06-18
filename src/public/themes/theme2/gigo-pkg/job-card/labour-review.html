@@ -40,7 +40,7 @@
             </div><!-- Page Tab Form Top Right -->
         </div><!-- Page Tab Form Top -->
         <div class="container">
-            <form id="form">
+            <form id="labour_review_form" autocomplete="off">
                 <input type="hidden" name="job_card_id" value="{{job_card_id}}">
                 <input type="hidden" name="job_order_repair_order_id" value="{{job_order_repair_order_id}}">
                 <div class="row">
@@ -64,8 +64,8 @@
                                                     </span>
                                                 </div><!-- Right Wrap -->
                                                 <div class="assigned-info">
-                                                    <span class="title small">Assigned to: </span>
-                                                    <span class="title small" ng-repeat="(key,repair_order_mechanic) in job_order_repair_order.repair_order_mechanics">{{repair_order_mechanic.mechanic.name}}{{$last ? '' : ', '}}</span>
+                                                    <span class="title small">Assigned to:
+                                                    <span ng-repeat="(key,repair_order_mechanic) in job_order_repair_order.repair_order_mechanics">{{repair_order_mechanic.mechanic.name}}{{$last ? '' : ', '}}</span></span>
                                                 </div>
                                             </div>
                                         </div><!-- Column -->
@@ -116,9 +116,9 @@
                                             <div class="form-group">
                                                 <label>Status</label>
                                                 <div class="common-radio-button type-4">
-                                                    <input type="radio" id="layer_yes" name="status_id" checked value="8187" />
+                                                    <input type="radio" id="layer_yes" name="status_id"  value="8187" />
                                                     <label for="layer_yes">Completed</label>
-                                                    <input type="radio" id="layer_no" name="status_id" value="8186" />
+                                                    <input type="radio" id="layer_no" name="status_id" checked value="8186" />
                                                     <label for="layer_no">Re-Schedule</label>
                                                 </div>
                                             </div><!-- Feild -->
@@ -126,13 +126,13 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>Observations <sup class="mandatory">*</sup></label>
-                                                <textarea class="form-control" rows="4" placeholder="Enter Observations" name="observation"></textarea>
+                                                <textarea class="form-control" rows="4" placeholder="Enter Observations" name="observation">{{labour_review_data.job_order.job_order_repair_orders[0].observation}}</textarea>
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>Action Taken <sup class="mandatory">*</sup></label>
-                                                <textarea class="form-control" rows="4" placeholder="Enter Actions Taken" name="action_taken"></textarea>
+                                                <textarea class="form-control" rows="4" placeholder="Enter Actions Taken" name="action_taken">{{labour_review_data.job_order.job_order_repair_orders[0].action_taken}}</textarea>
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                     </div><!-- Row -->
@@ -145,7 +145,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <a href="#!/gigo-pkg/job-card/schedule/{{job_card_id}}" class="btn btn-bordered btn-grey btn-min-wdth">Back</a>
-                            <button type="submit" class="btn btn-secondary-dark btn-min-wdth submit">Submit</button>
+                            <button type="submit" class="btn btn-secondary-dark btn-min-wdth submit" ng-click="saveLabourReview()">Submit</button>
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Page Form Footer -->
