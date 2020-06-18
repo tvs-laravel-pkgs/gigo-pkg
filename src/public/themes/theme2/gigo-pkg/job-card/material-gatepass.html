@@ -55,15 +55,15 @@
                                                         <div class="col-md-4">
                                                             <div class="mgpass-address-left-wrap">
                                                                 <span class="date">
-                                                                    Created On : {{view_metrial_gate_pass.created_at}}
+                                                                    Created On : {{job_card.created_at}}
                                                                 </span>                                                               
                                                                 <ul class="grey-list d-block">
                                                                     <li>
                                                                         <div class="grey-box">
-                                                                            <div class="grey-box-header">Status : {{view_metrial_gate_pass.status.name}}</div>
+                                                                            <div class="grey-box-header">Status : {{job_card.status.name}}</div>
                                                                         </div>
                                                                     </li>
-                                                                </ul>                                                                                                             
+                                                                </ul>                      
                                                             </div>
                                                         </div><!-- Column -->
                                                     </div><!-- Row -->
@@ -158,7 +158,7 @@
                                             </div><!-- Row -->
                                         </div>
                                         <div class="text-center pt-40"> 
-                                            <a class="btn btn-red">Add Another Material Gate Pass</a>
+                                            <a href="#!/gigo-pkg/job-card/material-outward/{{job_card.id}}" class="btn btn-red">Add Another Material Gate Pass</a>
                                         </div>
                                     </div><!-- Column -->
 

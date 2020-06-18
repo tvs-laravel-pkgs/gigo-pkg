@@ -3,7 +3,8 @@
 namespace Abs\GigoPkg;
 use App\Config;
 use App\Http\Controllers\Controller;
-use App\JobCard;
+use Abs\GigoPkg\JobCard;
+use App\Vendor;
 use App\QuoteType;
 use App\ServiceOrderType;
 use App\ServiceType;
@@ -363,5 +364,15 @@ class JobCardController extends Controller {
 			'success' => true,
 			'job_cards' => $job_cards,
 		]);
+	}
+
+	public function getVendorCodeSearchList(Request $request) {
+		return Vendor::searchVendorCode($request);
+	}
+
+	public function getVendorDetails(Request $request) {
+		
+		$this->data['vendor_details'] = Vendor::with(['addresses'])->select('vendors.*')->where('vendors.id',$request->id)->first();
+		return response()->json($this->data);
 	}
 }
