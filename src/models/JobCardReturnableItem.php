@@ -15,6 +15,7 @@ class JobCardReturnableItem extends Model {
 	public $timestamps = true;
 	protected $fillable = [
 		"job_card_id",
+		"item_name",
 		"item_description",
 		"item_make",
 		"item_model",

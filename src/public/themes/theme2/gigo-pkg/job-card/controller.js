@@ -774,6 +774,7 @@ app.component('jobCardReturnableItemForm', {
                     }
                     $scope.job_card = res.job_card;
                     $scope.returnable_item = res.returnable_item;
+                    console.log($scope.returnable_item);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
