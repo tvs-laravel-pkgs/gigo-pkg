@@ -30,7 +30,9 @@
                                         <h5 class="title-red border-bottom">
                                             Split Order
                                         </h5>
-                                        <div class="panel-group" id="accordion">
+                                        <div class="panel-group tabbable" id="accordion">
+
+
                                             <div class="panel panel-default type-4">
                                                 <div class="panel-heading">
                                                     <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
@@ -64,8 +66,8 @@
                                                                                 <th class="text-right">Total Amount</th>
                                                                             </tr>
                                                                         </thead>
-                                                                        <tbody>
-                                                                            <tr  draggable="true"  data-itemid="labour.id"  data-split_id="split_order_type.id"  ng-if="labour.split_order_type_id == null" ng-repeat="(key,labour) in labour_details">
+                                                                        <tbody class="connectedSortable">
+                                                                            <tr  data-itemid="labour.id"  data-split_id="split_order_type.id"  ng-if="labour.split_order_type_id == null" ng-repeat="(key,labour) in labour_details">
                                                                                 <td>Labour</td>
                                                                                 <td>{{labour.name}}</td>
                                                                                 <td>{{labour.qty}}</td>
@@ -78,7 +80,7 @@
                                                                                 <td class="text-right" >{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
                                                                                 <td class="text-right">{{labour.total_amount}}</td>
                                                                             </tr>
-                                                                            <tr draggable="true"  data-itemid="part.id"  data-split_id="split_order_type.id"  ng-if="part.split_order_type_id == null" ng-repeat="(key,part) in part_details">
+                                                                            <tr data-itemid="part.id"  data-split_id="split_order_type.id"  ng-if="part.split_order_type_id == null" ng-repeat="(key,part) in part_details">
                                                                                 <td>Part</td>
                                                                                 <td>{{part.name}}</td>
                                                                                 <td>{{part.qty}}</td>
@@ -102,7 +104,7 @@
                                             </div><!-- Panel -->
                                             <div class="panel panel-default type-4" ng-repeat="(key,split_order_type) in extras.split_order_types">
                                                 <div class="panel-heading">
-                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse{{key}}">
+                                                    <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse{{key}}">
                                                         {{split_order_type.code}} - {{split_order_type.name}} -  {{split_order_type.total_items}} Items
                                                         <span class="arrow"></span>
                                                         <span class="title-right">
@@ -111,13 +113,13 @@
                                                         </span>
                                                     </a>
                                                 </div>
-                                                <div id="collapse{{key}}" class="panel-collapse collapse">
+                                                <div id="collapse{{key}}" class="panel-collapse collapse in">
                                                     <div class="panel-body">
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="table-responsive">
-                                                                    <div id="table2" class="bitacoratable">
-                                                                    <table id="table2" class="table split-order-table table-form childgrid"  >
+                                                                    <div id="table{{key}}" class="bitacoratable">
+                                                                    <table id="table{{key}}" class="table split-order-table table-form childgrid"  >
                                                                         <thead>
                                                                             <tr>
                                                                                 <th>Item Type</th>
@@ -133,8 +135,34 @@
                                                                                 <th class="text-right">Total Amount</th>
                                                                             </tr>
                                                                         </thead>
-                                                                        <tbody>
-                                                                            <tr droppable="true"  data-itemid="part.id"  data-split_id="split_order_type.id"  class="listitems" ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(key,Labour) in labour_details">
+                                                                        <tbody class="connectedSortable">
+                                                                            <tr  >
+                                                                                <td>Part</td>
+                                                                                <td class="ng-binding">sample | sample</td>
+                                                                                <td class="ng-binding">3.00</td>
+                                                                                <td class="text-right ng-binding">200.00</td>
+                                                                                <td class="text-right">0.00</td>
+                                                                                <td class="text-right ng-binding">600.00</td>
+                                                                                <td class="text-right ng-binding">108.00</td>
+                                                                                <td class="text-right ng-binding">54.00</td>
+                                                                                <td class="text-right ng-binding">54.00</td>
+                                                                                <td class="text-right ng-binding">0.00</td>
+                                                                                <td class="text-right ng-binding">708.00</td>
+                                                                            </tr>
+                                                                            <tr  >
+                                                                                <td>Part</td>
+                                                                                <td class="ng-binding">sample | sample</td>
+                                                                                <td class="ng-binding">3.00</td>
+                                                                                <td class="text-right ng-binding">200.00</td>
+                                                                                <td class="text-right">0.00</td>
+                                                                                <td class="text-right ng-binding">600.00</td>
+                                                                                <td class="text-right ng-binding">108.00</td>
+                                                                                <td class="text-right ng-binding">54.00</td>
+                                                                                <td class="text-right ng-binding">54.00</td>
+                                                                                <td class="text-right ng-binding">0.00</td>
+                                                                                <td class="text-right ng-binding">708.00</td>
+                                                                            </tr>
+                                                                            <tr  data-itemid="part.id"  data-split_id="split_order_type.id"  class="listitems" ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(key,Labour) in labour_details">
                                                                                 <td>Labour</td>
                                                                                 <td>{{labour.name}}</td>
                                                                                 <td>{{labour.qty}}</td>
@@ -147,7 +175,7 @@
                                                                                 <td class="text-right" >{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
                                                                                 <td class="text-right">{{labour.total_amount}}</td>
                                                                             </tr>
-                                                                            <tr draggable="true"   ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(key,part) in part_details">
+                                                                            <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(key,part) in part_details">
                                                                                 <td>Part</td>
                                                                                 <td>{{part.name}}</td>
                                                                                 <td>{{part.qty}}</td>

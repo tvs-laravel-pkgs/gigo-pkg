@@ -690,6 +690,37 @@ class JobCardController extends Controller {
 		}
 	}
 
+
+	//BAY VIEW
+	public function getBayViewData(Request $r) {
+		//dd($r->all());
+		try {
+			$job_card = JobCard::with([
+				'bay',
+				'status',
+			])
+				->find($r->id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Card Not Found!'],
+				]);
+			}
+			return response()->json([
+				'success' => true,
+				'job_card' => $job_card,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+
 	//SCHEDULE
 	public function LabourAssignmentFormData(Request $r) {
 		// dd($r->all());

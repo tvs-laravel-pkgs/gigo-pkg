@@ -1971,6 +1971,52 @@ app.component('jobCardBillDetailView', {
     }
 });
 
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//Bay Details
+app.component('jobCardBayView', {
+    templateUrl: job_card_bay_view_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        console.log('job_card '+$scope.job_card_id);
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/job-card/bay-view/get',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_card_id = $routeParams.job_card_id;
+                    $scope.job_card = res.job_card;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+    }
+});
 
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
@@ -2053,7 +2099,58 @@ app.component('jobCardSplitOrder', {
                 });
         }
         $scope.fetchData();
+       /* var c = {};
+        $("#contact-list tr").draggable({
+                helper: "clone",
+                start: function(event, ui) {
+                    c.tr = this;
+                    c.helper = ui.helper;
+                }
+        });
+        $("#guest-list tr").droppable({
+            drop: function(event, ui) {
+                var guest = ui.draggable.text();
+                var copy = $(this);
+               var copy = $(this);
+                copy.clone(true).find(":input").val("").end().insertAfter(copy);
+                $(c.tr).remove();
+                $(c.helper).remove();
+            }
+           });*/
 
+        $tabs = $(".tabbable");
+
+         $( "tbody.connectedSortable" )
+        .sortable({
+            connectWith: ".connectedSortable",
+            items: "> tr",
+            appendTo: $tabs,
+            helper:"clone",
+            zIndex: 999990,
+            start: function(event, ui){ 
+                console.log(ui);
+                
+                $tabs.addClass("dragging") },
+            stop: function(event, ui){
+              console.log(event);
+            $tabs.removeClass("dragging") }
+        })
+        .disableSelection();
+    
+        var $tab_items = $( ".panel-group > tbody", $tabs ).droppable({
+            accept: ".connectedSortable tr",
+            hoverClass: "ui-state-hover",
+            over: function( event, ui ) {
+            var $item = $( this );
+           // $item.find("a").tab("show");
+
+            },
+            drop: function( event, ui ) {
+                console.log('drop');
+            return false;
+            }
+        });
+        
 
 
  /*$tabs = $(".tabbable");
