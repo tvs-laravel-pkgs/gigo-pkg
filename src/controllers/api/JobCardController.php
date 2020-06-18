@@ -2886,6 +2886,8 @@ class JobCardController extends Controller {
 	public function getMeterialGatePassOutwardDetail(Request $request) {
 		//dd($request->all());
 		try {
+			if(isset($request->gate_pass_id))
+			{
 			$gate_pass = GatePass::with([
 				'gatePassDetail',
 				'gatePassDetail.vendorType',
@@ -2902,6 +2904,17 @@ class JobCardController extends Controller {
 			}
 
 			$gate_pass_item = GatePassItem::where('gate_pass_id', $request->gate_pass_id)->get();
+
+			$gate_pass_detail = GatePassDetail::select('vendor_id')->where('gate_pass_id',$gate_pass->id)->first();
+			$vendor = Vendor::select('id','code')->where('id',$gate_pass_detail->vendor_id)->first();
+
+		    }
+		    else
+		    {
+		    	$gate_pass = '';
+		    	$gate_pass_item = [];
+		    	$vendor = [];
+		    }
 
 			$my_job_card_details = Employee::select([
 				'job_cards.job_card_number as jc_number',
@@ -2930,6 +2943,7 @@ class JobCardController extends Controller {
 				'gate_pass' => $gate_pass,
 				'my_job_card_details' => $my_job_card_details,
 				'gate_pass_item' => $gate_pass_item,
+				'vendor' => $vendor,
 			]);
 
 		} catch (Exception $e) {
@@ -2943,7 +2957,7 @@ class JobCardController extends Controller {
 
 	//Material GatePass Detail Save
 	public function saveMaterialGatePassDetail(Request $request) {
-		// dd($request->all());
+		 //dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -3003,6 +3017,8 @@ class JobCardController extends Controller {
 			]);
 			$gate_pass->type_id = 8281; //Material Gate Pass
 			$gate_pass->status_id = $status->id; //Gate Out Pending
+			$gate_pass->company_id = Auth::user()->company_id;
+			$gate_pass->job_card_id = $request->job_card_id;
 			$gate_pass->fill($request->all());
 			$gate_pass->save();
 
@@ -3010,6 +3026,8 @@ class JobCardController extends Controller {
 				'gate_pass_id' => $request->gate_pass_id,
 				'work_order_no' => $request->work_order_no,
 			]);
+			$gate_pass_detail->gate_pass_id = $gate_pass->id;
+			$gate_pass_detail->work_order_no = $request->work_order_no;
 			$gate_pass_detail->vendor_type_id = $request->vendor_type_id;
 			$gate_pass_detail->vendor_id = $request->vendor_id;
 			$gate_pass_detail->vendor_contact_no = $request->vendor_contact_no;

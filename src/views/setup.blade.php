@@ -1270,6 +1270,11 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Job Card Material Outward',
 
 	    }).
+	    when('/gigo-pkg/job-card/material-outward/:job_card_id', {
+	        template: '<job-card-material-outward-form></job-card-material-outward-form>',
+	        title: 'Job Card Material Outward',
+
+	    }).
 	    when('/gigo-pkg/job-card/road-test-observation/:job_card_id', {
 	        template: '<job-card-road-test-observation-form></job-card-road-test-observation-form>',
 	        title: 'Job Card Road Test Observation',

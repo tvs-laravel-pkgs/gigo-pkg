@@ -944,6 +944,8 @@ app.component('jobCardMaterialOutwardForm', {
                     $scope.gate_pass_item = res.gate_pass_item;
                     $scope.make_list = res.make_list;
                     $scope.model_list = res.model_list;
+                    self.vendor = res.vendor;
+                    $scope.job_card_id = $routeParams.job_card_id;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -951,6 +953,60 @@ app.component('jobCardMaterialOutwardForm', {
                 });
         }
         $scope.fetchData();
+
+         //GET VEHICLE MODEL LIST
+        self.searchVendorCode = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getVendorCodeSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                            console.log(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $scope.selectedVendorCode = function(id) {
+            if (id) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getVendorDetails'], {
+                                id: id,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                            $("#ven_name").text(response.data.vendor_details.name);
+                            $('.address').text(response.data.vendor_details.addresses[0].address_line1+" ,"+response.data.vendor_details.addresses[0].address_line2+" ,"+response.data.vendor_details.addresses[0].pincode);
+                            if(response.data.vendor_details.type_id == 121)
+                            {
+                                $("#type_yes").prop('checked', true);
+                                $("#type_no").prop('checked', false);
+                            }
+                            else
+                            {
+                               $("#type_no").prop('checked', true);
+                               $("#type_yes").prop('checked', false);
+                            }
+
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+
 
         $scope.addNewItem = function() {
             $scope.gate_pass_item.push({

@@ -256,6 +256,8 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/job-card/save', 'JobCardController@saveJobCard')->name('saveJobCard');
 	Route::get('/job-card/delete', 'JobCardController@deleteJobCard')->name('deleteJobCard');
 	Route::get('/job-card/get-filter-data', 'JobCardController@getJobCardFilterData')->name('getJobCardFilterData');
+	Route::post('/job-card/get-vendor', 'JobCardController@getVendorCodeSearchList')->name('getVendorCodeSearchList');
+	Route::post('/job-card/get-vendor-details', 'JobCardController@getVendorDetails')->name('getVendorDetails');
 
 	//Repair Order Types
 	Route::get('/repair-order-type/get-list', 'RepairOrderTypeController@getRepairOrderTypeList')->name('getRepairOrderTypeList');
