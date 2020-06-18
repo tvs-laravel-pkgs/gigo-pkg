@@ -18,13 +18,13 @@ class VehicleOwner extends Model {
 		["vehicle_id", "customer_id", "from_date", "ownership_id"]
 	;
 
-	public function getFromDateAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y', strtotime($value));
-	}
+	// public function getFromDateAttribute($value) {
+	// 	return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	// }
 
-	public function setFromDateAttribute($date) {
-		return $this->attributes['from_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
-	}
+	// public function setFromDateAttribute($date) {
+	// 	return $this->attributes['from_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	// }
 
 	public function customer() {
 		return $this->belongsTo('App\Customer', 'customer_id');
