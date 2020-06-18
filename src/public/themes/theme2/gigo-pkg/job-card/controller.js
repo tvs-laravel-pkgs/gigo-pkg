@@ -1827,6 +1827,54 @@ app.component('jobCardScheduleForm', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
+
+        $scope.saveJobStatus = function() {
+            // console.log(repair_order_id);
+
+            alert($routeParams.job_card_id);
+
+            $('.assign_mechanic_' + repair_order_id).button('loading');
+            $.ajax({
+                    url: base_url + '/api/job-card/get-mechanic',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                        repair_order_id: repair_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.job_card = res.job_card;
+                    $scope.repair_order = res.repair_order;
+                    $scope.employee_details = res.employee_details;
+                    angular.forEach($scope.job_card.job_order.job_order_repair_orders, function(value, key) {
+                        if (value.repair_order_mechanics && value.repair_order_id == repair_order_id) {
+                            angular.forEach(value.repair_order_mechanics, function(value, key) {
+                                setTimeout(function() {
+                                    $scope.selectedEmployee(value.mechanic_id);
+                                }, 500);
+                            });
+                        } else {
+                            $('#selectedMachanic').val('');
+                        }
+                    });
+                    $('#assign_labours').modal('show');
+                    // $("#selectedMachanic").;
+                    $('.assign_mechanic_' + repair_order_id).button('reset');
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $('.assign_mechanic_' + repair_order_id).button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
     }
 });
 
