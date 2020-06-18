@@ -1506,10 +1506,17 @@ class JobCardController extends Controller {
 
 			DB::beginTransaction();
 
-			$job_card = JobCard::where('id', $request->id)
+			$job_card = JobCard::find($request->id);
+			$job_card->status_id = 8223; //Ready for Billing
+			$job_card->updated_by = Auth::user()->id;
+			$job_card->updated_at = Carbon::now();
+			$job_card->save();
+
+			Bay::where('job_order_id', $job_card->id)
 				->update([
-					'status_id' => 8223, //Ready for Billing
-					'updated_by' => Auth::user()->id,
+					'status_id' => 8240, //Free
+					'job_order_id' => NULL, //Free
+					'updated_by_id' => Auth::user()->id,
 					'updated_at' => Carbon::now(),
 				]);
 
