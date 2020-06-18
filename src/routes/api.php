@@ -12,13 +12,22 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		Route::get('service-type/options', ServiceTypeController::class . '@options');
 
+		Route::group(['prefix' => 'warranty-job-order-request'], function () {
+			$controller = 'WarrantyJobOrderRequest';
+			Route::get('index', $controller . 'Controller@index');
+			Route::get('read/{id}', $controller . 'Controller@read');
+			Route::post('save', $controller . 'Controller@save');
+			Route::post('remove', $controller . 'Controller@remove');
+			Route::get('options', $controller . 'Controller@options');
+		});
+
 		Route::group(['prefix' => 'vehicle-primary-application'], function () {
-			$controller = 'VehiclePrimaryApplicationController';
-			Route::get('index', $controller . '@index');
-			Route::get('read/{id}', $controller . '@read');
-			Route::post('save', $controller . '@save');
-			Route::post('remove', $controller . '@remove');
-			Route::get('options', $controller . '@options');
+			$controller = 'VehiclePrimaryApplication';
+			Route::get('index', $controller . 'Controller@index');
+			Route::get('read/{id}', $controller . 'Controller@read');
+			Route::post('save', $controller . 'Controller@save');
+			Route::post('remove', $controller . 'Controller@remove');
+			Route::get('options', $controller . 'Controller@options');
 		});
 
 		Route::group(['prefix' => 'vehicle-secondary-application'], function () {
