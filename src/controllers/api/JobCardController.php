@@ -1521,7 +1521,10 @@ class JobCardController extends Controller {
 	}
 
 	public function getRoadTestObservation(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['status','jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1555,7 +1558,10 @@ class JobCardController extends Controller {
 	}
 
 	public function getExpertDiagnosis(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['status','jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1585,7 +1591,10 @@ class JobCardController extends Controller {
 	}
 
 	public function getDmsCheckList(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['status','jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1624,7 +1633,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getGateInDetail(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1660,7 +1673,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getVehicleDetail(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1691,7 +1708,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getCustomerDetail(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1728,7 +1749,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getOrderDetail(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1773,7 +1798,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getInventory(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1809,7 +1838,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getCaptureVoc(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1856,7 +1889,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getEstimateStatus(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1889,7 +1926,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getEstimate(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1962,7 +2003,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getPartsIndent(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -2009,7 +2054,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getScheduleMaintenance(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -2062,7 +2111,11 @@ class JobCardController extends Controller {
 	}
 
 	public function getPayableLabourPart(Request $request) {
-		$job_card = JobCard::with(['status'])->find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -2150,7 +2203,11 @@ class JobCardController extends Controller {
 	public function getVehicleInspection(Request $request) {
 		try {
 
-			$job_card = JobCard::with(['status'])->find($request->id);
+			$job_card = JobCard::with(['jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status'])->find($request->id);
 			if (!$job_card) {
 				return response()->json([
 					'success' => false,
@@ -2756,6 +2813,10 @@ class JobCardController extends Controller {
 		try {
 			$view_metrial_gate_pass = JobCard::with([
 				'status',
+				'jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
 				'gatePasses' => function ($query) {
 					$query->where('gate_passes.type_id', 8281); //MATRIAL GATE PASS
 				},
