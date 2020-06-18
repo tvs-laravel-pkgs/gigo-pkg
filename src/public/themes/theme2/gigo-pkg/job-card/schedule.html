@@ -42,11 +42,11 @@
                                                     <span class="title">{{job_order_repair_order.repair_order.name}}</span>
                                                 </div>
                                                 <div class="schedules-right-wrap">
-                                                    <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id == 8181" data-toggle="modal" data-target="#assign_labours" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Assign</a>
+                                                    <button class="btn btn-secondary-dark btn-square assign_mechanic_{{job_order_repair_order.repair_order.id}}" ng-show="job_order_repair_order.status_id == 8181" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Assign</button>
                                                     <!-- ng-click="assign_mechanic(job_order_repair_order.repair_order.code,job_order_repair_order.repair_order.name)" -->
                                                     <a class="btn btn-bordered btn-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id !=8182" ng-click="viewTimeLog(job_order_repair_order.id)" data-target="#view_time_log_modal" data-toggle="modal">View Time Log</a>
                                                     <a href="#!/gigo-pkg/job-card/labour-review/{{job_card_id}}/{{job_order_repair_order.id}}" class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185">Review</a>
-                                                    <a class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181" data-toggle="modal" data-target="#assign_labours" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Edit</a>
+                                                    <a class="btn btn-secondary-dark btn-square assign_mechanic_{{job_order_repair_order.repair_order.id}}" ng-show="job_order_repair_order.status_id != 8181" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Edit</a>
                                                 </div>
                                             </div><!-- Left Wrap -->
                                             <div class="right-wrap">
@@ -63,7 +63,7 @@
                                                             <span class="title">{{repair_order_mechanic.mechanic.name}}</span>
                                                             <span class="info">
                                                                 <a ng-click="getMechanicTimeLog(repair_order_mechanic.id,job_order_repair_order.repair_order.id)" data-toggle="modal" data-target="#time_log_modal">
-                                                                  {{repair_order_mechanic.status.name}} | {{repair_order_mechanic.total_duration}} |
+                                                                    {{repair_order_mechanic.status.name}} | {{repair_order_mechanic.total_duration}} <br>
                                                                     <span class="color-red">
                                                                         View Time Log
                                                                     </span>
@@ -142,7 +142,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title">View Time Log</h5>
+                <h5 class="modal-title">View Time Log11</h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
                 <div class="time-log-modal">
@@ -169,10 +169,13 @@
                             <tbody>
                                 <tr ng-repeat="(key,repair_order_mechanic_time_log) in repair_order_mechanic_time_logs">
                                     <td>{{repair_order_mechanic_time_log.date}}</td>
-                                    <td>{{repair_order_mechanic_time_log.start_time}}</td>
-                                    <td>{{repair_order_mechanic_time_log.end_time}} {{repair_order_mechanic_time_log.reason.name}}
+                                    <td>{{repair_order_mechanic_time_log.start_time}} {{key == 0 ? 'Started' : 'Resumed' }}</td>
+                                    <td>{{repair_order_mechanic_time_log.end_time}} {{repair_order_mechanic_time_log.end_time != '-' ? repair_order_mechanic_time_log.reason.name : ''}}
                                     </td>
                                     <td>{{repair_order_mechanic_time_log.duration_difference}}</td>
+                                </tr>
+                                <tr ng-if="repair_order_mechanic_time_logs.length == '0'">
+                                    <td colspan="4" class="text-center">No Worklog found!</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -229,9 +232,9 @@
                                                     <tbody>
                                                         <tr ng-repeat="(key,mechanic_time_log) in repair_order_mechanic.mechanic_time_logs">
                                                             <td>{{mechanic_time_log.date}}</td>
-                                                            <td>{{mechanic_time_log.start_time}}</td>
+                                                            <td>{{mechanic_time_log.start_time}} {{key == 0 ? 'Started' : 'Resumed' }}</td>
                                                             <td>{{mechanic_time_log.end_time ? mechanic_time_log.end_time : '-'}}
-                                                                {{mechanic_time_log.reason.name}}
+                                                               {{mechanic_time_log.end_time != '-' ? mechanic_time_log.reason.name : ''}}
                                                             </td>
                                                             <td>{{mechanic_time_log.duration_difference ? mechanic_time_log.duration_difference : '-'}}</td>
                                                         </tr>
