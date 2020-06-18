@@ -221,6 +221,12 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('jobcard/estimate/get', 'JobCardController@getEstimate');
 		Route::post('jobcard/estimate-status/get', 'JobCardController@getEstimateStatus');
 		Route::post('jobcard/outward-item/delete', 'JobCardController@deleteOutwardItem');
+		Route::post('jobcard/gate-in-detial/get', 'JobCardController@getGateInDetail');
+		Route::post('jobcard/vehicle-detial/get', 'JobCardController@getVehicleDetail');
+		Route::post('jobcard/customer-detial/get', 'JobCardController@getCustomerDetail');
+		Route::post('jobcard/order-detial/get', 'JobCardController@getOrderDetail');
+		Route::post('jobcard/inventory/get', 'JobCardController@getInventory');
+		Route::post('jobcard/capture-voc/get', 'JobCardController@getCaptureVoc');
 
 		//Material-GatePass Details Save
 		Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');
