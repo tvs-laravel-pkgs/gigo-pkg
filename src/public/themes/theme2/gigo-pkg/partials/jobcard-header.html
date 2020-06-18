@@ -12,18 +12,15 @@
         <div class="page-tab-form-top-left-info">
             <span class="page-tab-form-top-left-info-content">
                 <b>
-                    {{job_card.job_card_number}}
+                   JC No : {{job_card.job_card_number}} |
                 </b>
-                <a class="page-tab-form-top-left-info-link" data-toggle="modal" data-target="#search_vehicle_modal" style="margin-left: 0;">
-                    <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
-                </a>
-                <span ng-if="job_order.vehicle.model.model_number">
-                    {{job_card.vehicle.registration_number}} | {{job_order.vehicle.model.model_number}}
+                <span>
+                    {{job_card.job_order.vehicle.registration_number}} | {{job_card.job_order.vehicle.model.model_number}}
                 </span>
-                <span ng-if="job_order.driver_name">
-                    | {{job_order.driver_name}}
+                <span>
+                    | {{job_card.job_order.driver_name}}
                 </span>
-                | {{job_order.date}}, {{job_order.time}}
+                | {{job_card.created_at}}
             </span>
         </div>
     </div><!-- Page Tab Form Top Left -->
