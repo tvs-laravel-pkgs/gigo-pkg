@@ -208,7 +208,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('save-my-job-card', 'JobCardController@saveMyJobCard');
 
 		//JOB CARD LABOUR REVIEW
-		Route::get('get-labour-review/{id}', 'JobCardController@getLabourReviewData');
+		Route::post('get-labour-review', 'JobCardController@getLabourReviewData');
 
 		//JOB CARD RETURNABLE ITEM SAVE
 		Route::post('labour-review-save', 'JobCardController@LabourReviewSave');

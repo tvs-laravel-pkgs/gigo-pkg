@@ -62,7 +62,7 @@ app.component('jobCardTableList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'date', },
+                { data: 'created_at', },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'customer_name', name: 'customers.name' },
@@ -724,7 +724,7 @@ app.component('jobCardReturnableItemList', {
                     $scope.returnable_items = res.returnable_items;
                     $scope.returnable_item_attachement_path = res.attachement_path;
                     console.log(res.returnable_items);
-                    console.log(res.attachement_path);
+                    console.log($scope.returnable_item_attachement_path);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -774,6 +774,7 @@ app.component('jobCardReturnableItemForm', {
                     }
                     $scope.job_card = res.job_card;
                     $scope.returnable_item = res.returnable_item;
+                    console.log($scope.returnable_item);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -793,20 +794,18 @@ app.component('jobCardReturnableItemForm', {
                     'job_card_returnable_items[0][item_description]': {
                         required: true,
                     },
-                    'item_make': {
-                        required: true,
+                    'job_card_returnable_items[0][item_make]': {
+                        maxlength: 191,
                     },
-                    'item_model': {
-                        required: true,
+                    'job_card_returnable_items[0][item_model]': {
+                        maxlength: 191,
                     },
-                    'item_serial_no': {
-                        required: true,
-                    },
-                    'qty': {
-                        required: true,
+                    'job_card_returnable_items[0][item_serial_no]': {
+                        maxlength: 191,
                     },
                     'job_card_returnable_items[0][qty]': {
                         required: true,
+                        number:true,
                     },
                 },
                 messages: {
@@ -1796,7 +1795,7 @@ app.component('jobCardScheduleForm', {
                 });
         }
 
-        $scope.viewTimeLog = function(repair_order_id) {
+        $scope.viewTimeLog = function(job_order_repair_order_id) {
             // console.log(repair_order_id);
             // return;
             $.ajax({
@@ -1804,7 +1803,7 @@ app.component('jobCardScheduleForm', {
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id,
-                        repair_order_id: repair_order_id
+                        job_order_repair_order_id: job_order_repair_order_id
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -1824,6 +1823,103 @@ app.component('jobCardScheduleForm', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
+    }
+});
+
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//Schedule Review
+app.component('jobCardLabourReview', {
+    templateUrl: job_card_labour_review_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        $scope.job_order_repair_order_id = $routeParams.job_order_repair_order_id;
+
+        //FETCH DATA
+        $scope.fetchLabourReviewData = function() {
+            // console.log(1);
+            $.ajax({
+                    url: base_url + '/api/get-labour-review',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                        job_order_repair_order_id: $routeParams.job_order_repair_order_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res);
+                    $scope.labour_review_data = res.labour_review_data;
+                    $scope.job_order_repair_order = res.job_order_repair_order;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchLabourReviewData();
+
+
+        var form_id = '#form';
+        var v = jQuery(form_id).validate({
+            ignore: '',
+            rules: {
+                'status_id': {
+                    required: true,
+                    maxlength: 4,
+                },
+                'observation': {
+                    required: true,
+                },
+                'action_taken': {
+                    required: true,
+                },
+            },
+            submitHandler: function(form) {
+                let formData = new FormData($(form_id)[0]);
+                $('.submit').button('loading');
+                $.ajax({
+                        url: base_url + '/api/labour-review-save',
+                        method: "POST",
+                        data: formData,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                        processData: false,
+                        contentType: false,
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            $('.submit').button('reset');
+                            showErrorNoty(res);
+                            return;
+                        }
+                        custom_noty('success', res.message);
+                        $location.path('/gigo-pkg/job-card/schedule/' + $routeParams.job_card_id);
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        $('.submit').button('reset');
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
+        });
     }
 });
 
@@ -1911,10 +2007,45 @@ app.component('jobCardSplitOrder', {
                         showErrorNoty(res);
                         return;
                     }
-                    console.log(res);
+                    //console.log(res);
                     $scope.job_card = res.job_card;
+                    $scope.labour_details = res.labour_details;
+                    $scope.part_details = res.part_details;
                     $scope.extras = res.extras;
-                    console.log($scope.job_card);
+                    $scope.unassigned_total_amount = res.unassigned_total_amount;
+                    $scope.unassigned_total_count = res.unassigned_total_count;
+                    //console.log($scope.job_card);
+                    //console.log($scope.job_card);
+                    //console.log($scope.extras);
+                    //console.log($scope.labour_details);
+                    //console.log($scope.part_details);
+                   // var unassigned_total_amount=0;
+                    // var unassigned_total_items=0;
+                    // var labour_ids=[];
+                    // var part_ids =[];
+                    angular.forEach($scope.extras.split_order_types, function(split_order, key) {
+                        split_order.total_amount=0;
+                        split_order.total_items=0;
+                        angular.forEach($scope.labour_details, function(labour, key1) {
+                            if(split_order.id==labour.split_order_type_id){
+                                split_order.total_amount +=parseInt(labour.total_amount);
+                                split_order.total_items +=1;
+                            }
+                        });
+
+                        angular.forEach($scope.part_details, function(part, key2) {
+                           if(split_order.id==part.split_order_type_id){
+                                split_order.total_amount +=parseInt(part.total_amount);
+                                split_order.total_items +=1; 
+                            }    
+                        });
+
+                    });
+                    // console.log(part_ids);
+                    // console.log(labour_ids);
+                    //$scope.unassigned_total_amount = parseFloat(unassigned_total_amount).toFixed(2);
+                    //$scope.unassigned_total_items = unassigned_total_items;*/
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1924,7 +2055,132 @@ app.component('jobCardSplitOrder', {
         $scope.fetchData();
 
 
-        function dragstart_handler(ev) {
+
+ /*$tabs = $(".tabbable");
+
+    $('.nav-tabs a').click(function(e) {
+        e.preventDefault();
+        $(this).tab('show');
+    })
+    
+    $( "tbody.connectedSortable" )
+        .sortable({
+            connectWith: ".connectedSortable",
+            items: "> tr:not(:first)",
+            appendTo: $tabs,
+            helper:"clone",
+            zIndex: 999990,
+            start: function(){ $tabs.addClass("dragging") },
+            stop: function(){ $tabs.removeClass("dragging") }
+        })
+        .disableSelection()
+    ;
+
+
+    $("#table1 .childgrid tr, #table2 .childgrid tr").draggable({
+      helper: function(){
+          var selected = $('.childgrid tr.selectedRow');
+        if (selected.length === 0) {
+          selected = $(this).addClass('selectedRow');
+        }
+        var container = $('<div/>').attr('id', 'draggingContainer');
+    container.append(selected.clone().removeClass("selectedRow"));
+    return container;
+      }
+ });
+
+$("#table1 .childgrid, #table2 .childgrid").droppable({
+    drop: function (event, ui) {
+    $(this).append(ui.helper.children());
+    $('.selectedRow').remove();
+    }
+});
+
+$(document).on("click", ".childgrid tr", function () {
+    $(this).toggleClass("selectedRow");
+});*/
+
+    
+    /*var $tab_items = $( ".nav-tabs > li", $tabs ).droppable({
+      accept: ".connectedSortable tr",
+      hoverClass: "ui-state-hover",
+      over: function( event, ui ) {
+        var $item = $( this );
+        $item.find("a").tab("show");
+        
+      },
+      drop: function( event, ui ) {
+        return false;
+      }
+    });*/
+
+        //$(".listitems" ).draggable();
+
+                 /*   var index_value = ui.item.index();
+                    var count_value = ui.item.closest("tbody").find(".tr_scheme_priorities").length;
+                    var inc_index_value = index_value + 1;
+                    // console.log(' == total ===' + count_value);
+    //DOWN
+                    for (var i = inc_index_value; i < count_value; i++) {
+                        var scheme_type_id = ui.item.closest("tbody").find(".tr_scheme_priorities").eq(i).attr('data-scheme_type_id');
+                        var down_sorting_data = 'scheme_type_id=' + scheme_type_id + '&priority=' + i;
+                        // console.log(' == down === scheme_type_id ==' + scheme_type_id + ' == priority=' + i);
+                        $.ajax({
+                                url: update_scheme_type_priority_ajax_url,
+                                type: "POST",
+                                async: false,
+                                data: down_sorting_data,
+                                processData: false,
+                            })
+                            .done(function(data) {
+
+                            }).fail(function(xhr) {
+                                custom_noty('error', 'Something went wrong at server');
+                            });
+                    }
+    //UP
+                    for (var i = 0; i < index_value; i++) {
+                        var scheme_type_id = ui.item.closest("tbody").find(".tr_scheme_priorities").eq(i).attr('data-scheme_type_id');
+                        var up_sorting_data = 'scheme_type_id=' + scheme_type_id + '&priority=' + i;
+                        // console.log(' == up === scheme_type_id ==' + scheme_type_id + '===priority=' + i);
+                        $.ajax({
+                                url: update_scheme_type_priority_ajax_url,
+                                type: "POST",
+                                async: false,
+                                data: up_sorting_data,
+                                processData: false,
+                            })
+                            .done(function(data) {
+
+                            }).fail(function(xhr) {
+                                custom_noty('error', 'Something went wrong at server');
+                            });
+                    }
+//CURRENT
+                    var current_scheme_type_id = ui.item.attr('data-scheme_type_id');
+                    var current_data = 'scheme_type_id=' + current_scheme_type_id + '&priority=' + index_value;
+                    // console.log(' == current === scheme_type_id ==' + current_scheme_type_id + ' == priority=' + index_value);
+                    $.ajax({
+                            url: update_scheme_type_priority_ajax_url,
+                            type: "POST",
+                            async: false,
+                            data: current_data,
+                            processData: false,
+                        })
+                        .done(function(data) {
+                            if (data.success) {
+                                get_list();
+                                $('#sortable tbody').sortable('option', 'disabled', false);
+                                custom_noty('success', 'Scheme Priorities updated successfully');
+                            } else {
+                                custom_noty('error', 'Something went wrong at server');
+                            }
+
+                        }).fail(function(xhr) {
+                            custom_noty('error', 'Something went wrong at server');
+                        });*/
+
+        /*function dragstart_handler(ev) {
             // Add the target element's id to the data transfer object
             ev.dataTransfer.setData("application/my-app", ev.target.id);
             ev.dataTransfer.dropEffect = "move";
@@ -1940,7 +2196,7 @@ app.component('jobCardSplitOrder', {
             // Get the id of the target and add the moved element to the target's DOM
             const data = ev.dataTransfer.getData("application/my-app");
             ev.target.appendChild(document.getElementById(data));
-        }
+        }*/
     }
 });
 //---------------------------------------------------------------------------------------------
