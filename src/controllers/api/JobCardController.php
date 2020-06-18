@@ -691,7 +691,6 @@ class JobCardController extends Controller {
 		}
 	}
 
-
 	//BAY VIEW
 	public function getBayViewData(Request $r) {
 		//dd($r->all());
@@ -720,7 +719,6 @@ class JobCardController extends Controller {
 			]);
 		}
 	}
-
 
 	//SCHEDULE
 	public function LabourAssignmentFormData(Request $r) {
@@ -1484,6 +1482,52 @@ class JobCardController extends Controller {
 		}
 	}
 
+	public function updateJobCardStatus(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'id' => [
+					'required',
+					'integer',
+					'exists:job_cards,id',
+				],
+
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$job_card = JobCard::where('id', $request->id)
+				->update([
+					'status_id' => 8223, //Ready for Billing
+					'updated_by' => Auth::user()->id,
+					'updated_at' => Carbon::now(),
+				]);
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Jobcard Updated Successfully!!',
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
 	public function LabourReviewSave(Request $request) {
 		// dd($request->all());
 		try {
@@ -2933,35 +2977,32 @@ class JobCardController extends Controller {
 	public function getMeterialGatePassOutwardDetail(Request $request) {
 		//dd($request->all());
 		try {
-			if(isset($request->gate_pass_id))
-			{
-			$gate_pass = GatePass::with([
-				'gatePassDetail',
-				'gatePassDetail.vendorType',
-				'gatePassDetail.vendor',
-				'gatePassDetail.vendor.addresses',
-			])
-				->find($request->gate_pass_id);
+			if (isset($request->gate_pass_id)) {
+				$gate_pass = GatePass::with([
+					'gatePassDetail',
+					'gatePassDetail.vendorType',
+					'gatePassDetail.vendor',
+					'gatePassDetail.vendor.addresses',
+				])
+					->find($request->gate_pass_id);
 
-			if (!$gate_pass) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Job Card Not found!',
-				]);
+				if (!$gate_pass) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Job Card Not found!',
+					]);
+				}
+
+				$gate_pass_item = GatePassItem::where('gate_pass_id', $request->gate_pass_id)->get();
+
+				$gate_pass_detail = GatePassDetail::select('vendor_id')->where('gate_pass_id', $gate_pass->id)->first();
+				$vendor = Vendor::select('id', 'code')->where('id', $gate_pass_detail->vendor_id)->first();
+
+			} else {
+				$gate_pass = '';
+				$gate_pass_item = [];
+				$vendor = [];
 			}
-
-			$gate_pass_item = GatePassItem::where('gate_pass_id', $request->gate_pass_id)->get();
-
-			$gate_pass_detail = GatePassDetail::select('vendor_id')->where('gate_pass_id',$gate_pass->id)->first();
-			$vendor = Vendor::select('id','code')->where('id',$gate_pass_detail->vendor_id)->first();
-
-		    }
-		    else
-		    {
-		    	$gate_pass = '';
-		    	$gate_pass_item = [];
-		    	$vendor = [];
-		    }
 
 			$my_job_card_details = Employee::select([
 				'job_cards.job_card_number as jc_number',
@@ -3004,7 +3045,7 @@ class JobCardController extends Controller {
 
 	//Material GatePass Detail Save
 	public function saveMaterialGatePassDetail(Request $request) {
-		 //dd($request->all());
+		//dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [
