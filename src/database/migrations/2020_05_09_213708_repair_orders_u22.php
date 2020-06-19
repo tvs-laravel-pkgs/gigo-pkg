@@ -24,7 +24,8 @@ class RepairOrdersU22 extends Migration {
 	 */
 	public function down() {
 		Schema::table('repair_orders', function (Blueprint $table) {
-			$table->dropColumn('warranty_amount');
+			$table->unsignedInteger('type_id')->nullable(false)->change();
+			$table->dropColumn('claim_amount');
 		});
 	}
 }

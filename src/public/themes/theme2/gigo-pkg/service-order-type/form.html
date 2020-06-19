@@ -66,14 +66,20 @@ Content Wrap -->
                                                 <input type="text" class="form-control required" ng-model="$ctrl.service_order_type.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
-                                        <!-- <div class="col-md-3">
+                                        <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Description
+                                                    Is Expert Diagnosis Required
+                                                    <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.service_type.description" name="description" placeholder="Enter Name" />
-                                            </div>
-                                        </div> -->
+                                                <div class="tab-switch">
+                                                    <md-switch ng-model="$ctrl.is_expert_diagnosis_required" aria-label="Switch 3" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
+                                                        {{ $ctrl.is_expert_diagnosis_required }}
+                                                    </md-switch>
+                                                    <input type="hidden" name="is_expert_diagnosis_required" value="{{$ctrl.is_expert_diagnosis_required}}">
+                                                </div>
+                                            </div><!-- Form Group -->
+                                        </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>

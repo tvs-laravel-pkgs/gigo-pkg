@@ -218,15 +218,14 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//GET BAY ASSIGNMENT FORM DATA
 		Route::post('job-card/bay/get-form-data', 'JobCardController@getBayFormData');
+		//SAVE BAY ASSIGNMENT
+		Route::post('job-card/bay/save', 'JobCardController@saveBay');
 
 		//GET BAY DATA
 		Route::post('job-card/bay-view/get', 'JobCardController@getBayViewData');
 
 		//MY JOB CARD
 		Route::post('get-my-job-card-list', 'MyJobCardController@getMyJobCardList');
-
-		//SAVE BAY ASSIGNMENT
-		Route::post('job-card/bay/save', 'JobCardController@saveBay');
 
 		//Jobcard View Labour Assignment
 		Route::post('job-card/labour-assignment/get-form-data', 'JobCardController@LabourAssignmentFormData');
