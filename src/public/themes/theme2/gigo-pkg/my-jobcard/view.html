@@ -95,7 +95,7 @@ Content Wrap -->
                                                         Start Time
                                                     </span>
                                                     <span class="data small" ng-repeat="(index, repair_order_mechanic) in job_order_repair_orders.repair_order_mechanics">
-                                                        {{repair_order_mechanic.mechanic_time_logs[0].start_date_time | date: 'h:mm:ss a'}}
+                                                        {{repair_order_mechanic.mechanic_time_logs[0].start_date_time | date: 'h:mm:ss A'}}
                                                     </span>
                                                 </div>
                                             </span>
@@ -245,7 +245,7 @@ Content Wrap -->
                     </tbody>
                 </table>
                 <span class="grey-box">
-                    Standard Hours <p id="estimation_work_hours">{{work_log.actual_hrs}}</p> hrs
+                    Standard Hours <p id="estimation_work_hours">{{work_log.actual_hrs}} hrs</p>
                 </span>
                 <span class="title">
                     Actual Hours Worked
