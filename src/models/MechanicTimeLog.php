@@ -21,6 +21,14 @@ class MechanicTimeLog extends Model {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 
+	public function getStartDateTimeAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y H:i A', strtotime($value));
+	}
+
+	public function getEndDateTimeAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y H:i A', strtotime($value));
+	}
+
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
