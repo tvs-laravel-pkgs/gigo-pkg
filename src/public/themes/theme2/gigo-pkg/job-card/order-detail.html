@@ -47,7 +47,7 @@
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                {{job_order.driver_name}}
+                                                                                {{job_card.job_order.driver_name}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -57,13 +57,13 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{job_order.driver_mobile_number}}
+                                                                                {{job_card.job_order.driver_mobile_number}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order.id}}" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
                                                                 Edit
                                                             </a>
                                                         </div><!-- Panel Body -->
@@ -86,7 +86,7 @@
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                {{job_order.type.name}}
+                                                                                {{job_card.job_order.type.name}}
                                                                             </b></span>
                                                                     </li>
                                                                     <li class="view-col-3">
@@ -95,7 +95,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{job_order.quote_type.name}}
+                                                                                {{job_card.job_order.quote_type.name}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -105,7 +105,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{job_order.service_type.name}}
+                                                                                {{job_card.job_order.service_type.name}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -115,7 +115,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{job_order.km_reading_type.name}}
+                                                                                {{job_card.job_order.km_reading_type.name}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -125,13 +125,13 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{job_order.contact_number}}
+                                                                                {{job_card.job_order.contact_number}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order.id}}" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
                                                                 Edit
                                                             </a>
                                                         </div><!-- Panel Body -->
@@ -144,7 +144,7 @@
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
-                                                    <div id="collapse3" class="panel-collapse collapse" ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
+                                                    <div id="collapse3" class="panel-collapse collapse" ng-if="job_card.job_order.vehicle.last_job_order && job_card.job_order.vehicle.last_job_order.job_card">
                                                         <div class="panel-body">
                                                             <div class="view-details mb-no">
                                                                 <ul class="view-row pb-none">
@@ -154,7 +154,7 @@
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                {{job_order.vehicle.last_job_order.job_card.number}}
+                                                                                {{job_card.job_order.vehicle.last_job_order.job_card.number}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -164,7 +164,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{job_order.vehicle.last_job_order.created_at}}
+                                                                                {{job_card.job_order.vehicle.last_job_order.created_at}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -174,7 +174,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{job_order.vehicle.last_job_order.km_reading}}
+                                                                                {{job_card.job_order.vehicle.last_job_order.km_reading}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -184,7 +184,7 @@
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <a href=".#!/job-card/view/{{job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a>
+                                                            <a href=".#!/job-card/view/{{job_card.job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a>
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
@@ -205,7 +205,7 @@
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                {{job_order.driver_license_expiry_date}}
+                                                                                {{job_card.job_order.driver_license_expiry_date}}
                                                                             </b></span>
                                                                     </li>
                                                                     <li class="view-col-3">
@@ -214,7 +214,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{job_order.insurance_expiry_date }}
+                                                                                {{job_card.job_order.insurance_expiry_date }}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -222,12 +222,12 @@
                                                             </div><!-- View Data -->
                                                             <div class="mb-15"></div><!-- Spacing -->
                                                             <div class="multi-docs">
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}" alt="Driver License">
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment.name}}" alt="Insurance" />
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}" alt="RC Book" />
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.driver_license_attachment.name}}" alt="Driver License">
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.insurance_attachment.name}}" alt="Insurance" />
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.rc_book_attachment.name}}" alt="RC Book" />
                                                             </div>
                                                             <div class="mb-10"></div><!-- Spacing -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order.id}}" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
                                                                 Edit
                                                             </a>
                                                         </div><!-- Panel Body -->
