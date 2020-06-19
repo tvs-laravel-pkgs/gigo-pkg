@@ -1,0 +1,91 @@
+<div class="modal fade filter" id="labour_form_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                    <i class="icon ion-md-close"></i>
+                </button>
+                <h5 class="modal-title">
+                    Add/Edit Labour
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>
+                                ROT Code
+                                <span class="mandatory">*</span>
+                            </label>
+                            <md-autocomplete md-selected-item="repair_order" md-search-text="repairOrderSearchKey" md-items="repair_order in searchRepairOrders(repairOrderSearchKey)" md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. ABS100">
+                                <md-item-template>
+                                    <span>
+                                        {{repair_order.code}}
+                                    </span>
+                                </md-item-template>
+                                <md-not-found>
+                                    No records matching "{{repairOrderSearchKey}}" were found.
+                                </md-not-found>
+                            </md-autocomplete>
+                            <input type="hidden" name="repair_order_id" value="{{repair_order.id}}">
+                        </div><!-- Field -->
+                    </div><!-- Column -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>
+                                ROT Description
+                            </label>
+                            <label>
+                                {{repair_order.name}}
+                            </label>
+                        </div><!-- Field -->
+                    </div><!-- Column -->
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>
+                                Skill Level
+                            </label>
+                            <label>
+                                {{repair_order.skill_level.short_name}}
+                            </label>
+                        </div><!-- Field -->
+                    </div><!-- Column -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>
+                                Hours
+                            </label>
+                            <label>
+                                {{repair_order.hours}}
+                            </label>
+                        </div><!-- Field -->
+                    </div><!-- Column -->
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>
+                                Amount
+                            </label>
+                            <label>
+                                {{repair_order.amount}}
+                            </label>
+                        </div><!-- Field -->
+                    </div><!-- Column -->
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right mb-15">
+                        <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-bordered btn-red approve_btn">
+                            Submit
+                        </button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->

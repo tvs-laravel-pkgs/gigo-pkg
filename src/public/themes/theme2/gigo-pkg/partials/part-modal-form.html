@@ -1,0 +1,37 @@
+<div class="modal fade filter" id="part_form_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                    <i class="icon ion-md-close"></i>
+                </button>
+                <h5 class="modal-title">
+                    Add/Edit Part
+                </h5>
+            </div>
+            <div class="modal-body">
+                <form id="rejection-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Reason for rejection
+                                    <span class="mandatory">*</span>
+                                </label>
+                                <textarea class="form-control" name="rejected_reason" ng-model="warranty_job_order_request.rejected_reason"></textarea>
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-12 text-right mb-15">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-bordered btn-red reject_btn">
+                                Reject
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </form>
+            </div>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->

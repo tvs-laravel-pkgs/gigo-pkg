@@ -3,170 +3,48 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
-use App\Attachment;
 use App\BaseModel;
-use App\WjorPart;
-use App\WjorRepairOrder;
 use Auth;
 use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Storage;
 use Validator;
 
-class WarrantyJobOrderRequest extends BaseModel {
+class WjorPart extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
-	protected $table = 'warranty_job_order_requests';
-	public $timestamps = true;
+	protected $table = 'wjor_parts';
+	public $timestamps = false;
 	protected $fillable = [
 		"id",
-		"number",
-		"job_order_id",
-		"authorization_number",
-		"failure_date",
-		"has_warranty",
-		"has_amc",
-		"unit_serial_number",
-		"complaint_id",
-		"fault_id",
-		"supplier_id",
-		"primary_segment_id",
-		"secondary_segment_id",
-		"has_goodwill",
-		"operating_condition_id",
-		"normal_road_condition_id",
-		"failure_road_condition_id",
-		"load_carried_type_id",
-		"load_carried",
-		"load_range_id",
-		"load_at_failure",
-		"last_lube_changed",
-		"terrain_at_failure_id",
-		"reading_type_id",
-		"runs_per_day",
-		"failed_at",
-		"complaint_reported",
-		"failure_observed",
-		"investigation_findings",
-		"cause_of_failure",
-		"status_id",
+		"wjor_id",
+		"part_id",
 	];
 	// Getters --------------------------------------------------------------
 
-	public function getFailureDateAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y', strtotime($value));
-	}
-
 	// Setters --------------------------------------------------------------
-
-	public function setFailureDateAttribute($value) {
-		$this->attributes['failure_date'] = $value ? date('Y-m-d', strtotime($value)) : null;
-	}
 
 	// Relationships --------------------------------------------------------------
 
-	public function jobOrder() {
-		return $this->belongsTo('App\JobOrder');
+	public function wjor() {
+		return $this->belongsTo('App\WarrantyJobOrderRequest');
 	}
 
-	public function complaint() {
-		return $this->belongsTo('App\Complaint');
-	}
-
-	public function fault() {
-		return $this->belongsTo('App\Fault');
-	}
-
-	public function supplier() {
-		return $this->belongsTo('App\PartSupplier', 'supplier_id');
-	}
-
-	public function primarySegment() {
-		return $this->belongsTo('App\VehiclePrimaryApplication', 'primary_segment_id');
-	}
-
-	public function secondarySegment() {
-		return $this->belongsTo('App\VehicleSecondaryApplication', 'secondary_segment_id');
-	}
-
-	public function operatingCondition() {
-		return $this->belongsTo('App\Config', 'operating_condition_id');
-	}
-
-	public function normalRoadCondition() {
-		return $this->belongsTo('App\Config', 'normal_road_condition_id');
-	}
-
-	public function failureRoadCondition() {
-		return $this->belongsTo('App\Config', 'failure_road_condition_id');
-	}
-
-	public function loadCarriedType() {
-		return $this->belongsTo('App\Config', 'load_carried_type_id');
-	}
-
-	public function loadRange() {
-		return $this->belongsTo('App\Config', 'load_range_id');
-	}
-
-	public function terrainAtFailure() {
-		return $this->belongsTo('App\Config', 'terrain_at_failure_id');
-	}
-
-	public function readingType() {
-		return $this->belongsTo('App\Config', 'reading_type_id');
-	}
-
-	public function status() {
-		return $this->belongsTo('App\Config', 'status_id');
-	}
-
-	public function serviceTypes() {
-		return $this->belongsToMany('App\ServiceType', 'wjor_service_type', 'wjor_id', 'service_type_id');
-	}
-
-	public static function relationships($action = '') {
-		$relationships = [
-			'jobOrder',
-			'jobOrder.type',
-			'jobOrder.outlet',
-			'jobOrder.vehicle',
-			'jobOrder.serviceType',
-			'jobOrder.status',
-			'complaint',
-			'fault',
-			'supplier',
-			'primarySegment',
-			'secondarySegment',
-			'operatingCondition',
-			'normalRoadCondition',
-			'failureRoadCondition',
-			'loadCarriedType',
-			'loadRange',
-			'terrainAtFailure',
-			'readingType',
-			'status',
-			'serviceTypes',
-		];
-
-		return $relationships;
+	public function part() {
+		return $this->belongsTo('App\Part');
 	}
 
 	// Query Scopes --------------------------------------------------------------
 
-	public function scopeFilterSearch($query, $term) {
-		if (strlen($term)) {
-			$query->where(function ($query) use ($term) {
-				$query->orWhere('number', 'LIKE', '%' . $term . '%');
-			});
-		}
-	}
-
-	public function scopeFilterStatusIn($query, $statusIds) {
-		$query->whereIn('status_id', $statusIds);
-	}
-
 	// Static Operations --------------------------------------------------------------
+
+	public static function relationships($action = '') {
+		$relationships = [
+			'wjor',
+			'part',
+		];
+
+		return $relationships;
+	}
 
 	public static function validate($data, $user) {
 		$error_messages = [
@@ -285,7 +163,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 	}
 
-	public static function saveFromFormArray($input, $owner = null) {
+	public function saveFromFormArray($input, $owner = null) {
 		try {
 			DB::beginTransaction();
 			$owner = !is_null($owner) ? $owner : Auth::user();
@@ -310,38 +188,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 			$record->number = 'WJOR-' . $record->id;
 			$record->save();
 
-			$service_types = json_decode($input['service_type_ids']);
-			$service_type_ids = [];
-			if (count($service_types) > 0) {
-				foreach ($service_types as $service_type) {
-					$service_type_ids[] = $service_type->id;
-				}
-			}
-
-			if (isset($input['repair_orders'])) {
-				foreach ($input['repair_orders'] as $repair_order) {
-					$wjorRepairOrder = new WjorRepairOrder;
-					$wjorRepairOrder->wjor_id = $record->id;
-					$wjorRepairOrder->repair_order_id = $repair_order['id'];
-					$wjorRepairOrder->save();
-				}
-			}
-
-			if (isset($input['parts'])) {
-				foreach ($input['parts'] as $part) {
-					$wjorPart = new WjorPart;
-					$wjorPart->wjor_id = $record->id;
-					$wjorPart->part_id = $part['id'];
-					$wjorPart->save();
-				}
-			}
-
-			$record->serviceTypes()->sync($service_type_ids);
-
 			//SAVE ATTACHMENTS
 			$attachement_path = storage_path('app/public/wjor/');
 			Storage::makeDirectory($attachement_path, 0777);
-			if (isset($input['photos'])) {
+			if (count($input['photos']) > 0) {
 				foreach ($input['photos'] as $key => $photo) {
 					$value = rand(1, 100);
 					$image = $photo;

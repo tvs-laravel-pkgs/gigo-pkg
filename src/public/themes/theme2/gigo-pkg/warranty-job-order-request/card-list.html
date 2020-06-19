@@ -4,9 +4,9 @@
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
                     <h1 class="title type-2">
-                        Warranty Job Order Request
+                        Warranty Job Order Requests
                         <span class="badge badge-secondary">
-                            {{job_orders.length}}
+                            {{warranty_job_order_requests.length}}
                         </span>
                     </h1>
                 </div><!-- Page Header Content -->
@@ -29,6 +29,13 @@
                     <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#job-card-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
+            <div class="page-header-content-right">
+                <div class="page-header-content button-block">
+                    <a href="#!/warranty-job-order-request/form/" type="button" class="btn btn-primary">
+                        Initiate New Request
+                    </a>
+                </div>
+            </div>
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
     <div class="list-card-tab-wrap">
@@ -38,20 +45,21 @@
                     <div class="row">
                         <div class="col-md-12">
                             <ul class="card-list">
-                                <li ng-repeat="(key, job_order) in job_orders">
+                                <li ng-repeat="(key, warranty_job_order_request) in warranty_job_order_requests">
                                     <div class="card-box">
                                         <div class="card-box-body">
                                             <p class="card-top-info-bold">
-                                                Job Order No : {{job_order.number}}
+                                                Request No :
+                                                {{warranty_job_order_request.number}}
                                             </p>
                                             <div class="box-list">
                                                 <div class="box-left">
                                                     <div class="box-color white">
                                                         <div class="box-color-title">
-                                                            {{job_order.vehicle.registration_number ? job_order.vehicle.registration_number : '' }}
+                                                            {{warranty_job_order_request.job_order.vehicle.registration_number ? warranty_job_order_request.job_order.vehicle.registration_number : '' }}
                                                         </div>
                                                         <div class="box-color-subtitle">
-                                                            {{job_order.vehicle.model.name ? job_order.vehicle.model.name : '' }}
+                                                            {{warranty_job_order_request.job_order.number}}
                                                         </div>
                                                     </div>
                                                 </div><!-- Box Left -->
@@ -62,64 +70,50 @@
                                                         </div>
                                                         <div class="box-info-body">
                                                             <div class="box-info-body-text">
-                                                                {{job_order.created_at | date:'dd/MM/yyyy'}}
+                                                                {{warranty_job_order_request.job_order.created_at | date: 'dd/MM/yyyy'}}
                                                             </div>
                                                         </div>
                                                     </div><!-- Box Info -->
                                                 </div><!-- Box Right -->
                                             </div><!-- Box List -->
-                                            <div class="card-box-content mb-8">
-                                                <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
-                                                <span class="card-box-content-value">
-                                                    <b>
-                                                        {{job_order.customer.name ? job_order.customer.name : ''}}
-                                                    </b>
-                                                </span>
-                                                <table class="card-box-content-table">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>
-                                                                Job Order Type
-                                                            </td>
-                                                            <td>
-                                                                : {{job_order.type ? job_order.type.name : ''}}
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Quote Type
-                                                            </td>
-                                                            <td>
-                                                                : {{job_order.quote_type ? job_order.quote_type.name : ''}}
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                Service Type
-                                                            </td>
-                                                            <td>
-                                                                : {{job_order.service_type ? job_order.service_type.name : ''}}
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
                                         </div><!-- Card Box Body -->
                                         <div class="card-box-footer">
                                             <div class="card-box-footer-left">
                                                 <div class="card-box-footer-info">
                                                     <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
                                                     <span class="card-box-footer-value">
-                                                        {{job_order.status ? job_order.status.name : ''}}
+                                                        {{warranty_job_order_request.status.name}}
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div class="card-box-footer-right">
-                                                <a href=".#!/gigo-pkg/job-card/material-gatepass/{{job_order.id}}" class="btn btn-square btn-md btn-red">
-                                                    View
+                                            <div class="btn-group pull-right">
+                                                <a href=".#!/warranty-job-order-request/view/{{warranty_job_order_request.id}}" class="btn btn-sm btn-default">
+                                                    <md-tooltip md-direction="top">
+                                                        View
+                                                    </md-tooltip>
+                                                    <span class="glyphicon glyphicon glyphicon-eye-open"></span>
+                                                    <!-- <img src="./public/theme/img/table/view.svg" alt="View" class="img-responsive"> -->
                                                 </a>
-                                                <a ng-show="!job_order.bay_id" href="#!/warranty-job-order-request/ppr-form/{{job_order.id}}" class="btn btn-square btn-md btn-secondary-dark">
-                                                    Initiate
+                                                <a ng-if="warranty_job_order_request.status.id == 9100" href="#!/warranty-job-order-request/view/{{warranty_job_order_request.id}}" class="btn btn-sm btn-default">
+                                                    <md-tooltip md-direction="top">
+                                                        Edit
+                                                    </md-tooltip>
+                                                    <span class="glyphicon glyphicon-pencil"></span>
+                                                    <!-- <img src="./public/theme/img/table/edit.svg" alt="Edit" class="img-responsive"> -->
+                                                </a>
+                                                <a ng-if="warranty_job_order_request.status.id == 9100" ng-click="sendToApproval(warranty_job_order_request)" class="btn btn-sm btn-default">
+                                                    <md-tooltip md-direction="top">
+                                                        Send to approval
+                                                    </md-tooltip>
+                                                    <span class="glyphicon glyphicon-send"></span>
+                                                    <!-- <img src="./public/theme/img/table/edit.svg" alt="Edit" class="img-responsive"> -->
+                                                </a>
+                                                <a ng-if1="!job_card.bay_id" class="btn btn-sm btn-default" ng-click="delete()">
+                                                    <md-tooltip md-direction="top">
+                                                        Delete
+                                                    </md-tooltip>
+                                                    <span class="glyphicon glyphicon-trash"></span>
+                                                    <!-- <img src="./public/theme/img/table/delete.svg" alt="Delete" class="img-responsive"> -->
                                                 </a>
                                             </div>
                                         </div><!-- Card Box Footer -->

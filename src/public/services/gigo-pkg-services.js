@@ -1,33 +1,143 @@
+app.factory('WjorRepairOrderSvc', function(RequestSvc) {
+
+    var model = 'wjor-repair-order';
+
+    return {
+        index: function(params) {
+            return RequestSvc.get('/api/' + model + '/index', params);
+        },
+        read: function(id) {
+            return RequestSvc.get('/api/' + model + '/read/' + id);
+        },
+        save: function(params) {
+            return RequestSvc.post('/api/' + model + '/save', params);
+        },
+        saveFromNgData: function(params) {
+            return RequestSvc.post('/api/' + model + '/save-from-ng-data', params);
+        },
+        remove: function(params) {
+            return RequestSvc.post('api/' + model + '/delete', params);
+        },
+        options: function(params) {
+            return RequestSvc.get('/api/' + model + '/options', params);
+        },
+    };
+
+});
+
+app.factory('WjorPartSvc', function(RequestSvc) {
+
+    var model = 'wjor-part';
+
+    return {
+        index: function(params) {
+            return RequestSvc.get('/api/' + model + '/index', params);
+        },
+        read: function(id) {
+            return RequestSvc.get('/api/' + model + '/read/' + id);
+        },
+        save: function(params) {
+            return RequestSvc.post('/api/' + model + '/save', params);
+        },
+        saveFromNgData: function(params) {
+            return RequestSvc.post('/api/' + model + '/save-from-ng-data', params);
+        },
+        remove: function(params) {
+            return RequestSvc.post('api/' + model + '/delete', params);
+        },
+        options: function(params) {
+            return RequestSvc.get('/api/' + model + '/options', params);
+        },
+    };
+
+});
+
+app.factory('RepairOrderSvc', function(RequestSvc) {
+
+    var model = 'repair-order';
+
+    return {
+        index: function(params) {
+            return RequestSvc.get('/api/' + model + '/index', params);
+        },
+        read: function(id) {
+            return RequestSvc.get('/api/' + model + '/read/' + id);
+        },
+        save: function(params) {
+            return RequestSvc.post('/api/' + model + '/save', params);
+        },
+        saveIt: function(params) {
+            return RequestSvc.post('/api/' + model + '/save-it', params);
+        },
+        remove: function(params) {
+            return RequestSvc.post('api/' + model + '/delete', params);
+        },
+        options: function(params) {
+            return RequestSvc.get('/api/' + model + '/options', params);
+        },
+    };
+
+});
+
+app.factory('PartSvc', function(RequestSvc) {
+
+    var model = 'part';
+
+    return {
+        index: function(params) {
+            return RequestSvc.get('/api/' + model + '/index', params);
+        },
+        read: function(id) {
+            return RequestSvc.get('/api/' + model + '/read/' + id);
+        },
+        save: function(params) {
+            return RequestSvc.post('/api/' + model + '/save', params);
+        },
+        saveIt: function(params) {
+            return RequestSvc.post('/api/' + model + '/save-it', params);
+        },
+        remove: function(params) {
+            return RequestSvc.post('api/' + model + '/delete', params);
+        },
+        options: function(params) {
+            return RequestSvc.get('/api/' + model + '/options', params);
+        },
+    };
+
+});
+
 app.factory('WarrantyJobOrderRequestSvc', function(RequestSvc) {
 
     var model = 'warranty-job-order-request';
 
-    function index(params) {
-        return RequestSvc.get('/api/' + model + '/index', params);
-    }
-
-    function read(id) {
-        return RequestSvc.get('/api/' + model + '/read/' + id);
-    }
-
-    function save(params) {
-        return RequestSvc.post('/api/' + model + '/save', params);
-    }
-
-    function remove(params) {
-        return RequestSvc.post('api/' + model + '/delete', params);
-    }
-
-    function options(params) {
-        return RequestSvc.get('/api/' + model + '/options', params);
-    }
-
     return {
-        index: index,
-        read: read,
-        save: save,
-        remove: remove,
-        options: options,
+        index: function(params) {
+            return RequestSvc.get('/api/' + model + '/index', params);
+        },
+        read: function(id) {
+            return RequestSvc.get('/api/' + model + '/read/' + id);
+        },
+        save: function(params) {
+            return RequestSvc.post('/api/' + model + '/save', params);
+        },
+        saveIt: function(params) {
+            return RequestSvc.post('/api/' + model + '/save-it', params);
+        },
+        remove: function(params) {
+            return RequestSvc.post('api/' + model + '/delete', params);
+        },
+        options: function(params) {
+            return RequestSvc.get('/api/' + model + '/options', params);
+        },
+        sendToApproval: function(params) {
+            return RequestSvc.post('/api/' + model + '/send-to-approval', params);
+        },
+        approve: function(params) {
+            return RequestSvc.post('/api/' + model + '/approve', params);
+        },
+        reject: function(params) {
+            return RequestSvc.post('/api/' + model + '/reject', params);
+        },
     };
 
 });
