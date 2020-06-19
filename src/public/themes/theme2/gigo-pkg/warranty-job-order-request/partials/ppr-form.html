@@ -1,0 +1,619 @@
+<div class="tab-pane-wrap">
+    <div class="row">
+        <div class="col-md-12">
+            <h5 class="color-primary mb-10">
+                <b>
+                    Product Performance Report
+                </b>
+            </h5>
+            <ul class="view-row mb-no">
+                <li class="view-col-3">
+                    <div class="form-group">
+                        <label>
+                            Job Order
+                            <sup class="mandatory">*</sup>
+                        </label>
+                        <md-autocomplete md-selected-item="warranty_job_order_request.job_order" md-search-text="jobOrderSearchKey" md-items="job_order in searchJobOrders(jobOrderSearchKey)" md-item-text="job_order.number" md-min-length="3" md-escape-options="clear" placeholder="Ex. JO001">
+                            <md-item-template>
+                                <span>
+                                    {{job_order.number}}
+                                </span>
+                            </md-item-template>
+                            <md-not-found>
+                                No records matching "{{jobOrderSearchKey}}" were found.
+                            </md-not-found>
+                        </md-autocomplete>
+                        <input type="hidden" name="job_order_id" value="{{warranty_job_order_request.job_order.id}}">
+                    </div><!-- Feild -->
+                </li>
+                <li class="view-col-3">
+                    <span class="view-col-label">
+                        Vehicle sold?
+                    </span>
+                    <span class="view-col-value">
+                        {{warranty_job_order_request.warranty_job_order_request.job_order.vehicle.is_sold ? 'Yes' : 'No'}}
+                    </span>
+                </li>
+                <li class="view-col-3" ng-if="warranty_job_order_request.warranty_job_order_request.job_order.vehicle.is_sold">
+                    <span class="view-col-label">
+                        Sold date
+                    </span>
+                    <span class="view-data-list-value">
+                        <b>
+                            {{warranty_job_order_request.job_order.vehicle.sold_date}}
+                        </b>
+                    </span>
+                </li>
+                <li class="view-col-3">
+                    <div class="form-group">
+                        <label>
+                            <!-- todo abs : (need to disable future date) -->
+                            Failure date
+                            <sup class="mandatory">
+                                *
+                            </sup>
+                        </label>
+                        <div class="input-group date" data-provide="datepicker">
+                            <input type="text" class="form-control" placeholder="Select Failure Date" ng-model="warranty_job_order_request.failure_date" name="failure_date" readonly />
+                            <div class="input-group-addon">
+                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                            </div>
+                        </div><!-- Input Group -->
+                    </div><!-- Feild -->
+                </li>
+                <li class="view-col-3">
+                    <div class="form-group">
+                        <label>
+                            Warranty status
+                            <sup class="mandatory">*</sup>
+                        </label>
+                        <div class="common-radio-button type-4">
+                            <input type="radio" id="warranty_yes" name="has_warranty" ng-model="warranty_job_order_request.has_warranty" ng-value="1">
+                            <label for="warranty_yes">Active</label>
+                            <input type="radio" id="warranty_no" name="has_warranty" ng-model="warranty_job_order_request.has_warranty" ng-value="0">
+                            <label for="warranty_no">Inactive</label>
+                        </div>
+                    </div><!-- Feild -->
+                </li>
+                <li class="view-col-3">
+                    <div class="form-group">
+                        <label>
+                            AMC status
+                            <sup class="mandatory">*</sup>
+                        </label>
+                        <div class="common-radio-button type-4">
+                            <input type="radio" id="amc_yes" name="has_amc" ng-model="warranty_job_order_request.has_amc" ng-value="1">
+                            <label for="amc_yes">Active</label>
+                            <input type="radio" id="amc_no" name="has_amc" ng-model="warranty_job_order_request.has_amc" ng-value="0">
+                            <label for="amc_no">Inactive</label>
+                        </div>
+                    </div><!-- Feild -->
+                </li>
+                <li class="view-col-3" ng-if="false">
+                    <span class="view-col-label">
+                        Failure date
+                    </span>
+                    <span class="view-col-value">
+                        <b>
+                            23 Sep 2019
+                        </b>
+                    </span>
+                </li>
+                <li class="view-col-3" ng-if="false">
+                    <span class="view-col-label">
+                        Warranty status
+                    </span>
+                    <span class="view-col-value">
+                        <b>
+                            Active
+                        </b>
+                    </span>
+                </li>
+                <li class="view-col-3" ng-if="false">
+                    <span class="view-col-label">
+                        AMC status
+                    </span>
+                    <span class="view-col-value">
+                        No
+                    </span>
+                </li>
+            </ul>
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default type-3">
+                    <div class="panel-heading">
+                        <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
+                            Basic Information
+                            <span class="arrow"></span>
+                        </a>
+                    </div>
+                    <div id="collapse1" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <ul class="view-row mb-no">
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Chassis number
+                                    </span>
+                                    <span class="view-data-list-value">
+                                        <b>
+                                            {{warranty_job_order_request.job_order.vehicle.chassis_number}}
+                                        </b>
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Engine number
+                                    </span>
+                                    <span class="view-col-value">
+                                        <b>
+                                            {{warranty_job_order_request.job_order.vehicle.engine_number}}
+                                        </b>
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Registration number
+                                    </span>
+                                    <span class="view-col-value">
+                                        <b>
+                                            {{warranty_job_order_request.job_order.vehicle.registration_number}}
+                                        </b>
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Unit serial no.
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" autocomplete="off" ng-model="warranty_job_order_request.unit_serial_number" name="unit_serial_number" maxlength="32" />
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Model
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.job_order.vehicle.model.model_number}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Free services done
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-select multiple ng-model="warranty_job_order_request.service_types" placeholder="Select compled free services" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchServiceTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="service_type" ng-repeat="service_type in options.service_types | filter:searchServiceTypeKey">
+                                                    {{service_type.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="service_type_ids" value="{{warranty_job_order_request.service_types}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Complaint code
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. 01C4">
+                                            <md-item-template>
+                                                <span>
+                                                    {{complaint.code}}
+                                                </span>
+                                            </md-item-template>
+                                            <md-not-found>
+                                                No complaints matching "{{complaintSearchKey}}" were found.
+                                            </md-not-found>
+                                        </md-autocomplete>
+                                        <input type="hidden" name="complaint_id" value="{{warranty_job_order_request.complaint.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Complaint description
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.complaint.name}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Fault code
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. AA">
+                                            <md-item-template>
+                                                <span>
+                                                    {{fault.code}}
+                                                </span>
+                                            </md-item-template>
+                                            <md-not-found>
+                                                No faults matching "{{faultSearchKey}}" were found.
+                                            </md-not-found>
+                                        </md-autocomplete>
+                                        <input type="hidden" name="fault_id" value="{{warranty_job_order_request.fault.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Fault description
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.fault.name}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Supplier code
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.supplier" md-search-text="supplierSearchKey" md-items="supplier in searchPartSuppliers(supplierSearchKey)" md-item-text="supplier.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. Kumar Auto Eng.">
+                                            <md-item-template>
+                                                <span>
+                                                    {{supplier.code}}
+                                                </span>
+                                            </md-item-template>
+                                            <md-not-found>
+                                                No faults matching "{{supplierSearchKey}}" were found.
+                                            </md-not-found>
+                                        </md-autocomplete>
+                                        <input type="hidden" name="supplier_id" value="{{warranty_job_order_request.supplier.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Supplier name
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.supplier.name}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Servicing dealer name
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.job_order.outlet.name}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Servicing Dealer Code
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.job_order.outlet.code}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Primary segment
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-select ng-model="warranty_job_order_request.primary_segment" placeholder="Select Primary Segment" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchPrimarySegment" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option" ng-repeat="option in options.vehicle_primary_applications | filter:searchPrimarySegment">
+                                                    {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="primary_segment_id" value="{{warranty_job_order_request.primary_segment.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Secondary segment
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-select ng-model="warranty_job_order_request.secondary_segment" placeholder="Select Secondary Segment" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchSecondarySegment" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option" ng-repeat="option in options.vehicle_secondary_applications | filter:searchSecondarySegment">
+                                                    {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="secondary_segment_id" value="{{warranty_job_order_request.secondary_segment.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Customer name and address
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{job_order.customer.name}}
+                                        {{job_order.customer.address.formatted_address}}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default type-3">
+                    <div class="panel-heading">
+                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                            Operating Conditions
+                            <span class="arrow"></span>
+                        </a>
+                    </div>
+                    <div id="collapse2" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <ul class="view-row mb-no">
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Goodwill flag
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <div class="common-radio-button type-4">
+                                            <input type="radio" id="has_goodwill_yes" name="has_goodwill" ng-model="warranty_job_order_request.has_goodwill" ng-value="1">
+                                            <label for="has_goodwill_yes">
+                                                Yes
+                                            </label>
+                                            <input type="radio" id="has_goodwill_no" name="has_goodwill" ng-model="warranty_job_order_request.has_goodwill" ng-value="0">
+                                            <label for="has_goodwill_no">
+                                                No
+                                            </label>
+                                        </div>
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Operating condition
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-select ng-model="warranty_job_order_request.operating_condition" placeholder="Select Operating Condition" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchOperatingCondition" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option" ng-repeat="option in options.vehicle_operating_conditions | filter:searchOperatingCondition">
+                                                    {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="operating_condition_id" value="{{warranty_job_order_request.operating_condition.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Road conditions (Normal use)
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-select ng-model="warranty_job_order_request.normal_road_condition" placeholder="Select Road Condition" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchNormalRoadCondition" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option" ng-repeat="option in options.road_conditions | filter:searchNormalRoadCondition">
+                                                    {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="normal_road_condition_id" value="{{warranty_job_order_request.normal_road_condition.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Road conditions (At time of failure)
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-select ng-model="warranty_job_order_request.failure_road_condition" placeholder="Select Road Condition" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchFailureRoadCondition" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option" ng-repeat="option in options.road_conditions | filter:searchFailureRoadCondition">
+                                                    {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="failure_road_condition_id" value="{{warranty_job_order_request.failure_road_condition.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Load carried flag
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <div class="common-radio-button type-4">
+                                            <input type="radio" id="radio_ton" name="load_carried_type_id" ng-model="warranty_job_order_request.load_carried_type_id" ng-value="9040">
+                                            <label for="radio_ton">
+                                                Tons
+                                            </label>
+                                            <input type="radio" id="radio_passenger" name="load_carried_type_id" ng-model="warranty_job_order_request.load_carried_type_id" ng-value="9041">
+                                            <label for="radio_passenger">
+                                                Passenger
+                                            </label>
+                                        </div>
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Load carried / No. of passengers
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" name="load_carried" autocomplete="off" ng-model="warranty_job_order_request.load_carried" />
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Load range
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-select ng-model="warranty_job_order_request.load_range" placeholder="Select Load Range" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchLoadRange" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option" ng-repeat="option in options.load_ranges | filter:searchLoadRange">
+                                                    {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="load_range_id" value="{{warranty_job_order_request.load_range.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Pay load / passengers at failure time
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" name="load_at_failure" autocomplete="off" ng-model="warranty_job_order_request.load_at_failure" />
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Last lube change on failed aggregate(KM)
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" autocomplete="off" name="last_lube_changed" ng-model="warranty_job_order_request.last_lube_changed" maxlength="10" />
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Terrain at the time of failure
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-select ng-model="warranty_job_order_request.terrain_at_failure" placeholder="Select Terrain" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchTerrain" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option" ng-repeat="option in options.terrains | filter:searchTerrain">
+                                                    {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="terrain_at_failure_id" value="{{warranty_job_order_request.terrain_at_failure.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            KM / HRS flag
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <div class="common-radio-button type-4">
+                                            <input type="radio" id="radio_km" name="reading_type_id" ng-model="warranty_job_order_request.reading_type_id" ng-value="8040">
+                                            <label for="radio_km">
+                                                KM
+                                            </label>
+                                            <input type="radio" id="radio_hrs" name="reading_type_id" ng-model="warranty_job_order_request.reading_type_id" ng-value="8041">
+                                            <label for="radio_hrs">
+                                                HRS
+                                            </label>
+                                        </div>
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            KM / HRS run per day
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" autocomplete="off" name="runs_per_day" ng-model="warranty_job_order_request.runs_per_day" maxlength="10" />
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Failed KM / HRS
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" autocomplete="off" name="failed_at" ng-model="warranty_job_order_request.failed_at" maxlength="10" />
+                                    </div><!-- Feild -->
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default type-3">
+                    <div class="panel-heading">
+                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
+                            Failure information
+                            <span class="arrow"></span>
+                        </a>
+                    </div>
+                    <div id="collapse3" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <ul class="view-row mb-no">
+                                <li class="view-col-12">
+                                    <div class="form-group">
+                                        <label>
+                                            Complaint reported
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" autocomplete="off" placeholder="Ex: Rear axle noise" name="complaint_reported" ng-model="warranty_job_order_request.complaint_reported" />
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-12">
+                                    <div class="form-group">
+                                        <label>
+                                            Failure observed
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" autocomplete="off" placeholder="Ex: Crown wheel Pinion teeth found chipped is material defect" name="failure_observed" ng-model="warranty_job_order_request.failure_observed" />
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-12">
+                                    <div class="form-group">
+                                        <label>
+                                            Investigation findings
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <textarea class="form-control" autocomplete="off" name="investigation_findings" ng-model="warranty_job_order_request.investigation_findings"></textarea>
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-12">
+                                    <div class="form-group">
+                                        <label>
+                                            Cause of failure
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <textarea class="form-control" autocomplete="off" name="cause_of_failure" ng-model="warranty_job_order_request.cause_of_failure"></textarea>
+                                    </div><!-- Feild -->
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- Column -->
+        <div class="tab-pane-footer">
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" ng-click="action='save-and-close'" class="btn btn-red">
+                        Submit
+                    </button>
+                    <button type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div><!-- Tab Footer -->
+    </div><!-- Row -->
+</div><!-- Tab Pane Wrap -->

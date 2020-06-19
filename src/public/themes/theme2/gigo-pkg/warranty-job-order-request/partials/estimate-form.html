@@ -1,0 +1,191 @@
+<div class="tab-pane-wrap">
+    <div class="row">
+        <div class="col-md-12">
+            <h5 class="color-primary mb-10">
+                <b>
+                    Repair Estimate
+                </b>
+            </h5>
+            <hr class="hr-15"><!-- Separater -->
+            <h6>
+                Labour Details
+            </h6>
+            <div class="table-responsive">
+                <table class="table table-dark-grey">
+                    <thead>
+                        <tr>
+                            <th class="wid-100"></th>
+                            <th>
+                                ROT Code
+                            </th>
+                            <th>
+                                ROT Description
+                            </th>
+                            <th class="text-right">
+                                Quantity
+                            </th>
+                            <th class="wid-100 white-space-unset text-right">
+                                Labour Value
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="ptb-12" ng-repeat="(index,job_order_labour) in warranty_job_order_request.repair_orders">
+                            <td class="wid-100">
+                                <button ng-click="showLabourForm(job_order_labour)" class="btn img-btn btn-delete">
+                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                </button>
+                                <button class="btn img-btn btn-delete" ng-click="removeRepairOrder(index)">
+                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                </button>
+                            </td>
+                            <td>
+                                {{job_order_labour.code}}
+                                <input type="hidden" name="repair_orders[{{index}}][id]" value="{{job_order_labour.id}}">
+                            </td>
+                            <td>
+                                {{job_order_labour.name}}
+                            </td>
+                            <td class="text-right">
+                                {{job_order_labour.hours}}
+                            </td>
+                            <td class="white-space-unset text-right">
+                                {{job_order_labour.amount}}
+                                <input type="hidden" name="repair_orders[{{index}}][amount]" value="{{job_order_labour.amount}}">
+                            </td>
+                        </tr>
+                        <tr class="ptb-9">
+                            <td>
+                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
+                                    Add Labour
+                                </button>
+                            </td>
+                            <td colspan="3" class="text-right">
+                                <b>
+                                    Total Labour
+                                </b>
+                            </td>
+                            <td class="wid-180 white-space-unset  text-right">
+                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                <b>
+                                    {{warranty_job_order_request.repair_order_total ? warranty_job_order_request.repair_order_total : '0.00'}}
+                                </b>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div><!-- Table Responsive -->
+            <div class="mb-15"></div><!-- Spacing -->
+            <hr class="hr-15"><!-- Separater -->
+            <h6>
+                Part Details
+            </h6>
+            <div class="table-responsive">
+                <table class="table table-dark-grey">
+                    <thead>
+                        <tr>
+                            <th class="wid-100"></th>
+                            <th>
+                                Parts Code
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            <th class="text-right">
+                                Rate
+                            </th>
+                            <th class="text-right">
+                                Quantity
+                            </th>
+                            <th class="wid-100 white-space-unset text-right">
+                                Amount
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="ptb-12" ng-repeat="(index,job_order_part) in warranty_job_order_request.parts">
+                            <td class="wid-100">
+                                <button ng-click="showLabourForm(job_order_labour)" class="btn img-btn btn-delete">
+                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                </button>
+                                <button class="btn img-btn btn-delete" ng-click="removeRepairOrder(index)">
+                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                </button>
+                            </td>
+                            <td>
+                                {{job_order_part.code}}
+                                <input type="hidden" name="parts[{{index}}][id]" value="{{job_order_part.id}}">
+                            </td>
+                            <td>
+                                {{job_order_part.name}}
+                            </td>
+                            <td class="text-right">
+                                {{job_order_part.rate}}
+                            </td>
+                            <td class="text-right">
+                                {{job_order_part.qty}}
+                            </td>
+                            <td class="wid-180 white-space-unset text-right">
+                                {{job_order_part.amount}}
+                                <input type="hidden" name="parts[{{index}}][amount]" value="{{job_order_part.amount}}">
+                            </td>
+                        </tr>
+                        <tr class="ptb-9">
+                            <td>
+                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)">
+                                    Add Part
+                                </button>
+                            </td>
+                            <td colspan="3" class="text-right">
+                                <b>
+                                    Total Parts
+                                </b>
+                            </td>
+                            <td class="wid-180 white-space-unset text-right">
+                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                <b>
+                                    {{warranty_job_order_request.part_total ? warranty_job_order_request.part_total : '0.00'}}
+                                </b>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div><!-- Table Responsive -->
+            <div class="mb-20"></div><!-- Spacing -->
+            <div class="table-transparent-wrap">
+                <div class="table-responsive">
+                    <table class="table-transparent">
+                        <tbody>
+                            <tr>
+                                <td class="text-right">
+                                    <b>
+                                        Total Labour & Parts
+                                    </b>
+                                </td>
+                                <td class="wid-180 text-right">
+                                    <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                    <b>
+                                        {{warranty_job_order_request.total_amount}}
+                                    </b>
+                                </td>
+                                <td class="wid-100"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- Table Transparent Wrap -->
+        </div><!-- Column -->
+        <div class="tab-pane-footer">
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="submit" ng-click="action='save-and-close'" class="btn btn-red">
+                        Save & Close
+                    </button>
+                    <button type="submit" ng-click="action='save-and-close'" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div><!-- Tab Footer -->
+    </div><!-- Row -->
+</div><!-- Tab Pane Wrap -->

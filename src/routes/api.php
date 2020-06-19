@@ -12,13 +12,67 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		Route::get('service-type/options', ServiceTypeController::class . '@options');
 
-		Route::group(['prefix' => 'warranty-job-order-request'], function () {
-			$controller = 'WarrantyJobOrderRequest';
+		Route::group(['prefix' => 'wjor-repair-order'], function () {
+			$controller = 'WjorRepairOrder';
+			Route::get('index', $controller . 'Controller@index');
+			Route::get('read/{id}', $controller . 'Controller@read');
+			Route::post('save', $controller . 'Controller@save');
+			Route::post('save-from-form-data', $controller . 'Controller@saveFromFormData');
+			Route::post('save-from-ng-data', $controller . 'Controller@saveFromNgData');
+			Route::post('remove', $controller . 'Controller@remove');
+			Route::get('options', $controller . 'Controller@options');
+		});
+
+		Route::group(['prefix' => 'wjor-part'], function () {
+			$controller = 'WjorPart';
+			Route::get('index', $controller . 'Controller@index');
+			Route::get('read/{id}', $controller . 'Controller@read');
+			Route::post('save', $controller . 'Controller@save');
+			Route::post('save-from-form-data', $controller . 'Controller@saveFromFormData');
+			Route::post('save-from-ng-data', $controller . 'Controller@saveFromNgData');
+			Route::post('remove', $controller . 'Controller@remove');
+			Route::get('options', $controller . 'Controller@options');
+		});
+
+		Route::group(['prefix' => 'repair-order'], function () {
+			$controller = 'RepairOrder';
 			Route::get('index', $controller . 'Controller@index');
 			Route::get('read/{id}', $controller . 'Controller@read');
 			Route::post('save', $controller . 'Controller@save');
 			Route::post('remove', $controller . 'Controller@remove');
 			Route::get('options', $controller . 'Controller@options');
+		});
+
+		Route::group(['prefix' => 'part'], function () {
+			$controller = 'Part';
+			Route::get('index', $controller . 'Controller@index');
+			Route::get('read/{id}', $controller . 'Controller@read');
+			Route::post('save', $controller . 'Controller@save');
+			Route::post('remove', $controller . 'Controller@remove');
+			Route::get('options', $controller . 'Controller@options');
+		});
+
+		Route::group(['prefix' => 'job-order'], function () {
+			$controller = 'JobOrder';
+			Route::get('index', $controller . 'Controller@index');
+			Route::get('read/{id}', $controller . 'Controller@read');
+			Route::post('save', $controller . 'Controller@save');
+			Route::post('save-it', $controller . 'Controller@saveIt');
+			Route::post('remove', $controller . 'Controller@remove');
+			Route::get('options', $controller . 'Controller@options');
+		});
+
+		Route::group(['prefix' => 'warranty-job-order-request'], function () {
+			$controller = 'WarrantyJobOrderRequest';
+			Route::get('index', $controller . 'Controller@index');
+			Route::get('read/{id}', $controller . 'Controller@read');
+			Route::post('save', $controller . 'Controller@save');
+			Route::post('save-it', $controller . 'Controller@saveIt');
+			Route::post('remove', $controller . 'Controller@remove');
+			Route::get('options', $controller . 'Controller@options');
+			Route::post('send-to-approval', $controller . 'Controller@sendToApproval');
+			Route::post('approve', $controller . 'Controller@approve');
+			Route::post('reject', $controller . 'Controller@reject');
 		});
 
 		Route::group(['prefix' => 'vehicle-primary-application'], function () {
@@ -165,6 +219,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//GET BAY ASSIGNMENT FORM DATA
 		Route::post('job-card/bay/get-form-data', 'JobCardController@getBayFormData');
 
+		//GET BAY DATA
+		Route::post('job-card/bay-view/get', 'JobCardController@getBayViewData');
+
 		//MY JOB CARD
 		Route::post('get-my-job-card-list', 'MyJobCardController@getMyJobCardList');
 
@@ -191,6 +248,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		// JOB CARD TIME LOG
 		Route::post('get-job-card-time-log', 'JobCardController@getJobCardTimeLog');
+
+		//JOB CARD WORK COMPLETED
+		Route::post('job-card/update-status', 'JobCardController@updateJobCardStatus');
 
 		// JOB CARD MATRIAL GATE PASS VIEW
 		Route::post('view-material-gate-pass', 'JobCardController@viewMeterialGatePass');
