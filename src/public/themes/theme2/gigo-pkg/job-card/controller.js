@@ -1222,7 +1222,6 @@ app.component('jobCardRoadTestObservationForm', {
                         return;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
-                    $scope.job_order = res.job_order;
                     $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
@@ -1269,7 +1268,6 @@ app.component('jobCardExpertDiagnosisForm', {
                         return;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
-                    $scope.job_order = res.job_order;
                     $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
@@ -1365,7 +1363,6 @@ app.component('jobCardDmsChecklistForm', {
                         return;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
-                    $scope.job_order = res.job_order;
                     $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
@@ -2565,7 +2562,6 @@ app.component('jobCardEstimateStatusForm', {
                         return;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
-                    $scope.job_order = res.job_order;
                     $scope.attachement_path = res.attachement_path;
                     $scope.job_card = res.job_card;
                     $scope.$apply();
@@ -2661,7 +2657,6 @@ app.component('jobCardVehicleDetailView', {
                         return;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
-                    $scope.job_order = res.job_order;
                     $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
@@ -2708,7 +2703,6 @@ app.component('jobCardCustomerDetailView', {
                         return;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
-                    $scope.job_order = res.job_order;
                     $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
@@ -2756,7 +2750,6 @@ app.component('jobCardOrderDetailView', {
                         return;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
-                    $scope.job_order = res.job_order;
                     $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
@@ -2803,7 +2796,6 @@ app.component('jobCardInventoryView', {
                         return;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
-                    $scope.job_order = res.job_order;
                     $scope.job_card = res.job_card;
                     $scope.inventory_list = res.inventory_list;
                     $scope.$apply();
@@ -2851,7 +2843,7 @@ app.component('jobCardCaptureVocView', {
                         return;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
-                    $scope.job_order = res.job_order;
+                    //$scope.job_order = res.job_order;
                     $scope.job_card = res.job_card;
                     $scope.$apply();
                 })

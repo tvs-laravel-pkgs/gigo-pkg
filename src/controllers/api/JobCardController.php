@@ -1621,9 +1621,20 @@ class JobCardController extends Controller {
 
 	public function getRoadTestObservation(Request $request) {
 		$job_card = JobCard::with(['status', 'jobOrder',
-			'jobOrder.type',
-			'jobOrder.vehicle',
-			'jobOrder.vehicle.model'])->find($request->id);
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+		        'jobOrder.vehicle.status',
+				'jobOrder.status',
+				'jobOrder.roadTestDoneBy',
+				'jobOrder.roadTestPreferedBy',
+			    'jobOrder.gateLog',])
+		->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])
+		->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1632,25 +1643,8 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$job_order = JobOrder::company()
-			->with([
-				'vehicle',
-				'vehicle.model',
-				'vehicle.status',
-				'status',
-				'roadTestDoneBy',
-				'roadTestPreferedBy',
-			])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])
-			->find($job_card->job_order_id);
-
 		return response()->json([
 			'success' => true,
-			'job_order' => $job_order,
 			'job_card' => $job_card,
 		]);
 
@@ -1660,7 +1654,17 @@ class JobCardController extends Controller {
 		$job_card = JobCard::with(['status', 'jobOrder',
 			'jobOrder.type',
 			'jobOrder.vehicle',
-			'jobOrder.vehicle.model'])->find($request->id);
+			'jobOrder.vehicle.model',
+		    'jobOrder.vehicle.status',
+			'jobOrder.expertDiagnosisReportBy',
+		    'jobOrder.gateLog',])
+		->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])
+		->find($request->id);
+
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1668,23 +1672,8 @@ class JobCardController extends Controller {
 				'errors' => ['Job Card Not Found!'],
 			]);
 		}
-
-		$job_order = JobOrder::company()->with([
-			'vehicle',
-			'vehicle.model',
-			'vehicle.status',
-			'expertDiagnosisReportBy',
-		])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])
-			->find($job_card->job_order_id);
-
 		return response()->json([
 			'success' => true,
-			'job_order' => $job_order,
 			'job_card' => $job_card,
 		]);
 	}
@@ -1693,7 +1682,23 @@ class JobCardController extends Controller {
 		$job_card = JobCard::with(['status', 'jobOrder',
 			'jobOrder.type',
 			'jobOrder.vehicle',
-			'jobOrder.vehicle.model'])->find($request->id);
+			'jobOrder.vehicle.model',
+		    'jobOrder.vehicle.status',
+			'jobOrder.vehicle.model.campaign',
+			'jobOrder.vehicle.model.campaign.claimType',
+			'jobOrder.vehicle.model.campaign.faultType',
+			'jobOrder.vehicle.model.campaign.complaintType',
+			'jobOrder.vehicle.model.campaign.campaignLabours',
+			'jobOrder.vehicle.model.campaign.campaignParts',
+			'jobOrder.warrentyPolicyAttachment',
+			'jobOrder.EWPAttachment',
+			'jobOrder.AMCAttachment',])
+		->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])
+		->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1702,30 +1707,8 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$job_order = JobOrder::company()->with([
-			'vehicle',
-			'vehicle.model',
-			'vehicle.status',
-			'vehicle.model.campaign',
-			'vehicle.model.campaign.claimType',
-			'vehicle.model.campaign.faultType',
-			'vehicle.model.campaign.complaintType',
-			'vehicle.model.campaign.campaignLabours',
-			'vehicle.model.campaign.campaignParts',
-			'warrentyPolicyAttachment',
-			'EWPAttachment',
-			'AMCAttachment',
-		])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])
-			->find($job_card->job_order_id);
-
 		return response()->json([
 			'success' => true,
-			'job_order' => $job_order,
 			'job_card' => $job_card,
 		]);
 
@@ -1776,7 +1759,15 @@ class JobCardController extends Controller {
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
-			'status'])->find($request->id);
+			'status',
+		    'jobOrder.gateLog',])
+		->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])
+		->find($request->id);
+
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1785,22 +1776,8 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$job_order = JobOrder::company()->with([
-			'vehicle',
-			'vehicle.model',
-			'vehicle.status',
-			'gateLog',
-		])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])
-			->find($job_card->job_order_id);
-
 		return response()->json([
 			'success' => true,
-			'job_order' => $job_order,
 			'job_card' => $job_card,
 		]);
 
@@ -1811,7 +1788,21 @@ class JobCardController extends Controller {
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
-			'status'])->find($request->id);
+			'status',
+		    'jobOrder.gateLog',
+			'jobOrder.vehicle.currentOwner.customer',
+			'jobOrder.vehicle.currentOwner.customer.address',
+			'jobOrder.vehicle.currentOwner.customer.address.country',
+			'jobOrder.vehicle.currentOwner.customer.address.state',
+			'jobOrder.vehicle.currentOwner.customer.address.city',
+			'jobOrder.vehicle.currentOwner.ownershipType',])
+		->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])
+		->find($request->id);
+
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1819,29 +1810,8 @@ class JobCardController extends Controller {
 				'errors' => ['Job Card Not Found!'],
 			]);
 		}
-
-		$job_order = JobOrder::company()->with([
-			'vehicle',
-			'vehicle.model',
-			'vehicle.status',
-			'gateLog',
-			'vehicle.currentOwner.customer',
-			'vehicle.currentOwner.customer.address',
-			'vehicle.currentOwner.customer.address.country',
-			'vehicle.currentOwner.customer.address.state',
-			'vehicle.currentOwner.customer.address.city',
-			'vehicle.currentOwner.ownershipType',
-		])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])
-			->find($job_card->job_order_id);
-
 		return response()->json([
 			'success' => true,
-			'job_order' => $job_order,
 			'job_card' => $job_card,
 		]);
 
@@ -1852,7 +1822,30 @@ class JobCardController extends Controller {
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
-			'status'])->find($request->id);
+			'status',
+		    'jobOrder.vehicle.status',
+			'jobOrder.vehicle.currentOwner.ownershipType',
+			'jobOrder.vehicle.lastJobOrder',
+			'jobOrder.vehicle.lastJobOrder.jobCard',
+			'jobOrder.type',
+			'jobOrder.quoteType',
+			'jobOrder.serviceType',
+			'jobOrder.kmReadingType',
+			'jobOrder.status',
+			'jobOrder.gateLog',
+			'jobOrder.gateLog.createdBy',
+			'jobOrder.expertDiagnosisReportBy',
+			'jobOrder.estimationType',
+			'jobOrder.driverLicenseAttachment',
+			'jobOrder.insuranceAttachment',
+			'jobOrder.rcBookAttachment',])
+		->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])
+		->find($request->id);
+
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1861,36 +1854,8 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$job_order = JobOrder::company()->with([
-			'vehicle',
-			'vehicle.model',
-			'vehicle.status',
-			'vehicle.currentOwner.ownershipType',
-			'vehicle.lastJobOrder',
-			'vehicle.lastJobOrder.jobCard',
-			'type',
-			'quoteType',
-			'serviceType',
-			'kmReadingType',
-			'status',
-			'gateLog',
-			'gateLog.createdBy',
-			'expertDiagnosisReportBy',
-			'estimationType',
-			'driverLicenseAttachment',
-			'insuranceAttachment',
-			'rcBookAttachment',
-		])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])
-			->find($job_card->job_order_id);
-
 		return response()->json([
 			'success' => true,
-			'job_order' => $job_order,
 			'job_card' => $job_card,
 		]);
 
@@ -1901,7 +1866,18 @@ class JobCardController extends Controller {
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
-			'status'])->find($request->id);
+			'status',
+		    'jobOrder.vehicle.status',
+			'jobOrder.gateLog',
+			'jobOrder.vehicleInventoryItem',
+			'jobOrder.vehicleInspectionItems',])
+		->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])
+		->find($request->id);
+
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1910,28 +1886,12 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$job_order = JobOrder::company()->with([
-			'vehicle',
-			'vehicle.model',
-			'vehicle.status',
-			'gateLog',
-			'vehicleInventoryItem',
-			'vehicleInspectionItems',
-		])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])
-			->find($job_card->job_order_id);
-
 		$inventory_params['field_type_id'] = [11, 12];
 
 		return response()->json([
 			'success' => true,
-			'job_order' => $job_order,
 			'job_card' => $job_card,
-			'inventory_list' => VehicleInventoryItem::getInventoryList($job_order->id, $inventory_params),
+			'inventory_list' => VehicleInventoryItem::getInventoryList($job_card->job_order_id, $inventory_params),
 		]);
 
 	}
@@ -1941,7 +1901,17 @@ class JobCardController extends Controller {
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
-			'status'])->find($request->id);
+			'status',
+		    'jobOrder.vehicle.status',
+			'jobOrder.customerVoices',
+			'jobOrder.gateLog',])
+		->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])
+		->find($request->id);
+
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1950,7 +1920,7 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$job_order = JobOrder::company()->with([
+		/*$job_order = JobOrder::company()->with([
 			'vehicle',
 			'vehicle.model',
 			'vehicle.status',
@@ -1962,11 +1932,11 @@ class JobCardController extends Controller {
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 			])
-			->find($job_card->job_order_id);
+			->find($job_card->job_order_id);*/
 
 		return response()->json([
 			'success' => true,
-			'job_order' => $job_order,
+			//'job_order' => $job_order,
 			'job_card' => $job_card,
 		]);
 
@@ -1992,7 +1962,16 @@ class JobCardController extends Controller {
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
-			'status'])->find($request->id);
+			'status',
+		    'jobOrder.vehicle.status',
+			'jobOrder.customerApprovalAttachment',
+			'jobOrder.customerESign',])
+		->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])
+		->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -2001,23 +1980,8 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$job_order = JobOrder::company()->with([
-			'vehicle',
-			'vehicle.model',
-			'vehicle.status',
-			'customerApprovalAttachment',
-			'customerESign',
-		])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])
-			->find($job_card->job_order_id);
-
 		return response()->json([
 			'success' => true,
-			'job_order' => $job_order,
 			'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			'job_card' => $job_card,
 		]);

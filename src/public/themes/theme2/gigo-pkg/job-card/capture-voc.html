@@ -29,7 +29,7 @@
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>Voice of Customer</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
-                                            <ul class="checklist-form-ul" ng-repeat="(key, customer_voice) in job_order.customer_voices">
+                                            <ul class="checklist-form-ul" ng-repeat="(key, customer_voice) in job_card.job_order.customer_voices">
                                                 <li>
                                                     <div class="checklist-form-item-wrap">
                                                         <div class="checklist-form-content">
@@ -41,7 +41,7 @@
                                                 </li>
                                             </ul>
                                             <hr class="hr-15"><!-- Separater -->
-                                            <a href=".#!/inward-vehicle/voc-detail/form/{{job_order.id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/voc-detail/form/{{job_card.job_order.id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
