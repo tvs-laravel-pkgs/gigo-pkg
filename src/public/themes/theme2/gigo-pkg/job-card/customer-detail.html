@@ -35,7 +35,7 @@
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.vehicle.current_owner.customer.name}}
+                                                            {{job_card.job_order.vehicle.current_owner.customer.name}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -45,7 +45,7 @@
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
-                                                            {{job_order.vehicle.current_owner.customer.mobile_no}}
+                                                            {{job_card.job_order.vehicle.current_owner.customer.mobile_no}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -55,7 +55,7 @@
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
-                                                            {{job_order.vehicle.current_owner.customer.email}}
+                                                            {{job_card.job_order.vehicle.current_owner.customer.email}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -64,7 +64,7 @@
                                                         Address
                                                     </span>
                                                     <span class="view-col-value">
-                                                        {{job_order.vehicle.current_owner.customer.address.address_line1}},{{job_order.vehicle.current_owner.customer.address.address_line2}},{{job_order.vehicle.current_owner.customer.address.city.name}},{{job_order.vehicle.current_owner.customer.address.state.name}},{{job_order.vehicle.current_owner.customer.address.pincode}},{{job_order.vehicle.current_owner.customer.address.country.name}}.
+                                                        {{job_card.job_order.vehicle.current_owner.customer.address.address_line1}},{{job_card.job_order.vehicle.current_owner.customer.address.address_line2}},{{job_card.job_order.vehicle.current_owner.customer.address.city.name}},{{job_card.job_order.vehicle.current_owner.customer.address.state.name}},{{job_card.job_order.vehicle.current_owner.customer.address.pincode}},{{job_card.job_order.vehicle.current_owner.customer.address.country.name}}.
                                                     </span>
                                                 </li>
                                                 <li class="view-col-3">
@@ -72,7 +72,7 @@
                                                         GST No
                                                     </span>
                                                     <span class="view-col-value">
-                                                        {{job_order.vehicle.current_owner.customer.gst_number}}
+                                                        {{job_card.job_order.vehicle.current_owner.customer.gst_number}}
                                                     </span>
                                                 </li>
                                                 <li class="view-col-3">
@@ -81,7 +81,7 @@
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.vehicle.current_owner.customer.pan_number}}
+                                                            {{job_card.job_order.vehicle.current_owner.customer.pan_number}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -91,17 +91,17 @@
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.vehicle.current_owner.ownership_type.name}}
+                                                            {{job_card.job_order.vehicle.current_owner.ownership_type.name}}
                                                         </b>
                                                     </span>
                                                 </li>
                                             </ul>
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
-                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/customer-detail/{{job_order.id}}/1" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/customer-detail/{{job_card.job_order.id}}/1" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
                                                 Edit
                                             </a>
-                                            <button class="btn btn-bordered btn-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
-                                                <a href=".#!/inward-vehicle/customer-detail/{{job_order.id}}/2">
+                                            <button class="btn btn-bordered btn-dark btn-md btn-square" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
+                                                <a href=".#!/inward-vehicle/customer-detail/{{job_card.job_order.id}}/2">
                                                     Add New Owner
                                                 </a>
                                             </button>

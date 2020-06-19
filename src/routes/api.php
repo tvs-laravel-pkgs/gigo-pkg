@@ -218,15 +218,20 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//GET BAY ASSIGNMENT FORM DATA
 		Route::post('job-card/bay/get-form-data', 'JobCardController@getBayFormData');
+		//SAVE BAY ASSIGNMENT
+		Route::post('job-card/bay/save', 'JobCardController@saveBay');
 
 		//GET BAY DATA
 		Route::post('job-card/bay-view/get', 'JobCardController@getBayViewData');
 
 		//MY JOB CARD
 		Route::post('get-my-job-card-list', 'MyJobCardController@getMyJobCardList');
-
-		//SAVE BAY ASSIGNMENT
-		Route::post('job-card/bay/save', 'JobCardController@saveBay');
+		// MY JOB CARD DATA
+		Route::post('my-job-card-view', 'MyJobCardController@getMyJobCardData');
+		//Save Start Worklog
+		Route::post('save-my-job-card', 'MyJobCardController@saveMyStartWorkLog');
+		//Save Finish Worklog
+		Route::post('save-work-log', 'MyJobCardController@saveMyFinishWorkLog');
 
 		//Jobcard View Labour Assignment
 		Route::post('job-card/labour-assignment/get-form-data', 'JobCardController@LabourAssignmentFormData');
@@ -259,13 +264,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		Route::post('view-material-gate-pass-detail', 'JobCardController@getMeterialGatePassOutwardDetail');
 
-		// MY JOB CARD DATA
-		Route::post('my-job-card-view', 'JobCardController@getMyJobCardData');
-
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
-
-		Route::post('save-my-job-card', 'JobCardController@saveMyJobCard');
 
 		//JOB CARD LABOUR REVIEW
 		Route::post('get-labour-review', 'JobCardController@getLabourReviewData');

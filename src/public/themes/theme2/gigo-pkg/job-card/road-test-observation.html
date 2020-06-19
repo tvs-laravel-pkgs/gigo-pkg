@@ -36,26 +36,26 @@
                                                         </span>
                                                         <span class="view-data-list-value">
                                                             <b>
-                                                                {{job_order.is_road_test_required ==1 ? "Registered" : "UnRegistered"}}
+                                                                {{job_card.job_order.is_road_test_required ==1 ? "Registered" : "UnRegistered"}}
                                                             </b></span>
                                                     </li>
-                                                    <li class="view-col-3" ng-show="job_order.is_road_test_required==1">
+                                                    <li class="view-col-3" ng-show="job_card.job_order.is_road_test_required==1">
                                                         <span class="view-col-label">
                                                             Road Test by
                                                         </span>
                                                         <span class="view-col-value">
                                                             <b>
-                                                                {{job_order.road_test_done_by.name}}
+                                                                {{job_card.job_order.road_test_done_by.name}}
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3" ng-show="job_order.is_road_test_required==1 && job_order.road_test_done_by.name=='Employee'">
+                                                    <li class="view-col-3" ng-show="job_card.job_order.is_road_test_required==1 && job_card.job_order.road_test_done_by.name=='Employee'">
                                                         <span class="view-col-label">
                                                             Driver Name
                                                         </span>
                                                         <span class="view-col-value">
                                                             <b>
-                                                                {{job_order.road_test_prefered_by.name}}
+                                                                {{job_card.job_order.road_test_prefered_by.name}}
                                                             </b>
                                                         </span>
                                                     </li>
@@ -63,19 +63,19 @@
                                                         <span class="view-col-label"></span>
                                                         <span class="view-col-value"><b></b></span>
                                                     </li>
-                                                    <li class="view-col-12" ng-show="job_order.is_road_test_required==1">
+                                                    <li class="view-col-12" ng-show="job_card.job_order.is_road_test_required==1">
                                                         <span class="view-col-label">
                                                             Observations
                                                         </span>
                                                         <span class="view-col-value">
                                                             <b>
-                                                                {{job_order.road_test_report}}
+                                                                {{job_card.job_order.road_test_report}}
                                                             </b>
                                                         </span>
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order.id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                            <a href=".#!/inward-vehicle/road-test-detail/form/{{job_card.job_order.id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">

@@ -172,8 +172,14 @@ app.component('serviceOrderTypeForm', {
                 } else {
                     self.switch_value = 'Active';
                 }
+                if (self.service_order_type.is_expert_diagnosis_required) {
+                    self.is_expert_diagnosis_required = 'Yes';
+                } else {
+                    self.is_expert_diagnosis_required = 'No';
+                }
             } else {
                 self.switch_value = 'Active';
+                self.is_expert_diagnosis_required = 'No';
             }
         });
 
