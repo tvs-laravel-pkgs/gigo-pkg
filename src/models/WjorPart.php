@@ -6,12 +6,10 @@ use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use Auth;
 use DB;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 
 class WjorPart extends BaseModel {
 	use SeederTrait;
-	use SoftDeletes;
 	protected $table = 'wjor_parts';
 	public $timestamps = false;
 	protected $fillable = [

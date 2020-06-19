@@ -6,6 +6,22 @@ app.directive('warrantyJobOrderRequestFormTabs', function() {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
+app.directive('wjorHeader', function() {
+    return {
+        templateUrl: wjorHeader,
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.directive('wjorViewTabs', function() {
+    return {
+        templateUrl: wjorViewTabs,
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
 app.directive('wjorPprForm', function() {
     return {
         templateUrl: warrantyJobOrderRequestPprForm,
@@ -25,6 +41,38 @@ app.directive('wjorEstimateForm', function() {
 app.directive('wjorAttachmentForm', function() {
     return {
         templateUrl: warrantyJobOrderRequestAttachmentForm,
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.directive('wjorPprView', function() {
+    return {
+        templateUrl: wjorPprView,
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.directive('wjorEstimateView', function() {
+    return {
+        templateUrl: wjorEstimateView,
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.directive('wjorAttachmentView', function() {
+    return {
+        templateUrl: wjorAttachmentView,
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.directive('pprView', function() {
+    return {
+        templateUrl: pprView,
         controller: function() {}
     }
 });
@@ -161,6 +209,8 @@ app.component('warrantyJobOrderRequestForm', {
                     } else {
                         $scope.warranty_job_order_request = {
                             repair_orders: [],
+                            repair_order_total: 0,
+                            part_total: 0,
                         }
                         //for quick test
                         $scope.warranty_job_order_request = {
@@ -219,20 +269,26 @@ app.component('warrantyJobOrderRequestForm', {
                             failure_observed: 'Engine screw is missing',
                             investigation_findings: 'Engine screw is missing',
                             cause_of_failure: 'Engine screw is missing',
+                            repair_order_total: 0,
+                            part_total: 0,
 
                         };
                     }
+                    $scope.calculateLabourTotal();
+                    $scope.calculatePartTotal();
+
                     $("#file-1").fileinput({
                         theme: 'fas',
                         overwriteInitial: true,
-                        minFileCount: 1,
+                        // minFileCount: 1,
                         maxFileSize: 2000,
-                        required: true,
+                        // required: true,
                         showUpload: false,
                         browseOnZoneClick: true,
                         removeFromPreviewOnError: true,
                         initialPreviewShowDelete: true,
                         deleteUrl: '',
+                        // showRemove:true,
                         // maxFilesNum: 10,
                         // initialPreview: [
                         //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
@@ -500,17 +556,23 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.calculateLabourTotal = function() {
             var total = 0;
             angular.forEach($scope.warranty_job_order_request.repair_orders, function(repair_order) {
-                total += repair_order.amount;
+                total += parseFloat(repair_order.amount);
             });
             $scope.warranty_job_order_request.repair_order_total = total;
+            $scope.calculateEstimateTotal()
         }
 
         $scope.calculatePartTotal = function() {
             var total = 0;
             angular.forEach($scope.warranty_job_order_request.parts, function(part) {
-                total += part.amount;
+                total += parseFloat(part.amount);
             });
-            $scope.warranty_job_order_request.part_total = total;
+            $scope.warranty_job_order_request.part_total = total.toFixed(2);
+            $scope.calculateEstimateTotal()
+        }
+
+        $scope.calculateEstimateTotal = function() {
+            $scope.warranty_job_order_request.estimate_total = $scope.warranty_job_order_request.repair_order_total + $scope.warranty_job_order_request.part_total;
         }
 
         $scope.removeRepairOrder = function(index) {
@@ -551,6 +613,8 @@ app.component('warrantyJobOrderRequestView', {
             $q.all(promises)
                 .then(function(responses) {
                     $scope.warranty_job_order_request = responses.warranty_job_order_request_read.data.warranty_job_order_request;
+                    $scope.calculateLabourTotal();
+                    $scope.calculatePartTotal();
                     $rootScope.loading = false;
                 });
         };
@@ -640,6 +704,29 @@ app.component('warrantyJobOrderRequestView', {
                     });
             }
         });
+
+
+        $scope.calculateLabourTotal = function() {
+            var total = 0;
+            angular.forEach($scope.warranty_job_order_request.repair_orders, function(repair_order) {
+                total += parseFloat(repair_order.amount);
+            });
+            $scope.warranty_job_order_request.repair_order_total = total;
+            $scope.calculateEstimateTotal()
+        }
+
+        $scope.calculatePartTotal = function() {
+            var total = 0;
+            angular.forEach($scope.warranty_job_order_request.parts, function(part) {
+                total += parseFloat(part.amount);
+            });
+            $scope.warranty_job_order_request.part_total = total.toFixed(2);
+            $scope.calculateEstimateTotal()
+        }
+
+        $scope.calculateEstimateTotal = function() {
+            $scope.warranty_job_order_request.estimate_total = $scope.warranty_job_order_request.repair_order_total + $scope.warranty_job_order_request.part_total;
+        }
 
     }
 });

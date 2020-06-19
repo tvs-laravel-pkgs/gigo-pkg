@@ -51,16 +51,25 @@ class WarrantyJobOrderRequest extends BaseModel {
 		"cause_of_failure",
 		"status_id",
 	];
+
+	protected $dates = [
+		'failure_date',
+		'created_at',
+		'updated_at',
+		'deleted_at',
+	];
+
 	// Getters --------------------------------------------------------------
 
 	public function getFailureDateAttribute($value) {
+		dd($value);
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 
 	// Setters --------------------------------------------------------------
 
 	public function setFailureDateAttribute($value) {
-		$this->attributes['failure_date'] = $value ? date('Y-m-d', strtotime($value)) : null;
+		$this->fillDateAttribute('failure_date', $value);
 	}
 
 	// Relationships --------------------------------------------------------------
@@ -125,6 +134,26 @@ class WarrantyJobOrderRequest extends BaseModel {
 		return $this->belongsToMany('App\ServiceType', 'wjor_service_type', 'wjor_id', 'service_type_id');
 	}
 
+	public function repairOrders() {
+		return $this->belongsToMany('App\RepairOrder', 'wjor_repair_orders', 'wjor_id');
+	}
+
+	public function parts() {
+		return $this->belongsToMany('App\Part', 'wjor_parts', 'wjor_id');
+	}
+
+	// public function repairOrders() {
+	// 	return $this->hasMany('App\WjorRepairOrder', 'wjor_id');
+	// }
+
+	// public function parts() {
+	// 	return $this->hasMany('App\WjorPart', 'wjor_id');
+	// }
+
+	public function attachments() {
+		return $this->hasMany('App\Attachment', 'entity_id')->where('attachment_of_id', 9120);
+	}
+
 	public static function relationships($action = '') {
 		$relationships = [
 			'jobOrder',
@@ -147,6 +176,11 @@ class WarrantyJobOrderRequest extends BaseModel {
 			'readingType',
 			'status',
 			'serviceTypes',
+			'repairOrders',
+			// 'repairOrders.repairOrder',
+			'parts',
+			// 'parts.part',
+			'attachments',
 		];
 
 		return $relationships;

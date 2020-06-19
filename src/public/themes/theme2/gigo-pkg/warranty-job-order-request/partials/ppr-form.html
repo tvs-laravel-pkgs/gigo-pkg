@@ -13,7 +13,7 @@
                             Job Order
                             <sup class="mandatory">*</sup>
                         </label>
-                        <md-autocomplete md-selected-item="warranty_job_order_request.job_order" md-search-text="jobOrderSearchKey" md-items="job_order in searchJobOrders(jobOrderSearchKey)" md-item-text="job_order.number" md-min-length="3" md-escape-options="clear" placeholder="Ex. JO001">
+                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order" md-search-text="jobOrderSearchKey" md-items="job_order in searchJobOrders(jobOrderSearchKey)" md-item-text="job_order.number" md-min-length="3" md-escape-options="clear" placeholder="Ex. JO001">
                             <md-item-template>
                                 <span>
                                     {{job_order.number}}
@@ -31,10 +31,10 @@
                         Vehicle sold?
                     </span>
                     <span class="view-col-value">
-                        {{warranty_job_order_request.warranty_job_order_request.job_order.vehicle.is_sold ? 'Yes' : 'No'}}
+                        {{warranty_job_order_request.job_order.vehicle.is_sold ? 'Yes' : 'No'}}
                     </span>
                 </li>
-                <li class="view-col-3" ng-if="warranty_job_order_request.warranty_job_order_request.job_order.vehicle.is_sold">
+                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle.is_sold">
                     <span class="view-col-label">
                         Sold date
                     </span>

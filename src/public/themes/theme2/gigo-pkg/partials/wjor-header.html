@@ -1,0 +1,34 @@
+<div class="page-tab-form-top">
+    <div class="page-tab-form-top-left">
+        <div class="page-tab-form-top-left-title">General Info</div>
+        <div class="page-tab-form-top-left-link">
+            <a class="btn-link-arrow side-tab-toggle">
+                <i class="ionicons ion-md-arrow-round-back"></i>
+                <i class="ionicons ion-md-arrow-round-forward"></i>
+            </a>
+        </div>
+        <div class="page-tab-form-top-left-info">
+            <span class="page-tab-form-top-left-info-content">
+                <b>
+                    {{warranty_job_order_request.number}}
+                </b>
+                <span ng-if="warranty_job_order_request.job_order">
+                    | {{warranty_job_order_request.job_order.number}}
+                </span>
+                <span ng-if="warranty_job_order_request.job_order">
+                    | {{warranty_job_order_request.job_order.vehicle.registration_number}}
+                </span>
+                | {{warranty_job_order_request.created_at | date}}
+            </span>
+            <!--             <a class="page-tab-form-top-left-info-link" data-toggle="modal" data-target="#search_vehicle_modal">
+                <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
+            </a>
+ -->
+        </div>
+    </div><!-- Page Tab Form Top Left -->
+    <div class="page-tab-form-top-right">
+        <div class="page-tab-form-top-right-info">
+            Status : {{warranty_job_order_request.status.name}}
+        </div>
+    </div><!-- Page Tab Form Top Right -->
+</div><!-- Page Tab Form Top -->

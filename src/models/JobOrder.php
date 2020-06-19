@@ -45,11 +45,18 @@ class JobOrder extends BaseModel {
 		"floor_supervisor_id",
 	];
 
+	protected $dates = [
+		'created_at',
+		'updated_at',
+		'deleted_at',
+	];
+
 	public static function relationships($action = '') {
 		$relationships = [
 			'type',
 			'outlet',
 			'vehicle',
+			'vehicle.model',
 			'serviceType',
 			'status',
 		];

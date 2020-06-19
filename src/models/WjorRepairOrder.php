@@ -6,12 +6,10 @@ use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use Auth;
 use DB;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
 
 class WjorRepairOrder extends BaseModel {
 	use SeederTrait;
-	use SoftDeletes;
 	protected $table = 'wjor_repair_orders';
 	public $timestamps = false;
 	protected $fillable = [
@@ -33,10 +31,6 @@ class WjorRepairOrder extends BaseModel {
 		return $this->belongsTo('App\RepairOrder');
 	}
 
-	// Query Scopes --------------------------------------------------------------
-
-	// Static Operations --------------------------------------------------------------
-
 	public static function relationships($action = '') {
 		$relationships = [
 			'wjor',
@@ -45,6 +39,10 @@ class WjorRepairOrder extends BaseModel {
 
 		return $relationships;
 	}
+
+	// Query Scopes --------------------------------------------------------------
+
+	// Static Operations --------------------------------------------------------------
 
 	public static function validate($data, $user) {
 		$error_messages = [

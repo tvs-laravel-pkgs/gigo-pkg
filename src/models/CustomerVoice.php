@@ -3,12 +3,10 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
-use App\Company;
-use App\Config;
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CustomerVoice extends Model {
+class CustomerVoice extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'customer_voices';
@@ -19,47 +17,41 @@ class CustomerVoice extends Model {
 		"name",
 	];
 
-	public function getDateOfJoinAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y', strtotime($value));
-	}
+	// Static Operations --------------------------------------------------------------
 
-	public function setDateOfJoinAttribute($date) {
-		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
-	}
-
-	public static function createFromObject($record_data) {
-
-		$errors = [];
-		$company = Company::where('code', $record_data->company)->first();
-		if (!$company) {
-			dump('Invalid Company : ' . $record_data->company);
-			return;
+	public static function validate($data, $user) {
+		$error_messages = [
+			'code.required' => 'Code is Required',
+			'code.unique' => 'Code already taken',
+			'code.min' => 'Code should have minimum 3 Charachers',
+			'code.max' => 'Code should have maximum 32 Charachers',
+			'name.required' => 'Name is Required',
+			'name.unique' => 'Name already taken',
+			'name.min' => 'Name should have minimum 3 Charachers',
+			'name.max' => 'Name should have maximum 191 Charachers',
+		];
+		$validator = Validator::make($data, [
+			'code' => [
+				'required:true',
+				'min:3',
+				'max:32',
+			],
+			'name' => [
+				'required:true',
+				'min:3',
+				'max:191',
+			],
+		], $error_messages);
+		if ($validator->fails()) {
+			return [
+				'success' => false,
+				'errors' => $validator->errors()->all(),
+			];
 		}
-
-		$admin = $company->admin();
-		if (!$admin) {
-			dump('Default Admin user not found');
-			return;
-		}
-
-		$type = Config::where('name', $record_data->type)->where('config_type_id', 89)->first();
-		if (!$type) {
-			$errors[] = 'Invalid Tax Type : ' . $record_data->type;
-		}
-
-		if (count($errors) > 0) {
-			dump($errors);
-			return;
-		}
-
-		$record = self::firstOrNew([
-			'company_id' => $company->id,
-			'name' => $record_data->tax_name,
-		]);
-		$record->type_id = $type->id;
-		$record->created_by_id = $admin->id;
-		$record->save();
-		return $record;
+		return [
+			'success' => true,
+			'errors' => [],
+		];
 	}
 
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Customer Voice') {

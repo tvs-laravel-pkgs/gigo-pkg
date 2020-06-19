@@ -14,7 +14,6 @@ class WarrantyJobOrderRequestController extends Controller {
 
 	public function save(Request $request) {
 		$result = WarrantyJobOrderRequest::saveFromFormArray($request->all());
-		dd($request->all());
 		return response()->json($result);
 	}
 
