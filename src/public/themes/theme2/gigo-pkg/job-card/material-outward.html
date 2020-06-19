@@ -120,7 +120,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>Vendor Contact No <sup class="mandatory">*</sup></label>
-                                                            <input type="text" id="vendor_contact" name="vendor_contact_no" value="{{gate_pass.gate_pass_detail.vendor_contact_no}}" class="form-control" placeholder="Enter Contact No" autocomplete="off" />
+                                                            <input type="text" id="vendor_contact" name="vendor_contact_no" value="{{gate_pass.gate_pass_detail.vendor_contact_no}}" class="form-control" placeholder="Enter Contact No" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" minlength="10" maxlength="10" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-6">
@@ -180,7 +180,7 @@
                                         </h5>
                                         <input type="hidden" name="gate_pass_id" value="{{gate_pass.id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
 
-                                        <div class="border-icon" ng-repeat="(index, gate_pass_item) in gate_pass_item">
+                                        <div class="border-icon" ng-repeat="(index, gate_pass_item) in gate_pass.gate_pass_items">
                                             <input type="hidden" name="item_id" id="item_id_{{index}}" value="{{gate_pass_item.id}}" class="form-control" />
 
                                                 <img class="img-responsive img-delete" src="./public/theme/img/table/delete.svg" alt="Delete" ng-click="$ctrl.removeItem(index)">
@@ -218,7 +218,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>Quantity <sup class="mandatory">*</sup></label>
-                                                       <input type="text" ng-model="gate_pass_item.qty" class="form-control requried" placeholder="Enter Quantity" autocomplete="off" value="" name="item_details[{{index}}][qty]" />
+                                                       <input type="text" ng-model="gate_pass_item.qty" class="form-control requried" placeholder="Enter Quantity" autocomplete="off" value="" name="item_details[{{index}}][qty]" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-6">
@@ -229,9 +229,25 @@
                                                 </div><!-- Column -->
                                                 <div class="col-md-12">
                                                     <ul class="gatein-img-list">
-                                                        <li class="gatein-img-list-item item-img">
+                                                        <div class="avatar-upload type-3">
+                                                                <div class="avatar-edit" ng-class="{'in': gate_pass_item.attachments != NULL}">
+                                                                    <input type="file" class="profile-img-upload warranty_expiry_attachment" name="material_outward_attachments[{{index}}]" id="item{{index}}" accept=".png, .jpg, .jpeg, .svg" />
+                                                                    <label for="item{{index}}">
+                                                                        <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
+                                                                    </label>
+                                                                </div>
+                                                                <div class="avatar-preview in" ng-if="gate_pass_item.attachments != NULL">
+                                                                    <div class="avatar-img" id="imagePreview" style="background-image:url('storage/app/public/gigo/job_order/attachments/{{gate_pass_item.attachments[0].name}}')">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="avatar-preview" ng-if="gate_pass_item.attachments == NULL">
+                                                                    <div class="avatar-img" id="imagePreview" style="">
+                                                                    </div>
+                                                                </div><!-- Avatar Preview -->
+                                                            </div><!-- Avatar Upload -->
+                                                        <!-- <li class="gatein-img-list-item item-img">
                                                             <input type="file" name="material_outward_attachments[{{index}}]"class="image_uploadify requried" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple/>
-                                                        </li>
+                                                        </li> -->
                                                         <!-- <li class="gatein-img-list-item item-img">
                                                             <input type="file" class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple/>
                                                         </li> -->
@@ -264,6 +280,7 @@
                                     <div class="col-md-12">
                                         <h5 class="title-red"><b>Enter Item Details</b></h5>
                                         <input type="hidden" name="gate_pass_id" value="{{gate_pass.id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
+
                                             <div class="row" ng-repeat="(index, gate_pass_item) in gate_pass.gate_pass_items">
                                                 <div class="col-md-3">
                                                     <div class="form-group">

@@ -2968,14 +2968,13 @@ class JobCardController extends Controller {
 					]);
 				}
 
-				$gate_pass_item = GatePassItem::where('gate_pass_id', $request->gate_pass_id)->get();
+				//$gate_pass_item = GatePassItem::where('gate_pass_id', $request->gate_pass_id)->get();
 
 				$gate_pass_detail = GatePassDetail::select('vendor_id')->where('gate_pass_id', $gate_pass->id)->first();
 				$vendor = Vendor::select('id', 'code')->where('id', $gate_pass_detail->vendor_id)->first();
 
 			} else {
-				$gate_pass = '';
-				$gate_pass_item = [];
+				$gate_pass['gate_pass_items'] = [];
 				$vendor = [];
 			}
 
@@ -3005,7 +3004,7 @@ class JobCardController extends Controller {
 				'success' => true,
 				'gate_pass' => $gate_pass,
 				'my_job_card_details' => $my_job_card_details,
-				'gate_pass_item' => $gate_pass_item,
+				//'gate_pass_item' => $gate_pass_item,
 				'vendor' => $vendor,
 			]);
 
