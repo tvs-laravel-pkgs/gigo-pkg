@@ -1430,9 +1430,12 @@ app.component('jobCardPartIndentForm', {
                     $http.post(
                             laravel_routes['getPartDetails'], {
                                 key: part_code_selected,
+                                job_order_id : $scope.job_card.job_order_id,
                             }
                         )
                         .then(function(response) {
+                            if(response.data.parts_details.id != null)
+                            {
                             self.parts_details = response.data.parts_details;
                             $("#job_order_part_id").val(self.parts_details.id);
                             $("#req_qty").text(self.parts_details.qty + " " + "nos");
@@ -1445,6 +1448,14 @@ app.component('jobCardPartIndentForm', {
                             balance_qty = parseInt(self.parts_details.qty) - parseInt(issued_qty);
                             $("#balance_qty").text(balance_qty + " " + "nos");
                             $("#bal_qty").val(balance_qty);
+                        }
+                        else
+                        {
+                            $("#req_qty").text("0 nos");
+                            $("#issue_qty").text("0 nos");
+                            $("#balance_qty").text("0 nos");
+                            $("#bal_qty").val(0);
+                        }
                         });
                 });
             } else {
