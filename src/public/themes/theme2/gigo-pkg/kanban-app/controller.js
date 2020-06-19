@@ -42,57 +42,8 @@ app.component('kanbanAppAttendanceScanQr', {
 
         $scope.onSuccess = function(data) {
             console.log(data);
-            $scope.encrypted_id = data;
-            $scope.Punch();
-            /*$.ajax({
-                    url: base_url + '/api/employee-pkg/punch',
-                    method: "POST",
-                    data: {
-                        encrypted_id: $scope.encrypted_id
-                    },
-                    //processData: false,
-                    //contentType: false,
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        $('.submit').button('reset');
-                        return;
-                    }
-                    console.log(res);
-                    self.response = res.data;
-                    if (res.data.action == 'Out') {
-                        $scope.showQrScan = false;
-                        $scope.showCheckInSuccess = false;
-                        $scope.showCheckOutConfirmation = false;
-                        $scope.showCheckOut = true;
-                        $scope.punch_out = res.data.punch_out;
-                        $scope.punch_out_method_list = res.data.punch_out_method_list;
-                    } else {
-                        $scope.showQrScan = false;
-                        $scope.showCheckInSuccess = true;
-                        $scope.showCheckOutConfirmation = false;
-                        $scope.showCheckOut = false;
-                        $scope.punch_in = res.data.punch_in;
-                    }
-                    $scope.punch_user = res.data.punch_user;
-                    $scope.date = res.data.date;
-                    $scope.time = res.data.time;
-                    //$scope.punch_in=res.punch_in;
-
-                    $scope.$apply();
-
-                })
-                .fail(function(xhr) {
-
-                    console.log(xhr);
-                    $('.submit').button('reset');
-                    showServerErrorNoty();
-                });*/
-
+            // $scope.encrypted_id = data;
+            $scope.Punch(data);
         };
         $scope.onError = function(error) {
             console.log(error);
@@ -101,64 +52,108 @@ app.component('kanbanAppAttendanceScanQr', {
             console.log(error);
         };
 
-        $scope.Punch = function() {
+        $scope.Punch = function(data) {
             //console.log('punch ');
             //console.log($scope.user);
-            var form_id = '#attendance_form';
-            var v = jQuery(form_id).validate({
-                ignore: '',
-                rules: {},
-                submitHandler: function(form) {
-                    let formData = new FormData($(form_id)[0]);
-                    //$('.submit').button('loading');
-                    $.ajax({
-                            url: base_url + '/api/employee-pkg/punch',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                            beforeSend: function(xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                        })
-                        .done(function(res) {
-                            if (!res.success) {
-                                showErrorNoty(res);
-                                $('.submit').button('reset');
-                                return;
-                            }
-
-                            console.log(res);
-                            self.response = res.data;
-                            if (res.data.action == 'Out') {
-                                $scope.showQrScan = false;
-                                $scope.showCheckInSuccess = false;
-                                $scope.showCheckOutConfirmation = false;
-                                $scope.showCheckOut = true;
-                                $scope.punch_out = res.data.punch_out;
-                                $scope.punch_out_method_list = res.data.punch_out_method_list;
-                            } else {
-                                $scope.showQrScan = false;
-                                $scope.showCheckInSuccess = true;
-                                $scope.showCheckOutConfirmation = false;
-                                $scope.showCheckOut = false;
-                                $scope.punch_in = res.data.punch_in;
-                            }
-                            $scope.punch_user = res.data.punch_user;
-                            //$scope.punch_in=res.punch_in;
-
-                            $scope.$apply();
-
-                        })
-                        .fail(function(xhr) {
-
-                            console.log(xhr);
-                            $('.submit').button('reset');
-                            showServerErrorNoty();
-                        });
-                }
-            });
+            if (data) {
+                $.ajax({
+                        url: base_url + '/api/employee-pkg/punch',
+                        method: "POST",
+                        data: {
+                            encrypted_id: data,
+                        },
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        }
+                        console.log(res);
+                        self.response = res.data;
+                        if (res.data.action == 'Out') {
+                            $scope.showQrScan = false;
+                            $scope.showCheckInSuccess = false;
+                            $scope.showCheckOutConfirmation = false;
+                            $scope.showCheckOut = true;
+                            $scope.punch_out = res.data.punch_out;
+                            $scope.punch_out_method_list = res.data.punch_out_method_list;
+                        } else {
+                            $scope.showQrScan = false;
+                            $scope.showCheckInSuccess = true;
+                            $scope.showCheckOutConfirmation = false;
+                            $scope.showCheckOut = false;
+                            $scope.punch_in = res.data.punch_in;
+                        }
+                        $scope.punch_user = res.data.punch_user;
+                        //$scope.punch_in=res.punch_in;
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            } else {
+                custom_noty('error', 'Wrong QR Code!');
+            }
         }
+
+        // var form_id = '#attendance_form';
+        // var v = jQuery(form_id).validate({
+        //     ignore: '',
+        //     rules: {},
+        //     submitHandler: function(form) {
+        //         let formData = new FormData($(form_id)[0]);
+        //         //$('.submit').button('loading');
+        //         $.ajax({
+        //                 url: base_url + '/api/employee-pkg/punch',
+        //                 method: "POST",
+        //                 data: formData,
+        //                 processData: false,
+        //                 contentType: false,
+        //                 beforeSend: function(xhr) {
+        //                     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+        //                 },
+        //             })
+        //             .done(function(res) {
+        //                 if (!res.success) {
+        //                     showErrorNoty(res);
+        //                     $('.submit').button('reset');
+        //                     return;
+        //                 }
+
+        //                 console.log(res);
+        //                 self.response = res.data;
+        //                 if (res.data.action == 'Out') {
+        //                     $scope.showQrScan = false;
+        //                     $scope.showCheckInSuccess = false;
+        //                     $scope.showCheckOutConfirmation = false;
+        //                     $scope.showCheckOut = true;
+        //                     $scope.punch_out = res.data.punch_out;
+        //                     $scope.punch_out_method_list = res.data.punch_out_method_list;
+        //                 } else {
+        //                     $scope.showQrScan = false;
+        //                     $scope.showCheckInSuccess = true;
+        //                     $scope.showCheckOutConfirmation = false;
+        //                     $scope.showCheckOut = false;
+        //                     $scope.punch_in = res.data.punch_in;
+        //                 }
+        //                 $scope.punch_user = res.data.punch_user;
+        //                 //$scope.punch_in=res.punch_in;
+
+        //                 $scope.$apply();
+
+        //             })
+        //             .fail(function(xhr) {
+
+        //                 console.log(xhr);
+        //                 $('.submit').button('reset');
+        //                 showServerErrorNoty();
+        //             });
+        //     }
+        // });
+        // }
 
 
         $scope.savePunchOut = function() {
@@ -197,9 +192,7 @@ app.component('kanbanAppAttendanceScanQr', {
                                 $scope.punch_out = res.data.punch_out;
                             }
                             $scope.punch_user = res.data.punch_user;
-
                             $scope.$apply();
-
                         })
                         .fail(function(xhr) {
                             console.log(xhr);
@@ -211,7 +204,8 @@ app.component('kanbanAppAttendanceScanQr', {
         }
 
         $scope.reloadPage = function() {
-            $route.reload();
+            // $route.reload();
+            window.location = base_url + '#!/gigo-pkg/kanban-app';
         }
 
     }
