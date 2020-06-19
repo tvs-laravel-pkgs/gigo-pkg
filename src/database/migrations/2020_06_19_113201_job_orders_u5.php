@@ -12,7 +12,7 @@ class JobOrdersU5 extends Migration {
 	 */
 	public function up() {
 		Schema::table('job_orders', function (Blueprint $table) {
-			$table->boolean('is_expert_diagnosis_required')->nullable()->after('road_test_report');
+			$table->boolean('is_expert_diagnosis_required')->default(0)->after('road_test_report');
 		});
 	}
 
