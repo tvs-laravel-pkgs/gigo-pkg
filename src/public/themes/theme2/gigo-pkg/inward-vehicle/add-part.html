@@ -86,13 +86,13 @@
                                                         {{job_order_part.uom.name ? job_order_part.uom.name : ''}}
                                                     </td>
                                                     <td class="text-right">
-                                                        {{job_order_part.rate}}
+                                                        {{job_order_part.rate | number: 2}}
                                                     </td>
                                                     <td class="text-right">
                                                         {{job_order_part.qty}}
                                                     </td>
                                                     <td class="text-right">
-                                                        {{job_order_part.amount}}
+                                                        {{job_order_part.amount | number: 2}}
                                                     </td>
                                                 </tr>
                                             </tbody>
