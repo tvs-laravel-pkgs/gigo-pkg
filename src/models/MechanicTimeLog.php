@@ -17,10 +17,6 @@ class MechanicTimeLog extends Model {
 		["id", "repair_order_mechanic_id", "start_date_time", "end_date_time", "status_id"]
 	;
 
-	public function getDateOfJoinAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y', strtotime($value));
-	}
-
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}

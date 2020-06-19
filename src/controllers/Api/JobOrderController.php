@@ -11,7 +11,6 @@ use Abs\GigoPkg\JobCard;
 use Abs\GigoPkg\JobCardReturnableItem;
 use Abs\GigoPkg\JobOrderIssuedPart;
 use Abs\GigoPkg\JobOrderRepairOrder;
-use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\PauseWorkReason;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
@@ -2061,124 +2060,6 @@ class JobOrderController extends Controller {
 			return response()->json([
 				'success' => true,
 				'message' => 'Material Gate Pass Item Saved Successfully!!',
-			]);
-
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
-
-	// JOB CARD VIEW Save
-	public function saveMyJobCard(Request $request) {
-		//dd($request->all());
-		try {
-			$validator = Validator::make($request->all(), [
-				'job_repair_order_id' => [
-					'required',
-				],
-				'machanic_id' => [
-					'required',
-				],
-				'status_id' => [
-					'required',
-				],
-			]);
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'errors' => $validator->errors()->all(),
-				]);
-			}
-			$repair_order_mechanic = RepairOrderMechanic::where('job_order_repair_order_id', $request->job_repair_order_id)->where('mechanic_id', $request->machanic_id)->first();
-
-			if (!$repair_order_mechanic) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Job Order Repair Order Mechanic Not Found!',
-				]);
-			}
-			DB::beginTransaction();
-
-			if ($request->status_id == 8261 || $request->status_id == 8264) {
-				$mechanic_time_log = new MechanicTimeLog;
-				$mechanic_time_log->start_date_time = Carbon::now();
-				$mechanic_time_log->repair_order_mechanic_id = $repair_order_mechanic->id;
-				$mechanic_time_log->status_id = $request->status_id;
-				$mechanic_time_log->created_by_id = Auth::user()->id;
-				$mechanic_time_log->save();
-			} else {
-				$reason_id = $request->status_id == 8263 ? $request->reason_id : $request->reason_id;
-				$mechanic_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->whereNull('end_date_time')->update(['end_date_time' => Carbon::now(), 'reason_id' => $reason_id, 'status_id' => $request->status_id]);
-			}
-
-			//Update Status
-			$update_repair_order_mechanic = RepairOrderMechanic::where('id', $repair_order_mechanic->id)->where('mechanic_id', $request->machanic_id)->update(['status_id' => $request->status_id]);
-
-			//Update all mechanic work in joborder repair order
-			$mechanic_work = RepairOrderMechanic::where('job_order_repair_order_id', $request->job_repair_order_id)->select('status_id')->get()->toArray();
-			$mechanic_status = 0;
-			$jobcard_status = 0;
-			foreach ($mechanic_work as $key => $mechanic_work_status) {
-				if ($mechanic_work_status['status_id'] != 8263) {
-					$mechanic_status = $mechanic_status + 1;
-				}
-				if ($mechanic_work_status['status_id'] == 8261) {
-					$jobcard_status = $jobcard_status + 1;
-				}
-			}
-			if ($mechanic_status == 0) {
-				$update_job_repair_order = JobOrderRepairOrder::where('id', $request->job_repair_order_id)->update(['status_id' => 8185]);
-			}
-			//Work Complet
-			else {
-				$update_job_repair_order = JobOrderRepairOrder::where('id', $request->job_repair_order_id)->update(['status_id' => 8183]);
-			}
-			// Work inpro
-
-			//Update JobCard
-			$job_order_repair_order_details = JobOrderRepairOrder::select('job_order_id')->where('id', $request->job_repair_order_id)->first();
-			if ($jobcard_status != 0) {
-				$update_job_card = Jobcard::where('job_order_id', $job_order_repair_order_details->job_order_id)->update(['status_id' => 8221]);
-			}
-
-			//Mechanic Log Activity
-			$machanic_time_log_activity = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->get()->toArray();
-
-			//Stat Date and time and end date and time
-			$work_start_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->select('start_date_time')->orderby('id', 'ASC')->get()->toArray();
-			$work_end_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->select('end_date_time')->orderby('id', 'DESC')->get()->toArray();
-
-			//Estimation Working Hours
-			$estimation_work_hours = RepairOrder::select('hours')
-				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')
-				->where('job_order_repair_orders.id', $request->job_repair_order_id)->get()->toArray();
-
-			//Total Working hours of mechanic
-			$mechanic_time_log_check = MechanicTimeLog::select('start_date_time', 'end_date_time')->where('repair_order_mechanic_id', $repair_order_mechanic->id)->get()->toArray();
-
-			$total_hours = 0;
-			foreach ($mechanic_time_log_check as $key => $mechanic_time_log_check) {
-				$date1 = $mechanic_time_log_check['start_date_time'];
-				$date2 = $mechanic_time_log_check['end_date_time'];
-				$seconds = strtotime($date2) - strtotime($date1);
-				$hours = $seconds / 60 / 60;
-				$total_hours = $hours + $total_hours;
-			}
-
-			DB::commit();
-			return response()->json([
-				'success' => true,
-				'mechanic_time_log' => "Work Log Saved Successfully",
-				'machanic_time_log_activity' => $machanic_time_log_activity,
-				'work_status' => $request->status_id,
-				'work_start_date_time' => $work_start_date_time[0],
-				'work_end_date_time' => $work_end_date_time[0],
-				'estimation_work_hours' => $estimation_work_hours,
-				'total_working_hours' => round($total_hours),
 			]);
 
 		} catch (Exception $e) {
