@@ -38,7 +38,7 @@ app.component('myJobcardCardList', {
                     url: base_url + '/api/get-my-job-card-list',
                     method: "POST",
                     data: {
-                        employee_id: self.user.id,
+                        user_id: self.user.id,
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);

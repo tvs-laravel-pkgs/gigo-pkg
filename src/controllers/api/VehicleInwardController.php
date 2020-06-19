@@ -909,8 +909,11 @@ class VehicleInwardController extends Controller {
 				JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_oem_recommended', 1)->forceDelete();
 				JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_recommended_by_oem', 1)->forceDelete();
 			}
+			//GET IS EXPERT DIAGNOSIS REQUIRED FROM SERVICE ORDER TYPE
+			$service_order_type = ServiceOrderType::find($request->type_id);
 
 			$job_order->fill($request->all());
+			$job_order->is_expert_diagnosis_required = $service_order_type->is_expert_diagnosis_required;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
@@ -947,6 +950,19 @@ class VehicleInwardController extends Controller {
 			// INWARD PROCESS CHECK - ORDER DETAIL
 			$job_order->inwardProcessChecks()->where('tab_id', 8702)->update(['is_form_filled' => 1]);
 
+			// INWARD PROCESS CHECK - EXPERT DIAGNOSIS BASED ON SERVICE ORDER TYPE
+			if (!$service_order_type->is_expert_diagnosis_required) {
+				$job_order->expert_diagnosis_report = NULL;
+				$job_order->expert_diagnosis_report_by_id = NULL;
+				$job_order->save();
+				$job_order->inwardProcessChecks()->where('tab_id', 8703)->update(['is_form_filled' => 1]);
+			} else {
+				if (!empty($job_order->expert_diagnosis_report)) {
+					$job_order->inwardProcessChecks()->where('tab_id', 8703)->update(['is_form_filled' => 1]);
+				} else {
+					$job_order->inwardProcessChecks()->where('tab_id', 8703)->update(['is_form_filled' => 0]);
+				}
+			}
 			DB::commit();
 
 			return response()->json([
@@ -2363,6 +2379,9 @@ class VehicleInwardController extends Controller {
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
+
+			// INWARD PROCESS CHECK - ROAD TEST OBSERVATIONS
+			$job_order->inwardProcessChecks()->where('tab_id', 8707)->update(['is_form_filled' => 1]);
 
 			DB::commit();
 			return response()->json([

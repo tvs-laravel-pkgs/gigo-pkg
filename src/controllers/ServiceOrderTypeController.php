@@ -1,8 +1,8 @@
 <?php
 
 namespace Abs\GigoPkg;
-use App\Http\Controllers\Controller;
 use Abs\GigoPkg\ServiceOrderType;
+use App\Http\Controllers\Controller;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -119,6 +119,9 @@ class ServiceOrderTypeController extends Controller {
 					'max:64',
 					'unique:service_order_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
+				'is_expert_diagnosis_required' => [
+					'required:true',
+				],
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
@@ -143,6 +146,11 @@ class ServiceOrderTypeController extends Controller {
 			} else {
 				$service_order_type->deleted_by_id = NULL;
 				$service_order_type->deleted_at = NULL;
+			}
+			if ($request->is_expert_diagnosis_required == 'Yes') {
+				$service_order_type->is_expert_diagnosis_required = 1;
+			} else {
+				$service_order_type->is_expert_diagnosis_required = 0;
 			}
 			$service_order_type->save();
 
@@ -180,5 +188,5 @@ class ServiceOrderTypeController extends Controller {
 			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
 		}
 	}
-	
+
 }

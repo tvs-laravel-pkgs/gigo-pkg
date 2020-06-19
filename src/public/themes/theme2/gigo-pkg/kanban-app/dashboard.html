@@ -1,80 +1,82 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}" ng-app="app">
 
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- CSRF Token -->
-        <meta name="csrf-token" content="Payment Details">
-        <title>GIGO | Dashboard</title>
-        <!-- Fav Icon -->
-        <link rel="icon" href="../../../../favicon.ico" type="image/x-icon" />
-        <link rel="shortcut icon" href="../../../../favicon.ico" type="image/x-icon" />
-        <!-- Font -->
-        <link href="https://fonts.googleapis.com/css?family=Muli:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-        <!-- Theme -->
-        <link rel="stylesheet" type="text/css" href="../../../../theme/less/theme.css" />
-        <link rel="stylesheet" type="text/css" href="../../../../theme/less/responsive.css" />
-        <!-- Custom CSS -->
-        <link rel="stylesheet" type="text/css" href="../../../../theme/css/custom.css" />
-    </head>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="Payment Details">
+    <title>GIGO | Dashboard</title>
+    <!-- Fav Icon -->
+    <link rel="icon" href="../../../../favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="../../../../favicon.ico" type="image/x-icon" />
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css?family=Muli:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Theme -->
+    <link rel="stylesheet" type="text/css" href="../../../../theme/less/theme.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../theme/less/responsive.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="../../../../theme/css/custom.css" />
+</head>
 
-    <body>
-        <div class="separate-dashboard-wrap">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="separate-content-wrap">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="close-btn">
-                                        <a href="#!">
-                                            <img class="img-responsive" src="../../../../theme/img/content/icons/close.svg" alt="Logo" />
-                                        </a>
-                                    </div>
-                                </div><!-- Column -->
-                                <div class="col-md-12">
-                                    <img class="img-responsive img-center" src="./public/theme/img/gigo-logo.svg" alt="Logo" />
-                                </div><!-- Column -->
-                                <div class="col-md-12">
-                                    <p class="location"><img class="img-responsive map-marker" src="./public/theme/img/content/map-marker.svg" alt="Location" />{{user.employee.outlet.name}}</p>
-                                </div><!-- Column -->
-                            </div><!-- Row -->
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <ul class="flex-row ">
-                                        <li class="flex-col-4 mb-20">
-                                            <div class="white-box-wrap">
-                                                <!-- <a href=".#!/gigo-pkg/kanban-app/attendance/scan-qr" ng-if="hasPerm('mobile-attendanace')"><img class="img-responsive img-center" src="./public/theme/img/content/attendance.svg" alt="Attendance" /> -->
-                                                <a href=".#!/gigo-pkg/kanban-app/attendance/scan-qr" >
-                                                    <img class="img-responsive img-center" src="./public/theme/img/content/attendance.svg" alt="Attendance" />
-                                                    <p class="title-medium pt-20">Attendance</p>
-                                                </a>
-                                            </div><!-- White Box Wrap -->
-                                        </li>
-                                        <li class="flex-col-4 mb-20">
-                                            <div class="white-box-wrap">
+<body>
+    <div class="separate-dashboard-wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="separate-content-wrap">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="close-btn">
+                                    <a href="#!">
+                                        <img class="img-responsive" src="../../../../theme/img/content/icons/close.svg" alt="Logo" />
+                                    </a>
+                                </div>
+                            </div><!-- Column -->
+                            <div class="col-md-12">
+                                <img class="img-responsive img-center" src="./public/theme/img/gigo-logo.svg" alt="Logo" />
+                            </div><!-- Column -->
+                            <div class="col-md-12">
+                                <p class="location"><img class="img-responsive map-marker" src="./public/theme/img/content/map-marker.svg" alt="Location" />{{user.employee.outlet.name}}</p>
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="flex-row ">
+                                    <li class="flex-col-4 mb-20">
+                                        <div class="white-box-wrap">
+                                            <!-- <a href=".#!/gigo-pkg/kanban-app/attendance/scan-qr" ng-if="hasPerm('mobile-attendanace')"><img class="img-responsive img-center" src="./public/theme/img/content/attendance.svg" alt="Attendance" /> -->
+                                            <a href=".#!/gigo-pkg/kanban-app/attendance/scan-qr">
+                                                <img class="img-responsive img-center" src="./public/theme/img/content/attendance.svg" alt="Attendance" />
+                                                <p class="title-medium pt-20">Attendance</p>
+                                            </a>
+                                        </div><!-- White Box Wrap -->
+                                    </li>
+                                    <li class="flex-col-4 mb-20">
+                                        <div class="white-box-wrap">
+                                            <a href=".#!/gigo-pkg/kanban-app/my-job-card/scan-qr">
                                                 <img class="img-responsive img-center" src="./public/theme/img/content/job-card.svg" alt="Job cards" />
                                                 <p class="title-medium pt-20">My Job cards</p>
-                                            </div><!-- White Box Wrap -->
-                                        </li>
-                                        <li class="flex-col-4 mb-20">
-                                            <div class="white-box-wrap">
-                                                <img class="img-responsive img-center" src="./public/theme/img/content/time-sheet.svg" alt="Time Sheet" />
-                                                <p class="title-medium pt-20">My Time Sheet</p>
-                                            </div><!-- White Box Wrap -->
-                                        </li>
-                                    </ul>
-                                </div><!-- Column -->
-                            </div><!-- Row -->
-                        </div><!-- Separate Content Wrap -->
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div><!-- Container -->
-        </div><!-- Main Wrap -->
-        <!-- Scripts -->
-    </body>
+                                            </a>
+                                        </div><!-- White Box Wrap -->
+                                    </li>
+                                    <li class="flex-col-4 mb-20">
+                                        <div class="white-box-wrap">
+                                            <img class="img-responsive img-center" src="./public/theme/img/content/time-sheet.svg" alt="Time Sheet" />
+                                            <p class="title-medium pt-20">My Time Sheet</p>
+                                        </div><!-- White Box Wrap -->
+                                    </li>
+                                </ul>
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Separate Content Wrap -->
+                </div><!-- Column -->
+            </div><!-- Row -->
+        </div><!-- Container -->
+    </div><!-- Main Wrap -->
+    <!-- Scripts -->
+</body>
 
 </html>
