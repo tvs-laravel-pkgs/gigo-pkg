@@ -1,4 +1,4 @@
-<!-- Content Wrap -->
+Content Wrap -->
 <div class="content-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -66,10 +66,10 @@
                                     <div class="card-box-info">
                                         <div class="card-box-head">
                                             <div class="info">
-                                                MIS-BEND1
+                                                {{job_order_repair_orders.repair_order.code}}
                                             </div>
                                             <div class="title">
-                                                {{job_order_repair_orders.observation}}
+                                                {{job_order_repair_orders.repair_order.name}}
                                             </div>
                                             <input type="hidden" id="repair_repair_order_id{{key}}" value="{{job_order_repair_orders.id}}">
                                         </div>
@@ -159,7 +159,7 @@
                                                     </span>
                                                 </div>
                                             </span>
-                                            <span class="card-box-content-wrap" ng-click="StartWork(8264,key)">
+                                            <span class="card-box-content-wrap" ng-click="StartWork(8261,key)">
                                                 <div class="card-box-content bg-dark">
                                                     <span class="data">
                                                         Paused
@@ -197,7 +197,7 @@
                                     </div><!-- Card Box Info -->
                                     <div class="card-box-footer">
                                         <span class="info">
-                                            Status : {{job_order_repair_orders.status.name}}
+                                            Status : {{getwork_status[key].status_name}}
                                         </span>
                                     </div><!-- Card Box Footer -->
                                 </div><!-- Card Box -->
@@ -255,7 +255,7 @@
                 </span>
             </div><!-- Modal Body -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-green btn-block btn-square" ng-click="confirmFinish()">Confirm</button>
+                <button type="button" class="btn btn-green btn-block btn-square" ng-if="work_log.work_end_date_time" ng-click="confirmFinish()">Confirm</button>
             </div><!-- Modal Footer -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
@@ -285,4 +285,4 @@
             </div><!-- Modal Footer -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
-</div><!-- Modal -->
+</div><!-- Modal

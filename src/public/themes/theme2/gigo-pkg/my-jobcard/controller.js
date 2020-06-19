@@ -38,7 +38,7 @@ app.component('myJobcardCardList', {
                     url: base_url + '/api/get-my-job-card-list',
                     method: "POST",
                     data: {
-                        user_id: self.user.id,
+                        user_id: $routeParams.user_id,
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -101,14 +101,14 @@ app.component('myJobcardView', {
         }
 
         //HelperService.isLoggedIn()
-        self.user = $scope.user = HelperService.getLoggedUser();
+        $scope.user = HelperService.getLoggedUser();
+        self.user_id = $routeParams.user_id;
         $scope.job_card_id = $routeParams.job_card_id;
 
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
 
-        //console.log($routeParams.job_card_id);
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
@@ -116,7 +116,7 @@ app.component('myJobcardView', {
                     method: "POST",
                     data: {
                         job_card_id: $routeParams.job_card_id,
-                        mechanic_id: self.user.id,
+                        mechanic_id: self.user_id,
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -139,6 +139,7 @@ app.component('myJobcardView', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
+
         $scope.fetchData();
 
         $scope.StartWork = function($id, $key) {
@@ -149,28 +150,18 @@ app.component('myJobcardView', {
                     method: "POST",
                     data: {
                         job_repair_order_id: job_repair_order_id,
-                        machanic_id: self.user.id,
+                        machanic_id: self.user_id,
                         status_id: status_id,
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 }).done(function(res) {
+                    custom_noty('success', 'Work has been started');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
 
-                    if (status_id == 8261) {
-                        custom_noty('success', 'Work has been started');
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1000);
-                    } else if (status_id == 8263) {
-                        $("#start_date_time").text(res.work_start_date_time.start_date_time);
-                        $("#end_date_time").text(res.work_end_date_time.end_date_time);
-                        $("#estimation_work_hours").text(res.estimation_work_hours[0].hours);
-                        $("#actual_hours").text(res.total_working_hours);
-                    } else if (status_id == 8264) {
-                        custom_noty('success', 'Work has been started');
-                        setTimeout(function() { location.reload(); }, 1000);
-                    }
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -191,7 +182,7 @@ app.component('myJobcardView', {
                     method: "POST",
                     data: {
                         job_repair_order_id: job_repair_order_id,
-                        machanic_id: self.user.id,
+                        machanic_id: self.user_id,
                         status_id: status_id,
                         type: 1,
                     },
@@ -214,7 +205,7 @@ app.component('myJobcardView', {
                     method: "POST",
                     data: {
                         job_repair_order_id: $scope.job_repair_order_id,
-                        machanic_id: self.user.id,
+                        machanic_id: self.user_id,
                         status_id: 8263,
                         type: 2,
                     },
@@ -252,7 +243,7 @@ app.component('myJobcardView', {
                     method: "POST",
                     data: {
                         job_repair_order_id: pause_wrk_repair_id,
-                        machanic_id: self.user.id,
+                        machanic_id: self.user_id,
                         status_id: 8262,
                         reason_id: reason_id,
                     },
