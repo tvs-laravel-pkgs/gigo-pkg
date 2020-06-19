@@ -33,7 +33,7 @@
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
-                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.warrenty_policy_attachment.name}}" alt="Warranty">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.warrenty_policy_attachment.name}}" alt="Warranty">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -46,7 +46,7 @@
                                                                 Eligible Upto
                                                             </p>
                                                             <p class="font-sm">
-                                                                {{job_order.warranty_expiry_date}}
+                                                                {{job_card.job_order.warranty_expiry_date}}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -54,7 +54,7 @@
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
-                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.e_w_p_attachment.name}}" alt="EWP">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.e_w_p_attachment.name}}" alt="EWP">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -67,7 +67,7 @@
                                                                 Eligible Upto
                                                             </p>
                                                             <p class="font-sm">
-                                                                {{job_order.ewp_expiry_date}}
+                                                                {{job_card.job_order.ewp_expiry_date}}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -75,7 +75,7 @@
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
-                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.a_m_c_attachment.name}}" alt="Memberships">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.a_m_c_attachment.name}}" alt="Memberships">
                                                         </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
@@ -97,7 +97,7 @@
                                             <h6 class="color-secondary-dark mb-10"><b>Campaign Job Details</b></h6>
                                             <div class="row">
                                                 <div class="panel-group" id="accordion_1">
-                                                    <div class="panel panel-default type-3" ng-repeat="(index, campaign) in job_order.vehicle.model.campaign">
+                                                    <div class="panel panel-default type-3" ng-repeat="(index, campaign) in job_card.job_order.vehicle.model.campaign">
                                                         <div class="panel-heading">
                                                             <a class="panel-title in" data-toggle="collapse" data-parent="#accordion_1" data-target="#{{index}}">
                                                                 <div class="table-responsive">
@@ -207,7 +207,7 @@
                                                                                         </tr>
                                                                                     </thead>
                                                                                     <tbody>
-                                                                                        <tr ng-repeat="(index, campaign_part) in campaign.campaign_parts">
+                                                                            <tr ng-repeat="(index, campaign_part) in campaign.campaign_parts">
                                                                                             <td>{{campaign_part.code}}</td>
                                                                                             <td>{{campaign_part.name}}</td>
                                                                                         </tr>
@@ -226,7 +226,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="common-checkbox type-2">
-                                                            <input type="checkbox" id="check_verify" ng-value="1" ng-disabled="true" ng-checked="job_order.is_dms_verified == 1" />
+                                                            <input type="checkbox" id="check_verify" ng-value="1" ng-disabled="true" ng-checked="job_card.job_order.is_dms_verified == 1" />
                                                             <label for="check_verify">
                                                                 <b>
                                                                     Verified in DMS

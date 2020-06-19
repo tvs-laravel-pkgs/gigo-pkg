@@ -174,7 +174,8 @@ class PartsIndentController extends Controller {
 
 	public function getPartDetails(Request $request)
 	{
-	$this->data['parts_details'] = JobOrderPart::select('job_order_parts.id','job_order_parts.qty',DB::raw("SUM(job_order_issued_parts.issued_qty) as issued_qty"))->leftJoin('job_order_issued_parts','job_order_issued_parts.job_order_part_id','job_order_parts.id')->where('job_order_parts.part_id',$request->key)->first();
+	$this->data['parts_details'] = JobOrderPart::select('job_order_parts.id','job_order_parts.qty',DB::raw("SUM(job_order_issued_parts.issued_qty) as issued_qty"))->leftJoin('job_order_issued_parts','job_order_issued_parts.job_order_part_id','job_order_parts.id')->where('job_order_parts.part_id',$request->key)
+	    ->where('job_order_parts.job_order_id',$request->job_order_id)->first();
 	return response()->json($this->data);
 	}
 
