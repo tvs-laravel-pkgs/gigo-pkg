@@ -1088,7 +1088,7 @@ app.component('jobCardMaterialOutwardForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/job-card/material-outward/' + $scope.job_card_id + '/' + $scope.gatepass_id);
+                            $location.path('/gigo-pkg/job-card/material-gatepass/' + $scope.job_card_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -1159,7 +1159,7 @@ app.component('jobCardMaterialOutwardForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/job-card/material-outward/' + $scope.job_card_id + '/' + $scope.gatepass_id);
+                            $location.path('/gigo-pkg/job-card/material-gatepass/' + $scope.job_card_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {

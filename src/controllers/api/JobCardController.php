@@ -3109,6 +3109,7 @@ class JobCardController extends Controller {
 			}*/
 			$gate_pass = GatePass::firstOrNew([
 				'job_card_id' => $request->job_card_id,
+				'id' => $request->gate_pass_id,
 			]);
 			$gate_pass->type_id = 8281; //Material Gate Pass
 			$gate_pass->status_id = $status->id; //Gate Out Pending
