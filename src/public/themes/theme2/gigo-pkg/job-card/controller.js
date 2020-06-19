@@ -941,7 +941,7 @@ app.component('jobCardMaterialOutwardForm', {
                     }
                     $scope.gate_pass = res.gate_pass;
                     $scope.my_job_card_details = res.my_job_card_details;
-                    $scope.gate_pass_item = res.gate_pass_item;
+                    //$scope.gate_pass_item = res.gate_pass_item;
                     $scope.make_list = res.make_list;
                     $scope.model_list = res.model_list;
                     self.vendor = res.vendor;
@@ -986,12 +986,17 @@ app.component('jobCardMaterialOutwardForm', {
                         )
                         .then(function(response) {
                             resolve(response.data);
+                            console.log(response.data.vendor_details);
                             $("#ven_name").text(response.data.vendor_details.name);
+                            if(response.data.vendor_details.addresses != '')
+                            {
                             $('.address').text(response.data.vendor_details.addresses[0].address_line1 + " ," + response.data.vendor_details.addresses[0].address_line2 + " ," + response.data.vendor_details.addresses[0].pincode);
+       
+                            }
                             if (response.data.vendor_details.type_id == 121) {
                                 $("#type_yes").prop('checked', true);
                                 $("#type_no").prop('checked', false);
-                            } else {
+                            }if (response.data.vendor_details.type_id == 122) {
                                 $("#type_no").prop('checked', true);
                                 $("#type_yes").prop('checked', false);
                             }
@@ -1006,7 +1011,7 @@ app.component('jobCardMaterialOutwardForm', {
 
 
         $scope.addNewItem = function() {
-            $scope.gate_pass_item.push({
+            $scope.gate_pass.gate_pass_items.push({
                 item_description: '',
                 item_make: '',
                 item_model: '',
@@ -1018,7 +1023,7 @@ app.component('jobCardMaterialOutwardForm', {
 
         self.removeItem = function(index) {
             if (index != 0) {
-                $scope.gate_pass_item.splice(index, 1);
+                $scope.gate_pass.gate_pass_items.splice(index, 1);
             }
             var id = $("#item_id_" + index).val();
             if (id) {
