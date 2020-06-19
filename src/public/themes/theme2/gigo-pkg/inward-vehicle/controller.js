@@ -2907,13 +2907,61 @@ app.component('inwardVehiclePayableAddPartForm', {
             self.action = 'Add';
         }
 
-        //FETCH DATA
-        $scope.fetchData = function() {
+        // //FETCH DATA
+        // $scope.fetchData = function() {
+        //     $.ajax({
+        //             url: base_url + '/api/vehicle-inward/part-list/get',
+        //             method: "POST",
+        //             data: {
+        //                 id: $routeParams.job_order_id
+        //             },
+        //         })
+        //         .done(function(res) {
+        //             if (!res.success) {
+        //                 showErrorNoty(res);
+        //                 return;
+        //             }
+        //             $scope.job_order = res.job_order;
+        //             $scope.extras = res.extras;
+        //             if ($scope.job_order_part_id) {
+        //                 $scope.getJobOrderPartFormData($scope.job_order_part_id);
+        //             }
+        //             $scope.$apply();
+        //         })
+        //         .fail(function(xhr) {
+        //             custom_noty('error', 'Something went wrong at server');
+        //         });
+        // }
+        // $scope.fetchData();
+
+
+        //GET PART LIST
+        self.searchPart = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getPartSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+
+        $scope.getJobOrderPartFormData = function(job_order_part_id) {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/part-list/get',
+                    url: base_url + '/api/vehicle-inward/job_order-part/get-form-data',
                     method: "POST",
                     data: {
-                        id: $routeParams.job_order_id
+                        id: job_order_part_id,
+                        job_order_id: $routeParams.job_order_id
                     },
                 })
                 .done(function(res) {
@@ -2922,31 +2970,6 @@ app.component('inwardVehiclePayableAddPartForm', {
                         return;
                     }
                     $scope.job_order = res.job_order;
-                    $scope.extras = res.extras;
-                    if ($scope.job_order_part_id) {
-                        $scope.getJobOrderPartFormData($scope.job_order_part_id);
-                    }
-                    $scope.$apply();
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });
-        }
-        $scope.fetchData();
-
-        $scope.getJobOrderPartFormData = function(job_order_part_id) {
-            $.ajax({
-                    url: base_url + '/api/vehicle-inward/job_order-part/get-form-data',
-                    method: "POST",
-                    data: {
-                        id: job_order_part_id
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
                     $scope.job_order_part = res.job_order_part.part;
                     $scope.job_order_part.qty = res.job_order_part.qty;
                     $scope.job_order_part.amount = res.job_order_part.amount;
@@ -2960,12 +2983,21 @@ app.component('inwardVehiclePayableAddPartForm', {
                 });
         }
 
+        if ($scope.job_order_part_id) {
+            $scope.getJobOrderPartFormData($scope.job_order_part_id);
+        }
+
         $scope.getPartFormData = function(part_id) {
+            if(!part_id){
+                $scope.job_order_part = [];
+                return;
+            }
             $.ajax({
                     url: base_url + '/api/vehicle-inward/part/get-form-data',
                     method: "POST",
                     data: {
-                        id: part_id
+                        id: part_id,
+                        job_order_id: $routeParams.job_order_id
                     },
                 })
                 .done(function(res) {
@@ -2973,10 +3005,12 @@ app.component('inwardVehiclePayableAddPartForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    $scope.job_order = res.job_order;
                     $scope.job_order_part = res.part;
                     $scope.job_order_part.amount = '0.00';
                     $scope.job_order_part.qty = 0;
                     if (!isNaN(self.qty)) {
+                        $scope.job_order_part.qty = self.qty;
                         $scope.job_order_part.amount = parseFloat($scope.job_order_part.qty * parseFloat($scope.job_order_part.rate)).toFixed(2);
                     }
                     $scope.$apply();

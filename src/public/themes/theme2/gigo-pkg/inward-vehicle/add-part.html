@@ -29,17 +29,17 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Part Code <sup class="mandatory">*</sup></label>
-                                        <md-select ng-model="$ctrl.part" ng-change="getPartFormData($ctrl.part.id);job_order_part=''" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
-                                            <md-select-header class="demo-select-header">
-                                                <input ng-model="searchPart" type="search" placeholder="Search for a Part Code.." class="demo-header-searchbox md-text">
-                                            </md-select-header>
-                                            <md-optgroup>
-                                                <md-option ng-value="option" ng-repeat="option in extras.part_list | filter:searchPart">
-                                                    {{option.name}}
-                                                </md-option>
-                                            </md-optgroup>
-                                        </md-select>
-                                        <input type="hidden" name="part_id" value="{{$ctrl.part.id}}">
+                                        <md-autocomplete md-items="option in $ctrl.searchPart($ctrl.partSearchText)" md-selected-item="$ctrl.part" md-selected-item-change="getPartFormData($ctrl.part.id)" md-search-text="$ctrl.partSearchText" md-item-text="option.code" md-min-length="3" placeholder="Part Code" md-autofocus>
+                                            <md-item-template>
+                                                <span>
+                                                    {{option.code}}
+                                                </span>
+                                            </md-item-template>
+                                            <md-not-found>
+                                                No Part matching "{{$ctrl.partSearchText}}" were found.
+                                            </md-not-found>
+                                        </md-autocomplete>
+                                        <input type="hidden" id="part_id" name="part_id" value="{{$ctrl.part.id}}">
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">

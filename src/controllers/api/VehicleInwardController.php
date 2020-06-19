@@ -1821,7 +1821,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1863,7 +1863,9 @@ class VehicleInwardController extends Controller {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
-					'errors' => ['Job Order Not Found!'],
+					'errors' => [
+						'Job Order Not Found!',
+					],
 				]);
 			}
 
@@ -2033,6 +2035,17 @@ class VehicleInwardController extends Controller {
 	//Get Addtional Part
 	public function getPartData(Request $r) {
 		try {
+			$job_order = JobOrder::find($r->job_order_id);
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
+				]);
+			}
+
 			$part = Part::with([
 				'uom',
 				'taxCode',
@@ -2050,6 +2063,7 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'part' => $part,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -2066,6 +2080,17 @@ class VehicleInwardController extends Controller {
 	//Get Job Order Part
 	public function getJobOrderPartData(Request $r) {
 		try {
+			$job_order = JobOrder::find($r->job_order_id);
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
+				]);
+			}
+
 			$job_order_part = JobOrderPart::with([
 				'part',
 				'part.uom',
@@ -2084,6 +2109,7 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'job_order_part' => $job_order_part,
+				'job_order' => $job_order,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([

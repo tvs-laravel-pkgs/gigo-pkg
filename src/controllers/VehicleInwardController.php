@@ -6,6 +6,7 @@ use App\Config;
 use App\Customer;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
+use App\Part;
 use App\VehicleModel;
 use Auth;
 use DB;
@@ -152,17 +153,11 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function getCitySearchList(Request $r) {
-		$key = $r->key;
-		$list = City::select(
-			'id',
-			'name'
-		)
-			->where(function ($q) use ($key) {
-				$q->where('name', 'like', $key . '%')
-				;
-			})
-			->get();
-		return response()->json($list);
+		return City::searchCity($r);
+	}
+
+	public function getPartSearchList(Request $r) {
+		return Part::searchPart($r);
 	}
 
 }
