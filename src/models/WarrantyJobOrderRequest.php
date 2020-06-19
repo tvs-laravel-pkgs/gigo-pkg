@@ -62,7 +62,6 @@ class WarrantyJobOrderRequest extends BaseModel {
 	// Getters --------------------------------------------------------------
 
 	public function getFailureDateAttribute($value) {
-		dd($value);
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 

@@ -106,9 +106,13 @@ app.factory('PartSvc', function(RequestSvc) {
 
 });
 
-app.factory('WarrantyJobOrderRequestSvc', function(RequestSvc) {
+app.factory('WarrantyJobOrderRequestSvc', function($q, RequestSvc, $rootScope, $ngBootbox) {
 
     var model = 'warranty-job-order-request';
+
+    function sendToApproval(params) {
+        return RequestSvc.post('/api/' + model + '/send-to-approval', params);
+    }
 
     return {
         index: function(params) {
@@ -129,15 +133,39 @@ app.factory('WarrantyJobOrderRequestSvc', function(RequestSvc) {
         options: function(params) {
             return RequestSvc.get('/api/' + model + '/options', params);
         },
-        sendToApproval: function(params) {
-            return RequestSvc.post('/api/' + model + '/send-to-approval', params);
-        },
+        sendToApproval: sendToApproval,
         approve: function(params) {
             return RequestSvc.post('/api/' + model + '/approve', params);
         },
         reject: function(params) {
             return RequestSvc.post('/api/' + model + '/reject', params);
         },
+        confirmSendToApproval: function(warranty_job_order_request) {
+            var deferred = $q.defer();
+
+            $ngBootbox.confirm({
+                    message: 'Are you sure you want to send to approval?',
+                    title: 'Confirm',
+                    size: "small",
+                    className: 'text-center',
+                })
+                .then(function() {
+                    $rootScope.loading = true;
+                    sendToApproval(warranty_job_order_request)
+                        .then(function(response) {
+                            $rootScope.loading = false;
+                            if (!response.data.success) {
+                                showErrorNoty(response.data);
+                                return;
+                            }
+                            showNoty('success', 'Warranty job order request initiated successfully');
+                            deferred.resolve(response.data.warranty_job_order_request.status);
+
+                            // warranty_job_order_request.status = response.data.warranty_job_order_request.status;
+                        });
+                });
+        }
+
     };
 
 });

@@ -34,10 +34,10 @@
                     <tbody>
                         <tr class="ptb-12" ng-repeat="(index,job_order_labour) in warranty_job_order_request.repair_orders">
                             <td class="wid-100">
-                                <button ng-click="showLabourForm(job_order_labour)" class="btn img-btn btn-delete">
+                                <button type="button" ng-click="showLabourForm(job_order_labour,index)" class="btn img-btn btn-delete">
                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                 </button>
-                                <button class="btn img-btn btn-delete" ng-click="removeRepairOrder(index)">
+                                <button type="button" class="btn img-btn btn-delete" ng-click="removeRepairOrder(index)">
                                     <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                 </button>
                             </td>
@@ -106,10 +106,10 @@
                     <tbody>
                         <tr class="ptb-12" ng-repeat="(index,job_order_part) in warranty_job_order_request.parts">
                             <td class="wid-100">
-                                <button ng-click="showLabourForm(job_order_labour)" class="btn img-btn btn-delete">
+                                <button type="button" ng-click="showPartForm(job_order_part,index)" class="btn img-btn btn-delete">
                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                 </button>
-                                <button class="btn img-btn btn-delete" ng-click="removeRepairOrder(index)">
+                                <button type="button" class="btn img-btn btn-delete" ng-click="removePart(index)">
                                     <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                 </button>
                             </td>
@@ -163,7 +163,6 @@
                                         {{warranty_job_order_request.estimate_total | currency}}
                                     </b>
                                 </td>
-                                <td class="wid-100"></td>
                             </tr>
                         </tbody>
                     </table>

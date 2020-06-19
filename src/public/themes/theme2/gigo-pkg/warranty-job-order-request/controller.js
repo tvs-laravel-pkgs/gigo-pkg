@@ -96,7 +96,7 @@ app.directive('partModalForm', function() {
 //------------------------------------------------------------------------------------------------------------------------
 app.component('warrantyJobOrderRequestCardList', {
     templateUrl: warrantyJobOrderRequestCardList,
-    controller: function($http, $location, HelperService, WarrantyJobOrderRequestSvc, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect) {
+    controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect) {
         $rootScope.loading = true;
         $('#search').focus();
         var self = this;
@@ -132,23 +132,65 @@ app.component('warrantyJobOrderRequestCardList', {
             WarrantyJobOrderRequestSvc.index(params)
                 .then(function(response) {
                     $scope.warranty_job_order_requests = response.data.warranty_job_order_request_collection;
+                    $rootScope.loading = false;
                 });
         }
         $scope.fetchData();
 
+        // $scope.sendToApproval = function(warranty_job_order_request) {
+
+        //     console.log(warranty_job_order_request);
+        //     WarrantyJobOrderRequestSvc.confirmSendToApproval(warranty_job_order_request)
+        //         .then(function(status) {
+
+        //             console.log(status);
+        //             warranty_job_order_request.status = status;
+        //         });
+        // };
+
         $scope.sendToApproval = function(warranty_job_order_request) {
-            $rootScope.loading = true;
-            WarrantyJobOrderRequestSvc.sendToApproval(warranty_job_order_request)
-                .then(function(response) {
-                    if (!response.data.success) {
-                        showErrorNoty(response.data);
-                        return;
-                    }
-                    showNoty('success', 'Warranty job order request initiated successfully');
-                    warranty_job_order_request.status = response.data.warranty_job_order_request.status;
+            $ngBootbox.confirm({
+                    message: 'Are you sure you want to send to approval?',
+                    title: 'Confirm',
+                    size: "small",
+                    className: 'text-center',
+                })
+                .then(function() {
+                    $rootScope.loading = true;
+                    WarrantyJobOrderRequestSvc.sendToApproval(warranty_job_order_request)
+                        .then(function(response) {
+                            $rootScope.loading = false;
+                            if (!response.data.success) {
+                                showErrorNoty(response.data);
+                                return;
+                            }
+                            showNoty('success', 'Warranty job order request initiated successfully');
+                            warranty_job_order_request.status = response.data.warranty_job_order_request.status;
+                        });
                 });
         }
-        $rootScope.loading = false;
+
+
+        $scope.confirmDelete = function(warranty_job_order_request) {
+            $ngBootbox.confirm({
+                    message: 'Are you sure you want to delete this?',
+                    title: 'Confirm',
+                    size: "small",
+                    className: 'text-center',
+                })
+                .then(function() {
+                    WarrantyJobOrderRequestSvc.remove(warranty_job_order_request.id)
+                        .then(function(response) {
+                            if (!response.data.success) {
+                                showErrorNoty(response.data);
+                                return;
+                            }
+                            showNoty('success', 'Warranty job order request initiated successfully');
+                            $location.path('/warranty-job-order-request/card-list');
+                        });
+                });
+        }
+
     }
 });
 
@@ -281,7 +323,7 @@ app.component('warrantyJobOrderRequestForm', {
                         theme: 'fas',
                         overwriteInitial: true,
                         // minFileCount: 1,
-                        maxFileSize: 2000,
+                        maxFileSize: 5000,
                         // required: true,
                         showUpload: false,
                         browseOnZoneClick: true,
@@ -472,6 +514,9 @@ app.component('warrantyJobOrderRequestForm', {
                     required: true,
                     minlength: 5,
                 },
+                'photos[]': {
+                    required: true,
+                },
             },
             messages: {
 
@@ -498,6 +543,7 @@ app.component('warrantyJobOrderRequestForm', {
                         }
                         showNoty('success', 'Warranty job order request saved successfully');
                         $location.path('/warranty-job-order-request/card-list');
+                        $scope.$apply();
                     })
                     .fail(function(xhr) {
                         custom_noty('error', 'Something went wrong at server');
@@ -511,16 +557,18 @@ app.component('warrantyJobOrderRequestForm', {
         });
 
 
-        $scope.showLabourForm = function(repair_order) {
+        $scope.showLabourForm = function(repair_order, index) {
             $scope.repair_order = repair_order;
+            $scope.index = index;
             $scope.modal_action = !repair_order ? 'Add' : 'Edit';
-
-            console.log($scope.modal_action);
             $('#labour_form_modal').modal('show');
         }
 
-        $scope.showPartForm = function(part) {
+        $scope.showPartForm = function(part, index) {
             $scope.part = part;
+            $scope.index = index;
+            $scope.modal_action = !part ? 'Add' : 'Edit';
+            $('#part_form_modal').modal('show');
         }
 
         var form_id2 = '#labour-form';
@@ -592,7 +640,7 @@ app.component('warrantyJobOrderRequestForm', {
 
 app.component('warrantyJobOrderRequestView', {
     templateUrl: warrantyJobOrderRequestView,
-    controller: function($http, $location, HelperService, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc) {
+    controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc) {
         $rootScope.loading = true;
         var self = this;
 
@@ -621,15 +669,46 @@ app.component('warrantyJobOrderRequestView', {
         $scope.init();
 
         $scope.sendToApproval = function(warranty_job_order_request) {
-            $rootScope.loading = true;
-            WarrantyJobOrderRequestSvc.sendToApproval(warranty_job_order_request)
-                .then(function(response) {
-                    if (!response.data.success) {
-                        showErrorNoty(response.data);
-                        return;
-                    }
-                    showNoty('success', 'Warranty job order request initiated successfully');
-                    $location.path('/warranty-job-order-request/card-list');
+            $ngBootbox.confirm({
+                    message: 'Are you sure you want to send to approval?',
+                    title: 'Confirm',
+                    size: "small",
+                    className: 'text-center',
+                })
+                .then(function() {
+                    $rootScope.loading = true;
+                    WarrantyJobOrderRequestSvc.sendToApproval(warranty_job_order_request)
+                        .then(function(response) {
+                            $rootScope.loading = false;
+                            if (!response.data.success) {
+                                showErrorNoty(response.data);
+                                return;
+                            }
+                            showNoty('success', 'Warranty job order request initiated successfully');
+                            $location.path('/warranty-job-order-request/card-list');
+                            $scope.$apply();
+                        });
+                });
+            return;
+        }
+
+        $scope.confirmDelete = function(warranty_job_order_request) {
+            $ngBootbox.confirm({
+                    message: 'Are you sure you want to delete this?',
+                    title: 'Confirm',
+                    size: "small",
+                    className: 'text-center',
+                })
+                .then(function() {
+                    WarrantyJobOrderRequestSvc.remove(warranty_job_order_request)
+                        .then(function(response) {
+                            if (!response.data.success) {
+                                showErrorNoty(response.data);
+                                return;
+                            }
+                            showNoty('success', 'Warranty job order request initiated successfully');
+                            $location.path('/warranty-job-order-request/card-list');
+                        });
                 });
         }
 
