@@ -264,7 +264,7 @@
                                     <div class="col-md-12">
                                         <h5 class="title-red"><b>Enter Item Details</b></h5>
                                         <input type="hidden" name="gate_pass_id" value="{{gate_pass.id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
-                                            <div class="row" ng-repeat="(index, gate_pass_item) in gate_pass_item">
+                                            <div class="row" ng-repeat="(index, gate_pass_item) in gate_pass.gate_pass_items">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>
@@ -336,6 +336,7 @@
                                                                                     Item
                                                                                 </label>
                                                         <input type="file" name="material_outward_attachments[{{index}}]" class="image_uploadify" accept="image/*" multiple />
+
                                                                             </li>
                                                                         </ul>
                                                                     </div><!-- Field -->
@@ -368,5 +369,4 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 
-<!-- Drag & Drop File Upload Plugins -->
 <script src="./public/theme/js/imageuploadify-gatein.min.js"></script>

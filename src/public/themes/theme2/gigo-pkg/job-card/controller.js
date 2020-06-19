@@ -1179,7 +1179,9 @@ app.component('jobCardMaterialOutwardForm', {
             $('.cndn-tabs li.active').prev().children('a').trigger("click");
             tabPaneFooter();
         });
-
+          
+          setTimeout(function(){ $('.image_uploadify').imageuploadify();
+           }, 1000);
 
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();

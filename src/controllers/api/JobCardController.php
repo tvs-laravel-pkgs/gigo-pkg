@@ -2957,6 +2957,7 @@ class JobCardController extends Controller {
 					'gatePassDetail.vendorType',
 					'gatePassDetail.vendor',
 					'gatePassDetail.vendor.addresses',
+					'gatePassItems.attachments',
 				])
 					->find($request->gate_pass_id);
 
