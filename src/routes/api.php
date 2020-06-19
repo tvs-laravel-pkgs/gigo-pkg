@@ -219,6 +219,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//GET BAY ASSIGNMENT FORM DATA
 		Route::post('job-card/bay/get-form-data', 'JobCardController@getBayFormData');
 
+		//GET BAY DATA
+		Route::post('job-card/bay-view/get', 'JobCardController@getBayViewData');
+
 		//MY JOB CARD
 		Route::post('get-my-job-card-list', 'MyJobCardController@getMyJobCardList');
 
@@ -245,6 +248,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		// JOB CARD TIME LOG
 		Route::post('get-job-card-time-log', 'JobCardController@getJobCardTimeLog');
+
+		//JOB CARD WORK COMPLETED
+		Route::post('job-card/update-status', 'JobCardController@updateJobCardStatus');
 
 		// JOB CARD MATRIAL GATE PASS VIEW
 		Route::post('view-material-gate-pass', 'JobCardController@viewMeterialGatePass');
@@ -284,6 +290,12 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('jobcard/estimate/get', 'JobCardController@getEstimate');
 		Route::post('jobcard/estimate-status/get', 'JobCardController@getEstimateStatus');
 		Route::post('jobcard/outward-item/delete', 'JobCardController@deleteOutwardItem');
+		Route::post('jobcard/gate-in-detial/get', 'JobCardController@getGateInDetail');
+		Route::post('jobcard/vehicle-detial/get', 'JobCardController@getVehicleDetail');
+		Route::post('jobcard/customer-detial/get', 'JobCardController@getCustomerDetail');
+		Route::post('jobcard/order-detial/get', 'JobCardController@getOrderDetail');
+		Route::post('jobcard/inventory/get', 'JobCardController@getInventory');
+		Route::post('jobcard/capture-voc/get', 'JobCardController@getCaptureVoc');
 
 		//Material-GatePass Details Save
 		Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');

@@ -3,6 +3,36 @@
         <!-- Filters -->
         <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
             <ul class="nav nav-pills cndn-tabs">
+                <li ng-class="{active:active_tab == 'gatein-detail'}">
+                    <a class="filter" href=".#!/gigo-pkg/job-card/gatein-detail/{{job_card_id}}">
+                        Gate In Details
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'vehicle-detail'}">
+                    <a class="filter" href=".#!/gigo-pkg/job-card/vehicle-detail/{{job_card_id}}">
+                        Vehicle Details
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'customer-detail'}">
+                    <a class="filter" href=".#!/gigo-pkg/job-card/customer-detail/{{job_card_id}}">
+                        Customer Details
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'order-detail'}">
+                    <a class="filter" href=".#!/gigo-pkg/job-card/order-detail/{{job_card_id}}">
+                        Order Details
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'inventory'}">
+                    <a class="filter" href=".#!/gigo-pkg/job-card/inventory/{{job_card_id}}">
+                        Inventory
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'capture-voc'}">
+                    <a class="filter" href=".#!/gigo-pkg/job-card/capture-voc/{{job_card_id}}">
+                        Capture VOC
+                    </a>
+                </li>
                 <li ng-class="{active:active_tab == 'bill-detail'}">
                     <a class="filter" href=".#!/gigo-pkg/job-card/bill-detail/{{job_card_id}}">
                         Bill Details
@@ -45,7 +75,13 @@
                 </li>
                 <li ng-class="{active:active_tab == 'schedules'}">
                     <a class="filter" href=".#!/gigo-pkg/job-card/schedule/{{job_card_id}}">
-                        Schedules</a></li>
+                        Schedules</a>
+                </li>
+                 <li ng-class="{active:active_tab == 'bay'}">
+                    <a class="filter" href=".#!/gigo-pkg/job-card/bay-view/{{job_card_id}}">
+                        Bay
+                    </a>
+                </li>
                 <li ng-class="{active:active_tab == 'part-indent'}">
                     <a class="filter" href=".#!/gigo-pkg/job-card/part-indent/{{job_card_id}}">
                         Part Indent

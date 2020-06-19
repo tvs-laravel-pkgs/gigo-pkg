@@ -38,6 +38,9 @@
                                             <li class="gatein-img-list-item driver-img">
                                                 <input type="file" name="driver_photo" class="driver_photo image_uploadify" accept=".png, .jpg, .jpeg"/>
                                             </li>
+                                            <li class="gatein-img-list-item driver-img">
+                                                <input type="file" name="chassis_photo" class="chassis_photo image_uploadify" accept=".png, .jpg, .jpeg"/>
+                                            </li>
                                         </ul>
                                     </div><!-- Field -->
                                 </div><!-- Column -->
@@ -73,12 +76,21 @@
                                 <div class="col-md-4 col-lg-3">
                                     <div class="form-group">
                                         <label>
+                                            Chassis Number
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" minlength="10" maxlength="64" placeholder="Enter Chassis Number" autocomplete="off" name="chassis_number" />
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+<!--                                 <div class="col-md-4 col-lg-3">
+                                    <div class="form-group">
+                                        <label>
                                             VIN Number
                                             <sup class="mandatory">*</sup>
                                         </label>
                                         <input type="text" class="form-control" minlength="17" maxlength="17" placeholder="Enter VIN No" autocomplete="off" name="vin_number" />
-                                    </div><!-- Feild -->
-                                </div><!-- Column -->
+                                    </div>
+                                </div> -->                                
                                 <div class="col-md-4 col-lg-3">
                                     <div class="form-group">
                                         <label>

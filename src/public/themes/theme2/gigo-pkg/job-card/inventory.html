@@ -1,0 +1,125 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/gigo-pkg/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Inventory</b></h1>
+                    <p class="subtitle">Job Card / Inventory</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <jobcard-header></jobcard-header>
+            <div class="tab-form-wrap type-2">
+                <jobcard-tabs ng-init="active_tab = 'inventory'"></jobcard-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                           <div class="tab-pane fade in active" id="inventory_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Inventory Details</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="checklist-form-wrap">
+                                                <ul class="checklist-form-ul">
+                                                    <li ng-repeat="(key, vehicle_inventory_item) in inventory_list" ng-if="vehicle_inventory_item.field_type_id==11">
+                                                        <div class="checklist-item-wrap" ng-class="{'pad-big active':vehicle_inventory_item.checked ==true} ">
+                                                            <div class="checklist-item-value">
+                                                                {{vehicle_inventory_item.name}}
+                                                            </div>
+                                                            <div class="checklist-item-value-sm" ng-if="vehicle_inventory_item.checked==true">
+                                                                {{vehicle_inventory_item.remarks}}
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="mb-30"></div><!-- Space -->
+                                            <div class="row" ng-repeat="(index,vehicle_inventory_item) in inventory_list" ng-if="vehicle_inventory_item.field_type_id==12">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Fuel Level</label>
+                                                        <div class="slider-container in-view">
+                                                            <div class="slider-lower-fill" style="width: {{vehicle_inventory_item.remarks}}%;"></div>
+                                                            <div class="slider-upper-fill"></div>
+                                                            <div class="grid">
+                                                                <span class="first grid-item">E</span>
+                                                                <span class="middle grid-item"></span>
+                                                                <span class="middle grid-item">1/2</span>
+                                                                <span class="middle grid-item"></span>
+                                                                <span class="last grid-item">F</span>
+                                                            </div>
+                                                        </div><!-- Slider -->
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a href=".#!/inward-vehicle/inventory-detail/form/{{job_order.id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                                </div>
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a href=".#!/gigo-pkg/job-card/order-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a href=".#!/gigo-pkg/job-card/capture-voc/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xs" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title">Search Vehicle</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Registration Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Customer Code <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>VIN Number <sup class="mandatory">*</sup></label>
+                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->

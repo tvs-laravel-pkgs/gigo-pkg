@@ -168,9 +168,10 @@
                                                     <div class="col-md-6">
                                                         <div class="multi-img">
                                                             <!-- <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" /> -->
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.driver_attachment[0].name}}" alt="Driver Image" />
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.km_attachment[0].name}}" alt="KM" />
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.vehicle_attachment[0].name}}" alt="Vehicle Image" />
+                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.driver_attachment.name}}" alt="Driver Image" />
+                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.km_attachment.name}}" alt="KM" />
+                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.vehicle_attachment.name}}" alt="Vehicle Image" />
+                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.chassis_attachment.name}}" alt="Chassis Image" />
                                                         </div>
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
@@ -232,6 +233,27 @@
                                                     </span>
                                                     <span class="view-col-value">
                                                         {{job_order.vehicle.vin_number}}
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Is Sold ?
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b ng-if="job_order.vehicle.is_sold == 1">
+                                                            Yes
+                                                        </b>
+                                                        <b ng-if="job_order.vehicle.is_sold != 1">
+                                                            No
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3" ng-if="job_order.vehicle.is_sold == 1">
+                                                    <span class="view-col-label">
+                                                        Sold Date
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_order.vehicle.sold_date}}
                                                     </span>
                                                 </li>
                                                 <li class="view-col-3">

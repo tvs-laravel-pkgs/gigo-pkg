@@ -209,6 +209,9 @@ app.component('gateLogForm', {
                 'driver_photo': {
                     required: true,
                 },
+                'chassis_photo': {
+                    required: true,
+                },
                 'is_registered': {
                     required: true,
                 },
@@ -252,11 +255,16 @@ app.component('gateLogForm', {
                     required: true,
                     maxlength: 10,
                 },
-                'vin_number': {
+                'chassis_number': {
                     required: true,
-                    minlength: 17,
-                    maxlength: 17,
+                    minlength: 10,
+                    maxlength: 64,
                 },
+                // 'vin_number': {
+                //     required: true,
+                //     minlength: 17,
+                //     maxlength: 17,
+                // },
                 'gate_in_remarks': {
                     minlength: 3,
                     maxlength: 191,
@@ -296,6 +304,8 @@ app.component('gateLogForm', {
                     custom_noty('error', 'KM Reading Photo is Required')
                 }else if (element.hasClass("driver_photo")) {
                     custom_noty('error', 'Driver Photo is Required')
+                }else if (element.hasClass("chassis_photo")) {
+                    custom_noty('error', 'Chassis Photo is Required')
                 }else{
                     error.insertAfter(element)
                 }
