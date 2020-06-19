@@ -13,7 +13,6 @@ use Abs\GigoPkg\JobOrder;
 use Abs\GigoPkg\JobOrderIssuedPart;
 use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\MechanicTimeLog;
-use Abs\GigoPkg\PauseWorkReason;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
 use Abs\PartPkg\Part;
@@ -1243,93 +1242,6 @@ class JobCardController extends Controller {
 		}
 	}
 
-	// JOB CARD VIEW DATA
-	public function getMyJobCardData(Request $request) {
-		try {
-			//dd($request->job_card_id);
-			$job_card = JobCard::find($request->job_card_id);
-
-			if (!$job_card) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Invalid Job Order!',
-				]);
-			}
-
-			$user_details = Employee::
-				with(['user',
-				'outlet',
-				'outlet.state'])->find($request->mechanic_id);
-
-			$my_job_card_details = Employee::select([
-				'job_cards.job_card_number as jc_number',
-				'vehicles.registration_number',
-				DB::raw('COUNT(job_order_repair_orders.id) as no_of_ROTs'),
-				'configs.name as status',
-				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
-				'models.model_number',
-			])
-				->join('users', 'users.entity_id', 'employees.id')
-				->join('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
-				->join('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')
-				->join('job_orders', 'job_orders.id', 'job_order_repair_orders.job_order_id')
-				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
-				->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
-				->leftJoin('models', 'models.id', 'vehicles.model_id')
-				->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')
-				->join('configs', 'configs.id', 'job_cards.status_id')
-				->where('users.user_type_id', 1)
-				->where('employees.id', $request->mechanic_id)
-				->where('job_cards.id', $request->job_card_id)
-				->first();
-
-			$pass_work_reasons = PauseWorkReason::where('company_id', Auth::user()->company_id)
-				->get();
-
-			$job_order_repair_order_ids = RepairOrderMechanic::where('mechanic_id', $request->mechanic_id)
-				->pluck('job_order_repair_order_id')
-				->toArray();
-
-			$job_order_repair_orders = JobOrderRepairOrder::with([
-				'repairOrderMechanics',
-				'repairOrderMechanics.mechanicTimeLogs',
-				'repairOrderMechanics.mechanic',
-				'repairOrderMechanics.status',
-				'status',
-			])
-				->where('job_order_id', $job_card->job_order_id)
-				->whereIn('id', $job_order_repair_order_ids)
-				->get();
-
-			$total_labour = RepairOrderMechanic::distinct('mechanic_id')->count('mechanic_id');
-
-			$status = RepairOrderMechanic::select('repair_order_mechanics.id', 'repair_order_mechanics.status_id', 'repair_order_mechanics.job_order_repair_order_id', (DB::raw('DATE_FORMAT(repair_order_mechanics.updated_at,"%h:%i %p") as time')))
-				->whereIn('job_order_repair_order_id', $job_order_repair_order_ids)
-				->orderby('repair_order_mechanics.id', 'ASC')->groupBy('repair_order_mechanics.job_order_repair_order_id')->get();
-
-			// dd($job_order_repair_orders);
-			return response()->json([
-				'success' => true,
-				'job_card' => $job_card,
-				'job_order_repair_orders' => $job_order_repair_orders,
-				'pass_work_reasons' => $pass_work_reasons,
-				'user_details' => $user_details,
-				'my_job_card_details' => $my_job_card_details,
-				'getwork_status' => $status,
-				'total_labour' => $total_labour,
-
-			]);
-
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
-
 	public function getLabourReviewData(Request $request) {
 		// dd($request->all());
 		try {
@@ -1621,20 +1533,20 @@ class JobCardController extends Controller {
 
 	public function getRoadTestObservation(Request $request) {
 		$job_card = JobCard::with(['status', 'jobOrder',
-				'jobOrder.type',
-				'jobOrder.vehicle',
-				'jobOrder.vehicle.model',
-		        'jobOrder.vehicle.status',
-				'jobOrder.status',
-				'jobOrder.roadTestDoneBy',
-				'jobOrder.roadTestPreferedBy',
-			    'jobOrder.gateLog',])
-		->select([
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'jobOrder.vehicle.status',
+			'jobOrder.status',
+			'jobOrder.roadTestDoneBy',
+			'jobOrder.roadTestPreferedBy',
+			'jobOrder.gateLog'])
+			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
-		->find($request->id);
+			->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1655,15 +1567,15 @@ class JobCardController extends Controller {
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
-		    'jobOrder.vehicle.status',
+			'jobOrder.vehicle.status',
 			'jobOrder.expertDiagnosisReportBy',
-		    'jobOrder.gateLog',])
-		->select([
+			'jobOrder.gateLog'])
+			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
-		->find($request->id);
+			->find($request->id);
 
 		if (!$job_card) {
 			return response()->json([
@@ -1683,7 +1595,7 @@ class JobCardController extends Controller {
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
-		    'jobOrder.vehicle.status',
+			'jobOrder.vehicle.status',
 			'jobOrder.vehicle.model.campaign',
 			'jobOrder.vehicle.model.campaign.claimType',
 			'jobOrder.vehicle.model.campaign.faultType',
@@ -1692,13 +1604,13 @@ class JobCardController extends Controller {
 			'jobOrder.vehicle.model.campaign.campaignParts',
 			'jobOrder.warrentyPolicyAttachment',
 			'jobOrder.EWPAttachment',
-			'jobOrder.AMCAttachment',])
-		->select([
+			'jobOrder.AMCAttachment'])
+			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
-		->find($request->id);
+			->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -1720,19 +1632,19 @@ class JobCardController extends Controller {
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'status',
-		    'jobOrder.vehicle.status',
+			'jobOrder.vehicle.status',
 			'jobOrder.outlet',
 			'jobOrder.gateLog',
 			'jobOrder.gateLog.createdBy',
 			'jobOrder.gateLog.driverAttachment',
 			'jobOrder.gateLog.kmAttachment',
-			'jobOrder.gateLog.vehicleAttachment',])
-		->select([
+			'jobOrder.gateLog.vehicleAttachment'])
+			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
-		->find($request->id);
+			->find($request->id);
 
 		if (!$job_card) {
 			return response()->json([
@@ -1743,10 +1655,10 @@ class JobCardController extends Controller {
 		}
 
 		$job_order = JobOrder::select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])
+			'job_orders.*',
+			DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+			DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+		])
 			->find($job_card->job_order_id);
 
 		return response()->json([
@@ -1763,13 +1675,13 @@ class JobCardController extends Controller {
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'status',
-		    'jobOrder.gateLog',])
-		->select([
+			'jobOrder.gateLog'])
+			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
-		->find($request->id);
+			->find($request->id);
 
 		if (!$job_card) {
 			return response()->json([
@@ -1792,19 +1704,19 @@ class JobCardController extends Controller {
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'status',
-		    'jobOrder.gateLog',
+			'jobOrder.gateLog',
 			'jobOrder.vehicle.currentOwner.customer',
 			'jobOrder.vehicle.currentOwner.customer.address',
 			'jobOrder.vehicle.currentOwner.customer.address.country',
 			'jobOrder.vehicle.currentOwner.customer.address.state',
 			'jobOrder.vehicle.currentOwner.customer.address.city',
-			'jobOrder.vehicle.currentOwner.ownershipType',])
-		->select([
+			'jobOrder.vehicle.currentOwner.ownershipType'])
+			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
-		->find($request->id);
+			->find($request->id);
 
 		if (!$job_card) {
 			return response()->json([
@@ -1826,7 +1738,7 @@ class JobCardController extends Controller {
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'status',
-		    'jobOrder.vehicle.status',
+			'jobOrder.vehicle.status',
 			'jobOrder.vehicle.currentOwner.ownershipType',
 			'jobOrder.vehicle.lastJobOrder',
 			'jobOrder.vehicle.lastJobOrder.jobCard',
@@ -1841,13 +1753,13 @@ class JobCardController extends Controller {
 			'jobOrder.estimationType',
 			'jobOrder.driverLicenseAttachment',
 			'jobOrder.insuranceAttachment',
-			'jobOrder.rcBookAttachment',])
-		->select([
+			'jobOrder.rcBookAttachment'])
+			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
-		->find($request->id);
+			->find($request->id);
 
 		if (!$job_card) {
 			return response()->json([
@@ -1870,16 +1782,16 @@ class JobCardController extends Controller {
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'status',
-		    'jobOrder.vehicle.status',
+			'jobOrder.vehicle.status',
 			'jobOrder.gateLog',
 			'jobOrder.vehicleInventoryItem',
-			'jobOrder.vehicleInspectionItems',])
-		->select([
+			'jobOrder.vehicleInspectionItems'])
+			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
-		->find($request->id);
+			->find($request->id);
 
 		if (!$job_card) {
 			return response()->json([
@@ -1905,15 +1817,15 @@ class JobCardController extends Controller {
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'status',
-		    'jobOrder.vehicle.status',
+			'jobOrder.vehicle.status',
 			'jobOrder.customerVoices',
-			'jobOrder.gateLog',])
-		->select([
+			'jobOrder.gateLog'])
+			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
-		->find($request->id);
+			->find($request->id);
 
 		if (!$job_card) {
 			return response()->json([
@@ -1924,18 +1836,18 @@ class JobCardController extends Controller {
 		}
 
 		/*$job_order = JobOrder::company()->with([
-			'vehicle',
-			'vehicle.model',
-			'vehicle.status',
-			'customerVoices',
-			'gateLog',
-		])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'customerVoices',
+				'gateLog',
 			])
-			->find($job_card->job_order_id);*/
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+		*/
 
 		return response()->json([
 			'success' => true,
@@ -1966,15 +1878,15 @@ class JobCardController extends Controller {
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'status',
-		    'jobOrder.vehicle.status',
+			'jobOrder.vehicle.status',
 			'jobOrder.customerApprovalAttachment',
-			'jobOrder.customerESign',])
-		->select([
+			'jobOrder.customerESign'])
+			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
-		->find($request->id);
+			->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -2957,6 +2869,7 @@ class JobCardController extends Controller {
 					'gatePassDetail.vendorType',
 					'gatePassDetail.vendor',
 					'gatePassDetail.vendor.addresses',
+					'gatePassItems.attachments',
 				])
 					->find($request->gate_pass_id);
 
@@ -2967,14 +2880,13 @@ class JobCardController extends Controller {
 					]);
 				}
 
-				$gate_pass_item = GatePassItem::where('gate_pass_id', $request->gate_pass_id)->get();
+				//$gate_pass_item = GatePassItem::where('gate_pass_id', $request->gate_pass_id)->get();
 
 				$gate_pass_detail = GatePassDetail::select('vendor_id')->where('gate_pass_id', $gate_pass->id)->first();
 				$vendor = Vendor::select('id', 'code')->where('id', $gate_pass_detail->vendor_id)->first();
 
 			} else {
-				$gate_pass = '';
-				$gate_pass_item = [];
+				$gate_pass['gate_pass_items'] = [];
 				$vendor = [];
 			}
 
@@ -3004,7 +2916,7 @@ class JobCardController extends Controller {
 				'success' => true,
 				'gate_pass' => $gate_pass,
 				'my_job_card_details' => $my_job_card_details,
-				'gate_pass_item' => $gate_pass_item,
+				//'gate_pass_item' => $gate_pass_item,
 				'vendor' => $vendor,
 			]);
 
@@ -3200,124 +3112,6 @@ class JobCardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'message' => 'Material Gate Pass Item Saved Successfully!!',
-			]);
-
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
-
-	// JOB CARD VIEW Save
-	public function saveMyJobCard(Request $request) {
-		//dd($request->all());
-		try {
-			$validator = Validator::make($request->all(), [
-				'job_repair_order_id' => [
-					'required',
-				],
-				'machanic_id' => [
-					'required',
-				],
-				'status_id' => [
-					'required',
-				],
-			]);
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'errors' => $validator->errors()->all(),
-				]);
-			}
-			$repair_order_mechanic = RepairOrderMechanic::where('job_order_repair_order_id', $request->job_repair_order_id)->where('mechanic_id', $request->machanic_id)->first();
-
-			if (!$repair_order_mechanic) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Job Order Repair Order Mechanic Not Found!',
-				]);
-			}
-			DB::beginTransaction();
-
-			if ($request->status_id == 8261 || $request->status_id == 8264) {
-				$mechanic_time_log = new MechanicTimeLog;
-				$mechanic_time_log->start_date_time = Carbon::now();
-				$mechanic_time_log->repair_order_mechanic_id = $repair_order_mechanic->id;
-				$mechanic_time_log->status_id = $request->status_id;
-				$mechanic_time_log->created_by_id = Auth::user()->id;
-				$mechanic_time_log->save();
-			} else {
-				$reason_id = $request->status_id == 8263 ? $request->reason_id : $request->reason_id;
-				$mechanic_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->whereNull('end_date_time')->update(['end_date_time' => Carbon::now(), 'reason_id' => $reason_id, 'status_id' => $request->status_id]);
-			}
-
-			//Update Status
-			$update_repair_order_mechanic = RepairOrderMechanic::where('id', $repair_order_mechanic->id)->where('mechanic_id', $request->machanic_id)->update(['status_id' => $request->status_id]);
-
-			//Update all mechanic work in joborder repair order
-			$mechanic_work = RepairOrderMechanic::where('job_order_repair_order_id', $request->job_repair_order_id)->select('status_id')->get()->toArray();
-			$mechanic_status = 0;
-			$jobcard_status = 0;
-			foreach ($mechanic_work as $key => $mechanic_work_status) {
-				if ($mechanic_work_status['status_id'] != 8263) {
-					$mechanic_status = $mechanic_status + 1;
-				}
-				if ($mechanic_work_status['status_id'] == 8261) {
-					$jobcard_status = $jobcard_status + 1;
-				}
-			}
-			if ($mechanic_status == 0) {
-				$update_job_repair_order = JobOrderRepairOrder::where('id', $request->job_repair_order_id)->update(['status_id' => 8185]);
-			}
-			//Work Complet
-			else {
-				$update_job_repair_order = JobOrderRepairOrder::where('id', $request->job_repair_order_id)->update(['status_id' => 8183]);
-			}
-			// Work inpro
-
-			//Update JobCard
-			$job_order_repair_order_details = JobOrderRepairOrder::select('job_order_id')->where('id', $request->job_repair_order_id)->first();
-			if ($jobcard_status != 0) {
-				$update_job_card = Jobcard::where('job_order_id', $job_order_repair_order_details->job_order_id)->update(['status_id' => 8221]);
-			}
-
-			//Mechanic Log Activity
-			$machanic_time_log_activity = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->get()->toArray();
-
-			//Stat Date and time and end date and time
-			$work_start_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->select('start_date_time')->orderby('id', 'ASC')->get()->toArray();
-			$work_end_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->select('end_date_time')->orderby('id', 'DESC')->get()->toArray();
-
-			//Estimation Working Hours
-			$estimation_work_hours = RepairOrder::select('hours')
-				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')
-				->where('job_order_repair_orders.id', $request->job_repair_order_id)->get()->toArray();
-
-			//Total Working hours of mechanic
-			$mechanic_time_log_check = MechanicTimeLog::select('start_date_time', 'end_date_time')->where('repair_order_mechanic_id', $repair_order_mechanic->id)->get()->toArray();
-
-			$total_hours = 0;
-			foreach ($mechanic_time_log_check as $key => $mechanic_time_log_check) {
-				$date1 = $mechanic_time_log_check['start_date_time'];
-				$date2 = $mechanic_time_log_check['end_date_time'];
-				$seconds = strtotime($date2) - strtotime($date1);
-				$hours = $seconds / 60 / 60;
-				$total_hours = $hours + $total_hours;
-			}
-
-			DB::commit();
-			return response()->json([
-				'success' => true,
-				'mechanic_time_log' => "Work Log Saved Successfully",
-				'machanic_time_log_activity' => $machanic_time_log_activity,
-				'work_status' => $request->status_id,
-				'work_start_date_time' => $work_start_date_time[0],
-				'work_end_date_time' => $work_end_date_time[0],
-				'estimation_work_hours' => $estimation_work_hours,
-				'total_working_hours' => round($total_hours),
 			]);
 
 		} catch (Exception $e) {

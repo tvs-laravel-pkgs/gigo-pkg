@@ -1044,18 +1044,17 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 <script type='text/javascript'>
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
-	    when('/my-jobcard/card-list', {
+	    when('/my-jobcard/card-list/:user_id', {
 	        template: '<my-jobcard-card-list></my-jobcard-card-list>',
 	        title: 'My Job Card List',
 	    }).
-	    when('/my-jobcard/view/:job_card_id', {
+	    when('/my-jobcard/view/:user_id/:job_card_id', {
 	        template: '<my-jobcard-view></my-jobcard-view>',
 	        title: 'My Job Card View',
 	    });
 	}]);
 
 	//Gate Logs
-
     var myjobcard_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/my-jobcard/card-list.html')}}';
     var myjobcard_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/my-jobcard/view.html')}}';
 

@@ -88,8 +88,8 @@
                                                 <div class="col-lg-4"> 
                                                     <div id="myCarousel" class="carousel mgpass-carousel slide" data-ride="carousel">
                                                         <ol class="carousel-indicators">
-                                                            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-                                                            <li data-target="#myCarousel" data-slide-to="1"></li>
+                                                            <li data-target="#myCarousel" data-slide-to="0" class="active" ></li>
+                                                            <li data-target="#myCarousel" data-slide-to="{{keyss}}" ng-repeat="(keyss, gate_pass_items) in gate_passes.gate_pass_items" ng-if="keyss != 0"></li>
                                                         </ol>
                                                         <div class="carousel-inner">
 
