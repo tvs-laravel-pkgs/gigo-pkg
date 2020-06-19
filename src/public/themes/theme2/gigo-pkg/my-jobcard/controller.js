@@ -25,12 +25,12 @@ app.component('myJobcardCardList', {
 
         //HelperService.isLoggedIn()
         self.user = $scope.user = HelperService.getLoggedUser();
-        
+
 
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
-        
+
 
         //FETCH DATA
         $scope.fetchData = function() {
@@ -58,11 +58,11 @@ app.component('myJobcardCardList', {
                 });
         }
         $scope.fetchData();
-       
+
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
-        
+
         /* Modal Md Select Hide */
         $('.modal').bind('click', function(event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
@@ -107,7 +107,7 @@ app.component('myJobcardView', {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
-        
+
         //console.log($routeParams.job_card_id);
         //FETCH DATA
         $scope.fetchData = function() {
@@ -115,7 +115,7 @@ app.component('myJobcardView', {
                     url: base_url + '/api/my-job-card-view',
                     method: "POST",
                     data: {
-                        job_card_id : $routeParams.job_card_id,
+                        job_card_id: $routeParams.job_card_id,
                         mechanic_id: self.user.id,
                     },
                     beforeSend: function(xhr) {
@@ -141,99 +141,130 @@ app.component('myJobcardView', {
         }
         $scope.fetchData();
 
-        $scope.StartWork = function($id,$key)
-        {
-         job_repair_order_id = $("#repair_repair_order_id"+$key).val();
-         status_id = $id;
-          $.ajax({
+        $scope.StartWork = function($id, $key) {
+            job_repair_order_id = $("#repair_repair_order_id" + $key).val();
+            status_id = $id;
+            $.ajax({
                     url: base_url + '/api/save-my-job-card',
                     method: "POST",
                     data: {
-                        job_repair_order_id : job_repair_order_id,
+                        job_repair_order_id: job_repair_order_id,
                         machanic_id: self.user.id,
-                        status_id : status_id,
+                        status_id: status_id,
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 }).done(function(res) {
-                    if(status_id == 8261)
-                    {
-                       custom_noty('success', 'Work has been started');
-                       setTimeout(function(){ location.reload(); }, 1000);
-                       
-                    }
-                    if(status_id == 8263)
-                    {
+
+                    if (status_id == 8261) {
+                        custom_noty('success', 'Work has been started');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 1000);
+                    } else if (status_id == 8263) {
                         $("#start_date_time").text(res.work_start_date_time.start_date_time);
                         $("#end_date_time").text(res.work_end_date_time.end_date_time);
                         $("#estimation_work_hours").text(res.estimation_work_hours[0].hours);
                         $("#actual_hours").text(res.total_working_hours);
-
-                        $scope.confirmFinish = function()
-                        {
-                        custom_noty('success', 'Work has been Completed');
-
-                        setTimeout(function(){ location.reload(); }, 1000);
-                        }
-
-                        //custom_noty('success', 'Work has been Completed');
-
-                        //setTimeout(function(){ location.reload(); }, 1000);
-                    }
-                    if(status_id == 8264)
-                    {
+                    } else if (status_id == 8264) {
                         custom_noty('success', 'Work has been started');
-                        setTimeout(function(){ location.reload(); }, 1000);
+                        setTimeout(function() { location.reload(); }, 1000);
                     }
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
                     }
-                  
+
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
-                }); 
+                });
         }
 
-        $scope.PauseWork = function($key)
-        {
-        job_repair_order_id = $("#repair_repair_order_id"+$key).val();
-        pause_wrk_repair_id = $("#pause_wrk_repair_id").val(job_repair_order_id);
-        }
-
-        $scope.getReason = function($reason_id)
-        {
-            reason_id = $("#reason_id"+$reason_id).val();
-            reason_id = $("#reason").val(reason_id);
-            $("#ac"+$reason_id).addClass('active');
-
-        }
-
-        $scope.reasonConfirm = function() {
-            reason_id = $('#reason').val();
-            if(reason_id == '')
-            {
-                custom_noty('error', 'Select Reason to Pause Work');
-                return;
-            }
-            pause_wrk_repair_id = $("#pause_wrk_repair_id").val();
-          $.ajax({
-                    url: base_url + '/api/save-my-job-card',
+        $scope.FinishWork = function($id, $key) {
+            job_repair_order_id = $("#repair_repair_order_id" + $key).val();
+            $scope.job_repair_order_id = job_repair_order_id;
+            status_id = $id;
+            $.ajax({
+                    url: base_url + '/api/save-work-log',
                     method: "POST",
                     data: {
-                        job_repair_order_id : pause_wrk_repair_id,
+                        job_repair_order_id: job_repair_order_id,
                         machanic_id: self.user.id,
-                        status_id : 8262,
-                        reason_id : reason_id,
+                        status_id: status_id,
+                        type: 1,
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 }).done(function(res) {
+                    $scope.work_log = res.work_logs;
+                    console.log(res);
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        $scope.confirmFinish = function() {
+            $.ajax({
+                    url: base_url + '/api/save-work-log',
+                    method: "POST",
+                    data: {
+                        job_repair_order_id: $scope.job_repair_order_id,
+                        machanic_id: self.user.id,
+                        status_id: 8263,
+                        type: 2,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                }).done(function(res) {
+                    custom_noty('success', res.message);
+                    setTimeout(function() { location.reload(); }, 1000);
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        $scope.PauseWork = function($key) {
+            job_repair_order_id = $("#repair_repair_order_id" + $key).val();
+            pause_wrk_repair_id = $("#pause_wrk_repair_id").val(job_repair_order_id);
+        }
+
+        $scope.OnselectWorkReason = function(index, reason_id) {
+            $('.reasons').removeClass('active');
+            $('#reason_id' + index).addClass('active');
+            $('#selected_reason_id').val(reason_id);
+        }
+        $scope.reasonConfirm = function() {
+            reason_id = $('#selected_reason_id').val();
+            if (reason_id == '') {
+                custom_noty('error', 'Select Reason to Pause Work');
+                return;
+            }
+            pause_wrk_repair_id = $("#pause_wrk_repair_id").val();
+            $.ajax({
+                    url: base_url + '/api/save-my-job-card',
+                    method: "POST",
+                    data: {
+                        job_repair_order_id: pause_wrk_repair_id,
+                        machanic_id: self.user.id,
+                        status_id: 8262,
+                        reason_id: reason_id,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                }).done(function(res) {
+                    $("#pause_work_modal").hide();
                     custom_noty('success', 'Work has Paused');
-                    setTimeout(function(){ location.reload(); }, 1000);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -242,15 +273,12 @@ app.component('myJobcardView', {
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
-
-                $("#pause_work").hide();
-           
         }
-       
+
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
-        
+
         /* Modal Md Select Hide */
         $('.modal').bind('click', function(event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
@@ -260,5 +288,3 @@ app.component('myJobcardView', {
         $rootScope.loading = false;
     }
 });
-
-

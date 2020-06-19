@@ -266,6 +266,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
 
 		Route::post('save-my-job-card', 'JobCardController@saveMyJobCard');
+		Route::post('save-work-log', 'JobCardController@saveMyWorkLog');
 
 		//JOB CARD LABOUR REVIEW
 		Route::post('get-labour-review', 'JobCardController@getLabourReviewData');
