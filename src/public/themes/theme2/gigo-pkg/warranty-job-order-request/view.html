@@ -36,6 +36,9 @@
                         <div class="tab-pane fade" id="attachment_view" data-animation="fadeInUp" data-animation-delay="300">
                             <wjor-attachment-view ng-init="self.attachments = warranty_job_order_request.attachments"></wjor-attachment-view>
                         </div>
+                        <div class="tab-pane fade" id="approval_attachment_form" data-animation="fadeInUp" data-animation-delay="300">
+                            <wjor-approval-attachment-form></wjor-approval-attachment-form>
+                        </div>
                         <div class="tab-pane-footer">
                             <div class="row">
                                 <div class="col-md-12">
@@ -52,7 +55,7 @@
                                         Approve
                                     </button>
                                     <button type="button" ng-if="warranty_job_order_request.status.id == 9101" ng-click="showRejectForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
-                                        Reject
+                                        Request Resubmit
                                     </button>
                                 </div>
                             </div>
@@ -89,9 +92,25 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>
+                                    Authorized Date
+                                </label>
+                                <input type="text" disabled="disabled" class="form-control" ng-model="warranty_job_order_request.authorized_date">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
                                     Remarks (if any)
                                 </label>
                                 <textarea class="form-control" name="remarks" ng-model="warranty_job_order_request.rejected_reason"></textarea>
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Aproved By
+                                </label>
+                                <input type="text" disabled="disabled" class="form-control" ng-model="user.name">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-12 text-right mb-15">
@@ -116,7 +135,7 @@
                     <i class="icon ion-md-close"></i>
                 </button>
                 <h5 class="modal-title">
-                    Reject
+                    Request Resubmit
                 </h5>
             </div>
             <div class="modal-body">
@@ -125,7 +144,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>
-                                    Reason for rejection
+                                    Reason for resubmit request
                                     <span class="mandatory">*</span>
                                 </label>
                                 <textarea class="form-control" name="rejected_reason" ng-model="warranty_job_order_request.rejected_reason"></textarea>

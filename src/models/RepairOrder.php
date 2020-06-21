@@ -24,22 +24,32 @@ class RepairOrder extends BaseModel {
 		'code',
 		'alt_code',
 		'name',
+		'category_id',
 		'skill_level_id',
 		'hours',
 		'amount',
+		'claim_amount',
+		'maximum_claim_amount',
 		'tax_code_id',
 		'uom_id',
 	];
 
+	// Relationships --------------------------------------------------------------
+
 	public static function relationships($action = '') {
 		$relationships = [
 			'skillLevel',
+			'category',
+			'taxCode',
+			'taxCode.taxes',
 		];
 
 		return $relationships;
 	}
 
-	// Relationships --------------------------------------------------------------
+	public function category() {
+		return $this->belongsTo('App\Config', 'category_id');
+	}
 
 	public function repairOrderType() {
 		return $this->belongsTo('App\RepairOrderType', 'type_id');
@@ -50,7 +60,7 @@ class RepairOrder extends BaseModel {
 	}
 
 	public function taxCode() {
-		return $this->belongsTo('Abs\TaxPkg\TaxCode', 'tax_code_id');
+		return $this->belongsTo('App\TaxCode', 'tax_code_id');
 	}
 
 	public function skillLevel() {

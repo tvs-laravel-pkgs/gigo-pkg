@@ -16,6 +16,9 @@ class WjorRepairOrder extends BaseModel {
 		"id",
 		"wjor_id",
 		"repair_order_id",
+		"net_amount",
+		"total_tax",
+		"total_amount",
 	];
 	// Getters --------------------------------------------------------------
 

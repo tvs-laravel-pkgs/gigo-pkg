@@ -46,6 +46,15 @@ app.directive('wjorAttachmentForm', function() {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
+app.directive('wjorApprovalAttachmentForm', function() {
+    return {
+        templateUrl: gigo_pkg_url +
+            '/warranty-job-order-request/partials/wjor-approval-attachment-form.html',
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
 app.directive('wjorPprView', function() {
     return {
         templateUrl: wjorPprView,
@@ -393,6 +402,28 @@ app.component('warrantyJobOrderRequestForm', {
             });
         }
 
+        $scope.repairOrderSelected = function(repair_order) {
+
+            if (repair_order.category_id == 9140) {
+                //Miscellaneous
+                repair_order.net_amount = 0;
+            } else {
+                $scope.calculateRepairOrderAmount(repair_order);
+            }
+        }
+
+        $scope.calculateRepairOrderAmount = function(repair_order) {
+            var total_amount = 0;
+            var tax_total = 0;
+            if (repair_order.tax_code) {
+                angular.forEach(repair_order.tax_code.taxes, function(tax) {
+                    tax_total += parseFloat(repair_order.amount) * parseFloat(tax.pivot.percentage) / 100;
+                })
+            }
+            repair_order.total_amount = parseFloat(repair_order.amount) + tax_total;
+
+        }
+
         $scope.searchParts = function(query) {
             return new Promise(function(resolve, reject) {
                 PartSvc.options({ filter: { search: query } })
@@ -663,6 +694,29 @@ app.component('warrantyJobOrderRequestView', {
                     $scope.warranty_job_order_request = responses.warranty_job_order_request_read.data.warranty_job_order_request;
                     $scope.calculateLabourTotal();
                     $scope.calculatePartTotal();
+                    $("#file-1").fileinput({
+                        theme: 'fas',
+                        overwriteInitial: true,
+                        // minFileCount: 1,
+                        maxFileSize: 5000,
+                        // required: true,
+                        showUpload: false,
+                        browseOnZoneClick: true,
+                        removeFromPreviewOnError: true,
+                        initialPreviewShowDelete: true,
+                        deleteUrl: '',
+                        // showRemove:true,
+                        // maxFilesNum: 10,
+                        // initialPreview: [
+                        //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
+                        //     "<img src='/images/jellyfish.jpg' class='file-preview-image' alt='Jelly Fish' title='Jelly Fish'>",
+                        // ],
+                        // allowedFileTypes: ['image'],
+                        slugCallback: function(filename) {
+                            return filename.replace('(', '_').replace(']', '_');
+                        }
+                    });
+
                     $rootScope.loading = false;
                 });
         };

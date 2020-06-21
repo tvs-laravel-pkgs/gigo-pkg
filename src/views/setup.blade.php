@@ -5,7 +5,7 @@
 @endif
 
 <script type="text/javascript">
-
+    var gigo_pkg_url = "{{url($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg')}}";
 
 	//Vehicle Segments
     var vehicle_segment_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/list.html')}}";
