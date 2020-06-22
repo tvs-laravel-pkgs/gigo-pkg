@@ -36,7 +36,7 @@
                                                         </span>
                                                         <span class="view-data-list-value">
                                                             <b>
-                                                                {{job_order.expert_diagnosis_report_by.name}}
+                                                                {{job_card.job_order.expert_diagnosis_report_by.name}}
                                                             </b></span>
                                                     </li>
                                                     <li class="view-col-8">
@@ -45,13 +45,13 @@
                                                         </span>
                                                         <span class="view-col-value">
                                                             <b>
-                                                                {{job_order.expert_diagnosis_report}}
+                                                                {{job_card.job_order.expert_diagnosis_report}}
                                                             </b>
                                                         </span>
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_order.id}}" class="btn btn-secondary-dark btn-md btn-square">Edit</a>
+                                            <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_card.job_order.id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">

@@ -19,6 +19,19 @@ class Fault extends BaseModel {
 		"name",
 	];
 
+	public static function relationships($action = '') {
+		$relationships = [
+			'type',
+			'outlet',
+			'vehicle',
+			'vehicle.model',
+			'customer',
+			'serviceType',
+			'status',
+		];
+		return $relationships;
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {

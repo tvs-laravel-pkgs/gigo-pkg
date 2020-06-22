@@ -9,14 +9,14 @@
                     <div class="jc-profile">
                         <img class="img-responsive profile-image" src="./public/theme/img/content/profile.jpg" alt="Profile">
                         <span>
-                                 <b>
-                                    {{user_details.user.name}} | 
-                                </b>  
-                                ECode : {{user_details.code}} | {{user_details.outlet.state.code}} / {{user_details.outlet.code}} / Mechanic
+                            <b>
+                                {{user_details.name}} |
+                            </b>
+                            ECode : {{user_details.ecode}} | {{user_details.employee.outlet.state.code}} / {{user_details.employee.outlet.code}} / {{user_details.employee.is_mechanic == 1 ? 'Mechanic' : 'Not a Mechanic'}}
                         </span>
                     </div>
-                </div><!-- Page Header Content -->                
-            </div><!-- Page Header Content Left -->            
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
     <div class="card-tab-content">
@@ -37,10 +37,10 @@
                                             <div class="box-left">
                                                 <div class="box-transparent">
                                                     <div class="box-transparent-title">
-                                                       {{my_job_card_list.registration_number}}
+                                                        {{my_job_card_list.registration_number}}
                                                     </div>
                                                     <div class="box-transparent-subtitle">
-                                                       {{my_job_card_list.model_number}}
+                                                        {{my_job_card_list.model_number}}
                                                     </div>
                                                 </div>
                                             </div><!-- Box Left -->
@@ -60,17 +60,17 @@
                                             </div><!-- Box Right -->
                                         </div><!-- Box List -->
                                         <div class="card-box-content mb-8">
-                                            <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image" />
+                                            <img class="img-responsive" src="./public/theme/img/content/jc_profile.svg" alt="Image" />
                                             <span class="card-box-content-value">
                                                 <b>
-                                                    {{my_job_card_list.user_name}}
+                                                    {{my_job_card_list.customer_name}}
                                                 </b>
-                                            </span>                                            
+                                            </span>
                                         </div>
                                         <div class="card-box-content">
-                                            <img class="img-responsive" src="./public/theme/img/content/download-red.svg" alt="Image">
+                                            <img class="img-responsive" src="./public/theme/img/content/jc_setup.svg" alt="Image">
                                             <span class="card-box-content-value">
-                                                No. of ROT’s  : {{my_job_card_list.no_of_ROTs}}
+                                                No. of ROT’s : {{my_job_card_list.no_of_ROTs}}
                                             </span>
                                         </div>
                                     </div><!-- Card Box Body -->
@@ -84,9 +84,9 @@
                                             </div>
                                         </div>
                                         <div class="card-box-footer-right">
-                                            <a href=".#!/my-jobcard/view/{{my_job_card_list.id}}" class="btn btn-square btn-md btn-red">
-                                                    View
-                                                </a>
+                                            <a href=".#!/my-jobcard/view/{{user_details.id}}/{{my_job_card_list.id}}" class="btn btn-square btn-md btn-red">
+                                                View
+                                            </a>
                                         </div>
                                     </div><!-- Card Box Footer -->
                                 </div><!-- Card Box -->
@@ -100,7 +100,7 @@
                             <button class="btn btn-red btn-min-wdth">Close</button>
                         </div>
                     </div><!-- Column -->
-                </div><!-- Row -->                
+                </div><!-- Row -->
             </div><!-- Container -->
         </div><!-- Page Card Content -->
     </div><!-- Card Tab Content -->

@@ -1,0 +1,63 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="attendance-qr-details">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="page-header-content-left">
+                            <div class="page-header-content button-block">
+                                <a href="#!" type="button" class="btn-back btn-img">
+                                    <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                                </a>
+                            </div>
+                            <div class="page-header-content title-block">
+                                <h1 class="title">My Job Cards</h1>
+                            </div>
+                        </div><!-- Page Header Content Left -->
+                    </div><!-- Column -->
+                    <div class="col-md-4">
+                        <p class="location"><img class="img-responsive map-marker" src="./public/theme/img/content/map-marker.svg" alt="Location" />{{user.employee.outlet.name ? user.employee.outlet.name : ''}}</p>
+                    </div><!-- Column -->
+                    <div class="col-md-4">
+                        <div class="page-header-content-right">
+                            <span class="date">
+                                {{date |date:'dd/MM/yyyy'}} - {{date |date:'EEEE'}}
+                            </span>
+                            <span class="time">
+                                {{time |date:'shortTime'}}
+                            </span>
+                        </div><!-- Page Header Content Right -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="page-form pb-60">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="qr-bg1">
+                                    <qr-scanner width="400" height="300" ng-success="onSuccess(data)" ng-error="onError(error)" />
+                                    <p class="info">
+                                        Show QR Code
+                                    </p>
+                                </div>
+                            </div><!-- Column -->
+                            <div class="col-md-12">
+                                <div class="text-center pt-80">
+                                    <a href="#!/gigo-pkg/kanban-app" ng-click="reloadPage()"><button class="btn btn-red btn-min-wdth">Back</button></a>
+                                </div>
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Page Form -->
+                </div><!-- Column -->
+            </div><!-- Row -->
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

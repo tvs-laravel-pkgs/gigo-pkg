@@ -16,19 +16,19 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_service_type" class="form-control" placeholder="Search" autofocus />
+                            <input type="search" id="search_campaign" class="form-control" placeholder="Search" autofocus />
                             <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
                 </div>
                 <div class="page-header-content button-block">
-                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#service-type-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#campaign-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
                 <!-- Page Header Content -->
                 <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
-                    <a href="#!/gigo-pkg/compaigns/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
+                    <a href="#!/gigo-pkg/campaign/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">Add New</a>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
@@ -55,7 +55,7 @@
         </div><!-- Container -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<div class="modal fade filter" id="service-type-filter-modal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade filter" id="campaign-filter-modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog filter-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">

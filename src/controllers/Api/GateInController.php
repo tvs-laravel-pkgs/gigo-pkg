@@ -212,6 +212,19 @@ class GateInController extends Controller {
 			$vehicle->fill($request->all());
 			$vehicle->save();
 
+			//CHECK VEHICLE PREVIOUS JOBCARD STATUS
+			$previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
+			if ($previous_job_order) {
+				if ($previous_job_order->status_id != 8468) {
+					return response()->json([
+						'success' => false,
+						'errors' => [
+							'Previous Job Order not completed!',
+						],
+					]);
+				}
+			}
+
 			$job_order = new JobOrder;
 			$job_order->company_id = Auth::user()->company_id;
 			$job_order->number = rand();
@@ -234,7 +247,6 @@ class GateInController extends Controller {
 			$gate_log->outlet_id = Auth::user()->employee->outlet_id;
 			$gate_log->save();
 
-			//GATE IN NUMBER GENERATION & VALIDATION
 			if (date('m') > 3) {
 				$year = date('Y') + 1;
 			} else {
@@ -255,11 +267,8 @@ class GateInController extends Controller {
 			//GET BRANCH/OUTLET
 			$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
 
-			//SERIAL NUMBER CATEGORY TABLE - FOR GATE IN VEHICLE
-			$serial_number_category = 20;
-
 			//GENERATE GATE IN VEHICLE NUMBER
-			$generateNumber = SerialNumberGroup::generateNumber($serial_number_category, $financial_year->id, $branch->state_id, $branch->id);
+			$generateNumber = SerialNumberGroup::generateNumber(20, $financial_year->id, $branch->state_id, $branch->id);
 			if (!$generateNumber['success']) {
 				return response()->json([
 					'success' => false,
@@ -287,9 +296,40 @@ class GateInController extends Controller {
 					'errors' => $validator_1->errors()->all(),
 				]);
 			}
-
 			$gate_log->number = $generateNumber['number'];
 			$gate_log->save();
+
+			//GENERATE JOB ORDER NUMBER
+			$generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
+			if (!$generateJONumber['success']) {
+				return response()->json([
+					'success' => false,
+					'errors' => [
+						'No Serial number found',
+					],
+				]);
+			}
+
+			$error_messages_2 = [
+				'number.required' => 'Serial number is required',
+				'number.unique' => 'Serial number is already taken',
+			];
+
+			$validator_2 = Validator::make($generateJONumber, [
+				'number' => [
+					'required',
+					'unique:job_orders,number,' . $job_order->id . ',id,company_id,' . Auth::user()->company_id,
+				],
+			], $error_messages_2);
+
+			if ($validator_2->fails()) {
+				return response()->json([
+					'success' => false,
+					'errors' => $validator_2->errors()->all(),
+				]);
+			}
+			$job_order->number = $generateJONumber['number'];
+			$job_order->save();
 
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/gate_in/attachments/');

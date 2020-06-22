@@ -3,8 +3,14 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\Attachment;
 use App\BaseModel;
+use App\WjorPart;
+use App\WjorRepairOrder;
+use Auth;
+use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Storage;
 use Validator;
 
 class WarrantyJobOrderRequest extends BaseModel {
@@ -46,6 +52,25 @@ class WarrantyJobOrderRequest extends BaseModel {
 		"status_id",
 	];
 
+	protected $dates = [
+		'failure_date',
+		'created_at',
+		'updated_at',
+		'deleted_at',
+	];
+
+	// Getters --------------------------------------------------------------
+
+	public function getFailureDateAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
+	// Setters --------------------------------------------------------------
+
+	public function setFailureDateAttribute($value) {
+		$this->fillDateAttribute('failure_date', $value);
+	}
+
 	// Relationships --------------------------------------------------------------
 
 	public function jobOrder() {
@@ -65,7 +90,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 	}
 
 	public function primarySegment() {
-		return $this->belongsTo('App\VehiclePrimatyApplication', 'primary_segment_id');
+		return $this->belongsTo('App\VehiclePrimaryApplication', 'primary_segment_id');
 	}
 
 	public function secondarySegment() {
@@ -104,6 +129,62 @@ class WarrantyJobOrderRequest extends BaseModel {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
 
+	public function serviceTypes() {
+		return $this->belongsToMany('App\ServiceType', 'wjor_service_type', 'wjor_id', 'service_type_id');
+	}
+
+	public function repairOrders() {
+		return $this->belongsToMany('App\RepairOrder', 'wjor_repair_orders', 'wjor_id');
+	}
+
+	public function parts() {
+		return $this->belongsToMany('App\Part', 'wjor_parts', 'wjor_id');
+	}
+
+	// public function repairOrders() {
+	// 	return $this->hasMany('App\WjorRepairOrder', 'wjor_id');
+	// }
+
+	// public function parts() {
+	// 	return $this->hasMany('App\WjorPart', 'wjor_id');
+	// }
+
+	public function attachments() {
+		return $this->hasMany('App\Attachment', 'entity_id')->where('attachment_of_id', 9120);
+	}
+
+	public static function relationships($action = '') {
+		$relationships = [
+			'jobOrder',
+			'jobOrder.type',
+			'jobOrder.outlet',
+			'jobOrder.vehicle',
+			'jobOrder.serviceType',
+			'jobOrder.status',
+			'complaint',
+			'fault',
+			'supplier',
+			'primarySegment',
+			'secondarySegment',
+			'operatingCondition',
+			'normalRoadCondition',
+			'failureRoadCondition',
+			'loadCarriedType',
+			'loadRange',
+			'terrainAtFailure',
+			'readingType',
+			'status',
+			'serviceTypes',
+			'repairOrders',
+			// 'repairOrders.repairOrder',
+			'parts',
+			// 'parts.part',
+			'attachments',
+		];
+
+		return $relationships;
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {
@@ -112,6 +193,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$query->orWhere('number', 'LIKE', '%' . $term . '%');
 			});
 		}
+	}
+
+	public function scopeFilterStatusIn($query, $statusIds) {
+		$query->whereIn('status_id', $statusIds);
 	}
 
 	// Static Operations --------------------------------------------------------------
@@ -189,16 +274,142 @@ class WarrantyJobOrderRequest extends BaseModel {
 		];
 	}
 
-	public static function getList($params = [], $add_default = true, $default_text = 'Select Fault Type') {
-		$list = Collect(Self::select([
-			'id',
-			'name',
-		])
-				->orderBy('name')
-				->get());
-		if ($add_default) {
-			$list->prepend(['id' => '', 'name' => $default_text]);
+	public static function saveFromNgArray($input, $owner = null) {
+		$owner = !is_null($owner) ? $owner : Auth::user();
+
+		if (!isset($input['id']) || !$input['id']) {
+			$record = new Self();
+			$record->company_id = $owner->company_id;
+			$record->number = rand();
+
+		} else {
+			$record = Self::find($input['id']);
+			if (!$record) {
+				return [
+					'success' => false,
+					'error' => 'Record not found',
+				];
+			}
 		}
-		return $list;
+		$record->fill($input);
+		$record->job_order_id = $input['job_order']['id'];
+		$record->complaint_id = $input['complaint']['id'];
+		$record->fault_id = $input['fault']['id'];
+		$record->supplier_id = $input['supplier']['id'];
+		$record->primary_segment_id = $input['primary_segment']['id'];
+		$record->secondary_segment_id = $input['secondary_segment']['id'];
+		$record->operating_condition_id = $input['operating_condition']['id'];
+		$record->normal_road_condition_id = $input['normal_road_condition']['id'];
+		$record->failure_road_condition_id = $input['failure_road_condition']['id'];
+		// $record->load_carried_type_id = $input['load_carried_type']['id'];
+		$record->load_range_id = $input['load_range']['id'];
+		$record->terrain_at_failure_id = $input['terrain_at_failure']['id'];
+		// $record->reading_type_id = $input['reading_type']['id'];
+		$record->status_id = 9100; //New
+		$record->save();
+		$record->number = 'WJOR-' . $record->id;
+		// $record->failure_date = ;
+		$record->save();
+		return [
+			'success' => true,
+			'message' => 'Record created successfully',
+			'warranty_job_order_request' => $record,
+		];
+
 	}
+
+	public static function saveFromFormArray($input, $owner = null) {
+		try {
+			DB::beginTransaction();
+			$owner = !is_null($owner) ? $owner : Auth::user();
+
+			if (!isset($input['id']) || !$input['id']) {
+				$record = new Self();
+				$record->company_id = $owner->company_id;
+				$record->number = rand();
+
+			} else {
+				$record = Self::find($input['id']);
+				if (!$record) {
+					return [
+						'success' => false,
+						'error' => 'Record not found',
+					];
+				}
+			}
+			$record->fill($input);
+			$record->status_id = 9100; //New
+			$record->save();
+			$record->number = 'WJOR-' . $record->id;
+			$record->save();
+
+			$service_types = json_decode($input['service_type_ids']);
+			$service_type_ids = [];
+			if (count($service_types) > 0) {
+				foreach ($service_types as $service_type) {
+					$service_type_ids[] = $service_type->id;
+				}
+			}
+
+			if (isset($input['repair_orders'])) {
+				foreach ($input['repair_orders'] as $repair_order) {
+					$wjorRepairOrder = new WjorRepairOrder;
+					$wjorRepairOrder->wjor_id = $record->id;
+					$wjorRepairOrder->repair_order_id = $repair_order['id'];
+					$wjorRepairOrder->save();
+				}
+			}
+
+			if (isset($input['parts'])) {
+				foreach ($input['parts'] as $part) {
+					$wjorPart = new WjorPart;
+					$wjorPart->wjor_id = $record->id;
+					$wjorPart->part_id = $part['id'];
+					$wjorPart->save();
+				}
+			}
+
+			$record->serviceTypes()->sync($service_type_ids);
+
+			//SAVE ATTACHMENTS
+			$attachement_path = storage_path('app/public/wjor/');
+			Storage::makeDirectory($attachement_path, 0777);
+			if (isset($input['photos'])) {
+				foreach ($input['photos'] as $key => $photo) {
+					$value = rand(1, 100);
+					$image = $photo;
+
+					$file_name_with_extension = $image->getClientOriginalName();
+					$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+					$extension = $image->getClientOriginalExtension();
+					// dd($file_name, $extension);
+					//ISSUE : file name should be stored
+					$name = $record->id . '_' . $file_name . '_' . rand(10, 1000) . '.' . $extension;
+
+					$photo->move($attachement_path, $name);
+					$attachement = new Attachment;
+					$attachement->attachment_of_id = 9120;
+					$attachement->attachment_type_id = 244;
+					$attachement->entity_id = $record->id;
+					$attachement->name = $name;
+					$attachement->save();
+				}
+			}
+			DB::commit();
+
+			return [
+				'success' => true,
+				'message' => 'Record created successfully',
+				'warranty_job_order_request' => $record,
+			];
+		} catch (Exceprion $e) {
+			DB::rollBack();
+			return response()->json([
+				'success' => false,
+				'error' => $e->getMessage(),
+			]);
+		}
+
+	}
+
 }

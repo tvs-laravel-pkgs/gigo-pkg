@@ -1,0 +1,166 @@
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="./#!/warranty-job-order-request/card-list" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
+                    </a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title">
+                        <b>
+                            Warranty Job Order Request
+                        </b>
+                    </h1>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <wjor-header></wjor-header>
+            <div class="tab-form-wrap type-2">
+                <wjor-view-tabs></wjor-view-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="ppr_view" data-animation="fadeInUp" data-animation-delay="300">
+                            <wjor-ppr-view></wjor-ppr-view>
+                        </div>
+                        <div class="tab-pane fade" id="estimate_view" data-animation="fadeInUp" data-animation-delay="300">
+                            <wjor-estimate-view></wjor-estimate-view>
+                        </div>
+                        <div class="tab-pane fade" id="attachment_view" data-animation="fadeInUp" data-animation-delay="300">
+                            <wjor-attachment-view ng-init="self.attachments = warranty_job_order_request.attachments"></wjor-attachment-view>
+                        </div>
+                        <div class="tab-pane fade" id="approval_attachment_form" data-animation="fadeInUp" data-animation-delay="300">
+                            <wjor-approval-attachment-form></wjor-approval-attachment-form>
+                        </div>
+                        <div class="tab-pane-footer">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button type="button" ng-if="warranty_job_order_request.status.id == 9100" ng-click1="savePPRForm('close')" class="btn btn-red">
+                                        Edit
+                                    </button>
+                                    <button type="button" ng-click="confirmDelete(warranty_job_order_request)" class="btn btn-red">
+                                        Delete
+                                    </button>
+                                    <button type="button" ng-if="warranty_job_order_request.status.id == 9100" ng-click="sendToApproval(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                        Send to approval
+                                    </button>
+                                    <button type="button" ng-if="warranty_job_order_request.status.id == 9101" ng-click="showApprovalForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                        Approve
+                                    </button>
+                                    <button type="button" ng-if="warranty_job_order_request.status.id == 9101" ng-click="showRejectForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                        Request Resubmit
+                                    </button>
+                                </div>
+                            </div>
+                        </div><!-- Tab Footer -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div>
+<div class="modal fade filter" id="approve_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                    <i class="icon ion-md-close"></i>
+                </button>
+                <h5 class="modal-title">
+                    Approve
+                </h5>
+            </div>
+            <div class="modal-body">
+                <form id="approval-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Authorization number
+                                    <span class="mandatory">*</span>
+                                </label>
+                                <input type="text" class="form-control" name="authorization_number" ng-model="warranty_job_order_request.authorization_number" maxlength="64">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Authorized Date
+                                </label>
+                                <input type="text" disabled="disabled" class="form-control" ng-model="warranty_job_order_request.authorized_date">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Remarks (if any)
+                                </label>
+                                <textarea class="form-control" name="remarks" ng-model="warranty_job_order_request.rejected_reason"></textarea>
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Aproved By
+                                </label>
+                                <input type="text" disabled="disabled" class="form-control" ng-model="user.name">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-12 text-right mb-15">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-bordered btn-red approve_btn">
+                                Approve
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </form>
+            </div>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<div class="modal fade filter" id="reject_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                    <i class="icon ion-md-close"></i>
+                </button>
+                <h5 class="modal-title">
+                    Request Resubmit
+                </h5>
+            </div>
+            <div class="modal-body">
+                <form id="rejection-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Reason for resubmit request
+                                    <span class="mandatory">*</span>
+                                </label>
+                                <textarea class="form-control" name="rejected_reason" ng-model="warranty_job_order_request.rejected_reason"></textarea>
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-12 text-right mb-15">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-bordered btn-red reject_btn">
+                                Reject
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </form>
+            </div>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->

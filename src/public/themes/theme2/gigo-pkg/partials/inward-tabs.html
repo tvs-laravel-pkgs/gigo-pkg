@@ -33,7 +33,7 @@
                         Road Test Observations
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'expert-diagnosis-detail'}">
+                <li ng-class="{active:active_tab == 'expert-diagnosis-detail'}" ng-if="job_order.is_expert_diagnosis_required">
                     <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_order_id}}" class="filter">
                         Expert Diagnosis Report
                     </a>

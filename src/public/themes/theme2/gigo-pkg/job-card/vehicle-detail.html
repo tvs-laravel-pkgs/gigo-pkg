@@ -34,21 +34,21 @@
                                                         Registration Type
                                                     </span>
                                                     <span class="view-data-list-value">
-                                                        <b ng-if="job_order.vehicle.is_registered == 1">
+                                                        <b ng-if="job_card.job_order.vehicle.is_registered == 1">
                                                             Registered Vehicle
                                                         </b>
-                                                        <b ng-if="job_order.vehicle.is_registered != 1">
+                                                        <b ng-if="job_card.job_order.vehicle.is_registered != 1">
                                                             Un-Registered Vehicle
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-3" ng-if="job_order.vehicle.is_registered == 1">
+                                                <li class="view-col-3" ng-if="job_card.job_order.vehicle.is_registered == 1">
                                                     <span class="view-col-label">
                                                         Registration No
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
-                                                            {{job_order.vehicle.registration_number}}
+                                                            {{job_card.job_order.vehicle.registration_number}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -58,7 +58,7 @@
                                                     </span>
                                                     <span class="view-col-value">
                                                         <b>
-                                                            {{job_order.vehicle.model.model_name}}
+                                                            {{job_card.job_order.vehicle.model.model_name}}
                                                         </b>
                                                     </span>
                                                 </li>
@@ -67,7 +67,20 @@
                                                         VIN Number
                                                     </span>
                                                     <span class="view-col-value">
-                                                        {{job_order.vehicle.vin_number}}
+                                                        {{job_card.job_order.vehicle.vin_number}}
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Is Sold ?
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b ng-if="job_card.job_order.vehicle.is_sold == 1">
+                                                            Yes
+                                                        </b>
+                                                        <b ng-if="job_card.job_order.vehicle.is_sold != 1">
+                                                            No
+                                                        </b>
                                                     </span>
                                                 </li>
                                                 <li class="view-col-3">
@@ -75,7 +88,7 @@
                                                         Engine Number
                                                     </span>
                                                     <span class="view-col-value">
-                                                        {{job_order.vehicle.engine_number}}
+                                                        {{job_card.job_order.vehicle.engine_number}}
                                                     </span>
                                                 </li>
                                                 <li class="view-col-3">
@@ -84,12 +97,12 @@
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.vehicle.chassis_number}}
+                                                            {{job_card.job_order.vehicle.chassis_number}}
                                                         </b>
                                                     </span>
                                                 </li>
                                             </ul>
-                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/vehicle-detail/{{job_order.id}}/1" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/vehicle-detail/{{job_card.job_order.id}}/1" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
                                                 Edit
                                             </a>
                                         </div><!-- Column -->

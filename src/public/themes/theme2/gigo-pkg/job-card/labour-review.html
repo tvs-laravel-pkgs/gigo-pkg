@@ -65,7 +65,7 @@
                                                 </div><!-- Right Wrap -->
                                                 <div class="assigned-info">
                                                     <span class="title small">Assigned to:
-                                                    <span ng-repeat="(key,repair_order_mechanic) in job_order_repair_order.repair_order_mechanics">{{repair_order_mechanic.mechanic.name}}{{$last ? '' : ', '}}</span></span>
+                                                        <span ng-repeat="(key,repair_order_mechanic) in job_order_repair_order.repair_order_mechanics">{{repair_order_mechanic.mechanic.name}}{{$last ? '' : ', '}}</span></span>
                                                 </div>
                                             </div>
                                         </div><!-- Column -->
@@ -100,6 +100,9 @@
                                                                             </td>
                                                                             <td>{{mechanic_time_log.duration_difference ? mechanic_time_log.duration_difference : '-'}}</td>
                                                                         </tr>
+                                                                        <tr ng-if="repair_order_mechanic.mechanic_time_logs.length == '0'">
+                                                                            <td colspan="4" class="text-center">No Worklog found!</td>
+                                                                        </tr>
                                                                     </tbody>
                                                                 </table>
                                                             </div><!-- Table Responsive -->
@@ -116,7 +119,7 @@
                                             <div class="form-group">
                                                 <label>Status</label>
                                                 <div class="common-radio-button type-4">
-                                                    <input type="radio" id="layer_yes" name="status_id"  value="8187" />
+                                                    <input type="radio" id="layer_yes" name="status_id" value="8187" />
                                                     <label for="layer_yes">Completed</label>
                                                     <input type="radio" id="layer_no" name="status_id" checked value="8186" />
                                                     <label for="layer_no">Re-Schedule</label>

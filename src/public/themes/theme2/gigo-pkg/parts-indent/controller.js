@@ -172,6 +172,7 @@ app.component('partsIndentView', {
                     $http.post(
                             laravel_routes['getPartDetails'], {
                                 key: part_code_selected,
+                                job_order_id : self.job_cards.job_order_id,
                             }
                         )
                         .then(function(response) {
@@ -349,10 +350,12 @@ app.component('partsIndentEditParts', {
                     $http.post(
                             laravel_routes['getPartDetails'], {
                                 key: part_code_selected,
+                                job_order_id : self.job_cards.job_order_id,
                             }
                         )
                         .then(function(response) {
                             self.parts_details = response.data.parts_details;
+                            console.log(response.data.parts_details);
                             $("#job_order_part_id").val(self.parts_details.id);
                             $("#req_qty").text(self.parts_details.qty+" "+"nos");
                             $("#issue_qty").text(self.parts_details.issued_qty+" "+"nos");

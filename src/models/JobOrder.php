@@ -45,40 +45,26 @@ class JobOrder extends BaseModel {
 		"floor_supervisor_id",
 	];
 
-	public static function relationships($action = '') {
-		$relationships = [
-			'type',
-			'outlet',
-			'vehicle',
-			'serviceType',
-			'status',
-		];
+	protected $dates = [
+		'created_at',
+		'updated_at',
+		'deleted_at',
+	];
 
-		return $relationships;
-	}
+	// Getters --------------------------------------------------------------
 
 	public function getDriverLicenseExpiryDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 
-	public function setDriverLicenseExpiryDateAttribute($date) {
-		return $this->attributes['driver_license_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
-	}
 	public function getInsuranceExpiryDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
-	}
-
-	public function setInsuranceExpiryDateAttribute($date) {
-		return $this->attributes['insurance_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
 	public function getWarrantyExpiryDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 
-	public function setWarrantyExpiryDateAttribute($date) {
-		return $this->attributes['warranty_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
-	}
 	public function getEwpExpiryDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
@@ -87,8 +73,41 @@ class JobOrder extends BaseModel {
 		return empty($date) ? '' : date('d-m-Y h:i A ', strtotime($date));
 	}
 
+	// Setters --------------------------------------------------------------
+
+	public function setDriverLicenseExpiryDateAttribute($date) {
+		return $this->attributes['driver_license_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+
+	public function setInsuranceExpiryDateAttribute($date) {
+		return $this->attributes['insurance_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+
+	public function setWarrantyExpiryDateAttribute($date) {
+		return $this->attributes['warranty_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+
 	public function setEwpExpiryDateAttribute($date) {
 		return $this->attributes['ewp_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+
+	// Relationships --------------------------------------------------------------
+
+	public static function relationships($action = '') {
+		$relationships = [
+			'type',
+			'outlet',
+			'vehicle',
+			'vehicle.model',
+			'customer',
+			'serviceType',
+			'status',
+		];
+		return $relationships;
+	}
+
+	public function customer() {
+		return $this->belongsTo('App\Customer');
 	}
 
 	public function customerVoices() {
