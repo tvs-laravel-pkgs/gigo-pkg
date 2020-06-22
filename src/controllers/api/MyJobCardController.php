@@ -219,6 +219,18 @@ class MyJobCardController extends Controller {
 			//Update Work Status
 			$update_repair_order_mechanic = RepairOrderMechanic::where('id', $repair_order_mechanic->id)->where('mechanic_id', $request->machanic_id)->update(['status_id' => $request->status_id]);
 
+			if ($request->status_id == 8262) {
+				$repair_order_mechanic_count = RepairOrderMechanic::where('job_order_repair_order_id', $request->job_repair_order_id)->where('status_id', 8261)->count();
+				//Repair Order status change inprogress into work paused
+				if ($repair_order_mechanic_count > 0) {
+					JobOrderRepairOrder::where('id', $request->job_repair_order_id)->update(['status_id' => 8183]);
+				} else {
+					JobOrderRepairOrder::where('id', $request->job_repair_order_id)->update(['status_id' => 8184]);
+				}
+			} else {
+				JobOrderRepairOrder::where('id', $request->job_repair_order_id)->update(['status_id' => 8183]);
+			}
+
 			DB::commit();
 			return response()->json([
 				'success' => true,
