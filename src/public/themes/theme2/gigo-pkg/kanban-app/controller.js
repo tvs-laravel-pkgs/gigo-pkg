@@ -261,7 +261,7 @@ app.component('kanbanAppMyJobCardScanQr', {
                             return;
                         }
                         console.log(res);
-                        window.location = base_url + '#!/my-jobcard/card-list';
+                        window.location = base_url + '#!/my-jobcard/card-list/' + data;
                         $scope.$apply();
                     })
                     .fail(function(xhr) {
