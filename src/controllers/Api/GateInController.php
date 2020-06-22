@@ -273,7 +273,7 @@ class GateInController extends Controller {
 				return response()->json([
 					'success' => false,
 					'errors' => [
-						'No Serial number found',
+						'No Gate In Serial number found',
 					],
 				]);
 			}
@@ -305,7 +305,7 @@ class GateInController extends Controller {
 				return response()->json([
 					'success' => false,
 					'errors' => [
-						'No Serial number found',
+						'No Job Order Serial number found',
 					],
 				]);
 			}
