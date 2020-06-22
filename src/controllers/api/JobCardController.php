@@ -1500,8 +1500,17 @@ class JobCardController extends Controller {
 			$job_order_repair_order->fill($request->all());
 			$job_order_repair_order->updated_at = Carbon::now();
 			$job_order_repair_order->updated_by_id = Auth::user()->id;
-
 			$job_order_repair_order->save();
+
+			//Change Mechnanic status completed into rework
+			if ($request->status_id == 8186) {
+				$mechnic = RepairOrderMechanic::where('job_order_repair_order_id', $request->job_order_repair_order_id)
+					->update([
+						'status_id' => 8264, //Rework
+						'updated_by_id' => Auth::user()->id,
+						'updated_at' => Carbon::now(),
+					]);
+			}
 
 			if ($request->status_id == 8187) {
 				$total_count = JobOrderRepairOrder::where('job_order_id', $job_order_repair_order->job_order_id)->where('status_id', '!=', 8187)->count();

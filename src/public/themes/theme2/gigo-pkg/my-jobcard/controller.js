@@ -127,12 +127,10 @@ app.component('myJobcardView', {
                         showErrorNoty(res);
                         return;
                     }
-                    $scope.my_job_card_details = res.my_job_card_details;
+                    $scope.job_card = res.job_card;
                     $scope.user_details = res.user_details;
-                    $scope.job_order_repair_orders = res.job_order_repair_orders;
+                    $scope.my_job_orders = res.my_job_orders;
                     $scope.pass_work_reasons = res.pass_work_reasons;
-                    $scope.getwork_status = res.getwork_status;
-                    $scope.total_labour = res.total_labour;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -157,15 +155,15 @@ app.component('myJobcardView', {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 }).done(function(res) {
-                    custom_noty('success', 'Work has been started');
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
-
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
                     }
+
+                    custom_noty('success', 'Work has been started');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
 
                 })
                 .fail(function(xhr) {
@@ -252,14 +250,16 @@ app.component('myJobcardView', {
                     },
                 }).done(function(res) {
                     $("#pause_work_modal").hide();
-                    custom_noty('success', 'Work has Paused');
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
+
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
                     }
+
+                    custom_noty('success', 'Work has Paused');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');

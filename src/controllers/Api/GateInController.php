@@ -212,6 +212,19 @@ class GateInController extends Controller {
 			$vehicle->fill($request->all());
 			$vehicle->save();
 
+			//CHECK VEHICLE PREVIOUS JOBCARD STATUS
+			$previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
+			if ($previous_job_order) {
+				if ($previous_job_order->status_id != 8468) {
+					return response()->json([
+						'success' => false,
+						'errors' => [
+							'Previous Job Order not completed!',
+						],
+					]);
+				}
+			}
+
 			$job_order = new JobOrder;
 			$job_order->company_id = Auth::user()->company_id;
 			$job_order->number = rand();

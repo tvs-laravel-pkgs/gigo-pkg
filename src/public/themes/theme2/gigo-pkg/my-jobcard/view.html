@@ -1,4 +1,4 @@
-Content Wrap -->
+<!--Content Wrap -->
 <div class="content-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -14,7 +14,7 @@ Content Wrap -->
                         My Job Card
                     </h1>
                     <p class="subtitle">
-                        Inward Vehicle / Job card / Update
+                        Job card / My Job card / View
                     </p>
                 </div>
                 <div class="page-header-content">
@@ -22,9 +22,9 @@ Content Wrap -->
                         <img class="img-responsive profile-image" src="./public/theme/img/content/profile.jpg" alt="Profile">
                         <span>
                             <b>
-                                {{user_details.user.name}} |
+                                {{user_details.name}} |
                             </b>
-                            ECode : {{user_details.code}} | {{user_details.outlet.state.code}} / {{user_details.outlet.code}} / Mechanic
+                            ECode : {{user_details.ecode}} | {{user_details.employee.outlet.state.code}} / {{user_details.employee.outlet.code}} / Mechanic
                         </span>
                     </div>
                 </div><!-- Page Header Content -->
@@ -38,15 +38,15 @@ Content Wrap -->
                 <div class="page-tab-form-top-left-info pad-lf-rt">
                     <span class="page-tab-form-top-left-info-content">
                         <b>
-                            JC No: {{my_job_card_details.jc_number}} |
+                            JC No: {{job_card.job_card_number}} |
                         </b>
-                        {{my_job_card_details.registration_number}} | {{my_job_card_details.model_number}} | {{my_job_card_details.date}}, {{my_job_card_details.time}}
+                        {{job_card.job_order.vehicle.registration_number}} | {{job_card.job_order.vehicle.model.model_number}} | {{job_card.created_at}}
                     </span>
                 </div>
             </div><!-- Page Tab Form Top Left -->
             <div class="page-tab-form-top-right">
                 <div class="page-tab-form-top-right-info">
-                    Status : {{my_job_card_details.status}}
+                    Status : {{job_card.status.name}}
                 </div>
             </div><!-- Page Tab Form Top Right -->
         </div><!-- Page Tab Form Top -->
@@ -55,31 +55,30 @@ Content Wrap -->
                 <div class="col-sm-12">
                     <div class="page-form pb-60 mt-30">
                         <h5 class="jc-update-title">
-                            Total Labours ({{total_labour}})
+                            Total Labours ({{my_job_orders.length}})
                         </h5>
                         <p class="jc-update-label">
                             Assign to Mechanics
                         </p>
                         <ul class="card-list">
-                            <li ng-repeat="(key, job_order_repair_orders) in job_order_repair_orders">
+                            <li ng-repeat="(key, my_job_order) in my_job_orders">
                                 <div class="card-box type-2">
                                     <div class="card-box-info">
                                         <div class="card-box-head">
                                             <div class="info">
-                                                {{job_order_repair_orders.repair_order.code}}
+                                                {{my_job_order.repair_code}}
                                             </div>
                                             <div class="title">
-                                                {{job_order_repair_orders.repair_order.name}}
+                                                {{my_job_order.repair_name}}
                                             </div>
-                                            <input type="hidden" id="repair_repair_order_id{{key}}" value="{{job_order_repair_orders.id}}">
+                                            <input type="hidden" id="repair_repair_order_id{{key}}" value="{{my_job_order.job_order_repair_order_id}}">
                                         </div>
                                         <div class="card-box-label">
                                             <div class="info">
-                                                Assigned to:<span ng-repeat="(index, repair_order_mechanics) in job_order_repair_orders.repair_order_mechanics"> {{repair_order_mechanics.mechanic.name}} ,
-                                                </span>
+                                                Assigned to: <span ng-repeat="(index, assigned_mechanics) in my_job_order.assigned_mechanics">{{assigned_mechanics.name}}{{$last ? '' : ', '}}</span>
                                             </div>
                                         </div>
-                                        <div class="card-box-body start" id="start_{{key}}" ng-show="{{getwork_status[key].status_id}} == 8260">
+                                        <div class="card-box-body" ng-if="my_job_order.status_id == 8260 ||  my_job_order.status_id == 8264">
                                             <span class="card-box-content-wrap" ng-click="StartWork(8261,key)">
                                                 <div class="card-box-content bg-dark">
                                                     <span class="info">
@@ -88,18 +87,18 @@ Content Wrap -->
                                                 </div>
                                             </span>
                                         </div><!-- Card Box Body -->
-                                        <div class="card-box-body" id="alstart_{{key}}" ng-show="{{getwork_status[key].status_id}} == 8261">
+                                        <div class="card-box-body" ng-if="my_job_order.status_id == 8261">
                                             <span class="card-box-content-wrap alstart">
                                                 <div class="card-box-content bg-grey">
                                                     <span class="data">
                                                         Start Time
                                                     </span>
-                                                    <span class="data small" ng-repeat="(index, repair_order_mechanic) in job_order_repair_orders.repair_order_mechanics">
-                                                        {{repair_order_mechanic.mechanic_time_logs[0].start_date_time | date: 'h:mm:ss A'}}
+                                                    <span class="data small">
+                                                        {{my_job_order.start_time}}
                                                     </span>
                                                 </div>
                                             </span>
-                                            <span class="card-box-content-wrap pause" id="pause_{{key}}" ng-click="PauseWork(key)">
+                                            <span class="card-box-content-wrap" ng-click="PauseWork(key)">
                                                 <a data-toggle="modal" data-target="#pause_work_modal">
                                                     <div class="card-box-content bg-dark">
                                                         <span class="info">
@@ -108,7 +107,7 @@ Content Wrap -->
                                                     </div>
                                                 </a>
                                             </span>
-                                            <span class="card-box-content-wrap finish" id="finish_{{key}}" ng-click="FinishWork(8263,key)">
+                                            <span class="card-box-content-wrap" ng-click="FinishWork(8263,key)">
                                                 <a data-toggle="modal" data-target="#finish_work">
                                                     <div class="card-box-content bg-red">
                                                         <span class="info">
@@ -118,44 +117,14 @@ Content Wrap -->
                                                 </a>
                                             </span>
                                         </div><!-- Card Box Body -->
-                                        <div class="card-box-body" id="alstart_{{key}}" ng-show="{{getwork_status[key].status_id}} == 8264">
+                                        <div class="card-box-body" ng-if="my_job_order.status_id == 8262">
                                             <span class="card-box-content-wrap alstart">
                                                 <div class="card-box-content bg-grey">
                                                     <span class="data">
                                                         Start Time
                                                     </span>
-                                                    <span class="data small" ng-repeat="(index, repair_order_mechanic) in job_order_repair_orders.repair_order_mechanics">
-                                                        {{repair_order_mechanic.mechanic_time_logs[0].start_date_time | date: 'h:mm:ss a'}}
-                                                    </span>
-                                                </div>
-                                            </span>
-                                            <span class="card-box-content-wrap pause" id="pause_{{key}}" ng-click="PauseWork(key)">
-                                                <a data-toggle="modal" data-target="#pause_work_modal">
-                                                    <div class="card-box-content bg-dark">
-                                                        <span class="info">
-                                                            Pause<br> Work
-                                                        </span>
-                                                    </div>
-                                                </a>
-                                            </span>
-                                            <span class="card-box-content-wrap finish" id="finish_{{key}}" ng-click="FinishWork(8263,key)">
-                                                <a data-toggle="modal" data-target="#finish_work">
-                                                    <div class="card-box-content bg-red">
-                                                        <span class="info">
-                                                            Finish<br> Work
-                                                        </span>
-                                                    </div>
-                                                </a>
-                                            </span>
-                                        </div><!-- Card Box Body -->
-                                        <div class="card-box-body" ng-show="{{getwork_status[key].status_id}} == 8262">
-                                            <span class="card-box-content-wrap">
-                                                <div class="card-box-content bg-grey">
-                                                    <span class="data">
-                                                        Start Time
-                                                    </span>
-                                                    <span class="data small" ng-repeat="(index, repair_order_mechanic) in job_order_repair_orders.repair_order_mechanics">
-                                                        {{repair_order_mechanic.mechanic_time_logs[0].start_date_time | date: 'h:mm:ss a'}}
+                                                    <span class="data small">
+                                                        {{my_job_order.start_time}}
                                                     </span>
                                                 </div>
                                             </span>
@@ -165,7 +134,7 @@ Content Wrap -->
                                                         Paused
                                                     </span>
                                                     <span class="data small">
-                                                        {{getwork_status[key].time}}
+                                                        {{my_job_order.pause_time}}
                                                     </span>
                                                     <span class="time txt-white">
                                                         Start Again
@@ -180,7 +149,7 @@ Content Wrap -->
                                                 </div>
                                             </span>
                                         </div><!-- Card Box Body -->
-                                        <div class="card-box-body" ng-show="{{getwork_status[key].status_id}} == 8263">
+                                        <div class="card-box-body" ng-if="my_job_order.status_id == 8263">
                                             <span class="card-box-content-wrap wid-100">
                                                 <div class="card-box-content bg-grey txt-left pl-19">
                                                     <span class="data pt-10">
@@ -189,7 +158,7 @@ Content Wrap -->
                                                         </b>
                                                     </span>
                                                     <span class="time">
-                                                        {{getwork_status[key].time}}
+                                                        {{my_job_order.total_time}}
                                                     </span>
                                                 </div>
                                             </span>
@@ -197,7 +166,7 @@ Content Wrap -->
                                     </div><!-- Card Box Info -->
                                     <div class="card-box-footer">
                                         <span class="info">
-                                            Status : {{getwork_status[key].status_name}}
+                                            Status : {{my_job_order.status_name}}
                                         </span>
                                     </div><!-- Card Box Footer -->
                                 </div><!-- Card Box -->
