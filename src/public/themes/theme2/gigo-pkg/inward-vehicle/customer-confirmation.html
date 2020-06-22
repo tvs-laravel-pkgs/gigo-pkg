@@ -34,6 +34,7 @@
                                     <input type="hidden" name="job_order_id" value="{{job_order_id}}">
                                     <input type="hidden" name="web" value="website">
                                     <input type="hidden" name="is_customer_agreed" value="1">
+                                    <input type="hidden" name="customer_photo_exist" value="0">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>Customer Estimation Approval</b></h5>
@@ -58,6 +59,7 @@
                                                 <!-- <div class="photo-sign-caption">Customer Photo</div> -->
                                                 <!-- </div> -->
                                                 <input type="hidden" name="customer_photo" value="" id="customer_photo">
+                                                <input type="hidden" name="customer_photo_exist" ng-if="job_order.customer_approval_attachment.length > 0" value="1">
                                             </div><!-- Photo Sign Wrap -->
                                         </div><!-- Column -->
                                         <div class="col-md-12">

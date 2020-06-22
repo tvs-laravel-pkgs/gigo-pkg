@@ -3056,7 +3056,7 @@ class VehicleInwardController extends Controller {
 						'exists:job_orders,id',
 					],
 					'customer_photo' => [
-						'required',
+						'required_if:customer_photo_exist,0',
 						// 'mimes:jpeg,jpg,png',
 					],
 					'customer_e_sign' => [
@@ -3229,8 +3229,7 @@ class VehicleInwardController extends Controller {
 				->find($request->job_order_id);
 
 			//UPDATE GATE LOG STATUS
-			//issue: readability
-			if (!empty($job_order->gateLog)) {
+			if ($job_order->gateLog) {
 				$gate_log = GateLog::where('id', $job_order->gateLog->id)
 					->update([
 						'status_id' => 8122, //VEHICLE INWARD COMPLETED
