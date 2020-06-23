@@ -10,7 +10,7 @@ class CreateCampignChassisNumberTable extends Migration {
 	 * @return void
 	 */
 	public function up() {
-		if (!Schema::hasTable('gate_pass_items')) {
+		if (!Schema::hasTable('campign_chassis_numbers')) {
 			Schema::create('campign_chassis_numbers', function (Blueprint $table) {
 				$table->increments('id');
 				$table->unsignedInteger('campign_id');
