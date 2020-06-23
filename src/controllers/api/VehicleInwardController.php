@@ -5,6 +5,7 @@ namespace Abs\GigoPkg\Api;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\ServiceOrderType;
 use App\Attachment;
+use App\Campaign;
 use App\Config;
 use App\Country;
 use App\Customer;
@@ -13,6 +14,8 @@ use App\EstimationType;
 use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
+use App\JobOrderCampaign;
+use App\JobOrderCampaignChassisNumber;
 use App\JobOrderPart;
 use App\JobOrderRepairOrder;
 use App\Part;
@@ -182,12 +185,6 @@ class VehicleInwardController extends Controller {
 			$job_order = JobOrder::company()->with([
 				'vehicle',
 				'vehicle.model',
-				'vehicle.model.campaign',
-				'vehicle.model.campaign.claimType',
-				'vehicle.model.campaign.faultType',
-				'vehicle.model.campaign.complaintType',
-				'vehicle.model.campaign.campaignLabours',
-				'vehicle.model.campaign.campaignParts',
 				'vehicle.status',
 				'vehicle.currentOwner.customer',
 				'vehicle.currentOwner.customer.address',
@@ -241,6 +238,12 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
+
+			//GET CAMPAIGNS
+			$nameSpace = '\\App\\';
+			$entity = 'JobOrderCampaign';
+			$namespaceModel = $nameSpace . $entity;
+			$job_order->campaigns = $this->compaigns($namespaceModel, $job_order, 1);
 
 			//SCHEDULE MAINTENANCE
 			$labour_amount = 0;
@@ -1298,12 +1301,6 @@ class VehicleInwardController extends Controller {
 				with([
 				'vehicle',
 				'vehicle.model',
-				'vehicle.model.campaign',
-				'vehicle.model.campaign.claimType',
-				'vehicle.model.campaign.faultType',
-				'vehicle.model.campaign.complaintType',
-				'vehicle.model.campaign.campaignLabours',
-				'vehicle.model.campaign.campaignParts',
 				'vehicle.status',
 				'vehicle.lastJobOrder',
 				'vehicle.lastJobOrder.jobCard',
@@ -1323,6 +1320,18 @@ class VehicleInwardController extends Controller {
 				])
 				->find($r->id);
 
+			if (!$job_order->is_campaign_carried) {
+				$nameSpace = '\\App\\';
+				$entity = 'Campaign';
+				$namespaceModel = $nameSpace . $entity;
+				$campaigns = $this->compaigns($namespaceModel, $job_order, 0);
+			} else {
+				$nameSpace = '\\App\\';
+				$entity = 'JobOrderCampaign';
+				$namespaceModel = $nameSpace . $entity;
+				$campaigns = $this->compaigns($namespaceModel, $job_order, 1);
+			}
+
 			//ENABLE ESTIMATE STATUS
 			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
 			if ($inward_process_check) {
@@ -1334,6 +1343,7 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
+				'campaigns' => $campaigns,
 				'attachement_path' => url('storage/app/public/gigo/job_order/attachments/'),
 			]);
 		} catch (\Exception $e) {
@@ -1343,6 +1353,51 @@ class VehicleInwardController extends Controller {
 				'errors' => [$e->getMessage()],
 			]);
 		}
+	}
+
+	public function compaigns($namespaceModel, $job_order, $type) {
+		$model_campaigns = collect($namespaceModel::with([
+			'claimType',
+			'faultType',
+			'complaintType',
+			'campaignLabours',
+			'campaignParts',
+		])
+				->where('campaign_type', 0)
+				->where('vehicle_model_id', $job_order->vehicle->model_id)
+				->where(function ($query) use ($type, $job_order) {
+					if ($type == 1) {
+						$query->where('job_order_id', $job_order->id);
+					}
+				})
+				->get());
+
+		$chassis_campaign_ids = $namespaceModel::whereHas('chassisNumbers', function ($query) use ($job_order) {
+			$query->where('chassis_number', $job_order->vehicle->chassis_number);
+		})
+			->get()
+			->pluck('id')
+			->toArray();
+
+		$chassis_no_campaigns = collect($namespaceModel::with([
+			'chassisNumbers',
+			'claimType',
+			'faultType',
+			'complaintType',
+			'campaignLabours',
+			'campaignParts',
+		])
+				->where('campaign_type', 2)
+				->where(function ($query) use ($type, $job_order, $chassis_campaign_ids) {
+					if ($type == 1) {
+						$query->where('job_order_id', $job_order->id);
+					} else {
+						$query->whereIn('id', $chassis_campaign_ids);
+					}
+				})
+				->get());
+		$campaigns = $model_campaigns->merge($chassis_no_campaigns);
+		return $campaigns;
 	}
 
 	//DMS CHECKLIST SAVE
@@ -1394,12 +1449,74 @@ class VehicleInwardController extends Controller {
 			$job_order->warranty_expiry_date = $request->warranty_expiry_date;
 			$job_order->ewp_expiry_date = $request->ewp_expiry_date;
 			$job_order->is_dms_verified = $request->is_verified;
+			if (isset($request->is_campaign_carried)) {
+				$job_order->is_campaign_carried = $request->is_campaign_carried;
+			}
+			$job_order->campaign_not_carried_remarks = isset($request->campaign_not_carried_remarks) ? $request->campaign_not_carried_remarks : NULL;
 			$job_order->save();
+
+			if ($job_order->campaigns()->count() == 0) {
+				if (isset($request->campaign_ids)) {
+					$campaigns = Campaign::with([
+						'chassisNumbers',
+						'complaintType',
+						'campaignLabours',
+						'campaignParts',
+					])
+						->whereIn('id', $request->campaign_ids)
+						->get();
+					// dd($campaigns);
+					if (!empty($campaigns)) {
+						foreach ($campaigns as $key => $campaign) {
+							//SAVE JobOrderCampaign
+							$job_order_campaign = new JobOrderCampaign;
+							$job_order_campaign->job_order_id = $job_order->id;
+							$job_order_campaign->campaign_id = $campaign->id;
+							$job_order_campaign->authorisation_no = $campaign->authorisation_no;
+							$job_order_campaign->complaint_id = $campaign->complaint_id;
+							$job_order_campaign->fault_id = $campaign->fault_id;
+							$job_order_campaign->claim_type_id = $campaign->claim_type_id;
+							$job_order_campaign->campaign_type = $campaign->campaign_type;
+							$job_order_campaign->vehicle_model_id = $campaign->vehicle_model_id;
+							$job_order_campaign->manufacture_date = $campaign->manufacture_date;
+							$job_order_campaign->created_by_id = Auth::user()->id;
+							$job_order_campaign->created_at = Carbon::now();
+							$job_order_campaign->save();
+
+							//SAVE JobOrderCampaign Repair Orders
+							$job_order_campaign->campaignLabours()->sync([]);
+							if (count($campaign->campaignLabours) > 0) {
+								foreach ($campaign->campaignLabours as $key => $labour) {
+									$job_order_campaign->campaignLabours()->attach($labour->id, [
+										'amount' => $labour->pivot->amount,
+									]);
+								}
+							}
+
+							//SAVE JobOrderCampaign Parts
+							$job_order_campaign->campaignParts()->sync([]);
+							if (count($campaign->campaignParts) > 0) {
+								foreach ($campaign->campaignParts as $key => $part) {
+									$job_order_campaign->campaignParts()->attach($part->id);
+								}
+							}
+							//SAVE JobOrderCampaign Chassis Number
+							if (count($campaign->chassisNumbers) > 0) {
+								$job_order_campaign_chassis_number = new JobOrderCampaignChassisNumber;
+								$job_order_campaign_chassis_number->job_order_campaign_id = $job_order_campaign->id;
+								$job_order_campaign_chassis_number->chassis_number = $job_order->vehicle->chassis_number;
+								$job_order_campaign_chassis_number->created_by_id = Auth::user()->id;
+								$job_order_campaign_chassis_number->created_at = Carbon::now();
+								$job_order_campaign_chassis_number->save();
+							}
+						}
+					}
+				}
+			}
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
 			Storage::makeDirectory($attachment_path, 0777);
 
-			//issue : saravanan - created_at, created_by, updated_by & updated_at missing while save attachment
 			//SAVE WARRANTY EXPIRY PHOTO ATTACHMENT
 			if (!empty($request->warranty_expiry_attachment)) {
 				$attachment = $request->warranty_expiry_attachment;

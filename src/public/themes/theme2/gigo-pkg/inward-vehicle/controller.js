@@ -703,7 +703,13 @@ app.component('inwardVehicleDmsCheckListForm', {
                         return;
                     }
                     $scope.job_order = res.job_order;
+                    $scope.campaigns = res.campaigns;
                     $scope.job_order_id = $routeParams.job_order_id;
+                    if(!$scope.job_order.is_campaign_carried){
+                        $scope.job_order.is_campaign_carried = 0;
+                    }else{
+                        $scope.job_order.is_campaign_carried = 1;
+                    }
                     $scope.$apply();
 
                     setTimeout(function() {

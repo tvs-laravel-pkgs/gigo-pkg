@@ -205,8 +205,8 @@
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
-                                                    <div id="collapse3" class="panel-collapse collapse" ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
-                                                        <div class="panel-body">
+                                                    <div id="collapse3" class="panel-collapse collapse">
+                                                        <div class="panel-body" ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
                                                             <div class="view-details mb-no">
                                                                 <ul class="view-row pb-none">
                                                                     <li class="view-col-3">
@@ -249,6 +249,9 @@
                                                             <a href=".#!/vehicle/view/{{job_order.vehicle.id}}" class="btn btn-secondary-dark btn-md btn-square">
                                                                 View History
                                                             </a>
+                                                        </div><!-- Panel Body -->
+                                                        <div class="panel-body" ng-if="!job_order.vehicle.last_job_order || !job_order.vehicle.last_job_order.job_card">
+                                                            No Previous Job Card Details Found
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->

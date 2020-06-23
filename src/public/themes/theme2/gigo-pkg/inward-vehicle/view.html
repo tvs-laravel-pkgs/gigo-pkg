@@ -513,8 +513,8 @@
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
-                                                    <div id="collapse3" class="panel-collapse collapse" ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
-                                                        <div class="panel-body">
+                                                    <div id="collapse3" class="panel-collapse collapse" >
+                                                        <div class="panel-body" ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
                                                             <div class="view-details mb-no">
                                                                 <ul class="view-row pb-none">
                                                                     <li class="view-col-3">
@@ -555,6 +555,9 @@
                                                             </div><!-- View Data -->
                                                             <a href=".#!/job-card/view/{{job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a>
                                                         </div><!-- Panel Body -->
+                                                        <div class="panel-body" ng-if="!job_order.vehicle.last_job_order || !job_order.vehicle.last_job_order.job_card">
+                                                            No Previous Job Card Details Found
+                                                        </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
                                                 <div class="panel panel-default type-3">
@@ -591,7 +594,7 @@
                                                             </div><!-- View Data -->
                                                             <div class="mb-15"></div><!-- Spacing -->
                                                             <div class="multi-docs">
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}" alt="Driver License">
+                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}" alt="Driver License" ng-if="job_order.driver_license_attachment">
                                                                 <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment.name}}" alt="Insurance" />
                                                                 <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}" alt="RC Book" />
                                                             </div>
@@ -934,7 +937,7 @@
                                             <h6 class="color-secondary-dark mb-10"><b>Campaign Job Details</b></h6>
                                             <div class="row">
                                                 <div class="panel-group" id="accordion_1">
-                                                    <div class="panel panel-default type-3" ng-repeat="(index, campaign) in job_order.vehicle.model.campaign">
+                                                    <div class="panel panel-default type-3" ng-repeat="(index, campaign) in job_order.campaigns">
                                                         <div class="panel-heading">
                                                             <a class="panel-title in" data-toggle="collapse" data-parent="#accordion_1" data-target="#{{index}}">
                                                                 <div class="table-responsive">

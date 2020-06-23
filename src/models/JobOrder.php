@@ -158,6 +158,10 @@ class JobOrder extends BaseModel {
 		return $this->belongsTo('App\Outlet', 'outlet_id');
 	}
 
+	public function campaigns() {
+		return $this->hasMany('Abs\GigoPkg\JobOrderCampaign', 'job_order_id', 'id');
+	}
+
 	//issue : company condition not required
 	// public function serviceOrederType() {
 	// 	return $this->belongsTo('App\ServiceOrderType', 'type_id')->where('company_id', Auth::user()->company_id);

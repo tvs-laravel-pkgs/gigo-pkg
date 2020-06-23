@@ -108,7 +108,7 @@ class CompaignController extends Controller {
 				'vehicleModel',
 			])->find($id);
 
-			$this->data['chassis_number'] = CampaignChassisNumber::where('campign_id', $id)->orderBy('id', 'ASC')->get();
+			$this->data['chassis_number'] = CampaignChassisNumber::where('campaign_id', $id)->orderBy('id', 'ASC')->get();
 
 			$campaign->campaign_labours = $labours = $campaign->campaignLabours()->select('id')->get();
 			if ($campaign->campaign_labours) {
@@ -209,7 +209,10 @@ class CompaignController extends Controller {
 				],
 			], $error_messages);
 			if ($validator->fails()) {
-				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
+				return response()->json([
+					'success' => false,
+					'errors' => $validator->errors()->all(),
+				]);
 			}
 
 			DB::beginTransaction();
@@ -297,7 +300,7 @@ class CompaignController extends Controller {
 						$chassis_numbers->updated_by_id = Auth::user()->id;
 						$chassis_numbers->updated_at = Carbon::now();
 					}
-					$chassis_numbers->campign_id = $campaign->id;
+					$chassis_numbers->campaign_id = $campaign->id;
 					$chassis_numbers->chassis_number = $chassis_number;
 					$chassis_numbers->save();
 				}}
