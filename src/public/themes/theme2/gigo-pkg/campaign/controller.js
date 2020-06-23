@@ -6,12 +6,12 @@ app.component('campaignList', {
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
-        self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('campaigns')) {
+       // self.hasPermission = HelperService.hasPermission;
+        /*if (!self.hasPermission('campaigns')) {
             window.location = "#!/page-permission-denied";
             return false;
-        }
-        self.add_permission = self.hasPermission('add-campaign');
+        }*/
+        //self.add_permission = self.hasPermission('add-campaign');
         var table_scroll;
 
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
@@ -156,10 +156,10 @@ app.component('campaignForm', {
         var self = this;
         $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-campaign') || !self.hasPermission('edit-campaign')) {
-            window.location = "#!/page-permission-denied";
-            return false;
-        }
+        // if (!self.hasPermission('add-campaign') || !self.hasPermission('edit-campaign')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
         self.angular_routes = angular_routes;
         $http.get(
             laravel_routes['getCampaignFormData'], {
@@ -172,18 +172,117 @@ app.component('campaignForm', {
             self.claim_types = response.data.claim_types;
             self.fault_types = response.data.fault_types;
             self.complaint_types = response.data.complaint_types;
+            self.chassis_number = response.data.chassis_number;
             self.action = response.data.action;
             $rootScope.loading = false;
+            console.log(self.campaign.campaign_type);
             if (self.action == 'Edit') {
                 if (self.campaign.deleted_at) {
                     self.switch_value = 'Inactive';
                 } else {
                     self.switch_value = 'Active';
                 }
+                if(self.campaign.campaign_type == 2)
+                {
+                    $("#vehicle_model").hide();
+                    $("#manufacturedate").hide();
+                    $("#ch_no").show();
+                    $("#vehicle_model_id").removeClass('required');
+                    $("#manufacturedt").removeClass('required');
+                    $("#with_chasis").show();
+                    $("#without_chasis").hide();  
+                }
+                if(self.campaign.campaign_type == 1)
+                {
+                    $("#vehicle_model").hide();
+                    $("#manufacturedate").show();
+                    $("#ch_no").hide(); 
+                    $("#manufacturedt").addClass('required');
+                    $("#vehicle_model_id").removeClass('required');
+                    $("#with_chasis").hide();
+                    $("#without_chasis").show();
+                }
+                if(self.campaign.campaign_type == 0)
+                {
+                    $("#vehicle_model").show();
+                    $("#manufacturedate").hide();
+                    $("#ch_no").hide(); 
+                    $("#vehicle_model_id").addClass('required');
+                    $("#manufacturedt").removeClass('required');
+                    $("#with_chasis").hide();
+                    $("#without_chasis").show();
+                }
             } else {
                 self.switch_value = 'Active';
+                self.campaign.campaign_type = 0;
             }
         });
+
+        $("#vehicle_model").show();
+        $("#manufacturedate").hide();
+        $("#ch_no").hide();
+        $("#vehicle_model_id").addClass('required');
+
+       self.CampignTypeSelected = function(id)
+       {
+        if(id == 0)
+        {
+            $("#vehicle_model").show();
+            $("#manufacturedate").hide();
+            $("#ch_no").hide();
+            $("#vehicle_model_id").addClass('required');
+            $("#manufacturedt").removeClass('required');
+            $("#with_chasis").hide();
+            $("#without_chasis").show();
+        }
+        if(id == 1)
+        {
+            $("#vehicle_model").hide();
+            $("#manufacturedate").show();
+            $("#ch_no").hide();
+            $("#manufacturedt").addClass('required');
+            $("#vehicle_model_id").removeClass('required');
+            $("#with_chasis").hide();
+            $("#without_chasis").show();
+        }
+        if(id == 2)
+        {
+            $("#vehicle_model").hide();
+            $("#manufacturedate").hide();
+            $("#ch_no").show();
+            $("#vehicle_model_id").removeClass('required');
+            $("#manufacturedt").removeClass('required');
+            $("#with_chasis").show();
+            $("#without_chasis").hide();
+        }
+
+       }
+
+       self.addNewChassis = function() {
+            self.chassis_number.push({
+                campaign_id:'',
+                chassis_number: '',
+            });
+        }
+
+        self.removeChassisNumber = function(index) {
+            self.chassis_number.splice(index, 1);
+            var id = $("#id"+index).val();
+            if (id) {
+                return new Promise(function(resolve, reject) {
+                    $http.post(
+                            laravel_routes['deleteCampignChassis'], {
+                                id: id,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                });
+            } else {
+                return [];
+            }
+        }
 
         //Search Vehicle Model
         self.searchVehicleModel = function(query) {
@@ -285,6 +384,17 @@ app.component('campaignForm', {
             ev.stopPropagation();
         });
 
+        //Buttons to navigate between tabs
+        $('.btn-nxt').on("click", function() {
+            $('.cndn-tabs li.active').next().children('a').trigger("click");
+            tabPaneFooter();
+        });
+        $('.btn-prev').on("click", function() {
+            $('.cndn-tabs li.active').prev().children('a').trigger("click");
+            tabPaneFooter();
+        });
+
+
         //Save Form Data 
         var form_id = '#campaign_form';
         var v = jQuery(form_id).validate({
@@ -304,11 +414,14 @@ app.component('campaignForm', {
                 'claim_type_id': {
                     required: true,
                 },
-                'vehicle_model_id': {
+                /*'vehicle_model_id': {
                     required: true,
-                },
-                'manufacture_date': {
+                },*/
+                /*'manufacture_date': {
                     required: true,
+                },*/
+                'chassis_number':{
+                    required:true,
                 },
             },
             messages: {
