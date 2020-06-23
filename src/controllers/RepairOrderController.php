@@ -141,6 +141,7 @@ class RepairOrderController extends Controller {
 		}
 		$this->data['repair_order_type'] = collect(RepairOrderType::select('id','short_name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'short_name' => 'Select Repair Order Type']);
 		$this->data['skill_level'] = collect(SkillLevel::select('id','name')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Skill Level']);
+		$this->data['category_types'] = Config::getList(306,true,'Select Category');
 		$this->data['tax_code'] = collect(TaxCode::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Tax Code']);
 		$this->data['uom_code'] = collect(Uom::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Uom Code']);
 		$this->data['repair_order'] = $repair_order;
@@ -187,7 +188,18 @@ class RepairOrderController extends Controller {
 				],
 				'skill_level_id' => 'required',
 				'hours' => 'required',
-				'amount' => 'required',
+				'category_id' => [
+					'required',
+					'exists:configs,id',
+				],
+				'claim_amount' => [
+					'nullable',
+					'numeric',
+				],
+				'maximum_claim_amount' => [
+					'nullable',
+					'numeric',
+				],
 				//'tax_code_id' => 'required',
 			], $error_messages);
 			if ($validator->fails()) {

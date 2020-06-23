@@ -62,12 +62,12 @@ app.component('repairOrderList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'repair_orders.code' , searchable: true },
-                { data: 'alt_code', name: 'repair_orders.alt_code' , searchable: true },
-                { data: 'name', name: 'repair_orders.name' , searchable: true },
-                { data: 'short_name', name: 'repair_order_types.short_name' , searchable: true },
-                { data: 'skill_name', name: 'skill_levels.name' , searchable: true },
-                { data: 'hours', name: 'repair_orders.hours' , searchable: true},
+                { data: 'code', name: 'repair_orders.code', searchable: true },
+                { data: 'alt_code', name: 'repair_orders.alt_code', searchable: true },
+                { data: 'name', name: 'repair_orders.name', searchable: true },
+                { data: 'short_name', name: 'repair_order_types.short_name', searchable: true },
+                { data: 'skill_name', name: 'skill_levels.name', searchable: true },
+                { data: 'hours', name: 'repair_orders.hours', searchable: true },
                 { data: 'amount', name: 'repair_orders.amount', searchable: true },
                 { data: 'tax_code', name: 'tax_codes.code', searchable: true },
                 { data: 'status', name: '' },
@@ -138,7 +138,7 @@ app.component('repairOrderList', {
         $scope.onSelectedtype = function(repair_order_type_selected) {
             $('#type').val(repair_order_type_selected);
         }
-        
+
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -198,6 +198,7 @@ app.component('repairOrderForm', {
             self.repair_order = response.data.repair_order;
             self.repair_order_type = response.data.repair_order_type;
             self.skill_level = response.data.skill_level;
+            self.category_types = response.data.category_types;
             self.tax_code = response.data.tax_code;
             self.uom_code = response.data.uom_code;
             self.action = response.data.action;
@@ -218,8 +219,8 @@ app.component('repairOrderForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'type_id':{
-                    required:true,
+                'type_id': {
+                    required: true,
                 },
                 'code': {
                     required: true,
@@ -235,14 +236,27 @@ app.component('repairOrderForm', {
                     minlength: 3,
                     maxlength: 128,
                 },
-                'skill_level_id':{
-                    required:true,
+                'skill_level_id': {
+                    required: true,
                 },
-                'hours':{
-                    required:true,
+                'hours': {
+                    required: true,
                 },
-                'amount':{
-                    required:true,
+                'amount': {
+                    required: true,
+                },
+                'category_id': {
+                    required: true,
+                },
+                'claim_amount': {
+                    required: false,
+                    number: true,
+                },
+                'maximum_claim_amount': {
+                    required: function(element) {
+                        return $("#category_id").val() == 9140;
+                    },
+                    number: true,
                 },
                 /*'tax_code_id':{
                     required:true,
