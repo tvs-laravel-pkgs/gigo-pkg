@@ -51,8 +51,8 @@
                                                 </ul>
                                             </div>
                                             <div class="mb-30"></div><!-- Space -->
-                                            <div class="row" ng-repeat="(index,inventory) in extras.inventory_type_list">
-                                                <div class="col-md-6" ng-if="inventory.field_type_id==12">
+                                            <div class="row" ng-repeat="(index,inventory) in extras.inventory_type_list" ng-if="inventory.field_type_id==12">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label>{{inventory.name}}</label>
                                                         <div class="slider-container">
