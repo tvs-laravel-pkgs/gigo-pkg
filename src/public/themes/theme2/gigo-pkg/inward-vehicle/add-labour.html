@@ -65,13 +65,16 @@
                                             <thead>
                                                 <tr>
                                                     <th>
-                                                        Description
+                                                        DBM Code
                                                     </th>
                                                     <th>
-                                                        UOM
+                                                        DMS Code
+                                                    </th>
+                                                    <th>
+                                                        Name
                                                     </th>
                                                     <th class="text-right">
-                                                        Quantity
+                                                        Hours
                                                     </th>
                                                     <th class="text-right">
                                                         Amount
@@ -80,10 +83,12 @@
                                             </thead>
                                             <tr ng-if="job_order_labour">
                                                 <td>
-                                                    {{job_order_labour.code ? job_order_labour.code : ''}} | {{job_order_labour.name ? job_order_labour.name : ''}}
+                                                    {{job_order_labour.code ? job_order_labour.code : ''}} </td>
+                                                <td>
+                                                    {{job_order_labour.alt_code ? job_order_labour.alt_code : ''}}
                                                 </td>
                                                 <td>
-                                                    {{job_order_labour.uom.name ? job_order_labour.uom.name : ''}}
+                                                    {{job_order_labour.name ? job_order_labour.name : ''}}
                                                 </td>
                                                 <td class="text-right">
                                                     {{job_order_labour.qty}}
