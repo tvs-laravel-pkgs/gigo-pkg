@@ -11,9 +11,9 @@ class CampaignChassisNumber extends Model {
 	use SoftDeletes;
 	protected $table = 'campign_chassis_numbers';
 	public $timestamps = true;
-	protected $fillable =
-		["campign_id", "chassis_number"]
-	;
+	protected $fillable = [
+		"campign_id",
+		"chassis_number",
+	];
 
-	
 }

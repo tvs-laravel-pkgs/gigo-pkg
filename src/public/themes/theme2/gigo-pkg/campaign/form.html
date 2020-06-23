@@ -1,4 +1,4 @@
-Content Wrap -->
+<!--Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -50,7 +50,7 @@ Content Wrap -->
                                     </li>
                                     <li id="ch_no">
                                         <a class="filter" data-target="#campign_chassis_no" data-toggle="tab" aria-expanded="true">
-                                            Campaign Chassis Number
+                                            Chassis Numbers
                                         </a>
                                     </li>
                                 </ul>
@@ -115,22 +115,20 @@ Content Wrap -->
                                             </div><!-- Feild -->
                                         </div>
 
-                                        <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>Campign Type<sup class="mandatory">*</sup></label>
-                                                            <div class="common-radio-button type-4">
-                                                                <input type="radio" id="model_select" ng-checked="$ctrl.campaign.campaign_type==0" value="0" name="campaign_type" ng-click="$ctrl.CampignTypeSelected(0)" />
-                                                                <label for="model_select">Model</label>
-                                                                <input type="radio" ng-checked="$ctrl.campaign.campaign_type==1" id="manufacture_date" value="1" name="campaign_type" ng-click="$ctrl.CampignTypeSelected(1)"/>
-                                                                <label for="manufacture_date">Manufacture Date</label>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Campign Type<sup class="mandatory">*</sup></label>
+                                                <div class="common-radio-button type-4">
+                                                    <input type="radio" id="model_select" ng-checked="$ctrl.campaign.campaign_type==0" value="0" name="campaign_type" ng-click="$ctrl.CampignTypeSelected(0)" />
+                                                    <label for="model_select">Model</label>
+                                                    <input type="radio" ng-checked="$ctrl.campaign.campaign_type==1" id="manufacture_date" value="1" name="campaign_type" ng-click="$ctrl.CampignTypeSelected(1)"/>
+                                                    <label for="manufacture_date">Manufacture Date</label>
 
-                                                                <input type="radio" ng-checked="$ctrl.campaign.campaign_type==2" id="chassis_no" value="2" name="campaign_type" ng-click="$ctrl.CampignTypeSelected(2)"/>
-                                                                <label for="chassis_no">Chassis Number</label>
-                                                            </div>
-                                                        </div><!-- Feild -->
+                                                    <input type="radio" ng-checked="$ctrl.campaign.campaign_type==2" id="chassis_no" value="2" name="campaign_type" ng-click="$ctrl.CampignTypeSelected(2)"/>
+                                                    <label for="chassis_no">Chassis Number</label>
+                                                </div>
+                                            </div><!-- Feild -->
                                         </div><!-- Column -->
-
-
                                         <div class="col-md-3" id="vehicle_model">
                                             <div class="input-text form-group">
                                                 <label>
@@ -154,8 +152,8 @@ Content Wrap -->
                                                 <label>
                                                     Manufacturing Date<sup class="mandatory">*</sup>
                                                 </label>
-                                                <div class="input-group date" data-provide="datepicker">
-                                                    <input type="text" name="manufacture_date" id="manufacturedt" value="{{$ctrl.campaign.manufacture_date}}" readonly class="form-control" placeholder="Select Date" />
+                                                <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
+                                                    <input type="text" name="manufacture_date" id="manufacturedt" value="{{$ctrl.campaign.manufacture_date}}" class="form-control" placeholder="Select Date" />
                                                     <div class="input-group-addon">
                                                         <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                     </div>
@@ -319,8 +317,10 @@ Content Wrap -->
                                                     </thead>
                                                     <tbody>
                                                         <tr ng-repeat="(index, chassis) in $ctrl.chassis_number">
-                                                             <td><input type="text" class="form-control required" id="chassis{{index}}" name="chassis_number[{{index}}]" value="{{chassis.chassis_number}}" minlength="10"/>
-                                                                <input type="hidden" class="form-control" id="id{{index}}" name="chassis_number_id[{{index}}]" value="{{chassis.id}}" /></td>
+                                                             <td>
+                                                                <input type="text" class="form-control required" id="chassis{{index}}" name="chassis_number[{{index}}]" value="{{chassis.chassis_number}}" minlength="10"/>
+                                                                <input type="hidden" class="form-control" id="id{{index}}" name="chassis_number_id[{{index}}]" value="{{chassis.id}}" />
+                                                            </td>
                                                             <td>
                                                                 <button type="button" class="btn btn-delete" ng-click="$ctrl.removeChassisNumber(index)">
                                                                     <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
@@ -338,14 +338,15 @@ Content Wrap -->
                                                 </table>
                                             </div><!-- Table Responsive -->
                                         </div><!-- Column -->
+                                        <input type="hidden" name="remove_chassis_ids" id="remove_chassis_ids" value="">
                                         <div class="tab-pane-footer">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <a class="btn btn-secondary btn-prev">Previous</a>
-                                                <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary btn-prev">Previous</a>
+                                                    <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div><!-- Tab Footer -->
+                                        </div><!-- Tab Footer -->
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->

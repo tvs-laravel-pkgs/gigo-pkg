@@ -11,9 +11,16 @@ class Campaign extends Model {
 	use SoftDeletes;
 	protected $table = 'compaigns';
 	public $timestamps = true;
-	protected $fillable =
-		["company_id", "authorisation_no", "complaint_id", "fault_id", "claim_type_id", "manufacture_date", "vehicle_model_id","campaign_type"]
-	;
+	protected $fillable = [
+		"company_id",
+		"authorisation_no",
+		"complaint_id",
+		"fault_id",
+		"claim_type_id",
+		"manufacture_date",
+		"vehicle_model_id",
+		"campaign_type",
+	];
 
 	public function getManufactureDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -45,6 +52,10 @@ class Campaign extends Model {
 
 	public function campaignParts() {
 		return $this->belongsToMany('Abs\PartPkg\Part', 'compaign_part', 'compaign_id', 'part_id');
+	}
+
+	public function chassisNumbers() {
+		return $this->hasMany('Abs\GigoPkg\CampaignChassisNumber', 'campign_id', 'id');
 	}
 
 }

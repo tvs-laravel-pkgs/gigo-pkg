@@ -175,7 +175,6 @@ app.component('campaignForm', {
             self.chassis_number = response.data.chassis_number;
             self.action = response.data.action;
             $rootScope.loading = false;
-            console.log(self.campaign.campaign_type);
             if (self.action == 'Edit') {
                 if (self.campaign.deleted_at) {
                     self.switch_value = 'Inactive';
@@ -265,22 +264,13 @@ app.component('campaignForm', {
             });
         }
 
+        self.remove_chassis_ids = [];
         self.removeChassisNumber = function(index) {
             self.chassis_number.splice(index, 1);
             var id = $("#id"+index).val();
             if (id) {
-                return new Promise(function(resolve, reject) {
-                    $http.post(
-                            laravel_routes['deleteCampignChassis'], {
-                                id: id,
-                            }
-                        )
-                        .then(function(response) {
-                            resolve(response.data);
-                        });
-                });
-            } else {
-                return [];
+                self.remove_chassis_ids.push(id);
+                $('#remove_chassis_ids').val(JSON.stringify(self.remove_chassis_ids));
             }
         }
 
