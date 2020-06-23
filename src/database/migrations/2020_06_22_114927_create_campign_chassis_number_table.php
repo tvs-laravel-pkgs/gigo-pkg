@@ -10,7 +10,7 @@ class CreateCampignChassisNumberTable extends Migration {
 	 * @return void
 	 */
 	public function up() {
-		if (!Schema::hasTable('gate_pass_items')) {
+		if (!Schema::hasTable('campign_chassis_numbers')) {
 			Schema::create('campign_chassis_numbers', function (Blueprint $table) {
 				$table->increments('id');
 				$table->unsignedInteger('campign_id');
@@ -21,7 +21,7 @@ class CreateCampignChassisNumberTable extends Migration {
 				$table->timestamps();
 				$table->softDeletes();
 
-				$table->foreign("campign_id")->references("id")->on("compaigns")->onDelete("SET NULL")->onUpdate("cascade");
+				$table->foreign("campign_id")->references("id")->on("compaigns")->onDelete("cascade")->onUpdate("cascade");
 				$table->foreign("created_by_id")->references("id")->on("users")->onDelete("SET NULL")->onUpdate("cascade");
 				$table->foreign("updated_by_id")->references("id")->on("users")->onDelete("SET NULL")->onUpdate("cascade");
 				$table->foreign("deleted_by_id")->references("id")->on("users")->onDelete("SET NULL")->onUpdate("cascade");

@@ -177,6 +177,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/campaign/delete', 'CompaignController@deleteCampaign')->name('deleteCampaign');
 	Route::get('/campaign/get-filter-data', 'CompaignController@getCampaignFilterData')->name('getCampaignFilterData');
 	Route::post('/campaign/vehicle-model/get-search-list', 'VehicleInwardController@getVehicleModelSearchList')->name('getVehicleModelSearchList');
+	Route::post('/campaign/delete-chassis', 'CompaignController@deleteCampignChassis')->name('deleteCampignChassis');
 
 	//Estimation Type
 	Route::get('/estimation-type/get-list', 'EstimationTypeController@getEstimationTypeList')->name('getEstimationTypeList');

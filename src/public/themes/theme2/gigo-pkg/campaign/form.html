@@ -1,4 +1,4 @@
-Content Wrap -->
+<!--Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -46,6 +46,11 @@ Content Wrap -->
                                     <li>
                                         <a class="filter" data-target="#parts-info" data-toggle="tab" aria-expanded="true">
                                             Parts Details
+                                        </a>
+                                    </li>
+                                    <li id="ch_no">
+                                        <a class="filter" data-target="#campign_chassis_no" data-toggle="tab" aria-expanded="true">
+                                            Chassis Numbers
                                         </a>
                                     </li>
                                 </ul>
@@ -109,7 +114,22 @@ Content Wrap -->
                                                 <input type="hidden" class="material required" id="claim_type_id" name="claim_type_id" value="{{$ctrl.campaign.claim_type_id}}">
                                             </div><!-- Feild -->
                                         </div>
-                                        <div class="col-md-3">
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Campign Type<sup class="mandatory">*</sup></label>
+                                                <div class="common-radio-button type-4">
+                                                    <input type="radio" id="model_select" ng-checked="$ctrl.campaign.campaign_type==0" value="0" name="campaign_type" ng-click="$ctrl.CampignTypeSelected(0)" />
+                                                    <label for="model_select">Model</label>
+                                                    <input type="radio" ng-checked="$ctrl.campaign.campaign_type==1" id="manufacture_date" value="1" name="campaign_type" ng-click="$ctrl.CampignTypeSelected(1)"/>
+                                                    <label for="manufacture_date">Manufacture Date</label>
+
+                                                    <input type="radio" ng-checked="$ctrl.campaign.campaign_type==2" id="chassis_no" value="2" name="campaign_type" ng-click="$ctrl.CampignTypeSelected(2)"/>
+                                                    <label for="chassis_no">Chassis Number</label>
+                                                </div>
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3" id="vehicle_model">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Vehicle Model<sup class="mandatory">*</sup>
@@ -124,16 +144,16 @@ Content Wrap -->
                                                         No Vehicle Model Found "{{$ctrl.modelSearchText}}" were found.
                                                     </md-not-found>
                                                 </md-autocomplete>
-                                                <input type="hidden" id="vehicle_model_id" class="required" name="vehicle_model_id" value="{{$ctrl.campaign.vehicle_model.id}}">
+                                                <input type="hidden" id="vehicle_model_id" class="requireds" name="vehicle_model_id" value="{{$ctrl.campaign.vehicle_model.id}}">
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-3" id="manufacturedate">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Manufacturing Date<sup class="mandatory">*</sup>
                                                 </label>
-                                                <div class="input-group date" data-provide="datepicker">
-                                                    <input type="text" name="manufacture_date" value="{{$ctrl.campaign.manufacture_date}}" readonly class="form-control required" placeholder="Select Date" />
+                                                <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
+                                                    <input type="text" name="manufacture_date" id="manufacturedt" value="{{$ctrl.campaign.manufacture_date}}" class="form-control" placeholder="Select Date" />
                                                     <div class="input-group-addon">
                                                         <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                     </div>
@@ -154,6 +174,14 @@ Content Wrap -->
                                                 </div>
                                             </div><!-- Form Group -->
                                         </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary btn-prev">Previous</a>
+                                                <a class="btn btn-primary btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
@@ -205,6 +233,14 @@ Content Wrap -->
                                                 </table>
                                             </div><!-- Table Responsive -->
                                         </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary btn-prev">Previous</a>
+                                                <a class="btn btn-primary btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
@@ -254,17 +290,75 @@ Content Wrap -->
                                                 </table>
                                             </div><!-- Table Responsive -->
                                         </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a class="btn btn-secondary btn-prev">Previous</a>
+                                                <a class="btn btn-primary btn-min-wdth btn-nxt" id="with_chasis">Next</a>
+                                                <button type="submit" id="without_chasis" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
-                            <div class="tab-pane-footer">
+
+                             <div class="tab-pane fade in" id="campign_chassis_no" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-10 col-md-10">
+                                            <div class="table-responsive">
+                                                <table class="table table-form">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="width-250">Chassis Number</th>
+                                                            <th class="width-30"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="(index, chassis) in $ctrl.chassis_number">
+                                                             <td>
+                                                                <input type="text" class="form-control required" id="chassis{{index}}" name="chassis_number[{{index}}]" value="{{chassis.chassis_number}}" minlength="10"/>
+                                                                <input type="hidden" class="form-control" id="id{{index}}" name="chassis_number_id[{{index}}]" value="{{chassis.id}}" />
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-delete" ng-click="$ctrl.removeChassisNumber(index)">
+                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <td colspan="3">
+                                                                <button type="button" class="btn btn-primary-light btn-square" ng-click="$ctrl.addNewChassis()">+ Add More</button>
+                                                            </td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div><!-- Table Responsive -->
+                                        </div><!-- Column -->
+                                        <input type="hidden" name="remove_chassis_ids" id="remove_chassis_ids" value="">
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary btn-prev">Previous</a>
+                                                    <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+
+                            <!-- <div class="tab-pane-footer">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <a href="#!/gigo-pkg/campaign/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
                                         <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
                                     </div>
                                 </div>
-                            </div><!-- Tab Footer -->
+                            </div> -->
                         </div><!-- Tab Content -->
                     </div><!-- Tab Form Body -->
                 </div><!-- Tab Form Wrap -->

@@ -2,6 +2,7 @@
 
 namespace Abs\GigoPkg;
 use Abs\GigoPkg\Campaign;
+use Abs\GigoPkg\CampaignChassisNumber;
 use Abs\GigoPkg\Complaint;
 use Abs\GigoPkg\Fault;
 use Abs\GigoPkg\RepairOrder;
@@ -12,7 +13,6 @@ use App\VehicleModel;
 use Auth;
 use Carbon\Carbon;
 use DB;
-use Entrust;
 use Illuminate\Http\Request;
 use Validator;
 use Yajra\Datatables\Datatables;
@@ -38,7 +38,7 @@ class CompaignController extends Controller {
 			->join('configs', 'configs.id', 'compaigns.claim_type_id')
 			->join('faults', 'faults.id', 'compaigns.fault_id')
 			->join('complaints', 'complaints.id', 'compaigns.complaint_id')
-			->join('models', 'models.id', 'compaigns.vehicle_model_id')
+			->leftJoin('models', 'models.id', 'compaigns.vehicle_model_id')
 			->select([
 				'compaigns.id',
 				'compaigns.authorisation_no',
@@ -84,12 +84,12 @@ class CompaignController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('edit-campaign')) {
-					$output .= '<a href="#!/gigo-pkg/campaign/edit/' . $compaigns->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
-				}
-				if (Entrust::can('delete-campaign')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#campaign-delete-modal" onclick="angular.element(this).scope().deleteCampaign(' . $compaigns->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
-				}
+				/*if (Entrust::can('edit-campaign')) {*/
+				$output .= '<a href="#!/gigo-pkg/campaign/edit/' . $compaigns->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				/*}*/
+				/*if (Entrust::can('delete-campaign')) {*/
+				$output .= '<a href="javascript:;" data-toggle="modal" data-target="#campaign-delete-modal" onclick="angular.element(this).scope().deleteCampaign(' . $compaigns->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+				/*}*/
 				return $output;
 			})
 			->make(true);
@@ -101,11 +101,14 @@ class CompaignController extends Controller {
 			$campaign = new Campaign;
 			$campaign->campaign_labours = [];
 			$campaign->campaign_parts = [];
+			$this->data['chassis_number'] = [];
 			$action = 'Add';
 		} else {
 			$campaign = Campaign::withTrashed()->with([
 				'vehicleModel',
 			])->find($id);
+
+			$this->data['chassis_number'] = CampaignChassisNumber::where('campign_id', $id)->orderBy('id', 'ASC')->get();
 
 			$campaign->campaign_labours = $labours = $campaign->campaignLabours()->select('id')->get();
 			if ($campaign->campaign_labours) {
@@ -147,8 +150,8 @@ class CompaignController extends Controller {
 				'authorisation_no.unique' => 'Authorization Code is already taken',
 				'authorisation_no.min' => 'Authorization Code is Minimum 3 Charachers',
 				'authorisation_no.max' => 'Authorization Code is Maximum 32 Charachers',
-				'manufacture_date.required' => 'Manufacture Date is Required',
-				'vehicle_model_id.required' => 'Vehicle Model is Required',
+				//'manufacture_date.required' => 'Manufacture Date is Required',
+				//'vehicle_model_id.required' => 'Vehicle Model is Required',
 				'complaint_id.required' => 'Complaint Type is Required',
 				'fault_id.required' => 'Fault Type is Required',
 			];
@@ -182,9 +185,9 @@ class CompaignController extends Controller {
 					'distinct',
 				],
 				'vehicle_model_id' => [
-					'required',
-					'integer',
-					'exists:models,id',
+					'required_if:campaign_type,==,0',
+					// 'integer',
+					// 'exists:models,id',
 				],
 				'complaint_id' => [
 					'required',
@@ -196,7 +199,14 @@ class CompaignController extends Controller {
 					'integer',
 					'exists:faults,id',
 				],
-				'manufacture_date' => 'required|date',
+				'chassis_number.*' => [
+					'required:true',
+					'min:3',
+					'max:64',
+				],
+				'manufacture_date' => [
+					'required_if:campaign_type,==,1',
+				],
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
@@ -231,7 +241,12 @@ class CompaignController extends Controller {
 				$total_labours = array_column($request->labours, 'id');
 				$total_labours_unique = array_unique($total_labours);
 				if (count($total_labours) != count($total_labours_unique)) {
-					return response()->json(['success' => false, 'errors' => ['Labours already been taken']]);
+					return response()->json([
+						'success' => false,
+						'errors' => [
+							'Labours already been taken',
+						],
+					]);
 				}
 
 				foreach ($request->labours as $labour) {
@@ -243,14 +258,63 @@ class CompaignController extends Controller {
 				$total_parts = array_column($request->parts, 'id');
 				$total_parts_unique = array_unique($total_parts);
 				if (count($total_parts) != count($total_parts_unique)) {
-					return response()->json(['success' => false, 'errors' => ['Parts already been taken']]);
+					return response()->json([
+						'success' => false,
+						'errors' => [
+							'Parts already been taken',
+						],
+					]);
 				}
 
 				foreach ($request->parts as $parts) {
 					$campaign->campaignParts()->attach($parts['id']);
 				}
 			}
-
+			//DELETE CHASSIS NUMBERS
+			if (!empty($request->remove_chassis_ids)) {
+				$remove_chassis_ids = json_decode($request->remove_chassis_ids);
+				CampaignChassisNumber::whereIn('id', $remove_chassis_ids)->forceDelete();
+			}
+			//SAVE CHASSIS NUMBERS
+			if (isset($request->chassis_number)) {
+				$chassis_nos = $request->chassis_number;
+				$unique_chassis_nos = array_unique($request->chassis_number);
+				if (count($chassis_nos) != count($unique_chassis_nos)) {
+					return response()->json([
+						'success' => false,
+						'errors' => [
+							'Chassis Number already been taken',
+						],
+					]);
+				}
+				foreach ($request->chassis_number as $key => $chassis_number) {
+					if (!$request->chassis_number_id[$key]) {
+						$chassis_numbers = new CampaignChassisNumber;
+						$chassis_numbers->created_by_id = Auth::user()->id;
+						$chassis_numbers->created_at = Carbon::now();
+					} else {
+						$chassis_numbers = CampaignChassisNumber::find($request->chassis_number_id[$key]);
+						$chassis_numbers->updated_by_id = Auth::user()->id;
+						$chassis_numbers->updated_at = Carbon::now();
+					}
+					$chassis_numbers->campign_id = $campaign->id;
+					$chassis_numbers->chassis_number = $chassis_number;
+					$chassis_numbers->save();
+				}}
+			//CAMPAIGN TYPE == VEHICLE MODEL
+			if ($request->campaign_type == '0') {
+				$campaign->manufacture_date = NULL;
+				$campaign->chassisNumbers()->forceDelete();
+			} elseif ($request->campaign_type == '1') {
+				//CAMPAIGN TYPE == MANUFACTURE DATE
+				$campaign->vehicle_model_id = NULL;
+				$campaign->chassisNumbers()->forceDelete();
+			} else {
+				//CAMPAIGN TYPE == CHASSIS NUMBER
+				$campaign->manufacture_date = NULL;
+				$campaign->vehicle_model_id = NULL;
+			}
+			$campaign->save();
 			DB::commit();
 			if (!($request->id)) {
 				return response()->json([
@@ -279,6 +343,20 @@ class CompaignController extends Controller {
 			if ($campaign) {
 				DB::commit();
 				return response()->json(['success' => true, 'message' => 'Campaign Deleted Successfully']);
+			}
+		} catch (Exception $e) {
+			DB::rollBack();
+			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
+		}
+	}
+
+	public function deleteCampignChassis(Request $request) {
+		DB::beginTransaction();
+		try {
+			$chassis_numbers = CampaignChassisNumber::withTrashed()->where('id', $request->id)->forceDelete();
+			if ($chassis_numbers) {
+				DB::commit();
+				return response()->json(['success' => true, 'message' => 'Campaign Chassis Number Deleted Successfully']);
 			}
 		} catch (Exception $e) {
 			DB::rollBack();
