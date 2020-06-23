@@ -167,11 +167,28 @@
                                                     </div><!-- Column -->
                                                     <div class="col-md-6">
                                                         <div class="multi-img">
-                                                            <!-- <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" /> -->
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.driver_attachment.name}}" alt="Driver Image" />
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.km_attachment.name}}" alt="KM" />
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.vehicle_attachment.name}}" alt="Vehicle Image" />
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.chassis_attachment.name}}" alt="Chassis Image" />
+                                                            <table class="table-info">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="text-center">Vehicle Image</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">KM Image</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">Driver Image</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">Chassis Image</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.vehicle_attachment.name}}" alt="Vehicle Image" /></td>
+                                                                        <td></td>
+                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.km_attachment.name}}" alt="KM" /></td>
+                                                                        <td>&nbsp;&nbsp;</td>
+                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.driver_attachment.name}}" alt="Driver Image" /></td>
+                                                                        <td></td>
+                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.chassis_attachment.name}}" alt="Chassis Image" /></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
                                                         </div>
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
@@ -640,7 +657,7 @@
                                             <div class="row" ng-repeat="(index,vehicle_inventory_item) in inventory_list" ng-if="vehicle_inventory_item.field_type_id==12">
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label>Fuel Level</label>
+                                                        <label>{{vehicle_inventory_item.name}}</label>
                                                         <div class="slider-container in-view">
                                                             <div class="slider-lower-fill" style="width: {{vehicle_inventory_item.remarks}}%;"></div>
                                                             <div class="slider-upper-fill"></div>
