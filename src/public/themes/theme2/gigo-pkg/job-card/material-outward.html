@@ -109,7 +109,7 @@
                                                                 <md-autocomplete md-items="option in $ctrl.searchVendorCode($ctrl.modelSearchText)" md-selected-item="$ctrl.vendor" md-selected-item-change="selectedVendorCode($ctrl.vendor.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.code" md-min-length="3" placeholder="OSL Vendor Code" md-autofocus>
                                                                     <md-item-template>
                                                                         <span>
-                                                                            {{option.code}}
+                                                                            {{option.code}} / {{option.name}}
                                                                         </span>
                                                                     </md-item-template>
                                                                     <md-not-found>
@@ -182,7 +182,7 @@
                                             <input type="hidden" name="gate_pass_id" value="{{gate_pass.id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
                                             <div class="border-icon" ng-repeat="(index, gate_pass_item) in gate_pass.gate_pass_items">
                                                 <input type="hidden" name="item_id" id="item_id_{{index}}" value="{{gate_pass_item.id}}" class="form-control" />
-                                                <img class="img-responsive img-delete" src="./public/theme/img/table/delete.svg" alt="Delete" ng-click="$ctrl.removeItem(index)">
+                                                <img class="img-responsive img-delete" src="./public/theme/img/table/delete.svg" alt="Delete" ng-click="$ctrl.removeItem(index, gate_pass_item.id)">
                                                 <div class="row">
                                                     <div class="col-md-3">
                                                         <div class="form-group">
@@ -222,7 +222,7 @@
                                                     </div><!-- Column -->
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label>Remarks</label>
+                                                            <label>Remarks <sup class="mandatory">*</sup></label>
                                                             <input type="text" ng-model="gate_pass_item.remarks" class="form-control requried" placeholder="Enter Remark" autocomplete="off" value="" name="item_details[{{index}}][remarks]" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
@@ -255,6 +255,7 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
+                                                    <input type="hidden" id="gate_pass_item_removal_id" name="gate_pass_item_removal_id">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <button type="submit" ng-click="saveItemDetails()" class="btn btn-red">
                                                         Save & Close

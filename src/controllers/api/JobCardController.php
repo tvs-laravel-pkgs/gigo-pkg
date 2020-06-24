@@ -3020,7 +3020,6 @@ class JobCardController extends Controller {
 	public function saveMaterialGatePass(Request $request) {
 		// dd($request->all());
 		try {
-
 			$validator = Validator::make($request->all(), [
 				'job_card_id' => [
 					'required',
@@ -3116,27 +3115,37 @@ class JobCardController extends Controller {
 			$gate_pass_detail->created_by_id = Auth::user()->id;
 			$gate_pass_detail->save();
 
+			if (!empty($request->gate_pass_item_removal_id)) {
+				$gate_pass_item_removal_id = json_decode($request->gate_pass_item_removal_id, true);
+				GatePassItem::whereIn('id', $gate_pass_item_removal_id)->delete();
+
+				$attachment_remove = json_decode($request->gate_pass_item_removal_id, true);
+				Attachment::where('entity_id', $attachment_remove)->where('attachment_of_id', 3440)->delete();
+			}
+
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
 			Storage::makeDirectory($attachment_path, 0777);
 
-			foreach ($request->item_details as $key => $item_detail) {
-				$gate_pass_item = GatePassItem::firstOrNew([
-					'gate_pass_id' => $gate_pass->id,
-					'name' => $item_detail['name'],
-					'item_serial_no' => $item_detail['item_serial_no'],
-				]);
-				$gate_pass_item->fill($item_detail);
-				$gate_pass_item->save();
+			if ($request->item_details) {
+				foreach ($request->item_details as $key => $item_detail) {
+					$gate_pass_item = GatePassItem::firstOrNew([
+						'gate_pass_id' => $gate_pass->id,
+						'name' => $item_detail['name'],
+						'item_serial_no' => $item_detail['item_serial_no'],
+					]);
+					$gate_pass_item->fill($item_detail);
+					$gate_pass_item->save();
 
-				//SAVE MATERIAL OUTWARD ATTACHMENT
-				if (!empty($item_detail['material_outward_attachments'])) {
-					foreach ($item_detail['material_outward_attachments'] as $key => $material_outward_attachment) {
-						$attachment = $material_outward_attachment;
-						$entity_id = $gate_pass_item->id;
-						$attachment_of_id = 231; //Material Gate Pass
-						$attachment_type_id = 238; //Material Gate Pass
-						saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+					//SAVE MATERIAL OUTWARD ATTACHMENT
+					if (!empty($item_detail['material_outward_attachments'])) {
+						foreach ($item_detail['material_outward_attachments'] as $key => $material_outward_attachment) {
+							$attachment = $material_outward_attachment;
+							$entity_id = $gate_pass_item->id;
+							$attachment_of_id = 231; //Material Gate Pass
+							$attachment_type_id = 238; //Material Gate Pass
+							saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+						}
 					}
 				}
 			}
