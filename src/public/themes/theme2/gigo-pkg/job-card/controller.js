@@ -921,6 +921,8 @@ app.component('jobCardMaterialOutwardForm', {
 
         $scope.job_card_id = $routeParams.job_card_id;
         $scope.gatepass_id = $routeParams.gatepass_id;
+        self.gate_pass_item_removal_ids = [];
+
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
@@ -1018,36 +1020,12 @@ app.component('jobCardMaterialOutwardForm', {
             });
         }
 
-        self.removeItem = function(index) {
-            if (index != 0) {
-                $scope.gate_pass.gate_pass_items.splice(index, 1);
+        self.removeItem = function(index, $id) {
+            if ($id) {
+                self.gate_pass_item_removal_ids.push($id);
+                $('#gate_pass_item_removal_id').val(JSON.stringify(self.gate_pass_item_removal_ids));
             }
-            var id = $("#item_id_" + index).val();
-            if (id) {
-                $.ajax({
-                        url: base_url + '/api/jobcard/outward-item/delete',
-                        method: "POST",
-                        data: {
-                            id: id,
-                            gate_pass_id: $routeParams.gatepass_id
-                        },
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
-                            showErrorNoty(res);
-                            return;
-                        }
-                        custom_noty('success', 'Outward Item Deleted Successfully');
-                    })
-                    .fail(function(xhr) {
-                        custom_noty('error', 'Something went wrong at server');
-                    });
-            } else {
-                return [];
-            }
+            $scope.gate_pass.gate_pass_items.splice(index, 1);
         }
 
         //Save Form Data 
