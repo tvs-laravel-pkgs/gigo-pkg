@@ -16,7 +16,6 @@ use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
 use Abs\PartPkg\Part;
-use Abs\StatusPkg\Status;
 use Abs\TaxPkg\Tax;
 use App\Attachment;
 use App\Config;
@@ -2798,7 +2797,7 @@ class JobCardController extends Controller {
 
 	//JOB CARD GATE PASS VIEW
 	public function viewMeterialGatePass(Request $request) {
-		// dd($job_card_id);
+		// dd($request->all());
 		try {
 			$view_metrial_gate_pass = JobCard::with([
 				'status',
@@ -2836,12 +2835,6 @@ class JobCardController extends Controller {
 					'vehicle.model',
 					'vehicle.status',
 					'status',
-					'vehicleInspectionItems',
-				])
-				->select([
-					'job_orders.*',
-					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
 				->find($view_metrial_gate_pass->job_order_id);
 
@@ -2872,8 +2865,7 @@ class JobCardController extends Controller {
 	}
 
 	//JOB CARD Vendor Details
-	public function getMeterialGatePassOutwardDetail(Request $request) {
-		//dd($request->all());
+	public function getMeterialGatePassData(Request $request) {
 		try {
 			if (isset($request->gate_pass_id)) {
 				$gate_pass = GatePass::with([
@@ -2902,33 +2894,19 @@ class JobCardController extends Controller {
 				$vendor = [];
 			}
 
-			$my_job_card_details = Employee::select([
-				'job_cards.job_card_number as jc_number',
-				'vehicles.registration_number',
-				DB::raw('COUNT(job_order_repair_orders.id) as no_of_ROTs'),
-				'configs.name as status',
-				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
-				'models.model_number',
+			$job_card = JobCard::with([
+				'status',
+				'jobOrder',
+				'jobOrder.type',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
 			])
-				->join('users', 'users.entity_id', 'employees.id')
-				->join('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
-				->join('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')
-				->join('job_orders', 'job_orders.id', 'job_order_repair_orders.job_order_id')
-				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
-				->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
-				->leftJoin('models', 'models.id', 'vehicles.model_id')
-				->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')
-				->join('configs', 'configs.id', 'job_cards.status_id')
-				->where('users.user_type_id', 1)
-				->where('job_cards.id', $request->id)
-				->first();
+				->find($request->id);
 
 			return response()->json([
 				'success' => true,
 				'gate_pass' => $gate_pass,
-				'my_job_card_details' => $my_job_card_details,
-				//'gate_pass_item' => $gate_pass_item,
+				'job_card' => $job_card,
 				'vendor' => $vendor,
 			]);
 
@@ -2942,8 +2920,105 @@ class JobCardController extends Controller {
 	}
 
 	//Material GatePass Detail Save
-	public function saveMaterialGatePassDetail(Request $request) {
-		//dd($request->all());
+	// public function saveMaterialGatePassDetail(Request $request) {
+	// 	dd($request->all());
+	// 	try {
+
+	// 		$validator = Validator::make($request->all(), [
+	// 			'job_card_id' => [
+	// 				'required',
+	// 				'integer',
+	// 				'exists:job_cards,id',
+	// 			],
+	// 			'vendor_type_id' => [
+	// 				'required',
+	// 				'integer',
+	// 				'exists:configs,id',
+	// 			],
+	// 			'vendor_id' => [
+	// 				'required',
+	// 				'integer',
+	// 				'exists:vendors,id',
+	// 			],
+	// 			'work_order_no' => [
+	// 				'required',
+	// 				'integer',
+	// 			],
+	// 			'work_order_description' => [
+	// 				'required',
+	// 			],
+
+	// 		]);
+
+	// 		if ($validator->fails()) {
+	// 			$errors = $validator->errors()->all();
+	// 			$success = false;
+	// 			return response()->json([
+	// 				'success' => false,
+	// 				'error' => 'Validation Error',
+	// 				'errors' => $validator->errors()->all(),
+	// 			]);
+	// 		}
+	// 		DB::beginTransaction();
+
+	// 		$job_card = JobCard::find($request->job_card_id);
+	// 		if (!$job_card) {
+	// 			return response()->json([
+	// 				'success' => false,
+	// 				'error' => 'Job Card Not Found!',
+	// 			]);
+	// 		}
+
+	// 		$status = Status::where('type_id', 8451)->where('name', 'Gate Out Pending')->first();
+	// 		/*if ($status) {
+	// 			return response()->json([
+	// 				'success' => false,
+	// 				'error' => 'Gate Out Pending Status Not Found!',
+	// 			]);
+	// 		}*/
+	// 		$gate_pass = GatePass::firstOrNew([
+	// 			'job_card_id' => $request->job_card_id,
+	// 			'id' => $request->gate_pass_id,
+	// 		]);
+	// 		$gate_pass->type_id = 8281; //Material Gate Pass
+	// 		$gate_pass->status_id = $status->id; //Gate Out Pending
+	// 		$gate_pass->company_id = Auth::user()->company_id;
+	// 		$gate_pass->job_card_id = $request->job_card_id;
+	// 		$gate_pass->fill($request->all());
+	// 		$gate_pass->save();
+
+	// 		$gate_pass_detail = GatePassDetail::firstOrNew([
+	// 			'gate_pass_id' => $request->gate_pass_id,
+	// 			'work_order_no' => $request->work_order_no,
+	// 		]);
+	// 		$gate_pass_detail->gate_pass_id = $gate_pass->id;
+	// 		$gate_pass_detail->work_order_no = $request->work_order_no;
+	// 		$gate_pass_detail->vendor_type_id = $request->vendor_type_id;
+	// 		$gate_pass_detail->vendor_id = $request->vendor_id;
+	// 		$gate_pass_detail->vendor_contact_no = $request->vendor_contact_no;
+	// 		$gate_pass_detail->work_order_description = $request->work_order_description;
+	// 		// $gate_pass_detail->created_by = Auth::user()->id;
+	// 		$gate_pass_detail->save();
+
+	// 		DB::commit();
+
+	// 		return response()->json([
+	// 			'success' => true,
+	// 			'message' => 'Material Gate Pass Details Saved Successfully!!',
+	// 		]);
+
+	// 	} catch (Exception $e) {
+	// 		return response()->json([
+	// 			'success' => false,
+	// 			'error' => 'Server Network Down!',
+	// 			'errors' => ['Exception Error' => $e->getMessage()],
+	// 		]);
+	// 	}
+	// }
+
+	//Material GatePass Item Save
+	public function saveMaterialGatePass(Request $request) {
+		// dd($request->all());
 		try {
 
 			$validator = Validator::make($request->all(), [
@@ -2969,106 +3044,23 @@ class JobCardController extends Controller {
 				'work_order_description' => [
 					'required',
 				],
-
-			]);
-
-			if ($validator->fails()) {
-				$errors = $validator->errors()->all();
-				$success = false;
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
-				]);
-			}
-			DB::beginTransaction();
-
-			$job_card = JobCard::find($request->job_card_id);
-			if (!$job_card) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Job Card Not Found!',
-				]);
-			}
-
-			$status = Status::where('type_id', 8451)->where('name', 'Gate Out Pending')->first();
-			/*if ($status) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Gate Out Pending Status Not Found!',
-				]);
-			}*/
-			$gate_pass = GatePass::firstOrNew([
-				'job_card_id' => $request->job_card_id,
-				'id' => $request->gate_pass_id,
-			]);
-			$gate_pass->type_id = 8281; //Material Gate Pass
-			$gate_pass->status_id = $status->id; //Gate Out Pending
-			$gate_pass->company_id = Auth::user()->company_id;
-			$gate_pass->job_card_id = $request->job_card_id;
-			$gate_pass->fill($request->all());
-			$gate_pass->save();
-
-			$gate_pass_detail = GatePassDetail::firstOrNew([
-				'gate_pass_id' => $request->gate_pass_id,
-				'work_order_no' => $request->work_order_no,
-			]);
-			$gate_pass_detail->gate_pass_id = $gate_pass->id;
-			$gate_pass_detail->work_order_no = $request->work_order_no;
-			$gate_pass_detail->vendor_type_id = $request->vendor_type_id;
-			$gate_pass_detail->vendor_id = $request->vendor_id;
-			$gate_pass_detail->vendor_contact_no = $request->vendor_contact_no;
-			$gate_pass_detail->work_order_description = $request->work_order_description;
-			// $gate_pass_detail->created_by = Auth::user()->id;
-			$gate_pass_detail->save();
-
-			DB::commit();
-
-			return response()->json([
-				'success' => true,
-				'message' => 'Material Gate Pass Details Saved Successfully!!',
-			]);
-
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
-
-	//Material GatePass Item Save
-	public function saveMaterialGatePassItem(Request $request) {
-		//dd($request->material_outward_attachments);
-		try {
-
-			$validator = Validator::make($request->all(), [
-				'gate_pass_id' => [
-					'required',
-					'integer',
-					'exists:gate_passes,id',
-				],
 				'item_details.*.item_description' => [
 					'required',
 					'min:3',
 					'max:191',
 				],
-				'item_details.*.item_make' => [
-					'required',
-					'min:3',
-					'max:191',
-				],
-				'item_details.*.item_model' => [
-					'required',
-					'min:3',
-					'max:191',
-				],
-				'item_details.*.item_serial_no' => [
-					'required',
-					'min:3',
-					'max:191',
-				],
+				// 'item_details.*.item_make' => [
+				// 	'min:3',
+				// 	'max:191',
+				// ],
+				// 'item_details.*.item_model' => [
+				// 	'min:3',
+				// 	'max:191',
+				// ],
+				// 'item_details.*.item_serial_no' => [
+				// 	'min:3',
+				// 	'max:191',
+				// ],
 				'item_details.*.qty' => [
 					'required',
 				],
@@ -3090,32 +3082,62 @@ class JobCardController extends Controller {
 			}
 			DB::beginTransaction();
 
-			$item_detail_id = [];
-
-			foreach ($request->item_details as $key => $item_detail) {
-				$gate_pass_item = GatePassItem::firstOrNew([
-					'gate_pass_id' => $request->gate_pass_id,
-					'item_serial_no' => $item_detail['item_serial_no'],
+			$job_card = JobCard::find($request->job_card_id);
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Card Not Found!',
+					],
 				]);
-				$gate_pass_item->fill($item_detail);
-				$gate_pass_item->save();
-
-				array_push($item_detail_id, $gate_pass_item->id);
 			}
+
+			$gate_pass = GatePass::firstOrNew([
+				'job_card_id' => $request->job_card_id,
+				'id' => $request->gate_pass_id,
+				'status_id' => 8300, //Gate Out Pending
+			]);
+
+			$gate_pass->type_id = 8281; //Material Gate Pass
+			$gate_pass->company_id = Auth::user()->company_id;
+			$gate_pass->number = rand();
+			$gate_pass->fill($request->all());
+			$gate_pass->save();
+
+			$gate_pass_detail = GatePassDetail::firstOrNew([
+				'gate_pass_id' => $gate_pass->id,
+				'work_order_no' => $request->work_order_no,
+			]);
+			$gate_pass_detail->vendor_type_id = $request->vendor_type_id;
+			$gate_pass_detail->vendor_id = $request->vendor_id;
+			$gate_pass_detail->vendor_contact_no = $request->vendor_contact_no;
+			$gate_pass_detail->work_order_description = $request->work_order_description;
+			$gate_pass_detail->created_by_id = Auth::user()->id;
+			$gate_pass_detail->save();
 
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
 			Storage::makeDirectory($attachment_path, 0777);
 
-			//SAVE MATERIAL OUTWARD ATTACHMENT
-			if (!empty($request->material_outward_attachments)) {
-				foreach ($request->material_outward_attachments as $key => $material_outward_attachment) {
-					//dump($material_outward_attachment);
-					$attachment = $material_outward_attachment;
-					$entity_id = $item_detail_id[$key];
-					$attachment_of_id = 231; //Material Gate Pass
-					$attachment_type_id = 238; //Material Gate Pass
-					saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+			foreach ($request->item_details as $key => $item_detail) {
+				$gate_pass_item = GatePassItem::firstOrNew([
+					'gate_pass_id' => $gate_pass->id,
+					'name' => $item_detail['name'],
+					'item_serial_no' => $item_detail['item_serial_no'],
+				]);
+				$gate_pass_item->fill($item_detail);
+				$gate_pass_item->save();
+
+				//SAVE MATERIAL OUTWARD ATTACHMENT
+				if (!empty($item_detail['material_outward_attachments'])) {
+					foreach ($item_detail['material_outward_attachments'] as $key => $material_outward_attachment) {
+						$attachment = $material_outward_attachment;
+						$entity_id = $gate_pass_item->id;
+						$attachment_of_id = 231; //Material Gate Pass
+						$attachment_type_id = 238; //Material Gate Pass
+						saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+					}
 				}
 			}
 
