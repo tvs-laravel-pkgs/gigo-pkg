@@ -332,28 +332,30 @@ class VehicleInwardController extends Controller {
 			$total_estimate_amount = $total_estimate_labour_amount['labour_amount'] + $total_estimate_part_amount['part_amount'];
 
 			//VEHICLE INSPECTION ITEM
-			$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
-
 			$vehicle_inspection_item_groups = array();
-			foreach ($vehicle_inspection_item_group as $key => $value) {
-				$item_group = array();
-				$item_group['id'] = $value->id;
-				$item_group['name'] = $value->name;
+			if (count($job_order->vehicleInspectionItems) > 0) {
+				$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
 
-				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
+				foreach ($vehicle_inspection_item_group as $key => $value) {
+					$item_group = array();
+					$item_group['id'] = $value->id;
+					$item_group['name'] = $value->name;
 
-				$vehicle_inspections = $job_order->vehicleInspectionItems()->orderBy('vehicle_inspection_item_id')->get()->toArray();
+					$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
 
-				if (count($vehicle_inspections) > 0) {
-					foreach ($vehicle_inspections as $value) {
-						if (isset($inspection_items[$value['id']])) {
-							$inspection_items[$value['id']]->status_id = $value['pivot']['status_id'];
+					$vehicle_inspections = $job_order->vehicleInspectionItems()->orderBy('vehicle_inspection_item_id')->get()->toArray();
+
+					if (count($vehicle_inspections) > 0) {
+						foreach ($vehicle_inspections as $value) {
+							if (isset($inspection_items[$value['id']])) {
+								$inspection_items[$value['id']]->status_id = $value['pivot']['status_id'];
+							}
 						}
 					}
-				}
-				$item_group['vehicle_inspection_items'] = $inspection_items;
+					$item_group['vehicle_inspection_items'] = $inspection_items;
 
-				$vehicle_inspection_item_groups[] = $item_group;
+					$vehicle_inspection_item_groups[] = $item_group;
+				}
 			}
 
 			$params['config_type_id'] = 32;

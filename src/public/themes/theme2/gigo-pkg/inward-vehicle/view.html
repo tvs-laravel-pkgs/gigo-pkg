@@ -836,7 +836,7 @@
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>Vehicle Inspection Report</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
-                                            <div class="panel-group" id="accordion_1" ng-if="vehicle_inspection_item_groups[0].vehicle_inspection_items[1].status_id">
+                                            <div class="panel-group" id="accordion_1" ng-if="vehicle_inspection_item_groups.length > 0">
                                                 <div class="panel panel-default type-3" ng-repeat="(index, vehicle_inspection_item_group) in vehicle_inspection_item_groups">
                                                     <div class="panel-heading">
                                                         <a class="panel-title in" data-toggle="collapse" data-parent="#accordion_1" data-target="#collapse_{{index}}">
