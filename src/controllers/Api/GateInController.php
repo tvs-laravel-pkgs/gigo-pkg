@@ -57,7 +57,10 @@ class GateInController extends Controller {
 				if ($registration_no_count < 8) {
 					return response()->json([
 						'success' => false,
-						'error' => 'The registration number must be at least 8 characters.',
+						'error' => 'Validation Error',
+						'errors' => [
+							'The registration number must be at least 8 characters.',
+						],
 					]);
 				} else {
 					$first_two_string = substr($request->registration_number, 0, 2);
@@ -75,7 +78,10 @@ class GateInController extends Controller {
 					if ($error) {
 						return response()->json([
 							'success' => false,
-							'error' => $error,
+							'error' => 'Validation Error',
+							'errors' => [
+								$error,
+							],
 						]);
 					}
 				}
@@ -218,6 +224,7 @@ class GateInController extends Controller {
 				if ($previous_job_order->status_id != 8468) {
 					return response()->json([
 						'success' => false,
+						'error' => 'Validation Error',
 						'errors' => [
 							'Previous Job Order not completed!',
 						],
@@ -259,6 +266,7 @@ class GateInController extends Controller {
 			if (!$financial_year) {
 				return response()->json([
 					'success' => false,
+					'error' => 'Validation Error',
 					'errors' => [
 						'Fiancial Year Not Found',
 					],
@@ -272,6 +280,7 @@ class GateInController extends Controller {
 			if (!$generateNumber['success']) {
 				return response()->json([
 					'success' => false,
+					'error' => 'Validation Error',
 					'errors' => [
 						'No Gate In Serial number found',
 					],
@@ -293,6 +302,7 @@ class GateInController extends Controller {
 			if ($validator_1->fails()) {
 				return response()->json([
 					'success' => false,
+					'error' => 'Validation Error',
 					'errors' => $validator_1->errors()->all(),
 				]);
 			}
@@ -304,6 +314,7 @@ class GateInController extends Controller {
 			if (!$generateJONumber['success']) {
 				return response()->json([
 					'success' => false,
+					'error' => 'Validation Error',
 					'errors' => [
 						'No Job Order Serial number found',
 					],
@@ -325,6 +336,7 @@ class GateInController extends Controller {
 			if ($validator_2->fails()) {
 				return response()->json([
 					'success' => false,
+					'error' => 'Validation Error',
 					'errors' => $validator_2->errors()->all(),
 				]);
 			}

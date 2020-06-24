@@ -1349,8 +1349,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -1439,7 +1441,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -1455,64 +1457,70 @@ class VehicleInwardController extends Controller {
 			$job_order->campaign_not_carried_remarks = isset($request->campaign_not_carried_remarks) ? $request->campaign_not_carried_remarks : NULL;
 			$job_order->save();
 
-			if ($job_order->campaigns()->count() == 0) {
-				if (isset($request->campaign_ids)) {
-					$campaigns = Campaign::with([
-						'chassisNumbers',
-						'complaintType',
-						'campaignLabours',
-						'campaignParts',
-					])
-						->whereIn('id', $request->campaign_ids)
-						->get();
-					// dd($campaigns);
-					if (!empty($campaigns)) {
-						foreach ($campaigns as $key => $campaign) {
-							//SAVE JobOrderCampaign
-							$job_order_campaign = new JobOrderCampaign;
-							$job_order_campaign->job_order_id = $job_order->id;
-							$job_order_campaign->campaign_id = $campaign->id;
-							$job_order_campaign->authorisation_no = $campaign->authorisation_no;
-							$job_order_campaign->complaint_id = $campaign->complaint_id;
-							$job_order_campaign->fault_id = $campaign->fault_id;
-							$job_order_campaign->claim_type_id = $campaign->claim_type_id;
-							$job_order_campaign->campaign_type = $campaign->campaign_type;
-							$job_order_campaign->vehicle_model_id = $campaign->vehicle_model_id;
-							$job_order_campaign->manufacture_date = $campaign->manufacture_date;
-							$job_order_campaign->created_by_id = Auth::user()->id;
-							$job_order_campaign->created_at = Carbon::now();
-							$job_order_campaign->save();
+			if (isset($request->is_campaign_carried) && $request->is_campaign_carried == 1) {
+				if ($job_order->campaigns()->count() == 0) {
+					if (isset($request->campaign_ids)) {
+						$campaigns = Campaign::with([
+							'chassisNumbers',
+							'complaintType',
+							'campaignLabours',
+							'campaignParts',
+						])
+							->whereIn('id', $request->campaign_ids)
+							->get();
+						// dd($campaigns);
+						if (!empty($campaigns)) {
+							foreach ($campaigns as $key => $campaign) {
+								//SAVE JobOrderCampaign
+								$job_order_campaign = new JobOrderCampaign;
+								$job_order_campaign->job_order_id = $job_order->id;
+								$job_order_campaign->campaign_id = $campaign->id;
+								$job_order_campaign->authorisation_no = $campaign->authorisation_no;
+								$job_order_campaign->complaint_id = $campaign->complaint_id;
+								$job_order_campaign->fault_id = $campaign->fault_id;
+								$job_order_campaign->claim_type_id = $campaign->claim_type_id;
+								$job_order_campaign->campaign_type = $campaign->campaign_type;
+								$job_order_campaign->vehicle_model_id = $campaign->vehicle_model_id;
+								$job_order_campaign->manufacture_date = $campaign->manufacture_date;
+								$job_order_campaign->created_by_id = Auth::user()->id;
+								$job_order_campaign->created_at = Carbon::now();
+								$job_order_campaign->save();
 
-							//SAVE JobOrderCampaign Repair Orders
-							$job_order_campaign->campaignLabours()->sync([]);
-							if (count($campaign->campaignLabours) > 0) {
-								foreach ($campaign->campaignLabours as $key => $labour) {
-									$job_order_campaign->campaignLabours()->attach($labour->id, [
-										'amount' => $labour->pivot->amount,
-									]);
+								//SAVE JobOrderCampaign Repair Orders
+								$job_order_campaign->campaignLabours()->sync([]);
+								if (count($campaign->campaignLabours) > 0) {
+									foreach ($campaign->campaignLabours as $key => $labour) {
+										$job_order_campaign->campaignLabours()->attach($labour->id, [
+											'amount' => $labour->pivot->amount,
+										]);
+									}
 								}
-							}
 
-							//SAVE JobOrderCampaign Parts
-							$job_order_campaign->campaignParts()->sync([]);
-							if (count($campaign->campaignParts) > 0) {
-								foreach ($campaign->campaignParts as $key => $part) {
-									$job_order_campaign->campaignParts()->attach($part->id);
+								//SAVE JobOrderCampaign Parts
+								$job_order_campaign->campaignParts()->sync([]);
+								if (count($campaign->campaignParts) > 0) {
+									foreach ($campaign->campaignParts as $key => $part) {
+										$job_order_campaign->campaignParts()->attach($part->id);
+									}
 								}
-							}
-							//SAVE JobOrderCampaign Chassis Number
-							if (count($campaign->chassisNumbers) > 0) {
-								$job_order_campaign_chassis_number = new JobOrderCampaignChassisNumber;
-								$job_order_campaign_chassis_number->job_order_campaign_id = $job_order_campaign->id;
-								$job_order_campaign_chassis_number->chassis_number = $job_order->vehicle->chassis_number;
-								$job_order_campaign_chassis_number->created_by_id = Auth::user()->id;
-								$job_order_campaign_chassis_number->created_at = Carbon::now();
-								$job_order_campaign_chassis_number->save();
+								//SAVE JobOrderCampaign Chassis Number
+								if (count($campaign->chassisNumbers) > 0) {
+									$job_order_campaign_chassis_number = new JobOrderCampaignChassisNumber;
+									$job_order_campaign_chassis_number->job_order_campaign_id = $job_order_campaign->id;
+									$job_order_campaign_chassis_number->chassis_number = $job_order->vehicle->chassis_number;
+									$job_order_campaign_chassis_number->created_by_id = Auth::user()->id;
+									$job_order_campaign_chassis_number->created_at = Carbon::now();
+									$job_order_campaign_chassis_number->save();
+								}
 							}
 						}
 					}
 				}
+			} else {
+				//REMOVE LAST JOB ORDER CAMPAIGNS
+				$job_order->campaigns()->forceDelete();
 			}
+
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
 			Storage::makeDirectory($attachment_path, 0777);
@@ -1552,7 +1560,9 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => false,
 				'message' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
