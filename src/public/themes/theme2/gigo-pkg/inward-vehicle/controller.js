@@ -1662,7 +1662,13 @@ app.component('inwardVehicleEstimateForm', {
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    'estimated_delivery_date': {
+                    'estimated_amount': {
+                        required: true,
+                    },
+                    'est_delivery_date': {
+                        required: true,
+                    },
+                    'est_delivery_time': {
                         required: true,
                     },
                 },

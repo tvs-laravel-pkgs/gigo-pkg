@@ -1134,10 +1134,10 @@
                                                                 {{labour_detail.qty}}
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="labour_detail.is_free_service == 1">
-                                                                <p class="text-danger">{{labour_detail.amount}}</p>
+                                                                <p class="text-danger">{{labour_detail.amount | number:2}}</p>
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="labour_detail.is_free_service != 1">
-                                                                {{labour_detail.amount}}
+                                                                {{labour_detail.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -1149,7 +1149,7 @@
                                                             <td class="wid-180 white-space  text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{schedule_maintenance.labour_amount}}
+                                                                    {{schedule_maintenance.labour_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1187,16 +1187,16 @@
                                                                 {{part_detail.type}}
                                                             </td>
                                                             <td class="text-right">
-                                                                {{part_detail.rate}}
+                                                                {{part_detail.rate | number:2}}
                                                             </td>
                                                             <td class="text-right">
                                                                 {{part_detail.qty}}
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="part_detail.is_free_service == 1">
-                                                                <p class="text-danger">{{part_detail.amount}}</p>
+                                                                <p class="text-danger">{{part_detail.amount | number:2}}</p>
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="part_detail.is_free_service != 1">
-                                                                {{part_detail.amount}}
+                                                                {{part_detail.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr>
@@ -1208,7 +1208,7 @@
                                                             <td class="wid-180 white-space text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{schedule_maintenance.part_amount}}
+                                                                    {{schedule_maintenance.part_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1229,7 +1229,7 @@
                                                                 <td class="wid-180 text-right">
                                                                     <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                     <b>
-                                                                        {{schedule_maintenance.total_amount}}
+                                                                        {{schedule_maintenance.total_amount | number:2}}
                                                                     </b>
                                                                 </td>
                                                             </tr>
@@ -1288,7 +1288,7 @@
                                                                 {{labour_detail.repair_order.hours}}
                                                             </td>
                                                             <td class="wid-100 white-space text-right">
-                                                                {{labour_detail.amount}}
+                                                                {{labour_detail.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr class="ptb-9">
@@ -1305,7 +1305,7 @@
                                                             <td class="wid-100 white-space  text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{payable_maintenance.labour_amount}}
+                                                                    {{payable_maintenance.labour_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1343,13 +1343,13 @@
                                                                 {{part_detail.part.name}}
                                                             </td>
                                                             <td class="text-right">
-                                                                {{part_detail.rate}}
+                                                                {{part_detail.rate | number:2}}
                                                             </td>
                                                             <td class="text-right">
                                                                 {{part_detail.qty}}
                                                             </td>
                                                             <td class="wid-100 white-space text-right">
-                                                                {{part_detail.amount}}
+                                                                {{part_detail.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr class="ptb-9">
@@ -1366,7 +1366,7 @@
                                                             <td class="wid-100 white-space text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{payable_maintenance.part_amount}}
+                                                                    {{payable_maintenance.part_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1387,7 +1387,7 @@
                                                                 <td class="wid-100 text-right">
                                                                     <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                     <b>
-                                                                        {{payable_maintenance.total_amount}}
+                                                                        {{payable_maintenance.total_amount | number:2}}
                                                                     </b>
                                                                 </td>
                                                             </tr>
@@ -1433,7 +1433,7 @@
                                                                                 </span>
                                                                                 <span class="three-box-value">
                                                                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                    {{schedule_maintenance.labour_amount}}
+                                                                                    {{schedule_maintenance.labour_amount | number:2}}
                                                                                 </span>
                                                                             </div>
                                                                         </li>
@@ -1444,7 +1444,7 @@
                                                                                 </span>
                                                                                 <span class="three-box-value">
                                                                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                    {{schedule_maintenance.part_amount}}
+                                                                                    {{schedule_maintenance.part_amount | number:2}}
                                                                                 </span>
                                                                             </div>
                                                                         </li>
@@ -1455,7 +1455,7 @@
                                                                                 </span>
                                                                                 <span class="three-box-value">
                                                                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                    {{schedule_maintenance.total_amount}}
+                                                                                    {{schedule_maintenance.total_amount | number:2}}
                                                                                 </span>
                                                                             </div>
                                                                         </li>
@@ -1482,7 +1482,7 @@
                                                                                 </span>
                                                                                 <span class="three-box-value">
                                                                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                    {{payable_maintenance.labour_amount}}
+                                                                                    {{payable_maintenance.labour_amount | number:2}}
                                                                                 </span>
                                                                             </div>
                                                                         </li>
@@ -1493,7 +1493,7 @@
                                                                                 </span>
                                                                                 <span class="three-box-value">
                                                                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                    {{payable_maintenance.part_amount}}
+                                                                                    {{payable_maintenance.part_amount | number:2}}
                                                                                 </span>
                                                                             </div>
                                                                         </li>
@@ -1504,7 +1504,7 @@
                                                                                 </span>
                                                                                 <span class="three-box-value">
                                                                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                    {{payable_maintenance.total_amount}}
+                                                                                    {{payable_maintenance.total_amount | number:2}}
                                                                                 </span>
                                                                             </div>
                                                                         </li>
@@ -1531,7 +1531,7 @@
                                                                                 </span>
                                                                                 <span class="three-box-value">
                                                                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                    {{total_estimate_labour_amount.labour_amount}}
+                                                                                    {{total_estimate_labour_amount.labour_amount | number:2}}
                                                                                 </span>
                                                                             </div>
                                                                         </li>
@@ -1542,7 +1542,7 @@
                                                                                 </span>
                                                                                 <span class="three-box-value">
                                                                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                    {{total_estimate_part_amount.part_amount}}
+                                                                                    {{total_estimate_part_amount.part_amount | number:2}}
                                                                                 </span>
                                                                             </div>
                                                                         </li>
@@ -1553,7 +1553,7 @@
                                                                                 </span>
                                                                                 <span class="three-box-value">
                                                                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-white.svg" alt="Rupee" />
-                                                                                    {{total_estimate_amount}}
+                                                                                    {{total_estimate_amount | number:2}}
                                                                                 </span>
                                                                             </div>
                                                                         </li>
@@ -1571,7 +1571,16 @@
                                             </div><!-- Row -->
                                             <div class="view-details mb-no">
                                                 <ul class="view-row">
-                                                    <li class="view-col-8">
+                                                    <li class="view-col-4">
+                                                        <span class="view-col-label">
+                                                            Estimated Amount
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.estimated_amount}}
+                                                            </b></span>
+                                                    </li>
+                                                    <li class="view-col-4">
                                                         <span class="view-col-label">
                                                             Estimated Delivery Date & Time
                                                         </span>

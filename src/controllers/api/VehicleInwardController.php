@@ -2899,6 +2899,13 @@ class VehicleInwardController extends Controller {
 			$job_order->total_estimate_parts_amount = $oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount;
 			$job_order->total_estimate_amount = (($oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount) + ($oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount));
 
+			if (empty($job_order->estimated_amount)) {
+				$job_order->min_estimated_amount = $job_order->total_estimate_amount;
+				$job_order->estimated_amount = $job_order->total_estimate_amount;
+			} else {
+				$job_order->min_estimated_amount = $job_order->estimated_amount;
+			}
+
 			//ENABLE ESTIMATE STATUS
 			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
 			if ($inward_process_check) {
@@ -2934,7 +2941,15 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:job_orders,id',
 				],
-				'estimated_delivery_date' => [
+				'estimated_amount' => [
+					'required',
+					'string',
+				],
+				'est_delivery_date' => [
+					'required',
+					'string',
+				],
+				'est_delivery_time' => [
 					'required',
 					'string',
 				],
@@ -2968,7 +2983,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$job_order->estimated_delivery_date = date('Y-m-d H:i:s', strtotime($request->estimated_delivery_date));
+			$job_order->estimated_amount = $request->estimated_amount;
+			$estimated_delivery_date = $request->est_delivery_date . ' ' . $request->est_delivery_time;
+			$job_order->estimated_delivery_date = date('Y-m-d H:i:s', strtotime($estimated_delivery_date));
 			$job_order->is_customer_agreed = $request->is_customer_agreed;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
