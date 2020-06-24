@@ -33,7 +33,7 @@
                                         <ul class="flex-row type-3 pt-10">
                                             <li class="flex-col-4" ng-repeat="(key, returnable_item) in returnable_items">
                                                 <div class="border-box type-2">
-                                                    <div class="top-title">{{returnable_item.item_description ? returnable_item.item_description : '' }} <span class="right-text">Qty :{{returnable_item.qty}}</span></div>
+                                                    <div class="top-title">{{returnable_item.item_name ? returnable_item.item_name : '' }} <span class="right-text">Qty :{{returnable_item.qty}}</span></div>
                                                     <div class="mb-20"></div><!-- Spacing -->
                                                     <table class="table-info">
                                                         <tbody>
@@ -61,9 +61,9 @@
                                                 </div><!-- Border Box -->
                                             </li>
                                         </ul><!-- Flex Row -->
-                                        <hr>
+                                        <hr ng-if="returnable_items.length > 0">
                                         <a href="#!/gigo-pkg/job-card/returnable-item/add/{{job_card.id}}">
-                                            <button class="btn btn-md type2 btn-green btn-square">Add Another Item</button>
+                                            <button class="btn btn-md type2 btn-green btn-square">Add {{returnable_items.length > 0 ? 'Another' : ''}} Item</button>
                                         </a>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">

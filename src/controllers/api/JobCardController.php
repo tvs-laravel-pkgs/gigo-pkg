@@ -2271,7 +2271,13 @@ class JobCardController extends Controller {
 	}
 
 	public function getReturnableItems(Request $request) {
-		$job_card = JobCard::find($request->id);
+		$job_card = $job_card = JobCard::with([
+			'status',
+			'jobOrder',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+		])->find($request->id);
+
 		if (!$job_card) {
 			return response()->json([
 				'success' => true,
@@ -2298,14 +2304,13 @@ class JobCardController extends Controller {
 
 	public function getReturnableItemFormdata(Request $request) {
 		$job_card = JobCard::with([
+			'jobOrder',
+			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'status',
 		])
-			->select([
-				'job_cards.*',
-				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
-			])->find($request->id);
+			->find($request->id);
+
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -2401,23 +2406,21 @@ class JobCardController extends Controller {
 				//Inserting Job card returnable items
 				foreach ($request->job_card_returnable_items as $key => $job_card_returnable_item) {
 					$returnable_item = JobCardReturnableItem::firstOrNew([
+						'item_name' => $job_card_returnable_item['item_name'],
 						'item_serial_no' => $job_card_returnable_item['item_serial_no'],
 						'job_card_id' => $request->job_card_id,
 					]);
 					$returnable_item->fill($job_card_returnable_item);
 					$returnable_item->job_card_id = $request->job_card_id;
 					if ($returnable_item->exists) {
-						//FIRST
 						$returnable_item->updated_at = Carbon::now();
 						$returnable_item->updated_by_id = Auth::user()->id;
 					} else {
-//NEW
 						$returnable_item->created_at = Carbon::now();
 						$returnable_item->created_by_id = Auth::user()->id;
 					}
 					$returnable_item->save();
 
-					//dd($job_card_returnable_item['attachments']);
 					//Attachment Save
 					$attachment_path = storage_path('app/public/gigo/job_card/returnable_items/');
 					Storage::makeDirectory($attachment_path, 0777);
