@@ -28,8 +28,8 @@
                     <span class="page-tab-form-top-left-info-content">
                         JC No: {{job_card.job_card_number ? job_card.job_card_number : ''}}
                         | {{job_card.job_order.vehicle.registration_number ? job_card.job_order.vehicle.registration_number : ''}}
-                        | {{job_card.job_order.vehicle.model.name ? job_card.job_order.vehicle.model.name : ''}}
-                        | {{job_card.date}}, {{job_card.time}}
+                        | {{job_card.job_order.vehicle.model.model_name ? job_card.job_order.vehicle.model_name : ''}}
+                        | {{job_card.created_at}}
                     </span>
                 </div>
             </div><!-- Page Tab Form Top Left -->
@@ -89,7 +89,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Quantity <sup class="mandatory">*</sup></label>
-                                                <input type="text" class="form-control" placeholder="Enter Quantity" autocomplete="off" name="job_card_returnable_items[0][qty]" ng-model="returnable_item.qty" />
+                                                <input type="text" class="form-control" placeholder="Enter Quantity" autocomplete="off" name="job_card_returnable_items[0][qty]" maxlength="7" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" ng-model="returnable_item.qty" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-8">
@@ -103,7 +103,23 @@
                                 <div class="col-md-12">
                                     <ul class="gatein-img-list">
                                         <li class="gatein-img-list-item item-img">
-                                            <input type="file" multiple class="image_uploadify" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" name="job_card_returnable_items[0][attachments][]" />
+                                            <div class="avatar-upload type-3">
+                                                <div class="avatar-edit" ng-class="{'in': returnable_item.attachment.length > 0}">
+                                                    <input type="file" class="profile-img-upload" name="job_card_returnable_items[0][attachments][]" id="image_Upload_4" accept=".png, .jpg, .jpeg" />
+                                                    <label for="image_Upload_4">
+                                                        <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
+                                                    </label>
+                                                </div>
+                                                <div class="avatar-preview in" ng-if="returnable_item.attachment.length > 0">
+                                                    <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_card/returnable_items/{{returnable_item.attachment[0].name}}')">
+                                                    </div>
+                                                </div>
+                                                <div class="avatar-preview" ng-if="!returnable_item.attachment || returnable_item.attachment.length == 0">
+                                                    <div class="avatar-img" id="imagePreview" style="">
+                                                    </div>
+                                                </div>
+                                            </div><!-- Avatar Upload -->
+                                            <!-- <input type="file" class="image_uploadify" accept="image/*," name="job_card_returnable_items[0][attachments][]" /> -->
                                         </li>
                                     </ul>
                                 </div><!-- Column -->

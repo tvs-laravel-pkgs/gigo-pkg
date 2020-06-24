@@ -8,13 +8,11 @@ use Abs\GigoPkg\GatePass;
 use Abs\GigoPkg\GatePassDetail;
 use Abs\GigoPkg\GatePassItem;
 use Abs\GigoPkg\JobCard;
-use Abs\GigoPkg\JobCardReturnableItem;
 use Abs\GigoPkg\JobOrderIssuedPart;
 use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\RepairOrder;
 use Abs\PartPkg\Part;
 use Abs\StatusPkg\Status;
-use App\Attachment;
 use App\Config;
 use App\Customer;
 use App\Employee;
@@ -28,7 +26,6 @@ use App\Vendor;
 use Auth;
 use Carbon\Carbon;
 use DB;
-use File;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
@@ -1257,203 +1254,6 @@ class JobOrderController extends Controller {
 				'errors' => [
 					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 				],
-			]);
-		}
-	}
-
-	public function getReturnableItems(Request $request) {
-		$job_card = JobCard::find($request->id);
-		if (!$job_card) {
-			return response()->json([
-				'success' => true,
-				'job_card' => $job_card,
-				'returnable_items' => $returnable_items,
-				'attachement_path' => url('storage/app/public/gigo/job_card/returnable_items/'),
-			]);
-		}
-
-		$returnable_items = JobCardReturnableItem::with([
-			'attachment',
-		])
-			->where('job_card_id', $job_card->id)
-			->get();
-
-		return response()->json([
-			'success' => true,
-			'job_card' => $job_card,
-			'returnable_items' => $returnable_items,
-			'attachement_path' => url('app/public/gigo/job_card/returnable_items/'),
-		]);
-
-	}
-
-	public function getReturnableItemFormdata(Request $request) {
-		$job_card = JobCard::with([
-			'jobOrder.vehicle.model',
-			'status',
-		])
-			->select([
-				'job_cards.*',
-				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
-			])->find($request->id);
-		if (!$job_card) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Validation Error',
-				'errors' => ['Job Card Not Found!'],
-			]);
-		}
-		if ($request->returnable_item_id) {
-			$returnable_item = JobCardReturnableItem::with([
-				'attachment',
-			])
-				->find($request->returnable_item_id);
-			//->first();
-			$action = 'Edit';
-		} else {
-			$returnable_item = new JobCardReturnableItem;
-			$action = 'Add';
-		}
-		return response()->json([
-			'success' => true,
-			'job_card' => $job_card,
-			'returnable_item' => $returnable_item,
-			'attachement_path' => url('storage/app/public/gigo/job_card/returnable_items/'),
-		]);
-	}
-
-	public function ReturnableItemSave(Request $request) {
-		// dd($request->all());
-		try {
-			$validator = Validator::make($request->all(), [
-				'job_card_id' => [
-					'required',
-					'integer',
-					'exists:job_cards,id',
-				],
-				'job_card_returnable_items.*.item_description' => [
-					'required',
-					'string',
-					'max:191',
-				],
-				'job_card_returnable_items.*.item_make' => [
-					'nullable',
-					'string',
-					'max:191',
-				],
-				'job_card_returnable_items.*.item_model' => [
-					'nullable',
-					'string',
-					'max:191',
-				],
-				'job_card_returnable_items.*.item_serial_no' => [
-					'nullable',
-					'string',
-					// 'unique:job_card_returnable_items,item_serial_no,' . $request->id . ',id,job_card_id,' .  $request->job_card_id,
-				],
-				'job_card_returnable_items.*.qty' => [
-					'required',
-					'integer',
-					'regex:/^\d+(\.\d{1,2})?$/',
-				],
-				'job_card_returnable_items.*.remarks' => [
-					'nullable',
-					'string',
-					'max:191',
-				],
-
-			]);
-
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
-				]);
-			}
-
-			$job_card_returnable_items_count = count($request->job_card_returnable_items);
-			$job_card_returnable_unique_items_count = count(array_unique(array_column($request->job_card_returnable_items, 'item_serial_no')));
-			if ($job_card_returnable_items_count != $job_card_returnable_unique_items_count) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'message' => 'Returnable items serial numbers are not unique',
-				]);
-			}
-			DB::beginTransaction();
-			if (isset($request->job_card_returnable_items) && count($request->job_card_returnable_items) > 0) {
-				//Inserting Job card returnable items
-				foreach ($request->job_card_returnable_items as $key => $job_card_returnable_item) {
-					$returnable_item = JobCardReturnableItem::firstOrNew([
-						'item_serial_no' => $job_card_returnable_item['item_serial_no'],
-						'job_card_id' => $request->job_card_id,
-					]);
-					$returnable_item->fill($job_card_returnable_item);
-					$returnable_item->job_card_id = $request->job_card_id;
-					if ($returnable_item->exists) {
-						//FIRST
-						$returnable_item->updated_at = Carbon::now();
-						$returnable_item->updated_by_id = Auth::user()->id;
-					} else {
-//NEW
-						$returnable_item->created_at = Carbon::now();
-						$returnable_item->created_by_id = Auth::user()->id;
-					}
-					$returnable_item->save();
-
-					//dd($job_card_returnable_item['attachments']);
-					//Attachment Save
-					$attachment_path = storage_path('app/public/gigo/job_card/returnable_items/');
-					Storage::makeDirectory($attachment_path, 0777);
-
-					//SAVE RETURNABLE ITEMS PHOTO ATTACHMENT
-					if (!empty($job_card_returnable_item['attachments']) && count($job_card_returnable_item['attachments']) > 0) {
-						//REMOVE OLD ATTACHEMNTS
-						$remove_previous_attachments = Attachment::where([
-							'entity_id' => $returnable_item->id,
-							'attachment_of_id' => 232, //Job Card Returnable Item
-							'attachment_type_id' => 239, //Job Card Returnable Item
-						])->get();
-						if (!empty($remove_previous_attachments)) {
-							foreach ($remove_previous_attachments as $key => $remove_previous_attachment) {
-								$img_path = $attachment_path . $remove_previous_attachment->name;
-								if (File::exists($img_path)) {
-									File::delete($img_path);
-								}
-								$remove = $remove_previous_attachment->forceDelete();
-							}
-						}
-						foreach ($job_card_returnable_item['attachments'] as $key => $returnable_item_attachment) {
-							//dump('save');
-							$file_name_with_extension = $returnable_item_attachment->getClientOriginalName();
-							$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
-							$extension = $returnable_item_attachment->getClientOriginalExtension();
-							$name = $returnable_item->id . '_' . $file_name . '.' . $extension;
-							$returnable_item_attachment->move($attachment_path, $name);
-							$attachement = new Attachment;
-							$attachement->attachment_of_id = 232; //Job Card Returnable Item
-							$attachement->attachment_type_id = 239; //Job Card Returnable Item
-							$attachement->name = $name;
-							$attachement->entity_id = $returnable_item->id;
-							$attachement->created_by = Auth::user()->id;
-							$attachement->save();
-						}
-					}
-				}
-			}
-
-			DB::commit();
-			return response()->json([
-				'success' => true,
-				'message' => 'Returnable items added successfully!!',
-			]);
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
 			]);
 		}
 	}
