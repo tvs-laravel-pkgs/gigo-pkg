@@ -51,6 +51,10 @@ class JobOrder extends BaseModel {
 		'deleted_at',
 	];
 
+	protected $casts = [
+		'is_sold' => 'boolean',
+	];
+
 	protected $appends = [
 		'est_delivery_date',
 		'est_delivery_time',
