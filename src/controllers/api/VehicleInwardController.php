@@ -1322,6 +1322,16 @@ class VehicleInwardController extends Controller {
 				])
 				->find($r->id);
 
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job order Not found!',
+					],
+				]);
+			}
+
 			if (!$job_order->is_campaign_carried) {
 				$nameSpace = '\\App\\';
 				$entity = 'Campaign';
@@ -3067,7 +3077,7 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
+				'error' => 'Server Error!',
 				'errors' => [
 					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 				],
@@ -3230,7 +3240,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -3342,8 +3352,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -3364,7 +3376,7 @@ class VehicleInwardController extends Controller {
 			if ($validator->fails()) {
 				return response()->json([
 					'success' => false,
-					'message' => 'Validation Error',
+					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
 			}
@@ -3373,16 +3385,15 @@ class VehicleInwardController extends Controller {
 				'gateLog',
 			])
 				->find($request->job_order_id);
+			$job_order->status_id = 8461;
+			$job_order->save();
 
 			//UPDATE GATE LOG STATUS
-			if ($job_order->gateLog) {
-				$gate_log = GateLog::where('id', $job_order->gateLog->id)
-					->update([
-						'status_id' => 8122, //VEHICLE INWARD COMPLETED
-						'updated_by_id' => Auth::user()->id,
-						'updated_at' => Carbon::now(),
-					]);
-			}
+			$job_order->gateLog()->update([
+				'status_id' => 8122, //VEHICLE INWARD COMPLETED
+				'updated_by_id' => Auth::user()->id,
+				'updated_at' => Carbon::now(),
+			]);
 
 			DB::commit();
 
@@ -3393,8 +3404,10 @@ class VehicleInwardController extends Controller {
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
-				'message' => 'Server Error',
-				'errors' => [$e->getMessage()],
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
