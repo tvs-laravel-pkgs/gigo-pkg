@@ -794,7 +794,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/scheduled-maintenance/form/' + $scope.job_order_id);
@@ -1046,7 +1046,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/payable-labour-part-detail/form/' + $scope.job_order.id);
@@ -1120,7 +1120,7 @@ app.component('inwardVehicleUpdatejcForm', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/vehicle-inward/get-update-jc-form-data',
+                    url: base_url + '/api/vehicle-inward/update-jc/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_order_id
@@ -1250,7 +1250,7 @@ app.component('inwardVehicleUpdatejcForm', {
                                 $scope.send_customer_approval();
                             } else {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                             }
                             $scope.$apply();
                         })
@@ -1277,7 +1277,7 @@ app.component('inwardVehicleUpdatejcForm', {
                 success: function(response) {
                     custom_noty('success', response.message);
                     $(".send_to_customer_approval").button('reset');
-                    $location.path('/inward-vehicle/table-list');
+                    $location.path('/inward-vehicle/card-list');
                     $scope.$apply();
                 },
                 error: function(textStatus, errorThrown) {
@@ -1336,7 +1336,7 @@ app.component('inwardVehicleUpdatejcForm', {
                         $('#otp').modal('hide');
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
-                        $location.path('/inward-vehicle/table-list');
+                        $location.path('/inward-vehicle/card-list');
                         $scope.$apply();
                     })
                     .fail(function(xhr) {
@@ -1533,7 +1533,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                             $("#inward_notification").modal('show');
                             // self.repair_order_and_parts_detils
                             // custom_noty('success', res.message);
-                            // $location.path('/inward-vehicle/table-list');
+                            // $location.path('/inward-vehicle/card-list');
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -1574,7 +1574,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
                             custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/table-list');
+                            $location.path('/inward-vehicle/card-list');
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -1699,7 +1699,7 @@ app.component('inwardVehicleEstimateForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 if ($('#is_customer_agreed').val() == 1) {
@@ -2806,7 +2806,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/estimate/' + $scope.job_order_id);
@@ -3701,7 +3701,7 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                             // setTimeout(function() {
                             //     custom_noty('success', res.message);
                             //     if (id == 1) {
-                            //         $location.path('/inward-vehicle/table-list');
+                            //         $location.path('/inward-vehicle/card-list');
                             //         $scope.$apply();
                             //     } else {
                             //         $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order_id);

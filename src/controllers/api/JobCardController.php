@@ -166,6 +166,7 @@ class JobCardController extends Controller {
 	public function getUpdateJcFormData(Request $r) {
 		try {
 			$job_order = JobOrder::with([
+				'status',
 				'gateLog',
 				'gateLog.status',
 				'vehicle',

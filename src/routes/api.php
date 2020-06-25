@@ -210,7 +210,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::get('get-city/state-id/{state_id}', 'VehicleInwardController@getcity');
 
 		//Update Job Card
-		Route::post('vehicle-inward/get-update-jc-form-data', 'JobCardController@getUpdateJcFormData');
+		Route::post('vehicle-inward/update-jc/get-form-data', 'JobCardController@getUpdateJcFormData');
 		Route::post('vehicle-inward/job-card/save', 'JobCardController@saveJobCard');
 		Route::post('vehicle-inward/send/customer/otp', 'JobCardController@sendCustomerOtp');
 		Route::post('vehicle-inward/verify/otp', 'JobCardController@verifyOtp');
