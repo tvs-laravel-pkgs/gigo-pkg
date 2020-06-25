@@ -6,6 +6,7 @@ use Abs\BasicPkg\Traits\CrudTrait;
 use App\Http\Controllers\Controller;
 use App\WarrantyJobOrderRequest;
 use Illuminate\Http\Request;
+use DB;
 
 class WarrantyJobOrderRequestController extends Controller {
 	use CrudTrait;
@@ -59,6 +60,21 @@ class WarrantyJobOrderRequestController extends Controller {
 				'success' => false,
 				'error' => $e->getMessage(),
 			]);
+		}
+	}
+
+	public function remove(Request $request)
+	{
+		DB::beginTransaction();
+		try {
+			$warranty_job_order = WarrantyJobOrderRequest::find($request->id)->delete();
+			if ($warranty_job_order) {
+				DB::commit();
+				return response()->json(['success' => true, 'message' => 'Warranty Job Order Deleted Successfully']);
+			}
+		} catch (Exception $e) {
+			DB::rollBack();
+			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
 		}
 	}
 }

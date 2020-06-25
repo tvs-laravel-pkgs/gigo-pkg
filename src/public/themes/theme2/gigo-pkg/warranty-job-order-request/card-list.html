@@ -94,7 +94,7 @@
                                                     <span class="glyphicon glyphicon glyphicon-eye-open"></span>
                                                     <!-- <img src="./public/theme/img/table/view.svg" alt="View" class="img-responsive"> -->
                                                 </a>
-                                                <a ng-if="warranty_job_order_request.status.id == 9100" href="#!/warranty-job-order-request/view/{{warranty_job_order_request.id}}" class="btn btn-sm btn-default">
+                                                <a ng-if="warranty_job_order_request.status.id == 9100" href="#!/warranty-job-order-request/form/{{warranty_job_order_request.id}}" class="btn btn-sm btn-default">
                                                     <md-tooltip md-direction="top">
                                                         Edit
                                                     </md-tooltip>
@@ -108,7 +108,7 @@
                                                     <span class="glyphicon glyphicon-send"></span>
                                                     <!-- <img src="./public/theme/img/table/edit.svg" alt="Edit" class="img-responsive"> -->
                                                 </a>
-                                                <a ng-if1="!job_card.bay_id" class="btn btn-sm btn-default" ng-click="confirmDelete(warranty_job_order_request)">
+                                                <a ng-if1="!job_card.bay_id" class="btn btn-sm btn-default" ng-click="confirmDelete(warranty_job_order_request,key)">
                                                     <md-tooltip md-direction="top">
                                                         Delete
                                                     </md-tooltip>
