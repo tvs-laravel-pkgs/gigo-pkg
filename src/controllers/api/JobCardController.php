@@ -916,12 +916,15 @@ class JobCardController extends Controller {
 			//JOB CARD
 			$job_card = JobCard::with([
 				'jobOrder',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
 				'jobOrder.JobOrderRepairOrders',
 				'jobOrder.JobOrderRepairOrders.status',
 				'jobOrder.JobOrderRepairOrders.repairOrder',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanic',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.status',
+				'status',
 			])->find($request->id);
 
 			if (!$job_card) {
@@ -951,14 +954,14 @@ class JobCardController extends Controller {
 				'deputed_outlet.code as deputed_outlet_code',
 				'attendance_logs.user_id',
 			])
-				->leftJoin('users', 'users.entity_id', 'employees.id')
+				->join('users', 'users.entity_id', 'employees.id')
 				->leftJoin('attendance_logs', function ($join) {
 					$join->on('attendance_logs.user_id', 'users.id')
 						->whereNull('attendance_logs.out_time')
 						->whereDate('attendance_logs.date', '=', date('Y-m-d', strtotime("now")));
 				})
-				->leftJoin('outlets', 'outlets.id', 'employees.outlet_id')
-				->leftJoin('outlets as deputed_outlet', 'deputed_outlet.id', 'employees.deputed_outlet_id')
+				->join('outlets', 'outlets.id', 'employees.outlet_id')
+				->leftjoin('outlets as deputed_outlet', 'deputed_outlet.id', 'employees.deputed_outlet_id')
 				->where('employees.is_mechanic', 1)
 				->where('users.user_type_id', 1) //EMPLOYEE
 				->where('employees.outlet_id', $job_card->outlet_id)
