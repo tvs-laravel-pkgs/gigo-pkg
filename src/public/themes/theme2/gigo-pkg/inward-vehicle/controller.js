@@ -3542,7 +3542,11 @@ app.component('inwardVehicleRoadTestDetailForm', {
                                 $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
-                                $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order_id);
+                                if($scope.job_order.is_expert_diagnosis_required){
+                                    $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order_id);
+                                }else{
+                                    $location.path('/inward-vehicle/inspection-detail/form/' + $scope.job_order_id);
+                                }
                                 $scope.$apply();
                             }
                         })
