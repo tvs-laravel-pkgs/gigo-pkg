@@ -51,6 +51,11 @@ class JobOrder extends BaseModel {
 		'deleted_at',
 	];
 
+	protected $appends = [
+		'est_delivery_date',
+		'est_delivery_time',
+	];
+
 	// Getters --------------------------------------------------------------
 
 	public function getDriverLicenseExpiryDateAttribute($value) {
@@ -71,6 +76,14 @@ class JobOrder extends BaseModel {
 
 	public function getEstimatedDeliveryDateAttribute($date) {
 		return empty($date) ? '' : date('d-m-Y h:i A ', strtotime($date));
+	}
+
+	public function getEstDeliveryDateAttribute() {
+		return empty($this->attributes['estimated_delivery_date']) ? date('d-m-Y') : date('d-m-Y', strtotime($this->attributes['estimated_delivery_date']));
+	}
+
+	public function getEstDeliveryTimeAttribute() {
+		return empty($this->attributes['estimated_delivery_date']) ? date('h:i A') : date('h:i A', strtotime($this->attributes['estimated_delivery_date']));
 	}
 
 	// Setters --------------------------------------------------------------
@@ -156,6 +169,10 @@ class JobOrder extends BaseModel {
 
 	public function outlet() {
 		return $this->belongsTo('App\Outlet', 'outlet_id');
+	}
+
+	public function campaigns() {
+		return $this->hasMany('Abs\GigoPkg\JobOrderCampaign', 'job_order_id', 'id');
 	}
 
 	//issue : company condition not required

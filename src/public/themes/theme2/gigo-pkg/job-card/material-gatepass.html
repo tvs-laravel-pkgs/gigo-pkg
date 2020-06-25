@@ -30,146 +30,113 @@
                                         <h5 class="title-red">
                                             Material gatepass
                                         </h5>
-                                        <div class="mgatepass-wrap border">
-                                            <div class="row" ng-repeat="(key, gate_passes) in job_card.gate_passes">
-                                                <div class="col-md-8">
-                                                    <div class="row">
-                                                        <div class="col-md-8">
-                                                            <div class="mgpass-address-left-wrap">
-                                                                <span class="title mb-10">
-                                                                    Vendor Code : {{gate_passes.gate_pass_detail.vendor.code}} ({{gate_passes.gate_pass_detail.vendor_type.name}})
-                                                                </span>
-                                                                <span class="heading">
-                                                                    {{gate_passes.gate_pass_detail.vendor.name}}
-                                                                </span>
-                                                            <span class="address" ng-repeat="(key, address) in gate_passes.gate_pass_detail.vendor.addresses">
-                                                            {{address.address_line1}},
-                                                            {{address.address_line2}}
-                                                            {{address.pincode}}
-                                                                </span>  
-                                                                <span class="contact">
-                                                                    Vendor Contact No : {{gate_passes.gate_pass_detail.vendor_contact_no}}
-                                                                </span>                                                
-                                                            </div>
-                                                        </div><!-- Column -->
-                                                        <div class="col-md-4">
-                                                            <div class="mgpass-address-left-wrap">
-                                                                <span class="date">
-                                                                    Created On : {{job_card.created_at}}
-                                                                </span>                                                               
-                                                                <ul class="grey-list d-block">
-                                                                    <li>
-                                                                        <div class="grey-box">
-                                                                            <div class="grey-box-header">Status : {{job_card.status.name}}</div>
-                                                                        </div>
-                                                                    </li>
-                                                                </ul>                      
-                                                            </div>
-                                                        </div><!-- Column -->
-                                                    </div><!-- Row -->
-                                                    <div class="mgpass-address-left-wrap">
-                                                        <ul class="view-row mb-no border-none">
-                                                            <li class="view-col-4">
-                                                                <span class="view-col-label">Work Order No</span>
-                                                                <span class="view-col-value">{{gate_passes.gate_pass_detail.work_order_no}}</span>
-                                                            </li>
-                                                            <li class="view-col-4">
-                                                                <span class="view-col-label">Work Order Description</span>
-                                                                <span class="view-col-value">{{gate_passes.gate_pass_detail.work_order_description}}</span>
-                                                            </li>
-                                                            <li class="view-col-4">
-                                                                <span class="view-col-label">No. of Items</span>
-                                                                <span class="view-col-value">{{gate_passes.gate_pass_items.length}}</span>
-                                                            </li>                      
-                                                        </ul>
-                                                    </div>                                                   
-                                                    <a href="#!/gigo-pkg/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
-                                                </div><!-- Column -->
-                                                <div class="col-lg-4"> 
-                                                    <div id="myCarousel" class="carousel mgpass-carousel slide" data-ride="carousel">
-                                                        <ol class="carousel-indicators">
-                                                            <li data-target="#myCarousel" data-slide-to="0" class="active" ></li>
-                                                            <li data-target="#myCarousel" data-slide-to="{{keyss}}" ng-repeat="(keyss, gate_pass_items) in gate_passes.gate_pass_items" ng-if="keyss != 0"></li>
-                                                        </ol>
-                                                        <div class="carousel-inner">
-
-                                                            <div class="item active item_{{keys}}" ng-repeat="(keys, gate_pass_items) in gate_passes.gate_pass_items" ng-if="keys == 0">
-                                                           
-                                                                <div class="border-box type-2">
-                                                                    <div class="top-title">Front Tyres <span class="right-text">Qty : {{gate_pass_items.qty}}</span></div>
-                                                                    <div class="mb-20"></div><!-- Spacing -->
-                                                                    <table class="table-info">
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td>Make</td>           
-                                                                                <td>: {{gate_pass_items.item_make}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Model</td>          
-                                                                                <td>: {{gate_pass_items.item_model}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Seriel no</td>          
-                                                                                <td>: {{gate_pass_items.item_serial_no}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Remarks</td>            
-                                                                                <td>: {{gate_pass_items.remarks}}</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                    <div class="mb-10"></div><!-- Spacing -->
-                                                                    <img class="img-responsive wid-60" src="storage/app/public/gigo/job_order/attachments/{{gate_pass_items.attachments[0].name}}"alt="Parts Image" /> 
+                                        <div class="row" ng-repeat="(key, gate_passes) in job_card.gate_passes" ng-if="job_card.gate_passes.length > 0">
+                                            <div class="mgatepass-wrap border">
+                                                <div class="row">
+                                                    <div class="col-lg-8">
+                                                        <div class="row">
+                                                            <div class="col-md-8">
+                                                                <div class="mgpass-address-left-wrap">
+                                                                    <span class="title mb-10">
+                                                                        Vendor Code : {{gate_passes.gate_pass_detail.vendor.code}} ({{gate_passes.gate_pass_detail.vendor_type.name}})
+                                                                    </span>
+                                                                    <span class="heading">
+                                                                        {{gate_passes.gate_pass_detail.vendor.name}}
+                                                                    </span>
+                                                                    <span class="address">
+                                                                        {{gate_passes.gate_pass_detail.vendor.addresses[0].address_line1}},
+                                                                        {{gate_passes.gate_pass_detail.vendor.addresses[0].address_line2}}
+                                                                    </span>
+                                                                    <span class="contact">
+                                                                        Vendor Contact No : {{gate_passes.gate_pass_detail.vendor_contact_no}}
+                                                                    </span>
                                                                 </div>
-                                                            </div>
-
-                                                            <div class="item" ng-repeat="(keyss, gate_pass_items) in gate_passes.gate_pass_items" ng-if="keyss != 0">
-                                                                <div class="border-box type-2">
-                                                                    <div class="top-title">Front Tyres <span class="right-text">Qty : {{gate_pass_items.qty}}</span></div>
-                                                                    <div class="mb-20"></div><!-- Spacing -->
-                                                                    <table class="table-info">
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td>Make</td>           
-                                                                                <td>: {{gate_pass_items.item_make}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Model</td>          
-                                                                                <td>: {{gate_pass_items.item_model}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Seriel no</td>          
-                                                                                <td>: {{gate_pass_items.item_serial_no}}</td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td>Remarks</td>            
-                                                                                <td>: {{gate_pass_items.remarks}}</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                    <div class="mb-10"></div><!-- Spacing -->
-                                                                    <img class="img-responsive wid-60" src="storage/app/public/gigo/job_order/attachments/{{gate_pass_items.attachments[0].name}}"alt="Parts Image" /> 
+                                                            </div><!-- Column -->
+                                                            <div class="col-md-4">
+                                                                <div class="mgpass-address-left-wrap">
+                                                                    <span class="date">
+                                                                        Created On : {{gate_passes.created_at}}
+                                                                    </span>
+                                                                    <ul class="grey-list d-block">
+                                                                        <li>
+                                                                            <div class="grey-box">
+                                                                                <div class="grey-box-header">Status : {{gate_passes.status.name}}</div>
+                                                                            </div>
+                                                                        </li>
+                                                                    </ul>
                                                                 </div>
-                                                            </div><!-- Item -->
-
-                                                        </div><!-- Carousel Inner -->
-                                                    </div><!-- Carousel -->   
-                                                </div><!-- Column --> 
-                                            </div><!-- Row -->
+                                                            </div><!-- Column -->
+                                                        </div><!-- Row -->
+                                                        <div class="mgpass-address-left-wrap">
+                                                            <ul class="view-row mb-no border-none">
+                                                                <li class="view-col-4">
+                                                                    <span class="view-col-label">Work Order No</span>
+                                                                    <span class="view-col-value">{{gate_passes.gate_pass_detail.work_order_no}}</span>
+                                                                </li>
+                                                                <li class="view-col-4">
+                                                                    <span class="view-col-label">Work Order Description</span>
+                                                                    <span class="view-col-value">{{gate_passes.gate_pass_detail.work_order_description}}</span>
+                                                                </li>
+                                                                <li class="view-col-4">
+                                                                    <span class="view-col-label">No. of Items</span>
+                                                                    <span class="view-col-value">{{gate_passes.gate_pass_items.length}}</span>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <a href="#!/gigo-pkg/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
+                                                    </div><!-- Column -->
+                                                    <div class="col-lg-4" ng-if="gate_passes.gate_pass_items.length > 0">
+                                                        <div id="myCarousel" class="carousel mgpass-carousel slide" data-ride="carousel">
+                                                            <ol class="carousel-indicators">
+                                                                <li style="margin-right: 5px" data-target="#myCarousel" data-slide-to="{{key}}{{index}}" ng-class="{'active': (index == 0)}" ng-repeat="(index, gate_pass_items) in gate_passes.gate_pass_items"></li>
+                                                            </ol>
+                                                            <div class="carousel-inner">
+                                                                <div class="item" ng-class="{'active': (keys == 0)}" ng-repeat="(keys, gate_pass_item) in gate_passes.gate_pass_items">
+                                                                    <div class="border-box type-2">
+                                                                        <div class="top-title">{{gate_pass_item.name}}<span class="right-text">Qty : {{gate_pass_item.qty}}</span></div>
+                                                                        <div class="mb-20"></div>
+                                                                        <table class="table-info">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>Make</td>
+                                                                                    <td>: {{gate_pass_item.item_make}}</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Model</td>
+                                                                                    <td>: {{gate_pass_item.item_model}}</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Seriel no</td>
+                                                                                    <td>: {{gate_pass_item.item_serial_no}}</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Remarks</td>
+                                                                                    <td>: {{gate_pass_item.remarks}}</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                        <div class="mb-10"></div>
+                                                                        <img ng-if="gate_pass_item.attachments.length >0" class="img-responsive wid-60" src="storage/app/public/gigo/job_order/attachments/{{gate_pass_item.attachments[0].name}}" alt="Image" />
+                                                                    </div><!-- Border Box -->
+                                                                </div><!-- Item -->
+                                                            </div><!-- Carousel Inner -->
+                                                        </div><!-- Carousel -->
+                                                    </div><!-- Column -->
+                                                </div><!-- Row -->
+                                            </div>
                                         </div>
-                                        <div class="text-center pt-40"> 
-                                            <a href="#!/gigo-pkg/job-card/material-outward/{{job_card.id}}" class="btn btn-red">Add Another Material Gate Pass</a>
+                                        <div class="text-center pt-40">
+                                            <a href="#!/gigo-pkg/job-card/material-outward/{{job_card.id}}" class="btn btn-red">Add {{job_card.gate_passes.length > 0 ? 'Another' : ''}} Material Gate Pass</a>
                                         </div>
                                     </div><!-- Column -->
-
                                     <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a href=".#!/gigo-pkg/job-card/split-order/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a href=".#!/gigo-pkg/job-card/returnable-item/{{job_card_id}}" class="btn btn-secondary-dark btn-nxt">Next</a>
-                                                </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a href=".#!/gigo-pkg/job-card/split-order/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a href=".#!/gigo-pkg/job-card/returnable-item/{{job_card_id}}" class="btn btn-secondary-dark btn-nxt">Next</a>
                                             </div>
-                                        </div><!-- Tab Footer -->
+                                        </div>
+                                    </div><!-- Tab Footer -->
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
@@ -179,40 +146,3 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<!-- Modal -->
-<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xs" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title">Search Vehicle</h5>
-            </div><!-- Modal Header -->
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Registration Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Customer Code <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>VIN Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div><!-- Modal Body -->
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
-<!-- Modal -->

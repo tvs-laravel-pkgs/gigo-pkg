@@ -6,20 +6,21 @@ use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Campaign extends BaseModel {
+class JobOrderCampaign extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
-	protected $table = 'compaigns';
+	protected $table = 'job_order_campaigns';
 	public $timestamps = true;
 	protected $fillable = [
-		"company_id",
+		"job_order_id",
+		"campaign_id",
 		"authorisation_no",
 		"complaint_id",
 		"fault_id",
 		"claim_type_id",
-		"manufacture_date",
-		"vehicle_model_id",
 		"campaign_type",
+		"vehicle_model_id",
+		"manufacture_date",
 	];
 
 	public function getManufactureDateAttribute($value) {
@@ -47,15 +48,15 @@ class Campaign extends BaseModel {
 	}
 
 	public function campaignLabours() {
-		return $this->belongsToMany('Abs\GigoPkg\RepairOrder', 'compaign_repair_order', 'compaign_id', 'repair_order_id')->withPivot(['amount']);
+		return $this->belongsToMany('Abs\GigoPkg\RepairOrder', 'job_order_campaign_repair_order', 'job_order_campaign_id', 'repair_order_id')->withPivot(['amount']);
 	}
 
 	public function campaignParts() {
-		return $this->belongsToMany('Abs\PartPkg\Part', 'compaign_part', 'compaign_id', 'part_id');
+		return $this->belongsToMany('Abs\PartPkg\Part', 'job_order_campaign_part', 'job_order_campaign_id', 'part_id');
 	}
 
 	public function chassisNumbers() {
-		return $this->hasMany('Abs\GigoPkg\CampaignChassisNumber', 'campaign_id', 'id');
+		return $this->hasMany('Abs\GigoPkg\JobOrderCampaignChassisNumber', 'job_order_campaign_id', 'id');
 	}
 
 }

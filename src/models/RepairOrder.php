@@ -67,6 +67,10 @@ class RepairOrder extends BaseModel {
 		return $this->belongsTo('App\SkillLevel', 'skill_level_id');
 	}
 
+	public function campaigns() {
+		return $this->belongsToMany('App\Campaign', 'compaign_repair_order', 'repair_order_id', 'compaign_id')->withPivot(['amount']);
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {

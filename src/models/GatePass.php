@@ -14,17 +14,17 @@ class GatePass extends Model {
 	protected $table = 'gate_passes';
 	public $timestamps = true;
 	protected $fillable =
-		["company_id", "type_id", "name"]
+		["company_id", "type_id", "number", "status_id", "job_card_id", "gate_in_date", "gate_out_date", "gate_in_remarks", "gate_out_remarks"]
 	;
 
 	public function getCreatedAtAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y H:i a', strtotime($value));
+		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
 	}
 	public function getGateInDateAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y H:i a', strtotime($value));
+		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
 	}
 	public function getGateOutDateAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y H:i a', strtotime($value));
+		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
 	}
 
 	public function setDateOfJoinAttribute($date) {
@@ -40,7 +40,7 @@ class GatePass extends Model {
 	}
 
 	public function status() {
-		return $this->belongsTo('App\Config', 'type_id');
+		return $this->belongsTo('App\Config', 'status_id');
 	}
 	public function jobCard() {
 		return $this->belongsTo('App\JobCard');
@@ -52,7 +52,7 @@ class GatePass extends Model {
 	public function gatePassItemsCount() {
 		return $this->hasMany('App\GatePassItem', 'gate_pass_id')->count();
 	}
-	
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];

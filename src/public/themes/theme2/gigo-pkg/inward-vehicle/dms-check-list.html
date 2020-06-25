@@ -147,9 +147,10 @@
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="col-md-12">
                                             </div><!-- Column -->
-                                            <h6 class="color-secondary-dark mb-10" ng-if="job_order.vehicle.model.campaign.length > 0"><b>Campaign Job Details</b></h6>
+                                            <h6 class="color-secondary-dark mb-10" ng-if="campaigns.length > 0"><b>Campaign Job Details</b></h6>
                                             <div class="table-responsive">
-                                                <table class="table table-form jc-view-bill-table-wrap" ng-repeat="(index, campaign) in job_order.vehicle.model.campaign">
+                                                <table class="table table-form jc-view-bill-table-wrap" ng-repeat="(index, campaign) in campaigns">
+                                                    <input type="hidden" name="campaign_ids[]" value="{{campaign.id}}">
                                                     <thead>
                                                         <tr>
                                                             <th colspan="2">Claim Type : {{campaign.claim_type.name}}</th>
@@ -239,6 +240,36 @@
                                                 </table>
                                             </div><!-- Table Responsive -->
                                             <br>
+                                            <div class="row" ng-if="campaigns.length > 0">
+                                                <div class="col-md-4" id="road_test_required">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Campaign Carried ?
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="carried" name="is_campaign_carried" ng-value="1" value="1" ng-model="job_order.is_campaign_carried" ng-checked="job_order.is_campaign_carried">
+                                                            <label for="carried">
+                                                                Yes
+                                                            </label>
+                                                            <input type="radio" id="not_carried" name="is_campaign_carried" ng-value="0" value="0" ng-model="job_order.is_campaign_carried" ng-checked="!job_order.is_campaign_carried">
+                                                            <label for="not_carried">
+                                                                No
+                                                            </label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-8" ng-if="job_order.is_campaign_carried == 0">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Remarks
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <textarea class="form-control required" rows="4" placeholder="Enter Remarks" name="campaign_not_carried_remarks">{{job_order.campaign_not_carried_remarks}}</textarea>
+                                                        <div id="errorCampaignNotCarriedRemarks"></div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div> 
+                                            <br>
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
@@ -319,4 +350,4 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->
-<!-- Modal -->
+<!-- Modal

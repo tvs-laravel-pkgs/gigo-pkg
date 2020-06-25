@@ -257,12 +257,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//JOB CARD WORK COMPLETED
 		Route::post('job-card/update-status', 'JobCardController@updateJobCardStatus');
 
-		// JOB CARD MATRIAL GATE PASS VIEW
-		Route::post('view-material-gate-pass', 'JobCardController@viewMeterialGatePass');
-
-		//Job Card get OutwardDetail
-
-		Route::post('view-material-gate-pass-detail', 'JobCardController@getMeterialGatePassOutwardDetail');
+		//JOB CARD MATRIAL GATE PASS
+		Route::post('material-gatepass/view', 'JobCardController@viewMeterialGatePass');
+		Route::post('material-gatepass/form', 'JobCardController@getMeterialGatePassData');
+		Route::post('material-gatepass/save', 'JobCardController@saveMaterialGatePass');
 
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');
@@ -299,9 +297,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//Material-GatePass Details Save
 		Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');
-
-		//Material-GatePass Items Save
-		Route::post('save-material-gate-pass-item', 'JobCardController@saveMaterialGatePassItem');
 
 		//Material-GatePass Details List
 		Route::post('get-material-gate-pass-list', 'MaterialGatePassController@getMaterialGatePass');

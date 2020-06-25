@@ -871,7 +871,7 @@ app.component('jobCardMaterialGatepassForm', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/view-material-gate-pass',
+                    url: base_url + '/api/material-gatepass/view',
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id
@@ -921,10 +921,12 @@ app.component('jobCardMaterialOutwardForm', {
 
         $scope.job_card_id = $routeParams.job_card_id;
         $scope.gatepass_id = $routeParams.gatepass_id;
+        self.gate_pass_item_removal_ids = [];
+
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/view-material-gate-pass-detail',
+                    url: base_url + '/api/material-gatepass/form',
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id,
@@ -940,10 +942,7 @@ app.component('jobCardMaterialOutwardForm', {
                         return;
                     }
                     $scope.gate_pass = res.gate_pass;
-                    $scope.my_job_card_details = res.my_job_card_details;
-                    //$scope.gate_pass_item = res.gate_pass_item;
-                    $scope.make_list = res.make_list;
-                    $scope.model_list = res.model_list;
+                    $scope.job_card = res.job_card;
                     self.vendor = res.vendor;
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.$apply();
@@ -988,15 +987,15 @@ app.component('jobCardMaterialOutwardForm', {
                             resolve(response.data);
                             console.log(response.data.vendor_details);
                             $("#ven_name").text(response.data.vendor_details.name);
-                            if(response.data.vendor_details.addresses != '')
-                            {
-                            $('.address').text(response.data.vendor_details.addresses[0].address_line1 + " ," + response.data.vendor_details.addresses[0].address_line2 + " ," + response.data.vendor_details.addresses[0].pincode);
-       
+                            if (response.data.vendor_details.addresses != '') {
+                                $('.address').text(response.data.vendor_details.addresses[0].address_line1 + " ," + response.data.vendor_details.addresses[0].address_line2 + " ," + response.data.vendor_details.addresses[0].pincode);
+
                             }
                             if (response.data.vendor_details.type_id == 121) {
                                 $("#type_yes").prop('checked', true);
                                 $("#type_no").prop('checked', false);
-                            }if (response.data.vendor_details.type_id == 122) {
+                            }
+                            if (response.data.vendor_details.type_id == 122) {
                                 $("#type_no").prop('checked', true);
                                 $("#type_yes").prop('checked', false);
                             }
@@ -1021,104 +1020,39 @@ app.component('jobCardMaterialOutwardForm', {
             });
         }
 
-        self.removeItem = function(index) {
-            if (index != 0) {
-                $scope.gate_pass.gate_pass_items.splice(index, 1);
+        self.removeItem = function(index, $id) {
+            if ($id) {
+                self.gate_pass_item_removal_ids.push($id);
+                $('#gate_pass_item_removal_id').val(JSON.stringify(self.gate_pass_item_removal_ids));
             }
-            var id = $("#item_id_" + index).val();
-            if (id) {
-                $.ajax({
-                        url: base_url + '/api/jobcard/outward-item/delete',
-                        method: "POST",
-                        data: {
-                            id: id,
-                            gate_pass_id: $routeParams.gatepass_id
-                        },
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
-                            showErrorNoty(res);
-                            return;
-                        }
-                        custom_noty('success', 'Outward Item Deleted Successfully');
-                    })
-                    .fail(function(xhr) {
-                        custom_noty('error', 'Something went wrong at server');
-                    });
-            } else {
-                return [];
-            }
-        }
-
-        //$scope.addNewItem();
-        //Save Form Data 
-        $scope.saveVendorDetails = function() {
-            var form_id = '#vendor_save';
-            var v = jQuery(form_id).validate({
-                ignore: '',
-                rules: {
-                    /*'expert_diagnosis_report': {
-                        required: true,
-                    },
-                    'expert_diagnosis_report_by_id': {
-                        required: true,
-                    },*/
-                },
-                messages: {
-
-                },
-                invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check all tabs');
-                },
-                submitHandler: function(form) {
-                    let formData = new FormData($(form_id)[0]);
-                    $('.submit').button('loading');
-                    $.ajax({
-                            url: base_url + '/api/save-material-gate-pass-detail',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function(xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function(res) {
-                            if (!res.success) {
-                                $('.submit').button('reset');
-                                showErrorNoty(res);
-                                return;
-                            }
-                            custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/job-card/material-gatepass/' + $scope.job_card_id);
-                            $scope.$apply();
-                        })
-                        .fail(function(xhr) {
-                            $('.submit').button('reset');
-                            custom_noty('error', 'Something went wrong at server');
-                        });
-                }
-            });
+            $scope.gate_pass.gate_pass_items.splice(index, 1);
         }
 
         //Save Form Data 
         $scope.saveItemDetails = function() {
-            var form_id = '#form';
+            var form_id = '#material_gatepass';
             var v = jQuery(form_id).validate({
                 errorPlacement: function(error, element) {
                     show_alert = true;
                     error.insertAfter(element)
                 },
                 invalidHandler: function(form, validator) {
-
                     console.log('Errors!!');
                 },
                 ignore: [],
-                //ignore: '',
                 rules: {
+                    'vendor_id': {
+                        required: true,
+                    },
+                    'vendor_contact_no': {
+                        required: true,
+                    },
+                    'work_order_no': {
+                        required: true,
+                    },
+                    'work_order_description': {
+                        required: true,
+                    },
                     'item_description[]': {
                         required: true,
                     },
@@ -1148,7 +1082,7 @@ app.component('jobCardMaterialOutwardForm', {
                     let formData = new FormData($(form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/save-material-gate-pass-item',
+                            url: base_url + '/api/material-gatepass/save',
                             method: "POST",
                             data: formData,
                             beforeSend: function(xhr) {
@@ -1184,9 +1118,10 @@ app.component('jobCardMaterialOutwardForm', {
             $('.cndn-tabs li.active').prev().children('a').trigger("click");
             tabPaneFooter();
         });
-          
-          setTimeout(function(){ $('.image_uploadify').imageuploadify();
-           }, 1000);
+
+        setTimeout(function() {
+            $('.image_uploadify').imageuploadify();
+        }, 1000);
 
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
@@ -1437,32 +1372,29 @@ app.component('jobCardPartIndentForm', {
                     $http.post(
                             laravel_routes['getPartDetails'], {
                                 key: part_code_selected,
-                                job_order_id : $scope.job_card.job_order_id,
+                                job_order_id: $scope.job_card.job_order_id,
                             }
                         )
                         .then(function(response) {
-                            if(response.data.parts_details.id != null)
-                            {
-                            self.parts_details = response.data.parts_details;
-                            $("#job_order_part_id").val(self.parts_details.id);
-                            $("#req_qty").text(self.parts_details.qty + " " + "nos");
-                            $("#issue_qty").text(self.parts_details.issued_qty + " " + "nos");
-                            issued_qty = self.parts_details.issued_qty;
-                            if (issued_qty == null) {
-                                issued_qty = 0;
-                                $("#issue_qty").text(issued_qty + " " + "nos");
+                            if (response.data.parts_details.id != null) {
+                                self.parts_details = response.data.parts_details;
+                                $("#job_order_part_id").val(self.parts_details.id);
+                                $("#req_qty").text(self.parts_details.qty + " " + "nos");
+                                $("#issue_qty").text(self.parts_details.issued_qty + " " + "nos");
+                                issued_qty = self.parts_details.issued_qty;
+                                if (issued_qty == null) {
+                                    issued_qty = 0;
+                                    $("#issue_qty").text(issued_qty + " " + "nos");
+                                }
+                                balance_qty = parseInt(self.parts_details.qty) - parseInt(issued_qty);
+                                $("#balance_qty").text(balance_qty + " " + "nos");
+                                $("#bal_qty").val(balance_qty);
+                            } else {
+                                $("#req_qty").text("0 nos");
+                                $("#issue_qty").text("0 nos");
+                                $("#balance_qty").text("0 nos");
+                                $("#bal_qty").val(0);
                             }
-                            balance_qty = parseInt(self.parts_details.qty) - parseInt(issued_qty);
-                            $("#balance_qty").text(balance_qty + " " + "nos");
-                            $("#bal_qty").val(balance_qty);
-                        }
-                        else
-                        {
-                            $("#req_qty").text("0 nos");
-                            $("#issue_qty").text("0 nos");
-                            $("#balance_qty").text("0 nos");
-                            $("#bal_qty").val(0);
-                        }
                         });
                 });
             } else {
