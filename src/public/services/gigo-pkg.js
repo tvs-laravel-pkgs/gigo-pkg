@@ -128,7 +128,7 @@ app.factory('WarrantyJobOrderRequestSvc', function($q, RequestSvc, $rootScope, $
             return RequestSvc.post('/api/' + model + '/save-it', params);
         },
         remove: function(params) {
-            return RequestSvc.post('api/' + model + '/delete', params);
+            return RequestSvc.post('/api/' + model + '/remove', params);
         },
         options: function(params) {
             return RequestSvc.get('/api/' + model + '/options', params);

@@ -21,13 +21,13 @@ class Fault extends BaseModel {
 
 	public static function relationships($action = '') {
 		$relationships = [
-			'type',
-			'outlet',
-			'vehicle',
-			'vehicle.model',
-			'customer',
-			'serviceType',
-			'status',
+			// 'type',
+			// 'outlet',
+			// 'vehicle',
+			// 'vehicle.model',
+			// 'customer',
+			// 'serviceType',
+			// 'status',
 		];
 		return $relationships;
 	}

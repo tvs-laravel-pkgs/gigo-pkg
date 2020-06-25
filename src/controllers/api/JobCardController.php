@@ -166,6 +166,7 @@ class JobCardController extends Controller {
 	public function getUpdateJcFormData(Request $r) {
 		try {
 			$job_order = JobOrder::with([
+				'status',
 				'gateLog',
 				'gateLog.status',
 				'vehicle',
@@ -978,12 +979,15 @@ class JobCardController extends Controller {
 			//JOB CARD
 			$job_card = JobCard::with([
 				'jobOrder',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
 				'jobOrder.JobOrderRepairOrders',
 				'jobOrder.JobOrderRepairOrders.status',
 				'jobOrder.JobOrderRepairOrders.repairOrder',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanic',
 				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.status',
+				'status',
 			])->find($request->id);
 
 			if (!$job_card) {
@@ -1013,14 +1017,14 @@ class JobCardController extends Controller {
 				'deputed_outlet.code as deputed_outlet_code',
 				'attendance_logs.user_id',
 			])
-				->leftJoin('users', 'users.entity_id', 'employees.id')
+				->join('users', 'users.entity_id', 'employees.id')
 				->leftJoin('attendance_logs', function ($join) {
 					$join->on('attendance_logs.user_id', 'users.id')
 						->whereNull('attendance_logs.out_time')
 						->whereDate('attendance_logs.date', '=', date('Y-m-d', strtotime("now")));
 				})
-				->leftJoin('outlets', 'outlets.id', 'employees.outlet_id')
-				->leftJoin('outlets as deputed_outlet', 'deputed_outlet.id', 'employees.deputed_outlet_id')
+				->join('outlets', 'outlets.id', 'employees.outlet_id')
+				->leftjoin('outlets as deputed_outlet', 'deputed_outlet.id', 'employees.deputed_outlet_id')
 				->where('employees.is_mechanic', 1)
 				->where('users.user_type_id', 1) //EMPLOYEE
 				->where('employees.outlet_id', $job_card->outlet_id)
@@ -2928,34 +2932,8 @@ class JobCardController extends Controller {
 
 	//JOB CARD Vendor Details
 	public function getMeterialGatePassData(Request $request) {
+		// dd($request->all());
 		try {
-			if (isset($request->gate_pass_id)) {
-				$gate_pass = GatePass::with([
-					'gatePassDetail',
-					'gatePassDetail.vendorType',
-					'gatePassDetail.vendor',
-					'gatePassDetail.vendor.addresses',
-					'gatePassItems.attachments',
-				])
-					->find($request->gate_pass_id);
-
-				if (!$gate_pass) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Job Card Not found!',
-					]);
-				}
-
-				//$gate_pass_item = GatePassItem::where('gate_pass_id', $request->gate_pass_id)->get();
-
-				$gate_pass_detail = GatePassDetail::select('vendor_id')->where('gate_pass_id', $gate_pass->id)->first();
-				$vendor = Vendor::select('id', 'code')->where('id', $gate_pass_detail->vendor_id)->first();
-
-			} else {
-				$gate_pass['gate_pass_items'] = [];
-				$vendor = [];
-			}
-
 			$job_card = JobCard::with([
 				'status',
 				'jobOrder',
@@ -2965,18 +2943,56 @@ class JobCardController extends Controller {
 			])
 				->find($request->id);
 
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Card Not found!',
+					],
+				]);
+
+			}
+
+			if (isset($request->gate_pass_id)) {
+				$gate_pass = GatePass::with([
+					'gatePassDetail',
+					'gatePassDetail.vendorType',
+					'gatePassDetail.vendor',
+					'gatePassDetail.vendor.primaryAddress',
+					'gatePassItems.attachments',
+				])
+					->find($request->gate_pass_id);
+
+				if (!$gate_pass) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Material Gate Pass Not found!',
+						],
+					]);
+				}
+			} else {
+				$gate_pass = new GatePass();
+				$gate_pass->gate_pass_detail = new GatePassDetail();
+				$gate_pass->gate_pass_detail->vendor = new Vendor();
+				$gate_pass->gate_pass_items = new GatePassItem();
+			}
+
 			return response()->json([
 				'success' => true,
 				'gate_pass' => $gate_pass,
 				'job_card' => $job_card,
-				'vendor' => $vendor,
 			]);
 
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
