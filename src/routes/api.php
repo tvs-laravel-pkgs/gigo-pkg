@@ -318,6 +318,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//SPLIT ORDER DETAILS
 		Route::post('job-card/split-order/view', 'JobCardController@viewSplitOrderDetails');
+		Route::post('job-card/split-order-update', 'JobCardController@splitOrderUpdate');
 
 		//VEHICLE GATE PASS LIST
 		Route::post('get-vehicle-gate-pass-list', 'VehicleGatePassController@getVehicleGatePassList');

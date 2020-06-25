@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VehicleOwner extends Model {
 	use SeederTrait;
-	use SoftDeletes;
+	//use SoftDeletes;
 	protected $table = 'vehicle_owners';
 	public $timestamps = true;
 	protected $fillable =

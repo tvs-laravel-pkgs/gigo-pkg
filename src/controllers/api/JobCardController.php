@@ -557,6 +557,68 @@ class JobCardController extends Controller {
 		}
 	}
 
+	public function splitOrderUpdate(Request $r){
+		//dd($r->all());
+		try{
+			$validator = Validator::make($r->all(), [
+				'split_order_type_id' => [
+					'required',
+					'exists:split_order_types,id',
+					'integer',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+		if($r->type=='Part'){
+			$job_order_part=JobOrderPart::find($r->part_id);
+			if(!$job_order_part){
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Part Not Found!'],
+				]);
+			}
+			$job_order_part->split_order_type_id=$r->split_order_type_id;
+			$job_order_part->updated_at=Carbon::now();
+			$job_order_part->updated_by_id=Auth::user()->id;
+			$job_order_part->save();
+		}else{
+			$job_order_repair_order=JobOrderRepairOrder::find($r->labour_id);
+			if(!$job_order_repair_order){
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Repair Order Not Found!'],
+				]);
+			}
+			$job_order_repair_order->split_order_type_id=$r->split_order_type_id;
+			$job_order_repair_order->updated_at=Carbon::now();
+			$job_order_repair_order->updated_by_id=Auth::user()->id;
+			$job_order_repair_order->save();
+
+		}
+		return response()->json([
+			'success' => true,
+			'message' => $r->type.' Update Successfully',
+		]);
+	}catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+
+
+	}	
+
 	//BAY ASSIGNMENT
 	public function getBayFormData(Request $r) {
 		try {
@@ -3201,7 +3263,7 @@ class JobCardController extends Controller {
 			$labour_amount = 0;
 			$total_amount = 0;
 
-			//dd($job_card->jobOrder->outlet);
+			//dd($job_card->jobOrder->vehicle->currentOwner);
 
 			//Check which tax applicable for customer
 			if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
@@ -3217,7 +3279,8 @@ class JobCardController extends Controller {
 			if ($job_card->jobOrder->jobOrderRepairOrders) {
 				foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $labour) {
 					$total_amount = 0;
-					$labour_details[$key]['id'] = $labour->repairOrder->id;
+					$labour_details[$key]['id'] = $labour->id;
+					$labour_details[$key]['repair_order_id'] = $labour->repairOrder->id;
 					$labour_details[$key]['name'] = $labour->repairOrder->code . ' | ' . $labour->repairOrder->name;
 					$labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
 					$labour_details[$key]['qty'] = $labour->qty;
@@ -3258,7 +3321,8 @@ class JobCardController extends Controller {
 			if ($job_card->jobOrder->jobOrderParts) {
 				foreach ($job_card->jobOrder->jobOrderParts as $key => $parts) {
 					$total_amount = 0;
-					$part_details[$key]['id'] = $parts->part->id;
+					$part_details[$key]['id'] = $parts->id;
+					$part_details[$key]['part_id'] = $parts->part->id;
 					$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
 					$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
 					$part_details[$key]['qty'] = $parts->qty;

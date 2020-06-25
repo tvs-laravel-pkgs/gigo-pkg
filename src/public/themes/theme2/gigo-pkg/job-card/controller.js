@@ -2134,6 +2134,69 @@ app.component('jobCardSplitOrder', {
                 });
         }
         $scope.fetchData();
+
+
+        $scope.splitOrderLabourChange = function(id) {
+            // alert(id);
+            console.log(id);
+            $('#labour_id').val(id);
+            $('#part_id').val('');
+            $scope.type = 'Labour';
+        }
+
+        $scope.splitOrderPartChange = function(id) {
+            // alert(id);
+            $('#part_id').val(id);
+            $('#labour_id').val('');
+            $scope.type = 'Part';
+        }
+
+        console.log($scope.user.token);
+        $scope.splitOrderChange = function() {
+            //console.log('in');
+            var split_form_id = '#split_order_form';
+            var v = jQuery(split_form_id).validate({
+                ignore: '',
+                rules: {
+                    'split_order_type_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function(form) {
+                    //alert('submit');
+                    let formData = new FormData($(split_form_id)[0]);
+                    //$('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/job-card/split-order-update',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+
+                            $scope.fetchData();
+
+                            // $location.path('/gigo-pkg/job-card/bill-detail/' + $routeParams.job_card_id);
+                            //$scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
         /* var c = {};
          $("#contact-list tr").draggable({
                  helper: "clone",
