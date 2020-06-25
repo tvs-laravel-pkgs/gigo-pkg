@@ -2867,34 +2867,8 @@ class JobCardController extends Controller {
 
 	//JOB CARD Vendor Details
 	public function getMeterialGatePassData(Request $request) {
+		// dd($request->all());
 		try {
-			if (isset($request->gate_pass_id)) {
-				$gate_pass = GatePass::with([
-					'gatePassDetail',
-					'gatePassDetail.vendorType',
-					'gatePassDetail.vendor',
-					'gatePassDetail.vendor.addresses',
-					'gatePassItems.attachments',
-				])
-					->find($request->gate_pass_id);
-
-				if (!$gate_pass) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Job Card Not found!',
-					]);
-				}
-
-				//$gate_pass_item = GatePassItem::where('gate_pass_id', $request->gate_pass_id)->get();
-
-				$gate_pass_detail = GatePassDetail::select('vendor_id')->where('gate_pass_id', $gate_pass->id)->first();
-				$vendor = Vendor::select('id', 'code')->where('id', $gate_pass_detail->vendor_id)->first();
-
-			} else {
-				$gate_pass['gate_pass_items'] = [];
-				$vendor = [];
-			}
-
 			$job_card = JobCard::with([
 				'status',
 				'jobOrder',
@@ -2904,18 +2878,56 @@ class JobCardController extends Controller {
 			])
 				->find($request->id);
 
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Card Not found!',
+					],
+				]);
+
+			}
+
+			if (isset($request->gate_pass_id)) {
+				$gate_pass = GatePass::with([
+					'gatePassDetail',
+					'gatePassDetail.vendorType',
+					'gatePassDetail.vendor',
+					'gatePassDetail.vendor.primaryAddress',
+					'gatePassItems.attachments',
+				])
+					->find($request->gate_pass_id);
+
+				if (!$gate_pass) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Material Gate Pass Not found!',
+						],
+					]);
+				}
+			} else {
+				$gate_pass = new GatePass();
+				$gate_pass->gate_pass_detail = new GatePassDetail();
+				$gate_pass->gate_pass_detail->vendor = new Vendor();
+				$gate_pass->gate_pass_items = new GatePassItem();
+			}
+
 			return response()->json([
 				'success' => true,
 				'gate_pass' => $gate_pass,
 				'job_card' => $job_card,
-				'vendor' => $vendor,
 			]);
 
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}

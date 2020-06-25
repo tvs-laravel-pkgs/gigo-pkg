@@ -1,13 +1,13 @@
 <?php
 
 namespace Abs\GigoPkg;
+use Abs\GigoPkg\JobCard;
 use App\Config;
 use App\Http\Controllers\Controller;
-use Abs\GigoPkg\JobCard;
-use App\Vendor;
 use App\QuoteType;
 use App\ServiceOrderType;
 use App\ServiceType;
+use App\Vendor;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -371,8 +371,22 @@ class JobCardController extends Controller {
 	}
 
 	public function getVendorDetails(Request $request) {
-		
-		$this->data['vendor_details'] = Vendor::with(['addresses'])->select('vendors.*')->where('vendors.id',$request->id)->first();
-		return response()->json($this->data);
+
+		$vendor_details = Vendor::with([
+			'primaryAddress',
+		])
+			->find($request->id);
+
+		if (!$vendor_details) {
+			return response()->json([
+				'success' => true,
+				'error' => 'Vendor Not Found',
+			]);
+		}
+
+		return response()->json([
+			'success' => true,
+			'vendor_details' => $vendor_details,
+		]);
 	}
 }

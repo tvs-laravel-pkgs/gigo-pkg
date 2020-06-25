@@ -13,9 +13,17 @@ class GatePass extends Model {
 	use SoftDeletes;
 	protected $table = 'gate_passes';
 	public $timestamps = true;
-	protected $fillable =
-		["company_id", "type_id", "number", "status_id", "job_card_id", "gate_in_date", "gate_out_date", "gate_in_remarks", "gate_out_remarks"]
-	;
+	protected $fillable = [
+		"company_id",
+		"type_id",
+		"number",
+		"status_id",
+		"job_card_id",
+		"gate_in_date",
+		"gate_out_date",
+		"gate_in_remarks",
+		"gate_out_remarks",
+	];
 
 	public function getCreatedAtAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));

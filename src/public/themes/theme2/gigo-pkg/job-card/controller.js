@@ -904,7 +904,7 @@ app.component('jobCardMaterialGatepassForm', {
 //Material Outward
 app.component('jobCardMaterialOutwardForm', {
     templateUrl: job_card_material_outward_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $timeout) {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -926,7 +926,7 @@ app.component('jobCardMaterialOutwardForm', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/material-gatepass/form',
+                    url: base_url + '/api/material-gatepass/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id,
@@ -943,7 +943,10 @@ app.component('jobCardMaterialOutwardForm', {
                     }
                     $scope.gate_pass = res.gate_pass;
                     $scope.job_card = res.job_card;
-                    self.vendor = res.vendor;
+                    self.vendor = $scope.gate_pass.gate_pass_detail.vendor;
+                    if(!$scope.gate_pass.gate_pass_detail.vendor_type_id){
+                        $scope.gate_pass.gate_pass_detail.vendor_type_id = 121;
+                    }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.$apply();
                 })
@@ -954,18 +957,18 @@ app.component('jobCardMaterialOutwardForm', {
         $scope.fetchData();
 
         //GET VEHICLE MODEL LIST
-        self.searchVendorCode = function(query) {
+        self.searchVendorCode = function(query, type_id) {
             if (query) {
                 return new Promise(function(resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getVendorCodeSearchList'], {
                                 key: query,
+                                type_id: type_id,
                             }
                         )
                         .then(function(response) {
                             resolve(response.data);
-                            console.log(response.data);
                         });
                     //reject(response);
                 });
@@ -974,40 +977,40 @@ app.component('jobCardMaterialOutwardForm', {
             }
         }
 
+        //GET VENDOR INFO
         $scope.selectedVendorCode = function(id) {
+            self.isFire = true;
             if (id) {
-                return new Promise(function(resolve, reject) {
-                    $http
-                        .post(
-                            laravel_routes['getVendorDetails'], {
-                                id: id,
-                            }
-                        )
-                        .then(function(response) {
-                            resolve(response.data);
-                            console.log(response.data.vendor_details);
-                            $("#ven_name").text(response.data.vendor_details.name);
-                            if (response.data.vendor_details.addresses != '') {
-                                $('.address').text(response.data.vendor_details.addresses[0].address_line1 + " ," + response.data.vendor_details.addresses[0].address_line2 + " ," + response.data.vendor_details.addresses[0].pincode);
-
-                            }
-                            if (response.data.vendor_details.type_id == 121) {
-                                $("#type_yes").prop('checked', true);
-                                $("#type_no").prop('checked', false);
-                            }
-                            if (response.data.vendor_details.type_id == 122) {
-                                $("#type_no").prop('checked', true);
-                                $("#type_yes").prop('checked', false);
-                            }
-
-                        });
-                    //reject(response);
-                });
-            } else {
-                return [];
+                $.ajax({
+                        url: laravel_routes['getVendorDetails'],
+                        method: "POST",
+                        data: {
+                            id: id,
+                        },
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        }
+                        $scope.gate_pass.gate_pass_detail.vendor = res.vendor_details;
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        custom_noty('error', 'Something went wrong at server');
+                    });
             }
         }
 
+        $scope.vendorTypeOnchange = function() {
+            $scope.gate_pass.gate_pass_detail.vendor = [];
+            self.modelSearchText = [];
+            $scope.vendor = [];
+        }
+
+        $scope.vendorTextChange = function() {
+            $scope.gate_pass.gate_pass_detail.vendor = [];
+        }
 
         $scope.addNewItem = function() {
             $scope.gate_pass.gate_pass_items.push({
