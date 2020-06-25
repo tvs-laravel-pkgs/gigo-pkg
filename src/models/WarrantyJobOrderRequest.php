@@ -134,11 +134,11 @@ class WarrantyJobOrderRequest extends BaseModel {
 	}
 
 	public function repairOrders() {
-		return $this->belongsToMany('App\RepairOrder', 'wjor_repair_orders', 'wjor_id')->withPivot(['net_amount','tax_total','total_amount'])->with(['skillLevel','category','taxCode','taxCode.taxes']);
+		return $this->belongsToMany('App\RepairOrder', 'wjor_repair_orders', 'wjor_id');
 	}
 
 	public function parts() {
-		return $this->belongsToMany('App\Part', 'wjor_parts', 'wjor_id')->withPivot(['net_amount','tax_total','total_amount'])->with(['uom','taxCode','taxCode.taxes']);
+		return $this->belongsToMany('App\Part', 'wjor_parts', 'wjor_id');
 	}
 
 	// public function repairOrders() {
@@ -352,27 +352,19 @@ class WarrantyJobOrderRequest extends BaseModel {
 			}
 
 			if (isset($input['repair_orders'])) {
-				WjorRepairOrder::where('wjor_id',$record->id)->delete();
 				foreach ($input['repair_orders'] as $repair_order) {
 					$wjorRepairOrder = new WjorRepairOrder;
 					$wjorRepairOrder->wjor_id = $record->id;
 					$wjorRepairOrder->repair_order_id = $repair_order['id'];
-					$wjorRepairOrder->net_amount = $repair_order['net_amount'];
-					$wjorRepairOrder->tax_total = $repair_order['tax_total'];
-					$wjorRepairOrder->total_amount = $repair_order['total_amount'];
 					$wjorRepairOrder->save();
 				}
 			}
 
 			if (isset($input['parts'])) {
-				WjorPart::where('wjor_id',$record->id)->delete();
 				foreach ($input['parts'] as $part) {
 					$wjorPart = new WjorPart;
 					$wjorPart->wjor_id = $record->id;
 					$wjorPart->part_id = $part['id'];
-					$wjorPart->net_amount = $part['net_amount'];
-					$wjorPart->tax_total = $part['tax_total'];
-					$wjorPart->total_amount = $part['total_amount'];
 					$wjorPart->save();
 				}
 			}

@@ -10,91 +10,27 @@
                 </h5>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                Part Code
-                                <span class="mandatory">*</span>
-                            </label>
-                            <md-autocomplete md-selected-item="part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)">
-                                <md-item-template>
-                                    <span>
-                                        {{part.code}}
-                                    </span>
-                                </md-item-template>
-                                <md-not-found>
-                                    No records matching "{{partSearchKey}}" were found.
-                                </md-not-found>
-                            </md-autocomplete>
-                            <input type="hidden" name="part_id" value="{{part.id}}">
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                Part Description
-                            </label>
-                            <label>
-                                {{part.name}}
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                UOM
-                            </label>
-                            <label>
-                                {{part.uom.name}}
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                Net Amount
-                            </label>
-                            <input type="text" ng-keyup="partAmountChange(part)" class="form-control" name="rate" ng-model="part.rate" maxlength="12" ng-readonly="true">
-                        </div>
-                    </div>
-                    <div class="col-md-6" ng-repeat="(tax_key, tax) in part.tax_code.taxes" ng-if="part.tax_code">
-                        <div class="form-group">
-                            <label>
-                                {{tax.name}} ({{tax.pivot.percentage}}%)
-                            </label>
-                            <label>
-                                {{(part.rate*tax.pivot.percentage)/100 | currency}}
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                <b>
-                                    Amount
-                                </b>
-                            </label>
-                            <label>
-                                <b>
-                                    {{part.total_amount | currency}}
-                                </b>
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                </div>
-                <div class="row">
-                    <div class="col-md-12 text-right mb-15">
-                        <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
-                            Cancel
-                        </button>
-                        <button type="submit" class="btn btn-bordered btn-red approve_btn">
-                            Submit
-                        </button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
+                <form id="rejection-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Reason for rejection
+                                    <span class="mandatory">*</span>
+                                </label>
+                                <textarea class="form-control" name="rejected_reason" ng-model="warranty_job_order_request.rejected_reason"></textarea>
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-12 text-right mb-15">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-bordered btn-red reject_btn">
+                                Reject
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </form>
             </div>
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->

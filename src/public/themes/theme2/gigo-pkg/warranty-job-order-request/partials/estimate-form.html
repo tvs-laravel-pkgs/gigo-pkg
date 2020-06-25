@@ -24,7 +24,7 @@
                                 ROT Description
                             </th>
                             <th class="text-right">
-                                Hours
+                                Quantity
                             </th>
                             <th class="wid-100 white-space-unset text-right">
                                 Labour Value
@@ -32,12 +32,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="ptb-12" ng-repeat="(index,job_order_labour) in warranty_job_order_request.repair_orders track by index">
+                        <tr class="ptb-12" ng-repeat="(index,job_order_labour) in warranty_job_order_request.repair_orders">
                             <td class="wid-100">
                                 <button type="button" ng-click="showLabourForm(job_order_labour,index)" class="btn img-btn btn-delete">
                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                 </button>
-                                <button type="button" class="btn img-btn btn-delete" ng-click="removeRepairOrder(index,job_order_labour)">
+                                <button type="button" class="btn img-btn btn-delete" ng-click="removeRepairOrder(index)">
                                     <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                 </button>
                             </td>
@@ -52,11 +52,8 @@
                                 {{job_order_labour.hours | number:2}}
                             </td>
                             <td class="white-space-unset text-right">
-                                {{job_order_labour.net_amount| currency}}
-                                <!-- <input type="hidden" name="repair_orders[{{index}}][amount]" value="{{job_order_labour.amount}}"> -->
-                                <input type="hidden" name="repair_orders[{{index}}][net_amount]" value="{{job_order_labour.net_amount_without_tax}}">
-                                <input type="hidden" name="repair_orders[{{index}}][tax_total]" value="{{job_order_labour.tax_amount}}">
-                                <input type="hidden" name="repair_orders[{{index}}][total_amount]" value="{{job_order_labour.net_amount_with_tax}}">
+                                {{job_order_labour.amount| currency}}
+                                <input type="hidden" name="repair_orders[{{index}}][amount]" value="{{job_order_labour.amount}}">
                             </td>
                         </tr>
                         <tr class="ptb-9">
@@ -98,16 +95,16 @@
                             <th class="text-right">
                                 Rate
                             </th>
-                            <!-- <th class="text-right">
+                            <th class="text-right">
                                 Quantity
-                            </th> -->
+                            </th>
                             <th class="wid-100 white-space-unset text-right">
                                 Amount
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="ptb-12" ng-repeat="(index,job_order_part) in warranty_job_order_request.parts track by index">
+                        <tr class="ptb-12" ng-repeat="(index,job_order_part) in warranty_job_order_request.parts">
                             <td class="wid-100">
                                 <button type="button" ng-click="showPartForm(job_order_part,index)" class="btn img-btn btn-delete">
                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
@@ -126,15 +123,12 @@
                             <td class="text-right">
                                 {{job_order_part.rate | currency}}
                             </td>
-                            <!-- <td class="text-right">
+                            <td class="text-right">
                                 {{job_order_part.qty | number:2}}
-                            </td> -->
+                            </td>
                             <td class="wid-180 white-space-unset text-right">
-                                {{job_order_part.net_amount | currency}}
-                                <!-- <input type="hidden" name="parts[{{index}}][amount]" value="{{job_order_part.net_amount}}"> -->
-                                <input type="hidden" name="parts[{{index}}][net_amount]" value="{{job_order_part.net_amount_without_tax}}">
-                                <input type="hidden" name="parts[{{index}}][tax_total]" value="{{job_order_part.tax_amount}}">
-                                <input type="hidden" name="parts[{{index}}][total_amount]" value="{{job_order_part.net_amount_with_tax}}">
+                                {{job_order_part.amount | currency}}
+                                <input type="hidden" name="parts[{{index}}][amount]" value="{{job_order_part.amount}}">
                             </td>
                         </tr>
                         <tr class="ptb-9">
