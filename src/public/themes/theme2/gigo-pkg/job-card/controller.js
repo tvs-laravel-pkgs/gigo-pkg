@@ -944,7 +944,7 @@ app.component('jobCardMaterialOutwardForm', {
                     $scope.gate_pass = res.gate_pass;
                     $scope.job_card = res.job_card;
                     self.vendor = $scope.gate_pass.gate_pass_detail.vendor;
-                    if(!$scope.gate_pass.gate_pass_detail.vendor_type_id){
+                    if (!$scope.gate_pass.gate_pass_detail.vendor_type_id) {
                         $scope.gate_pass.gate_pass_detail.vendor_type_id = 121;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
@@ -2101,7 +2101,7 @@ app.component('jobCardSplitOrder', {
                     //console.log($scope.job_card);
                     //console.log($scope.job_card);
                     //console.log($scope.extras);
-                    //console.log($scope.labour_details);
+                    console.log($scope.labour_details);
                     //console.log($scope.part_details);
                     // var unassigned_total_amount=0;
                     // var unassigned_total_items=0;
@@ -2131,6 +2131,18 @@ app.component('jobCardSplitOrder', {
                     //$scope.unassigned_total_items = unassigned_total_items;*/
 
                     $scope.$apply();
+
+                    //$('#tabs').tabs({ active: 3 });
+                    // console.log('test');
+                    // $('#unassigned_items').removeClass('active');
+                    //$('#unassigned_items').removeClass('in active');
+                    //$('#1').addClass('in active');
+                    // $('#1').trigger('click');
+
+                    console.log('Test');
+
+
+
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -2154,7 +2166,7 @@ app.component('jobCardSplitOrder', {
             $scope.type = 'Part';
         }
 
-        console.log($scope.user.token);
+        //console.log($scope.user.token);
         $scope.splitOrderChange = function() {
             //console.log('in');
             var split_form_id = '#split_order_form';
@@ -2168,7 +2180,7 @@ app.component('jobCardSplitOrder', {
                 submitHandler: function(form) {
                     //alert('submit');
                     let formData = new FormData($(split_form_id)[0]);
-                    //$('.submit').button('loading');
+                    $('.submit').button('loading');
                     $.ajax({
                             url: base_url + '/api/job-card/split-order-update',
                             method: "POST",
@@ -2185,9 +2197,21 @@ app.component('jobCardSplitOrder', {
                                 showErrorNoty(res);
                                 return;
                             }
+                            $('.submit').button('reset');
                             custom_noty('success', res.message);
-
+                            $('#split_order_change').modal('hide');
+                            $('#split_order_type_id').val('');
+                            //$('#' + res.type_id).click();
                             $scope.fetchData();
+                            $('#' + res.type_id).trigger('click');
+                            //$("#tabs").tabs();
+                            //$(".selector").tabs("select", res.type_id);
+                            // console.log('start');
+                            // var active_tab = '#' + res.type_id;
+                            // console.log(active_tab);
+                            // $('#' + res.type_id).click();
+                            //console.log('end');
+                            // $("#tabs").tabs({ active: active_tab });
 
                             // $location.path('/gigo-pkg/job-card/bill-detail/' + $routeParams.job_card_id);
                             //$scope.$apply();
@@ -2200,24 +2224,6 @@ app.component('jobCardSplitOrder', {
             });
         }
 
-        /* var c = {};
-         $("#contact-list tr").draggable({
-                 helper: "clone",
-                 start: function(event, ui) {
-                     c.tr = this;
-                     c.helper = ui.helper;
-                 }
-         });
-         $("#guest-list tr").droppable({
-             drop: function(event, ui) {
-                 var guest = ui.draggable.text();
-                 var copy = $(this);
-                var copy = $(this);
-                 copy.clone(true).find(":input").val("").end().insertAfter(copy);
-                 $(c.tr).remove();
-                 $(c.helper).remove();
-             }
-            });*/
 
         $tabs = $(".tabbable");
 
@@ -2256,147 +2262,7 @@ app.component('jobCardSplitOrder', {
 
 
 
-        /*$tabs = $(".tabbable");
 
-    $('.nav-tabs a').click(function(e) {
-        e.preventDefault();
-        $(this).tab('show');
-    })
-    
-    $( "tbody.connectedSortable" )
-        .sortable({
-            connectWith: ".connectedSortable",
-            items: "> tr:not(:first)",
-            appendTo: $tabs,
-            helper:"clone",
-            zIndex: 999990,
-            start: function(){ $tabs.addClass("dragging") },
-            stop: function(){ $tabs.removeClass("dragging") }
-        })
-        .disableSelection()
-    ;
-
-
-    $("#table1 .childgrid tr, #table2 .childgrid tr").draggable({
-      helper: function(){
-          var selected = $('.childgrid tr.selectedRow');
-        if (selected.length === 0) {
-          selected = $(this).addClass('selectedRow');
-        }
-        var container = $('<div/>').attr('id', 'draggingContainer');
-    container.append(selected.clone().removeClass("selectedRow"));
-    return container;
-      }
- });
-
-$("#table1 .childgrid, #table2 .childgrid").droppable({
-    drop: function (event, ui) {
-    $(this).append(ui.helper.children());
-    $('.selectedRow').remove();
-    }
-});
-
-$(document).on("click", ".childgrid tr", function () {
-    $(this).toggleClass("selectedRow");
-});*/
-
-
-        /*var $tab_items = $( ".nav-tabs > li", $tabs ).droppable({
-          accept: ".connectedSortable tr",
-          hoverClass: "ui-state-hover",
-          over: function( event, ui ) {
-            var $item = $( this );
-            $item.find("a").tab("show");
-            
-          },
-          drop: function( event, ui ) {
-            return false;
-          }
-        });*/
-
-        //$(".listitems" ).draggable();
-
-        /*   var index_value = ui.item.index();
-                    var count_value = ui.item.closest("tbody").find(".tr_scheme_priorities").length;
-                    var inc_index_value = index_value + 1;
-                    // console.log(' == total ===' + count_value);
-    //DOWN
-                    for (var i = inc_index_value; i < count_value; i++) {
-                        var scheme_type_id = ui.item.closest("tbody").find(".tr_scheme_priorities").eq(i).attr('data-scheme_type_id');
-                        var down_sorting_data = 'scheme_type_id=' + scheme_type_id + '&priority=' + i;
-                        // console.log(' == down === scheme_type_id ==' + scheme_type_id + ' == priority=' + i);
-                        $.ajax({
-                                url: update_scheme_type_priority_ajax_url,
-                                type: "POST",
-                                async: false,
-                                data: down_sorting_data,
-                                processData: false,
-                            })
-                            .done(function(data) {
-
-                            }).fail(function(xhr) {
-                                custom_noty('error', 'Something went wrong at server');
-                            });
-                    }
-    //UP
-                    for (var i = 0; i < index_value; i++) {
-                        var scheme_type_id = ui.item.closest("tbody").find(".tr_scheme_priorities").eq(i).attr('data-scheme_type_id');
-                        var up_sorting_data = 'scheme_type_id=' + scheme_type_id + '&priority=' + i;
-                        // console.log(' == up === scheme_type_id ==' + scheme_type_id + '===priority=' + i);
-                        $.ajax({
-                                url: update_scheme_type_priority_ajax_url,
-                                type: "POST",
-                                async: false,
-                                data: up_sorting_data,
-                                processData: false,
-                            })
-                            .done(function(data) {
-
-                            }).fail(function(xhr) {
-                                custom_noty('error', 'Something went wrong at server');
-                            });
-                    }
-//CURRENT
-                    var current_scheme_type_id = ui.item.attr('data-scheme_type_id');
-                    var current_data = 'scheme_type_id=' + current_scheme_type_id + '&priority=' + index_value;
-                    // console.log(' == current === scheme_type_id ==' + current_scheme_type_id + ' == priority=' + index_value);
-                    $.ajax({
-                            url: update_scheme_type_priority_ajax_url,
-                            type: "POST",
-                            async: false,
-                            data: current_data,
-                            processData: false,
-                        })
-                        .done(function(data) {
-                            if (data.success) {
-                                get_list();
-                                $('#sortable tbody').sortable('option', 'disabled', false);
-                                custom_noty('success', 'Scheme Priorities updated successfully');
-                            } else {
-                                custom_noty('error', 'Something went wrong at server');
-                            }
-
-                        }).fail(function(xhr) {
-                            custom_noty('error', 'Something went wrong at server');
-                        });*/
-
-        /*function dragstart_handler(ev) {
-            // Add the target element's id to the data transfer object
-            ev.dataTransfer.setData("application/my-app", ev.target.id);
-            ev.dataTransfer.dropEffect = "move";
-        }
-
-        function dragover_handler(ev) {
-            ev.preventDefault();
-            ev.dataTransfer.dropEffect = "move"
-        }
-
-        function drop_handler(ev) {
-            ev.preventDefault();
-            // Get the id of the target and add the moved element to the target's DOM
-            const data = ev.dataTransfer.getData("application/my-app");
-            ev.target.appendChild(document.getElementById(data));
-        }*/
     }
 });
 //---------------------------------------------------------------------------------------------

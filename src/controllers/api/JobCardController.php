@@ -607,6 +607,7 @@ class JobCardController extends Controller {
 		}
 		return response()->json([
 			'success' => true,
+			'type_id' =>$r->split_order_type_id,
 			'message' => $r->type.' Update Successfully',
 		]);
 	}catch (Exception $e) {

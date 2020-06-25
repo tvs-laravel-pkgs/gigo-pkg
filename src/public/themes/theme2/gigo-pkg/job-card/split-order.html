@@ -25,13 +25,13 @@
                         <div class="tab-pane-wrap">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="page-form pb-80">
+                                    <div class="page-form pb-80 ">
                                         <div class="tab-header">
                                             <!-- Filters -->
-                                            <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
+                                            <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300" id="tabs">
                                                 <ul class="nav nav-pills editDetails-tabs">
                                                     <li class="active"><a class="btn-pills" data-target="#unassigned_items" role="tab" data-toggle="tab" aria-expanded="true"> 000000 - Unassigned Items - {{unassigned_total_count}} Items</a></li>
-                                                    <li ng-repeat="(key,split_order_type) in extras.split_order_types"><a data-target="#{{split_order_type.code}}" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">{{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} Items</a></li>
+                                                    <li ng-repeat="(key,split_order_type) in extras.split_order_types"><a data-target="#{{split_order_type.id}}" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">{{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} Items</a></li>
                                                     <!-- <li class="active"><a class="btn-pills" data-target="#order-pane" data-toggle="tab" aria-expanded="true">Order</a></li>
                                                     <li><a class="btn-pills" data-target="#payment-pane" data-toggle="tab" aria-expanded="true">Payment</a></li>
                                                     <li><a class="btn-pills" data-target="#invoice-pane" data-toggle="tab" aria-expanded="true">Invoice & CN</a></li>
@@ -108,7 +108,7 @@
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
                                             </div><!-- Tabe Pane -->
-                                            <div class="tab-pane fade" id="{{split_order_type.code}}" data-animation="fadeInUp" data-animation-delay="300" ng-repeat="(key,split_order_type) in extras.split_order_types">
+                                            <div class="tab-pane fade" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300" ng-repeat="(key,split_order_type) in extras.split_order_types">
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="table-responsive">
@@ -131,8 +131,8 @@
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody class="connectedSortable">
-                                                                        <tr data-itemid="part.id" data-split_id="split_order_type.id" class="listitems" ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(key,Labour) in labour_details">
-                                                                            <td>Labour</td>
+                                                                        <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(key,labour) in labour_details">{{labour}}
+                                                                            <td>Labour </td>
                                                                             <td>{{labour.name}}</td>
                                                                             <td>{{labour.qty}}</td>
                                                                             <td class="text-right">{{labour.amount}}</td>
@@ -213,7 +213,7 @@
                             <input type="hidden" id="labour_id" name="labour_id" value="" />
                             <input type="hidden" id="part_id" name="part_id" value="" />
                             <input type="hidden" id="type" name="type" value="{{type}}" />
-                            <button type="submit" class="btn btn-secondary-dark btn-square btn-block" ng-click="splitOrderChange();"><b>Submit</b></button>
+                            <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit" ng-click="splitOrderChange();"><b>Submit</b></button>
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </form>
