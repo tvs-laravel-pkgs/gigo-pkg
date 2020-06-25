@@ -20,6 +20,7 @@ class RepairOrder extends BaseModel {
 	protected $table = 'repair_orders';
 	public $timestamps = true;
 	protected $fillable = [
+		'company_id',
 		'type_id',
 		'code',
 		'alt_code',
@@ -32,6 +33,105 @@ class RepairOrder extends BaseModel {
 		'maximum_claim_amount',
 		'tax_code_id',
 		'uom_id',
+	];
+
+	protected static $excelColumnRules = [
+		'Group Code' => [
+			'table_column_name' => 'type_id',
+			'rules' => [
+				'required' => [
+				],
+				'fk' => [
+					'class' => 'App\RepairOrderType',
+					'foreign_table_column' => 'code',
+					'check_with_company' => true,
+				],
+			],
+		],
+		'Code' => [
+			'table_column_name' => 'code',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Category Name' => [
+			'table_column_name' => 'category_id',
+			'rules' => [
+				'nullable' => [
+				],
+				'fk' => [
+					'class' => 'App\Config',
+					'foreign_table_column' => 'code',
+					'check_with_company' => true,
+					'additional_conditions' => [
+						'entity_type_id' => 306,
+					],
+				],
+			],
+		],
+		'Hours' => [
+			'table_column_name' => 'kms',
+			'rules' => [
+				'nullable' => [
+				],
+				'unsigned_integer' => [
+					'size' => '8',
+				],
+			],
+		],
+		'Skill Level Short Name' => [
+			'table_column_name' => 'skill_level_id',
+			'rules' => [
+				'nullable' => [],
+				'fk' => [
+					'class' => 'App\SkillLevel',
+					'foreign_table_column' => 'short_name',
+					'self_table_column' => 'skill_level_id',
+					'check_with_company' => true,
+				],
+			],
+		],
+		'Amount' => [
+			'table_column_name' => 'amount',
+			'rules' => [
+				'reuired' => [
+				],
+				'unsigned_decimal' => [
+					'size' => '12,2',
+				],
+			],
+		],
+		'Claim Amount' => [
+			'table_column_name' => 'claim_amount',
+			'rules' => [
+				'reuired' => [
+				],
+				'unsigned_decimal' => [
+					'size' => '12,2',
+				],
+			],
+		],
+		'Maximum Claim Amount' => [
+			'table_column_name' => 'maximum_claim_amount',
+			'rules' => [
+				'reuired_if' => [
+					'claim_amount',
+				],
+				'nullable' => [
+				],
+				'unsigned_decimal' => [
+					'size' => '12,2',
+				],
+			],
+		],
 	];
 
 	// Relationships --------------------------------------------------------------
@@ -133,17 +233,29 @@ class RepairOrder extends BaseModel {
 		return $list;
 	}
 
-	public static function importFromArray($record) {
-		$status = [];
-		$status['errors'] = [];
+	public static function saveFromExcelArray($record) {
+		$errors = [];
+		$company = Company::where('code', $record_data['Company Code'])->first();
+		if (!$company) {
+			return [
+				'success' => false,
+				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
+			];
+		}
 
-		// $validation = Self::validate($original_record, $admin);
-		// if (count($validation['success']) > 0 || count($errors) > 0) {
-		// 	return [
-		// 		'success' => false,
-		// 		'errors' => array_merge($validation['errors'], $errors),
-		// 	];
-		// }
+		if (!isset($record_data['created_by_id'])) {
+			$admin = $company->admin();
+
+			if (!$admin) {
+				return [
+					'success' => false,
+					'errors' => ['Default Admin user not found'],
+				];
+			}
+			$created_by_id = $admin->id;
+		} else {
+			$created_by_id = $record_data['created_by_id'];
+		}
 
 		$type_id = null;
 		if (!empty($record['Type'])) {
@@ -158,87 +270,6 @@ class RepairOrder extends BaseModel {
 			}
 		}
 
-		if (empty($record['Code'])) {
-			$status['errors'][] = 'Code is empty';
-		} else {
-			$code = RepairOrder::where([
-				'company_id' => $record['company_id'],
-				'code' => $record['Code'],
-			])->first();
-			// if ($code) {
-			// 	$status['errors'][] = 'Code already taken';
-			// }
-		}
-
-		if (!empty($record['Alt Code'])) {
-			$alt_code = RepairOrder::where([
-				'company_id' => $record['company_id'],
-				'alt_code' => $record['Alt Code'],
-			])->first();
-			/*if ($alt_code) {
-						$status['errors'][] = 'Alt Code already taken';
-					}*/
-		}
-
-		if (empty($record['Name'])) {
-			$status['errors'][] = 'Name is empty';
-		} else {
-			$name = RepairOrder::where([
-				'company_id' => $record['company_id'],
-				'name' => $record['Name'],
-			])->first();
-			/*if ($name) {
-						$status['errors'][] = 'Name already taken';
-					}*/
-		}
-
-		$uom_id = null;
-		if (!empty($record['UOM'])) {
-			$uom = Uom::where([
-				'company_id' => $record['company_id'],
-				'code' => $record['UOM'],
-			])->first();
-			if (!$uom) {
-				$status['errors'][] = 'Invalid UOM';
-			} else {
-				$uom_id = $uom->id;
-			}
-		}
-
-		$skill_level_id = null;
-		if (!empty($record['Skill Level'])) {
-			$skill_level = SkillLevel::where([
-				'company_id' => $record['company_id'],
-				'short_name' => $record['Skill Level'],
-			])->first();
-			if (!$skill_level) {
-				$status['errors'][] = 'Invalid Skill Leve';
-			} else {
-				$skill_level_id = $skill_level->id;
-			}
-		}
-
-		if (empty($record['Hours'])) {
-			$status['errors'][] = 'Hours is empty';
-		}
-
-		if (empty($record['Amount'])) {
-			$status['errors'][] = 'Amount is empty';
-		}
-
-		$tax_code_id = null;
-		if (!empty($record['Tax Code'])) {
-			$tax_code = TaxCode::where([
-				'company_id' => $record['company_id'],
-				'code' => $record['Tax Code'],
-			])->first();
-			if (!$tax_code) {
-				$status['errors'][] = 'Invalid Tax Code';
-			} else {
-				$tax_code_id = $tax_code->id;
-			}
-		}
-
 		if (count($status['errors']) > 0) {
 			return [
 				'success' => false,
@@ -246,25 +277,18 @@ class RepairOrder extends BaseModel {
 			];
 		}
 
-		$repair_order = RepairOrder::firstOrNew([
+		$record = RepairOrder::firstOrNew([
 			'type_id' => $type_id,
 			'code' => $record['Code'],
 			'company_id' => $record['company_id'],
 		]);
 
-		$repair_order->company_id = $record['company_id'];
-		$repair_order->type_id = $type_id;
-		$repair_order->code = $record['Code'];
-		$repair_order->alt_code = $record['Alt Code'];
-		$repair_order->name = $record['Name'];
-		$repair_order->uom_id = $uom_id;
-		$repair_order->skill_level_id = $skill_level_id;
-		$repair_order->hours = $record['Hours'];
-		$repair_order->amount = $record['Amount'];
-		$repair_order->tax_code_id = $tax_code_id;
-		$repair_order->created_by_id = $record['created_by_id'];
-		$repair_order->save();
-
+		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+		if (!$result['success']) {
+			return $result;
+		}
+		$record->created_by = $created_by_id;
+		$record->save();
 		return [
 			'success' => true,
 		];
@@ -290,7 +314,7 @@ class RepairOrder extends BaseModel {
 				$original_record = $record;
 				$record['company_id'] = $job->company_id;
 				$record['created_by_id'] = $job->created_by_id;
-				$result = self::importFromArray($record);
+				$result = static::saveFromExcelArray($record);
 				if (!$result['success']) {
 					$original_record['Record No'] = $k + 1;
 					$original_record['Error Details'] = implode(',', $result['errors']);
@@ -326,38 +350,23 @@ class RepairOrder extends BaseModel {
 
 	}
 
-	public static function createFromObject($record_data) {
-		$errors = [];
-		$company = Company::where('code', $record_data->company_code)->first();
-		if (!$company) {
-			return [
-				'success' => false,
-				'errors' => ['Invalid Company : ' . $record_data->company],
-			];
-		}
-
-		$admin = $company->admin();
-		if (!$admin) {
-			return [
-				'success' => false,
-				'errors' => ['Default Admin user not found'],
-			];
-		}
-
+	public static function saveFromObject($record_data) {
 		$record = [
 			'company_id' => $company->id,
-			'Type' => $record_data->type,
+			'Group Code' => $record_data->group_code,
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
+			'Category Name' => $record_data->category_name,
 			'Hours' => $record_data->hours,
-			'Skill Level' => $record_data->skill_level,
+			'Skill Level Short Name' => $record_data->skill_level_short_name,
 			'Amount' => $record_data->amount,
+			'Claim Amount' => $record_data->claim_amount,
+			'Maximum Claim Amount' => $record_data->maximum_claim_amount,
 			'Alt Code' => $record_data->alt_code,
-			'UOM' => $record_data->uom,
+			'UOM Short Name' => $record_data->uom_short_name,
 			'Tax Code' => $record_data->tax_code,
-			'created_by_id' => $admin->id,
 		];
-		return self::importFromArray($record);
+		return static::saveFromExcelArray($record);
 	}
 
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Repair Order') {

@@ -282,7 +282,7 @@ class GateInController extends Controller {
 					'success' => false,
 					'error' => 'Validation Error',
 					'errors' => [
-						'No Gate In Serial number found',
+						'No Gate In Serial number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
 					],
 				]);
 			}
