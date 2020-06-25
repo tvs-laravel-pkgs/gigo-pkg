@@ -21,7 +21,7 @@
                                 ROT Description
                             </th>
                             <th class="text-right">
-                                Quantity
+                                Hours
                             </th>
                             <th class="wid-100 white-space-unset text-right">
                                 Labour Value
@@ -41,7 +41,8 @@
                                 {{job_order_labour.hours | number:2}}
                             </td>
                             <td class="white-space-unset text-right">
-                                {{job_order_labour.amount| currency}}
+                                <!-- {{job_order_labour.amount| currency}} -->
+                                {{job_order_labour.pivot.total_amount| currency}}
                             </td>
                         </tr>
                         <tr class="ptb-9">
@@ -77,9 +78,9 @@
                             <th class="text-right">
                                 Rate
                             </th>
-                            <th class="text-right">
+                            <!-- <th class="text-right">
                                 Quantity
-                            </th>
+                            </th> -->
                             <th class="wid-100 white-space-unset text-right">
                                 Amount
                             </th>
@@ -96,11 +97,12 @@
                             <td class="text-right">
                                 {{job_order_part.rate | currency}}
                             </td>
-                            <td class="text-right">
+                            <!-- <td class="text-right">
                                 {{job_order_part.qty | number:2}}
-                            </td>
+                            </td> -->
                             <td class="wid-180 white-space-unset text-right">
-                                {{job_order_part.amount | currency}}
+                                {{job_order_part.pivot.total_amount | currency}}
+                                <!-- {{job_order_part.amount | currency}} -->
                             </td>
                         </tr>
                         <tr class="ptb-9">
