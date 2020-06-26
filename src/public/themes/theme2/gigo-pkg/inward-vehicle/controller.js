@@ -194,6 +194,7 @@ app.component('inwardVehicleCardList', {
             setTimeout(function() {
                 $scope.fetchData();
             }, 1000);
+            $('#vehicle-inward-filter-modal').modal('hide');
         }
 
         $rootScope.loading = false;
@@ -397,6 +398,7 @@ app.component('inwardVehicleTableList', {
             $("#gate_in_no").val('');
             $("#status_id").val('');
             dataTables.fnFilter();
+            $('#vehicle-inward-filter-modal').modal('hide');
         }
 
         $rootScope.loading = false;

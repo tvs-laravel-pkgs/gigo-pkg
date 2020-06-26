@@ -218,6 +218,7 @@ app.component('jobCardTableList', {
             $("#job_order_type_id").val('');
             $("#status_id").val('');
             dataTables.fnFilter();
+            $('#job-card-filter-modal').modal('hide');
             //$scope.fetchData();
         }
         $rootScope.loading = false;
@@ -434,6 +435,7 @@ app.component('jobCardCardList', {
             $("#service_type_id").val('');
             $("#quote_type_id").val('');
             //dataTables.fnFilter();
+            $('#job-card-filter-modal').modal('hide');
             $scope.fetchData();
         }
 
