@@ -1636,7 +1636,6 @@ app.component('jobCardScheduleForm', {
                     }
                     console.log(res);
                     $scope.job_card = res.job_card_view;
-                    // $scope.employee_details = res.employee_details;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1645,14 +1644,7 @@ app.component('jobCardScheduleForm', {
         }
         $scope.fetchData();
 
-        //ASSIGN MECHANIC
-        // $scope.assign_mechanic = function(code, name) {
-        //     console.log(code, name);
-        //     $scope.job_card.repair_order_code = code;
-        //     $scope.job_card.repair_order_name = name;
-        // }
         $scope.assignMechanic = function(repair_order_id) {
-            // console.log(repair_order_id);
             $('.assign_mechanic_' + repair_order_id).button('loading');
             $.ajax({
                     url: base_url + '/api/job-card/get-mechanic',
@@ -1670,23 +1662,19 @@ app.component('jobCardScheduleForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    console.log(res);
-                    $scope.job_card = res.job_card;
+                    
+                    $('#selectedMachanic').val('');
                     $scope.repair_order = res.repair_order;
                     $scope.employee_details = res.employee_details;
-                    angular.forEach($scope.job_card.job_order.job_order_repair_orders, function(value, key) {
-                        if (value.repair_order_mechanics && value.repair_order_id == repair_order_id) {
-                            angular.forEach(value.repair_order_mechanics, function(value, key) {
-                                setTimeout(function() {
-                                    $scope.selectedEmployee(value.mechanic_id);
-                                }, 500);
-                            });
-                        } else {
-                            $('#selectedMachanic').val('');
-                        }
+                    $scope.repair_order_mechanics = res.repair_order_mechanics;
+
+                    $.each($scope.repair_order_mechanics, function(key, employee_id) {
+                        setTimeout(function() {
+                            $scope.selectedEmployee(employee_id);
+                        }, 500);
                     });
+
                     $('#assign_labours').modal('show');
-                    // $("#selectedMachanic").;
                     $('.assign_mechanic_' + repair_order_id).button('reset');
                     $scope.$apply();
                 })
@@ -1698,28 +1686,22 @@ app.component('jobCardScheduleForm', {
 
         self.selectedEmployee_ids = [];
         $scope.selectedEmployee = function(id) {
-            // console.log(id);
             if ($('.check_uncheck_' + id).hasClass('bg-dark')) {
-                console.log("1");
                 $('.check_uncheck_' + id).removeClass('bg-dark');
                 $('.check_uncheck_' + id).find('img').attr('src', '');
                 self.selectedEmployee_ids = jQuery.grep(self.selectedEmployee_ids, function(value) {
                     return value != id;
                 });
-                // console.log(self.selectedEmployee_ids);
                 $('#selectedMachanic').val(self.selectedEmployee_ids);
             } else {
-                // console.log("2");
                 $('.check_uncheck_' + id).addClass('bg-dark');
                 $('.check_uncheck_' + id).find('img').attr('src', './public/theme/img/content/icons/check-white.svg');
                 if (self.selectedEmployee_ids.includes(id)) {
                     $('#selectedMachanic').val(self.selectedEmployee_ids);
                 } else {
-                    // console.log("2");
                     self.selectedEmployee_ids.push(id);
                     $('#selectedMachanic').val(self.selectedEmployee_ids);
                 }
-                // console.log(self.selectedEmployee_ids);
             }
         }
         //SAVE MECHANIC

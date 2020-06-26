@@ -1060,6 +1060,10 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<warranty-job-order-request-card-list></warranty-job-order-request-card-list>',
         title: 'Warranty Job Order Requests'
     }).
+    when('/warranty-job-order-request/table-list', {
+        template: '<warranty-job-order-request-table-list></warranty-job-order-request-table-list>',
+        title: 'Warranty Job Order Requests'
+    }).
     when('/warranty-job-order-request/form/:request_id?', {
         template: '<warranty-job-order-request-form></warranty-job-order-request-form>',
         title: 'Warranty Job Order Request - Form'

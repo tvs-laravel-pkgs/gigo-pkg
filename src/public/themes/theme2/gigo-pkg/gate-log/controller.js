@@ -222,7 +222,7 @@ app.component('gateLogForm', {
                         }
                         return false;
                     },
-                    minlength: 10,
+                    minlength: 8,
                     maxlength: 10,
                 },
                 'plate_number': {
