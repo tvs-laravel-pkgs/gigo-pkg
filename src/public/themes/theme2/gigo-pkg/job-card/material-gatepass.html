@@ -31,7 +31,7 @@
                                             Material gatepass
                                         </h5>
                                         <div class="row" ng-repeat="(key, gate_passes) in job_card.gate_passes" ng-if="job_card.gate_passes.length > 0">
-                                            <div class="mgatepass-wrap border">
+                                            <div class="mgatepass-wrap border" id="carousel_parent_{{gate_passes.id}}">
                                                 <div class="row">
                                                     <div class="col-lg-8">
                                                         <div class="row">
@@ -55,7 +55,7 @@
                                                             <div class="col-md-4">
                                                                 <div class="mgpass-address-left-wrap">
                                                                     <span class="date">
-                                                                        Created On : {{gate_passes.created_at}}
+                                                                        Created On : {{gate_passes.created_on}}
                                                                     </span>
                                                                     <ul class="grey-list d-block">
                                                                         <li>
@@ -83,15 +83,15 @@
                                                                 </li>
                                                             </ul>
                                                         </div>
-                                                        <a href="#!/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
+                                                        <a ng-if="gate_passes.status_id == 8300" href="#!/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
                                                     </div><!-- Column -->
                                                     <div class="col-lg-4" ng-if="gate_passes.gate_pass_items.length > 0">
                                                         <div id="myCarousel" class="carousel mgpass-carousel slide" data-ride="carousel">
                                                             <ol class="carousel-indicators">
-                                                                <li style="margin-right: 5px" data-target="#myCarousel" data-slide-to="{{key}}{{index}}" ng-class="{'active': (index == 0)}" ng-repeat="(index, gate_pass_items) in gate_passes.gate_pass_items"></li>
+                                                                <li style="margin-right: 5px" data-target="#myCarousel" data-slide-to="{{key}}{{index}}" class="carousel_li"  id ="carousel_li_{{gate_passes.id}}{{index}}" ng-repeat="(index, gate_pass_items) in gate_passes.gate_pass_items"  ng-click="carouselLiChange(gate_passes.id,index)"></li>
                                                             </ol>
                                                             <div class="carousel-inner">
-                                                                <div class="item" ng-class="{'active': (keys == 0)}" ng-repeat="(keys, gate_pass_item) in gate_passes.gate_pass_items">
+                                                                <div class="item carousel_inner_item" id="carousel_inner_item_{{gate_passes.id}}{{keys}}" ng-repeat="(keys, gate_pass_item) in gate_passes.gate_pass_items">
                                                                     <div class="border-box type-2">
                                                                         <div class="top-title">{{gate_pass_item.name}}<span class="right-text">Qty : {{gate_pass_item.qty}}</span></div>
                                                                         <div class="mb-20"></div>
@@ -146,3 +146,5 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<!-- Drag & Drop File Upload Plugins -->
+<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
