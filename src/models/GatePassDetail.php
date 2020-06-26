@@ -11,9 +11,13 @@ class GatePassDetail extends Model {
 	use SoftDeletes;
 	protected $table = 'gate_pass_details';
 	public $timestamps = true;
-	protected $fillable =
-		["gate_pass_id", "vendor_type_id", "vendor_id", "work_order_no", "work_order_description"]
-	;
+	protected $fillable = [
+		"gate_pass_id",
+		"vendor_type_id",
+		"vendor_id",
+		"work_order_no",
+		"work_order_description",
+	];
 
 	public function vendorType() {
 		return $this->belongsTo('App\Config', 'vendor_type_id');

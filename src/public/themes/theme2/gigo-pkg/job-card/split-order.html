@@ -21,199 +21,203 @@
             <div class="tab-form-wrap type-2">
                 <jobcard-tabs ng-init="active_tab = 'split-order'"></jobcard-tabs>
                 <div class="tab-form-body">
-                    <div class="tab-content">
-                        <!-- TAB PANEL -->
-                        <div class="tab-pane fade in active" id="split-order" data-animation="fadeInUp" data-animation-delay="300">
-                            <div class="tab-pane-wrap">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5 class="title-red border-bottom">
-                                            Split Order
-                                        </h5>
-                                        <div class="panel-group tabbable" id="accordion">
-
-
-                                            <div class="panel panel-default type-4">
-                                                <div class="panel-heading">
-                                                    <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
-                                                        000000 - Unassigned Items - {{unassigned_total_count}} Items
-                                                        <span class="arrow"></span>
-                                                        <span class="title-right">
-                                                            <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
-                                                            {{unassigned_total_amount}}
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                                <div id="collapse1" class="panel-collapse collapse in">
-                                                    <div class="panel-body">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="table-responsive">
-                                                                    <div id="table1" class="bitacoratable">
-                                                                        <table id="table1" class="table split-order-table table-form  childgrid">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>Item Type</th>
-                                                                                <th>Item</th>
-                                                                                <th>Qty</th>
-                                                                                <th class="text-right">Rate</th>
-                                                                                <th class="text-right">Discount</th>
-                                                                                <th class="text-right">Amount</th>
-                                                                                <th class="text-right">Taxable Amount</th>
-                                                                                <th class="text-right">CGST (9%)</th>
-                                                                                <th class="text-right">SGST (9%)</th>
-                                                                                <th class="text-right">IGST (0%)</th>
-                                                                                <th class="text-right">Total Amount</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody class="connectedSortable">
-                                                                            <tr  data-itemid="labour.id"  data-split_id="split_order_type.id"  ng-if="labour.split_order_type_id == null" ng-repeat="(key,labour) in labour_details">
-                                                                                <td>Labour</td>
-                                                                                <td>{{labour.name}}</td>
-                                                                                <td>{{labour.qty}}</td>
-                                                                                <td class="text-right">{{labour.amount}}</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">{{labour.amount}}</td>
-                                                                                <td class="text-right" >{{labour.tax_amount}}</td>
-                                                                                <td class="text-right">{{labour.tax_values[0]  ? labour.tax_values[0] : '0.00'}}</td>
-                                                                                <td class="text-right" >{{labour.tax_values[1] ? labour.tax_values[1] : '0.00' }}</td>
-                                                                                <td class="text-right" >{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
-                                                                                <td class="text-right">{{labour.total_amount}}</td>
-                                                                            </tr>
-                                                                            <tr data-itemid="part.id"  data-split_id="split_order_type.id"  ng-if="part.split_order_type_id == null" ng-repeat="(key,part) in part_details">
-                                                                                <td>Part</td>
-                                                                                <td>{{part.name}}</td>
-                                                                                <td>{{part.qty}}</td>
-                                                                                <td class="text-right">{{part.rate}}</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">{{part.amount}}</td>
-                                                                                <td class="text-right" >{{part.tax_amount}}</td>
-                                                                                <td class="text-right" >{{part.tax_values[0] ? part.tax_values[0]: '0.00'}}</td>
-                                                                                <td class="text-right" >{{part.tax_values[1] ? part.tax_values[1]: '0.00' }}</td>
-                                                                                <td class="text-right" >{{part.tax_values[2]  ? part.tax_values[2] : '0.00'}}</td>
-                                                                                <td class="text-right">{{part.total_amount}}</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                        </table>
-                                                                    </div>
-                                                                </div><!-- Table Responsive -->
-                                                            </div><!-- Column -->
-                                                        </div><!-- Row -->
-                                                    </div><!-- Panel Body -->
-                                                </div><!-- Panel Collapse -->
-                                            </div><!-- Panel -->
-                                            <div class="panel panel-default type-4" ng-repeat="(key,split_order_type) in extras.split_order_types">
-                                                <div class="panel-heading">
-                                                    <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse{{key}}">
-                                                        {{split_order_type.code}} - {{split_order_type.name}} -  {{split_order_type.total_items}} Items
-                                                        <span class="arrow"></span>
-                                                        <span class="title-right">
-                                                            <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
-                                                             {{split_order_type.total_amount}}
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                                <div id="collapse{{key}}" class="panel-collapse collapse in">
-                                                    <div class="panel-body">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="table-responsive">
-                                                                    <div id="table{{key}}" class="bitacoratable">
-                                                                    <table id="table{{key}}" class="table split-order-table table-form childgrid"  >
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>Item Type</th>
-                                                                                <th>Item</th>
-                                                                                <th>Qty</th>
-                                                                                <th class="text-right">Rate</th>
-                                                                                <th class="text-right">Discount</th>
-                                                                                <th class="text-right">Amount</th>
-                                                                                <th class="text-right">Taxable Amount</th>
-                                                                                <th class="text-right">CGST (9%)</th>
-                                                                                <th class="text-right">SGST (9%)</th>
-                                                                                <th class="text-right">IGST (0%)</th>
-                                                                                <th class="text-right">Total Amount</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody class="connectedSortable">
-                                                                            <tr  >
-                                                                                <td>Part</td>
-                                                                                <td class="ng-binding">sample | sample</td>
-                                                                                <td class="ng-binding">3.00</td>
-                                                                                <td class="text-right ng-binding">200.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right ng-binding">600.00</td>
-                                                                                <td class="text-right ng-binding">108.00</td>
-                                                                                <td class="text-right ng-binding">54.00</td>
-                                                                                <td class="text-right ng-binding">54.00</td>
-                                                                                <td class="text-right ng-binding">0.00</td>
-                                                                                <td class="text-right ng-binding">708.00</td>
-                                                                            </tr>
-                                                                            <tr  >
-                                                                                <td>Part</td>
-                                                                                <td class="ng-binding">sample | sample</td>
-                                                                                <td class="ng-binding">3.00</td>
-                                                                                <td class="text-right ng-binding">200.00</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right ng-binding">600.00</td>
-                                                                                <td class="text-right ng-binding">108.00</td>
-                                                                                <td class="text-right ng-binding">54.00</td>
-                                                                                <td class="text-right ng-binding">54.00</td>
-                                                                                <td class="text-right ng-binding">0.00</td>
-                                                                                <td class="text-right ng-binding">708.00</td>
-                                                                            </tr>
-                                                                            <tr  data-itemid="part.id"  data-split_id="split_order_type.id"  class="listitems" ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(key,Labour) in labour_details">
-                                                                                <td>Labour</td>
-                                                                                <td>{{labour.name}}</td>
-                                                                                <td>{{labour.qty}}</td>
-                                                                                <td class="text-right">{{labour.amount}}</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">{{labour.amount}}</td>
-                                                                                 <td class="text-right" >{{labour.tax_amount}}</td>
-                                                                                <td class="text-right">{{labour.tax_values[0]  ? labour.tax_values[0] : '0.00'}}</td>
-                                                                                <td class="text-right" >{{labour.tax_values[1] ? labour.tax_values[1] : '0.00' }}</td>
-                                                                                <td class="text-right" >{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
-                                                                                <td class="text-right">{{labour.total_amount}}</td>
-                                                                            </tr>
-                                                                            <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(key,part) in part_details">
-                                                                                <td>Part</td>
-                                                                                <td>{{part.name}}</td>
-                                                                                <td>{{part.qty}}</td>
-                                                                                <td class="text-right">{{part.rate}}</td>
-                                                                                <td class="text-right">0.00</td>
-                                                                                <td class="text-right">{{part.amount}}</td>
-                                                                                <td class="text-right" >{{part.tax_amount}}</td>
-                                                                                <td class="text-right" >{{part.tax_values[0] ? part.tax_values[0]: '0.00'}}</td>
-                                                                                <td class="text-right" >{{part.tax_values[1] ? part.tax_values[1]: '0.00' }}</td>
-                                                                                <td class="text-right" >{{part.tax_values[2]  ? part.tax_values[2] : '0.00'}}</td>
-                                                                                <td class="text-right">{{part.total_amount}}</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                                </div><!-- Table Responsive -->
-                                                            </div><!-- Column -->
-                                                             
-                                                        </div><!-- Row -->
-                                                    </div><!-- Panel Body -->
-                                                </div><!-- Panel Collapse -->
-                                            </div><!-- Panel -->
-                                        </div><!-- Panel Group -->
-                                    </div><!-- Column -->
-                                    <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a href=".#!/gigo-pkg/job-card/bill-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a href=".#!/gigo-pkg/job-card/material-gatepass/{{job_card_id}}" class="btn btn-secondary-dark btn-nxt">Next</a>
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
-                                </div><!-- Row -->
-                            </div><!-- Tab Pane Wrap -->
-                        </div><!-- Tabe Pane -->
-                    </div><!-- Tab Content -->
-                </div><!-- Tab Form Body -->
-            </div><!-- Tab Form Wrap -->
+                    <div class="tab-pane fade in active" id="split-order" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane-wrap">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="page-form pb-80 ">
+                                        <div class="tab-header">
+                                            <!-- Filters -->
+                                            <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300" id="tabs">
+                                                <ul class="nav nav-pills editDetails-tabs">
+                                                    <li class="active"><a class="btn-pills" data-target="#unassigned_items" role="tab" data-toggle="tab" aria-expanded="true"> 000000 - Unassigned Items - {{unassigned_total_count}} Items</a></li>
+                                                    <li ng-repeat="(key,split_order_type) in extras.split_order_types"><a data-target="#{{split_order_type.id}}" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">{{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} Items</a></li>
+                                                    <!-- <li class="active"><a class="btn-pills" data-target="#order-pane" data-toggle="tab" aria-expanded="true">Order</a></li>
+                                                    <li><a class="btn-pills" data-target="#payment-pane" data-toggle="tab" aria-expanded="true">Payment</a></li>
+                                                    <li><a class="btn-pills" data-target="#invoice-pane" data-toggle="tab" aria-expanded="true">Invoice & CN</a></li>
+                                                    <li><a class="btn-pills" data-target="#payment-pane" data-toggle="tab" aria-expanded="true">Payment</a></li>
+                                                    <li><a class="btn-pills" data-target="#invoice-pane" data-toggle="tab" aria-expanded="true">Invoice & CN</a></li> -->
+                                                </ul>
+                                            </div><!-- Filters -->
+                                        </div>
+                                        <div class="tab-content">
+                                            <!-- TAB PANEL -->
+                                            <div class="tab-pane fade in active" id="unassigned_items" data-animation="fadeInUp" data-animation-delay="300">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="table-responsive">
+                                                            <div id="table1" class="bitacoratable">
+                                                                <table id="table1" class="table split-order-table table-form  childgrid">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Item Type</th>
+                                                                            <th>Item</th>
+                                                                            <th>Qty</th>
+                                                                            <th class="text-right">Rate</th>
+                                                                            <th class="text-right">Discount</th>
+                                                                            <th class="text-right">Amount</th>
+                                                                            <th class="text-right">Taxable Amount</th>
+                                                                            <th class="text-right">CGST (9%)</th>
+                                                                            <th class="text-right">SGST (9%)</th>
+                                                                            <th class="text-right">IGST (0%)</th>
+                                                                            <th class="text-right">Total Amount</th>
+                                                                            <th class="action">Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody class="connectedSortable">
+                                                                        <tr data-itemid="labour.id" data-split_id="split_order_type.id" ng-if="labour.split_order_type_id == null" ng-repeat="(key,labour) in labour_details">
+                                                                            <td>Labour</td>
+                                                                            <td>{{labour.name}}</td>
+                                                                            <td>{{labour.qty}}</td>
+                                                                            <td class="text-right">{{labour.amount}}</td>
+                                                                            <td class="text-right">0.00</td>
+                                                                            <td class="text-right">{{labour.amount}}</td>
+                                                                            <td class="text-right">{{labour.tax_amount}}</td>
+                                                                            <td class="text-right">{{labour.tax_values[0] ? labour.tax_values[0] : '0.00'}}</td>
+                                                                            <td class="text-right">{{labour.tax_values[1] ? labour.tax_values[1] : '0.00' }}</td>
+                                                                            <td class="text-right">{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
+                                                                            <td class="text-right">{{labour.total_amount}}</td>
+                                                                            <td class="action width-100">
+                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderLabourChange(labour.id)">
+                                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr data-itemid="part.id" data-split_id="split_order_type.id" ng-if="part.split_order_type_id == null" ng-repeat="(key,part) in part_details">
+                                                                            <td>Part</td>
+                                                                            <td>{{part.name}}</td>
+                                                                            <td>{{part.qty}}</td>
+                                                                            <td class="text-right">{{part.rate}}</td>
+                                                                            <td class="text-right">0.00</td>
+                                                                            <td class="text-right">{{part.amount}}</td>
+                                                                            <td class="text-right">{{part.tax_amount}}</td>
+                                                                            <td class="text-right">{{part.tax_values[0] ? part.tax_values[0]: '0.00'}}</td>
+                                                                            <td class="text-right">{{part.tax_values[1] ? part.tax_values[1]: '0.00' }}</td>
+                                                                            <td class="text-right">{{part.tax_values[2] ? part.tax_values[2] : '0.00'}}</td>
+                                                                            <td class="text-right">{{part.total_amount}}</td>
+                                                                            <td class="action width-100">
+                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderPartChange(part.id)">
+                                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div><!-- Table Responsive -->
+                                                    </div><!-- Column -->
+                                                </div><!-- Row -->
+                                            </div><!-- Tabe Pane -->
+                                            <div class="tab-pane fade" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300" ng-repeat="(key,split_order_type) in extras.split_order_types">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="table-responsive">
+                                                            <div id="table{{key}}" class="bitacoratable">
+                                                                <table id="table{{key}}" class="table split-order-table table-form childgrid">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Item Type</th>
+                                                                            <th>Item</th>
+                                                                            <th>Qty</th>
+                                                                            <th class="text-right">Rate</th>
+                                                                            <th class="text-right">Discount</th>
+                                                                            <th class="text-right">Amount</th>
+                                                                            <th class="text-right">Taxable Amount</th>
+                                                                            <th class="text-right">CGST (9%)</th>
+                                                                            <th class="text-right">SGST (9%)</th>
+                                                                            <th class="text-right">IGST (0%)</th>
+                                                                            <th class="text-right">Total Amount</th>
+                                                                            <th class="action">Action</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody class="connectedSortable">
+                                                                        <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(key,labour) in labour_details">{{labour}}
+                                                                            <td>Labour </td>
+                                                                            <td>{{labour.name}}</td>
+                                                                            <td>{{labour.qty}}</td>
+                                                                            <td class="text-right">{{labour.amount}}</td>
+                                                                            <td class="text-right">0.00</td>
+                                                                            <td class="text-right">{{labour.amount}}</td>
+                                                                            <td class="text-right">{{labour.tax_amount}}</td>
+                                                                            <td class="text-right">{{labour.tax_values[0] ? labour.tax_values[0] : '0.00'}}</td>
+                                                                            <td class="text-right">{{labour.tax_values[1] ? labour.tax_values[1] : '0.00' }}</td>
+                                                                            <td class="text-right">{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
+                                                                            <td class="text-right">{{labour.total_amount}}</td>
+                                                                            <td class="action width-100">
+                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderLabourChange(labour.id)">
+                                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(key,part) in part_details">
+                                                                            <td>Part</td>
+                                                                            <td>{{part.name}}</td>
+                                                                            <td>{{part.qty}}</td>
+                                                                            <td class="text-right">{{part.rate}}</td>
+                                                                            <td class="text-right">0.00</td>
+                                                                            <td class="text-right">{{part.amount}}</td>
+                                                                            <td class="text-right">{{part.tax_amount}}</td>
+                                                                            <td class="text-right">{{part.tax_values[0] ? part.tax_values[0]: '0.00'}}</td>
+                                                                            <td class="text-right">{{part.tax_values[1] ? part.tax_values[1]: '0.00' }}</td>
+                                                                            <td class="text-right">{{part.tax_values[2] ? part.tax_values[2] : '0.00'}}</td>
+                                                                            <td class="text-right">{{part.total_amount}}</td>
+                                                                            <td class="action width-100">
+                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderPartChange(part.id)">
+                                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div><!-- Table Responsive -->
+                                                    </div><!-- Column -->
+                                                </div><!-- Row -->
+                                            </div><!-- Tabe Pane -->
+                                        </div><!-- Tab Content -->
+                                    </div><!-- Page Form -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<div class="modal modal-center fade" id="split_order_change" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xs" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title">Split Order Update</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <form id="split_order_form">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="input-text form-group">
+                                <label>Split Order Type<sup class="mandatory">*</sup></label>
+                                <md-select ng-model="split_order_type.id" md-on-close="clearSearchType()" ng-change="onSelectedmode($ctrl.issue_modeselected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Split Order Type">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchType" type="search" placeholder="Search Split Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="split_order_type.id" ng-repeat="split_order_type in extras.split_order_types | filter:searchType">{{split_order_type.name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control required" id="split_order_type_id" name="split_order_type_id" value="{{split_order_type.id}}" />
+                            </div>
+                        </div><!-- Column -->
+                        <div class="col-md-12">
+                            <input type="hidden" id="labour_id" name="labour_id" value="" />
+                            <input type="hidden" id="part_id" name="part_id" value="" />
+                            <input type="hidden" id="type" name="type" value="{{type}}" />
+                            <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit" ng-click="splitOrderChange();"><b>Submit</b></button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </form>
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->

@@ -17,6 +17,64 @@ class Complaint extends BaseModel {
 		["company_id", "code", "name", "group_id", "hours", "kms", "months"]
 	;
 
+	protected static $excelColumnRules = [
+		'Group Code' => [
+			'table_column_name' => 'group_id',
+			'rules' => [
+				'required' => [
+				],
+				'fk' => [
+					'class' => 'App\ComplaintGroup',
+					'foreign_table_column' => 'code',
+					'check_with_company' => true,
+				],
+			],
+		],
+		'Code' => [
+			'table_column_name' => 'code',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Hours' => [
+			'table_column_name' => 'hours',
+			'rules' => [
+				'nullable' => [
+				],
+				'unsigned_integer' => [
+					'size' => '8',
+				],
+			],
+		],
+		'KMs' => [
+			'table_column_name' => 'kms',
+			'rules' => [
+				'nullable' => [
+				],
+				'unsigned_integer' => [
+					'size' => '8',
+				],
+			],
+		],
+		'Months' => [
+			'table_column_name' => 'months',
+			'rules' => [
+				'nullable' => [
+				],
+				'unsigned_integer' => [
+					'size' => '8',
+				],
+			],
+		],
+	];
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {
@@ -65,54 +123,67 @@ class Complaint extends BaseModel {
 		];
 	}
 
-	public static function createFromObject($record_data) {
+	public static function saveFromExcelArray($record_data) {
 		$errors = [];
-		$company = Company::where('code', $record_data->company_code)->first();
+		$company = Company::where('code', $record_data['Company Code'])->first();
 		if (!$company) {
 			return [
 				'success' => false,
-				'errors' => ['Invalid Company : ' . $record_data->company],
+				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
 			];
 		}
 
-		$admin = $company->admin();
-		if (!$admin) {
-			return [
-				'success' => false,
-				'errors' => ['Default Admin user not found'],
-			];
+		if (!isset($record_data['created_by_id'])) {
+			$admin = $company->admin();
+
+			if (!$admin) {
+				return [
+					'success' => false,
+					'errors' => ['Default Admin user not found'],
+				];
+			}
+			$created_by_id = $admin->id;
+		} else {
+			$created_by_id = $record_data['created_by_id'];
 		}
 
 		$group = ComplaintGroup::where([
 			'company_id' => $admin->company_id,
-			'code' => $record_data->group_id,
+			'code' => $record_data['Group Code'],
 		])->first();
 		if (!$group) {
-			$errors[] = 'Group not found : ' . $record_data->group_id;
-		}
-
-		$validation = Self::validate($record_data->toArray(), $admin);
-		if (count($validation['errors']) > 0 || count($errors) > 0) {
-			return [
-				'success' => false,
-				'errors' => array_merge($validation['errors'], $errors),
-			];
+			$errors[] = 'Group not found : ' . $record_data['Group'];
 		}
 
 		$record = self::firstOrNew([
 			'company_id' => $company->id,
 			'group_id' => $group->id,
-			'code' => $record_data->code,
+			'code' => $record_data['Code'],
 		]);
-		$record->name = $record_data->name;
-		$record->hours = $record_data->hours;
-		$record->kms = $record_data->kms;
-		$record->months = $record_data->months;
-		$record->created_by_id = $admin->id;
+
+		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+		if (!$result['success']) {
+			return $result;
+		}
+		$record->created_by_id = $created_by_id;
 		$record->save();
 		return [
 			'success' => true,
 		];
+	}
+
+	public static function saveFromObject($record_data) {
+
+		$record = [
+			'Company Code' => $record_data->company_code,
+			'Group Code' => $record_data->group_code,
+			'Code' => $record_data->code,
+			'Name' => $record_data->name,
+			'Hours' => $record_data->hours,
+			'KMs' => $record_data->kms,
+			'Months' => $record_data->months,
+		];
+		return static::saveFromExcelArray($record);
 	}
 
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Complaint Type') {

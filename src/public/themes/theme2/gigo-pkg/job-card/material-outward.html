@@ -93,9 +93,9 @@
                                                             <div class="form-group">
                                                                 <label>Vendor Type <sup class="mandatory">*</sup></label>
                                                                 <div class="common-radio-button type-4">
-                                                                    <input type="radio" id="type_yes" ng-checked="gate_pass.gate_pass_detail.vendor_type.id==121" value="121" name="vendor_type_id" />
+                                                                    <input type="radio" id="type_yes" ng-checked="gate_pass.gate_pass_detail.vendor_type_id==121" value="121" name="vendor_type_id" ng-change='vendorTypeOnchange()' ng-model="gate_pass.gate_pass_detail.vendor_type_id"/>
                                                                     <label for="type_yes">Internal</label>
-                                                                    <input type="radio" ng-checked="gate_pass.gate_pass_detail.vendor_type.id==122" id="type_no" value="122" name="vendor_type_id" />
+                                                                    <input type="radio" ng-checked="gate_pass.gate_pass_detail.vendor_type_id==122" id="type_no" value="122" name="vendor_type_id" ng-change='vendorTypeOnchange()' ng-model="gate_pass.gate_pass_detail.vendor_type_id"/>
                                                                     <label for="type_no">External</label>
                                                                 </div>
                                                             </div><!-- Feild -->
@@ -106,7 +106,7 @@
                                                                     OSL Vendor Code
                                                                     <sup class="mandatory">*</sup>
                                                                 </label>
-                                                                <md-autocomplete md-items="option in $ctrl.searchVendorCode($ctrl.modelSearchText)" md-selected-item="$ctrl.vendor" md-selected-item-change="selectedVendorCode($ctrl.vendor.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.code" md-min-length="3" placeholder="OSL Vendor Code" md-autofocus>
+                                                                <md-autocomplete md-items="option in $ctrl.searchVendorCode($ctrl.modelSearchText, gate_pass.gate_pass_detail.vendor_type_id)" md-selected-item="$ctrl.vendor" md-selected-item-change="selectedVendorCode($ctrl.vendor.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.code" md-search-text-change="vendorTextChange()" md-min-length="3" placeholder="OSL Vendor Code" md-autofocus>
                                                                     <md-item-template>
                                                                         <span>
                                                                             {{option.code}} / {{option.name}}
@@ -115,7 +115,7 @@
                                                                     <md-not-found>
                                                                         No Vendor Code matching "{{$ctrl.modelSearchText}}" were found.
                                                                     </md-not-found>
-                                                                </md-autocomplete>
+                                                                </md-autocomplete>  
                                                                 <input type="hidden" name="vendor_id" class="requried" value="{{$ctrl.vendor.id}}">
                                                             </div><!-- Feild -->
                                                         </div><!-- Column -->
@@ -149,9 +149,9 @@
                                                         <div class="grey-box-address-body">
                                                             <span class="title" id="ven_name">{{gate_pass.gate_pass_detail.vendor.name}}</span>
                                                             <p class="address"></p>
-                                                            <span class="info address" ng-repeat="(key, address) in gate_pass.gate_pass_detail.vendor.addresses"> {{address.address_line1}},
-                                                                {{address.address_line2}}
-                                                                {{address.pincode}}</span>
+                                                            <span class="info address"> {{gate_pass.gate_pass_detail.vendor.primary_address.address_line1}},
+                                                                {{gate_pass.gate_pass_detail.vendor.primary_address.address_line2}}
+                                                                {{gate_pass.gate_pass_detail.vendor.primary_address.pincode}}</span>
                                                             <span class="info contact" id="contact">{{gate_pass.gate_pass_detail.vendor_contact_no}}</span>
                                                         </div>
                                                     </div>

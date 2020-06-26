@@ -15,6 +15,7 @@ class VehicleSecondaryApplication extends BaseModel {
 	public $timestamps = true;
 	protected $fillable = [
 		"id",
+		"company_id",
 		"code",
 		"name",
 	];

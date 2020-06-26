@@ -166,6 +166,7 @@ class JobCardController extends Controller {
 	public function getUpdateJcFormData(Request $r) {
 		try {
 			$job_order = JobOrder::with([
+				'status',
 				'gateLog',
 				'gateLog.status',
 				'vehicle',
@@ -557,6 +558,68 @@ class JobCardController extends Controller {
 		}
 	}
 
+	public function splitOrderUpdate(Request $r) {
+		//dd($r->all());
+		try {
+			$validator = Validator::make($r->all(), [
+				'split_order_type_id' => [
+					'required',
+					'exists:split_order_types,id',
+					'integer',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			if ($r->type == 'Part') {
+				$job_order_part = JobOrderPart::find($r->part_id);
+				if (!$job_order_part) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Job Order Part Not Found!'],
+					]);
+				}
+				$job_order_part->split_order_type_id = $r->split_order_type_id;
+				$job_order_part->updated_at = Carbon::now();
+				$job_order_part->updated_by_id = Auth::user()->id;
+				$job_order_part->save();
+			} else {
+				$job_order_repair_order = JobOrderRepairOrder::find($r->labour_id);
+				if (!$job_order_repair_order) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Job Order Repair Order Not Found!'],
+					]);
+				}
+				$job_order_repair_order->split_order_type_id = $r->split_order_type_id;
+				$job_order_repair_order->updated_at = Carbon::now();
+				$job_order_repair_order->updated_by_id = Auth::user()->id;
+				$job_order_repair_order->save();
+
+			}
+			return response()->json([
+				'success' => true,
+				'type_id' => $r->split_order_type_id,
+				'message' => $r->type . ' Update Successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+
+	}
+
 	//BAY ASSIGNMENT
 	public function getBayFormData(Request $r) {
 		try {
@@ -739,7 +802,10 @@ class JobCardController extends Controller {
 			if (!$job_card) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Invalid Job Card!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Card Not Found!',
+					],
 				]);
 			}
 
@@ -825,7 +891,10 @@ class JobCardController extends Controller {
 			if (!$repair_order) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Invalid Repair Order!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Repair Order Not Found!',
+					],
 				]);
 			}
 
@@ -841,7 +910,10 @@ class JobCardController extends Controller {
 			if (!$repair_order_mechanic_time_logs) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Repair Order Mechanic Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Repair Order Mechanic Not Found!',
+					],
 				]);
 			}
 
@@ -914,34 +986,33 @@ class JobCardController extends Controller {
 		// dd($request->all());
 		try {
 			//JOB CARD
-			$job_card = JobCard::with([
-				'jobOrder',
-				'jobOrder.JobOrderRepairOrders',
-				'jobOrder.JobOrderRepairOrders.status',
-				'jobOrder.JobOrderRepairOrders.repairOrder',
-				'jobOrder.JobOrderRepairOrders.repairOrderMechanics',
-				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.mechanic',
-				'jobOrder.JobOrderRepairOrders.repairOrderMechanics.status',
-			])->find($request->id);
+			$job_card = JobCard::find($request->id);
 
 			if (!$job_card) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Invalid Job Card!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Card Not Found!',
+					],
 				]);
 			}
 
 			//REPAIR ORDER
-			$repair_order = RepairOrder::with([
-
-			])->find($request->repair_order_id);
+			$repair_order = RepairOrder::find($request->repair_order_id);
 
 			if (!$repair_order) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Invalid Repair Order!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Repair Order Not Found!',
+					],
 				]);
 			}
+
+			//REPAIR ORDER MECHNICS
+			$repair_order_mechanics = RepairOrderMechanic::join('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->where('job_order_repair_orders.repair_order_id', $request->repair_order_id)->where('job_order_repair_orders.job_order_id', $job_card->job_order_id)->pluck('repair_order_mechanics.mechanic_id')->toArray();
 
 			$employee_details = Employee::select([
 				'users.id',
@@ -951,14 +1022,14 @@ class JobCardController extends Controller {
 				'deputed_outlet.code as deputed_outlet_code',
 				'attendance_logs.user_id',
 			])
-				->leftJoin('users', 'users.entity_id', 'employees.id')
+				->join('users', 'users.entity_id', 'employees.id')
 				->leftJoin('attendance_logs', function ($join) {
 					$join->on('attendance_logs.user_id', 'users.id')
 						->whereNull('attendance_logs.out_time')
 						->whereDate('attendance_logs.date', '=', date('Y-m-d', strtotime("now")));
 				})
-				->leftJoin('outlets', 'outlets.id', 'employees.outlet_id')
-				->leftJoin('outlets as deputed_outlet', 'deputed_outlet.id', 'employees.deputed_outlet_id')
+				->join('outlets', 'outlets.id', 'employees.outlet_id')
+				->leftjoin('outlets as deputed_outlet', 'deputed_outlet.id', 'employees.deputed_outlet_id')
 				->where('employees.is_mechanic', 1)
 				->where('users.user_type_id', 1) //EMPLOYEE
 				->where('employees.outlet_id', $job_card->outlet_id)
@@ -967,62 +1038,10 @@ class JobCardController extends Controller {
 				->get()
 			;
 
-			//FOR TOTAL WORKING TIME PERTICULAR EMPLOYEE
-			$total_duration = 0;
-			if (!empty($job_card->jobOrder->JobOrderRepairOrders)) {
-				foreach ($job_card->jobOrder->JobOrderRepairOrders as $key => $job_order_repair_order) {
-					$overall_total_duration = [];
-					if ($job_order_repair_order->repairOrderMechanics) {
-						foreach ($job_order_repair_order->repairOrderMechanics as $key1 => $repair_order_mechanic) {
-							$duration = [];
-							if ($repair_order_mechanic->mechanicTimeLogs) {
-								// $duration_difference = []; //FOR START TIME AND END TIME DIFFERENCE
-								foreach ($repair_order_mechanic->mechanicTimeLogs as $key2 => $mechanic_time_log) {
-									// dd($mechanic_time_log);
-									$time1 = strtotime($mechanic_time_log->start_date_time);
-									$time2 = strtotime($mechanic_time_log->end_date_time);
-									if ($time2 < $time1) {
-										$time2 += 86400;
-									}
-									//TOTAL DURATION FOR PARTICLUAR EMPLOEE
-									$duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
-
-									//OVERALL TOTAL WORKING DURATION
-									$overall_total_duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
-								}
-							}
-							//TOTAL WORKING HOURS PER EMPLOYEE
-							$total_duration = sum_mechanic_duration($duration);
-							$total_duration = date("H:i:s", strtotime($total_duration));
-							// dd($total_duration);
-							$format_change = explode(':', $total_duration);
-							$hour = $format_change[0] . 'h';
-							$minutes = $format_change[1] . 'm';
-							// $seconds = $format_change[2] . 's';
-							$repair_order_mechanic['total_duration'] = $hour . ' ' . $minutes; // . ' ' . $seconds;
-							unset($duration);
-						}
-
-					} else {
-						$repair_order_mechanic['total_duration'] = '';
-					}
-					//OVERALL WORKING HOURS
-					$overall_total_duration = sum_mechanic_duration($overall_total_duration);
-					$overall_total_duration = date("H:i:s", strtotime($overall_total_duration));
-					// dd($total_duration);
-					$format_change = explode(':', $overall_total_duration);
-					$hour = $format_change[0] . 'h';
-					$minutes = $format_change[1] . 'm';
-					// $seconds = $format_change[2] . 's';
-					$job_order_repair_order['overall_total_duration'] = $hour . ' ' . $minutes; // . ' ' . $seconds;
-					unset($overall_total_duration);
-				}
-			}
-
 			return response()->json([
 				'success' => true,
-				'job_card' => $job_card,
 				'repair_order' => $repair_order,
+				'repair_order_mechanics' => $repair_order_mechanics,
 				'employee_details' => $employee_details,
 			]);
 
@@ -1078,7 +1097,7 @@ class JobCardController extends Controller {
 			foreach ($job_card->jobOrder->JobOrderRepairOrders as $JobOrderRepairOrder) {
 				if ($JobOrderRepairOrder->repair_order_id == $request->repair_order_id) {
 					$repair_order_mechanic_remove = RepairOrderMechanic::where('job_order_repair_order_id', $JobOrderRepairOrder->id)->whereNotIn('mechanic_id', $mechanic_ids)->forceDelete();
-					// dd($repair_order_mechanic_remove);
+
 					foreach ($mechanic_ids as $mechanic_id) {
 						$repair_order_mechanic = RepairOrderMechanic::firstOrNew([
 							'job_order_repair_order_id' => $JobOrderRepairOrder->id,
@@ -1093,7 +1112,9 @@ class JobCardController extends Controller {
 							$repair_order_mechanic->created_at = Carbon::now();
 						}
 						$repair_order_mechanic->fill($request->all());
-						$repair_order_mechanic->status_id = 8260; //PENDING
+						if (!$repair_order_mechanic->exists) {
+							$repair_order_mechanic->status_id = 8260; //PENDING
+						}
 						$repair_order_mechanic->save();
 
 						$job_order_repair_order = JobOrderRepairOrder::where('id', $JobOrderRepairOrder->id)
@@ -2866,34 +2887,8 @@ class JobCardController extends Controller {
 
 	//JOB CARD Vendor Details
 	public function getMeterialGatePassData(Request $request) {
+		// dd($request->all());
 		try {
-			if (isset($request->gate_pass_id)) {
-				$gate_pass = GatePass::with([
-					'gatePassDetail',
-					'gatePassDetail.vendorType',
-					'gatePassDetail.vendor',
-					'gatePassDetail.vendor.addresses',
-					'gatePassItems.attachments',
-				])
-					->find($request->gate_pass_id);
-
-				if (!$gate_pass) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Job Card Not found!',
-					]);
-				}
-
-				//$gate_pass_item = GatePassItem::where('gate_pass_id', $request->gate_pass_id)->get();
-
-				$gate_pass_detail = GatePassDetail::select('vendor_id')->where('gate_pass_id', $gate_pass->id)->first();
-				$vendor = Vendor::select('id', 'code')->where('id', $gate_pass_detail->vendor_id)->first();
-
-			} else {
-				$gate_pass['gate_pass_items'] = [];
-				$vendor = [];
-			}
-
 			$job_card = JobCard::with([
 				'status',
 				'jobOrder',
@@ -2903,18 +2898,56 @@ class JobCardController extends Controller {
 			])
 				->find($request->id);
 
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Card Not found!',
+					],
+				]);
+
+			}
+
+			if (isset($request->gate_pass_id)) {
+				$gate_pass = GatePass::with([
+					'gatePassDetail',
+					'gatePassDetail.vendorType',
+					'gatePassDetail.vendor',
+					'gatePassDetail.vendor.primaryAddress',
+					'gatePassItems.attachments',
+				])
+					->find($request->gate_pass_id);
+
+				if (!$gate_pass) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Material Gate Pass Not found!',
+						],
+					]);
+				}
+			} else {
+				$gate_pass = new GatePass();
+				$gate_pass->gate_pass_detail = new GatePassDetail();
+				$gate_pass->gate_pass_detail->vendor = new Vendor();
+				$gate_pass->gate_pass_items = new GatePassItem();
+			}
+
 			return response()->json([
 				'success' => true,
 				'gate_pass' => $gate_pass,
 				'job_card' => $job_card,
-				'vendor' => $vendor,
 			]);
 
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -3201,7 +3234,7 @@ class JobCardController extends Controller {
 			$labour_amount = 0;
 			$total_amount = 0;
 
-			//dd($job_card->jobOrder->outlet);
+			//dd($job_card->jobOrder->vehicle->currentOwner);
 
 			//Check which tax applicable for customer
 			if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
@@ -3217,7 +3250,8 @@ class JobCardController extends Controller {
 			if ($job_card->jobOrder->jobOrderRepairOrders) {
 				foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $labour) {
 					$total_amount = 0;
-					$labour_details[$key]['id'] = $labour->repairOrder->id;
+					$labour_details[$key]['id'] = $labour->id;
+					$labour_details[$key]['repair_order_id'] = $labour->repairOrder->id;
 					$labour_details[$key]['name'] = $labour->repairOrder->code . ' | ' . $labour->repairOrder->name;
 					$labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
 					$labour_details[$key]['qty'] = $labour->qty;
@@ -3258,7 +3292,8 @@ class JobCardController extends Controller {
 			if ($job_card->jobOrder->jobOrderParts) {
 				foreach ($job_card->jobOrder->jobOrderParts as $key => $parts) {
 					$total_amount = 0;
-					$part_details[$key]['id'] = $parts->part->id;
+					$part_details[$key]['id'] = $parts->id;
+					$part_details[$key]['part_id'] = $parts->part->id;
 					$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
 					$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
 					$part_details[$key]['qty'] = $parts->qty;

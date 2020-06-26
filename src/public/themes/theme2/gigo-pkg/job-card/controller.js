@@ -904,7 +904,7 @@ app.component('jobCardMaterialGatepassForm', {
 //Material Outward
 app.component('jobCardMaterialOutwardForm', {
     templateUrl: job_card_material_outward_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $timeout) {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -926,7 +926,7 @@ app.component('jobCardMaterialOutwardForm', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/material-gatepass/form',
+                    url: base_url + '/api/material-gatepass/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id,
@@ -943,7 +943,10 @@ app.component('jobCardMaterialOutwardForm', {
                     }
                     $scope.gate_pass = res.gate_pass;
                     $scope.job_card = res.job_card;
-                    self.vendor = res.vendor;
+                    self.vendor = $scope.gate_pass.gate_pass_detail.vendor;
+                    if (!$scope.gate_pass.gate_pass_detail.vendor_type_id) {
+                        $scope.gate_pass.gate_pass_detail.vendor_type_id = 121;
+                    }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.$apply();
                 })
@@ -954,18 +957,18 @@ app.component('jobCardMaterialOutwardForm', {
         $scope.fetchData();
 
         //GET VEHICLE MODEL LIST
-        self.searchVendorCode = function(query) {
+        self.searchVendorCode = function(query, type_id) {
             if (query) {
                 return new Promise(function(resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getVendorCodeSearchList'], {
                                 key: query,
+                                type_id: type_id,
                             }
                         )
                         .then(function(response) {
                             resolve(response.data);
-                            console.log(response.data);
                         });
                     //reject(response);
                 });
@@ -974,40 +977,40 @@ app.component('jobCardMaterialOutwardForm', {
             }
         }
 
+        //GET VENDOR INFO
         $scope.selectedVendorCode = function(id) {
+            self.isFire = true;
             if (id) {
-                return new Promise(function(resolve, reject) {
-                    $http
-                        .post(
-                            laravel_routes['getVendorDetails'], {
-                                id: id,
-                            }
-                        )
-                        .then(function(response) {
-                            resolve(response.data);
-                            console.log(response.data.vendor_details);
-                            $("#ven_name").text(response.data.vendor_details.name);
-                            if (response.data.vendor_details.addresses != '') {
-                                $('.address').text(response.data.vendor_details.addresses[0].address_line1 + " ," + response.data.vendor_details.addresses[0].address_line2 + " ," + response.data.vendor_details.addresses[0].pincode);
-
-                            }
-                            if (response.data.vendor_details.type_id == 121) {
-                                $("#type_yes").prop('checked', true);
-                                $("#type_no").prop('checked', false);
-                            }
-                            if (response.data.vendor_details.type_id == 122) {
-                                $("#type_no").prop('checked', true);
-                                $("#type_yes").prop('checked', false);
-                            }
-
-                        });
-                    //reject(response);
-                });
-            } else {
-                return [];
+                $.ajax({
+                        url: laravel_routes['getVendorDetails'],
+                        method: "POST",
+                        data: {
+                            id: id,
+                        },
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        }
+                        $scope.gate_pass.gate_pass_detail.vendor = res.vendor_details;
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        custom_noty('error', 'Something went wrong at server');
+                    });
             }
         }
 
+        $scope.vendorTypeOnchange = function() {
+            $scope.gate_pass.gate_pass_detail.vendor = [];
+            self.modelSearchText = [];
+            $scope.vendor = [];
+        }
+
+        $scope.vendorTextChange = function() {
+            $scope.gate_pass.gate_pass_detail.vendor = [];
+        }
 
         $scope.addNewItem = function() {
             $scope.gate_pass.gate_pass_items.push({
@@ -1633,7 +1636,6 @@ app.component('jobCardScheduleForm', {
                     }
                     console.log(res);
                     $scope.job_card = res.job_card_view;
-                    // $scope.employee_details = res.employee_details;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1642,14 +1644,7 @@ app.component('jobCardScheduleForm', {
         }
         $scope.fetchData();
 
-        //ASSIGN MECHANIC
-        // $scope.assign_mechanic = function(code, name) {
-        //     console.log(code, name);
-        //     $scope.job_card.repair_order_code = code;
-        //     $scope.job_card.repair_order_name = name;
-        // }
         $scope.assignMechanic = function(repair_order_id) {
-            // console.log(repair_order_id);
             $('.assign_mechanic_' + repair_order_id).button('loading');
             $.ajax({
                     url: base_url + '/api/job-card/get-mechanic',
@@ -1667,23 +1662,19 @@ app.component('jobCardScheduleForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    console.log(res);
-                    $scope.job_card = res.job_card;
+                    
+                    $('#selectedMachanic').val('');
                     $scope.repair_order = res.repair_order;
                     $scope.employee_details = res.employee_details;
-                    angular.forEach($scope.job_card.job_order.job_order_repair_orders, function(value, key) {
-                        if (value.repair_order_mechanics && value.repair_order_id == repair_order_id) {
-                            angular.forEach(value.repair_order_mechanics, function(value, key) {
-                                setTimeout(function() {
-                                    $scope.selectedEmployee(value.mechanic_id);
-                                }, 500);
-                            });
-                        } else {
-                            $('#selectedMachanic').val('');
-                        }
+                    $scope.repair_order_mechanics = res.repair_order_mechanics;
+
+                    $.each($scope.repair_order_mechanics, function(key, employee_id) {
+                        setTimeout(function() {
+                            $scope.selectedEmployee(employee_id);
+                        }, 500);
                     });
+
                     $('#assign_labours').modal('show');
-                    // $("#selectedMachanic").;
                     $('.assign_mechanic_' + repair_order_id).button('reset');
                     $scope.$apply();
                 })
@@ -1695,28 +1686,22 @@ app.component('jobCardScheduleForm', {
 
         self.selectedEmployee_ids = [];
         $scope.selectedEmployee = function(id) {
-            // console.log(id);
             if ($('.check_uncheck_' + id).hasClass('bg-dark')) {
-                console.log("1");
                 $('.check_uncheck_' + id).removeClass('bg-dark');
                 $('.check_uncheck_' + id).find('img').attr('src', '');
                 self.selectedEmployee_ids = jQuery.grep(self.selectedEmployee_ids, function(value) {
                     return value != id;
                 });
-                // console.log(self.selectedEmployee_ids);
                 $('#selectedMachanic').val(self.selectedEmployee_ids);
             } else {
-                // console.log("2");
                 $('.check_uncheck_' + id).addClass('bg-dark');
                 $('.check_uncheck_' + id).find('img').attr('src', './public/theme/img/content/icons/check-white.svg');
                 if (self.selectedEmployee_ids.includes(id)) {
                     $('#selectedMachanic').val(self.selectedEmployee_ids);
                 } else {
-                    // console.log("2");
                     self.selectedEmployee_ids.push(id);
                     $('#selectedMachanic').val(self.selectedEmployee_ids);
                 }
-                // console.log(self.selectedEmployee_ids);
             }
         }
         //SAVE MECHANIC
@@ -2098,7 +2083,7 @@ app.component('jobCardSplitOrder', {
                     //console.log($scope.job_card);
                     //console.log($scope.job_card);
                     //console.log($scope.extras);
-                    //console.log($scope.labour_details);
+                    console.log($scope.labour_details);
                     //console.log($scope.part_details);
                     // var unassigned_total_amount=0;
                     // var unassigned_total_items=0;
@@ -2128,30 +2113,99 @@ app.component('jobCardSplitOrder', {
                     //$scope.unassigned_total_items = unassigned_total_items;*/
 
                     $scope.$apply();
+
+                    //$('#tabs').tabs({ active: 3 });
+                    // console.log('test');
+                    // $('#unassigned_items').removeClass('active');
+                    //$('#unassigned_items').removeClass('in active');
+                    //$('#1').addClass('in active');
+                    // $('#1').trigger('click');
+
+                    console.log('Test');
+
+
+
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
         $scope.fetchData();
-        /* var c = {};
-         $("#contact-list tr").draggable({
-                 helper: "clone",
-                 start: function(event, ui) {
-                     c.tr = this;
-                     c.helper = ui.helper;
-                 }
-         });
-         $("#guest-list tr").droppable({
-             drop: function(event, ui) {
-                 var guest = ui.draggable.text();
-                 var copy = $(this);
-                var copy = $(this);
-                 copy.clone(true).find(":input").val("").end().insertAfter(copy);
-                 $(c.tr).remove();
-                 $(c.helper).remove();
-             }
-            });*/
+
+
+        $scope.splitOrderLabourChange = function(id) {
+            // alert(id);
+            console.log(id);
+            $('#labour_id').val(id);
+            $('#part_id').val('');
+            $scope.type = 'Labour';
+        }
+
+        $scope.splitOrderPartChange = function(id) {
+            // alert(id);
+            $('#part_id').val(id);
+            $('#labour_id').val('');
+            $scope.type = 'Part';
+        }
+
+        //console.log($scope.user.token);
+        $scope.splitOrderChange = function() {
+            //console.log('in');
+            var split_form_id = '#split_order_form';
+            var v = jQuery(split_form_id).validate({
+                ignore: '',
+                rules: {
+                    'split_order_type_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function(form) {
+                    //alert('submit');
+                    let formData = new FormData($(split_form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/job-card/split-order-update',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
+                            $('#split_order_change').modal('hide');
+                            $('#split_order_type_id').val('');
+                            //$('#' + res.type_id).click();
+                            $scope.fetchData();
+                            $('#' + res.type_id).trigger('click');
+                            //$("#tabs").tabs();
+                            //$(".selector").tabs("select", res.type_id);
+                            // console.log('start');
+                            // var active_tab = '#' + res.type_id;
+                            // console.log(active_tab);
+                            // $('#' + res.type_id).click();
+                            //console.log('end');
+                            // $("#tabs").tabs({ active: active_tab });
+
+                            // $location.path('/gigo-pkg/job-card/bill-detail/' + $routeParams.job_card_id);
+                            //$scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
 
         $tabs = $(".tabbable");
 
@@ -2190,147 +2244,7 @@ app.component('jobCardSplitOrder', {
 
 
 
-        /*$tabs = $(".tabbable");
 
-    $('.nav-tabs a').click(function(e) {
-        e.preventDefault();
-        $(this).tab('show');
-    })
-    
-    $( "tbody.connectedSortable" )
-        .sortable({
-            connectWith: ".connectedSortable",
-            items: "> tr:not(:first)",
-            appendTo: $tabs,
-            helper:"clone",
-            zIndex: 999990,
-            start: function(){ $tabs.addClass("dragging") },
-            stop: function(){ $tabs.removeClass("dragging") }
-        })
-        .disableSelection()
-    ;
-
-
-    $("#table1 .childgrid tr, #table2 .childgrid tr").draggable({
-      helper: function(){
-          var selected = $('.childgrid tr.selectedRow');
-        if (selected.length === 0) {
-          selected = $(this).addClass('selectedRow');
-        }
-        var container = $('<div/>').attr('id', 'draggingContainer');
-    container.append(selected.clone().removeClass("selectedRow"));
-    return container;
-      }
- });
-
-$("#table1 .childgrid, #table2 .childgrid").droppable({
-    drop: function (event, ui) {
-    $(this).append(ui.helper.children());
-    $('.selectedRow').remove();
-    }
-});
-
-$(document).on("click", ".childgrid tr", function () {
-    $(this).toggleClass("selectedRow");
-});*/
-
-
-        /*var $tab_items = $( ".nav-tabs > li", $tabs ).droppable({
-          accept: ".connectedSortable tr",
-          hoverClass: "ui-state-hover",
-          over: function( event, ui ) {
-            var $item = $( this );
-            $item.find("a").tab("show");
-            
-          },
-          drop: function( event, ui ) {
-            return false;
-          }
-        });*/
-
-        //$(".listitems" ).draggable();
-
-        /*   var index_value = ui.item.index();
-                    var count_value = ui.item.closest("tbody").find(".tr_scheme_priorities").length;
-                    var inc_index_value = index_value + 1;
-                    // console.log(' == total ===' + count_value);
-    //DOWN
-                    for (var i = inc_index_value; i < count_value; i++) {
-                        var scheme_type_id = ui.item.closest("tbody").find(".tr_scheme_priorities").eq(i).attr('data-scheme_type_id');
-                        var down_sorting_data = 'scheme_type_id=' + scheme_type_id + '&priority=' + i;
-                        // console.log(' == down === scheme_type_id ==' + scheme_type_id + ' == priority=' + i);
-                        $.ajax({
-                                url: update_scheme_type_priority_ajax_url,
-                                type: "POST",
-                                async: false,
-                                data: down_sorting_data,
-                                processData: false,
-                            })
-                            .done(function(data) {
-
-                            }).fail(function(xhr) {
-                                custom_noty('error', 'Something went wrong at server');
-                            });
-                    }
-    //UP
-                    for (var i = 0; i < index_value; i++) {
-                        var scheme_type_id = ui.item.closest("tbody").find(".tr_scheme_priorities").eq(i).attr('data-scheme_type_id');
-                        var up_sorting_data = 'scheme_type_id=' + scheme_type_id + '&priority=' + i;
-                        // console.log(' == up === scheme_type_id ==' + scheme_type_id + '===priority=' + i);
-                        $.ajax({
-                                url: update_scheme_type_priority_ajax_url,
-                                type: "POST",
-                                async: false,
-                                data: up_sorting_data,
-                                processData: false,
-                            })
-                            .done(function(data) {
-
-                            }).fail(function(xhr) {
-                                custom_noty('error', 'Something went wrong at server');
-                            });
-                    }
-//CURRENT
-                    var current_scheme_type_id = ui.item.attr('data-scheme_type_id');
-                    var current_data = 'scheme_type_id=' + current_scheme_type_id + '&priority=' + index_value;
-                    // console.log(' == current === scheme_type_id ==' + current_scheme_type_id + ' == priority=' + index_value);
-                    $.ajax({
-                            url: update_scheme_type_priority_ajax_url,
-                            type: "POST",
-                            async: false,
-                            data: current_data,
-                            processData: false,
-                        })
-                        .done(function(data) {
-                            if (data.success) {
-                                get_list();
-                                $('#sortable tbody').sortable('option', 'disabled', false);
-                                custom_noty('success', 'Scheme Priorities updated successfully');
-                            } else {
-                                custom_noty('error', 'Something went wrong at server');
-                            }
-
-                        }).fail(function(xhr) {
-                            custom_noty('error', 'Something went wrong at server');
-                        });*/
-
-        /*function dragstart_handler(ev) {
-            // Add the target element's id to the data transfer object
-            ev.dataTransfer.setData("application/my-app", ev.target.id);
-            ev.dataTransfer.dropEffect = "move";
-        }
-
-        function dragover_handler(ev) {
-            ev.preventDefault();
-            ev.dataTransfer.dropEffect = "move"
-        }
-
-        function drop_handler(ev) {
-            ev.preventDefault();
-            // Get the id of the target and add the moved element to the target's DOM
-            const data = ev.dataTransfer.getData("application/my-app");
-            ev.target.appendChild(document.getElementById(data));
-        }*/
     }
 });
 //---------------------------------------------------------------------------------------------
