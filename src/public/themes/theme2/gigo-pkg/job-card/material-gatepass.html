@@ -5,7 +5,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Material Gate Pass</b></h1>
@@ -18,9 +18,9 @@
     <div class="page-main-content form-content type2">
         <div class="page-tab-form pb-70">
             <jobcard-header></jobcard-header>
-            <div class="tab-form-wrap type-2">
+            <div class="tab-form-wrap type-2 side-tab-open">
                 <jobcard-tabs ng-init="active_tab = 'material-gatepass'"></jobcard-tabs>
-                <div class="tab-form-body">
+                <div class="tab-form-body side-tab-open">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
                         <div class="tab-pane fade in active" id="material_gatepass" data-animation="fadeInUp" data-animation-delay="300">
@@ -83,7 +83,7 @@
                                                                 </li>
                                                             </ul>
                                                         </div>
-                                                        <a href="#!/gigo-pkg/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
+                                                        <a href="#!/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
                                                     </div><!-- Column -->
                                                     <div class="col-lg-4" ng-if="gate_passes.gate_pass_items.length > 0">
                                                         <div id="myCarousel" class="carousel mgpass-carousel slide" data-ride="carousel">
@@ -126,7 +126,7 @@
                                             </div>
                                         </div>
                                         <div class="text-center pt-40">
-                                            <a href="#!/gigo-pkg/job-card/material-outward/{{job_card.id}}" class="btn btn-red">Add {{job_card.gate_passes.length > 0 ? 'Another' : ''}} Material Gate Pass</a>
+                                            <a href="#!/job-card/material-outward/{{job_card.id}}" class="btn btn-red">Add {{job_card.gate_passes.length > 0 ? 'Another' : ''}} Material Gate Pass</a>
                                         </div>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">

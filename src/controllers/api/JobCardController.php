@@ -3071,7 +3071,7 @@ class JobCardController extends Controller {
 				],
 				'work_order_no' => [
 					'required',
-					'integer',
+					'string',
 				],
 				'work_order_description' => [
 					'required',
@@ -3081,18 +3081,18 @@ class JobCardController extends Controller {
 					'min:3',
 					'max:191',
 				],
-				// 'item_details.*.item_make' => [
-				// 	'min:3',
-				// 	'max:191',
-				// ],
-				// 'item_details.*.item_model' => [
-				// 	'min:3',
-				// 	'max:191',
-				// ],
-				// 'item_details.*.item_serial_no' => [
-				// 	'min:3',
-				// 	'max:191',
-				// ],
+				'item_details.*.item_make' => [
+					'min:3',
+					'max:191',
+				],
+				'item_details.*.item_model' => [
+					'min:3',
+					'max:191',
+				],
+				'item_details.*.item_serial_no' => [
+					'min:3',
+					'max:191',
+				],
 				'item_details.*.qty' => [
 					'required',
 				],
@@ -3104,8 +3104,6 @@ class JobCardController extends Controller {
 			]);
 
 			if ($validator->fails()) {
-				$errors = $validator->errors()->all();
-				$success = false;
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
@@ -3114,24 +3112,13 @@ class JobCardController extends Controller {
 			}
 			DB::beginTransaction();
 
-			$job_card = JobCard::find($request->job_card_id);
-			if (!$job_card) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Job Card Not Found!',
-					],
-				]);
-			}
-
 			$gate_pass = GatePass::firstOrNew([
 				'job_card_id' => $request->job_card_id,
 				'id' => $request->gate_pass_id,
-				'status_id' => 8300, //Gate Out Pending
 			]);
 
 			$gate_pass->type_id = 8281; //Material Gate Pass
+			$gate_pass->status_id = 8300; //Gate Out Pending
 			$gate_pass->company_id = Auth::user()->company_id;
 			$gate_pass->number = rand();
 			$gate_pass->fill($request->all());
@@ -3193,8 +3180,10 @@ class JobCardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}

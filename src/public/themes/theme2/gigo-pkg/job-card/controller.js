@@ -158,11 +158,11 @@ app.component('jobCardTableList', {
         });
         $scope.listRedirect = function(type) {
             if (type == 'table') {
-                window.location = "#!/gigo-pkg/job-card/table-list";
+                window.location = "#!/job-card/table-list";
                 return false;
             } else {
                 //alert();
-                window.location = "#!/gigo-pkg/job-card/card-list";
+                window.location = "#!/job-card/card-list";
                 return false;
             }
         }
@@ -327,10 +327,10 @@ app.component('jobCardCardList', {
 
         $scope.listRedirect = function(type) {
             if (type == 'table') {
-                window.location = "#!/gigo-pkg/job-card/table-list";
+                window.location = "#!/job-card/table-list";
                 return false;
             } else {
-                window.location = "#!/gigo-pkg/job-card/card-list";
+                window.location = "#!/job-card/card-list";
                 return false;
             }
         }
@@ -672,7 +672,7 @@ app.component('jobCardBayForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/job-card/table-list');
+                            $location.path('/job-card/table-list');
                             $scope.$apply();
                             $('.submit').button('reset');
                         })
@@ -979,7 +979,6 @@ app.component('jobCardMaterialOutwardForm', {
 
         //GET VENDOR INFO
         $scope.selectedVendorCode = function(id) {
-            self.isFire = true;
             if (id) {
                 $.ajax({
                         url: laravel_routes['getVendorDetails'],
@@ -1035,14 +1034,7 @@ app.component('jobCardMaterialOutwardForm', {
         $scope.saveItemDetails = function() {
             var form_id = '#material_gatepass';
             var v = jQuery(form_id).validate({
-                errorPlacement: function(error, element) {
-                    show_alert = true;
-                    error.insertAfter(element)
-                },
-                invalidHandler: function(form, validator) {
-                    console.log('Errors!!');
-                },
-                ignore: [],
+                ignore: '',
                 rules: {
                     'vendor_id': {
                         required: true,
@@ -1056,27 +1048,12 @@ app.component('jobCardMaterialOutwardForm', {
                     'work_order_description': {
                         required: true,
                     },
-                    'item_description[]': {
-                        required: true,
-                    },
-                    'item_make[]': {
-                        required: true,
-                    },
-                    'item_model[]': {
-                        required: true,
-                    },
-                    'item_serial_no[]': {
-                        required: true,
-                    },
-                    'qty[]': {
-                        required: true,
-                    },
-                    'remarks[]': {
-                        required: true,
-                    },
                 },
                 messages: {
 
+                },
+                errorPlacement: function(error, element) {
+                    error.insertAfter(element)
                 },
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
@@ -1101,7 +1078,7 @@ app.component('jobCardMaterialOutwardForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/job-card/material-gatepass/' + $scope.job_card_id);
+                            $location.path('/job-card/material-gatepass/' + $scope.job_card_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
