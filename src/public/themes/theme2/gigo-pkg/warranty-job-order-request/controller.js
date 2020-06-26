@@ -207,6 +207,110 @@ app.component('warrantyJobOrderRequestCardList', {
 //-------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------
 
+app.component('warrantyJobOrderRequestTableList', {
+    templateUrl: warrantyJobOrderRequestTableList,
+    controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect) {
+        $rootScope.loading = true;
+        $('#search').focus();
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+
+        if (!HelperService.isLoggedIn()) {
+            $location.path('/login');
+            return;
+        }
+
+        $scope.user = HelperService.getLoggedUser();
+
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
+        var params = {
+            page: 1, // show first page
+            count: 100, // count per page
+            sorting: {
+                created_at: 'asc' // initial sorting
+            },
+            filter: {
+                // search: '',
+                statusIn: [9100, 9101, 9103], //new, waiting for approval and rejected
+            },
+        };
+
+        // typeIn: [2, 5], //warranty & free service orders
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            WarrantyJobOrderRequestSvc.index(params)
+                .then(function(response) {
+                    $scope.warranty_job_order_requests = response.data.warranty_job_order_request_collection;
+                    $rootScope.loading = false;
+                });
+        }
+        $scope.fetchData();
+
+        // $scope.sendToApproval = function(warranty_job_order_request) {
+
+        //     console.log(warranty_job_order_request);
+        //     WarrantyJobOrderRequestSvc.confirmSendToApproval(warranty_job_order_request)
+        //         .then(function(status) {
+
+        //             console.log(status);
+        //             warranty_job_order_request.status = status;
+        //         });
+        // };
+
+        $scope.sendToApproval = function(warranty_job_order_request) {
+            $ngBootbox.confirm({
+                    message: 'Are you sure you want to send to approval?',
+                    title: 'Confirm',
+                    size: "small",
+                    className: 'text-center',
+                })
+                .then(function() {
+                    $rootScope.loading = true;
+                    WarrantyJobOrderRequestSvc.sendToApproval(warranty_job_order_request)
+                        .then(function(response) {
+                            $rootScope.loading = false;
+                            if (!response.data.success) {
+                                showErrorNoty(response.data);
+                                return;
+                            }
+                            showNoty('success', 'Warranty job order request initiated successfully');
+                            warranty_job_order_request.status = response.data.warranty_job_order_request.status;
+                        });
+                });
+        }
+
+
+        $scope.confirmDelete = function(warranty_job_order_request,key) {
+            $ngBootbox.confirm({
+                    message: 'Are you sure you want to delete this?',
+                    title: 'Confirm',
+                    size: "small",
+                    className: 'text-center',
+                })
+                .then(function() {
+                    WarrantyJobOrderRequestSvc.remove(warranty_job_order_request)
+                        .then(function(response) {
+                            if (!response.data.success) {
+                                showErrorNoty(response.data);
+                                return;
+                            }
+                            showNoty('success', 'Warranty job order request deleted successfully');
+                            // $location.path('/warranty-job-order-request/card-list');
+                            $scope.warranty_job_order_requests.splice(key, 1);
+                        });
+                });
+        }
+
+    }
+});
+
+//-------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------
+
 app.component('warrantyJobOrderRequestForm', {
     templateUrl: warrantyJobOrderRequestForm,
     controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc) {
@@ -329,10 +433,11 @@ app.component('warrantyJobOrderRequestForm', {
                     }
                     if ($scope.updating) {
                         $scope.calculateLabourTotal('update');
+                        $scope.calculatePartTotal('update');
                     }else{
                         $scope.calculateLabourTotal();
+                        $scope.calculatePartTotal();
                     }
-                    $scope.calculatePartTotal();
 
                     $("#file-1").fileinput({
                         theme: 'fas',
@@ -418,6 +523,11 @@ app.component('warrantyJobOrderRequestForm', {
             });
         }
         $scope.partSelected = function(part) {
+            var quantity = 1; 
+            if(part.pivot!=undefined){
+                quantity = part.pivot.quantity;
+            }
+            part.quantity = quantity;
             $scope.calculatePartAmount(part);
         }
         $scope.repairOrderSelected = function(repair_order) {
@@ -444,6 +554,13 @@ app.component('warrantyJobOrderRequestForm', {
             }
         }
         
+        $scope.partQuantityChange = function (part) {
+            $scope.calculatePartAmount(part);
+        }
+        $scope.partAmountChange = function (part) {
+            $scope.calculatePartAmount(part);
+        }
+        
         $scope.calculateRepairOrderAmount = function(repair_order) {
             var total_amount = 0;
             var tax_total = 0;
@@ -461,7 +578,8 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.calculatePartAmount = function(part){
             var total_amount = 0;
             var tax_total = 0;
-            var amount = part.rate;
+
+            var amount = part.rate * part.quantity;
 
             if (part.tax_code) {
                 angular.forEach(part.tax_code.taxes, function(tax) {
@@ -656,6 +774,12 @@ app.component('warrantyJobOrderRequestForm', {
                 'part_id': {
                     required: true,
                 },
+                'quantity': {
+                    required: true,
+                },
+                'rate': {
+                    required: true,
+                },
             },
             messages: {
 
@@ -742,16 +866,25 @@ app.component('warrantyJobOrderRequestForm', {
             $scope.calculateEstimateTotal()
         }
 
-        $scope.calculatePartTotal = function() {
+        $scope.calculatePartTotal = function(update=null) {
+            console.log($scope.warranty_job_order_request.job_order.customer.state_id);
+            console.log($scope.warranty_job_order_request.job_order.customer.pivot);
             var total = 0;
-
             angular.forEach($scope.warranty_job_order_request.parts, function(part) {
-                var amount = part.rate;
+                if (update) {
+                    $quantity = part.pivot.quantity;
+                }else{
+                    $quantity = part.quantity;
+                }
+                var amount = part.rate * $quantity;
                 var tax_total = 0;
                 if (part.tax_code) {
                     angular.forEach(part.tax_code.taxes, function(tax) {
                         tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
                     })
+                }
+                if (update!=null) {
+                    part.quantity = Math.trunc(part.pivot.quantity);
                 }
                 part.net_amount = parseFloat(amount) + tax_total;
                 part.net_amount_without_tax = parseFloat(amount);

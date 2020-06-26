@@ -129,6 +129,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
 
+	public function customer() {
+		return $this->belongsTo('App\Customer', 'customer_id');
+	}
+
 	public function serviceTypes() {
 		return $this->belongsToMany('App\ServiceType', 'wjor_service_type', 'wjor_id', 'service_type_id');
 	}
@@ -138,7 +142,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 	}
 
 	public function parts() {
-		return $this->belongsToMany('App\Part', 'wjor_parts', 'wjor_id')->withPivot(['net_amount','tax_total','total_amount'])->with(['uom','taxCode','taxCode.taxes']);
+		return $this->belongsToMany('App\Part', 'wjor_parts', 'wjor_id')->withPivot(['net_amount','tax_total','total_amount','quantity'])->with(['uom','taxCode','taxCode.taxes']);
 	}
 
 	// public function repairOrders() {
@@ -161,6 +165,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 			'jobOrder.vehicle',
 			'jobOrder.serviceType',
 			'jobOrder.status',
+			'jobOrder.customer',
 			'complaint',
 			'fault',
 			'supplier',
@@ -371,6 +376,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 					$wjorPart->wjor_id = $record->id;
 					$wjorPart->part_id = $part['id'];
 					$wjorPart->net_amount = $part['net_amount'];
+					$wjorPart->quantity = $part['quantity'];
 					$wjorPart->tax_total = $part['tax_total'];
 					$wjorPart->total_amount = $part['total_amount'];
 					$wjorPart->save();

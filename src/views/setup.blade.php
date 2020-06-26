@@ -605,6 +605,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	//WARRANTY JOB ORDER REQUEST
 
     var warrantyJobOrderRequestCardList = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/card-list.html")}}';
+    var warrantyJobOrderRequestTableList = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/table-list.html")}}';
     var warrantyJobOrderRequestForm = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/form.html")}}';
     var warrantyJobOrderRequestView = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/view.html")}}';
 

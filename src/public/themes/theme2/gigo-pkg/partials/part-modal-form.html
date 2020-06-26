@@ -45,6 +45,17 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>
+                                Purchase Type
+                            </label>
+                            <input type="radio" id="option_stock" name="purchase_type" ng-model="part.purchase_type" value="stock">
+                            <label for="option_stock">Stock</label>
+                            <input type="radio" id="option_local" name="purchase_type" ng-model="part.purchase_type" value="local">
+                            <label for="option_local">Local Purchase</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>
                                 UOM
                             </label>
                             <label>
@@ -52,24 +63,48 @@
                             </label>
                         </div><!-- Field -->
                     </div><!-- Column -->
+                </div>
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>
-                                Net Amount
+                                Rate
                             </label>
-                            <input type="text" ng-keyup="partAmountChange(part)" class="form-control" name="rate" ng-model="part.rate" maxlength="12" ng-readonly="true">
+                            <input type="text" ng-keyup="partAmountChange(part)" class="form-control" name="rate" ng-model="part.rate" maxlength="12" ng-readonly="part.purchase_type != 'local'">
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>
+                                Quantity
+                            </label>
+                            <input type="text" ng-keyup="partQuantityChange(part)" class="form-control" name="quantity" ng-model="part.quantity" maxlength="12">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>
+                                MRP
+                            </label>
+                            <label>
+                                {{part.mrp}}
+                            </label>
+                        </div><!-- Field -->
+                    </div><!-- Column -->
                     <div class="col-md-6" ng-repeat="(tax_key, tax) in part.tax_code.taxes" ng-if="part.tax_code">
                         <div class="form-group">
                             <label>
                                 {{tax.name}} ({{tax.pivot.percentage}}%)
                             </label>
                             <label>
-                                {{(part.rate*tax.pivot.percentage)/100 | currency}}
+                                {{((part.rate*part.quantity)*tax.pivot.percentage)/100 | currency}}
                             </label>
                         </div><!-- Field -->
                     </div><!-- Column -->
+                </div>
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>
