@@ -181,16 +181,11 @@ app.component('kanbanAppAttendanceScanQr', {
                                 $('.submit').button('reset');
                                 return;
                             }
-
-                            console.log(res);
                             self.response = res.data;
-                            if (res.data.action == 'Out') {
-                                $scope.showQrScan = false;
-                                $scope.showCheckInSuccess = false;
-                                $scope.showCheckOutConfirmation = true;
-                                $scope.showCheckOut = false;
-                                $scope.punch_out = res.data.punch_out;
-                            }
+                            $scope.showQrScan = false;
+                            $scope.showCheckInSuccess = false;
+                            $scope.showCheckOutConfirmation = true;
+                            $scope.showCheckOut = false;
                             $scope.punch_user = res.data.punch_user;
                             $scope.$apply();
                         })

@@ -1960,7 +1960,7 @@ app.component('inwardVehicleVehicleDetail', {
                     },
                     'registration_number': {
                         required: true,
-                        minlength: 10,
+                        minlength: 8,
                         maxlength: 10,
                     },
                     'plate_number': {
