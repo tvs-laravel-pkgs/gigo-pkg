@@ -237,17 +237,17 @@ app.config(['$routeProvider', function($routeProvider) {
 
 
     //Kanban App
-    when('/gigo-pkg/kanban-app', {
+    when('/kanban-app', {
         template: '<kanban-app></kanban-app>',
         title: 'Kanban App',
     }).
     //Kanban Attendance Scan Qr
-    when('/gigo-pkg/kanban-app/attendance/scan-qr', {
+    when('/kanban-app/attendance/scan-qr', {
         template: '<kanban-app-attendance-scan-qr></kanban-app-attendance-scan-qr>',
         title: 'Attendance - Scan Qr',
     }).
     //Kanban My Job Card Scan Qr
-    when('/gigo-pkg/kanban-app/my-job-card/scan-qr', {
+    when('/kanban-app/my-job-card/scan-qr', {
         template: '<kanban-app-my-job-card-scan-qr></kanban-app-my-job-card-scan-qr>',
         title: 'My Job Card - Scan Qr',
     });

@@ -47,9 +47,7 @@ class MyJobCardController extends Controller {
 				'job_cards.job_card_number as jc_number',
 				'vehicles.registration_number',
 				DB::raw('COUNT(job_order_repair_orders.id) as no_of_ROTs'),
-				'configs.name as status',
-				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+				'configs.name as status', 'job_cards.created_at',
 				'models.model_number',
 				'customers.name as customer_name',
 			])
@@ -66,6 +64,7 @@ class MyJobCardController extends Controller {
 				->join('configs', 'configs.id', 'job_cards.status_id')
 				->where('repair_order_mechanics.mechanic_id', $request->user_id)
 				->groupBy('job_order_repair_orders.job_order_id')
+				->orderBy('job_cards.created_at', 'DESC')
 				->get();
 
 			return response()->json([
@@ -294,10 +293,10 @@ class MyJobCardController extends Controller {
 				$mechanic_time_log = MechanicTimeLog::select('start_date_time', 'end_date_time')->where('repair_order_mechanic_id', $repair_order_mechanic->id)->get()->toArray();
 
 				//Mechanic Start Time
-				$work_start_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->orderby('id', 'ASC')->pluck('start_date_time')->first();
+				$work_start_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->orderby('id', 'ASC')->select('start_date_time as work_start_time')->first();
 
 				//Mechanic End Time
-				$work_end_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->orderby('id', 'DESC')->pluck('end_date_time')->first();
+				$work_end_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->orderby('id', 'DESC')->select('end_date_time as work_end_time')->first();
 
 				if ($mechanic_time_log) {
 					foreach ($mechanic_time_log as $key => $repair_order_mechanic_time_log) {
@@ -318,8 +317,8 @@ class MyJobCardController extends Controller {
 				}
 
 				$work_logs['message'] = "Work Log Saved Successfully";
-				$work_logs['work_start_date_time'] = $work_start_date_time;
-				$work_logs['work_end_date_time'] = $work_end_date_time;
+				$work_logs['work_start_date_time'] = $work_start_date_time->work_start_time;
+				$work_logs['work_end_date_time'] = $work_end_date_time->work_end_time;
 				$work_logs['actual_hrs'] = $actual_hrs;
 				$work_logs['total_working_hours'] = $total_hours;
 

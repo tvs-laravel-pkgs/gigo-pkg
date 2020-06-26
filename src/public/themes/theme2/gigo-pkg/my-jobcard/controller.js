@@ -35,7 +35,7 @@ app.component('myJobcardCardList', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/get-my-job-card-list',
+                    url: base_url + '/api/myjobcard/list',
                     method: "POST",
                     data: {
                         user_id: $routeParams.user_id,

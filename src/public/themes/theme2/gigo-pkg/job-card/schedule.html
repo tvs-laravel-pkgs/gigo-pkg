@@ -46,7 +46,7 @@
                                                     <!-- ng-click="assign_mechanic(job_order_repair_order.repair_order.code,job_order_repair_order.repair_order.name)" -->
                                                     <a class="btn btn-bordered btn-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id !=8182" ng-click="viewTimeLog(job_order_repair_order.id)" data-target="#view_time_log_modal" data-toggle="modal">View Time Log</a>
                                                     <a href="#!/gigo-pkg/job-card/labour-review/{{job_card_id}}/{{job_order_repair_order.id}}" class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185">Review</a>
-                                                    <a class="btn btn-secondary-dark btn-square assign_mechanic_{{job_order_repair_order.repair_order.id}}" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id != 8187" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Edit</a>
+                                                    <a class="btn btn-secondary-dark btn-square assign_mechanic_{{job_order_repair_order.repair_order.id}}" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id != 8187 && job_order_repair_order.status_id != 8185" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Re-Assign</a>
                                                 </div>
                                             </div><!-- Left Wrap -->
                                             <div class="right-wrap">

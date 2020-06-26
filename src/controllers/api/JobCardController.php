@@ -1032,8 +1032,9 @@ class JobCardController extends Controller {
 				->leftjoin('outlets as deputed_outlet', 'deputed_outlet.id', 'employees.deputed_outlet_id')
 				->where('employees.is_mechanic', 1)
 				->where('users.user_type_id', 1) //EMPLOYEE
-				->where('employees.outlet_id', $job_card->outlet_id)
 				->where('employees.skill_level_id', $repair_order->skill_level_id)
+				->where('employees.outlet_id', $job_card->outlet_id)
+				->orWhere('employees.deputed_outlet_id', $job_card->outlet_id)
 				->orderBy('users.name', 'asc')
 				->get()
 			;

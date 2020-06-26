@@ -35,14 +35,17 @@ app.component('kanbanAppAttendanceScanQr', {
             $location.path('/page-permission-denied');
             return;
         }
-        $scope.showQrScan = true;
-        $scope.showCheckInSuccess = false;
-        $scope.showCheckOutConfirmation = false;
-        $scope.showCheckOut = false;
+
+        setTimeout(function() {
+            $scope.showQrScan = true;
+            $scope.showCheckInSuccess = false;
+            $scope.showCheckOutConfirmation = false;
+            $scope.showCheckOut = false;
+        }, 1000);
+
 
         $scope.onSuccess = function(data) {
             console.log(data);
-            // $scope.encrypted_id = data;
             $scope.Punch(data);
         };
         $scope.onError = function(error) {
@@ -53,8 +56,6 @@ app.component('kanbanAppAttendanceScanQr', {
         };
 
         $scope.Punch = function(data) {
-            //console.log('punch ');
-            //console.log($scope.user);
             if (data) {
                 $.ajax({
                         url: base_url + '/api/employee-pkg/punch',
@@ -98,63 +99,6 @@ app.component('kanbanAppAttendanceScanQr', {
                 custom_noty('error', 'Wrong QR Code!');
             }
         }
-
-        // var form_id = '#attendance_form';
-        // var v = jQuery(form_id).validate({
-        //     ignore: '',
-        //     rules: {},
-        //     submitHandler: function(form) {
-        //         let formData = new FormData($(form_id)[0]);
-        //         //$('.submit').button('loading');
-        //         $.ajax({
-        //                 url: base_url + '/api/employee-pkg/punch',
-        //                 method: "POST",
-        //                 data: formData,
-        //                 processData: false,
-        //                 contentType: false,
-        //                 beforeSend: function(xhr) {
-        //                     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-        //                 },
-        //             })
-        //             .done(function(res) {
-        //                 if (!res.success) {
-        //                     showErrorNoty(res);
-        //                     $('.submit').button('reset');
-        //                     return;
-        //                 }
-
-        //                 console.log(res);
-        //                 self.response = res.data;
-        //                 if (res.data.action == 'Out') {
-        //                     $scope.showQrScan = false;
-        //                     $scope.showCheckInSuccess = false;
-        //                     $scope.showCheckOutConfirmation = false;
-        //                     $scope.showCheckOut = true;
-        //                     $scope.punch_out = res.data.punch_out;
-        //                     $scope.punch_out_method_list = res.data.punch_out_method_list;
-        //                 } else {
-        //                     $scope.showQrScan = false;
-        //                     $scope.showCheckInSuccess = true;
-        //                     $scope.showCheckOutConfirmation = false;
-        //                     $scope.showCheckOut = false;
-        //                     $scope.punch_in = res.data.punch_in;
-        //                 }
-        //                 $scope.punch_user = res.data.punch_user;
-        //                 //$scope.punch_in=res.punch_in;
-
-        //                 $scope.$apply();
-
-        //             })
-        //             .fail(function(xhr) {
-
-        //                 console.log(xhr);
-        //                 $('.submit').button('reset');
-        //                 showServerErrorNoty();
-        //             });
-        //     }
-        // });
-        // }
-
 
         $scope.savePunchOut = function() {
             //console.log($scope.user);
@@ -200,7 +144,7 @@ app.component('kanbanAppAttendanceScanQr', {
 
         $scope.reloadPage = function() {
             // $route.reload();
-            window.location = base_url + '#!/gigo-pkg/kanban-app';
+            window.location = base_url + '#!/kanban-app';
         }
 
     }
@@ -241,7 +185,7 @@ app.component('kanbanAppMyJobCardScanQr', {
         $scope.scanQR = function(data) {
             if (data) {
                 $.ajax({
-                        url: base_url + '/api/get-my-job-card-list',
+                        url: base_url + '/api/myjobcard/list',
                         method: "POST",
                         data: {
                             user_id: data,
@@ -255,7 +199,6 @@ app.component('kanbanAppMyJobCardScanQr', {
                             showErrorNoty(res);
                             return;
                         }
-                        console.log(res);
                         window.location = base_url + '#!/my-jobcard/card-list/' + data;
                         $scope.$apply();
                     })
@@ -267,7 +210,7 @@ app.component('kanbanAppMyJobCardScanQr', {
             }
         }
         $scope.reloadPage = function() {
-            window.location = base_url + '#!/gigo-pkg/kanban-app';
+            window.location = base_url + '#!/kanban-app';
         }
     }
 });
