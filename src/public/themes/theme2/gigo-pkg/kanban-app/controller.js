@@ -143,7 +143,6 @@ app.component('kanbanAppAttendanceScanQr', {
         }
 
         $scope.reloadPage = function() {
-            // $route.reload();
             window.location = base_url + '#!/kanban-app';
         }
 
