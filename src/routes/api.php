@@ -225,7 +225,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('job-card/bay-view/get', 'JobCardController@getBayViewData');
 
 		//MY JOB CARD
-		Route::post('get-my-job-card-list', 'MyJobCardController@getMyJobCardList');
+		Route::post('myjobcard/list', 'MyJobCardController@getMyJobCardList');
 		// MY JOB CARD DATA
 		Route::post('my-job-card-view', 'MyJobCardController@getMyJobCardData');
 		//Save Start Worklog
