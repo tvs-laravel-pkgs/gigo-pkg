@@ -887,6 +887,15 @@ app.component('jobCardMaterialGatepassForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_card = res.view_metrial_gate_pass;
+                    setTimeout(function(){ 
+                        if($scope.job_card.gate_passes.length > 0){
+                            angular.forEach($scope.job_card.gate_passes, function(gate_pass, key){
+                                 $('#carousel_li_'+gate_pass.id+'0').addClass('active');
+                                 $('#carousel_inner_item_'+gate_pass.id+'0').addClass('active');
+                            });
+                        }
+                    }, 1000);
+                    
                     $scope.job_order = res.job_order;
                     $scope.$apply();
 
@@ -896,6 +905,13 @@ app.component('jobCardMaterialGatepassForm', {
                 });
         }
         $scope.fetchData();
+
+        $scope.carouselLiChange = function(gatepass_id, index){
+            $('#carousel_parent_'+gatepass_id+" .carousel_li").removeClass('active');
+            $('#carousel_parent_'+gatepass_id+" .carousel_inner_item").removeClass('active');
+            $('#carousel_li_'+gatepass_id+index).addClass('active');
+            $('#carousel_inner_item_'+gatepass_id+index).addClass('active');
+        }
     }
 });
 

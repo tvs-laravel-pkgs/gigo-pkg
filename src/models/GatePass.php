@@ -25,9 +25,18 @@ class GatePass extends Model {
 		"gate_out_remarks",
 	];
 
+	protected $appends = [
+		'created_on',
+	];
+
 	public function getCreatedAtAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
 	}
+
+	public function getCreatedOnAttribute() {
+		return empty($this->attributes['created_at']) ? '' : date('d/m/Y', strtotime($this->attributes['created_at']));
+	}
+
 	public function getGateInDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
 	}
