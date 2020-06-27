@@ -1238,12 +1238,12 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Job Card Card List',
 	    }).
 
-	    when('/gigo-pkg/job-card/assign-bay/:id', {
+	    when('/job-card/assign-bay/:id', {
 	        template: '<job-card-bay-form></job-card-bay-form>',
 	        title: 'Assign Bay',
 	    }).
 
-	    when('/gigo-pkg/job-card/bay-view/:job_card_id', {
+	    when('/job-card/bay-view/:job_card_id', {
 	        template: '<job-card-bay-view></job-card-bay-view>',
 	        title: 'Job Card Bay View',
 	    }).
