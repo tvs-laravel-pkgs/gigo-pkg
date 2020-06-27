@@ -2836,12 +2836,9 @@ class JobCardController extends Controller {
 				'gatePasses.gatePassDetail',
 				'gatePasses.gatePassDetail.vendorType',
 				'gatePasses.gatePassDetail.vendor',
-				'gatePasses.gatePassDetail.vendor.addresses',
-				'gatePasses.gatePassDetail.vendor.addresses.country',
-				'gatePasses.gatePassDetail.vendor.addresses.state',
-				'gatePasses.gatePassDetail.vendor.addresses.city',
+				'gatePasses.gatePassDetail.vendor.primaryAddress',
 				'gatePasses.gatePassItems',
-				'gatePasses.gatePassItems.attachments',
+				'gatePasses.gatePassItems.attachment',
 			])
 				->find($request->id);
 
@@ -2881,8 +2878,10 @@ class JobCardController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -2917,7 +2916,7 @@ class JobCardController extends Controller {
 					'gatePassDetail.vendorType',
 					'gatePassDetail.vendor',
 					'gatePassDetail.vendor.primaryAddress',
-					'gatePassItems.attachments',
+					'gatePassItems.attachment',
 				])
 					->find($request->gate_pass_id);
 
@@ -3083,15 +3082,23 @@ class JobCardController extends Controller {
 					'min:3',
 					'max:191',
 				],
+				'item_details.*.name' => [
+					'required',
+					'min:3',
+					'max:191',
+				],
 				'item_details.*.item_make' => [
+					'nullable',
 					'min:3',
 					'max:191',
 				],
 				'item_details.*.item_model' => [
+					'nullable',
 					'min:3',
 					'max:191',
 				],
 				'item_details.*.item_serial_no' => [
+					'required',
 					'min:3',
 					'max:191',
 				],
@@ -3115,7 +3122,6 @@ class JobCardController extends Controller {
 			DB::beginTransaction();
 
 			$gate_pass = GatePass::firstOrNew([
-				'job_card_id' => $request->job_card_id,
 				'id' => $request->gate_pass_id,
 			]);
 
@@ -3128,10 +3134,10 @@ class JobCardController extends Controller {
 
 			$gate_pass_detail = GatePassDetail::firstOrNew([
 				'gate_pass_id' => $gate_pass->id,
-				'work_order_no' => $request->work_order_no,
 			]);
 			$gate_pass_detail->vendor_type_id = $request->vendor_type_id;
 			$gate_pass_detail->vendor_id = $request->vendor_id;
+			$gate_pass_detail->work_order_no = $request->work_order_no;
 			$gate_pass_detail->vendor_contact_no = $request->vendor_contact_no;
 			$gate_pass_detail->work_order_description = $request->work_order_description;
 			$gate_pass_detail->created_by_id = Auth::user()->id;
@@ -3146,28 +3152,38 @@ class JobCardController extends Controller {
 			}
 
 			//CREATE DIRECTORY TO STORAGE PATH
-			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
+			$attachment_path = storage_path('app/public/gigo/material_gate_pass/attachments/');
 			Storage::makeDirectory($attachment_path, 0777);
 
-			if ($request->item_details) {
+			if (isset($request->item_details)) {
 				foreach ($request->item_details as $key => $item_detail) {
+					$item_detail['gate_pass_id'] = $gate_pass->id;
+					$validator1 = Validator::make($item_detail, [
+						'item_serial_no' => [
+							'unique:gate_pass_items,item_serial_no,' . $item_detail['id'] . ',id,gate_pass_id,' . $item_detail['gate_pass_id'] . ',name,' . $item_detail['name'],
+						],
+					]);
+
+					if ($validator1->fails()) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => $validator1->errors()->all(),
+						]);
+					}
 					$gate_pass_item = GatePassItem::firstOrNew([
-						'gate_pass_id' => $gate_pass->id,
-						'name' => $item_detail['name'],
-						'item_serial_no' => $item_detail['item_serial_no'],
+						'id' => $item_detail['id'],
 					]);
 					$gate_pass_item->fill($item_detail);
 					$gate_pass_item->save();
 
 					//SAVE MATERIAL OUTWARD ATTACHMENT
-					if (!empty($item_detail['material_outward_attachments'])) {
-						foreach ($item_detail['material_outward_attachments'] as $key => $material_outward_attachment) {
-							$attachment = $material_outward_attachment;
-							$entity_id = $gate_pass_item->id;
-							$attachment_of_id = 231; //Material Gate Pass
-							$attachment_type_id = 238; //Material Gate Pass
-							saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
-						}
+					if (!empty($item_detail['material_outward_attachment'])) {
+						$attachment = $item_detail['material_outward_attachment'];
+						$entity_id = $gate_pass_item->id;
+						$attachment_of_id = 231; //Material Gate Pass
+						$attachment_type_id = 238; //Material Gate Pass
+						saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 					}
 				}
 			}

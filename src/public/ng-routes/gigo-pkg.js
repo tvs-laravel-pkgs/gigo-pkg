@@ -136,12 +136,17 @@ app.config(['$routeProvider', function($routeProvider) {
     }).
 
     //Material Gate Pass
-    when('/gigo-pkg/material-gate-pass/list', {
-        template: '<material-gate-pass-list></material-gate-pass-list>',
-        title: 'Material Gate Pass',
+    when('/material-gate-pass/table-list', {
+        template: '<material-gate-pass-table-list></material-gate-pass-table-list>',
+        title: 'Material Gate Pass - Table List',
     }).
 
-    when('/gigo-pkg/material-gate-pass/view/:id', {
+    when('/material-gate-pass/card-list', {
+        template: '<material-gate-pass-card-list></material-gate-pass-card-list>',
+        title: 'Material Gate Pass - Card List',
+    }).
+
+    when('/material-gate-pass/view/:id', {
         template: '<material-gate-pass-view></material-gate-pass-view>',
         title: 'View Material Gate Pass',
     }).

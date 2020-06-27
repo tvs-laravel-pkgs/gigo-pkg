@@ -2,7 +2,7 @@ app.component('inwardVehicleCardList', {
     templateUrl: inward_vehicle_card_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $rootScope.loading = true;
-        $('#search').focus();
+        $('#search_inward_vehicle').focus();
         var self = this;
         HelperService.isLoggedIn()
         $('li').removeClass('active');
