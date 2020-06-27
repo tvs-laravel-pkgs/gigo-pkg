@@ -16,14 +16,17 @@ use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
 use Abs\PartPkg\Part;
+use Abs\SerialNumberPkg\SerialNumberGroup;
 use Abs\TaxPkg\Tax;
 use App\Attachment;
 use App\Config;
 use App\Customer;
 use App\Employee;
+use App\FinancialYear;
 use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrderPart;
+use App\Outlet;
 use App\SplitOrderType;
 use App\VehicleInspectionItem;
 use App\VehicleInspectionItemGroup;
@@ -2967,103 +2970,6 @@ class JobCardController extends Controller {
 		}
 	}
 
-	//Material GatePass Detail Save
-	// public function saveMaterialGatePassDetail(Request $request) {
-	// 	dd($request->all());
-	// 	try {
-
-	// 		$validator = Validator::make($request->all(), [
-	// 			'job_card_id' => [
-	// 				'required',
-	// 				'integer',
-	// 				'exists:job_cards,id',
-	// 			],
-	// 			'vendor_type_id' => [
-	// 				'required',
-	// 				'integer',
-	// 				'exists:configs,id',
-	// 			],
-	// 			'vendor_id' => [
-	// 				'required',
-	// 				'integer',
-	// 				'exists:vendors,id',
-	// 			],
-	// 			'work_order_no' => [
-	// 				'required',
-	// 				'integer',
-	// 			],
-	// 			'work_order_description' => [
-	// 				'required',
-	// 			],
-
-	// 		]);
-
-	// 		if ($validator->fails()) {
-	// 			$errors = $validator->errors()->all();
-	// 			$success = false;
-	// 			return response()->json([
-	// 				'success' => false,
-	// 				'error' => 'Validation Error',
-	// 				'errors' => $validator->errors()->all(),
-	// 			]);
-	// 		}
-	// 		DB::beginTransaction();
-
-	// 		$job_card = JobCard::find($request->job_card_id);
-	// 		if (!$job_card) {
-	// 			return response()->json([
-	// 				'success' => false,
-	// 				'error' => 'Job Card Not Found!',
-	// 			]);
-	// 		}
-
-	// 		$status = Status::where('type_id', 8451)->where('name', 'Gate Out Pending')->first();
-	// 		/*if ($status) {
-	// 			return response()->json([
-	// 				'success' => false,
-	// 				'error' => 'Gate Out Pending Status Not Found!',
-	// 			]);
-	// 		}*/
-	// 		$gate_pass = GatePass::firstOrNew([
-	// 			'job_card_id' => $request->job_card_id,
-	// 			'id' => $request->gate_pass_id,
-	// 		]);
-	// 		$gate_pass->type_id = 8281; //Material Gate Pass
-	// 		$gate_pass->status_id = $status->id; //Gate Out Pending
-	// 		$gate_pass->company_id = Auth::user()->company_id;
-	// 		$gate_pass->job_card_id = $request->job_card_id;
-	// 		$gate_pass->fill($request->all());
-	// 		$gate_pass->save();
-
-	// 		$gate_pass_detail = GatePassDetail::firstOrNew([
-	// 			'gate_pass_id' => $request->gate_pass_id,
-	// 			'work_order_no' => $request->work_order_no,
-	// 		]);
-	// 		$gate_pass_detail->gate_pass_id = $gate_pass->id;
-	// 		$gate_pass_detail->work_order_no = $request->work_order_no;
-	// 		$gate_pass_detail->vendor_type_id = $request->vendor_type_id;
-	// 		$gate_pass_detail->vendor_id = $request->vendor_id;
-	// 		$gate_pass_detail->vendor_contact_no = $request->vendor_contact_no;
-	// 		$gate_pass_detail->work_order_description = $request->work_order_description;
-	// 		// $gate_pass_detail->created_by = Auth::user()->id;
-	// 		$gate_pass_detail->save();
-
-	// 		DB::commit();
-
-	// 		return response()->json([
-	// 			'success' => true,
-	// 			'message' => 'Material Gate Pass Details Saved Successfully!!',
-	// 		]);
-
-	// 	} catch (Exception $e) {
-	// 		return response()->json([
-	// 			'success' => false,
-	// 			'error' => 'Server Network Down!',
-	// 			'errors' => ['Exception Error' => $e->getMessage()],
-	// 		]);
-	// 	}
-	// }
-
 	//Material GatePass Item Save
 	public function saveMaterialGatePass(Request $request) {
 		// dd($request->all());
@@ -3142,10 +3048,67 @@ class JobCardController extends Controller {
 			$gate_pass->type_id = 8281; //Material Gate Pass
 			$gate_pass->status_id = 8300; //Gate Out Pending
 			$gate_pass->company_id = Auth::user()->company_id;
-			$gate_pass->number = rand();
 			$gate_pass->fill($request->all());
 			$gate_pass->save();
 
+			if (!$request->gate_pass_id) {
+				//GENERATE MATERIAl GATE PASS NUMBER
+				if (date('m') > 3) {
+					$year = date('Y') + 1;
+				} else {
+					$year = date('Y');
+				}
+				//GET FINANCIAL YEAR ID
+				$financial_year = FinancialYear::where('from', $year)
+					->where('company_id', Auth::user()->company_id)
+					->first();
+				if (!$financial_year) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Fiancial Year Not Found',
+						],
+					]);
+				}
+				//GET BRANCH/OUTLET
+				$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+
+				$generateNumber = SerialNumberGroup::generateNumber(24, $financial_year->id, $branch->state_id, $branch->id);
+				if (!$generateNumber['success']) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'No Material Gate Pass Serial number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+						],
+					]);
+				}
+
+				$error_messages_1 = [
+					'number.required' => 'Serial number is required',
+					'number.unique' => 'Serial number is already taken',
+				];
+
+				$validator_1 = Validator::make($generateNumber, [
+					'number' => [
+						'required',
+						'unique:gate_passes,number,' . $gate_pass->id . ',id,company_id,' . Auth::user()->company_id,
+					],
+				], $error_messages_1);
+
+				if ($validator_1->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator_1->errors()->all(),
+					]);
+				}
+				$gate_pass->number = $generateNumber['number'];
+				$gate_pass->save();
+			}
+
+			//SAVE GATE PASS DETAIL
 			$gate_pass_detail = GatePassDetail::firstOrNew([
 				'gate_pass_id' => $gate_pass->id,
 			]);
