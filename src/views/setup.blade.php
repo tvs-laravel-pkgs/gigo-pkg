@@ -615,9 +615,11 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var wjorViewTabs = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/wjor-view-tabs.html")}}';
     var warrantyJobOrderRequestPprForm = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/ppr-form.html")}}';
     var warrantyJobOrderRequestEstimateForm = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/estimate-form.html")}}';
+    var warrantyJobOrderRequestEstimateFormPart = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/estimate-form-part.html")}}';
     var warrantyJobOrderRequestAttachmentForm = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/wjor-attachment-form.html")}}';
     var wjorPprView = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/wjor-ppr-view.html")}}';
     var wjorEstimateView = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/wjor-estimate-view.html")}}';
+    var wjorEstimateViewPart = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/wjor-estimate-view-part.html")}}';
     var wjorAttachmentView = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/wjor-attachment-view.html")}}';
     var wjorHeader = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/partials/wjor-header.html")}}';
 

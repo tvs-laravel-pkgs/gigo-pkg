@@ -38,6 +38,14 @@ app.directive('wjorEstimateForm', function() {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
+app.directive('wjorEstimateFormPart', function() {
+    return {
+        templateUrl: warrantyJobOrderRequestEstimateFormPart,
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
 app.directive('wjorAttachmentForm', function() {
     return {
         templateUrl: warrantyJobOrderRequestAttachmentForm,
@@ -66,6 +74,14 @@ app.directive('wjorPprView', function() {
 app.directive('wjorEstimateView', function() {
     return {
         templateUrl: wjorEstimateView,
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.directive('wjorEstimateViewPart', function() {
+    return {
+        templateUrl: wjorEstimateViewPart,
         controller: function() {}
     }
 });

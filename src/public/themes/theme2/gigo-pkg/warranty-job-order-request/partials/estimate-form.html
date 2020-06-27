@@ -97,7 +97,7 @@
             </div><!-- Table Responsive -->
             <div class="mb-15"></div><!-- Spacing -->
             <hr class="hr-15"><!-- Separater -->
-            <h6>
+            <!-- <h6>
                 Part Details
             </h6>
             <div class="table-responsive">
@@ -125,9 +125,6 @@
                             <th class="text-right">
                                 Tax Amount
                             </th>
-                            <!-- <th class="text-right">
-                                Quantity
-                            </th> -->
                             <th class="wid-100 white-space-unset text-right">
                                 Amount
                             </th>
@@ -156,9 +153,6 @@
                             <td class="text-right">
                                 {{job_order_part.rate | currency}}
                             </td>
-                            <!-- <td class="text-right">
-                                {{job_order_part.qty | number:2}}
-                            </td> -->
                             <td class="text-right" ng-repeat="(tax_key, tax) in job_order_part.tax_code.taxes" ng-if="job_order_part.tax_code">
                                 {{(job_order_part.rate*tax.pivot.percentage)/100 | currency}}
                             </td>
@@ -167,7 +161,6 @@
                             </td>
                             <td class="wid-180 white-space-unset text-right">
                                 {{job_order_part.net_amount | currency}}
-                                <!-- <input type="hidden" name="parts[{{index}}][amount]" value="{{job_order_part.net_amount}}"> -->
                                 <input type="hidden" name="parts[{{index}}][quantity]" value="{{job_order_part.quantity}}">
                                 <input type="hidden" name="parts[{{index}}][net_amount]" value="{{job_order_part.net_amount_without_tax}}">
                                 <input type="hidden" name="parts[{{index}}][tax_total]" value="{{job_order_part.tax_amount}}">
@@ -191,7 +184,7 @@
                         </tr>
                     </tbody>
                 </table>
-            </div><!-- Table Responsive -->
+            </div> --><!-- Table Responsive -->
             <div class="mb-20"></div><!-- Spacing -->
             <div class="table-transparent-wrap">
                 <div class="table-responsive">
