@@ -14,6 +14,7 @@ class PartSupplier extends BaseModel {
 	protected $table = 'part_suppliers';
 	public $timestamps = true;
 	protected $fillable = [
+		"company_id",
 		"id",
 		"code",
 		"name",
