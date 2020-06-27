@@ -1631,6 +1631,7 @@ app.component('jobCardScheduleForm', {
                     }
                     console.log(res);
                     $scope.job_card = res.job_card_view;
+                    $scope.job_completed_status = res.job_completed_status;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1926,7 +1927,7 @@ app.component('jobCardLabourReview', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/job-card/schedule/' + $routeParams.job_card_id);
+                            $location.path('/job-card/schedule/' + $routeParams.job_card_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {

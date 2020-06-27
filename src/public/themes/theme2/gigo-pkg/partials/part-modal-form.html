@@ -47,7 +47,7 @@
                             <label>
                                 Purchase Type
                             </label>
-                            <input type="radio" id="option_stock" name="purchase_type" ng-model="part.purchase_type" value="stock">
+                            <input ng-checked="true" type="radio" id="option_stock" name="purchase_type" ng-model="part.purchase_type" value="stock">
                             <label for="option_stock">Stock</label>
                             <input type="radio" id="option_local" name="purchase_type" ng-model="part.purchase_type" value="local">
                             <label for="option_local">Local Purchase</label>

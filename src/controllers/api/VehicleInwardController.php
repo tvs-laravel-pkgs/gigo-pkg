@@ -151,6 +151,7 @@ class VehicleInwardController extends Controller {
 				}
 			}
 			$vehicle_inward_list_get->groupBy('job_orders.id');
+			$vehicle_inward_list_get->orderBy('job_orders.created_at', 'DESC');
 
 			$total_records = $vehicle_inward_list_get->get()->count();
 

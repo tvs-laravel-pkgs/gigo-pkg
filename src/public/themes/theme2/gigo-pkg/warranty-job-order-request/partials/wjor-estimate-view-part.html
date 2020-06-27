@@ -6,8 +6,9 @@
                     Repair Estimate
                 </b>
             </h5>
-            <hr class="hr-15"><!-- Separater -->
-            <h6>
+            <!-- Separater -->
+            <!-- <hr class="hr-15"> -->
+            <!-- <h6>
                 Labour Details
             </h6>
             <div class="table-responsive">
@@ -76,10 +77,9 @@
                         </tr>
                     </tbody>
                 </table>
-            </div><!-- Table Responsive -->
+            </div> --><!-- Table Responsive -->
             <div class="mb-15"></div><!-- Spacing -->
-            <!-- Separater -->
-            <!-- <hr class="hr-15">
+            <hr class="hr-15"><!-- Separater -->
             <h6>
                 Part Details
             </h6>
@@ -125,6 +125,9 @@
                             <td class="text-right">
                                 {{job_order_part.rate | currency}}
                             </td>
+                            <!-- <td class="text-right">
+                                {{job_order_part.qty | number:2}}
+                            </td> -->
                             <td ng-repeat="(tax_key, tax) in job_order_part.tax_code.taxes" ng-if="job_order_part.tax_code">
                                 {{(job_order_part.rate*tax.pivot.percentage)/100 | currency}}
                             </td>
@@ -151,7 +154,7 @@
                         </tr>
                     </tbody>
                 </table>
-            </div> --><!-- Table Responsive -->
+            </div><!-- Table Responsive -->
             <div class="mb-20"></div><!-- Spacing -->
             <div class="table-transparent-wrap">
                 <div class="table-responsive">

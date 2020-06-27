@@ -34,7 +34,7 @@ class JobCard extends BaseModel {
 	}
 
 	public function getCreatedAtAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y H:i A', strtotime($value));
+		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
 	}
 
 	public function setDateOfJoinAttribute($date) {
