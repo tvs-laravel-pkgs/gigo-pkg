@@ -117,6 +117,7 @@ class JobCardController extends Controller {
 			})
 
 			->groupBy('job_cards.id')
+			->orderBy('job_cards.created_at', 'DESC')
 		//->get()
 		;
 		//dd($job_cards);

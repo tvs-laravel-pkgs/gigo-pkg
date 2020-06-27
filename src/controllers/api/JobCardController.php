@@ -146,6 +146,7 @@ class JobCardController extends Controller {
 			//Floor Supervisor not Assigned =>8220
 				->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')")
 				->groupBy('job_cards.id')
+				->orderBy('job_cards.created_at', 'DESC')
 				->get();
 
 			return response()->json([
@@ -1204,66 +1205,6 @@ class JobCardController extends Controller {
 		}
 	}
 
-	public function VendorList(Request $request) {
-		try {
-			$validator = Validator::make($request->all(), [
-				'vendor_code' => [
-					'required',
-				],
-			]);
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'errors' => $validator->errors()->all(),
-				]);
-			}
-			DB::beginTransaction();
-
-			$VendorList = Vendor::where('code', 'LIKE', '%' . $request->vendor_code . '%')
-				->where(function ($query) {
-					$query->where('type_id', 121)
-						->orWhere('type_id', 122);
-				})->get();
-
-			DB::commit();
-			return response()->json([
-				'success' => true,
-				'Vendor_list' => $VendorList,
-			]);
-
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
-
-	public function VendorDetails($vendor_id) {
-		try {
-			$vendor_details = Vendor::find($vendor_id);
-
-			if (!$vendor_details) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Vendor Details Not found!',
-				]);
-			}
-			return response()->json([
-				'success' => true,
-				'vendor_details' => $vendor_details,
-			]);
-
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
-
 	public function getLabourReviewData(Request $request) {
 		// dd($request->all());
 		try {
@@ -1416,59 +1357,6 @@ class JobCardController extends Controller {
 		}
 	}
 
-	public function updateJobCardStatus(Request $request) {
-		// dd($request->all());
-		try {
-			$validator = Validator::make($request->all(), [
-				'id' => [
-					'required',
-					'integer',
-					'exists:job_cards,id',
-				],
-
-			]);
-
-			if ($validator->fails()) {
-				$errors = $validator->errors()->all();
-				$success = false;
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
-				]);
-			}
-
-			DB::beginTransaction();
-
-			$job_card = JobCard::find($request->id);
-			$job_card->status_id = 8223; //Ready for Billing
-			$job_card->updated_by = Auth::user()->id;
-			$job_card->updated_at = Carbon::now();
-			$job_card->save();
-
-			Bay::where('job_order_id', $job_card->id)
-				->update([
-					'status_id' => 8240, //Free
-					'job_order_id' => NULL, //Free
-					'updated_by_id' => Auth::user()->id,
-					'updated_at' => Carbon::now(),
-				]);
-
-			DB::commit();
-
-			return response()->json([
-				'success' => true,
-				'message' => 'Jobcard Updated Successfully!!',
-			]);
-
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
 	public function LabourReviewSave(Request $request) {
 		// dd($request->all());
 		try {
@@ -1539,11 +1427,18 @@ class JobCardController extends Controller {
 				if ($total_count == 0) {
 					$job_card = JobCard::where('id', $request->job_card_id)
 						->update([
-							'status_id' => 8222, //Ready for Review
+							'status_id' => 8223, //Review Completed
 							'updated_by' => Auth::user()->id,
 							'updated_at' => Carbon::now(),
 						]);
 				}
+			} else {
+				$job_card = JobCard::where('id', $request->job_card_id)
+					->update([
+						'status_id' => 8221, //Work In Progress
+						'updated_by' => Auth::user()->id,
+						'updated_at' => Carbon::now(),
+					]);
 			}
 
 			DB::commit();
@@ -1551,6 +1446,120 @@ class JobCardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'message' => 'Review Updated Successfully!!',
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function updateJobCardStatus(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'id' => [
+					'required',
+					'integer',
+					'exists:job_cards,id',
+				],
+
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$job_card = JobCard::find($request->id);
+			$job_card->status_id = 8224; //Ready for Billing
+			$job_card->updated_by = Auth::user()->id;
+			$job_card->updated_at = Carbon::now();
+			$job_card->save();
+
+			Bay::where('job_order_id', $job_card->id)
+				->update([
+					'status_id' => 8240, //Free
+					'job_order_id' => NULL, //Free
+					'updated_by_id' => Auth::user()->id,
+					'updated_at' => Carbon::now(),
+				]);
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Jobcard Updated Successfully!!',
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function VendorList(Request $request) {
+		try {
+			$validator = Validator::make($request->all(), [
+				'vendor_code' => [
+					'required',
+				],
+			]);
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+			DB::beginTransaction();
+
+			$VendorList = Vendor::where('code', 'LIKE', '%' . $request->vendor_code . '%')
+				->where(function ($query) {
+					$query->where('type_id', 121)
+						->orWhere('type_id', 122);
+				})->get();
+
+			DB::commit();
+			return response()->json([
+				'success' => true,
+				'Vendor_list' => $VendorList,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function VendorDetails($vendor_id) {
+		try {
+			$vendor_details = Vendor::find($vendor_id);
+
+			if (!$vendor_details) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Vendor Details Not found!',
+				]);
+			}
+			return response()->json([
+				'success' => true,
+				'vendor_details' => $vendor_details,
 			]);
 
 		} catch (Exception $e) {

@@ -1331,7 +1331,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Job Card Export Diagnosis',
 
 	    }).
-	    when('/gigo-pkg/job-card/schedule/:job_card_id', {
+	    when('/job-card/schedule/:job_card_id', {
 	        template: '<job-card-schedule-form></job-card-schedule-form>',
 	        title: 'Job Card Schedules',
 	    }).

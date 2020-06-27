@@ -888,7 +888,7 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Export Diagnosis',
 
     }).
-    when('/gigo-pkg/job-card/schedule/:job_card_id', {
+    when('/job-card/schedule/:job_card_id', {
         template: '<job-card-schedule-form></job-card-schedule-form>',
         title: 'Job Card Schedules',
     }).

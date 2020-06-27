@@ -1,3 +1,8 @@
+<style type="text/css">
+.my-disable {
+    pointer-events: none;
+}
+</style>
 <!--Content Wrap -->
 <div class="content-wrap">
     <!-- Page Header -->
@@ -79,7 +84,7 @@
                                             </div>
                                         </div>
                                         <div class="card-box-body" ng-if="my_job_order.status_id == 8260 ||  my_job_order.status_id == 8264">
-                                            <span class="card-box-content-wrap" ng-click="StartWork(8261,key)">
+                                            <span class="card-box-content-wrap" ng-class="{'my-disable':other_work_status == 1}" ng-click="StartWork(8261,key)">
                                                 <div class="card-box-content bg-dark">
                                                     <span class="info">
                                                         Start
@@ -128,7 +133,7 @@
                                                     </span>
                                                 </div>
                                             </span>
-                                            <span class="card-box-content-wrap" ng-click="StartWork(8261,key)">
+                                            <span class="card-box-content-wrap" ng-click="StartWork(8261,key)" ng-class="{'my-disable':other_work_status == 1}">
                                                 <div class="card-box-content bg-dark">
                                                     <span class="data">
                                                         Paused
@@ -224,7 +229,7 @@
                 </span>
             </div><!-- Modal Body -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-green btn-block btn-square" ng-if="work_log.work_end_date_time" ng-click="confirmFinish()">Confirm</button>
+                <button type="button" class="btn btn-green btn-block btn-square confirm_finish" ng-if="work_log.work_end_date_time" ng-click="confirmFinish()">Confirm</button>
             </div><!-- Modal Footer -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
@@ -250,7 +255,7 @@
             <div class="modal-footer">
                 <input type="hidden" name="selected_reason_id" id="selected_reason_id" value="">
                 <input type="hidden" id="pause_wrk_repair_id" value="">
-                <button type="button" ng-click="reasonConfirm()" class="btn btn-green btn-block btn-square">Submit</button>
+                <button type="button" ng-click="reasonConfirm()" class="btn btn-green btn-block btn-square break_confirm">Submit</button>
             </div><!-- Modal Footer -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
