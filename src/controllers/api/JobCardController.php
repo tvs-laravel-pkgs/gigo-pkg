@@ -1094,39 +1094,41 @@ class JobCardController extends Controller {
 			])
 				->find($request->job_card_id);
 
-			foreach ($job_card->jobOrder->jobOrderRepairOrders as $JobOrderRepairOrder) {
-				if ($JobOrderRepairOrder->repair_order_id == $request->repair_order_id) {
-					$repair_order_mechanic_remove = RepairOrderMechanic::where('job_order_repair_order_id', $JobOrderRepairOrder->id)->whereNotIn('mechanic_id', $mechanic_ids)->forceDelete();
+			if (count($mechanic_ids) > 0) {
+				foreach ($job_card->jobOrder->jobOrderRepairOrders as $JobOrderRepairOrder) {
+					if ($JobOrderRepairOrder->repair_order_id == $request->repair_order_id) {
+						$repair_order_mechanic_remove = RepairOrderMechanic::where('job_order_repair_order_id', $JobOrderRepairOrder->id)->whereNotIn('mechanic_id', $mechanic_ids)->forceDelete();
 
-					foreach ($mechanic_ids as $mechanic_id) {
-						$repair_order_mechanic = RepairOrderMechanic::firstOrNew([
-							'job_order_repair_order_id' => $JobOrderRepairOrder->id,
-							'mechanic_id' => $mechanic_id,
-						]);
-						// dd($repair_order_mechanic);
-						if ($repair_order_mechanic->exists) {
-							$repair_order_mechanic->updated_by_id = Auth::user()->id;
-							$repair_order_mechanic->updated_at = Carbon::now();
-						} else {
-							$repair_order_mechanic->created_by_id = Auth::user()->id;
-							$repair_order_mechanic->created_at = Carbon::now();
-						}
-						$repair_order_mechanic->fill($request->all());
-						if (!$repair_order_mechanic->exists) {
-							$repair_order_mechanic->status_id = 8260; //PENDING
-						}
-						$repair_order_mechanic->save();
+						foreach ($mechanic_ids as $mechanic_id) {
+							$repair_order_mechanic = RepairOrderMechanic::firstOrNew([
+								'job_order_repair_order_id' => $JobOrderRepairOrder->id,
+								'mechanic_id' => $mechanic_id,
+							]);
+							// dd($repair_order_mechanic);
+							if ($repair_order_mechanic->exists) {
+								$repair_order_mechanic->updated_by_id = Auth::user()->id;
+								$repair_order_mechanic->updated_at = Carbon::now();
+							} else {
+								$repair_order_mechanic->created_by_id = Auth::user()->id;
+								$repair_order_mechanic->created_at = Carbon::now();
+							}
+							$repair_order_mechanic->fill($request->all());
+							if (!$repair_order_mechanic->exists) {
+								$repair_order_mechanic->status_id = 8260; //PENDING
+							}
+							$repair_order_mechanic->save();
 
-						$job_order_repair_order = JobOrderRepairOrder::where('id', $JobOrderRepairOrder->id)
-							->update([
-								'status_id' => 8182, //WORK PENDING
-								'updated_by_id' => Auth::user()->id,
-								'updated_at' => Carbon::now(),
-							])
-						;
+							$job_order_repair_order = JobOrderRepairOrder::where('id', $JobOrderRepairOrder->id)
+								->update([
+									'status_id' => 8182, //WORK PENDING
+									'updated_by_id' => Auth::user()->id,
+									'updated_at' => Carbon::now(),
+								])
+							;
+						}
+					} else {
+						continue;
 					}
-				} else {
-					continue;
 				}
 			}
 
