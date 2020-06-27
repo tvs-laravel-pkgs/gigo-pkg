@@ -7,8 +7,9 @@ use App\Company;
 use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\BaseModel;
 
-class TaxCode extends Model {
+class TaxCode extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'tax_codes';

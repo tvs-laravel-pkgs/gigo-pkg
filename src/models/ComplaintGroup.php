@@ -7,23 +7,23 @@ use App\Company;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Validator;
+use App\BaseModel;
 
-class ComplaintGroup extends Model {
+class ComplaintGroup extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'complaint_groups';
 	public $timestamps = true;
-	protected $fillable =
-		["id", "company_id", "code", "name"]
-	;
+	protected $fillable =[
+		"id", 
+		"company_id", 
+		"code", 
+		"name", 
+	];
 
-	public function getDateOfJoinAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y', strtotime($value));
-	}
+	// Getter & Setters --------------------------------------------------------------
 
-	public function setDateOfJoinAttribute($date) {
-		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
-	}
+	// Static operations --------------------------------------------------------------
 
 	public static function validate($data, $user) {
 		$error_messages = [
@@ -59,42 +59,42 @@ class ComplaintGroup extends Model {
 		];
 	}
 
-	public static function createFromObject($record_data) {
-		$errors = [];
-		$company = Company::where('code', $record_data->company_code)->first();
-		if (!$company) {
-			return [
-				'success' => false,
-				'errors' => ['Invalid Company : ' . $record_data->company],
-			];
-		}
+	// public static function createFromObject($record_data) {
+	// 	$errors = [];
+	// 	$company = Company::where('code', $record_data->company_code)->first();
+	// 	if (!$company) {
+	// 		return [
+	// 			'success' => false,
+	// 			'errors' => ['Invalid Company : ' . $record_data->company],
+	// 		];
+	// 	}
 
-		$admin = $company->admin();
-		if (!$admin) {
-			return [
-				'success' => false,
-				'errors' => ['Default Admin user not found'],
-			];
-		}
+	// 	$admin = $company->admin();
+	// 	if (!$admin) {
+	// 		return [
+	// 			'success' => false,
+	// 			'errors' => ['Default Admin user not found'],
+	// 		];
+	// 	}
 
-		$validation = Self::validate($record_data->toArray(), $admin);
-		if (!$validation['success']) {
-			return [
-				'success' => false,
-				'errors' => $validation['errors'],
-			];
-		}
+	// 	$validation = Self::validate($record_data->toArray(), $admin);
+	// 	if (!$validation['success']) {
+	// 		return [
+	// 			'success' => false,
+	// 			'errors' => $validation['errors'],
+	// 		];
+	// 	}
 
-		$record = self::firstOrNew([
-			'company_id' => $company->id,
-			'code' => $record_data->code,
-		]);
-		$record->name = $record_data->name;
-		$record->created_by_id = $admin->id;
-		$record->save();
-		return [
-			'success' => true,
-		];
-	}
+	// 	$record = self::firstOrNew([
+	// 		'company_id' => $company->id,
+	// 		'code' => $record_data->code,
+	// 	]);
+	// 	$record->name = $record_data->name;
+	// 	$record->created_by_id = $admin->id;
+	// 	$record->save();
+	// 	return [
+	// 		'success' => true,
+	// 	];
+	// }
 
 }

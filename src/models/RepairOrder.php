@@ -39,7 +39,7 @@ class RepairOrder extends BaseModel {
 		'Group Code' => [
 			'table_column_name' => 'type_id',
 			'rules' => [
-				'required' => [
+				'nullable' => [
 				],
 				'fk' => [
 					'class' => 'App\RepairOrderType',
@@ -69,7 +69,7 @@ class RepairOrder extends BaseModel {
 				],
 				'fk' => [
 					'class' => 'App\Config',
-					'foreign_table_column' => 'code',
+					'foreign_table_column' => 'name',
 					'check_with_company' => true,
 					'additional_conditions' => [
 						'entity_type_id' => 306,
@@ -78,7 +78,7 @@ class RepairOrder extends BaseModel {
 			],
 		],
 		'Hours' => [
-			'table_column_name' => 'kms',
+			'table_column_name' => 'hours',
 			'rules' => [
 				'nullable' => [
 				],
@@ -233,67 +233,6 @@ class RepairOrder extends BaseModel {
 		return $list;
 	}
 
-	public static function saveFromExcelArray($record) {
-		$errors = [];
-		$company = Company::where('code', $record_data['Company Code'])->first();
-		if (!$company) {
-			return [
-				'success' => false,
-				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
-			];
-		}
-
-		if (!isset($record_data['created_by_id'])) {
-			$admin = $company->admin();
-
-			if (!$admin) {
-				return [
-					'success' => false,
-					'errors' => ['Default Admin user not found'],
-				];
-			}
-			$created_by_id = $admin->id;
-		} else {
-			$created_by_id = $record_data['created_by_id'];
-		}
-
-		$type_id = null;
-		if (!empty($record['Type'])) {
-			$type = RepairOrderType::where([
-				'company_id' => $record['company_id'],
-				'short_name' => $record['Type'],
-			])->first();
-			if (!$type) {
-				$status['errors'][] = 'Invalid Type';
-			} else {
-				$type_id = $type->id;
-			}
-		}
-
-		if (count($status['errors']) > 0) {
-			return [
-				'success' => false,
-				'errors' => $status['errors'],
-			];
-		}
-
-		$record = RepairOrder::firstOrNew([
-			'type_id' => $type_id,
-			'code' => $record['Code'],
-			'company_id' => $record['company_id'],
-		]);
-
-		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
-		if (!$result['success']) {
-			return $result;
-		}
-		$record->created_by = $created_by_id;
-		$record->save();
-		return [
-			'success' => true,
-		];
-	}
-
 	public static function importFromExcel($job) {
 
 		try {
@@ -352,7 +291,7 @@ class RepairOrder extends BaseModel {
 
 	public static function saveFromObject($record_data) {
 		$record = [
-			'company_id' => $company->id,
+			'Company Code' => $record_data->company_code,
 			'Group Code' => $record_data->group_code,
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
@@ -367,6 +306,66 @@ class RepairOrder extends BaseModel {
 			'Tax Code' => $record_data->tax_code,
 		];
 		return static::saveFromExcelArray($record);
+	}
+
+	public static function saveFromExcelArray($record_data) {
+		$errors = [];
+		$company = Company::where('code', $record_data['Company Code'])->first();
+		if (!$company) {
+			return [
+				'success' => false,
+				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
+			];
+		}
+
+		if (!isset($record_data['created_by_id'])) {
+			$admin = $company->admin();
+
+			if (!$admin) {
+				return [
+					'success' => false,
+					'errors' => ['Default Admin user not found'],
+				];
+			}
+			$created_by_id = $admin->id;
+		} else {
+			$created_by_id = $record_data['created_by_id'];
+		}
+
+		$type_id = null;
+		if (!empty($record['Group Code'])) {
+			$type = RepairOrderType::where([
+				'company_id' => $record['company_id'],
+				'short_name' => $record['Group Code'],
+			])->first();
+			if (!$type) {
+				$status['errors'][] = 'Invalid Group Code';
+			} else {
+				$type_id = $type->id;
+			}
+		}
+
+		if (count($errors) > 0) {
+			return [
+				'success' => false,
+				'errors' => $status['errors'],
+			];
+		}
+
+		$record = Self::firstOrNew([
+			'company_id' => $company->id,
+			// 'type_id' => $type_id,
+			'code' => $record_data['Code'],
+		]);
+		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+		if (!$result['success']) {
+			return $result;
+		}
+		$record->created_by_id = $created_by_id;
+		$record->save();
+		return [
+			'success' => true,
+		];
 	}
 
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Repair Order') {
