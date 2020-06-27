@@ -1,5 +1,5 @@
 <!--Content Wrap -->
-<div class="content-wrap scan_qr" ng-show="showQrScan">
+<div class="content-wrap scan_qr" ng-show="showQrScan == true">
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-inner">
@@ -8,7 +8,7 @@
                     <div class="col-md-4">
                         <div class="page-header-content-left">
                             <div class="page-header-content button-block">
-                                <a href="#!/static/procurement/payment/customer-search" type="button" class="btn-back btn-img">
+                                <a ng-click="reloadPage()" type="button" class="btn-back btn-img">
                                     <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
                                 </a>
                             </div>
@@ -48,7 +48,7 @@
                                     <!-- <input type="text" name="encrypted_id" value="" id="encrypted_id" ng-model="encrypted_id"> -->
                                     <div class="text-center pt-80">
                                         <!-- <button type="submit" class="btn btn-red btn-min-wdth" ng-click="Punch()">Submit</button> -->
-                                        <a href="#!/gigo-pkg/kanban-app" ng-click="reloadPage()"><button class="btn btn-red btn-min-wdth">Back</button></a>
+                                        <a href="#!/kanban-app" ng-click="reloadPage()"><button class="btn btn-red btn-min-wdth">Back</button></a>
                                     </div>
                                 </div><!-- Column -->
                             </div><!-- Row -->
@@ -61,7 +61,7 @@
 </div><!-- Content Wrap-->
 <!--Check In Success ---->
 <!-- Content Wrap -->
-<div class="content-wrap check_in_success" ng-show="showCheckInSuccess">
+<div class="content-wrap check_in_success" ng-show="showCheckInSuccess == true">
     <!-- Page Main Content -->
     <div class="page-main-content form-content">
         <div class="container">
@@ -77,8 +77,8 @@
                                                 <img class="img-responsive profile" src="./public/theme/img/content/profile.jpg" alt="Profile" />
                                             </div><!-- Img Wrap -->
                                             <div class="right-wrap">
-                                                <h4 class="title">{{punch_user.employee.name}}</h4>
-                                                <span class="info">Employee code : {{punch_user.employee.code}}</span>
+                                                <h4 class="title">{{punch_user.name}}</h4>
+                                                <span class="info">Employee code : {{punch_user.ecode}}</span>
                                                 <span class="grey-box">{{punch_user.role.name}}</span>
                                                 <span class="location"><img class="img-responsive map-marker-sm" src="./public/theme/img/content/map-marker.svg" alt="Location" />{{punch_user.employee.outlet.name}}</span>
                                             </div><!-- Right Wrap -->
@@ -95,15 +95,14 @@
                                             <ul class="shift-time-list">
                                                 <li class="shift-time-list-item">Shift Start Time : 09:00 am</li>
                                             </ul>
-                                            <h4 class="date text-center">{{punch_in.date |date:'dd/MM/yyyy'}} - {{date |date:'EEEE'}}</h4>
-                                            <span class="time text-center">Check In Time- {{punch_in.in_time}}</span>
+                                            <h4 class="date text-center">{{punch_user.punch_data.date}}</h4>
+                                            <span class="time text-center">Check In Time- {{punch_user.punch_data.in_time}}</span>
                                         </div><!-- White Box Wrap -->
                                     </li>
                                 </ul>
                             </div><!-- Column -->
                             <div class="col-md-12">
                                 <div class="button-lg">
-                                    <!--      <a href="#!/gigo-pkg/kanban-app/attendance/scan-qr" class="btn btn-secondary-dark btn-square">DONE</a> -->
                                     <button class="btn btn-secondary-dark btn-square" ng-click="reloadPage()">DONE</button>
                                 </div>
                             </div><!-- Column -->
@@ -116,7 +115,7 @@
 </div><!-- Content Wrap -->
 <!--Check Out Success ---->
 <!-- Content Wrap -->
-<div class="content-wrap check_out_success" ng-show="showCheckOutConfirmation">
+<div class="content-wrap check_out_success" ng-if="showCheckOutConfirmation  == true">
     <!-- Page Main Content -->
     <div class="page-main-content form-content">
         <div class="container">
@@ -132,8 +131,8 @@
                                                 <img class="img-responsive profile" src="./public/theme/img/content/profile.jpg" alt="Profile" />
                                             </div><!-- Img Wrap -->
                                             <div class="right-wrap">
-                                                <h4 class="title">{{punch_user.employee.name}}</h4>
-                                                <span class="info">Employee code : {{punch_user.employee.code}}</span>
+                                                <h4 class="title">{{punch_user.name}}</h4>
+                                                <span class="info">Employee code : {{punch_user.ecode}}</span>
                                                 <span class="grey-box">{{punch_user.role.name}}</span>
                                                 <span class="location"><img class="img-responsive map-marker-sm" src="./public/theme/img/content/map-marker.svg" alt="Location" />{{punch_user.employee.outlet.name}}</span>
                                             </div><!-- Right Wrap -->
@@ -148,19 +147,18 @@
                                     <li class="flex-col-4 mb-20">
                                         <div class="white-box-wrap">
                                             <ul class="shift-time-list">
-                                                <li class="shift-time-list-item">Check In Time - {{punch_out.in_time | date:'shortTime'}}</li>
-                                                <li class="shift-time-list-item">Total Hours Worked : {{punch_out.duration | date:'shortTime'}}</li>
+                                                <li class="shift-time-list-item">Check In Time - {{punch_user.punch_data.in_time}}</li>
+                                                <li class="shift-time-list-item">Total Hours Worked : {{punch_user.punch_data.duration | date:'shortTime'}}</li>
                                                 <li class="shift-time-list-item">Shift End Time - 06:00 pm</li>
                                             </ul>
-                                            <h4 class="date text-center">{{punch_out.date |date:'dd/MM/yyyy'}} - {{punch_out.date |date:'EEEE'}}</h4>
-                                            <span class="time text-center">Check Out Time - {{punch_out.out_time}}</span>
+                                            <h4 class="date text-center">{{punch_user.punch_data.date}}</h4>
+                                            <span class="time text-center">Check Out Time - {{punch_user.punch_data.out_time}}</span>
                                         </div><!-- White Box Wrap -->
                                     </li>
                                 </ul>
                             </div><!-- Column -->
                             <div class="col-md-12">
                                 <div class="button-lg">
-                                    <!-- <a href="#!/gigo-pkg/kanban-app/attendance/scan-qr" class="btn btn-secondary-dark btn-square">DONE</a> -->
                                     <button class="btn btn-secondary-dark btn-square" ng-click="reloadPage()">DONE</button>
                                 </div>
                             </div><!-- Column -->
@@ -172,7 +170,7 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Content Wrap -->
-<div class="content-wrap check_out_confirm" ng-show="showCheckOut">
+<div class="content-wrap check_out_confirm" ng-show="showCheckOut == true">
     <!-- Page Main Content -->
     <div class="page-main-content form-content">
         <form id="punch_out_form">
@@ -190,8 +188,8 @@
                                                     <img class="img-responsive profile" src="./public/theme/img/content/profile.jpg" alt="Profile" />
                                                 </div><!-- Img Wrap -->
                                                 <div class="right-wrap">
-                                                    <h4 class="title">{{punch_user.employee.name}}</h4>
-                                                    <span class="info">Employee code : {{punch_user.employee.code}}</span>
+                                                    <h4 class="title">{{punch_user.name}}</h4>
+                                                    <span class="info">Employee code : {{punch_user.ecode}}</span>
                                                     <span class="grey-box">{{punch_user.role.name}}</span>
                                                     <span class="location"><img class="img-responsive map-marker-sm" src="./public/theme/img/content/map-marker.svg" alt="Location" />{{punch_user.employee.outlet.name}}</span>
                                                 </div><!-- Right Wrap -->
@@ -236,4 +234,4 @@
             </div><!-- Container -->
         </form>
     </div><!-- Page Main Content -->
-</div><!-- Content Wrap
+</div><!-- Content Wrap -->

@@ -194,6 +194,7 @@ app.component('inwardVehicleCardList', {
             setTimeout(function() {
                 $scope.fetchData();
             }, 1000);
+            $('#vehicle-inward-filter-modal').modal('hide');
         }
 
         $rootScope.loading = false;
@@ -397,6 +398,7 @@ app.component('inwardVehicleTableList', {
             $("#gate_in_no").val('');
             $("#status_id").val('');
             dataTables.fnFilter();
+            $('#vehicle-inward-filter-modal').modal('hide');
         }
 
         $rootScope.loading = false;
@@ -705,9 +707,9 @@ app.component('inwardVehicleDmsCheckListForm', {
                     $scope.job_order = res.job_order;
                     $scope.campaigns = res.campaigns;
                     $scope.job_order_id = $routeParams.job_order_id;
-                    if(!$scope.job_order.is_campaign_carried){
+                    if (!$scope.job_order.is_campaign_carried) {
                         $scope.job_order.is_campaign_carried = 0;
-                    }else{
+                    } else {
                         $scope.job_order.is_campaign_carried = 1;
                     }
                     $scope.$apply();
@@ -1198,7 +1200,7 @@ app.component('inwardVehicleUpdatejcForm', {
 
         //Save Form Data 
         $scope.saveJobCard = function(id) {
-            var form_id = '#form';
+            var form_id = '#update_jc_form';
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
@@ -1208,7 +1210,7 @@ app.component('inwardVehicleUpdatejcForm', {
                     },
                     'job_card_photo': {
                         required: function(element) {
-                            if (!$scope.job_order.job_card.attachment) {
+                            if (!$scope.job_order.job_card) {
                                 return true;
                             }
                             return false;
@@ -1219,7 +1221,9 @@ app.component('inwardVehicleUpdatejcForm', {
                     },
                 },
                 errorPlacement: function(error, element) {
-                    if (element.attr('name') == 'job_card_photo') {
+                    if (element.attr('name') == 'job_card_number') {
+                        error.appendTo($('.job_card_error'));
+                    } else if (element.attr('name') == 'job_card_photo') {
                         error.appendTo($('.attachment_error'));
                     } else {
                         error.insertAfter(element);
@@ -1268,7 +1272,7 @@ app.component('inwardVehicleUpdatejcForm', {
                 url: base_url + '/api/vehicle-inward/estimate/link/generate',
                 type: "POST",
                 data: {
-                    id: $routeParams.job_order_id,
+                    job_order_id: $routeParams.job_order_id,
                 },
                 dataType: "json",
                 beforeSend: function(xhr) {
@@ -1910,9 +1914,9 @@ app.component('inwardVehicleVehicleDetail', {
                     } else {
                         $scope.show_vehicle_detail = true;
                         $scope.show_vehicle_form = false;
-                        if($scope.job_order.vehicle.is_sold){
+                        if ($scope.job_order.vehicle.is_sold) {
                             self.is_sold = 1;
-                        }else{
+                        } else {
                             self.is_sold = 0;
                         }
                     }
@@ -1960,7 +1964,7 @@ app.component('inwardVehicleVehicleDetail', {
                     },
                     'registration_number': {
                         required: true,
-                        minlength: 10,
+                        minlength: 8,
                         maxlength: 10,
                     },
                     'plate_number': {
@@ -1975,7 +1979,7 @@ app.component('inwardVehicleVehicleDetail', {
                     },
                     'sold_date': {
                         required: function(element) {
-                            if(self.is_sold){
+                            if (self.is_sold) {
                                 return true;
                             }
                             return false;
@@ -2324,8 +2328,8 @@ app.component('inwardVehicleCustomerDetail', {
 
                     //ADD NEW OWNER TYPE
                     if ($scope.type_id == 2) {
-                            self.state = $scope.job_order.state;
-                    }else{
+                        self.state = $scope.job_order.state;
+                    } else {
                         if (!$scope.job_order.vehicle.current_owner) {
                             self.state = $scope.job_order.state;
                         } else {
@@ -3000,7 +3004,7 @@ app.component('inwardVehiclePayableAddPartForm', {
         }
 
         $scope.getPartFormData = function(part_id) {
-            if(!part_id){
+            if (!part_id) {
                 $scope.job_order_part = [];
                 return;
             }
@@ -3542,9 +3546,9 @@ app.component('inwardVehicleRoadTestDetailForm', {
                                 $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
-                                if($scope.job_order.is_expert_diagnosis_required){
+                                if ($scope.job_order.is_expert_diagnosis_required) {
                                     $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order_id);
-                                }else{
+                                } else {
                                     $location.path('/inward-vehicle/inspection-detail/form/' + $scope.job_order_id);
                                 }
                                 $scope.$apply();
@@ -3627,7 +3631,7 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                     $scope.estimation_type = res.estimation_type;
                     $scope.minimum_payable_amount = $scope.job_order.minimum_payable_amount;
 
-                    $scope.getSelectedEstimationType($scope.job_order.estimation_type_id,1);
+                    $scope.getSelectedEstimationType($scope.job_order.estimation_type_id, 1);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {

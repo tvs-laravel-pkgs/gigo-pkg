@@ -237,17 +237,17 @@ app.config(['$routeProvider', function($routeProvider) {
 
 
     //Kanban App
-    when('/gigo-pkg/kanban-app', {
+    when('/kanban-app', {
         template: '<kanban-app></kanban-app>',
         title: 'Kanban App',
     }).
     //Kanban Attendance Scan Qr
-    when('/gigo-pkg/kanban-app/attendance/scan-qr', {
+    when('/kanban-app/attendance/scan-qr', {
         template: '<kanban-app-attendance-scan-qr></kanban-app-attendance-scan-qr>',
         title: 'Attendance - Scan Qr',
     }).
     //Kanban My Job Card Scan Qr
-    when('/gigo-pkg/kanban-app/my-job-card/scan-qr', {
+    when('/kanban-app/my-job-card/scan-qr', {
         template: '<kanban-app-my-job-card-scan-qr></kanban-app-my-job-card-scan-qr>',
         title: 'My Job Card - Scan Qr',
     });
@@ -778,7 +778,7 @@ app.config(['$routeProvider', function($routeProvider) {
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
     //Job Card
-    when('/gigo-pkg/job-card/table-list', {
+    when('/job-card/table-list', {
         template: '<job-card-table-list></job-card-table-list>',
         title: 'Job Cards',
     }).
@@ -790,7 +790,7 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<job-card-form></job-card-form>',
         title: 'Edit Job Card',
     }).
-    when('/gigo-pkg/job-card/card-list', {
+    when('/job-card/card-list', {
         template: '<job-card-card-list></job-card-card-list>',
         title: 'Job Card Card List',
     }).
@@ -829,16 +829,16 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Gate In Details',
     }).
 
-    when('/gigo-pkg/job-card/material-gatepass/:job_card_id', {
+    when('/job-card/material-gatepass/:job_card_id', {
         template: '<job-card-material-gatepass-form></job-card-material-gatepass-form>',
         title: 'Job Card Material Gate Pass',
     }).
-    when('/gigo-pkg/job-card/material-outward/:job_card_id/:gatepass_id', {
+    when('/job-card/material-outward/:job_card_id/:gatepass_id', {
         template: '<job-card-material-outward-form></job-card-material-outward-form>',
         title: 'Job Card Material Outward',
 
     }).
-    when('/gigo-pkg/job-card/material-outward/:job_card_id', {
+    when('/job-card/material-outward/:job_card_id', {
         template: '<job-card-material-outward-form></job-card-material-outward-form>',
         title: 'Job Card Material Outward',
 

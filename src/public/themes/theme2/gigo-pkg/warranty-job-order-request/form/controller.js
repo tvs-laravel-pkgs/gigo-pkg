@@ -346,7 +346,7 @@ app.component('warrantyJobOrderRequestForm', {
                     if ($scope.updating) {
                         $scope.calculateLabourTotal('update');
                         $scope.calculatePartTotal('update');
-                    }else{
+                    } else {
                         $scope.calculateLabourTotal();
                         $scope.calculatePartTotal();
                     }
@@ -452,7 +452,7 @@ app.component('warrantyJobOrderRequestForm', {
         }
         $scope.partSelected = function(part) {
             var quantity = 1; 
-            /*if(part.pivot){
+            /*if (part.pivot != undefined) {
                 quantity = part.pivot.quantity;
             }*/
             part.quantity = quantity;
@@ -482,12 +482,13 @@ app.component('warrantyJobOrderRequestForm', {
             }
         }
 
-        $scope.partQuantityChange = function (part) {
+        $scope.partQuantityChange = function(part) {
             $scope.calculatePartAmount(part);
         }
-        $scope.partAmountChange = function (part) {
+        $scope.partAmountChange = function(part) {
             $scope.calculatePartAmount(part);
         }
+
         $scope.isSameState = function(){
             $same_state = false;
             if ($scope.warranty_job_order_request.job_order != undefined) {
@@ -502,6 +503,7 @@ app.component('warrantyJobOrderRequestForm', {
             // self.same_state = $same_state;
             return $same_state;
         }
+
 
         $scope.calculateRepairOrderAmount = function(repair_order) {
             $same_state = $scope.isSameState();
@@ -872,15 +874,16 @@ app.component('warrantyJobOrderRequestForm', {
             $scope.calculateEstimateTotal()
         }
 
+
         $scope.calculatePartTotal = function(update=null) {
             
             $same_state = $scope.isSameState();
-            
+
             var total = 0;
             angular.forEach($scope.warranty_job_order_request.parts, function(part) {
                 if (update) {
                     $quantity = part.pivot.quantity;
-                }else{
+                } else {
                     $quantity = part.quantity;
                 }
                 var amount = part.rate * $quantity;
@@ -904,7 +907,7 @@ app.component('warrantyJobOrderRequestForm', {
                         }
                     })
                 }
-                if (update!=null) {
+                if (update != null) {
                     part.quantity = Math.trunc(part.pivot.quantity);
                 }
                 part.net_amount = parseFloat(amount) + tax_total;

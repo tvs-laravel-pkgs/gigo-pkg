@@ -5,16 +5,16 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/job-card/material-gatepass/{{job_card_id}}" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/job-card/material-gatepass/{{job_card_id}}" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title">
                         <b>
-                            Job Card View
+                            Material Outward
                         </b>
                     </h1>
                     <p class="subtitle">
-                        Job card / View
+                        Job card / Material Outward
                     </p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
@@ -29,10 +29,8 @@
                         General Info
                     </div>
                     <div class="page-tab-form-top-left-link">
-                        <a class="btn-link-arrow btn-prev">
+                        <a class="btn-link-arrow side-tab-toggle">
                             <i class="ionicons ion-md-arrow-round-back"></i>
-                        </a>
-                        <a class="btn-link-arrow btn-nxt">
                             <i class="ionicons ion-md-arrow-round-forward"></i>
                         </a>
                     </div>
@@ -57,7 +55,7 @@
                     </div>
                 </div><!-- Page Tab Form Top Right -->
             </div><!-- Page Tab Form Top -->
-            <div class="tab-form-wrap type-2">
+            <div class="tab-form-wrap type-2 side-tab-open">
                 <div class="tab-form-header">
                     <div class="tab-header">
                         <!-- Filters -->
@@ -76,7 +74,7 @@
                     </div><!-- Tab Header -->
                 </div><!-- Tab Form Header -->
                 <form id="material_gatepass">
-                    <div class="tab-form-body">
+                    <div class="tab-form-body side-tab-open">
                         <div class="tab-content">
                             <!-- TAB PANEL -->
                             <div class="tab-pane fade in active" id="vendor_details" data-animation="fadeInUp" data-animation-delay="300">
@@ -106,7 +104,7 @@
                                                                     OSL Vendor Code
                                                                     <sup class="mandatory">*</sup>
                                                                 </label>
-                                                                <md-autocomplete md-items="option in $ctrl.searchVendorCode($ctrl.modelSearchText, gate_pass.gate_pass_detail.vendor_type_id)" md-selected-item="$ctrl.vendor" md-selected-item-change="selectedVendorCode($ctrl.vendor.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.code" md-search-text-change="vendorTextChange()" md-min-length="3" placeholder="OSL Vendor Code" md-autofocus>
+                                                                <md-autocomplete md-items="option in $ctrl.searchVendorCode($ctrl.modelSearchText, gate_pass.gate_pass_detail.vendor_type_id)" md-selected-item="$ctrl.vendor" md-selected-item-change="selectedVendorCode($ctrl.vendor.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.code" md-search-text-change="vendorTextChange()" md-min-length="3" placeholder="OSL Vendor Code" md-autofocus md-no-cache="true">
                                                                     <md-item-template>
                                                                         <span>
                                                                             {{option.code}} / {{option.name}}
@@ -147,12 +145,12 @@
                                                             <span class="title">Vendor Details</span>
                                                         </div>
                                                         <div class="grey-box-address-body">
-                                                            <span class="title" id="ven_name">{{gate_pass.gate_pass_detail.vendor.name}}</span>
+                                                            <span class="title" id="ven_name">{{gate_pass.gate_pass_detail.vendor ? gate_pass.gate_pass_detail.vendor.name : ''}}</span>
                                                             <p class="address"></p>
-                                                            <span class="info address"> {{gate_pass.gate_pass_detail.vendor.primary_address.address_line1}},
-                                                                {{gate_pass.gate_pass_detail.vendor.primary_address.address_line2}}
-                                                                {{gate_pass.gate_pass_detail.vendor.primary_address.pincode}}</span>
-                                                            <span class="info contact" id="contact">{{gate_pass.gate_pass_detail.vendor_contact_no}}</span>
+                                                            <span class="info address"> {{gate_pass.gate_pass_detail.vendor ? (gate_pass.gate_pass_detail.vendor.primary_address ? gate_pass.gate_pass_detail.vendor.primary_address.address_line1 : '') : ''}} ,
+                                                                {{gate_pass.gate_pass_detail.vendor ? (gate_pass.gate_pass_detail.vendor.primary_address ? gate_pass.gate_pass_detail.vendor.primary_address.address_line2 : '') : ''}}
+                                                                {{gate_pass.gate_pass_detail.vendor ? (gate_pass.gate_pass_detail.vendor.primary_address ? gate_pass.gate_pass_detail.vendor.primary_address.pincode : '') : ''}}</span>
+                                                            <span class="info contact" id="contact">{{gate_pass.gate_pass_detail.vendor.mobile_no ? gate_pass.gate_pass_detail.vendor.mobile_no : ''}} {{gate_pass.gate_pass_detail.vendor.email ? gate_pass.gate_pass_detail.vendor.email: ''}}</span>
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
@@ -187,43 +185,43 @@
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Item Name <sup class="mandatory">*</sup></label>
-                                                            <input type="text" name="item_details[{{index}}][name]" class="form-control requried" ng-model="gate_pass_item.name" placeholder="Enter Name" autocomplete="off" value="" />
+                                                            <input type="text" name="item_details[{{index}}][name]" class="form-control required" ng-model="gate_pass_item.name" placeholder="Enter Name" autocomplete="off" value="" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Item Description <sup class="mandatory">*</sup></label>
-                                                            <input type="text" class="form-control requried" placeholder="Enter Description" autocomplete="off" ng-model="gate_pass_item.item_description" name="item_details[{{index}}][item_description]" />
+                                                            <input type="text" class="form-control required" placeholder="Enter Description" autocomplete="off" ng-model="gate_pass_item.item_description" name="item_details[{{index}}][item_description]" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Make</label>
-                                                            <input type="text" class="form-control requried" ng-model="gate_pass_item.item_make" placeholder="Enter Make" autocomplete="off" value="" name="item_details[{{index}}][item_make]" />
+                                                            <input type="text" class="form-control" ng-model="gate_pass_item.item_make" placeholder="Enter Make" autocomplete="off" value="" name="item_details[{{index}}][item_make]" minlength="3" maxlength="191"/>
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Model</label>
-                                                            <input type="text" class="form-control requried" ng-model="gate_pass_item.item_model" placeholder="Enter Model" autocomplete="off" value="" name="item_details[{{index}}][item_model]" />
+                                                            <input type="text" class="form-control" ng-model="gate_pass_item.item_model" placeholder="Enter Model" autocomplete="off" value="" name="item_details[{{index}}][item_model]" minlength="3" maxlength="191"/>
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Item Serial No</label>
-                                                            <input type="text" class="form-control requried" ng-model="gate_pass_item.item_serial_no" placeholder="Enter Serial No" autocomplete="off" value="" name="item_details[{{index}}][item_serial_no]" />
+                                                            <input type="text" class="form-control" ng-model="gate_pass_item.item_serial_no" placeholder="Enter Serial No" autocomplete="off" value="" name="item_details[{{index}}][item_serial_no]" minlength="3" maxlength="191"/>
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Quantity <sup class="mandatory">*</sup></label>
-                                                            <input type="text" ng-model="gate_pass_item.qty" class="form-control requried" placeholder="Enter Quantity" autocomplete="off" value="" name="item_details[{{index}}][qty]" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
+                                                            <input type="text" ng-model="gate_pass_item.qty" class="form-control required" placeholder="Enter Quantity" autocomplete="off" value="" name="item_details[{{index}}][qty]" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>Remarks <sup class="mandatory">*</sup></label>
-                                                            <input type="text" ng-model="gate_pass_item.remarks" class="form-control requried" placeholder="Enter Remark" autocomplete="off" value="" name="item_details[{{index}}][remarks]" />
+                                                            <input type="text" ng-model="gate_pass_item.remarks" class="form-control required" placeholder="Enter Remark" autocomplete="off" value="" name="item_details[{{index}}][remarks]" minlength="3" maxlength="191"/>
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-12">

@@ -203,10 +203,10 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Vehicle Model</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
                                     <md-item-template>
                                         <span>
-                                            {{option.name}}
+                                            {{option.model_name}}
                                         </span>
                                     </md-item-template>
                                     <md-not-found>
@@ -227,7 +227,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Job Order Type</label>
-                                <md-select ng-model="$ctrl.job_order_type_id" md-on-close="clearSearchTerm()" ng-change="onSelectedJobOrderType($ctrl.job_order_type_id)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Job Card Type">
+                                <md-select ng-model="$ctrl.job_order_type_id" md-on-close="clearSearchTerm()" ng-change="onSelectedJobOrderType($ctrl.job_order_type_id)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Job Order Type">
                                     <md-select-header class="demo-select-header">
                                         <input ng-model="searchJobOrderType" type="search" placeholder="Search for a Job Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                     </md-select-header>

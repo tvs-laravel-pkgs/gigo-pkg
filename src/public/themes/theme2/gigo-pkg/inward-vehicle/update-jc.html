@@ -36,7 +36,7 @@
                 </div>
             </div><!-- Page Tab Form Top Right -->
         </div><!-- Page Tab Form Top -->
-        <form id="form" autocomplete="off">
+        <form id="update_jc_form" autocomplete="off">
             <input type="hidden" name="job_order_id" value="{{job_order_id}}">
             <div class="container">
                 <div class="row">
@@ -46,14 +46,15 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Job Card Number <sup class="mandatory">*</sup></label>
-                                        <input ng-model="job_order.job_card.job_card_number" type="text" class="form-control" placeholder="Enter Job Card Number" autocomplete="off" value="{{job_order.job_card.job_card_number}}" maxlength="191" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="job_card_number" />
+                                        <input ng-model="job_order.job_card.job_card_number" type="text" class="form-control required" placeholder="Enter Job Card Number" autocomplete="off" value="{{job_order.job_card.job_card_number}}" maxlength="191" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="job_card_number" />
+                                        <div class="job_card_error"></div>
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Job Card Date <sup class="mandatory">*</sup></label>
-                                        <div class="input-group date" data-provide="datepicker" data-date-start-date="0d">
-                                            <input ng-model="job_order.job_card.date" type="text" class="form-control" placeholder="Select Job Card Date" name="job_card_date" value="job_order.job_card.date" />
+                                        <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
+                                            <input ng-model="job_order.job_card.date" type="text" class="form-control required" placeholder="Select Job Card Date" name="job_card_date" value="job_order.job_card.date" />
                                             <div class="input-group-addon">
                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                             </div>

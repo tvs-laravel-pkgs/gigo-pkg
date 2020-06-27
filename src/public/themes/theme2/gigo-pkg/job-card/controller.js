@@ -158,11 +158,11 @@ app.component('jobCardTableList', {
         });
         $scope.listRedirect = function(type) {
             if (type == 'table') {
-                window.location = "#!/gigo-pkg/job-card/table-list";
+                window.location = "#!/job-card/table-list";
                 return false;
             } else {
                 //alert();
-                window.location = "#!/gigo-pkg/job-card/card-list";
+                window.location = "#!/job-card/card-list";
                 return false;
             }
         }
@@ -218,6 +218,7 @@ app.component('jobCardTableList', {
             $("#job_order_type_id").val('');
             $("#status_id").val('');
             dataTables.fnFilter();
+            $('#job-card-filter-modal').modal('hide');
             //$scope.fetchData();
         }
         $rootScope.loading = false;
@@ -327,10 +328,10 @@ app.component('jobCardCardList', {
 
         $scope.listRedirect = function(type) {
             if (type == 'table') {
-                window.location = "#!/gigo-pkg/job-card/table-list";
+                window.location = "#!/job-card/table-list";
                 return false;
             } else {
-                window.location = "#!/gigo-pkg/job-card/card-list";
+                window.location = "#!/job-card/card-list";
                 return false;
             }
         }
@@ -434,6 +435,7 @@ app.component('jobCardCardList', {
             $("#service_type_id").val('');
             $("#quote_type_id").val('');
             //dataTables.fnFilter();
+            $('#job-card-filter-modal').modal('hide');
             $scope.fetchData();
         }
 
@@ -672,7 +674,7 @@ app.component('jobCardBayForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/job-card/table-list');
+                            $location.path('/job-card/table-list');
                             $scope.$apply();
                             $('.submit').button('reset');
                         })
@@ -887,6 +889,15 @@ app.component('jobCardMaterialGatepassForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_card = res.view_metrial_gate_pass;
+                    setTimeout(function() {
+                        if ($scope.job_card.gate_passes.length > 0) {
+                            angular.forEach($scope.job_card.gate_passes, function(gate_pass, key) {
+                                $('#carousel_li_' + gate_pass.id + '0').addClass('active');
+                                $('#carousel_inner_item_' + gate_pass.id + '0').addClass('active');
+                            });
+                        }
+                    }, 1000);
+
                     $scope.job_order = res.job_order;
                     $scope.$apply();
 
@@ -896,6 +907,13 @@ app.component('jobCardMaterialGatepassForm', {
                 });
         }
         $scope.fetchData();
+
+        $scope.carouselLiChange = function(gatepass_id, index) {
+            $('#carousel_parent_' + gatepass_id + " .carousel_li").removeClass('active');
+            $('#carousel_parent_' + gatepass_id + " .carousel_inner_item").removeClass('active');
+            $('#carousel_li_' + gatepass_id + index).addClass('active');
+            $('#carousel_inner_item_' + gatepass_id + index).addClass('active');
+        }
     }
 });
 
@@ -979,7 +997,6 @@ app.component('jobCardMaterialOutwardForm', {
 
         //GET VENDOR INFO
         $scope.selectedVendorCode = function(id) {
-            self.isFire = true;
             if (id) {
                 $.ajax({
                         url: laravel_routes['getVendorDetails'],
@@ -1035,14 +1052,7 @@ app.component('jobCardMaterialOutwardForm', {
         $scope.saveItemDetails = function() {
             var form_id = '#material_gatepass';
             var v = jQuery(form_id).validate({
-                errorPlacement: function(error, element) {
-                    show_alert = true;
-                    error.insertAfter(element)
-                },
-                invalidHandler: function(form, validator) {
-                    console.log('Errors!!');
-                },
-                ignore: [],
+                ignore: '',
                 rules: {
                     'vendor_id': {
                         required: true,
@@ -1056,27 +1066,12 @@ app.component('jobCardMaterialOutwardForm', {
                     'work_order_description': {
                         required: true,
                     },
-                    'item_description[]': {
-                        required: true,
-                    },
-                    'item_make[]': {
-                        required: true,
-                    },
-                    'item_model[]': {
-                        required: true,
-                    },
-                    'item_serial_no[]': {
-                        required: true,
-                    },
-                    'qty[]': {
-                        required: true,
-                    },
-                    'remarks[]': {
-                        required: true,
-                    },
                 },
                 messages: {
 
+                },
+                errorPlacement: function(error, element) {
+                    error.insertAfter(element)
                 },
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
@@ -1101,7 +1096,7 @@ app.component('jobCardMaterialOutwardForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/job-card/material-gatepass/' + $scope.job_card_id);
+                            $location.path('/job-card/material-gatepass/' + $scope.job_card_id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -1662,7 +1657,7 @@ app.component('jobCardScheduleForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    
+
                     $('#selectedMachanic').val('');
                     $scope.repair_order = res.repair_order;
                     $scope.employee_details = res.employee_details;
@@ -1708,6 +1703,7 @@ app.component('jobCardScheduleForm', {
         $scope.saveMechanic = function() {
             if (!$("#selectedMachanic").val()) {
                 custom_noty('error', 'Kindly Select Employee to assign work!');
+                return;
             }
             var form_id = '#form';
             var v = jQuery(form_id).validate({

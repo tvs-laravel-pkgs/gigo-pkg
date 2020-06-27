@@ -3,7 +3,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Job Cards (<span id="table_infos"></span>)</h1>
+                    <h1 class="title type-2">Job Cards <span class="badge badge-secondary" id="table_infos"></span></h1>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
@@ -125,10 +125,10 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Vehicle Model</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
                                     <md-item-template>
                                         <span>
-                                            {{option.name}}
+                                            {{option.model_name}}
                                         </span>
                                     </md-item-template>
                                     <md-not-found>

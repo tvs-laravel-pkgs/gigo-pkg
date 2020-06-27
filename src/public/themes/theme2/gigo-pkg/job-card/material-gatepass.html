@@ -5,7 +5,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Material Gate Pass</b></h1>
@@ -18,9 +18,9 @@
     <div class="page-main-content form-content type2">
         <div class="page-tab-form pb-70">
             <jobcard-header></jobcard-header>
-            <div class="tab-form-wrap type-2">
+            <div class="tab-form-wrap type-2 side-tab-open">
                 <jobcard-tabs ng-init="active_tab = 'material-gatepass'"></jobcard-tabs>
-                <div class="tab-form-body">
+                <div class="tab-form-body side-tab-open">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
                         <div class="tab-pane fade in active" id="material_gatepass" data-animation="fadeInUp" data-animation-delay="300">
@@ -31,7 +31,7 @@
                                             Material gatepass
                                         </h5>
                                         <div class="row" ng-repeat="(key, gate_passes) in job_card.gate_passes" ng-if="job_card.gate_passes.length > 0">
-                                            <div class="mgatepass-wrap border">
+                                            <div class="mgatepass-wrap border" id="carousel_parent_{{gate_passes.id}}">
                                                 <div class="row">
                                                     <div class="col-lg-8">
                                                         <div class="row">
@@ -55,7 +55,7 @@
                                                             <div class="col-md-4">
                                                                 <div class="mgpass-address-left-wrap">
                                                                     <span class="date">
-                                                                        Created On : {{gate_passes.created_at}}
+                                                                        Created On : {{gate_passes.created_on}}
                                                                     </span>
                                                                     <ul class="grey-list d-block">
                                                                         <li>
@@ -83,15 +83,15 @@
                                                                 </li>
                                                             </ul>
                                                         </div>
-                                                        <a href="#!/gigo-pkg/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
+                                                        <a ng-if="gate_passes.status_id == 8300" href="#!/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
                                                     </div><!-- Column -->
                                                     <div class="col-lg-4" ng-if="gate_passes.gate_pass_items.length > 0">
                                                         <div id="myCarousel" class="carousel mgpass-carousel slide" data-ride="carousel">
                                                             <ol class="carousel-indicators">
-                                                                <li style="margin-right: 5px" data-target="#myCarousel" data-slide-to="{{key}}{{index}}" ng-class="{'active': (index == 0)}" ng-repeat="(index, gate_pass_items) in gate_passes.gate_pass_items"></li>
+                                                                <li style="margin-right: 5px" data-target="#myCarousel" data-slide-to="{{key}}{{index}}" class="carousel_li"  id ="carousel_li_{{gate_passes.id}}{{index}}" ng-repeat="(index, gate_pass_items) in gate_passes.gate_pass_items"  ng-click="carouselLiChange(gate_passes.id,index)"></li>
                                                             </ol>
                                                             <div class="carousel-inner">
-                                                                <div class="item" ng-class="{'active': (keys == 0)}" ng-repeat="(keys, gate_pass_item) in gate_passes.gate_pass_items">
+                                                                <div class="item carousel_inner_item" id="carousel_inner_item_{{gate_passes.id}}{{keys}}" ng-repeat="(keys, gate_pass_item) in gate_passes.gate_pass_items">
                                                                     <div class="border-box type-2">
                                                                         <div class="top-title">{{gate_pass_item.name}}<span class="right-text">Qty : {{gate_pass_item.qty}}</span></div>
                                                                         <div class="mb-20"></div>
@@ -126,7 +126,7 @@
                                             </div>
                                         </div>
                                         <div class="text-center pt-40">
-                                            <a href="#!/gigo-pkg/job-card/material-outward/{{job_card.id}}" class="btn btn-red">Add {{job_card.gate_passes.length > 0 ? 'Another' : ''}} Material Gate Pass</a>
+                                            <a href="#!/job-card/material-outward/{{job_card.id}}" class="btn btn-red">Add {{job_card.gate_passes.length > 0 ? 'Another' : ''}} Material Gate Pass</a>
                                         </div>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
@@ -146,3 +146,5 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<!-- Drag & Drop File Upload Plugins -->
+<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
