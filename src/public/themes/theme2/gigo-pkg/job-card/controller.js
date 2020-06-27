@@ -4,7 +4,7 @@ app.component('jobCardTableList', {
         $scope.loading = true;
         $('#search_job_card').focus();
         var self = this;
-        //alert();
+        HelperService.isLoggedIn()
         $('li').removeClass('active');
         $('.job_cards').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
@@ -13,6 +13,8 @@ app.component('jobCardTableList', {
             return false;
         }
         self.add_permission = self.hasPermission('add-job-card');
+        self.user = $scope.user = HelperService.getLoggedUser();
+        self.search_key = '';
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
         var dataTable = $('#job_cards_list').DataTable({
@@ -34,7 +36,7 @@ app.component('jobCardTableList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_job_card').val(state_save_val.search.search);
+                    self.search_key = state_save_val.search.search;
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -57,6 +59,7 @@ app.component('jobCardTableList', {
                     d.service_type_id = $("#service_type_id").val();
                     d.job_order_type_id = $("#job_order_type_id").val();
                     d.status_id = $("#status_id").val();
+                    d.floor_supervisor_id = self.user.id;
                 },
             },
 
@@ -83,7 +86,7 @@ app.component('jobCardTableList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_job_card').val('');
+            self.search_key = '';
             $('#job_cards_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
@@ -91,9 +94,9 @@ app.component('jobCardTableList', {
         });
 
         var dataTables = $('#job_cards_list').dataTable();
-        $("#search_job_card").keyup(function() {
-            dataTables.fnFilter(this.value);
-        });
+        $scope.searchJobCard = function() {
+            dataTables.fnFilter(self.search_key);
+        }
 
         // FOR FILTER
         $http.get(
@@ -170,41 +173,29 @@ app.component('jobCardTableList', {
         $("#date").keyup(function() {
             self.date = this.value;
         });
-        $('#reg_no').on('keyup', function() {
-            dataTables.fnFilter();
-        });
-        $('#job_card_no').on('keyup', function() {
-            dataTables.fnFilter();
-        });
+
         $scope.selectedCustomer = function(id) {
             $('#customer_id').val(id);
-            self.customer_id = id;
         }
         $scope.selectedVehicleModel = function(id) {
             $('#model_id').val(id);
-            self.model_id = id;
         }
 
         $scope.onSelectedStatus = function(id) {
             $('#status_id').val(id);
-            dataTables.fnFilter();
         }
 
         $scope.onSelectedQuoteType = function(id) {
             $('#quote_type_id').val(id);
-            dataTables.fnFilter();
         }
         $scope.onSelectedServiceType = function(id) {
             $('#service_type_id').val(id);
-            dataTables.fnFilter();
         }
         $scope.onSelectedJobOrderType = function(id) {
             $('#job_order_type_id').val(id);
-            dataTables.fnFilter();
         }
 
         $scope.applyFilter = function() {
-            //$scope.fetchData();
             $('#job-card-filter-modal').modal('hide');
             dataTables.fnFilter();
         }
@@ -225,6 +216,8 @@ app.component('jobCardTableList', {
     }
 });
 
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
 
 app.component('jobCardCardList', {
     templateUrl: job_card_card_list_template_url,
@@ -233,11 +226,7 @@ app.component('jobCardCardList', {
         $('#search_job_card').focus();
         var self = this;
 
-        if (!HelperService.isLoggedIn()) {
-            $location.path('/login');
-            return;
-        }
-
+        HelperService.isLoggedIn()
         $('li').removeClass('active');
         $('.job_cards').addClass('active').trigger('click');
 
@@ -247,13 +236,7 @@ app.component('jobCardCardList', {
             return false;
         }
 
-        $scope.clear_search = function() {
-            $('#search_job_card').val('');
-        }
-
-        //HelperService.isLoggedIn()
         self.user = $scope.user = HelperService.getLoggedUser();
-        self.search_key = '';
         self.date = '';
         self.reg_no = '';
         self.job_card_no = '';
@@ -263,15 +246,11 @@ app.component('jobCardCardList', {
         self.model_id = '';
         self.status_id = '';
 
-        $element.find('input').on('keydown', function(ev) {
-            ev.stopPropagation();
-        });
-        $scope.clearSearchTerm = function() {
-            $scope.searchTerm = '';
-            $scope.searchTerm1 = '';
-            $scope.searchTerm2 = '';
-            $scope.searchTerm3 = '';
-        };
+        if (!localStorage.getItem('search_key')) {
+            self.search_key = '';
+        } else {
+            self.search_key = localStorage.getItem('search_key');
+        }
 
         //FETCH DATA
         $scope.fetchData = function() {
@@ -290,6 +269,7 @@ app.component('jobCardCardList', {
                         quote_type_id: self.quote_type_id,
                         job_order_type_id: self.job_order_type_id,
                         status_id: self.status_id,
+                        floor_supervisor_id: self.user.id,
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -312,10 +292,15 @@ app.component('jobCardCardList', {
         $('.refresh_table').on("click", function() {
             $scope.fetchData();
         });
-        $("#search_job_card").keyup(function() {
-            self.search_key = this.value;
+        $scope.clear_search = function() {
+            self.search_key = '';
+            localStorage.setItem('search_key', self.search_key);
             $scope.fetchData();
-        });
+        }
+        $scope.searchJobCard = function() {
+            localStorage.setItem('search_key', self.search_key);
+            $scope.fetchData();
+        }
         $("#date").keyup(function() {
             self.date = this.value;
         });
@@ -407,17 +392,14 @@ app.component('jobCardCardList', {
         $scope.onSelectedQuoteType = function(id) {
             $('#quote_type_id').val(id);
             self.quote_type_id = id;
-            //dataTables.fnFilter();
         }
         $scope.onSelectedServiceType = function(id) {
             $('#service_type_id').val(id);
             self.service_type_id = id;
-            // dataTables.fnFilter();
         }
         $scope.onSelectedJobOrderType = function(id) {
             $('#job_order_type_id').val(id);
             self.job_order_type_id = id;
-            // dataTables.fnFilter();
         }
 
         $scope.applyFilter = function() {
@@ -434,9 +416,15 @@ app.component('jobCardCardList', {
             $("#job_card_type_id").val('');
             $("#service_type_id").val('');
             $("#quote_type_id").val('');
-            //dataTables.fnFilter();
             $('#job-card-filter-modal').modal('hide');
-            $scope.fetchData();
+            self.customer_id = '';
+            self.quote_type_id = '';
+            self.service_type_id = '';
+            self.status_id = '';
+            self.job_order_type_id = '';
+            setTimeout(function() {
+                $scope.fetchData();
+            }, 1000);
         }
 
         $rootScope.loading = false;

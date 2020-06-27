@@ -20,7 +20,7 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_job_card" class="form-control" placeholder="Search" />
+                            <input type="search" id="search_job_card" class="form-control" placeholder="Search" ng-model="$ctrl.search_key" ng-keyup=searchJobCard() autofocus/>
                             <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
@@ -69,7 +69,7 @@
                                                             {{job_card.registration_number ? job_card.registration_number : '' }}
                                                         </div>
                                                         <div class="box-color-subtitle">
-                                                            {{job_card.model_name ? job_card.model_name : '' }}
+                                                            {{job_card.vehicle_model ? job_card.vehicle_model : '' }}
                                                         </div>
                                                     </div>
                                                 </div><!-- Box Left -->

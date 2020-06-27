@@ -4,6 +4,7 @@ namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
+use App\Company;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CustomerVoice extends BaseModel {
@@ -15,11 +16,114 @@ class CustomerVoice extends BaseModel {
 		"company_id",
 		"code",
 		"name",
+		"repair_order_id",
 	];
+
+	protected static $excelColumnRules = [
+		'Code' => [
+			'table_column_name' => 'code',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'ROT Code' => [
+			'table_column_name' => 'repair_order_id',
+			'rules' => [
+				'nullable' => [
+				],
+				'fk' => [
+					'class' => 'App\RepairOrder',
+					'foreign_table_column' => 'code',
+					'check_with_company' => true,
+				],
+			],
+		],
+	];
+
+	// Getter & Setters --------------------------------------------------------------
+
+	// Relations --------------------------------------------------------------
+
+	public function repair_order() {
+		return $this->belongsTo('App\RepairOrder');
+	}
 
 	// Static Operations --------------------------------------------------------------
 
-	public static function validate($data, $user) {
+	public static function saveFromObject($record_data) {
+		$record = [
+			'Company Code' => $record_data->company_code,
+			'Code' => $record_data->code,
+			'Name' => $record_data->name,
+			'ROT Code' => $record_data->rot_code,
+		];
+		return static::saveFromExcelArray($record);
+	}
+
+	public static function saveFromExcelArray($record_data) {
+		try {
+			$errors = [];
+			$company = Company::where('code', $record_data['Company Code'])->first();
+			if (!$company) {
+				return [
+					'success' => false,
+					'errors' => ['Invalid Company : ' . $record_data['Company Code']],
+				];
+			}
+
+			if (!isset($record_data['created_by_id'])) {
+				$admin = $company->admin();
+
+				if (!$admin) {
+					return [
+						'success' => false,
+						'errors' => ['Default Admin user not found'],
+					];
+				}
+				$created_by_id = $admin->id;
+			} else {
+				$created_by_id = $record_data['created_by_id'];
+			}
+
+			if (count($errors) > 0) {
+				return [
+					'success' => false,
+					'errors' => $errors,
+				];
+			}
+
+			$record = Self::firstOrNew([
+				'company_id' => $company->id,
+				'code' => $record_data['Code'],
+			]);
+			$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+			if (!$result['success']) {
+				return $result;
+			}
+			$record->created_by_id = $created_by_id;
+			$record->save();
+			return [
+				'success' => true,
+			];
+		} catch (\Exception $e) {
+			return [
+				'success' => false,
+				'errors' => [
+					$e->getMessage(),
+				],
+			];
+		}
+	}
+
+	public static function validateFormInput($data, $user) {
 		$error_messages = [
 			'code.required' => 'Code is Required',
 			'code.unique' => 'Code already taken',

@@ -12,6 +12,10 @@ use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Storage;
 use Validator;
+use App\JobCard;
+use App\FinancialYear;
+use App\Outlet;
+use Abs\SerialNumberPkg\SerialNumberGroup;
 
 class WarrantyJobOrderRequest extends BaseModel {
 	use SeederTrait;
@@ -142,7 +146,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 	}
 
 	public function parts() {
-		return $this->belongsToMany('App\Part', 'wjor_parts', 'wjor_id')->withPivot(['net_amount','tax_total','total_amount','quantity'])->with(['uom','taxCode','taxCode.taxes']);
+		return $this->belongsToMany('App\Part', 'wjor_parts', 'wjor_id')->withPivot(['net_amount','tax_total','total_amount','quantity','purchase_type'])->with(['uom','taxCode','taxCode.taxes']);
 	}
 
 	// public function repairOrders() {
@@ -327,6 +331,63 @@ class WarrantyJobOrderRequest extends BaseModel {
 		try {
 			DB::beginTransaction();
 			$owner = !is_null($owner) ? $owner : Auth::user();
+			// dd($input);
+			if ($input['form_type'] == "manual") {
+				$job_card_number = $input['job_card_number'];
+				$isJobCard = JobCard::where('job_card_number',$job_card_number)->first();
+
+				if (date('m') > 3) {
+					$year = date('Y') + 1;
+				} else {
+					$year = date('Y');
+				}
+				//GET FINANCIAL YEAR ID
+				$financial_year = FinancialYear::where('from', $year)
+					->where('company_id', Auth::user()->company_id)
+					->first();
+				if (!$financial_year) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Fiancial Year Not Found',
+						],
+					]);
+				}
+				$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+
+				$generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
+
+				if (is_null($isJobCard)) {
+					$job_order = new JobOrder;
+					$job_order->company_id = $owner->company_id;
+					$job_order->number = $generateJONumber['number'];
+					$job_order->vehicle_id = $input['vehicle_id'];
+					$job_order->outlet_id = $input['outlet_id'];
+					$job_order->type_id = 4;
+					$job_order->quote_type_id = 2;
+					$job_order->save();
+					// $job_order->status_id = 8460; //Ready for Inward
+					// $job_order->number = 'JO-' . $job_order->id;
+					// $job_order->save();
+
+					$job_card = new JobCard;
+					$job_card->company_id = $owner->company_id;
+					$job_card->dms_job_card_number = $job_card_number;
+					$job_card->job_card_number = $job_card_number;
+					$job_card->date = date('Y-m-d');
+					$job_card->outlet_id = $input['outlet_id'];
+					$job_card->created_by = Auth::id();
+					$job_card->job_order_id = $job_order->id;
+					$job_card->save();
+
+					$job_order_id = $job_order->id;
+				}else{
+					$job_order_id = $isJobCard->job_order_id;
+				}
+			}else{
+				$job_order_id = $input['job_order_id'];
+			}
 
 			if (!isset($input['id']) || !$input['id']) {
 				$record = new Self();
@@ -343,6 +404,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 					];
 				}
 			}
+			$record->job_order_id = $job_order_id;
 			$record->fill($input);
 			$record->status_id = 9100; //New
 			$record->save();
@@ -376,6 +438,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 					$wjorPart = new WjorPart;
 					$wjorPart->wjor_id = $record->id;
 					$wjorPart->part_id = $part['id'];
+					$wjorPart->purchase_type = $part['purchase_type'];
 					$wjorPart->net_amount = $part['net_amount'];
 					$wjorPart->quantity = $part['quantity'];
 					$wjorPart->tax_total = $part['tax_total'];

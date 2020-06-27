@@ -57,7 +57,7 @@ class VehicleInwardController extends Controller {
 				DB::raw('COALESCE(models.model_number, "-") as model_number'),
 				'gate_logs.number',
 				'gate_logs.status_id',
-				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y - %h:%i %p") as date'),
+				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y, %h:%i %p") as date'),
 				'job_orders.driver_name',
 				'job_orders.driver_mobile_number as driver_mobile_number',
 				DB::raw('COALESCE(GROUP_CONCAT(amc_policies.name), "-") as amc_policies'),
@@ -108,9 +108,6 @@ class VehicleInwardController extends Controller {
 		if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
 			if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
 				$vehicle_inwards->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
-			} else if (Entrust::can('view-own-outlet-vehicle-inward')) {
-				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
-					->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
 			} else {
 				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
 					->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");

@@ -300,17 +300,17 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('save-material-gate-pass-detail', 'JobCardController@saveMaterialGatePassDetail');
 
 		//Material-GatePass Details List
-		Route::post('get-material-gate-pass-list', 'MaterialGatePassController@getMaterialGatePass');
+		Route::post('material-gate-pass/get', 'MaterialGatePassController@getMaterialGatePass');
 
 		//Material-GatePass Detail
-		Route::get('get-material-gate-pass-detail/{id}', 'MaterialGatePassController@getMaterialGatePassViewData');
+		Route::post('material-gate-pass/view/get-data', 'MaterialGatePassController@getMaterialGatePassViewData');
 
 		//Material-GatePass Gate in and out
-		Route::post('save-gate-in-out-material-gate-pass', 'MaterialGatePassController@materialGateInAndOut');
+		Route::post('material-gate-pass/gate-in-out/save', 'MaterialGatePassController@saveMaterialGateInAndOut');
 		//Save Material Gate Out Confirm
-		Route::post('save-gate-out-confirm-material-gate-pass', 'MaterialGatePassController@materialGateOutConfirm');
+		Route::post('material-gate-pass/gate-out/confirm', 'MaterialGatePassController@materialGateOutConfirm');
 		//Resend OTP for Material Gate Pass
-		Route::get('material-gate-out-otp-resend/{id}', 'MaterialGatePassController@materialCustomerOtp');
+		Route::get('material-gate-pass/gate-out/otp-resend/{id}', 'MaterialGatePassController@sendOtpToCustomer');
 
 		//VIEW BILL DETAILS
 		Route::post('job-card/bill-detail/view', 'JobCardController@viewBillDetails');

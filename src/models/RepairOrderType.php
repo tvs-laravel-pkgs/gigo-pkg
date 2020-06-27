@@ -3,20 +3,45 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\BaseModel;
 use App\Company;
-use App\Config;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Auth;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class RepairOrderType extends Model {
+class RepairOrderType extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'repair_order_types';
 	public $timestamps = true;
 	protected $fillable =
-		["id","company_id","short_name","name"]
+		["id", "company_id", "short_name", "name"]
 	;
+
+	protected static $excelColumnRules = [
+		'Short Name' => [
+			'table_column_name' => 'short_name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Description' => [
+			'table_column_name' => 'description',
+			'rules' => [
+				'nullable' => [
+				],
+			],
+		],
+	];
+
+	// Getter & Setters --------------------------------------------------------------
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -26,39 +51,64 @@ class RepairOrderType extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
-	public static function createFromObject($record_data) {
+	// Relationships --------------------------------------------------------------
 
+	// Static operations --------------------------------------------------------------
+
+	public static function saveFromObject($record_data) {
+		$record = [
+			'Company Code' => $record_data->company_code,
+			'Short Name' => $record_data->short_name,
+			'Name' => $record_data->name,
+			'Description' => $record_data->description,
+		];
+		return static::saveFromExcelArray($record);
+	}
+
+	public static function saveFromExcelArray($record_data) {
 		$errors = [];
-		$company = Company::where('code', $record_data->company)->first();
+		$company = Company::where('code', $record_data['Company Code'])->first();
 		if (!$company) {
-			dump('Invalid Company : ' . $record_data->company);
-			return;
+			return [
+				'success' => false,
+				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
+			];
 		}
 
-		$admin = $company->admin();
-		if (!$admin) {
-			dump('Default Admin user not found');
-			return;
-		}
+		if (!isset($record_data['created_by_id'])) {
+			$admin = $company->admin();
 
-		$type = Config::where('name', $record_data->type)->where('config_type_id', 89)->first();
-		if (!$type) {
-			$errors[] = 'Invalid Tax Type : ' . $record_data->type;
+			if (!$admin) {
+				return [
+					'success' => false,
+					'errors' => ['Default Admin user not found'],
+				];
+			}
+			$created_by_id = $admin->id;
+		} else {
+			$created_by_id = $record_data['created_by_id'];
 		}
 
 		if (count($errors) > 0) {
-			dump($errors);
-			return;
+			return [
+				'success' => false,
+				'errors' => $errors,
+			];
 		}
 
-		$record = self::firstOrNew([
+		$record = Self::firstOrNew([
 			'company_id' => $company->id,
-			'name' => $record_data->tax_name,
+			'short_name' => $record_data['Short Name'],
 		]);
-		$record->type_id = $type->id;
-		$record->created_by_id = $admin->id;
+		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+		if (!$result['success']) {
+			return $result;
+		}
+		$record->created_by_id = $created_by_id;
 		$record->save();
-		return $record;
+		return [
+			'success' => true,
+		];
 	}
 
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Repair Order Type') {
@@ -67,7 +117,7 @@ class RepairOrderType extends Model {
 			'name',
 		])
 				->orderBy('name')
-				->where('company_id',Auth::user()->company_id)
+				->where('company_id', Auth::user()->company_id)
 				->get());
 		if ($add_default) {
 			$list->prepend(['id' => '', 'name' => $default_text]);

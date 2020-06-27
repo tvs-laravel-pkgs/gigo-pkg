@@ -82,11 +82,6 @@ class WarrantyJobOrderRequestController extends Controller {
 		}
 	}
 
-	public function getData()
-	{
-		$this->data['extras']['status_list'] = Config::where('config_type_id',305)->get();
-		return $this->data;
-	}
 	public function list(Request $request)
 	{
 		$list_data = WarrantyJobOrderRequest::select([
@@ -152,10 +147,14 @@ class WarrantyJobOrderRequestController extends Controller {
 
 				$output .= '<a onclick="angular.element(this).scope().confirmDelete(' . $list_data->id . ')" id = "" title="Delete" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-trash"></span></a>';
 
-				/*	$output .= '<a href="javascript:;" data-toggle="modal" data-target="#job_order-delete-modal" onclick="angular.element(this).scope().deleteJobOrder(' . $job_order->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';*/
 				
 				return $output;
 			})
 			->make(true);
+	}
+
+	public function getOultet(Request $request)
+	{
+		dd("dfsf");
 	}
 }
