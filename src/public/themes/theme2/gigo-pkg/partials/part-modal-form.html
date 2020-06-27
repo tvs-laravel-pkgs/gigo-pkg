@@ -47,10 +47,20 @@
                             <label>
                                 Purchase Type
                             </label>
-                            <input ng-checked="true" type="radio" id="option_stock" name="purchase_type" ng-model="part.purchase_type" value="stock">
+                            <!-- <input ng-checked="true" type="radio" id="option_stock" name="purchase_type" ng-model="part.purchase_type" value="stock">
                             <label for="option_stock">Stock</label>
                             <input type="radio" id="option_local" name="purchase_type" ng-model="part.purchase_type" value="local">
-                            <label for="option_local">Local Purchase</label>
+                            <label for="option_local">Local Purchase</label> -->
+
+                            <input type="radio" id="option_stock" name="purchase_type" ng-model="part.purchase_type" ng-value="8480">
+                            <label for="option_stock">
+                                Stock
+                            </label>
+                            <input type="radio" id="option_local" name="purchase_type" ng-model="part.purchase_type" ng-value="8481">
+                            <label for="option_local">
+                                Local Purchase
+                            </label>
+
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -70,7 +80,7 @@
                             <label>
                                 Rate
                             </label>
-                            <input type="text" ng-keyup="partAmountChange(part)" class="form-control" name="rate" ng-model="part.rate" maxlength="12" ng-readonly="part.purchase_type != 'local'">
+                            <input type="text" ng-keyup="partAmountChange(part)" class="form-control" name="rate" ng-model="part.rate" maxlength="12" ng-readonly="part.purchase_type != '8481'">
                         </div>
                     </div>
                     <div class="col-md-6">

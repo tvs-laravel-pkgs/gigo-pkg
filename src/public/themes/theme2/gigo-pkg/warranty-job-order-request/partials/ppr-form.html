@@ -50,7 +50,8 @@
                             Job card number
                             <sup class="mandatory">*</sup>
                         </label>
-                        <input type="text" class="form-control" autocomplete="off" ng-model="warranty_job_order_request.job_order.job_card.number" name="job_card_number" maxlength="32" />
+                        <input required type="text" class="form-control" autocomplete="off" ng-model="warranty_job_order_request.job_order.job_card.number" name="job_card_number" maxlength="32" />
+                        <input type="hidden" name="form_type" value="{{form_type}}">
                     </div><!-- Feild -->
                 </li>
                 <li class="view-col-3" ng-if="form_type == 'manual'">
@@ -180,6 +181,44 @@
                         No
                     </span>
                 </li>
+                <li class="view-col-3" ng-if="form_type=='manual'">
+                    <div class="form-group">
+                        <label>
+                            Customer
+                            <sup class="mandatory">*</sup>
+                        </label>
+                        <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
+                            <md-item-template>
+                                <span>
+                                    {{option.name}} / {{option.code}}
+                                </span>
+                            </md-item-template>
+                            <md-not-found>
+                                No Customer matching "{{$ctrl.customerSearchText}}" were found.
+                            </md-not-found>
+                        </md-autocomplete>
+                        <input required type="hidden" id="customer_id" name="customer_id" value="">
+                    </div><!-- Feild -->
+                </li>
+                <!-- <li class="view-col-3" ng-if="form_type == 'manual'">
+                    <div class="form-group">
+                        <label>
+                            Outlet
+                            <sup class="mandatory">*</sup>
+                        </label>
+                        <md-autocomplete class="type-sm" md-items="option in $ctrl.searchOutlet($ctrl.outletSearchText)" md-selected-item="$ctrl.outlet" md-selected-item-change="selectedOutlet($ctrl.outlet.id)" md-search-text="$ctrl.outletSearchText" md-item-text="option.name" md-min-length="3" placeholder="Outlet Name" md-autofocus>
+                            <md-item-template>
+                                <span>
+                                    {{option.name}} / {{option.code}}
+                                </span>
+                            </md-item-template>
+                            <md-not-found>
+                                No Customer matching "{{$ctrl.outletSearchText}}" were found.
+                            </md-not-found>
+                        </md-autocomplete>
+                    </div>
+                </li> -->
+                        <input required type="hidden" name="outlet_id" id="outlet_id" value="16">
             </ul>
             <div class="panel-group" id="accordion">
                 <div class="panel panel-default type-3">

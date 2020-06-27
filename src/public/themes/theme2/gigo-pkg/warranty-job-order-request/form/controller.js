@@ -227,6 +227,49 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.user = HelperService.getLoggedUser();
 
+        //Search Customer
+        self.searchCustomer = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCustomerSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+        $scope.selectedCustomer = function(id) {
+            $('#customer_id').val(id);
+        }
+        //Search Outlet
+        /*self.searchOultet = function(query) {
+            let url = base_url + '/api/warranty-job-order-request/getOutlet';
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCustomerSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }*/
+
         $scope.init = function() {
             $rootScope.loading = true;
 
@@ -456,6 +499,7 @@ app.component('warrantyJobOrderRequestForm', {
                 quantity = part.pivot.quantity;
             }*/
             part.quantity = quantity;
+            part.purchase_type = 8480;
             $scope.calculatePartAmount(part);
         }
         $scope.repairOrderSelected = function(repair_order) {
@@ -575,7 +619,7 @@ app.component('warrantyJobOrderRequestForm', {
                     });
             });
         }
-
+        
         var form_id1 = '#form';
         var v = jQuery(form_id1).validate({
             ignore: '',
@@ -883,8 +927,10 @@ app.component('warrantyJobOrderRequestForm', {
             angular.forEach($scope.warranty_job_order_request.parts, function(part) {
                 if (update) {
                     $quantity = part.pivot.quantity;
+                    $purchase_type = part.pivot.purchase_type;
                 } else {
                     $quantity = part.quantity;
+                    $purchase_type = part.purchase_type;
                 }
                 var amount = part.rate * $quantity;
                 var tax_total = 0;
@@ -914,7 +960,8 @@ app.component('warrantyJobOrderRequestForm', {
                 part.net_amount_without_tax = parseFloat(amount);
                 part.tax_amount = parseFloat(tax_total);
                 part.net_amount_with_tax = part.net_amount;
-
+                part.purchase_type = $purchase_type;
+                
                 total += parseFloat(amount) + tax_total;
 
             });

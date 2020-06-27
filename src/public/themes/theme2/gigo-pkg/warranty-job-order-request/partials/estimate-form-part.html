@@ -78,10 +78,12 @@
                             <td class="wid-180 white-space-unset text-right">
                                 {{job_order_part.net_amount | currency}}
                                 <!-- <input type="hidden" name="parts[{{index}}][amount]" value="{{job_order_part.net_amount}}"> -->
+                                
                                 <input type="hidden" name="parts[{{index}}][quantity]" value="{{job_order_part.quantity}}">
                                 <input type="hidden" name="parts[{{index}}][net_amount]" value="{{job_order_part.net_amount_without_tax}}">
                                 <input type="hidden" name="parts[{{index}}][tax_total]" value="{{job_order_part.tax_amount}}">
                                 <input type="hidden" name="parts[{{index}}][total_amount]" value="{{job_order_part.net_amount_with_tax}}">
+                                <input type="hidden" name="parts[{{index}}][purchase_type]" value="{{job_order_part.purchase_type}}">
                             </td>
                         </tr>
                         <tr class="ptb-9">
