@@ -2077,15 +2077,9 @@ app.component('jobCardSplitOrder', {
                     $scope.extras = res.extras;
                     $scope.unassigned_total_amount = res.unassigned_total_amount;
                     $scope.unassigned_total_count = res.unassigned_total_count;
-                    //console.log($scope.job_card);
-                    //console.log($scope.job_card);
-                    //console.log($scope.extras);
+                   
                     console.log($scope.labour_details);
-                    //console.log($scope.part_details);
-                    // var unassigned_total_amount=0;
-                    // var unassigned_total_items=0;
-                    // var labour_ids=[];
-                    // var part_ids =[];
+                  
                     angular.forEach($scope.extras.split_order_types, function(split_order, key) {
                         split_order.total_amount = 0;
                         split_order.total_items = 0;
@@ -2104,24 +2098,7 @@ app.component('jobCardSplitOrder', {
                         });
 
                     });
-                    // console.log(part_ids);
-                    // console.log(labour_ids);
-                    //$scope.unassigned_total_amount = parseFloat(unassigned_total_amount).toFixed(2);
-                    //$scope.unassigned_total_items = unassigned_total_items;*/
-
                     $scope.$apply();
-
-                    //$('#tabs').tabs({ active: 3 });
-                    // console.log('test');
-                    // $('#unassigned_items').removeClass('active');
-                    //$('#unassigned_items').removeClass('in active');
-                    //$('#1').addClass('in active');
-                    // $('#1').trigger('click');
-
-                    console.log('Test');
-
-
-
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -2183,17 +2160,6 @@ app.component('jobCardSplitOrder', {
                             //$('#' + res.type_id).click();
                             $scope.fetchData();
                             $('#' + res.type_id).trigger('click');
-                            //$("#tabs").tabs();
-                            //$(".selector").tabs("select", res.type_id);
-                            // console.log('start');
-                            // var active_tab = '#' + res.type_id;
-                            // console.log(active_tab);
-                            // $('#' + res.type_id).click();
-                            //console.log('end');
-                            // $("#tabs").tabs({ active: active_tab });
-
-                            // $location.path('/gigo-pkg/job-card/bill-detail/' + $routeParams.job_card_id);
-                            //$scope.$apply();
                         })
                         .fail(function(xhr) {
                             $('.submit').button('reset');
@@ -2202,46 +2168,6 @@ app.component('jobCardSplitOrder', {
                 }
             });
         }
-
-
-        $tabs = $(".tabbable");
-
-        $("tbody.connectedSortable")
-            .sortable({
-                connectWith: ".connectedSortable",
-                items: "> tr",
-                appendTo: $tabs,
-                helper: "clone",
-                zIndex: 999990,
-                start: function(event, ui) {
-                    console.log(ui);
-
-                    $tabs.addClass("dragging")
-                },
-                stop: function(event, ui) {
-                    console.log(event);
-                    $tabs.removeClass("dragging")
-                }
-            })
-            .disableSelection();
-
-        var $tab_items = $(".panel-group > tbody", $tabs).droppable({
-            accept: ".connectedSortable tr",
-            hoverClass: "ui-state-hover",
-            over: function(event, ui) {
-                var $item = $(this);
-                // $item.find("a").tab("show");
-
-            },
-            drop: function(event, ui) {
-                console.log('drop');
-                return false;
-            }
-        });
-
-
-
-
     }
 });
 //---------------------------------------------------------------------------------------------
