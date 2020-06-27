@@ -61,7 +61,7 @@ class MyJobCardController extends Controller {
 				})
 				->join('customers', 'customers.id', 'vehicle_owners.customer_id')
 				->join('models', 'models.id', 'vehicles.model_id')
-				->join('configs', 'configs.id', 'job_cards.status_id')
+				->join('configs', 'configs.id', 'repair_order_mechanics.status_id')
 				->where('repair_order_mechanics.mechanic_id', $request->user_id)
 				->groupBy('job_order_repair_orders.job_order_id')
 				->orderBy('job_cards.created_at', 'DESC')
@@ -113,7 +113,15 @@ class MyJobCardController extends Controller {
 				->where('job_order_repair_orders.job_order_id', $job_card->job_order_id)
 				->get();
 
+			$other_work_status = '0';
+
 			foreach ($my_job_orders as $key => $my_job_order) {
+
+				//Check in this job card assigned works any one started or not.
+				//if started means other work cannot be started until current work paused or completed
+				if ($my_job_order->status_id == '8261') {
+					$other_work_status = '1';
+				}
 
 				$assigned_mechanics = User::join('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->where('repair_order_mechanics.job_order_repair_order_id', $my_job_order->job_order_repair_order_id)->select('users.name')->get()->toArray();
 				$my_job_order->assigned_mechanics = $assigned_mechanics;
@@ -162,6 +170,7 @@ class MyJobCardController extends Controller {
 				'user_details' => $user_details,
 				'my_job_orders' => $my_job_orders,
 				'pass_work_reasons' => $pass_work_reasons,
+				'other_work_status' => $other_work_status,
 			]);
 
 		} catch (Exception $e) {
@@ -312,7 +321,8 @@ class MyJobCardController extends Controller {
 
 					$hour = $format_change[0] . 'h';
 					$minutes = $format_change[1] . 'm';
-					$total_hours = $hour . ' ' . $minutes; //. ' ' . $seconds;
+					$seconds = $format_change[2] . 's';
+					$total_hours = $hour . ' ' . $minutes . ' ' . $seconds;
 					unset($duration);
 				}
 
@@ -343,6 +353,17 @@ class MyJobCardController extends Controller {
 						JobOrderRepairOrder::where('id', $request->job_repair_order_id)->update(['status_id' => 8185]);
 					} else {
 						JobOrderRepairOrder::where('id', $request->job_repair_order_id)->update(['status_id' => 8183]);
+					}
+
+					$job_card = JobCard::find($request->job_card_id);
+
+					if ($job_card) {
+						$mechanic_status = RepairOrderMechanic::join('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->where('job_order_repair_orders.job_order_id', $job_card->job_order_id)->where('repair_order_mechanics.status_id', '!=', 8263)->count();
+
+						//Update Jobcard Status // Review Pending
+						if ($mechanic_status == 0) {
+							$job_card = Jobcard::where('id', $request->job_card_id)->update(['status_id' => 8222, 'updated_by' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+						}
 					}
 				}
 

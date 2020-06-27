@@ -117,6 +117,7 @@ class VehicleInwardController extends Controller {
 			}
 		}
 		$vehicle_inwards->groupBy('job_orders.id');
+		$vehicle_inwards->orderBy('job_orders.created_at', 'DESC');
 
 		return Datatables::of($vehicle_inwards)
 			->rawColumns(['status', 'action'])

@@ -60,7 +60,7 @@ class GatePass extends Model {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
 	public function jobCard() {
-		return $this->belongsTo('App\JobCard');
+		return $this->belongsTo('App\JobCard', 'job_card_id');
 	}
 
 	public function gatePassItems() {

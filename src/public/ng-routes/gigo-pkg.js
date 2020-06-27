@@ -136,12 +136,17 @@ app.config(['$routeProvider', function($routeProvider) {
     }).
 
     //Material Gate Pass
-    when('/gigo-pkg/material-gate-pass/list', {
-        template: '<material-gate-pass-list></material-gate-pass-list>',
-        title: 'Material Gate Pass',
+    when('/material-gate-pass/table-list', {
+        template: '<material-gate-pass-table-list></material-gate-pass-table-list>',
+        title: 'Material Gate Pass - Table List',
     }).
 
-    when('/gigo-pkg/material-gate-pass/view/:id', {
+    when('/material-gate-pass/card-list', {
+        template: '<material-gate-pass-card-list></material-gate-pass-card-list>',
+        title: 'Material Gate Pass - Card List',
+    }).
+
+    when('/material-gate-pass/view/:id', {
         template: '<material-gate-pass-view></material-gate-pass-view>',
         title: 'View Material Gate Pass',
     }).
@@ -795,17 +800,17 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Card List',
     }).
 
-    when('/gigo-pkg/job-card/assign-bay/:id', {
+    when('/job-card/assign-bay/:id', {
         template: '<job-card-bay-form></job-card-bay-form>',
         title: 'Assign Bay',
     }).
 
-    when('/gigo-pkg/job-card/bay-view/:job_card_id', {
+    when('/job-card/bay-view/:job_card_id', {
         template: '<job-card-bay-view></job-card-bay-view>',
         title: 'Job Card Bay View',
     }).
 
-    when('/gigo-pkg/job-card/split-order/:job_card_id', {
+    when('/job-card/split-order/:job_card_id', {
         template: '<job-card-split-order></job-card-split-order>',
         title: 'Job Card Split Order',
     }).
@@ -888,7 +893,7 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Export Diagnosis',
 
     }).
-    when('/gigo-pkg/job-card/schedule/:job_card_id', {
+    when('/job-card/schedule/:job_card_id', {
         template: '<job-card-schedule-form></job-card-schedule-form>',
         title: 'Job Card Schedules',
     }).

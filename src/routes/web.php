@@ -193,6 +193,9 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/gate-pass/delete', 'GatePassController@deleteGatePass')->name('deleteGatePass');
 	Route::get('/gate-pass/get-filter-data', 'GatePassController@getGatePassFilterData')->name('getGatePassFilterData');
 
+	//Material Gate Pass
+	Route::get('/material-gate-pass/get-list', 'MaterialGatePassController@getMaterialGatePassList')->name('getMaterialGatePassList');
+
 	//Gate Log
 	Route::get('/gate-log/get-list', 'GateLogController@getGateLogList')->name('getGateLogList');
 	Route::get('/gate-log/get-form-data', 'GateLogController@getGateLogFormData')->name('getGateLogFormData');

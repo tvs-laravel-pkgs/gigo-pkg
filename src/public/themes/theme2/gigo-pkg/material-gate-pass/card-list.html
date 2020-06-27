@@ -1,9 +1,14 @@
 <div class="content-wrap cndn-wrap">
-    <div class="page-header">
+ <div class="page-header">
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Material Gate Passes<span class="badge badge-secondary" id="table_infos"></span></h1>
+                    <h1 class="title type-2">
+                        Material Gate Passes
+                        <span class="badge badge-secondary">
+                            {{material_gate_passes.length}}
+                        </span>
+                    </h1>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
@@ -15,7 +20,7 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" ng-keyup="searchKey()" ng-model="$ctrl.search_key" id="search_material_gate_pass" class="form-control" placeholder="Search" autofocus/>
+                            <input type="search" id="search_material_gate_pass" class="form-control" placeholder="Search" ng-model="$ctrl.search_key" ng-keyup=searchKey() autofocus />
                             <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
@@ -27,13 +32,13 @@
             <div class="page-header-content-right">
                 <div class="page-header-content tab-block">
                     <div class="list-card-icon-wrap">
-                        <div class="list-icon in" ng-click="listRedirect('table')">
+                        <div class="list-icon" ng-click="listRedirect('table')">
                             <span></span>
                             <span></span>
                             <span></span>
                             <span></span>
                         </div>
-                        <div class="card-icon" ng-click="listRedirect('card')">
+                        <div class="card-icon in" ng-click="listRedirect('card')">
                             <span></span>
                             <span></span>
                             <span></span>
@@ -45,33 +50,64 @@
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
     <div class="list-card-tab-wrap">
-        <div class="list-tab-content in">
-            <div class="page-main-content list-page-content">
+        <div class="card-tab-content in">
+            <div class="page-card-content">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table" id="material_gate_pass_list" style="width: 100% !important;">
-                                <thead>
-                                    <tr>
-                                        <th class="action width-100">Action</th>
-                                        <th>Date & Time</th>
-                                        <th>Material GP No.</th>
-                                        <th>Job Card No</th>
-                                        <th>Work Order No</th>
-                                        <th>Vendor Code</th>
-                                        <th>Vendor Name</th>
-                                        <th>Items</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
+                            <ul class="card-list">
+                                <li ng-if="material_gate_passes.length > 0" ng-repeat="gate_pass in material_gate_passes">
+                                    <div class="card-box">
+                                        <div class="card-box-body">
+                                            <p class="card-top-info">Created on : {{gate_pass.date_and_time ? gate_pass.date_and_time : ''}}</p>
+                                            <div class="box-list">
+                                                <div class="box-left">
+                                                    <div class="box-color yellow">
+                                                        <div class="box-color-title">JC NO : {{gate_pass.job_card_number ? gate_pass.job_card_number : '' }}</div>
+                                                        <div class="box-color-subtitle">Work Oder No : {{gate_pass.work_order_no ? gate_pass.work_order_no : ''}}</div>
+                                                    </div>
+                                                </div><!-- Box Left -->
+                                                <div class="box-right">
+                                                    <div class="box-info">
+                                                        <div class="box-info-head">M Gate Pass No</div>
+                                                        <div class="box-info-body">
+                                                            <div class="box-info-body-title">{{gate_pass.gate_pass_no ? gate_pass.gate_pass_no : ''}}</div>
+                                                        </div>
+                                                    </div><!-- Box Info -->
+                                                </div><!-- Box Right -->
+                                            </div><!-- Box List -->
+                                            <div class="card-box-content mb-8">
+                                                <img class="img-responsive" src="./public/theme/img/content/jc_profile.svg" alt="Image" />
+                                                <span class="card-box-content-value"><b>{{gate_pass.name ? gate_pass.name : ''}}</b></span>
+                                                <span class="card-box-content-value info">Vendor Code : {{gate_pass.code ? gate_pass.code : '' }}</span>
+                                                <span class="card-box-content-value info"> {{gate_pass.vendor_contact_no ? gate_pass.vendor_contact_no : ''}}</span>
+                                            </div>
+                                            <div class="card-box-content">
+                                                <img class="img-responsive" src="./public/theme/img/content/jc_setup.svg" alt="Image" />
+                                                <span class="card-box-content-value">Items : {{gate_pass.items ? gate_pass.items : 0 }}</span>
+                                            </div>
+                                        </div><!-- Card Box Body -->
+                                        <div class="card-box-footer">
+                                            <div class="card-box-footer-left">
+                                                <div class="card-box-footer-info">
+                                                    <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                    <span class="card-box-footer-value">{{gate_pass.status ? gate_pass.status : '' }}</span>
+                                                </div>
+                                            </div>
+                                            <div class="card-box-footer-right">
+                                                <a href="#!/material-gate-pass/view/{{gate_pass.id}}" class="btn btn-square btn-md btn-red">View</a>
+                                                <button class="btn btn-square btn-md btn-secondary-dark confirm_gate_out_{{gate_pass.id}}" ng-if="gate_pass.status_id==8300" ng-click="materialGateInOut(gate_pass.id, gate_pass.status_id)">Gate Out</button>
+                                                <button class="btn btn-square btn-md btn-secondary-dark confirm_gate_in_{{gate_pass.id}}" ng-if="gate_pass.status_id==8301" ng-click="materialGateInOut(gate_pass.id, gate_pass.status_id)">Gate In</button>
+                                            </div>
+                                        </div><!-- Card Box Footer -->
+                                    </div><!-- Card Box -->
+                                </li>
+                            </ul><!-- Card List -->
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Container -->
-            </div><!-- Page Main Content -->
-        </div><!-- List Tab Content -->
+            </div><!-- Page Card Content -->
+        </div><!-- Card Tab Content -->
     </div><!-- List & Card Tab Wrap -->
 </div><!-- Content Wrap -->
 <!-- Modal -->
