@@ -5,14 +5,14 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/material-gate-pass/list" type="button" class="btn-back btn-img">
+                    <a href="#!/material-gate-pass/card-list" type="button" class="btn-back btn-img">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
                     </a>
                 </div>
                 <div class="page-header-content title-block">
                     <h1 class="title">Material Gate {{$ctrl.type}}</h1>
                     <p class="subtitle">
-                        <a href="#!/gigo-pkg/material-gate-pass/list">Material gate pass</a> / Gate {{$ctrl.type}}
+                        <a href="#!/material-gate-pass/card-list">Material gate pass</a> / Gate {{$ctrl.type}}
                     </p>
                 </div>
             </div>
@@ -27,7 +27,66 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="page-form pb-60">
-                            <div class="row">
+                            <h5 ng-if="$ctrl.material_gate_pass.status_id==8300" class="font-semi-dark mb-0">MGP : {{$ctrl.material_gate_pass.number ? $ctrl.material_gate_pass.number : ''}}</h5>
+                            <p ng-if="$ctrl.material_gate_pass.status_id==8300" class="mb-20">Created on : {{$ctrl.material_gate_pass.created_at ? $ctrl.material_gate_pass.created_at : ''}}</p>
+                            <div class="row" ng-if="$ctrl.material_gate_pass.status_id==8300">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="border-box">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <table class="table-info">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td><b>Job Card No</b></td>
+                                                                    <td>{{$ctrl.material_gate_pass.job_card.job_card_number ? $ctrl.material_gate_pass.job_card.job_card_number : ''}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><b>Work Order No.</b></td>
+                                                                    <td>{{$ctrl.material_gate_pass.gate_pass_detail.work_order_no ? $ctrl.material_gate_pass.gate_pass_detail.work_order_no : ''}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><b>Vendor Code</b></td>
+                                                                    <td>{{$ctrl.material_gate_pass.gate_pass_detail.vendor.code ? $ctrl.material_gate_pass.gate_pass_detail.vendor.code : ''}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><b>Vendor Name</b></td>
+                                                                    <td>{{$ctrl.material_gate_pass.gate_pass_detail.vendor.name ? $ctrl.material_gate_pass.gate_pass_detail.vendor.name :''}}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><b>Vendor Contact</b></td>
+                                                                    <td>{{$ctrl.material_gate_pass.gate_pass_detail.vendor_contact_no ? $ctrl.material_gate_pass.gate_pass_detail.vendor_contact_no : '' }}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><b>Items</b></td>
+                                                                    <td>{{$ctrl.material_gate_pass.items ? $ctrl.material_gate_pass.items : '' }}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div><!-- Column -->                                                
+                                                </div><!-- Row -->
+                                            </div><!-- Border Box -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                </div><!-- Column -->
+                                <div class="col-md-6">
+                                    <div class="grey-box-address-wrap">
+                                        <div class="grey-box-address-heading">
+                                            <span class="title">Vendor Details</span>
+                                        </div>
+                                        <div class="grey-box-address-body">
+                                            <span class="title">{{$ctrl.material_gate_pass.gate_pass_detail.vendor ? $ctrl.material_gate_pass.gate_pass_detail.vendor.name : ''}}</span>
+                                            <span class="info">
+                                                {{$ctrl.material_gate_pass.gate_pass_detail.vendor ? ($ctrl.material_gate_pass.gate_pass_detail.vendor.primary_address ? $ctrl.material_gate_pass.gate_pass_detail.vendor.primary_address.address_line1 : '') : ''}} ,
+                                                                {{$ctrl.material_gate_pass.gate_pass_detail.vendor ? ($ctrl.material_gate_pass.gate_pass_detail.vendor.primary_address ? $ctrl.material_gate_pass.gate_pass_detail.vendor.primary_address.address_line2 : '') : ''}}
+                                                                {{$ctrl.material_gate_pass.gate_pass_detail.vendor ? ($ctrl.material_gate_pass.gate_pass_detail.vendor.primary_address ? $ctrl.material_gate_pass.gate_pass_detail.vendor.primary_address.pincode : '') : ''}}</span>
+                                            <span class="info contact">{{$ctrl.material_gate_pass.gate_pass_detail.vendor.mobile_no ? $ctrl.material_gate_pass.gate_pass_detail.vendor.mobile_no : ''}} {{$ctrl.material_gate_pass.gate_pass_detail.vendor.email ? $ctrl.material_gate_pass.gate_pass_detail.vendor.email: ''}}</span>
+                                        </div>
+                                    </div>
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                            <div class="row" ng-if="$ctrl.material_gate_pass.status_id==8301 || $ctrl.material_gate_pass.status_id==8302">
                                 <div class="col-md-12">
                                     <h5 class="font-semi-dark mb-0">MGP : {{$ctrl.material_gate_pass.number ? $ctrl.material_gate_pass.number : ''}}</h5>
                                     <p class=" mb-20">Created on : {{$ctrl.material_gate_pass.created_at ? $ctrl.material_gate_pass.created_at : ''}}</p>
@@ -116,13 +175,13 @@
                                                             </tbody>
                                                         </table>
                                                         <div class="mb-10"></div><!-- Spacing -->
-                                                        <img class="img-responsive wid-60" src="{{$ctrl.material_gate_pass.attachement_path}}/{{item.attachments[0].name}}" alt="Parts Image" />
+                                                        <img class="img-responsive wid-60" src="{{$ctrl.material_gate_pass.attachement_path}}/{{item.attachment.name}}" alt="Parts Image" />
                                                     </div><!-- Border Box -->
                                                 </li>
                                             </ul><!-- Flex Row -->
                                         </div><!-- Column -->
                                     </div><!-- Row -->
-                                    <div class="row">
+                                    <div class="row" ng-if="!$ctrl.material_gate_pass.status_id==8302">
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label>Remarks</label>
@@ -138,7 +197,7 @@
                 <div class="page-form-footer">
                     <div class="row">
                         <div class="col-md-12">
-                            <a href="#!/gigo-pkg/material-gate-pass/list" class="btn btn-bordered btn-grey">Cancel</a>
+                            <a href="#!/material-gate-pass/card-list" class="btn btn-bordered btn-grey">Cancel</a>
                             <button class="btn btn-secondary-dark submit" ng-show="$ctrl.material_gate_pass.status_id==8301" type="submit">Confirm Gate In</button>
                             <button class="btn btn-secondary-dark submit" ng-show="$ctrl.material_gate_pass.status_id==8300" type="submit">Confirm Gate Out</button>
                         </div>
@@ -159,7 +218,6 @@
                 <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
                 <div class="mt-30 mb-30">
                     <a href="javascript:;" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="refresh()"><b>Done</b></a>
-                    <!-- <button type="button" ng-click="reloadPage()" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></button> -->
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->

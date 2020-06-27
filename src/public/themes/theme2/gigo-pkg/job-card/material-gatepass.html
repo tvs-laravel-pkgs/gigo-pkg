@@ -41,11 +41,11 @@
                                                                         Vendor Code : {{gate_passes.gate_pass_detail.vendor.code}} ({{gate_passes.gate_pass_detail.vendor_type.name}})
                                                                     </span>
                                                                     <span class="heading">
-                                                                        {{gate_passes.gate_pass_detail.vendor.name}}
+                                                                        {{gate_passes.gate_pass_detail.vendor ? (gate_passes.gate_pass_detail.vendor.name ? gate_passes.gate_pass_detail.vendor.name : '') : ''}}
                                                                     </span>
                                                                     <span class="address">
-                                                                        {{gate_passes.gate_pass_detail.vendor.addresses[0].address_line1}},
-                                                                        {{gate_passes.gate_pass_detail.vendor.addresses[0].address_line2}}
+                                                                        {{gate_passes.gate_pass_detail.vendor ? (gate_passes.gate_pass_detail.vendor.primary_address ? gate_passes.gate_pass_detail.vendor.primary_address.address_line1 : '') : ''}} ,
+                                                                        {{gate_passes.gate_pass_detail.vendor ? (gate_passes.gate_pass_detail.vendor.primary_address ? gate_passes.gate_pass_detail.vendor.primary_address.address_line2 : '') : ''}}
                                                                     </span>
                                                                     <span class="contact">
                                                                         Vendor Contact No : {{gate_passes.gate_pass_detail.vendor_contact_no}}
@@ -116,7 +116,7 @@
                                                                             </tbody>
                                                                         </table>
                                                                         <div class="mb-10"></div>
-                                                                        <img ng-if="gate_pass_item.attachments.length >0" class="img-responsive wid-60" src="storage/app/public/gigo/job_order/attachments/{{gate_pass_item.attachments[0].name}}" alt="Image" />
+                                                                        <img ng-if="gate_pass_item.attachment" class="img-responsive wid-60" src="storage/app/public/gigo/material_gate_pass/attachments/{{gate_pass_item.attachment.name}}" alt="Image" />
                                                                     </div><!-- Border Box -->
                                                                 </div><!-- Item -->
                                                             </div><!-- Carousel Inner -->
@@ -132,7 +132,7 @@
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <a href=".#!/gigo-pkg/job-card/split-order/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a href=".#!/job-card/split-order/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a href=".#!/gigo-pkg/job-card/returnable-item/{{job_card_id}}" class="btn btn-secondary-dark btn-nxt">Next</a>
                                             </div>
                                         </div>

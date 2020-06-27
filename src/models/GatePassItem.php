@@ -11,11 +11,18 @@ class GatePassItem extends Model {
 	use SoftDeletes;
 	protected $table = 'gate_pass_items';
 	public $timestamps = true;
-	protected $fillable =
-		["gate_pass_id", "name","item_description", "item_make", "item_model", "item_serial_no", "qty", "remarks"]
-	;
+	protected $fillable = [
+		"gate_pass_id",
+		"name",
+		"item_description",
+		"item_make",
+		"item_model",
+		"item_serial_no",
+		"qty",
+		"remarks",
+	];
 
-	public function attachments() {
-		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 231)->where('attachment_type_id', 238);
+	public function attachment() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 231)->where('attachment_type_id', 238);
 	}
 }

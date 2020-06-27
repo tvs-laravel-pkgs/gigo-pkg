@@ -145,7 +145,7 @@
                                                             <span class="title">Vendor Details</span>
                                                         </div>
                                                         <div class="grey-box-address-body">
-                                                            <span class="title" id="ven_name">{{gate_pass.gate_pass_detail.vendor ? gate_pass.gate_pass_detail.vendor.name : ''}}</span>
+                                                            <span class="title" id="ven_name">{{gate_pass.gate_pass_detail.vendor ? (gate_pass.gate_pass_detail.vendor.name ? gate_pass.gate_pass_detail.vendor.name : '') : ''}}</span>
                                                             <p class="address"></p>
                                                             <span class="info address"> {{gate_pass.gate_pass_detail.vendor ? (gate_pass.gate_pass_detail.vendor.primary_address ? gate_pass.gate_pass_detail.vendor.primary_address.address_line1 : '') : ''}} ,
                                                                 {{gate_pass.gate_pass_detail.vendor ? (gate_pass.gate_pass_detail.vendor.primary_address ? gate_pass.gate_pass_detail.vendor.primary_address.address_line2 : '') : ''}}
@@ -179,7 +179,7 @@
                                             </h5>
                                             <input type="hidden" name="gate_pass_id" value="{{gate_pass.id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
                                             <div class="border-icon" ng-repeat="(index, gate_pass_item) in gate_pass.gate_pass_items">
-                                                <input type="hidden" name="item_id" id="item_id_{{index}}" value="{{gate_pass_item.id}}" class="form-control" />
+                                                <input type="hidden" name="item_details[{{index}}][id]" id="item_id_{{index}}" value="{{gate_pass_item.id}}" class="form-control" />
                                                 <img class="img-responsive img-delete" src="./public/theme/img/table/delete.svg" alt="Delete" ng-click="$ctrl.removeItem(index, gate_pass_item.id)">
                                                 <div class="row">
                                                     <div class="col-md-3">
@@ -208,8 +208,8 @@
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
                                                         <div class="form-group">
-                                                            <label>Item Serial No</label>
-                                                            <input type="text" class="form-control" ng-model="gate_pass_item.item_serial_no" placeholder="Enter Serial No" autocomplete="off" value="" name="item_details[{{index}}][item_serial_no]" minlength="3" maxlength="191"/>
+                                                            <label>Item Serial No <sup class="mandatory">*</sup></label>
+                                                            <input type="text" class="form-control required" ng-model="gate_pass_item.item_serial_no" placeholder="Enter Serial No" autocomplete="off" value="" name="item_details[{{index}}][item_serial_no]" minlength="3" maxlength="191"/>
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
@@ -227,17 +227,17 @@
                                                     <div class="col-md-12">
                                                         <ul class="gatein-img-list">
                                                             <div class="avatar-upload type-3">
-                                                                <div class="avatar-edit" ng-class="{'in': gate_pass_item.attachments != NULL}">
-                                                                    <input type="file" class="profile-img-upload warranty_expiry_attachment" name="item_details[{{index}}][material_outward_attachments][]" id="item{{index}}" accept=".png, .jpg, .jpeg" />
+                                                                <div class="avatar-edit" ng-class="{'in': gate_pass_item.attachment != NULL}">
+                                                                    <input type="file" class="profile-img-upload warranty_expiry_attachment" name="item_details[{{index}}][material_outward_attachment]" id="item{{index}}" accept=".png, .jpg, .jpeg" />
                                                                     <label for="item{{index}}">
                                                                         <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
                                                                     </label>
                                                                 </div>
-                                                                <div class="avatar-preview in" ng-if="gate_pass_item.attachments != NULL">
-                                                                    <div class="avatar-img" id="imagePreview" style="background-image:url('storage/app/public/gigo/job_order/attachments/{{gate_pass_item.attachments[0].name}}')">
+                                                                <div class="avatar-preview in" ng-if="gate_pass_item.attachment != NULL">
+                                                                    <div class="avatar-img" id="imagePreview" style="background-image:url('storage/app/public/gigo/material_gate_pass/attachments/{{gate_pass_item.attachment.name}}')">
                                                                     </div>
                                                                 </div>
-                                                                <div class="avatar-preview" ng-if="gate_pass_item.attachments == NULL">
+                                                                <div class="avatar-preview" ng-if="gate_pass_item.attachment == NULL">
                                                                     <div class="avatar-img" id="imagePreview" style="">
                                                                     </div>
                                                                 </div><!-- Avatar Preview -->
@@ -255,7 +255,7 @@
                                                 <div class="col-md-12">
                                                     <input type="hidden" id="gate_pass_item_removal_id" name="gate_pass_item_removal_id">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <button type="submit" ng-click="saveItemDetails()" class="btn btn-red">
+                                                    <button type="submit" ng-click="saveItemDetails()" class="btn btn-red submit">
                                                         Save & Close
                                                     </button>
                                                 </div>

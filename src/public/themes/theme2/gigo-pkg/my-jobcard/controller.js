@@ -131,6 +131,7 @@ app.component('myJobcardView', {
                     $scope.user_details = res.user_details;
                     $scope.my_job_orders = res.my_job_orders;
                     $scope.pass_work_reasons = res.pass_work_reasons;
+                    $scope.other_work_status = res.other_work_status;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -179,6 +180,7 @@ app.component('myJobcardView', {
                     url: base_url + '/api/save-work-log',
                     method: "POST",
                     data: {
+                        job_card_id: $routeParams.job_card_id,
                         job_repair_order_id: job_repair_order_id,
                         machanic_id: self.user_id,
                         status_id: status_id,
@@ -198,10 +200,12 @@ app.component('myJobcardView', {
         }
 
         $scope.confirmFinish = function() {
+            $('.confirm_finish').button('loading');
             $.ajax({
                     url: base_url + '/api/save-work-log',
                     method: "POST",
                     data: {
+                        job_card_id: $routeParams.job_card_id,
                         job_repair_order_id: $scope.job_repair_order_id,
                         machanic_id: self.user_id,
                         status_id: 8263,
@@ -215,6 +219,7 @@ app.component('myJobcardView', {
                     setTimeout(function() { location.reload(); }, 1000);
                 })
                 .fail(function(xhr) {
+                    $('.confirm_finish').button('reset');
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
@@ -235,6 +240,7 @@ app.component('myJobcardView', {
                 custom_noty('error', 'Select Reason to Pause Work');
                 return;
             }
+            $('.break_confirm').button('loading');
             pause_wrk_repair_id = $("#pause_wrk_repair_id").val();
             $.ajax({
                     url: base_url + '/api/save-my-job-card',
@@ -250,7 +256,7 @@ app.component('myJobcardView', {
                     },
                 }).done(function(res) {
                     $("#pause_work_modal").hide();
-
+                    $('.break_confirm').button('reset');
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
