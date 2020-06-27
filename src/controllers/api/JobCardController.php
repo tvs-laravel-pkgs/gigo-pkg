@@ -624,6 +624,8 @@ class JobCardController extends Controller {
 	public function getBayFormData(Request $r) {
 		try {
 			$job_card = JobCard::with([
+				'jobOrder',
+				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
 				'status',
 			])
@@ -757,10 +759,13 @@ class JobCardController extends Controller {
 		//dd($r->all());
 		try {
 			$job_card = JobCard::with([
+				'jobOrder',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
 				'bay',
 				'status',
-			])
-				->find($r->id);
+			])->find($r->id);
+
 			if (!$job_card) {
 				return response()->json([
 					'success' => false,

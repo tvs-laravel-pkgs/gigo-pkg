@@ -30,12 +30,21 @@
                                         <h5 class="title-red border-bottom">
                                             Bay
                                         </h5>
-                                        <div class="row" ng-if="job_card.bay">
-                                            <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12" ng-if="job_card.bay">
                                                 <div class="bay-box-wrap">
                                                     <img class="img-responsive img-center" src="./public/theme/img/content/truck-bg-grey.svg" alt="Truck" />
                                                     <h6 class="info">Vehicle Assigned to</h6>
                                                     <h4 class="title">{{job_card.bay.name ? job_card.bay.name:'' }}</h4>
+                                                </div>
+                                                <div class="text-center">
+                                                    <a href="#!/job-card/assign-bay/{{job_card.id}}" ng-if="job_card.status_id ==8220 || job_card.status_id ==8221" class="btn btn-secondary-dark btn-square">Edit</a>
+                                                </div>
+                                            </div><!-- Column -->
+                                            <div class="col-md-12" ng-if="!job_card.bay">
+                                                <div class="bay-box-wrap">
+                                                    <img class="img-responsive img-center" src="./public/theme/img/content/truck-bg-grey.svg" alt="Truck" />
+                                                    <h6 class="info">Bay not Assigned</h6>
                                                 </div>
                                                 <div class="text-center">
                                                     <a href="#!/job-card/assign-bay/{{job_card.id}}" ng-if="job_card.status_id ==8220 || job_card.status_id ==8221" class="btn btn-secondary-dark btn-square">Edit</a>
