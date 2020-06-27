@@ -1,4 +1,4 @@
-app.directive('warrantyJobOrderRequestFormTabs', function() {
+/*app.directive('warrantyJobOrderRequestFormTabs', function() {
     return {
         templateUrl: warrantyJobOrderRequestFormTabs,
         controller: function() {}
@@ -11,18 +11,18 @@ app.directive('wjorHeader', function() {
         templateUrl: wjorHeader,
         controller: function() {}
     }
-});
+});*/
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('wjorViewTabs', function() {
+/*app.directive('wjorViewTabs', function() {
     return {
         templateUrl: wjorViewTabs,
         controller: function() {}
     }
-});
+});*/
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('wjorPprForm', function() {
+/*app.directive('wjorPprForm', function() {
     return {
         templateUrl: warrantyJobOrderRequestPprForm,
         controller: function() {}
@@ -43,27 +43,27 @@ app.directive('wjorAttachmentForm', function() {
         templateUrl: warrantyJobOrderRequestAttachmentForm,
         controller: function() {}
     }
-});
+});*/
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('wjorApprovalAttachmentForm', function() {
+/*app.directive('wjorApprovalAttachmentForm', function() {
     return {
         templateUrl: gigo_pkg_url +
             '/warranty-job-order-request/partials/wjor-approval-attachment-form.html',
         controller: function() {}
     }
-});
+});*/
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('wjorPprView', function() {
+/*app.directive('wjorPprView', function() {
     return {
         templateUrl: wjorPprView,
         controller: function() {}
     }
-});
+});*/
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('wjorEstimateView', function() {
+/*app.directive('wjorEstimateView', function() {
     return {
         templateUrl: wjorEstimateView,
         controller: function() {}
@@ -84,10 +84,10 @@ app.directive('pprView', function() {
         templateUrl: pprView,
         controller: function() {}
     }
-});
+});*/
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('labourModalForm', function() {
+/*app.directive('labourModalForm', function() {
     return {
         templateUrl: labourModalForm,
         controller: function() {}
@@ -100,10 +100,10 @@ app.directive('partModalForm', function() {
         templateUrl: partModalForm,
         controller: function() {}
     }
-});
+});*/
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.component('warrantyJobOrderRequestCardList', {
+/*app.component('warrantyJobOrderRequestCardList', {
     templateUrl: warrantyJobOrderRequestCardList,
     controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect) {
         $rootScope.loading = true;
@@ -202,115 +202,10 @@ app.component('warrantyJobOrderRequestCardList', {
         }
 
     }
-});
+});*/
 
 //-------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------
-
-app.component('warrantyJobOrderRequestTableList', {
-    templateUrl: warrantyJobOrderRequestTableList,
-    controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect) {
-        $rootScope.loading = true;
-        $('#search').focus();
-        var self = this;
-        self.hasPermission = HelperService.hasPermission;
-
-        if (!HelperService.isLoggedIn()) {
-            $location.path('/login');
-            return;
-        }
-
-        $scope.user = HelperService.getLoggedUser();
-
-        $element.find('input').on('keydown', function(ev) {
-            ev.stopPropagation();
-        });
-
-        var params = {
-            page: 1, // show first page
-            count: 100, // count per page
-            sorting: {
-                created_at: 'asc' // initial sorting
-            },
-            filter: {
-                // search: '',
-                statusIn: [9100, 9101, 9103], //new, waiting for approval and rejected
-            },
-        };
-
-        // typeIn: [2, 5], //warranty & free service orders
-
-        //FETCH DATA
-        $scope.fetchData = function() {
-            WarrantyJobOrderRequestSvc.index(params)
-                .then(function(response) {
-                    $scope.warranty_job_order_requests = response.data.warranty_job_order_request_collection;
-                    $rootScope.loading = false;
-                });
-        }
-        $scope.fetchData();
-
-        // $scope.sendToApproval = function(warranty_job_order_request) {
-
-        //     console.log(warranty_job_order_request);
-        //     WarrantyJobOrderRequestSvc.confirmSendToApproval(warranty_job_order_request)
-        //         .then(function(status) {
-
-        //             console.log(status);
-        //             warranty_job_order_request.status = status;
-        //         });
-        // };
-
-        $scope.sendToApproval = function(warranty_job_order_request) {
-            $ngBootbox.confirm({
-                    message: 'Are you sure you want to send to approval?',
-                    title: 'Confirm',
-                    size: "small",
-                    className: 'text-center',
-                })
-                .then(function() {
-                    $rootScope.loading = true;
-                    WarrantyJobOrderRequestSvc.sendToApproval(warranty_job_order_request)
-                        .then(function(response) {
-                            $rootScope.loading = false;
-                            if (!response.data.success) {
-                                showErrorNoty(response.data);
-                                return;
-                            }
-                            showNoty('success', 'Warranty job order request initiated successfully');
-                            warranty_job_order_request.status = response.data.warranty_job_order_request.status;
-                        });
-                });
-        }
-
-
-        $scope.confirmDelete = function(warranty_job_order_request,key) {
-            $ngBootbox.confirm({
-                    message: 'Are you sure you want to delete this?',
-                    title: 'Confirm',
-                    size: "small",
-                    className: 'text-center',
-                })
-                .then(function() {
-                    WarrantyJobOrderRequestSvc.remove(warranty_job_order_request)
-                        .then(function(response) {
-                            if (!response.data.success) {
-                                showErrorNoty(response.data);
-                                return;
-                            }
-                            showNoty('success', 'Warranty job order request deleted successfully');
-                            // $location.path('/warranty-job-order-request/card-list');
-                            $scope.warranty_job_order_requests.splice(key, 1);
-                        });
-                });
-        }
-
-    }
-});
-
-//-------------------------------------------------------------------------------------------------------------------
-//-------------------------------------------------------------------------------------------------------------------
-
 
 angular.module('app').requires.push('angularBootstrapFileinput');
 
@@ -557,9 +452,9 @@ app.component('warrantyJobOrderRequestForm', {
         }
         $scope.partSelected = function(part) {
             var quantity = 1; 
-            if(part.pivot!=undefined){
+            /*if(part.pivot){
                 quantity = part.pivot.quantity;
-            }
+            }*/
             part.quantity = quantity;
             $scope.calculatePartAmount(part);
         }
@@ -593,8 +488,24 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.partAmountChange = function (part) {
             $scope.calculatePartAmount(part);
         }
-        
+        $scope.isSameState = function(){
+            $same_state = false;
+            if ($scope.warranty_job_order_request.job_order != undefined) {
+                var customer_state = $scope.warranty_job_order_request.job_order.customer.state_id;
+                var job_order_state = $scope.warranty_job_order_request.job_order.outlet.state_id;
+                if (customer_state == job_order_state) {
+                    $same_state = true;
+                }else{
+                    $same_state = false;
+                }
+            }
+            // self.same_state = $same_state;
+            return $same_state;
+        }
+
         $scope.calculateRepairOrderAmount = function(repair_order) {
+            $same_state = $scope.isSameState();
+
             var total_amount = 0;
             var tax_total = 0;
             var amount = repair_order.amount;
@@ -603,12 +514,29 @@ app.component('warrantyJobOrderRequestForm', {
             }
             if (repair_order.tax_code) {
                 angular.forEach(repair_order.tax_code.taxes, function(tax) {
-                    tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                    if ($same_state==true) {
+                        if (tax.type_id == 1160) {
+                            tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                        }else{
+                            tax.pivot.percentage = 0;
+                            tax_total += 0;
+                        }
+                    }else{
+                        if (tax.type_id != 1160) {
+                            tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                        }else{
+                            tax.pivot.percentage = 0;
+                            tax_total += 0;
+                        }
+                    }
+                    // tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
                 })
             }
             repair_order.total_amount = parseFloat(amount) + tax_total;
         }
         $scope.calculatePartAmount = function(part) {
+            $same_state = $scope.isSameState();
+
             var total_amount = 0;
             var tax_total = 0;
 
@@ -616,7 +544,22 @@ app.component('warrantyJobOrderRequestForm', {
 
             if (part.tax_code) {
                 angular.forEach(part.tax_code.taxes, function(tax) {
-                    tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                    if ($same_state==true) {
+                        if (tax.type_id == 1160) {
+                            tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                        }else{
+                            tax.pivot.percentage = 0;
+                            tax_total += 0;
+                        }
+                    }else{
+                        if (tax.type_id != 1160) {
+                            tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                        }else{
+                            tax.pivot.percentage = 0;
+                            tax_total += 0;
+                        }
+                    }
+                    // tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
                 })
             }
             part.total_amount = parseFloat(amount) + tax_total;
@@ -868,6 +811,8 @@ app.component('warrantyJobOrderRequestForm', {
         });
 
         $scope.calculateLabourTotal = function(update = null) {
+            $same_state = $scope.isSameState();
+
             var total = 0;
             angular.forEach($scope.warranty_job_order_request.repair_orders, function(repair_order) {
                 var amount = repair_order.amount;
@@ -875,14 +820,42 @@ app.component('warrantyJobOrderRequestForm', {
                 if (update != null) {
                     amount = repair_order.pivot.net_amount;
                     tax_total = repair_order.pivot.tax_total;
+                    if (repair_order.tax_code) {
+                        angular.forEach(repair_order.tax_code.taxes, function(tax) {
+                            if ($same_state==true) {
+                                if (tax.type_id != 1160) {
+                                    tax.pivot.percentage = 0;
+                                }
+                            }else{
+                                if (tax.type_id == 1160) {
+                                    tax.pivot.percentage = 0;
+                                }
+                            }
+                        })
+                    }
                 } else {
-                    console.log(repair_order);
+                    // console.log(repair_order);
                     if (repair_order.category_id == 9140) {
                         amount = repair_order.net_amount;
                     }
                     if (repair_order.tax_code) {
                         angular.forEach(repair_order.tax_code.taxes, function(tax) {
-                            tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                            if ($same_state==true) {
+                                if (tax.type_id == 1160) {
+                                    tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                                }else{
+                                    tax.pivot.percentage = 0;
+                                    tax_total += 0;
+                                }
+                            }else{
+                                if (tax.type_id != 1160) {
+                                    tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                                }else{
+                                    tax.pivot.percentage = 0;
+                                    tax_total += 0;
+                                }
+                            }
+                            // tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
                         })
                     }
                 }
@@ -900,8 +873,9 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.calculatePartTotal = function(update=null) {
-            console.log($scope.warranty_job_order_request.job_order.customer.state_id);
-            console.log($scope.warranty_job_order_request.job_order.customer.pivot);
+            
+            $same_state = $scope.isSameState();
+            
             var total = 0;
             angular.forEach($scope.warranty_job_order_request.parts, function(part) {
                 if (update) {
@@ -913,7 +887,21 @@ app.component('warrantyJobOrderRequestForm', {
                 var tax_total = 0;
                 if (part.tax_code) {
                     angular.forEach(part.tax_code.taxes, function(tax) {
-                        tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                        if ($same_state==true) {
+                            if (tax.type_id == 1160) {
+                                tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                            }else{
+                                tax.pivot.percentage = 0;
+                                tax_total += 0;
+                            }
+                        }else{
+                            if (tax.type_id != 1160) {
+                                tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
+                            }else{
+                                tax.pivot.percentage = 0;
+                                tax_total += 0;
+                            }
+                        }
                     })
                 }
                 if (update!=null) {

@@ -331,6 +331,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 			if (!isset($input['id']) || !$input['id']) {
 				$record = new Self();
 				$record->company_id = $owner->company_id;
+				$record->created_by_id = Auth::id();
 				$record->number = rand();
 
 			} else {

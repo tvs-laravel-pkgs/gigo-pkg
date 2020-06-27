@@ -73,6 +73,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 			Route::post('send-to-approval', $controller . 'Controller@sendToApproval');
 			Route::post('approve', $controller . 'Controller@approve');
 			Route::post('reject', $controller . 'Controller@reject');
+			Route::get('list', $controller . 'Controller@list');
 		});
 
 		Route::group(['prefix' => 'vehicle-primary-application'], function () {

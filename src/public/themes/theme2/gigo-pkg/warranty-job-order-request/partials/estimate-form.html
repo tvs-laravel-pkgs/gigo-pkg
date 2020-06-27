@@ -63,7 +63,7 @@
                             <td class="text-right">
                                 {{job_order_labour.net_amount_without_tax| currency}}
                             </td>
-                            <td ng-repeat="(tax_key, tax) in job_order_labour.tax_code.taxes" ng-if="job_order_labour.tax_code">
+                            <td class="text-right" ng-repeat="(tax_key, tax) in job_order_labour.tax_code.taxes" ng-if="job_order_labour.tax_code">
                                 {{(job_order_labour.net_amount_without_tax*tax.pivot.percentage)/100 | currency}}
                             </td>
                             <td class="text-right">
@@ -159,7 +159,7 @@
                             <!-- <td class="text-right">
                                 {{job_order_part.qty | number:2}}
                             </td> -->
-                            <td ng-repeat="(tax_key, tax) in job_order_part.tax_code.taxes" ng-if="job_order_part.tax_code">
+                            <td class="text-right" ng-repeat="(tax_key, tax) in job_order_part.tax_code.taxes" ng-if="job_order_part.tax_code">
                                 {{(job_order_part.rate*tax.pivot.percentage)/100 | currency}}
                             </td>
                             <td class="text-right">

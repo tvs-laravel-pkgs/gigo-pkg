@@ -164,6 +164,9 @@ app.factory('WarrantyJobOrderRequestSvc', function($q, RequestSvc, $rootScope, $
                             // warranty_job_order_request.status = response.data.warranty_job_order_request.status;
                         });
                 });
+        },
+        list: function(params) { // table list
+            return RequestSvc.get('/api/' + model + '/list', params);
         }
 
     };
