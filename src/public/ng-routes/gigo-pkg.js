@@ -805,7 +805,7 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Bay View',
     }).
 
-    when('/gigo-pkg/job-card/split-order/:job_card_id', {
+    when('/job-card/split-order/:job_card_id', {
         template: '<job-card-split-order></job-card-split-order>',
         title: 'Job Card Split Order',
     }).

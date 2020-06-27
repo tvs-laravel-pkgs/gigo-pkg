@@ -3222,6 +3222,7 @@ class JobCardController extends Controller {
 				'jobOrder.jobOrderParts.part',
 				'jobOrder.jobOrderParts.part.taxCode',
 				'jobOrder.jobOrderParts.part.taxCode.taxes',
+				'status',
 			])
 				->find($request->id);
 

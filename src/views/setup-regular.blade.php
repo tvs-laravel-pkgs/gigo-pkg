@@ -1248,7 +1248,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Job Card Bay View',
 	    }).
 
-	     when('/gigo-pkg/job-card/split-order/:job_card_id', {
+	     when('/job-card/split-order/:job_card_id', {
 	        template: '<job-card-split-order></job-card-split-order>',
 	        title: 'Job Card Split Order',
 	    }).

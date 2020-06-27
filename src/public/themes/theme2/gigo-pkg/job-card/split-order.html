@@ -30,13 +30,8 @@
                                             <!-- Filters -->
                                             <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300" id="tabs">
                                                 <ul class="nav nav-pills editDetails-tabs">
-                                                    <li class="active"><a class="btn-pills" data-target="#unassigned_items" role="tab" data-toggle="tab" aria-expanded="true"> 000000 - Unassigned Items - {{unassigned_total_count}} Items</a></li>
+                                                    <li class="active"><a class="btn-pills" data-target="#unassigned_items" role="tab" data-toggle="tab" aria-expanded="true">Unassigned Items - {{unassigned_total_count}} Items</a></li>
                                                     <li ng-repeat="(key,split_order_type) in extras.split_order_types"><a data-target="#{{split_order_type.id}}" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">{{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} Items</a></li>
-                                                    <!-- <li class="active"><a class="btn-pills" data-target="#order-pane" data-toggle="tab" aria-expanded="true">Order</a></li>
-                                                    <li><a class="btn-pills" data-target="#payment-pane" data-toggle="tab" aria-expanded="true">Payment</a></li>
-                                                    <li><a class="btn-pills" data-target="#invoice-pane" data-toggle="tab" aria-expanded="true">Invoice & CN</a></li>
-                                                    <li><a class="btn-pills" data-target="#payment-pane" data-toggle="tab" aria-expanded="true">Payment</a></li>
-                                                    <li><a class="btn-pills" data-target="#invoice-pane" data-toggle="tab" aria-expanded="true">Invoice & CN</a></li> -->
                                                 </ul>
                                             </div><!-- Filters -->
                                         </div>
@@ -50,6 +45,7 @@
                                                                 <table id="table1" class="table split-order-table table-form  childgrid">
                                                                     <thead>
                                                                         <tr>
+                                                                            <th class="action">Action</th>
                                                                             <th>Item Type</th>
                                                                             <th>Item</th>
                                                                             <th>Qty</th>
@@ -61,11 +57,15 @@
                                                                             <th class="text-right">SGST (9%)</th>
                                                                             <th class="text-right">IGST (0%)</th>
                                                                             <th class="text-right">Total Amount</th>
-                                                                            <th class="action">Action</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody class="connectedSortable">
                                                                         <tr data-itemid="labour.id" data-split_id="split_order_type.id" ng-if="labour.split_order_type_id == null" ng-repeat="(key,labour) in labour_details">
+                                                                            <td class="action width-100">
+                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderLabourChange(labour.id)">
+                                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
+                                                                                </a>
+                                                                            </td>
                                                                             <td>Labour</td>
                                                                             <td>{{labour.name}}</td>
                                                                             <td>{{labour.qty}}</td>
@@ -77,13 +77,13 @@
                                                                             <td class="text-right">{{labour.tax_values[1] ? labour.tax_values[1] : '0.00' }}</td>
                                                                             <td class="text-right">{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
                                                                             <td class="text-right">{{labour.total_amount}}</td>
+                                                                        </tr>
+                                                                        <tr data-itemid="part.id" data-split_id="split_order_type.id" ng-if="part.split_order_type_id == null" ng-repeat="(key,part) in part_details">
                                                                             <td class="action width-100">
-                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderLabourChange(labour.id)">
+                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderPartChange(part.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
                                                                                 </a>
                                                                             </td>
-                                                                        </tr>
-                                                                        <tr data-itemid="part.id" data-split_id="split_order_type.id" ng-if="part.split_order_type_id == null" ng-repeat="(key,part) in part_details">
                                                                             <td>Part</td>
                                                                             <td>{{part.name}}</td>
                                                                             <td>{{part.qty}}</td>
@@ -95,11 +95,6 @@
                                                                             <td class="text-right">{{part.tax_values[1] ? part.tax_values[1]: '0.00' }}</td>
                                                                             <td class="text-right">{{part.tax_values[2] ? part.tax_values[2] : '0.00'}}</td>
                                                                             <td class="text-right">{{part.total_amount}}</td>
-                                                                            <td class="action width-100">
-                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderPartChange(part.id)">
-                                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
-                                                                                </a>
-                                                                            </td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
@@ -116,6 +111,7 @@
                                                                 <table id="table{{key}}" class="table split-order-table table-form childgrid">
                                                                     <thead>
                                                                         <tr>
+                                                                            <th class="action">Action</th>
                                                                             <th>Item Type</th>
                                                                             <th>Item</th>
                                                                             <th>Qty</th>
@@ -127,11 +123,15 @@
                                                                             <th class="text-right">SGST (9%)</th>
                                                                             <th class="text-right">IGST (0%)</th>
                                                                             <th class="text-right">Total Amount</th>
-                                                                            <th class="action">Action</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody class="connectedSortable">
                                                                         <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(key,labour) in labour_details">{{labour}}
+                                                                            <td class="action width-100">
+                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderLabourChange(labour.id)">
+                                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
+                                                                                </a>
+                                                                            </td>
                                                                             <td>Labour </td>
                                                                             <td>{{labour.name}}</td>
                                                                             <td>{{labour.qty}}</td>
@@ -143,13 +143,13 @@
                                                                             <td class="text-right">{{labour.tax_values[1] ? labour.tax_values[1] : '0.00' }}</td>
                                                                             <td class="text-right">{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
                                                                             <td class="text-right">{{labour.total_amount}}</td>
+                                                                        </tr>
+                                                                        <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(key,part) in part_details">
                                                                             <td class="action width-100">
-                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderLabourChange(labour.id)">
+                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderPartChange(part.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
                                                                                 </a>
                                                                             </td>
-                                                                        </tr>
-                                                                        <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(key,part) in part_details">
                                                                             <td>Part</td>
                                                                             <td>{{part.name}}</td>
                                                                             <td>{{part.qty}}</td>
@@ -161,11 +161,6 @@
                                                                             <td class="text-right">{{part.tax_values[1] ? part.tax_values[1]: '0.00' }}</td>
                                                                             <td class="text-right">{{part.tax_values[2] ? part.tax_values[2] : '0.00'}}</td>
                                                                             <td class="text-right">{{part.total_amount}}</td>
-                                                                            <td class="action width-100">
-                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderPartChange(part.id)">
-                                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
-                                                                                </a>
-                                                                            </td>
                                                                         </tr>
                                                                     </tbody>
                                                                 </table>
@@ -203,7 +198,7 @@
                                         <input ng-model="searchType" type="search" placeholder="Search Split Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="split_order_type.id" ng-repeat="split_order_type in extras.split_order_types | filter:searchType">{{split_order_type.name}}</md-option>
+                                        <md-option ng-value="split_order_type.id" ng-repeat="split_order_type in extras.split_order_types | filter:searchType">{{split_order_type.name}} / {{split_order_type.name}}</md-option>
                                     </md-optgroup>
                                 </md-select>
                                 <input type="hidden" class="form-control required" id="split_order_type_id" name="split_order_type_id" value="{{split_order_type.id}}" />
