@@ -35,6 +35,7 @@ use App\Vendor;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use Entrust;
 use File;
 use Illuminate\Http\Request;
 use Storage;
@@ -47,21 +48,21 @@ class JobCardController extends Controller {
 
 	public function getJobCardList(Request $request) {
 		try {
-			/*$validator = Validator::make($request->all(), [
-					'floor_supervisor_id' => [
-						'required',
-						'exists:users,id',
-						'integer',
-					],
+			$validator = Validator::make($request->all(), [
+				'floor_supervisor_id' => [
+					'required',
+					'exists:users,id',
+					'integer',
+				],
+			]);
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
 				]);
-				if ($validator->fails()) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => $validator->errors()->all(),
-					]);
-			*/
-			//issue: query optimisation
+			}
+
 			$job_card_list = JobCard::select([
 				'job_cards.id as job_card_id',
 				'job_cards.job_card_number',
@@ -69,7 +70,7 @@ class JobCardController extends Controller {
 				'job_orders.id as job_order_id',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y - %h:%i %p") as date'),
 				'vehicles.registration_number',
-				'models.model_name',
+				'models.model_name as vehicle_model',
 				'customers.name as customer_name',
 				'status.name as status',
 				'service_types.name as service_type',
@@ -78,7 +79,7 @@ class JobCardController extends Controller {
 				'gate_passes.id as gate_pass_id',
 
 			])
-				->leftJoin('job_orders', 'job_orders.id', 'job_cards.job_order_id')
+				->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')
 				->leftJoin('gate_passes', 'gate_passes.job_card_id', 'job_cards.id')
 				->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
 				->leftJoin('models', 'models.id', 'vehicles.model_id')
@@ -145,16 +146,34 @@ class JobCardController extends Controller {
 					if (!empty($request->job_order_type_id)) {
 						$query->where('job_orders.type_id', $request->job_order_type_id);
 					}
-				})
-			//Floor Supervisor not Assigned =>8220
-				->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')")
-				->groupBy('job_cards.id')
-				->orderBy('job_cards.created_at', 'DESC')
-				->get();
+				});
+
+			if (!Entrust::can('view-overall-outlets-job-card')) {
+				if (Entrust::can('view-mapped-outlet-job-card')) {
+					$job_card_list->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+				} else {
+					$job_card_list->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
+						->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')");
+				}
+			}
+			$job_card_list->groupBy('job_cards.id')
+				->orderBy('job_cards.created_at', 'DESC');
+
+			$total_records = $job_card_list->get()->count();
+
+			if ($request->offset) {
+				$job_card_list->offset($request->offset);
+			}
+			if ($request->limit) {
+				$job_card_list->limit($request->limit);
+			}
+
+			$job_cards = $job_card_list->get();
 
 			return response()->json([
 				'success' => true,
-				'job_card_list' => $job_card_list,
+				'job_card_list' => $job_cards,
+				'total_records' => $total_records,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([

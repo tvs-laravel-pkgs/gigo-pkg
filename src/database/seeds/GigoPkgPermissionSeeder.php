@@ -130,6 +130,24 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'view-parts-indent',
 				'display_name' => 'View',
 			],
+			[
+				'display_order' => 2,
+				'parent' => 'parts-indent',
+				'name' => 'view-own-outlet-parts-indent',
+				'display_name' => 'View Own Outlet',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'parts-indent',
+				'name' => 'view-mapped-outlet-parts-indent',
+				'display_name' => 'View Mapped Outlets',
+			],
+			[
+				'display_order' => 4,
+				'parent' => 'parts-indent',
+				'name' => 'view-overall-outlets-parts-indent',
+				'display_name' => 'View Overall Outlets',
+			],
 
 			//Complaint Group
 			[
@@ -955,6 +973,24 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'parent' => 'job-cards',
 				'name' => 'delete-job-card',
 				'display_name' => 'Delete',
+			],
+			[
+				'display_order' => 4,
+				'parent' => 'job-cards',
+				'name' => 'view-own-outlet-job-card',
+				'display_name' => 'View Own Outlet',
+			],
+			[
+				'display_order' => 5,
+				'parent' => 'job-cards',
+				'name' => 'view-mapped-outlet-job-card',
+				'display_name' => 'View Mapped Outlets',
+			],
+			[
+				'display_order' => 6,
+				'parent' => 'job-cards',
+				'name' => 'view-overall-outlets-job-card',
+				'display_name' => 'View Overall Outlets',
 			],
 
 			[

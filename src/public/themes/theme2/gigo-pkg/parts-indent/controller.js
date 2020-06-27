@@ -13,6 +13,7 @@ app.component('partsIndentList', {
         }
         self.add_permission = self.hasPermission('parts-indent');
         var table_scroll;
+        self.search_key = '';
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
         var dataTable = $('#parts_indent_table').DataTable({
             "dom": cndn_dom_structure,
@@ -28,13 +29,13 @@ app.component('partsIndentList', {
             },
             pageLength: 10,
             processing: true,
-            stateSaveCallback: function(settings, data) {
+             stateSaveCallback: function(settings, data) {
                 localStorage.setItem('CDataTables_' + settings.sInstance, JSON.stringify(data));
             },
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_parts_indent').val(state_save_val.search.search);
+                    self.search_key = state_save_val.search.search;
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -48,23 +49,25 @@ app.component('partsIndentList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.vendor = $('#vendor').val();
-                    d.outlet = $('#outlet').val();
-                    d.date = $('#date').val();
+                    d.job_card_no = $('#job_card_no').val();
+                    d.job_card_date = $('#job_card_date').val();
+                    d.customer_id = $('#customer_id').val();
+                    d.outlet_id = $('#outlet_id').val();
+                    d.status_id = $('#status_id').val();
                 },
             },
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' , searchable: true },
-                { data: 'date_time', name: 'job_cards.created_at' , searchable: true },
-                { data: 'qty', name: 'job_order_parts.qty' , searchable: true },
-                { data: 'issued_qty', name: 'job_order_issued_parts.issued_qty' , searchable: true },
+                { data: 'date_time', searchable: false },
+                { data: 'requested_qty', searchable: false },
+                { data: 'issued_qty', searchable: false },
                 { data: 'floor_supervisor', name: 'users.name' , searchable: true },
-                { data: 'customer_name', name: '' },
+                { data: 'customer_name', name: 'customers.name' },
                 { data: 'state_name', name: 'states.name' , searchable: true},
                 { data: 'region_name', name: 'regions.name', searchable: true },
                 { data: 'outlet_name', name: 'outlets.code', searchable: true },
-                { data: 'status', name: '' },
+                { data: 'status', name: 'configs.name', searchable: true },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -77,7 +80,7 @@ app.component('partsIndentList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_parts_indent').val('');
+            self.search_key = '';
             $('#parts_indent_table').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
@@ -85,23 +88,56 @@ app.component('partsIndentList', {
         });
 
         var dataTables = $('#parts_indent_table').dataTable();
-        $("#search_parts_indent").keyup(function() {
-            dataTables.fnFilter(this.value);
-        });
+        $scope.searchPartIndent = function() {
+            dataTables.fnFilter(self.search_key);
+        }
 
         //FOR FILTER
-       /* $http.get(
+        $http.get(
             laravel_routes['getPartsIndentFilter']
         ).then(function(response) {
             self.extras = response.data.extras;
-            self.repair_order_type = response.data.repair_order_type;
-            self.skill_level = response.data.skill_level;
-            self.tax_code = response.data.tax_code;
-            self.tax_code_selected = '';
-            self.skill_level_selected = '';
-            self.repair_order_type_selected = '';
-        });*/
-        
+        });
+
+        //GET CUSTOMER LIST
+        self.searchCustomer = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCustomerSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }        
+
+        //GET OUTLET LIST
+        self.searchOutlet = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getOutletSearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }        
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -117,14 +153,27 @@ app.component('partsIndentList', {
                 $mdSelect.hide();
             }
         });
+        $scope.selectedCustomer = function(id) {
+            $('#customer_id').val(id);
+        }
+        $scope.selectedOutlet = function(id) {
+            $('#outlet_id').val(id);
+        }
+        $scope.onSelectedStatus = function(id) {
+            $('#status_id').val(id);
+        }
         $scope.applyFilter = function() {
             dataTables.fnFilter();
             $('#indent_parts_filter').modal('hide');
         }
         $scope.reset_filter = function() {
-            $("#vendor").val('');
-            $("#outlet").val('');
-            $("#date").val('');
+            $("#job_card_no").val('');
+            $("#job_card_date").val('');
+            $("#customer_id").val('');
+            $("#outlet_id").val('');
+            $("#status_id").val('');
+            dataTables.fnFilter();
+            $('#indent_parts_filter').modal('hide');
         }
 
         $rootScope.loading = false;
