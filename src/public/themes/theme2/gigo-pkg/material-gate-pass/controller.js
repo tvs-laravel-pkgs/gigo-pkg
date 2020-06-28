@@ -290,12 +290,11 @@ app.component('materialGatePassTableList', {
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
         // $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#material_gate_pass_list').dataTable({
-            "dom": cndn_dom_structure,
+           "dom": cndn_dom_structure,
             "language": {
-                "search": "",
-                "searchPlaceholder": "Search",
-                "lengthMenu": "Rows Per Page MENU",
-                "info": "START to END of TOTAL Listing",
+                // "search": "",
+                // "searchPlaceholder": "Search",
+                "lengthMenu": "Rows _MENU_",
                 "paginate": {
                     "next": '<i class="icon ion-ios-arrow-forward"></i>',
                     "previous": '<i class="icon ion-ios-arrow-back"></i>'

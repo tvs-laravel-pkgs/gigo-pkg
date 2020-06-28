@@ -50,13 +50,14 @@ class JobCardController extends Controller {
 			'vehicles.registration_number',
 			'models.model_name',
 			'customers.name as customer_name',
+			'job_cards.status_id',
 			'configs.name as status',
 			'service_types.name as service_type',
 			'quote_types.name as quote_type',
 			'service_order_types.name as job_order_type',
 
 		])
-			->leftJoin('job_orders', 'job_orders.id', 'job_cards.job_order_id')
+			->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')
 			->leftJoin('gate_passes', 'gate_passes.job_card_id', 'job_cards.id')
 			->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
 			->leftJoin('models', 'models.id', 'vehicles.model_id')
@@ -114,19 +115,26 @@ class JobCardController extends Controller {
 				if (!empty($request->job_order_type_id)) {
 					$query->where('job_orders.type_id', $request->job_order_type_id);
 				}
-			})
+			});
 
-			->groupBy('job_cards.id')
-			->orderBy('job_cards.created_at', 'DESC')
-		//->get()
-		;
+		if (!Entrust::can('view-overall-outlets-job-card')) {
+			if (Entrust::can('view-mapped-outlet-job-card')) {
+				$job_cards->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+			} else {
+				$job_cards->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
+					->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')");
+			}
+		}
+
+		$job_cards->groupBy('job_cards.id')
+			->orderBy('job_cards.created_at', 'DESC');
 		//dd($job_cards);
 		return Datatables::of($job_cards)
-			->rawColumns(['name', 'action'])
-		/*->addColumn('name', function ($job_card) {
-				$status = $job_card->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $job_card->name;
-			})*/
+			->rawColumns(['status', 'action'])
+			->editColumn('status', function ($job_card) {
+				$status = $job_card->status_id == '8220' ? 'blue' : 'green';
+				return '<span class="text-' . $status . '">' . $job_card->status . '</span>';
+			})
 			->addColumn('action', function ($job_card) {
 				$img1 = asset('./public/theme/img/table/cndn/view.svg');
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
