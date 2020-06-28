@@ -18,13 +18,7 @@ class ServiceType extends BaseModel {
 		["company_id", "code", "name"]
 	;
 
-	public function getDateOfJoinAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y', strtotime($value));
-	}
-
-	public function setDateOfJoinAttribute($date) {
-		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
-	}
+	public static $AUTO_GENERATE_CODE = true;
 
 	public function serviceTypeLabours() {
 		return $this->belongsToMany('Abs\GigoPkg\RepairOrder', 'repair_order_service_type', 'service_type_id', 'repair_order_id')->withPivot(['is_free_service']);
