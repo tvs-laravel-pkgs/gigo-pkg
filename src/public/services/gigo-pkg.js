@@ -168,8 +168,8 @@ app.factory('WarrantyJobOrderRequestSvc', function($q, RequestSvc, $rootScope, $
         list: function(params) { // table list
             return RequestSvc.get('/api/' + model + '/list', params);
         },
-        getOutlet: function(params) { // outlet filter
-            return RequestSvc.get('/api/' + model + '/getOultet', params);
+        outlets: function(params) { // outlets
+            return RequestSvc.post('/api/' + model + '/outlets',params);
         },
 
     };

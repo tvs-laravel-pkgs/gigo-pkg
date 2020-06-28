@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\WarrantyJobOrderRequest;
 use Illuminate\Http\Request;
 use DB;
+use Auth;
 use Yajra\Datatables\Datatables;
+use App\Outlet;
 
 class WarrantyJobOrderRequestController extends Controller {
 	use CrudTrait;
@@ -153,8 +155,24 @@ class WarrantyJobOrderRequestController extends Controller {
 			->make(true);
 	}
 
-	public function getOultet(Request $request)
+	public function getOutlets(Request $r)
 	{
-		dd("dfsf");
+		$key = $r->key;
+        $list = Outlet::where('company_id', Auth::user()->company_id)
+            ->select(
+                'id',
+                'name',
+                'code'
+            )
+            ->where(function ($q) use ($key) {
+                $q->where('name', 'like', $key . '%')
+                    ->orWhere('code', 'like', $key . '%')
+                ;
+            })
+            ->get();
+        return response()->json($list);
+		/*$this->data['outlets'] = DB::select('id','code as name')->where('company_id', Auth::user()->company_id)->get();
+		return response()->json($this->data);*/
+		
 	}
 }

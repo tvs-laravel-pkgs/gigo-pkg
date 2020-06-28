@@ -200,25 +200,25 @@
                         <input required type="hidden" id="customer_id" name="customer_id" value="">
                     </div><!-- Feild -->
                 </li>
-                <!-- <li class="view-col-3" ng-if="form_type == 'manual'">
+                <li class="view-col-3" ng-if="form_type == 'manual'">
                     <div class="form-group">
                         <label>
                             Outlet
                             <sup class="mandatory">*</sup>
                         </label>
-                        <md-autocomplete class="type-sm" md-items="option in $ctrl.searchOutlet($ctrl.outletSearchText)" md-selected-item="$ctrl.outlet" md-selected-item-change="selectedOutlet($ctrl.outlet.id)" md-search-text="$ctrl.outletSearchText" md-item-text="option.name" md-min-length="3" placeholder="Outlet Name" md-autofocus>
+                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order.outlet" md-search-text="outlet_search_key" md-items="outlet in searchOutlets(outlet_search_key)" md-item-text="outlet.code" md-min-length="3" md-escape-options="clear" placeholder="Outlet">
                             <md-item-template>
                                 <span>
-                                    {{option.name}} / {{option.code}}
+                                    {{outlet.code}}
                                 </span>
                             </md-item-template>
                             <md-not-found>
-                                No Customer matching "{{$ctrl.outletSearchText}}" were found.
+                                No records matching "{{outlet_search_key}}" were found.
                             </md-not-found>
                         </md-autocomplete>
+                        <input type="hidden" name="outlet_id" value="{{warranty_job_order_request.job_order.outlet.id}}">
                     </div>
-                </li> -->
-                        <input required type="hidden" name="outlet_id" id="outlet_id" value="16">
+                </li>
             </ul>
             <div class="panel-group" id="accordion">
                 <div class="panel panel-default type-3">

@@ -2,7 +2,7 @@ angular.module('app').requires.push('angularBootstrapFileinput');
 
 app.component('warrantyJobOrderRequestForm', {
     templateUrl: warrantyJobOrderRequestForm,
-    controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc, VehicleSvc) {
+    controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc, VehicleSvc, OultetSvc) {
         $rootScope.loading = true;
         $('#search').focus();
         var self = this;
@@ -41,9 +41,12 @@ app.component('warrantyJobOrderRequestForm', {
             $('#customer_id').val(id);
         }
         //Search Outlet
-        /*self.searchOultet = function(query) {
-            let url = base_url + '/api/warranty-job-order-request/getOutlet';
-            if (query) {
+        /*self.searchOutlet = function(query) {
+           if (query) {
+                var params = {
+                    key:query
+                };
+
                 return new Promise(function(resolve, reject) {
                     $http
                         .post(
@@ -54,12 +57,17 @@ app.component('warrantyJobOrderRequestForm', {
                         .then(function(response) {
                             resolve(response.data);
                         });
+                    WarrantyJobOrderRequestSvc.outlets(params)
+                        .then(function(response) {
+                            resolve(response);
+                    });
                     //reject(response);
                 });
             } else {
                 return [];
-            }
+            } 
         }*/
+
 
         $scope.init = function() {
             $rootScope.loading = true;
@@ -234,6 +242,15 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.searchVehicles = function(query) {
             return new Promise(function(resolve, reject) {
                 VehicleSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+
+        $scope.searchOutlets = function(query) {
+            return new Promise(function(resolve, reject) {
+                OultetSvc.options({ filter: { search: query } })
                     .then(function(response) {
                         resolve(response.data.options);
                     });
