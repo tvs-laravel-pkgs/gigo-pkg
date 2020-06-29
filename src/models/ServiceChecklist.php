@@ -97,7 +97,7 @@ class ServiceChecklist extends BaseModel {
 			'Company Code' => $record_data->company_code,
 			'Vehicle Segment Name' => $record_data->vehicle_segment_name,
 			'Component Group Name' => $record_data->component_group_name,
-			'Maintenance Activity' => $record_data->maintenence_activity,
+			'Maintenance Activity' => $record_data->maintenance_activity,
 			'Display Order' => $record_data->display_order,
 		];
 		return static::saveFromExcelArray($record);
@@ -167,6 +167,7 @@ class ServiceChecklist extends BaseModel {
 			if (!$result['success']) {
 				return $result;
 			}
+			$record->company_id = $company->id;
 			$record->created_by_id = $created_by_id;
 			$record->save();
 			return [
