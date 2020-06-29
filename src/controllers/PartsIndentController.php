@@ -122,7 +122,7 @@ class PartsIndentController extends Controller {
 				$view_img = asset("/public/theme/img/table/view.svg");
 				$output = '';
 				if (Entrust::can('view-parts-indent')) {
-					$output .= '<a href="#!/gigo-pkg/parts-indent/view/' . $job_cards->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_hover_img . '" onmouseout=this.src="' . $view_img . '"></a>';
+					$output .= '<a href="#!/job-card/part-indent/' . $job_cards->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_hover_img . '" onmouseout=this.src="' . $view_img . '"></a>';
 				}
 				return $output;
 			})
@@ -200,81 +200,148 @@ class PartsIndentController extends Controller {
 	}
 
 	public function getPartDetails(Request $request) {
-		$this->data['parts_details'] = JobOrderPart::select('job_order_parts.id', 'job_order_parts.qty', DB::raw("SUM(job_order_issued_parts.issued_qty) as issued_qty"))->leftJoin('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')->where('job_order_parts.part_id', $request->key)
-			->where('job_order_parts.job_order_id', $request->job_order_id)->first();
-		return response()->json($this->data);
+		$job_order_parts = JobOrderPart::select(
+			'job_order_parts.id',
+			'job_order_parts.qty',
+			'parts.name',
+			DB::raw("SUM(job_order_issued_parts.issued_qty) as issued_qty")
+		)
+			->leftJoin('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')
+			->join('parts', 'parts.id', 'job_order_parts.part_id')
+			->where('job_order_parts.id', $request->job_order_part_id)
+			->first();
+		if (!$job_order_parts) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => [
+					'Job Order Part Not Found',
+				],
+			]);
+		}
+		return response()->json([
+			'success' => true,
+			'job_order_parts' => $job_order_parts,
+		]);
 	}
 
 	public function getPartsIndentPartsData(Request $request) {
-		$this->data['issued_parts_details'] = $job_order_issued = JobOrderIssuedPart::select('job_order_issued_parts.id as issued_id', 'parts.code', 'job_order_parts.id', 'job_order_parts.qty', 'job_order_issued_parts.issued_qty', DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'), 'users.name as issued_to', 'configs.name as config_name', 'job_order_issued_parts.issued_mode_id', 'job_order_issued_parts.issued_to_id', 'job_order_issued_parts.job_order_part_id')
-			->leftJoin('job_order_parts', 'job_order_parts.id', 'job_order_issued_parts.job_order_part_id')
-			->leftJoin('parts', 'parts.id', 'job_order_parts.part_id')
-			->leftJoin('users', 'users.id', 'job_order_issued_parts.issued_to_id')
-			->leftJoin('configs', 'configs.id', 'job_order_issued_parts.issued_mode_id')
-			->where('job_order_issued_parts.id', $request->part_id)->first();
-
-		$this->data['job_cards'] = $job_card = JobCard::select([
-			'job_cards.job_card_number',
-			'users.name as floor_supervisor',
-			'job_cards.job_order_id', 'configs.name as work_status', 'job_cards.id as job_card_id',
-			DB::raw('DATE_FORMAT(job_cards.created_at,"%d-%m-%Y") as date_time'),
-			'job_orders.vehicle_id',
+		$this->data['job_order_issued_part'] = JobOrderIssuedPart::with([
+			'jobOrderPart',
+			'jobOrderPart.part',
+			'issuedTo',
+			'issueMode',
 		])
-			->leftJoin('users', 'users.id', 'job_cards.floor_supervisor_id')
-			->leftJoin('job_orders', 'job_orders.id', 'job_cards.job_order_id')
-			->leftJoin('configs', 'configs.id', 'job_cards.status_id')
-			->where('job_cards.id', $request->job_card_id)->first();
+			->find($request->job_order_issued_part_id);
 
-		$this->data['part_list'] = collect(Part::select('id', 'name')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Repair Order Type']);
+		$this->data['job_card'] = $job_card = JobCard::with([
+			'jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'jobOrder.vehicle.status',
+			'status',
+		])->find($request->job_card_id);
 
-		$this->data['mechanic_list'] = collect(JobOrderRepairOrder::select('users.id', 'users.name')->leftJoin('repair_order_mechanics', 'repair_order_mechanics.job_order_repair_order_id', 'job_order_repair_orders.id')->leftJoin('users', 'users.id', 'repair_order_mechanics.mechanic_id')->where('job_order_repair_orders.job_order_id', $job_card->job_order_id)->distinct()->get())->prepend(['id' => '', 'name' => 'Select Mechanic']);
+		$part_list = collect(JobOrderPart::select(
+			'job_order_parts.id',
+			'parts.code as name'
+		)
+				->join('parts', 'parts.id', 'job_order_parts.part_id')
+				->where('job_order_id', $job_card->job_order_id)
+				->groupBy('job_order_parts.id')
+				->get())->prepend(['id' => '', 'name' => 'Select Part No']);
 
-		$this->data['issued_mode'] = collect(Config::select('id', 'name')->where('config_type_id', 109)->get())->prepend(['id' => '', 'name' => 'Select Issue Mode']);
+		$mechanic_list = collect(JobOrderRepairOrder::select(
+			'users.id',
+			'users.name'
+		)
+				->join('repair_order_mechanics', 'repair_order_mechanics.job_order_repair_order_id', 'job_order_repair_orders.id')
+				->join('users', 'users.id', 'repair_order_mechanics.mechanic_id')
+				->where('job_order_repair_orders.job_order_id', $job_card->job_order_id)
+				->groupBy('users.id')
+				->get())->prepend(['id' => '', 'name' => 'Select Issued To']);
+
+		$issued_mode_list = Config::getDropDownList(['config_type_id' => 109, 'add_default' => true, 'default_text' => 'Select Issue Mode']);
+
+		$this->data['extras'] = [
+			'part_list' => $part_list,
+			'mechanic_list' => $mechanic_list,
+			'issued_mode_list' => $issued_mode_list,
+		];
 		return response()->json($this->data);
 
 	}
 
 	public function savePartsindent(Request $request) {
+		// dd($request->all());
 		try {
 			$error_messages = [
-				'part_code.required' => 'Part No is Required',
+				'part_id.required' => 'Part No is Required',
 				'issued_qty.required' => 'Issued Qty is Required',
-				'issued_to_id.required' => 'Issued to is Required',
+				'issued_mode_id.required' => 'Issue Mode is Required',
+				'issued_to_id.required' => 'Issued To is Required',
 			];
 			$validator = Validator::make($request->all(), [
-				'part_code' => 'required',
-				'issued_qty' => 'required',
-				'issued_to_id' => 'required',
+				'job_order_part_id' => [
+					'required',
+					'integer',
+					'exists:job_order_parts,id',
+				],
+				'issued_qty' => [
+					'required',
+				],
+				'issued_mode_id' => [
+					'required',
+					'integer',
+					'exists:configs,id',
+				],
+				'issued_to_id' => [
+					'required',
+					'integer',
+					'exists:users,id',
+				],
 			], $error_messages);
+
 			if ($validator->fails()) {
-				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
-			}
-
-			if (!$request->id) {
-				if ($request->bal_qty < $request->issued_qty) {
-					return response()->json(['success' => false, 'errors' => ['Exception Error' => 'Transfered Quantity Exceed Requested Quantity']]);
-				}} else {
-				$tot = ($request->al_issued_qty - $request->edit_qty) + $request->issued_qty;
-
-				//dd($tot." ".$request->tot_qty);
-
-				if ($request->tot_qty < $tot) {
-					return response()->json(['success' => false, 'errors' => ['Exception Error' => 'Transfered Quantity Exceed Requested Quantity']]);
-				}
-
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
 			}
 
 			DB::beginTransaction();
 			if (!$request->id) {
+				if ($request->issued_qty > $request->bal_qty) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Issued Quantity Exceed Requested Quantity',
+						],
+					]);
+				}
 				$job_order_issued_parts = new JobOrderIssuedPart;
 				$job_order_issued_parts->created_by_id = Auth::user()->id;
 				$job_order_issued_parts->created_at = Carbon::now();
 				$job_order_issued_parts->updated_at = NULL;
 			} else {
+				$bal_qty = ($request->tot_qty - ($request->already_issued_qty - $request->issued_part_edit_qty));
+				if ($request->issued_qty > $bal_qty) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Issued Quantity Exceed Requested Quantity',
+						],
+					]);
+				}
 				$job_order_issued_parts = JobOrderIssuedPart::withTrashed()->find($request->id);
 				$job_order_issued_parts->updated_by_id = Auth::user()->id;
 				$job_order_issued_parts->updated_at = Carbon::now();
 			}
+
 			$job_order_issued_parts->fill($request->all());
 			$job_order_issued_parts->save();
 
@@ -290,11 +357,14 @@ class PartsIndentController extends Controller {
 					'message' => 'Job Order Issued Parts Updated Successfully',
 				]);
 			}
-		} catch (Exceprion $e) {
+		} catch (\Exceprion $e) {
 			DB::rollBack();
 			return response()->json([
 				'success' => false,
-				'error' => $e->getMessage(),
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -310,13 +380,16 @@ class PartsIndentController extends Controller {
 		return response()->json($this->data);
 	}
 
-	public function deleteIssedPart(Request $request) {
+	public function deleteIssuedPart(Request $request) {
 		DB::beginTransaction();
 		try {
 			$issued_parts_details = JobOrderIssuedPart::withTrashed()->where('id', $request->id)->forceDelete();
 			if ($issued_parts_details) {
 				DB::commit();
-				return response()->json(['success' => true, 'message' => 'Issed Part  Deleted Successfully']);
+				return response()->json([
+					'success' => true,
+					'message' => 'Issued Part Deleted Successfully',
+				]);
 			}
 		} catch (Exception $e) {
 			DB::rollBack();

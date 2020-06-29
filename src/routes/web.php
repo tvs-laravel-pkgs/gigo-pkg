@@ -58,7 +58,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/parts/parts-details', 'PartsIndentController@getPartDetails')->name('getPartDetails');
 	Route::post('/parts-indent/save', 'PartsIndentController@savePartsindent')->name('savePartsindent');
 	Route::get('/parts-indent/issued-parts-details', 'PartsIndentController@getIssedParts')->name('getIssedParts');
-	Route::get('/parts-indent/delete', 'PartsIndentController@deleteIssedPart')->name('deleteIssedPart');
+	Route::get('/parts-indent/delete', 'PartsIndentController@deleteIssuedPart')->name('deleteIssuedPart');
 	Route::get('/parts-indent-parts/data', 'PartsIndentController@getPartsIndentPartsData')->name('getPartsIndentPartsData');
 	Route::post('/parts-indent/outlet/get-search-list', 'PartsIndentController@getOutletSearchList')->name('getOutletSearchList');
 

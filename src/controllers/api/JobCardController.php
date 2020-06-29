@@ -2048,51 +2048,76 @@ class JobCardController extends Controller {
 	}
 
 	public function getPartsIndent(Request $request) {
-		$job_card = JobCard::with(['jobOrder',
+		$job_card = JobCard::with([
+			'jobOrder',
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
-			'status'])->find($request->id);
+			'jobOrder.vehicle.status',
+			'status',
+		])->find($request->id);
+
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
 				'error' => 'Validation Error',
-				'errors' => ['Job Card Not Found!'],
+				'errors' => [
+					'Job Card Not Found!',
+				],
 			]);
 		}
 
-		$job_order = JobOrder::company()->with([
-			'vehicle',
-			'vehicle.model',
-			'vehicle.status',
-		])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])
-			->find($job_card->job_order_id);
+		$part_list = collect(JobOrderPart::select(
+			'job_order_parts.id',
+			'parts.code as name'
+		)
+				->join('parts', 'parts.id', 'job_order_parts.part_id')
+				->where('job_order_id', $job_card->job_order_id)
+				->groupBy('job_order_parts.id')
+				->get())->prepend(['id' => '', 'name' => 'Select Part No']);
 
-		$part_list = collect(Part::select('id', 'name')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Part List']);
+		$mechanic_list = collect(JobOrderRepairOrder::select(
+			'users.id',
+			'users.name'
+		)
+				->join('repair_order_mechanics', 'repair_order_mechanics.job_order_repair_order_id', 'job_order_repair_orders.id')
+				->join('users', 'users.id', 'repair_order_mechanics.mechanic_id')
+				->where('job_order_repair_orders.job_order_id', $job_card->job_order_id)
+				->groupBy('users.id')
+				->get())->prepend(['id' => '', 'name' => 'Select Issued To']);
 
-		$mechanic_list = collect(JobOrderRepairOrder::select('users.id', 'users.name')->leftJoin('repair_order_mechanics', 'repair_order_mechanics.job_order_repair_order_id', 'job_order_repair_orders.id')->leftJoin('users', 'users.id', 'repair_order_mechanics.mechanic_id')->where('job_order_repair_orders.job_order_id', $job_card->job_order_id)->distinct()->get())->prepend(['id' => '', 'name' => 'Select Mechanic']);
+		$issued_mode_list = Config::getDropDownList(['config_type_id' => 109, 'add_default' => true, 'default_text' => 'Select Issue Mode']);
 
-		$issued_mode = collect(Config::select('id', 'name')->where('config_type_id', 109)->get())->prepend(['id' => '', 'name' => 'Select Issue Mode']);
+		$extras = [
+			'part_list' => $part_list,
+			'mechanic_list' => $mechanic_list,
+			'issued_mode_list' => $issued_mode_list,
+		];
 
-		$issued_parts_details = JobOrderIssuedPart::select('job_order_issued_parts.id as issued_id', 'parts.code', 'job_order_parts.id', 'job_order_parts.qty', 'job_order_issued_parts.issued_qty', DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'), 'users.name as issued_to', 'configs.name as config_name', 'job_order_issued_parts.issued_mode_id', 'job_order_issued_parts.issued_to_id')
-			->leftJoin('job_order_parts', 'job_order_parts.id', 'job_order_issued_parts.job_order_part_id')
-			->leftJoin('parts', 'parts.id', 'job_order_parts.part_id')
-			->leftJoin('users', 'users.id', 'job_order_issued_parts.issued_to_id')
-			->leftJoin('configs', 'configs.id', 'job_order_issued_parts.issued_mode_id')
-			->where('job_order_parts.job_order_id', $job_card->job_order_id)->groupBy('job_order_issued_parts.id')->get();
+		$issued_parts = JobOrderIssuedPart::select(
+			'job_order_issued_parts.id as issued_id',
+			'parts.code',
+			'job_order_parts.id',
+			'job_order_parts.qty',
+			'job_order_issued_parts.issued_qty',
+			DB::raw('DATE_FORMAT(job_order_issued_parts.created_at,"%d-%m-%Y") as date'),
+			'users.name as issued_to',
+			'configs.name as config_name',
+			'job_order_issued_parts.issued_mode_id',
+			'job_order_issued_parts.issued_to_id'
+		)
+			->join('job_order_parts', 'job_order_parts.id', 'job_order_issued_parts.job_order_part_id')
+			->join('parts', 'parts.id', 'job_order_parts.part_id')
+			->join('users', 'users.id', 'job_order_issued_parts.issued_to_id')
+			->join('configs', 'configs.id', 'job_order_issued_parts.issued_mode_id')
+			->where('job_order_parts.job_order_id', $job_card->job_order_id)
+			->groupBy('job_order_issued_parts.id')
+			->get();
 
 		return response()->json([
 			'success' => true,
-			'issued_parts_details' => $issued_parts_details,
-			'part_list' => $part_list,
-			'mechanic_list' => $mechanic_list,
-			'issued_mode' => $issued_mode,
-			'job_order' => $job_order,
+			'issued_parts' => $issued_parts,
+			'extras' => $extras,
 			'job_card' => $job_card,
 		]);
 
@@ -2885,13 +2910,12 @@ class JobCardController extends Controller {
 				]);
 			}
 
-			$job_order = JobOrder::company()
-				->with([
-					'vehicle',
-					'vehicle.model',
-					'vehicle.status',
-					'status',
-				])
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+			])
 				->find($view_metrial_gate_pass->job_order_id);
 
 			//GET ITEM COUNT

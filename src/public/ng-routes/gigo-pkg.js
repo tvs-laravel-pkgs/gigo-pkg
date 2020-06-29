@@ -176,7 +176,7 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<parts-indent-view></parts-indent-view>',
         title: 'View Parts Indent',
     }).
-    when('/gigo-pkg/parts-indent/edit-parts/:job_card_id/:part_id', {
+    when('/parts-indent/edit/:job_card_id/:job_order_issued_part_id', {
         template: '<parts-indent-edit-parts></parts-indent-edit-parts>',
         title: 'Edit Parts Indent',
     }).
@@ -861,7 +861,7 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card DMS Check List',
 
     }).
-    when('/gigo-pkg/job-card/part-indent/:job_card_id', {
+    when('/job-card/part-indent/:job_card_id', {
         template: '<job-card-part-indent-form></job-card-part-indent-form>',
         title: 'Job Card Part Indent',
 

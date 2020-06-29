@@ -13,9 +13,13 @@ class JobOrderIssuedPart extends Model {
 	use SoftDeletes;
 	protected $table = 'job_order_issued_parts';
 	public $timestamps = true;
-	protected $fillable =
-		["id","job_order_part_id","issued_qty","issued_mode_id","issued_to_id"]
-	;
+	protected $fillable = [
+		"id",
+		"job_order_part_id",
+		"issued_qty",
+		"issued_mode_id",
+		"issued_to_id",
+	];
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -23,6 +27,18 @@ class JobOrderIssuedPart extends Model {
 
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+
+	public function jobOrderPart() {
+		return $this->belongsTo('Abs\GigoPkg\JobOrderPart', 'job_order_part_id');
+	}
+
+	public function issuedTo() {
+		return $this->belongsTo('App\User', 'issued_to_id');
+	}
+
+	public function issueMode() {
+		return $this->belongsTo('App\Config', 'issued_mode_id');
 	}
 
 	public static function createFromObject($record_data) {

@@ -365,133 +365,126 @@ app.component('partsIndentEditParts', {
     templateUrl: parts_indent_edit_parts_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
-        $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
         if (!self.hasPermission('view-parts-indent')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
         self.angular_routes = angular_routes;
+        $scope.add_part = [];
+        $scope.job_order_part = [];
+
         $http.get(
             laravel_routes['getPartsIndentPartsData'], {
                 params: {
                     job_card_id: $routeParams.job_card_id,
-                    part_id: $routeParams.part_id,
+                    job_order_issued_part_id: $routeParams.job_order_issued_part_id,
 
                 }
             }
         ).then(function(response) {
-            self.job_cards = response.data.job_cards;
-            self.issued_parts_details = response.data.issued_parts_details;
-            self.part_list = response.data.part_list;
-            self.mechanic_list = response.data.mechanic_list;
-            self.issued_mode = response.data.issued_mode;
-            console.log();
-            $scope.onSelectedpartcode(self.issued_parts_details.job_order_part_id);
-            $rootScope.loading = false;
+            // console.log(response);
+            self.job_card = response.data.job_card;
+            self.extras = response.data.extras;
+            self.job_order_issued_part = response.data.job_order_issued_part;
+            self.job_order_issued_part.issued_part_edit_qty = self.job_order_issued_part.issued_qty;
+            self.job_order_issued_part.tot_qty = self.job_order_issued_part.job_order_part.qty;
+            self.job_order_part_id = self.job_order_issued_part.job_order_part.id;
+            $scope.onSelectedpartcode(self.job_order_issued_part.job_order_part.id);
         });
 
-        $scope.onSelectedpartcode = function(part_code_selected) {
-
-           $('#part_code').val(part_code_selected);
-            if (part_code_selected) {
-                return new Promise(function(resolve, reject) {
-                    $http.post(
-                            laravel_routes['getPartDetails'], {
-                                key: part_code_selected,
-                                job_order_id : self.job_cards.job_order_id,
-                            }
-                        )
-                        .then(function(response) {
-                            self.parts_details = response.data.parts_details;
-                            console.log(response.data.parts_details);
-                            $("#job_order_part_id").val(self.parts_details.id);
-                            $("#req_qty").text(self.parts_details.qty+" "+"nos");
-                            $("#issue_qty").text(self.parts_details.issued_qty+" "+"nos");
-                            $("#al_issued_qty").val(self.parts_details.issued_qty);
-                            issued_qty = self.parts_details.issued_qty;
-                            if(issued_qty == null)
-                            {
-                             issued_qty = 0;
-                             $("#issue_qty").text(issued_qty+" "+"nos");
-                             $("#al_issued_qty").text(issued_qty);
-                            }
-                            balance_qty = parseInt(self.parts_details.qty)-parseInt(issued_qty);
-                            $("#balance_qty").text(balance_qty+" "+"nos");
-                            $("#bal_qty").val(balance_qty);
-                        });
-                });
-            } else {
-                return [];
-            }
+        $scope.onSelectedpartcode = function(job_order_part_id) {
+            if (job_order_part_id) {
+                $http.post(
+                        laravel_routes['getPartDetails'], {
+                            job_order_part_id: job_order_part_id,
+                        }
+                    )
+                    .then(function(response) {
+                        if (!response.data.success) {
+                            $scope.add_part = [];
+                            showErrorNoty(response.data);
+                            return;
+                        }
+                        $scope.job_order_part = response.data.job_order_parts;
+                        $scope.add_part.name = $scope.job_order_part.name;
+                        $scope.add_part.req_qty = $scope.job_order_part.qty + " " + "nos";
+                        if(!$scope.job_order_part.issued_qty){
+                            $scope.add_part.issue_qty = "0 nos";
+                            var issued_qty = 0;
+                        }else{
+                            $scope.add_part.issue_qty = $scope.job_order_part.issued_qty + " " + "nos";
+                            var issued_qty = $scope.job_order_part.issued_qty;
+                        }
+                        $scope.add_part.all_issued_qty = issued_qty;
+                        $scope.add_part.balance_qty = parseInt($scope.job_order_part.qty) - parseInt(issued_qty);
+                        $scope.add_part.balance_qty_nos = $scope.add_part.balance_qty+ " " + "nos";
+                        console.log(self.job_order_part_id, job_order_part_id);
+                        if(self.job_order_part_id != job_order_part_id){
+                            console.log(' =========');
+                            self.job_order_issued_part.issued_part_edit_qty = 0;
+                        }
+                        self.job_order_issued_part.tot_qty = $scope.job_order_part.qty;
+                    });
+            }else{
+                $scope.add_part = [];
+            }           
         }
 
-        $scope.onSelectedmech = function(machanic_id_selected) {
-            $('#machanic_id').val(machanic_id_selected);
-        }
-        $scope.onSelectedmode = function(issue_modeselected) {
-            $('#issued_mode').val(issue_modeselected);
-        }
         //Save Form Data 
-        var form_id = '#part_add';
-        var v = jQuery(form_id).validate({
-            ignore: '',
-            rules: {
-                'part_code':{
-                    required:true,
-                },
-                'issued_qty': {
-                    required: true,
-                },
-                'issued_to_id': {
-                    required: true,
-                },
-                'issued_mode': {
-                    required: true,
-                },
+        $scope.submitPart = function(){
+            var form_id = '#part_add';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'job_order_part_id':{
+                        required:true,
+                    },
+                    'issued_qty': {
+                        required: true,
+                    },
+                    'issued_to_id': {
+                        required: true,
+                    },
+                    'issued_mode_id': {
+                        required: true,
+                    },
 
-            },
-            messages: {
-               
-            },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Please check all tabs');
-            },
-            submitHandler: function(form) {
-                let formData = new FormData($(form_id)[0]);
-                $('.submit').button('loading');
-                $.ajax({
-                        url: laravel_routes['savePartsindent'],
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
-                        if (res.success == true) {
-                            $('.submit').button('reset');
-                            $('#issued_qty').val(" ");
-                            custom_noty('success', res.message);
-                           $location.path('/gigo-pkg/parts-indent/view/' + $routeParams.job_card_id);
-                            $scope.$apply();
-
-                        } else {
-                            if (!res.success == true) {
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: laravel_routes['savePartsindent'],
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
                                 $('.submit').button('reset');
                                 showErrorNoty(res);
-                            } else {
-                                $('.submit').button('reset');
-                               $location.path('/gigo-pkg/parts-indent/view/' + $routeParams.job_card_id);
-                                $scope.$apply();
-                            }
-                        }
-                    })
-                    .fail(function(xhr) {
-                        $('.submit').button('reset');
-                        custom_noty('error', 'Something went wrong at server');
-                    });
-            }
-        });
+                                return;
+                            } 
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
+                            $location.path('/job-card/part-indent/' + $routeParams.job_card_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });   
+        }
 
     }
 });

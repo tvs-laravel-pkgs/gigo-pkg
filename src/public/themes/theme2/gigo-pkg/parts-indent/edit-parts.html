@@ -5,13 +5,13 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/parts-indent/view/{{$ctrl.job_cards.job_card_id}}" type="button" class="btn-back btn-img">
+                    <a href="#!/job-card/part-indent/{{$ctrl.job_card.id}}" type="button" class="btn-back btn-img">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
                     </a>
                 </div>
                 <div class="page-header-content title-block">
                     <h1 class="title">
-                        Edit Parts Indent
+                        Edit Part Indent
                     </h1>
                     <p class="subtitle">
                         Part Indent / Edit
@@ -20,36 +20,20 @@
             </div>
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
-    
     <!-- Page Main Content -->
-    <div class="page-main-content form-content type2">
-        <div class="page-tab-form-top type-2">
-            <div class="page-tab-form-top-left">
-                <div class="page-tab-form-top-left-info pad-lf-rt">
-                    <span class="page-tab-form-top-left-info-content">
-                        JC{{$ctrl.job_cards.job_card_number}} / {{$ctrl.job_cards.date_time}}
-                    </span>
-                </div>
-            </div><!-- Page Tab Form Top Left -->
-            <div class="page-tab-form-top-right">
-                <div class="page-tab-form-top-right-info">
-                    Status : {{$ctrl.job_cards.work_status}}
-                </div>
-            </div><!-- Page Tab Form Top Right -->
-        </div><!-- Page Tab Form Top -->            
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="page-form pb-60 mt-30">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="row">
-                                    <form id="part_add" autocomplete="off"> 
-                                                <input type="hidden" value="" name="job_order_part_id" id="job_order_part_id" />
-                                            <input type="hidden" name="bal_qty" id="bal_qty" />
-                                            <input type="hidden" name="al_issued_qty" id="al_issued_qty" />
+    <div class="page-main-content form-content">
+        <form id="part_add" autocomplete="off"> 
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                            <input type="hidden" name="bal_qty" id="bal_qty" value="{{add_part.balance_qty}}"/>
+                                            <input type="hidden" name="already_issued_qty" id="already_issued_qty" value="{{add_part.all_issued_qty}}" />
 
-                                            <input type="hidden" name="id" value="{{$ctrl.issued_parts_details.issued_id}}" />
+                                            <input type="hidden" name="id" value="{{$ctrl.job_order_issued_part.id}}" />
                                             <div class="col-lg-8">
                                                 <div class="row">
                                                     <div class="col-md-12">
@@ -57,15 +41,15 @@
                                                             <div class="col-md-4">
                                                                 <div class="input-text form-group">
                                                                     <label>Part No <sup class="mandatory">*</sup></label>
-                                                    <md-select ng-model="$ctrl.issued_parts_details.id" ng-change="onSelectedpartcode($ctrl.issued_parts_details.id)"md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Part No">
-                                                    <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchType" type="search" placeholder="Search Repair Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                    </md-select-header>
-                                                    <md-optgroup>
-                                                        <md-option ng-value="part_list.id" ng-repeat="part_list in $ctrl.part_list | filter:searchType">{{part_list.name}}</md-option>
-                                                    </md-optgroup>
-                                                </md-select>
-                                                <input type="hidden" class="form-control required" name="part_code" id="part_code" value="{{$ctrl.issued_parts_details.job_order_part_id}}">
+                                                                    <md-select ng-model="$ctrl.job_order_issued_part.job_order_part.id" ng-change="onSelectedpartcode($ctrl.job_order_issued_part.job_order_part.id)"md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Part No">
+                                                                        <md-select-header class="demo-select-header">
+                                                                            <input ng-model="searchType" type="search" placeholder="Search Repair Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                        </md-select-header>
+                                                                        <md-optgroup>
+                                                                            <md-option ng-value="part_list.id" ng-repeat="part_list in $ctrl.extras.part_list | filter:searchType">{{part_list.name}}</md-option>
+                                                                        </md-optgroup>
+                                                                    </md-select>
+                                                                    <input type="hidden" class="form-control required" name="job_order_part_id" id="job_order_part_id" value="{{$ctrl.job_order_issued_part.job_order_part.id}}">
                                                                 </div><!-- Form Group -->
                                                             </div><!-- Column -->
                                                         </div><!-- Row -->
@@ -73,93 +57,90 @@
                                                     <div class="col-md-4">
                                                         <div class="input-text form-group">
                                                             <label>Issuing Quantity <sup class="mandatory">*</sup></label>
-                                                            <input name="issued_qty" value="{{$ctrl.issued_parts_details.issued_qty}}" class="form-control required" id="issued_qty" placeholder="Enter Issuing Quantity" autocomplete="off" />
+                                                            <input name="issued_qty" value="{{$ctrl.job_order_issued_part.issued_qty}}" class="form-control required" id="issued_qty" placeholder="Enter Issuing Quantity" autocomplete="off" />
 
-                                                            <input type="hidden" value="{{$ctrl.issued_parts_details.issued_qty}}"name="edit_qty"  />
-                                                            <input type="hidden" value="{{$ctrl.issued_parts_details.qty}}"name="tot_qty"  />
+                                                            <input type="hidden" value="{{$ctrl.job_order_issued_part.issued_part_edit_qty}}" name="issued_part_edit_qty"  />
+                                                            <input type="hidden" value="{{$ctrl.job_order_issued_part.tot_qty}}" name="tot_qty"  />
 
                                                         </div><!-- Form Group -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-4">
                                                         <div class="input-text form-group">
                                                             <label>Issue Mode <sup class="mandatory">*</sup></label>
-                                                    <md-select ng-model="$ctrl.issued_parts_details.issued_mode_id" md-on-close="clearSearchType()" ng-change="onSelectedmode($ctrl.issue_modeselected)"data-md-container-class="selectdemoSelectHeader" placeholder="Select Issue Mode">
-                                                    <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchType" type="search" placeholder="Search Repair Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                    </md-select-header>
-                                                    <md-optgroup>
-                                                        <md-option ng-value="issued_mode.id" ng-repeat="issued_mode in $ctrl.issued_mode | filter:searchType">{{issued_mode.name}}</md-option>
-                                                    </md-optgroup>
-                                                </md-select>
-                                                <input type="hidden" class="form-control required" id="issued_mode" name="issued_mode_id" value="{{$ctrl.issued_parts_details.issued_mode_id}}"/>
+                                                            <md-select ng-model="$ctrl.job_order_issued_part.issued_mode_id" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Issue Mode">
+                                                                <md-select-header class="demo-select-header">
+                                                                    <input ng-model="searchType" type="search" placeholder="Search Repair Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                </md-select-header>
+                                                                <md-optgroup>
+                                                                    <md-option ng-value="issued_mode.id" ng-repeat="issued_mode in $ctrl.extras.issued_mode_list | filter:searchType">{{issued_mode.name}}</md-option>
+                                                                </md-optgroup>
+                                                            </md-select>
+                                                            <input type="hidden" class="form-control required" id="issued_mode_id" name="issued_mode_id" value="{{$ctrl.job_order_issued_part.issued_mode_id}}"/>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="input-text form-group">
                                                             <label>Issued To <sup class="mandatory">*</sup></label>
-                                                             <md-select ng-model="$ctrl.issued_parts_details.issued_to_id" md-on-close="clearSearchType()" ng-change="onSelectedmech($ctrl.machanic_id_selected)"data-md-container-class="selectdemoSelectHeader" placeholder="Select Part No">
-                                                    <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchType" type="search" placeholder="Search Repair Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                    </md-select-header>
-                                                    <md-optgroup>
-                                                        <md-option ng-value="mechanic_list.id" ng-repeat="mechanic_list in $ctrl.mechanic_list | filter:searchType">{{mechanic_list.name}}</md-option>
-                                                    </md-optgroup>
-                                                </md-select>
-                                                <input type="hidden" class="form-control required" name="issued_to_id" id="machanic_id" value="{{$ctrl.issued_parts_details.issued_to_id}}">
+                                                             <md-select ng-model="$ctrl.job_order_issued_part.issued_to_id" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Part No">
+                                                                <md-select-header class="demo-select-header">
+                                                                    <input ng-model="searchType" type="search" placeholder="Search Repair Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                </md-select-header>
+                                                                <md-optgroup>
+                                                                    <md-option ng-value="mechanic_list.id" ng-repeat="mechanic_list in $ctrl.extras.mechanic_list | filter:searchType">{{mechanic_list.name}}</md-option>
+                                                                </md-optgroup>
+                                                            </md-select>
+                                                            <input type="hidden" class="form-control required" name="issued_to_id" id="issued_to_id" value="{{$ctrl.job_order_issued_part.issued_to_id}}">
                                                         </div><!-- Form Group -->
                                                     </div><!-- Column -->
-                                                    <div class="col-md-12">
-                                                        <button type="submit" class="btn btn-secondary-dark btn-min-wdth submit" ng-click="$ctrl.part_code_selected='';$ctrl.machanic_id_selected='';">Add</button>
-
-                                                    </div>
                                                 </div><!-- Row -->
                                             </div><!-- Column -->
-                                        </form>
-                                            <div class="col-lg-4">
-                                                <div class="dark-wrap">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="text-wrap mb-20">
-                                                                <span class="text-label">Description</span>
-                                                                <span class="text-value">Parts Indent</span>
-                                                            </div>
-                                                        </div><!-- Column -->
-                                                        <div class="col-md-6">
-                                                            <div class="text-wrap mb-20">
-                                                                <span class="text-label">Req. Qty.</span>
-                                                                <span class="text-value" id="req_qty"></span>
-                                                            </div>
-                                                        </div><!-- Column -->
-                                                        <div class="col-md-6">
-                                                            <div class="text-wrap mb-20">
-                                                                <span class="text-label">Issued. Qty.</span>
-                                                                <span class="text-value" id="issue_qty"></span>
-                                                            </div>
-                                                        </div><!-- Column -->
-                                                        <div class="col-md-12">
-                                                            <div class="text-wrap">
-                                                                <span class="text-label">Balance. Qty.</span>
-                                                                <span class="text-value" id="balance_qty"></span>
-                                                            </div>
-                                                        </div><!-- Column -->
-                                                    </div><!-- Row -->
-                                                </div><!-- Dark Wrap -->
-                                            </div><!-- Column -->
-                        </div><!-- Row -->                                            
-                        
-                    </div><!-- Page Form -->                    
-                </div><!-- Column -->
-           </div><!-- Row -->
-           <br/>
-           <div class="page-form-footer">
-                <div class="row">
-                   <!--  <div class="col-md-12">
-                        <a class="btn btn-bordered btn-grey btn-min-wdth">Cancel</a>
-                        <button class="btn btn-secondary-dark btn-min-wdth">Save</button>
-                    </div> -->
-                </div><!-- Row -->
-            </div><!-- Page Form Footer --> 
-        </div><!-- Container -->
+                                        <div class="col-lg-4">
+                                            <div class="dark-wrap">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="text-wrap mb-20">
+                                                            <span class="text-label">Description</span>
+                                                            <span class="text-value">{{add_part.name}}</span>
+                                                        </div>
+                                                    </div><!-- Column -->
+                                                    <div class="col-md-6">
+                                                        <div class="text-wrap mb-20">
+                                                            <span class="text-label">Req. Qty.</span>
+                                                            <span class="text-value">{{add_part.req_qty}}</span>
+                                                        </div>
+                                                    </div><!-- Column -->
+                                                    <div class="col-md-6">
+                                                        <div class="text-wrap mb-20">
+                                                            <span class="text-label">Issued. Qty.</span>
+                                                            <span class="text-value">{{add_part.issue_qty}}</span>
+                                                        </div>
+                                                    </div><!-- Column -->
+                                                    <div class="col-md-12">
+                                                        <div class="text-wrap">
+                                                            <span class="text-label">Balance. Qty.</span>
+                                                            <span class="text-value">{{add_part.balance_qty_nos}}</span>
+                                                        </div>
+                                                    </div><!-- Column -->
+                                                </div><!-- Row -->
+                                            </div><!-- Dark Wrap -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row --> 
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Page Form -->                    
+                    </div><!-- Column -->
+               </div><!-- Row -->
+               <br/>
+               <div class="page-form-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href=".#!/job-card/part-indent/{{$ctrl.job_card.id}}" class="btn btn-bordered btn-grey">Cancel</a>
+                            <button type="submit" class="btn btn-secondary-dark submit" ng-click="submitPart()">Submit</button>
+                        </div>
+                    </div>
+                </div><!-- Page Form Footer -->
+            </div><!-- Container -->
+        </form>
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 
