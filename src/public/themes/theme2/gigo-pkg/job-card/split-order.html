@@ -1,4 +1,4 @@
-<!-- Content Wrap -->
+<!--Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -30,14 +30,15 @@
                                             <!-- Filters -->
                                             <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300" id="tabs">
                                                 <ul class="nav nav-pills editDetails-tabs">
-                                                    <li class="active"><a class="btn-pills" data-target="#unassigned_items" role="tab" data-toggle="tab" aria-expanded="true">Unassigned Items - {{unassigned_total_count}} Items</a></li>
-                                                    <li ng-repeat="(key,split_order_type) in extras.split_order_types"><a data-target="#{{split_order_type.id}}" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">{{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} Items</a></li>
+                                                    <li class="unassigned_tab"><a class="btn-pills" data-target="#unassigned_items" role="tab" data-toggle="tab" aria-expanded="true">Unassigned Items - {{unassigned_total_count}} Items</a></li>
+                                                    <li class="split_order_tabs split_order_tab_{{key}}" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-if="split_order_type.total_items > 0"><a data-target="#{{split_order_type.id}}" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">{{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}}
+                                                            {{split_order_type.total_items > 1 ? 'items' : 'item'}}</a></li>
                                                 </ul>
                                             </div><!-- Filters -->
                                         </div>
                                         <div class="tab-content">
                                             <!-- TAB PANEL -->
-                                            <div class="tab-pane fade in active" id="unassigned_items" data-animation="fadeInUp" data-animation-delay="300">
+                                            <div class="tab-pane panel fade unassigned_panel" id="unassigned_items" data-animation="fadeInUp" data-animation-delay="300">
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="table-responsive">
@@ -47,53 +48,57 @@
                                                                         <tr>
                                                                             <th class="action">Action</th>
                                                                             <th>Item Type</th>
+                                                                            <th>Free Service</th>
                                                                             <th>Item</th>
                                                                             <th>Qty</th>
                                                                             <th class="text-right">Rate</th>
-                                                                            <th class="text-right">Discount</th>
                                                                             <th class="text-right">Amount</th>
-                                                                            <th class="text-right">Taxable Amount</th>
-                                                                            <th class="text-right">CGST (9%)</th>
-                                                                            <th class="text-right">SGST (9%)</th>
-                                                                            <th class="text-right">IGST (0%)</th>
+                                                                            <th class="text-right" ng-repeat="(tax_key,tax) in extras.taxes">{{tax.name}}</th>
+                                                                            <th class="text-right">Total Tax</th>
                                                                             <th class="text-right">Total Amount</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody class="connectedSortable">
-                                                                        <tr data-itemid="labour.id" data-split_id="split_order_type.id" ng-if="labour.split_order_type_id == null" ng-repeat="(key,labour) in labour_details">
+                                                                        <tr data-itemid="labour.id" data-split_id="split_order_type.id" ng-if="labour.split_order_type_id == null" ng-repeat="(labour_key,labour) in labour_details">
                                                                             <td class="action width-100">
-                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderLabourChange(labour.id)">
+                                                                                <a ng-click="splitOrderLabourChange(labour.id,0,'',split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
                                                                             </td>
                                                                             <td>Labour</td>
+                                                                            <td ng-if="labour.is_free_service == 1">
+                                                                                <p class="text-danger">Yes</p>
+                                                                            </td>
+                                                                            <td ng-if="labour.is_free_service == 0 || labour.is_free_service == NULL">
+                                                                                <p class="text-success">No</p>
+                                                                            </td>
                                                                             <td>{{labour.name}}</td>
                                                                             <td>{{labour.qty}}</td>
                                                                             <td class="text-right">{{labour.amount}}</td>
-                                                                            <td class="text-right">0.00</td>
                                                                             <td class="text-right">{{labour.amount}}</td>
+                                                                            <td class="text-right" ng-repeat="(tax_index,tax_value) in labour.tax_values">{{tax_value.tax_value}}</td>
                                                                             <td class="text-right">{{labour.tax_amount}}</td>
-                                                                            <td class="text-right">{{labour.tax_values[0] ? labour.tax_values[0] : '0.00'}}</td>
-                                                                            <td class="text-right">{{labour.tax_values[1] ? labour.tax_values[1] : '0.00' }}</td>
-                                                                            <td class="text-right">{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
                                                                             <td class="text-right">{{labour.total_amount}}</td>
                                                                         </tr>
-                                                                        <tr data-itemid="part.id" data-split_id="split_order_type.id" ng-if="part.split_order_type_id == null" ng-repeat="(key,part) in part_details">
+                                                                        <tr data-itemid="part.id" data-split_id="split_order_type.id" ng-if="part.split_order_type_id == null" ng-repeat="(part_key,part) in part_details">
                                                                             <td class="action width-100">
-                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderPartChange(part.id)">
+                                                                                <a ng-click="splitOrderPartChange(part.id,0,'',split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
                                                                             </td>
                                                                             <td>Part</td>
+                                                                            <td ng-if="part.is_free_service == 1">
+                                                                                <p class="text-danger">Yes</p>
+                                                                            </td>
+                                                                            <td ng-if="part.is_free_service == 0">
+                                                                                <p class="text-success">No</p>
+                                                                            </td>
                                                                             <td>{{part.name}}</td>
                                                                             <td>{{part.qty}}</td>
                                                                             <td class="text-right">{{part.rate}}</td>
-                                                                            <td class="text-right">0.00</td>
                                                                             <td class="text-right">{{part.amount}}</td>
+                                                                            <td class="text-right" ng-repeat="(tax_index,tax_value) in part.tax_values">{{tax_value.tax_value}}</td>
                                                                             <td class="text-right">{{part.tax_amount}}</td>
-                                                                            <td class="text-right">{{part.tax_values[0] ? part.tax_values[0]: '0.00'}}</td>
-                                                                            <td class="text-right">{{part.tax_values[1] ? part.tax_values[1]: '0.00' }}</td>
-                                                                            <td class="text-right">{{part.tax_values[2] ? part.tax_values[2] : '0.00'}}</td>
                                                                             <td class="text-right">{{part.total_amount}}</td>
                                                                         </tr>
                                                                     </tbody>
@@ -103,7 +108,7 @@
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
                                             </div><!-- Tabe Pane -->
-                                            <div class="tab-pane fade" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300" ng-repeat="(key,split_order_type) in extras.split_order_types">
+                                            <div class="tab-pane fade panel split_order_panel_{{key}}" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300" ng-repeat="(key,split_order_type) in extras.split_order_types">
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="table-responsive">
@@ -113,53 +118,57 @@
                                                                         <tr>
                                                                             <th class="action">Action</th>
                                                                             <th>Item Type</th>
+                                                                            <th>Free Service</th>
                                                                             <th>Item</th>
                                                                             <th>Qty</th>
                                                                             <th class="text-right">Rate</th>
-                                                                            <th class="text-right">Discount</th>
                                                                             <th class="text-right">Amount</th>
-                                                                            <th class="text-right">Taxable Amount</th>
-                                                                            <th class="text-right">CGST (9%)</th>
-                                                                            <th class="text-right">SGST (9%)</th>
-                                                                            <th class="text-right">IGST (0%)</th>
+                                                                            <th class="text-right" ng-repeat="(tax_key,tax) in extras.taxes">{{tax.name}}</th>
+                                                                            <th class="text-right">Total Tax</th>
                                                                             <th class="text-right">Total Amount</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody class="connectedSortable">
-                                                                        <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(key,labour) in labour_details">{{labour}}
+                                                                        <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(labour_key,labour) in labour_details">
                                                                             <td class="action width-100">
-                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderLabourChange(labour.id)">
+                                                                                <a ng-click="splitOrderLabourChange(labour.id,1,key,split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
                                                                             </td>
-                                                                            <td>Labour </td>
+                                                                            <td>Labour</td>
+                                                                            <td ng-if="labour.is_free_service == 1">
+                                                                                <p class="text-danger">Yes</p>
+                                                                            </td>
+                                                                            <td ng-if="labour.is_free_service == 0 || labour.is_free_service == NULL">
+                                                                                <p class="text-success">No</p>
+                                                                            </td>
                                                                             <td>{{labour.name}}</td>
                                                                             <td>{{labour.qty}}</td>
                                                                             <td class="text-right">{{labour.amount}}</td>
-                                                                            <td class="text-right">0.00</td>
                                                                             <td class="text-right">{{labour.amount}}</td>
+                                                                            <td class="text-right" ng-repeat="(tax_index,tax_value) in labour.tax_values">{{tax_value.tax_value}}</td>
                                                                             <td class="text-right">{{labour.tax_amount}}</td>
-                                                                            <td class="text-right">{{labour.tax_values[0] ? labour.tax_values[0] : '0.00'}}</td>
-                                                                            <td class="text-right">{{labour.tax_values[1] ? labour.tax_values[1] : '0.00' }}</td>
-                                                                            <td class="text-right">{{labour.tax_values[2] ? labour.tax_values[2] : '0.00' }}</td>
                                                                             <td class="text-right">{{labour.total_amount}}</td>
                                                                         </tr>
-                                                                        <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(key,part) in part_details">
+                                                                        <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(part_key,part) in part_details">
                                                                             <td class="action width-100">
-                                                                                <a data-toggle="modal" data-target="#split_order_change" ng-click="splitOrderPartChange(part.id)">
+                                                                                <a ng-click="splitOrderPartChange(part.id,1,key,split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
                                                                             </td>
                                                                             <td>Part</td>
+                                                                            <td ng-if="part.is_free_service == 1">
+                                                                                <p class="text-danger">Yes</p>
+                                                                            </td>
+                                                                            <td ng-if="part.is_free_service == 0">
+                                                                                <p class="text-success">No</p>
+                                                                            </td>
                                                                             <td>{{part.name}}</td>
                                                                             <td>{{part.qty}}</td>
                                                                             <td class="text-right">{{part.rate}}</td>
-                                                                            <td class="text-right">0.00</td>
                                                                             <td class="text-right">{{part.amount}}</td>
+                                                                            <td class="text-right" ng-repeat="(tax_index,tax_value) in part.tax_values">{{tax_value.tax_value}}</td>
                                                                             <td class="text-right">{{part.tax_amount}}</td>
-                                                                            <td class="text-right">{{part.tax_values[0] ? part.tax_values[0]: '0.00'}}</td>
-                                                                            <td class="text-right">{{part.tax_values[1] ? part.tax_values[1]: '0.00' }}</td>
-                                                                            <td class="text-right">{{part.tax_values[2] ? part.tax_values[2] : '0.00'}}</td>
                                                                             <td class="text-right">{{part.total_amount}}</td>
                                                                         </tr>
                                                                     </tbody>
@@ -193,15 +202,15 @@
                         <div class="col-md-12">
                             <div class="input-text form-group">
                                 <label>Split Order Type<sup class="mandatory">*</sup></label>
-                                <md-select ng-model="split_order_type.id" md-on-close="clearSearchType()" ng-change="onSelectedmode($ctrl.issue_modeselected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Split Order Type">
+                                <md-select ng-model="split_order_id" md-on-close="clearSearchType()" ng-change="onSelectedmode($ctrl.issue_modeselected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Split Order Type">
                                     <md-select-header class="demo-select-header">
                                         <input ng-model="searchType" type="search" placeholder="Search Split Order Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="split_order_type.id" ng-repeat="split_order_type in extras.split_order_types | filter:searchType">{{split_order_type.name}} / {{split_order_type.name}}</md-option>
+                                        <md-option ng-value="split_order_type.id" ng-repeat="split_order_type in split_order_types | filter:searchType">{{split_order_type.code}} / {{split_order_type.name}}</md-option>
                                     </md-optgroup>
                                 </md-select>
-                                <input type="hidden" class="form-control required" id="split_order_type_id" name="split_order_type_id" value="{{split_order_type.id}}" />
+                                <input type="hidden" class="form-control required" id="split_order_type_id" name="split_order_type_id" value="{{split_order_id}}" />
                             </div>
                         </div><!-- Column -->
                         <div class="col-md-12">

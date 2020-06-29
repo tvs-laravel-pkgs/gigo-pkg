@@ -2003,7 +2003,7 @@ app.component('jobCardBayView', {
 //Split Order Details
 app.component('jobCardSplitOrder', {
     templateUrl: job_card_split_order_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -2038,11 +2038,10 @@ app.component('jobCardSplitOrder', {
                     $scope.labour_details = res.labour_details;
                     $scope.part_details = res.part_details;
                     $scope.extras = res.extras;
-                    $scope.unassigned_total_amount = res.unassigned_total_amount;
+                    $scope.split_order_types = res.extras.split_order_types;
+                    // $scope.unassigned_total_amount = res.unassigned_total_amount;
                     $scope.unassigned_total_count = res.unassigned_total_count;
-                   
-                    console.log($scope.labour_details);
-                  
+
                     angular.forEach($scope.extras.split_order_types, function(split_order, key) {
                         split_order.total_amount = 0;
                         split_order.total_items = 0;
@@ -2061,7 +2060,27 @@ app.component('jobCardSplitOrder', {
                         });
 
                     });
+
                     $scope.$apply();
+
+                    if ($scope.active_panel && $scope.active_panel != 0) {
+                        if ($scope.extras.split_order_types[$scope.active_panel].total_items > 0) {
+                            $('.panel').removeClass('active in');
+                            $('.unassigned_tab').removeClass('active');
+                            $('.split_order_tab_' + $scope.active_panel).addClass('active');
+                            $('.split_order_panel_' + $scope.active_panel).addClass('active in');
+                        } else {
+                            $('.panel').removeClass('active in');
+                            $('.split_order_tabs').removeClass('active');
+                            $('.unassigned_panel').addClass('active in');
+                            $('.unassigned_tab').addClass('active');
+                        }
+                    } else {
+                        $('.panel').removeClass('active in');
+                        $('.split_order_tabs').removeClass('active');
+                        $('.unassigned_panel').addClass('active in');
+                        $('.unassigned_tab').addClass('active');
+                    }
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -2069,25 +2088,66 @@ app.component('jobCardSplitOrder', {
         }
         $scope.fetchData();
 
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function(event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
 
-        $scope.splitOrderLabourChange = function(id) {
-            // alert(id);
-            console.log(id);
+        var removeByAttr = function(arr, attr, value) {
+            var i = arr.length;
+            while (i--) {
+                if (arr[i] &&
+                    arr[i].hasOwnProperty(attr) &&
+                    (arguments.length > 2 && arr[i][attr] === value)) {
+
+                    arr.splice(i, 1);
+
+                }
+            }
+            return arr;
+        }
+
+        $scope.splitOrderLabourChange = function(id, type, key,split_id) {
+            var split_order_types;
+            split_order_types = $scope.extras.split_order_types;
+            if (type == 0) {} else {
+                removeByAttr(split_order_types, 'id', split_id);
+                split_order_types.unshift({ 'id': '-1', 'code': 'Unassigned Items', 'name': 'Unassigned Items' });
+            }
+            $scope.split_order_types = [];
+            $scope.split_order_types = split_order_types;
+
             $('#labour_id').val(id);
             $('#part_id').val('');
             $scope.type = 'Labour';
+            $scope.active_panel = key;
+
+            $('#split_order_change').modal('show');
         }
 
-        $scope.splitOrderPartChange = function(id) {
-            // alert(id);
+        $scope.splitOrderPartChange = function(id, type, key,split_id) {
+            var split_order_types;
+            split_order_types = $scope.extras.split_order_types;
+            if (type == 0) {} else {
+                removeByAttr(split_order_types, 'id', split_id);
+                split_order_types.unshift({ 'id': '-1', 'code': 'Unassigned Items', 'name': 'Unassigned Items' });
+            }
+
+            $scope.split_order_types = [];
+            $scope.split_order_types = split_order_types;
+
             $('#part_id').val(id);
             $('#labour_id').val('');
             $scope.type = 'Part';
+            $scope.active_panel = key;
+
+            $('#split_order_change').modal('show');
         }
 
         //console.log($scope.user.token);
         $scope.splitOrderChange = function() {
-            //console.log('in');
             var split_form_id = '#split_order_form';
             var v = jQuery(split_form_id).validate({
                 ignore: '',
@@ -2097,11 +2157,10 @@ app.component('jobCardSplitOrder', {
                     },
                 },
                 submitHandler: function(form) {
-                    //alert('submit');
                     let formData = new FormData($(split_form_id)[0]);
                     $('.submit').button('loading');
                     $.ajax({
-                            url: base_url + '/api/job-card/split-order-update',
+                            url: base_url + '/api/job-card/split-order/update',
                             method: "POST",
                             data: formData,
                             beforeSend: function(xhr) {
@@ -2111,18 +2170,16 @@ app.component('jobCardSplitOrder', {
                             contentType: false,
                         })
                         .done(function(res) {
+                            $('.submit').button('reset');
                             if (!res.success) {
-                                $('.submit').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }
-                            $('.submit').button('reset');
                             custom_noty('success', res.message);
+                            $scope.split_order_id = '';
                             $('#split_order_change').modal('hide');
                             $('#split_order_type_id').val('');
-                            //$('#' + res.type_id).click();
                             $scope.fetchData();
-                            $('#' + res.type_id).trigger('click');
                         })
                         .fail(function(xhr) {
                             $('.submit').button('reset');

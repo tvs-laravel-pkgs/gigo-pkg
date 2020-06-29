@@ -580,68 +580,6 @@ class JobCardController extends Controller {
 		}
 	}
 
-	public function splitOrderUpdate(Request $r) {
-		//dd($r->all());
-		try {
-			$validator = Validator::make($r->all(), [
-				'split_order_type_id' => [
-					'required',
-					'exists:split_order_types,id',
-					'integer',
-				],
-			]);
-
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
-				]);
-			}
-
-			if ($r->type == 'Part') {
-				$job_order_part = JobOrderPart::find($r->part_id);
-				if (!$job_order_part) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => ['Job Order Part Not Found!'],
-					]);
-				}
-				$job_order_part->split_order_type_id = $r->split_order_type_id;
-				$job_order_part->updated_at = Carbon::now();
-				$job_order_part->updated_by_id = Auth::user()->id;
-				$job_order_part->save();
-			} else {
-				$job_order_repair_order = JobOrderRepairOrder::find($r->labour_id);
-				if (!$job_order_repair_order) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => ['Job Order Repair Order Not Found!'],
-					]);
-				}
-				$job_order_repair_order->split_order_type_id = $r->split_order_type_id;
-				$job_order_repair_order->updated_at = Carbon::now();
-				$job_order_repair_order->updated_by_id = Auth::user()->id;
-				$job_order_repair_order->save();
-
-			}
-			return response()->json([
-				'success' => true,
-				'type_id' => $r->split_order_type_id,
-				'message' => $r->type . ' Update Successfully',
-			]);
-		} catch (Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-
-	}
-
 	//BAY ASSIGNMENT
 	public function getBayFormData(Request $r) {
 		try {
@@ -3274,6 +3212,9 @@ class JobCardController extends Controller {
 			//Count Tax Type
 			$taxes = Tax::get();
 
+			$unassigned_labour_count = 0;
+			$unassigned_part_count = 0;
+
 			$labour_details = array();
 			if ($job_card->jobOrder->jobOrderRepairOrders) {
 				foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $labour) {
@@ -3295,12 +3236,12 @@ class JobCardController extends Controller {
 								$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
 								$percentage_value = number_format((float) $percentage_value, 2, '.', '');
 							}
-							$tax_values[$tax_key] = $percentage_value;
+							$tax_values[$tax_key]['tax_value'] = $percentage_value;
 							$tax_amount += $percentage_value;
 						}
 					} else {
 						for ($i = 0; $i < count($taxes); $i++) {
-							$tax_values[$i] = 0.00;
+							$tax_values[$i]['tax_value'] = 0.00;
 						}
 					}
 
@@ -3308,11 +3249,13 @@ class JobCardController extends Controller {
 
 					$total_amount = $tax_amount + $labour->amount;
 					$total_amount = number_format((float) $total_amount, 2, '.', '');
-					if ($labour->is_free_service != 1) {
-						$labour_amount += $total_amount;
-					}
-					$labour_details[$key]['total_amount'] = $total_amount;
+
 					$labour_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
+					$labour_details[$key]['total_amount'] = $total_amount;
+
+					if ($labour->split_order_type_id == null) {
+						$unassigned_labour_count++;
+					}
 				}
 			}
 
@@ -3338,12 +3281,12 @@ class JobCardController extends Controller {
 								$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
 								$percentage_value = number_format((float) $percentage_value, 2, '.', '');
 							}
-							$tax_values[$tax_key] = $percentage_value;
+							$tax_values[$tax_key]['tax_value'] = $percentage_value;
 							$tax_amount += $percentage_value;
 						}
 					} else {
 						for ($i = 0; $i < count($taxes); $i++) {
-							$tax_values[$i] = 0.00;
+							$tax_values[$i]['tax_value'] = 0.00;
 						}
 					}
 
@@ -3351,55 +3294,114 @@ class JobCardController extends Controller {
 
 					$total_amount = $tax_amount + $parts->amount;
 					$total_amount = number_format((float) $total_amount, 2, '.', '');
-					if ($parts->is_free_service != 1) {
-						$parts_amount += $total_amount;
-					}
+
 					$part_details[$key]['total_amount'] = $total_amount;
 					$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
+
+					if ($parts->split_order_type_id == null) {
+						$unassigned_part_count++;
+					}
 				}
 			}
 
-			$total_amount = $parts_amount + $labour_amount;
+			// $total_amount = $parts_amount + $labour_amount;
 
-			$unassigned_part_count = 0;
-			$unassigned_part_amount = 0;
-			foreach ($part_details as $key => $part) {
-				//	dd($part);
-				if (!$part['split_order_type_id']) {
-					$unassigned_part_count += 1;
-					$unassigned_part_amount += $part['total_amount'];
-				}
-			}
-			$unassigned_labour_count = 0;
-			$unassigned_labour_amount = 0;
-			foreach ($labour_details as $key => $labour) {
-				if (!$labour['split_order_type_id']) {
-					$unassigned_labour_count += 1;
-					$unassigned_labour_amount += $labour['total_amount'];
-				}
-			}
+			// $unassigned_part_amount = 0;
+			// foreach ($part_details as $key => $part) {
+			// 	//	dd($part);
+			// 	if (!$part['split_order_type_id']) {
+			// 		$unassigned_part_count += 1;
+			// 		$unassigned_part_amount += $part['total_amount'];
+			// 	}
+			// }
+			// $unassigned_labour_amount = 0;
+			// foreach ($labour_details as $key => $labour) {
+			// 	if (!$labour['split_order_type_id']) {
+			// 		$unassigned_labour_count += 1;
+			// 		$unassigned_labour_amount += $labour['total_amount'];
+			// 	}
+			// }
 			$unassigned_total_count = $unassigned_labour_count + $unassigned_part_count;
-			$unassigned_total_amount = $unassigned_labour_amount + $unassigned_part_amount;
+			// $unassigned_total_amount = $unassigned_labour_amount + $unassigned_part_amount;
 
 			$extras = [
 				'split_order_types' => SplitOrderType::get(),
+				'taxes' => $taxes,
 			];
 
 			return response()->json([
 				'success' => true,
 				'job_card' => $job_card,
-
 				'extras' => $extras,
-				'taxes' => $taxes,
 				'part_details' => $part_details,
 				'labour_details' => $labour_details,
-				'parts_total_amount' => number_format($parts_amount, 2),
-				'labour_total_amount' => number_format($labour_amount, 2),
-				'total_amount' => number_format($total_amount, 2),
-				'unassigned_total_amount' => number_format($unassigned_total_amount, 2),
+				// 'parts_total_amount' => number_format($parts_amount, 2),
+				// 'labour_total_amount' => number_format($labour_amount, 2),
+				// 'total_amount' => number_format($total_amount, 2),
+				// 'unassigned_total_amount' => number_format($unassigned_total_amount, 2),
 				'unassigned_total_count' => $unassigned_total_count,
 			]);
 
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function splitOrderUpdate(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'split_order_type_id' => [
+					'required',
+					// 'exists:split_order_types,id',
+					// 'integer',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			if ($request->type == 'Part') {
+				$job_order_part = JobOrderPart::find($request->part_id);
+				if (!$job_order_part) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Job Order Part Not Found!'],
+					]);
+				}
+				$job_order_part->split_order_type_id = $request->split_order_type_id == '-1' ? NULL : $request->split_order_type_id;
+				$job_order_part->updated_at = Carbon::now();
+				$job_order_part->updated_by_id = Auth::user()->id;
+				$job_order_part->save();
+			} else {
+				$job_order_repair_order = JobOrderRepairOrder::find($request->labour_id);
+				if (!$job_order_repair_order) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Job Order Repair Order Not Found!'],
+					]);
+				}
+				$job_order_repair_order->split_order_type_id = $request->split_order_type_id == '-1' ? NULL : $request->split_order_type_id;
+				$job_order_repair_order->updated_at = Carbon::now();
+				$job_order_repair_order->updated_by_id = Auth::user()->id;
+				$job_order_repair_order->save();
+			}
+			return response()->json([
+				'success' => true,
+				'type_id' => $request->split_order_type_id,
+				'message' => 'Split Order Type Update Successfully',
+			]);
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
