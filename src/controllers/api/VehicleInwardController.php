@@ -4,6 +4,8 @@ namespace Abs\GigoPkg\Api;
 
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\ServiceOrderType;
+// use Abs\GigoPkg\ShortUrl;
+use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Attachment;
 use App\Campaign;
 use App\Config;
@@ -11,6 +13,7 @@ use App\Country;
 use App\Customer;
 use App\CustomerVoice;
 use App\EstimationType;
+use App\FinancialYear;
 use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
@@ -18,10 +21,12 @@ use App\JobOrderCampaign;
 use App\JobOrderCampaignChassisNumber;
 use App\JobOrderPart;
 use App\JobOrderRepairOrder;
+use App\Outlet;
 use App\Part;
 use App\QuoteType;
 use App\RepairOrderType;
 use App\ServiceType;
+use App\ShortUrl;
 use App\State;
 use App\User;
 use App\VehicleInspectionItem;
@@ -60,7 +65,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$vehicle_inward_list_get = JobOrder::company('job_orders')
+			$vehicle_inward_list_get = JobOrder::from('job_orders')
 				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
 				->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
 				->leftJoin('vehicle_owners', function ($join) {
@@ -180,7 +185,7 @@ class VehicleInwardController extends Controller {
 	//VEHICLE INWARD VIEW
 	public function getVehicleInwardView(Request $r) {
 		try {
-			$job_order = JobOrder::company()->with([
+			$job_order = JobOrder::with([
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
@@ -225,6 +230,7 @@ class VehicleInwardController extends Controller {
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 
 			if (!$job_order) {
@@ -392,7 +398,7 @@ class VehicleInwardController extends Controller {
 	//VEHICLE INWARD VIEW DATA
 	public function getVehicleInwardViewData(Request $r) {
 		try {
-			$gate_log = GateLog::company()->with([
+			$gate_log = GateLog::with([
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
@@ -408,6 +414,7 @@ class VehicleInwardController extends Controller {
 					DB::raw('DATE_FORMAT(gate_logs.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(gate_logs.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 
 			if (!$gate_log) {
@@ -453,7 +460,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$job_order = JobOrder::company()->with([
+			$job_order = JobOrder::with([
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
@@ -465,6 +472,7 @@ class VehicleInwardController extends Controller {
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 
 			if (!$job_order) {
@@ -514,7 +522,7 @@ class VehicleInwardController extends Controller {
 	//CUSTOMER DETAILS
 	public function getCustomerDetail(Request $r) {
 		try {
-			$job_order = JobOrder::company()->with([
+			$job_order = JobOrder::with([
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
@@ -531,6 +539,7 @@ class VehicleInwardController extends Controller {
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('job_orders.company_id', Auth::user()->company_id)
 				->find($r->id);
 
 			if (!$job_order) {
@@ -581,7 +590,7 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
-			$job_order = JobOrder::company()->find($request->job_order_id);
+			$job_order = JobOrder::find($request->job_order_id);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -736,27 +745,27 @@ class VehicleInwardController extends Controller {
 	//JOB ORDER
 	public function getOrderFormData(Request $r) {
 		try {
-			$job_order = JobOrder::company()
-				->with([
-					'vehicle',
-					'vehicle.model',
-					'vehicle.status',
-					'vehicle.lastJobOrder',
-					'vehicle.lastJobOrder.jobCard',
-					'type',
-					'quoteType',
-					'serviceType',
-					'kmReadingType',
-					'status',
-					'driverLicenseAttachment',
-					'insuranceAttachment',
-					'rcBookAttachment',
-				])
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'vehicle.lastJobOrder',
+				'vehicle.lastJobOrder.jobCard',
+				'type',
+				'quoteType',
+				'serviceType',
+				'kmReadingType',
+				'status',
+				'driverLicenseAttachment',
+				'insuranceAttachment',
+				'rcBookAttachment',
+			])
 				->select([
 					'job_orders.*',
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 			if (!$job_order) {
 				return response()->json([
@@ -1119,18 +1128,18 @@ class VehicleInwardController extends Controller {
 	public function getInventoryFormData(Request $r) {
 		//dd($r->all());
 		try {
-			$job_order = JobOrder::company()
-				->with([
-					'vehicle',
-					'vehicle.model',
-					'vehicle.status',
-					'status',
-				])
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+			])
 				->select([
 					'job_orders.*',
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 
 			if (!$job_order) {
@@ -1581,23 +1590,23 @@ class VehicleInwardController extends Controller {
 	public function getScheduleMaintenanceFormData(Request $r) {
 		// dd($id);
 		try {
-			$job_order = JobOrder::company()
-				->with([
-					'vehicle',
-					'vehicle.model',
-					'vehicle.status',
-					'status',
-					'serviceType',
-					'serviceType.serviceTypeLabours',
-					'serviceType.serviceTypeLabours.repairOrderType',
-					'serviceType.serviceTypeParts',
-					'serviceType.serviceTypeParts.taxCode',
-				])
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'serviceType',
+				'serviceType.serviceTypeLabours',
+				'serviceType.serviceTypeLabours.repairOrderType',
+				'serviceType.serviceTypeParts',
+				'serviceType.serviceTypeParts.taxCode',
+			])
 				->select([
 					'job_orders.*',
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 
 			if (!$job_order) {
@@ -1869,7 +1878,7 @@ class VehicleInwardController extends Controller {
 		//dd($r->all());
 		try {
 
-			$job_order = JobOrder::company()->with([
+			$job_order = JobOrder::with([
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
@@ -1890,6 +1899,7 @@ class VehicleInwardController extends Controller {
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 
 			if (!$job_order) {
@@ -2278,19 +2288,19 @@ class VehicleInwardController extends Controller {
 	public function getVocFormData(Request $r) {
 		try {
 
-			$job_order = JobOrder::company()
-				->with([
-					'vehicle',
-					'vehicle.model',
-					'vehicle.status',
-					'status',
-					'customerVoices',
-				])
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'customerVoices',
+			])
 				->select([
 					'job_orders.*',
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 
 			if (!$job_order) {
@@ -2416,20 +2426,20 @@ class VehicleInwardController extends Controller {
 	//ROAD TEST OBSERVATION GET FORM DATA
 	public function getRoadTestObservationFormData(Request $r) {
 		try {
-			$job_order = JobOrder::company()
-				->with([
-					'vehicle',
-					'vehicle.model',
-					'vehicle.status',
-					'status',
-					'roadTestDoneBy',
-					'roadTestPreferedBy',
-				])
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'roadTestDoneBy',
+				'roadTestPreferedBy',
+			])
 				->select([
 					'job_orders.*',
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 
 			if (!$job_order) {
@@ -2566,19 +2576,19 @@ class VehicleInwardController extends Controller {
 	//EXPERT DIAGNOSIS REPORT GET FORM DATA
 	public function getExpertDiagnosisReportFormData(Request $r) {
 		try {
-			$job_order = JobOrder::company()
-				->with([
-					'vehicle',
-					'vehicle.model',
-					'vehicle.status',
-					'status',
-					'expertDiagnosisReportBy',
-				])
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'expertDiagnosisReportBy',
+			])
 				->select([
 					'job_orders.*',
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 			if (!$job_order) {
 				return response()->json([
@@ -2679,19 +2689,19 @@ class VehicleInwardController extends Controller {
 	public function getVehicleInspectiongetFormData(Request $r) {
 		try {
 
-			$job_order = JobOrder::company()
-				->with([
-					'vehicle',
-					'vehicle.model',
-					'vehicle.status',
-					'status',
-					'vehicleInspectionItems',
-				])
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'vehicleInspectionItems',
+			])
 				->select([
 					'job_orders.*',
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 
 			if (!$job_order) {
@@ -3113,12 +3123,50 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$job_order = jobOrder::find($request->job_order_id);
+			if (date('m') > 3) {
+				$year = date('Y') + 1;
+			} else {
+				$year = date('Y');
+			}
+			//GET FINANCIAL YEAR ID
+			$financial_year = FinancialYear::where('from', $year)
+				->where('company_id', Auth::user()->company_id)
+				->first();
+			if (!$financial_year) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Fiancial Year Not Found',
+					],
+				]);
+			}
+			//GET BRANCH/OUTLET
+			$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+
+			//GENERATE GATE IN VEHICLE NUMBER
+			$generateNumber = SerialNumberGroup::generateNumber(25, $financial_year->id, $branch->state_id, $branch->id);
+			if (!$generateNumber['success']) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+					],
+				]);
+			}
+
+			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->estimation_type_id = $request->estimation_type_id;
 			$job_order->minimum_payable_amount = $request->minimum_payable_amount;
+			$job_order->estimate_ref_no = $generateNumber['number'];
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
+
+			$url = url('/') . '/vehicle-inward/estimate/view/' . $job_order->id;
+
+			$short_url = ShortUrl::createLink($url, $maxlength = "7");
 
 			DB::commit();
 

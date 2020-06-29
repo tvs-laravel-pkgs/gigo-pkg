@@ -3692,26 +3692,13 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
                                 showErrorNoty(res);
                                 return;
                             }
+                            console.log(res.job_order);
                             $('.submit').button('reset');
                             $('#confirm_notification').modal('show');
-                            payment_detail_url = base_url + '/vehicle-inward/show-payment-detail/' + res.job_order.id;
-                            $("#payment_detail").attr("href", payment_detail_url);
-                            //$(".tttt").text(payment_detail_url);
-                            console.log(payment_detail_url);
-                            //$location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order_id);
-                            //$scope.$apply();
-                            // $('.submit').button('reset');
-                            // $('#confirm_notification').modal('hide');
-                            // setTimeout(function() {
-                            //     custom_noty('success', res.message);
-                            //     if (id == 1) {
-                            //         $location.path('/inward-vehicle/card-list');
-                            //         $scope.$apply();
-                            //     } else {
-                            //         $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order_id);
-                            //         $scope.$apply();
-                            //     }
-                            // }, 2000);
+                            $scope.estimate_ref_no = res.job_order.estimate_ref_no;
+
+                            $scope.$apply();
+
                         })
                         .fail(function(xhr) {
                             $rootScope.loading = false;

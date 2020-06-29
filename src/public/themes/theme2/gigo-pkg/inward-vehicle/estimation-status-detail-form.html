@@ -113,11 +113,10 @@ input[type=number] {
                     </p>
                     <br />
                     <p class="info">
-                        Estimate Ref No: ER6765
+                        Estimate Ref No: {{estimate_ref_no}}
                     </p>
                     <div class="mt-30 mb-30">
-                        <a href="" id="payment_detail" class="btn btn-red btn-square btn-block"><b>Done</b></a>
-                        <!-- <button type="submit" class="btn btn-red btn-square btn-block" data-toggle="modal" data-target="#inward_notification" data-dismiss="modal" ng-click="showPaymentDetails(job_order.id)"><b>Done</b></button> -->
+                        <a href="#!/inward-vehicle/card-list" id="payment_detail" class="btn btn-red btn-square btn-block"><b>Done</b></a>
                     </div><!-- Button -->
                 </div><!-- Modal Body -->
             </form>
@@ -125,42 +124,6 @@ input[type=number] {
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->
 <!-- Modal -->
-<!-- Modal -->
-<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xs" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title">Search Vehicle</h5>
-            </div><!-- Modal Header -->
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Registration Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Customer Code <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>VIN Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div><!-- Modal Body -->
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
 <!-- Modal -->
 <!-- Drag & Drop File Upload Plugins -->
 <script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
