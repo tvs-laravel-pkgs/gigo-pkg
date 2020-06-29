@@ -1127,6 +1127,7 @@ app.component('jobCardRoadTestObservationForm', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -1173,6 +1174,7 @@ app.component('jobCardExpertDiagnosisForm', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -1219,6 +1221,7 @@ app.component('jobCardVehicleInspectionForm', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -1268,6 +1271,7 @@ app.component('jobCardDmsChecklistForm', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -1316,6 +1320,10 @@ app.component('jobCardPartIndentForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
         $scope.add_part = [];
         $scope.job_order_part = [];
+
+        self.add_part_indent = self.hasPermission('add-parts-indent');
+        self.edit_part_indent = self.hasPermission('edit-parts-indent');
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         $scope.job_card_id = $routeParams.job_card_id;
         //FETCH DATA
@@ -1470,6 +1478,7 @@ app.component('jobCardScheduleMaintenanceForm', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -1518,6 +1527,7 @@ app.component('jobCardPayableLabourPartsForm', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -2298,6 +2308,7 @@ app.component('jobCardEstimateForm', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -2346,6 +2357,7 @@ app.component('jobCardEstimateStatusForm', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -2394,6 +2406,7 @@ app.component('jobCardGateinDetailForm', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -2441,6 +2454,7 @@ app.component('jobCardVehicleDetailView', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -2487,6 +2501,7 @@ app.component('jobCardCustomerDetailView', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -2534,6 +2549,7 @@ app.component('jobCardOrderDetailView', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -2580,6 +2596,7 @@ app.component('jobCardInventoryView', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -2627,6 +2644,7 @@ app.component('jobCardCaptureVocView', {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
+        self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();

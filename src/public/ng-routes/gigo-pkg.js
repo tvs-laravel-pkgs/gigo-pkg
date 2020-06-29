@@ -168,7 +168,7 @@ app.config(['$routeProvider', function($routeProvider) {
     }).
 
     //Parts Indent
-    when('/parts-indent/list', {
+    when('/part-indent/list', {
         template: '<parts-indent-list></parts-indent-list>',
         title: 'Parts Indent',
     }).
@@ -827,7 +827,7 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Edit Returnable Item',
     }).
 
-    when('/gigo-pkg/job-card/gatein-detail/:job_card_id', {
+    when('/job-card/gatein-detail/:job_card_id', {
         template: '<job-card-gatein-detail-form></job-card-gatein-detail-form>',
         title: 'Job Card Gate In Details',
     }).
@@ -846,17 +846,17 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Material Outward',
 
     }).
-    when('/gigo-pkg/job-card/road-test-observation/:job_card_id', {
+    when('/job-card/road-test-observation/:job_card_id', {
         template: '<job-card-road-test-observation-form></job-card-road-test-observation-form>',
         title: 'Job Card Road Test Observation',
 
     }).
-    when('/gigo-pkg/job-card/vehicle-inspection/:job_card_id', {
+    when('/job-card/vehicle-inspection/:job_card_id', {
         template: '<job-card-vehicle-inspection-form></job-card-vehicle-inspection-form>',
         title: 'Job Card Vehicle Inspection',
 
     }).
-    when('/gigo-pkg/job-card/dms-checklist/:job_card_id', {
+    when('/job-card/dms-checklist/:job_card_id', {
         template: '<job-card-dms-checklist-form></job-card-dms-checklist-form>',
         title: 'Job Card DMS Check List',
 
@@ -866,27 +866,27 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Part Indent',
 
     }).
-    when('/gigo-pkg/job-card/schedule-maintenance/:job_card_id', {
+    when('/job-card/schedule-maintenance/:job_card_id', {
         template: '<job-card-schedule-maintenance-form></job-card-schedule-maintenance-form>',
         title: 'Job Card Scheduled Maintenance',
 
     }).
-    when('/gigo-pkg/job-card/payable-labour-parts/:job_card_id', {
+    when('/job-card/payable-labour-parts/:job_card_id', {
         template: '<job-card-payable-labour-parts-form></job-card-payable-labour-parts-form>',
         title: 'Job Card Payable Labour Parts',
 
     }).
-    when('/gigo-pkg/job-card/estimate/:job_card_id', {
+    when('/job-card/estimate/:job_card_id', {
         template: '<job-card-estimate-form></job-card-estimate-form>',
         title: 'Job Card Estimate',
 
     }).
-    when('/gigo-pkg/job-card/estimate-status/:job_card_id', {
+    when('/job-card/estimate-status/:job_card_id', {
         template: '<job-card-estimate-status-form></job-card-estimate-status-form>',
         title: 'Job Card Estimate Status',
 
     }).
-    when('/gigo-pkg/job-card/expert-diagnosis/:job_card_id', {
+    when('/job-card/expert-diagnosis/:job_card_id', {
         template: '<job-card-expert-diagnosis-form></job-card-expert-diagnosis-form>',
         title: 'Job Card Export Diagnosis',
 
@@ -903,23 +903,23 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<job-card-bill-detail-view></job-card-bill-detail-view>',
         title: 'Job Card Bill Detail',
     }).
-    when('/gigo-pkg/job-card/vehicle-detail/:job_card_id', {
+    when('/job-card/vehicle-detail/:job_card_id', {
         template: '<job-card-vehicle-detail-view></job-card-vehicle-detail-view>',
         title: 'Job Card Vehicle Detail',
     }).
-    when('/gigo-pkg/job-card/customer-detail/:job_card_id', {
+    when('/job-card/customer-detail/:job_card_id', {
         template: '<job-card-customer-detail-view></job-card-customer-detail-view>',
         title: 'Job Card Customer Detail',
     }).
-    when('/gigo-pkg/job-card/order-detail/:job_card_id', {
+    when('/job-card/order-detail/:job_card_id', {
         template: '<job-card-order-detail-view></job-card-order-detail-view>',
         title: 'Job Card Order Detail',
     }).
-    when('/gigo-pkg/job-card/inventory/:job_card_id', {
+    when('/job-card/inventory/:job_card_id', {
         template: '<job-card-inventory-view></job-card-inventory-view>',
         title: 'Job Card Inventory',
     }).
-    when('/gigo-pkg/job-card/capture-voc/:job_card_id', {
+    when('/job-card/capture-voc/:job_card_id', {
         template: '<job-card-capture-voc-view></job-card-capture-voc-view>',
         title: 'Job Card Capture Voc',
     }).

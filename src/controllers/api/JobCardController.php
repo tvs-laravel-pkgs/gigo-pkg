@@ -1596,20 +1596,17 @@ class JobCardController extends Controller {
 	}
 
 	public function getDmsCheckList(Request $request) {
-		$job_card = JobCard::with(['status', 'jobOrder',
+		$job_card = JobCard::with([
+			'status',
+			'jobOrder',
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'jobOrder.vehicle.status',
-			'jobOrder.vehicle.model.campaign',
-			'jobOrder.vehicle.model.campaign.claimType',
-			'jobOrder.vehicle.model.campaign.faultType',
-			'jobOrder.vehicle.model.campaign.complaintType',
-			'jobOrder.vehicle.model.campaign.campaignLabours',
-			'jobOrder.vehicle.model.campaign.campaignParts',
 			'jobOrder.warrentyPolicyAttachment',
 			'jobOrder.EWPAttachment',
-			'jobOrder.AMCAttachment'])
+			'jobOrder.AMCAttachment',
+		])
 			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
@@ -1624,11 +1621,62 @@ class JobCardController extends Controller {
 			]);
 		}
 
+		//GET CAMPAIGNS
+		$nameSpace = '\\App\\';
+		$entity = 'JobOrderCampaign';
+		$namespaceModel = $nameSpace . $entity;
+		$job_card->jobOrder->campaigns = $this->compaigns($namespaceModel, $job_card->jobOrder, 1);
+
 		return response()->json([
 			'success' => true,
 			'job_card' => $job_card,
 		]);
 
+	}
+
+	public function compaigns($namespaceModel, $job_order, $type) {
+		$model_campaigns = collect($namespaceModel::with([
+			'claimType',
+			'faultType',
+			'complaintType',
+			'campaignLabours',
+			'campaignParts',
+		])
+				->where('campaign_type', 0)
+				->where('vehicle_model_id', $job_order->vehicle->model_id)
+				->where(function ($query) use ($type, $job_order) {
+					if ($type == 1) {
+						$query->where('job_order_id', $job_order->id);
+					}
+				})
+				->get());
+
+		$chassis_campaign_ids = $namespaceModel::whereHas('chassisNumbers', function ($query) use ($job_order) {
+			$query->where('chassis_number', $job_order->vehicle->chassis_number);
+		})
+			->get()
+			->pluck('id')
+			->toArray();
+
+		$chassis_no_campaigns = collect($namespaceModel::with([
+			'chassisNumbers',
+			'claimType',
+			'faultType',
+			'complaintType',
+			'campaignLabours',
+			'campaignParts',
+		])
+				->where('campaign_type', 2)
+				->where(function ($query) use ($type, $job_order, $chassis_campaign_ids) {
+					if ($type == 1) {
+						$query->where('job_order_id', $job_order->id);
+					} else {
+						$query->whereIn('id', $chassis_campaign_ids);
+					}
+				})
+				->get());
+		$campaigns = $model_campaigns->merge($chassis_no_campaigns);
+		return $campaigns;
 	}
 
 	public function getGateInDetail(Request $request) {
@@ -1922,7 +1970,7 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$job_order = JobOrder::company()->with([
+		$job_order = JobOrder::with([
 			'vehicle',
 			'vehicle.model',
 			'vehicle.status',
@@ -1932,6 +1980,7 @@ class JobCardController extends Controller {
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 			])
+			->where('company_id', Auth::user()->company_id)
 			->find($job_card->job_order_id);
 
 		$oem_recomentaion_labour_amount = 0;
@@ -2132,7 +2181,7 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$job_order = JobOrder::company()->with([
+		$job_order = JobOrder::with([
 			'vehicle',
 			'vehicle.model',
 			'vehicle.status',
@@ -2144,6 +2193,7 @@ class JobCardController extends Controller {
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 			])
+			->where('company_id', Auth::user()->company_id)
 			->find($job_card->job_order_id);
 
 		if (!$job_order) {
@@ -2224,19 +2274,19 @@ class JobCardController extends Controller {
 				]);
 			}
 
-			$job_order = JobOrder::company()
-				->with([
-					'vehicle',
-					'vehicle.model',
-					'vehicle.status',
-					'status',
-					'vehicleInspectionItems',
-				])
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'vehicleInspectionItems',
+			])
 				->select([
 					'job_orders.*',
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 				])
+				->where('company_id', Auth::user()->company_id)
 				->find($job_card->job_order_id);
 
 			//VEHICLE INSPECTION ITEM

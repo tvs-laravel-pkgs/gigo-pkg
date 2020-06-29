@@ -365,14 +365,15 @@ app.component('partsIndentEditParts', {
     templateUrl: parts_indent_edit_parts_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
-        self.hasPermission = HelperService.hasPermission;
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 
-        if (!self.hasPermission('view-parts-indent')) {
+        self.hasPermission = HelperService.hasPermission;
+        if (!self.hasPermission('edit-parts-indent')) {
             window.location = "#!/page-permission-denied";
             return false;
         }
+
         self.angular_routes = angular_routes;
         $scope.add_part = [];
         $scope.job_order_part = [];
@@ -422,9 +423,7 @@ app.component('partsIndentEditParts', {
                         $scope.add_part.all_issued_qty = issued_qty;
                         $scope.add_part.balance_qty = parseInt($scope.job_order_part.qty) - parseInt(issued_qty);
                         $scope.add_part.balance_qty_nos = $scope.add_part.balance_qty+ " " + "nos";
-                        console.log(self.job_order_part_id, job_order_part_id);
                         if(self.job_order_part_id != job_order_part_id){
-                            console.log(' =========');
                             self.job_order_issued_part.issued_part_edit_qty = 0;
                         }
                         self.job_order_issued_part.tot_qty = $scope.job_order_part.qty;

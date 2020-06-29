@@ -5,7 +5,12 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/part-indent/list" type="button" class="btn-back btn-img" ng-if="$ctrl.view_only_part_indent">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
+                    </a>
+                    <a href="#!/job-card/card-list" type="button" class="btn-back btn-img" ng-if="!$ctrl.view_only_part_indent">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
+                    </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Customer Detail</b></h1>
@@ -18,9 +23,9 @@
     <div class="page-main-content form-content type2">
         <div class="page-tab-form pb-70">
             <jobcard-header></jobcard-header>
-            <div class="tab-form-wrap type-2">
+            <div class="tab-form-wrap type-2 side-tab-open">
                 <jobcard-tabs ng-init="active_tab = 'customer-detail'"></jobcard-tabs>
-                <div class="tab-form-body">
+                <div class="tab-form-body side-tab-open">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
                           <div class="tab-pane fade in active" id="customer_detail" data-animation="fadeInUp" data-animation-delay="300">
@@ -109,8 +114,8 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <a href=".#!/gigo-pkg/job-card/vehicle-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a href=".#!/gigo-pkg/job-card/order-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a href=".#!/job-card/order-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a href=".#!/job-card/vehicle-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->

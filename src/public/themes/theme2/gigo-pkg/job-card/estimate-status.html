@@ -5,7 +5,12 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/part-indent/list" type="button" class="btn-back btn-img" ng-if="$ctrl.view_only_part_indent">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
+                    </a>
+                    <a href="#!/job-card/card-list" type="button" class="btn-back btn-img" ng-if="!$ctrl.view_only_part_indent">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
+                    </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Estimation Status</b></h1>
@@ -18,9 +23,9 @@
     <div class="page-main-content form-content type2">
         <div class="page-tab-form pb-70">
             <jobcard-header></jobcard-header>
-            <div class="tab-form-wrap type-2">
+            <div class="tab-form-wrap type-2 side-tab-open">
                 <jobcard-tabs ng-init="active_tab = 'estimate-status'"></jobcard-tabs>
-                <div class="tab-form-body">
+                <div class="tab-form-body side-tab-open">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
                         <div class="tab-pane fade in active" id="status_details" data-animation="fadeInUp" data-animation-delay="300">
@@ -46,7 +51,8 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <a href=".#!/gigo-pkg/job-card/estimate/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a href=".#!/job-card/part-indent/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a href=".#!/job-card/estimate/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -60,40 +66,3 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<!-- Modal -->
-<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xs" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title">Search Vehicle</h5>
-            </div><!-- Modal Header -->
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Registration Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Customer Code <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>VIN Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div><!-- Modal Body -->
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
-<!-- Modal -->

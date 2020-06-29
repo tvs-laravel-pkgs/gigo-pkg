@@ -60,8 +60,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$vehicle_inward_list_get = JobOrder::company('job_orders')
-				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
+			$vehicle_inward_list_get = JobOrder::join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
 				->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
 				->leftJoin('vehicle_owners', function ($join) {
 					$join->on('vehicle_owners.vehicle_id', 'job_orders.vehicle_id')
@@ -138,7 +137,9 @@ class VehicleInwardController extends Controller {
 					if (!empty($request->status_id)) {
 						$query->where('gate_logs.status_id', $request->status_id);
 					}
-				});
+				})
+				->where('job_orders.company_id', Auth::user()->company_id)
+			;
 			if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
 				if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
 					$vehicle_inward_list_get->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
