@@ -418,15 +418,13 @@ app.component('vehicleGatePassTableList', {
 app.component('vehicleGatePassView', {
     templateUrl: vehicle_gate_pass_view_template_url,
     controller: function($http, $location, HelperService, $scope, $rootScope, $route, $routeParams) {
-        $scope.loading = true;
+        $rootScope.loading = true;
         var self = this;
+        HelperService.isLoggedIn()
 
-        $scope.hasPerm = HelperService.hasPerm;
+        $scope.hasPermission = HelperService.hasPermission;
         self.user = $scope.user = HelperService.getLoggedUser();
-
-        $rootScope.loading = false;
-
-        if (!HelperService.isLoggedIn()) {
+        if (!self.hasPermission('view-vehicle-gate-pass')) {
             $location.path('/page-permission-denied');
             return;
         }
