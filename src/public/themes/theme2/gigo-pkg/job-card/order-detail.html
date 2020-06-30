@@ -113,14 +113,23 @@
                                                                                 {{job_card.job_order.service_type.name}}
                                                                             </b>
                                                                         </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
+                                                                    </li><li class="view-col-3" ng-if="job_card.job_order.km_reading_type.id == 8040">
                                                                         <span class="view-col-label">
                                                                             KM Reading
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{job_card.job_order.km_reading_type.name}}
+                                                                                {{job_card.job_order.km_reading}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3" ng-if="job_card.job_order.km_reading_type.id == 8041">
+                                                                        <span class="view-col-label">
+                                                                            HR Reading
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_card.job_order.hr_reading}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -190,6 +199,9 @@
                                                                 </ul>
                                                             </div><!-- View Data -->
                                                             <a href=".#!/job-card/view/{{job_card.job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a>
+                                                        </div><!-- Panel Body -->
+                                                        <div class="panel-body" ng-if="!job_card.job_order.vehicle.last_job_order || !job_card.job_order.vehicle.last_job_order.job_card">
+                                                            No Previous Job Card Details Found
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->

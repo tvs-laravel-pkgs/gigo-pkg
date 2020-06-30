@@ -67,7 +67,7 @@
                         Vehicle Inspection Report
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'expert-diagnosis'}">
+                <li ng-class="{active:active_tab == 'expert-diagnosis'}" ng-if="job_card.job_order.is_expert_diagnosis_required">
                     <a class="filter" href=".#!/job-card/expert-diagnosis/{{job_card_id}}">
                         Expert Diagnosis Report
                     </a>

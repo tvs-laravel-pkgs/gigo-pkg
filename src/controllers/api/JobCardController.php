@@ -1691,7 +1691,8 @@ class JobCardController extends Controller {
 			'jobOrder.gateLog.createdBy',
 			'jobOrder.gateLog.driverAttachment',
 			'jobOrder.gateLog.kmAttachment',
-			'jobOrder.gateLog.vehicleAttachment'])
+			'jobOrder.gateLog.vehicleAttachment',
+			'jobOrder.gateLog.chassisAttachment'])
 			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),

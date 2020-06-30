@@ -201,7 +201,7 @@
                                                                 </span>
                                                                 <span class="view-data-list-value">
                                                                     <b>
-                                                                        {{job_order.is_campaign_carried == 1 ? "Yes" : "No"}}
+                                                                        {{job_card.job_order.is_campaign_carried == 1 ? "Yes" : "No"}}
                                                                     </b></span>
                                                             </li>
                                                             <li class="view-col-4" ng-show="!job_order.is_campaign_carried">
@@ -210,7 +210,7 @@
                                                                 </span>
                                                                 <span class="view-col-value">
                                                                     <b>
-                                                                        {{job_order.campaign_not_carried_remarks}}
+                                                                        {{job_card.job_order.campaign_not_carried_remarks}}
                                                                     </b>
                                                                 </span>
                                                             </li>
@@ -222,7 +222,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="common-checkbox type-2">
-                                                            <input type="checkbox" id="check_verify" ng-value="1" ng-disabled="true" ng-checked="job_order.is_dms_verified == 1" />
+                                                            <input type="checkbox" id="check_verify" ng-value="1" ng-disabled="true" ng-checked="job_card.job_order.is_dms_verified == 1" />
                                                             <label for="check_verify">
                                                                 <b>
                                                                     Verified in DMS
