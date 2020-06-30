@@ -386,7 +386,7 @@ app.component('vehicleGatePassTableList', {
             $('#model_id').val(id);
             self.model_id = id;
         }
-         $scope.onSelectedStatus = function(id) {
+        $scope.onSelectedStatus = function(id) {
             $('#status_id').val(id);
             self.status_id = id;
         }

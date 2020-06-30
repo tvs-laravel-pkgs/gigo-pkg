@@ -1,6 +1,7 @@
 <?php
 
 namespace Abs\GigoPkg;
+use App\Config;
 use App\GatePass;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -12,6 +13,18 @@ class MaterialGatePassController extends Controller {
 
 	public function __construct() {
 		$this->data['theme'] = config('custom.theme');
+	}
+
+	public function getMaterialGatePassFilter() {
+		$params = [
+			'config_type_id' => 46,
+			'add_default' => true,
+			'default_text' => "Select Status",
+		];
+		$this->data['extras'] = [
+			'status_list' => Config::getDropDownList($params),
+		];
+		return response()->json($this->data);
 	}
 
 	public function getMaterialGatePassList(Request $request) {
@@ -62,6 +75,11 @@ class MaterialGatePassController extends Controller {
 			->where(function ($query) use ($request) {
 				if (!empty($request->vendor_code)) {
 					$query->where('vendors.code', 'LIKE', '%' . $request->vendor_code . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->status_id)) {
+					$query->where('gate_passes.status_id', $request->status_id);
 				}
 			})
 			->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)

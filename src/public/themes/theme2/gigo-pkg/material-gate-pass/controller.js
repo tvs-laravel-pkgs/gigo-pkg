@@ -19,6 +19,7 @@ app.component('materialGatePassCardList', {
         self.number = '';
         self.job_card_number = '';
         self.work_order_no = '';
+        self.status_id = '';
         self.vendor_name = '';
         self.vendor_code = '';
         if (!localStorage.getItem('search_key')) {
@@ -38,6 +39,7 @@ app.component('materialGatePassCardList', {
                         number: self.number,
                         job_card_number: self.job_card_number,
                         work_order_no: self.work_order_no,
+                        status_id: self.status_id,
                         vendor_name: self.vendor_name,
                         vendor_code: self.vendor_code,
                     },
@@ -90,6 +92,13 @@ app.component('materialGatePassCardList', {
             self.vendor_code = this.value;
         });
 
+        // FOR FILTER
+        $http.get(
+            laravel_routes['getMaterialGatePassFilter']
+        ).then(function(response) {
+            self.extras = response.data.extras;
+        });
+
         $scope.listRedirect = function(type) {
             if (type == 'table') {
                 window.location = "#!/material-gate-pass/table-list";
@@ -100,6 +109,11 @@ app.component('materialGatePassCardList', {
             }
         }
 
+        $scope.onSelectedStatus = function(id) {
+            $('#status_id').val(id);
+            self.status_id = id;
+        }
+
         $scope.applyFilter = function() {
             $scope.fetchData();
             $('#material-gate-pass-filter-modal').modal('hide');
@@ -108,12 +122,14 @@ app.component('materialGatePassCardList', {
             $("#gate_pass_created_date").val('');
             $("#number").val('');
             $("#job_card_number").val('');
+            $("#status_id").val('');
             $("#work_order_no").val('');
             $("#vendor_name").val('');
             $("#vendor_code").val('');
             self.gate_pass_created_date = '';
             self.number = '';
             self.job_card_number = '';
+            self.status_id = '';
             self.work_order_no = '';
             self.vendor_name = '';
             self.vendor_code = '';
@@ -125,7 +141,7 @@ app.component('materialGatePassCardList', {
 
        //GATE IN / OUT 
         $scope.materialGateInOut = function(id, status_id) {
-            console.log(id, status_id);
+            // console.log(id, status_id);
             if(status_id == 8300){
                 var type = 'Out';                
                 var button_class = '.confirm_gate_out_' + id;
@@ -327,6 +343,7 @@ app.component('materialGatePassTableList', {
                     d.job_card_number = $("#job_card_number").val();
                     d.work_order_no = $("#work_order_no").val();
                     d.vendor_name = $("#vendor_name").val();
+                    d.status_id = $("#status_id").val();
                     d.vendor_code = $("#vendor_code").val();
                 },
             },
@@ -375,6 +392,18 @@ app.component('materialGatePassTableList', {
             }
         }
 
+        // FOR FILTER
+        $http.get(
+            laravel_routes['getMaterialGatePassFilter']
+        ).then(function(response) {
+            self.extras = response.data.extras;
+        });
+
+        $scope.onSelectedStatus = function(id) {
+            $('#status_id').val(id);
+            self.status_id = id;
+        }
+
         $scope.applyFilter = function() {
             dataTables.fnFilter();
             $('#material-gate-pass-filter-modal').modal('hide');
@@ -384,6 +413,7 @@ app.component('materialGatePassTableList', {
             $("#number").val('');
             $("#job_card_number").val('');
             $("#work_order_no").val('');
+            $("#status_id").val('');
             $("#vendor_name").val('');
             $("#vendor_code").val('');
             dataTables.fnFilter();
@@ -392,7 +422,7 @@ app.component('materialGatePassTableList', {
 
         //GATE IN / OUT 
         $scope.materialGateInOut = function(id, status_id) {
-            console.log(id, status_id);
+            // console.log(id, status_id);
             if(status_id == 8300){
                 var type = 'Out';                
                 var button_class = '.confirm_gate_out_' + id;
