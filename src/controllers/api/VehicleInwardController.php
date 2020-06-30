@@ -4,7 +4,7 @@ namespace Abs\GigoPkg\Api;
 
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\ServiceOrderType;
-// use Abs\GigoPkg\ShortUrl;
+use Abs\GigoPkg\ShortUrl;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Attachment;
 use App\Campaign;
@@ -26,7 +26,6 @@ use App\Part;
 use App\QuoteType;
 use App\RepairOrderType;
 use App\ServiceType;
-use App\ShortUrl;
 use App\State;
 use App\User;
 use App\VehicleInspectionItem;
@@ -3167,14 +3166,43 @@ class VehicleInwardController extends Controller {
 
 			$url = url('/') . '/vehicle-inward/estimate/view/' . $job_order->id;
 
-			$short_url = ShortUrl::createLink($url, $maxlength = "7");
+			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+			$customer_detail = Customer::select('name', 'mobile_no', 'vehicles.registration_number')
+				->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
+				->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
+				->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
+				->where('job_orders.id', $job_order->id)
+				->orderBy('vehicle_owners.from_date', 'DESC')
+				->first();
+
+			if (!$customer_detail) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Customer Details Not Found!',
+				]);
+			}
+
+			$mobile_number = $customer_detail->mobile_no;
+
+			$mobile_number = "9965098134";
+
+			$message = 'Dear Cutomer,Kindly click below link to pay for TVS job order ' . $short_url . '<br> Vehicle Reg Number : ' . $customer_detail->registration_number;
+
+			if (!$mobile_number) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Customer Mobile Number Not Found',
+				]);
+			}
+			$msg = sendSMSNotification($mobile_number, $message);
 
 			DB::commit();
 
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
-				'message' => 'Estimation Denied Details Added Successfully',
+				'message' => 'Estimation Details Sent to Cusotmer Successfully',
 			]);
 		} catch (\Exception $e) {
 			return response()->json([

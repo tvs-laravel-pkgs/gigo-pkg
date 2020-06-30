@@ -46,6 +46,7 @@ class MaterialGatePassController extends Controller {
 							->orWhere('job_cards.job_card_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('vendors.name', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('vendors.code', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('configs.name', 'LIKE', '%' . $request->search_key . '%')
 						;
 					}
 				})
@@ -77,6 +78,11 @@ class MaterialGatePassController extends Controller {
 				->where(function ($query) use ($request) {
 					if (!empty($request->vendor_code)) {
 						$query->where('vendors.code', 'LIKE', '%' . $request->vendor_code . '%');
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->status_id)) {
+						$query->where('gate_passes.status_id', $request->status_id);
 					}
 				})
 				->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
