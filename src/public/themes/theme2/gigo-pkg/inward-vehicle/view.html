@@ -495,13 +495,23 @@
                                                                             </b>
                                                                         </span>
                                                                     </li>
-                                                                    <li class="view-col-3">
+                                                                    <li class="view-col-3" ng-if="job_order.km_reading_type.id == 8040">
                                                                         <span class="view-col-label">
                                                                             KM Reading
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{job_order.km_reading_type.name}}
+                                                                                {{job_order.km_reading}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3" ng-if="job_order.km_reading_type.id == 8041">
+                                                                        <span class="view-col-label">
+                                                                            HR Reading
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.hr_reading}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -530,7 +540,7 @@
                                                             <span class="arrow"></span>
                                                         </a>
                                                     </div>
-                                                    <div id="collapse3" class="panel-collapse collapse" >
+                                                    <div id="collapse3" class="panel-collapse collapse">
                                                         <div class="panel-body" ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.job_card">
                                                             <div class="view-details mb-no">
                                                                 <ul class="view-row pb-none">
@@ -1026,7 +1036,7 @@
                                                                                 Part Code
                                                                             </th>
                                                                             <th>
-                                                                                Part Number 
+                                                                                Part Number
                                                                             </th>
                                                                         </tr>
                                                                     </thead>
@@ -1618,7 +1628,7 @@
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
-                            <div class="tab-pane fade" id="status_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane fade" id="status_details" data-animation="fadeInUp" data-animation-delay="300" ng-if="job_order.is_customer_agreed == 1">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
                                         <div class="col-md-12">
@@ -1642,6 +1652,48 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="status_details" data-animation="fadeInUp" data-animation-delay="300" ng-if="job_order.is_customer_agreed != 1">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Estimation Denied by Customer</b></h5>
+                                            <div class="view-details mb-no">
+                                                <ul class="view-row pb-none">
+                                                    <li class="view-col-4">
+                                                        <span class="view-col-label">
+                                                            Estimation Type
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.type.name}}
+                                                            </b></span>
+                                                    </li>
+                                                    <li class="view-col-4">
+                                                        <span class="view-col-label">
+                                                            Minimum Payable Amount
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.minimum_payable_amount}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div><!-- View Data -->
+                                            <a href=".#!/inward-vehicle/estimation-status-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
                                                     <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
                                                 </div>
                                             </div>

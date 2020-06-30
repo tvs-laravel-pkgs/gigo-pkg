@@ -2574,6 +2574,11 @@ app.component('jobCardOrderDetailView', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_card = res.job_card;
+                    console.log(res);
+                    if($scope.job_card.job_order.vehicle.last_job_order == null || $scope.job_card.job_order.vehicle.last_job_order.job_card == null)
+                    {
+                        console.log(' == ');
+                    }
                     $scope.$apply();
                 })
                 .fail(function(xhr) {

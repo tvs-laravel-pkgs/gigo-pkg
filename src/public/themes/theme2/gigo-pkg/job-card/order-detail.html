@@ -28,229 +28,242 @@
                 <div class="tab-form-body side-tab-open">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
-                           <div class="tab-pane fade in active" id="order_details" data-animation="fadeInUp" data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>Order Details</b></h5>
-                                            <hr class="hr-15"><!-- Separater -->
-                                            <div class="panel-group" id="accordion">
-                                                <div class="panel panel-default type-3">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
-                                                            Driver Details
-                                                            <span class="arrow"></span>
+                        <div class="tab-pane fade in active" id="order_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Order Details</b></h5>
+                                        <hr class="hr-15"><!-- Separater -->
+                                        <div class="panel-group" id="accordion">
+                                            <div class="panel panel-default type-3">
+                                                <div class="panel-heading">
+                                                    <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
+                                                        Driver Details
+                                                        <span class="arrow"></span>
+                                                    </a>
+                                                </div>
+                                                <div id="collapse1" class="panel-collapse collapse in">
+                                                    <div class="panel-body">
+                                                        <div class="view-details mb-no">
+                                                            <ul class="view-row pb-none">
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Name
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.driver_name}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Mobile No
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.driver_mobile_number}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                            </ul>
+                                                        </div><!-- View Data -->
+                                                        <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
+                                                            Edit
                                                         </a>
-                                                    </div>
-                                                    <div id="collapse1" class="panel-collapse collapse in">
-                                                        <div class="panel-body">
-                                                            <div class="view-details mb-no">
-                                                                <ul class="view-row pb-none">
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Name
-                                                                        </span>
-                                                                        <span class="view-data-list-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.driver_name}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Mobile No
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.driver_mobile_number}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div><!-- View Data -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
-                                                                Edit
-                                                            </a>
-                                                        </div><!-- Panel Body -->
-                                                    </div><!-- Panel Collapse -->
-                                                </div><!-- Panel -->
-                                                <div class="panel panel-default type-3">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
-                                                            Job Order Details
-                                                            <span class="arrow"></span>
+                                                    </div><!-- Panel Body -->
+                                                </div><!-- Panel Collapse -->
+                                            </div><!-- Panel -->
+                                            <div class="panel panel-default type-3">
+                                                <div class="panel-heading">
+                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                                                        Job Order Details
+                                                        <span class="arrow"></span>
+                                                    </a>
+                                                </div>
+                                                <div id="collapse2" class="panel-collapse collapse">
+                                                    <div class="panel-body">
+                                                        <div class="view-details mb-no">
+                                                            <ul class="view-row pb-none">
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Job Order Type
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.type.name}}
+                                                                        </b></span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Quote Type
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.quote_type.name}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Service Type
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.service_type.name}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3" ng-if="job_card.job_order.km_reading_type.id == 8040">
+                                                                    <span class="view-col-label">
+                                                                        KM Reading
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.km_reading}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3" ng-if="job_card.job_order.km_reading_type.id == 8041">
+                                                                    <span class="view-col-label">
+                                                                        HR Reading
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.hr_reading}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Service Contact No.
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.contact_number}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                            </ul>
+                                                        </div><!-- View Data -->
+                                                        <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
+                                                            Edit
                                                         </a>
-                                                    </div>
-                                                    <div id="collapse2" class="panel-collapse collapse">
-                                                        <div class="panel-body">
-                                                            <div class="view-details mb-no">
-                                                                <ul class="view-row pb-none">
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Job Order Type
-                                                                        </span>
-                                                                        <span class="view-data-list-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.type.name}}
-                                                                            </b></span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Quote Type
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.quote_type.name}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Service Type
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.service_type.name}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            KM Reading
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.km_reading_type.name}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Service Contact No.
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.contact_number}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div><!-- View Data -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
-                                                                Edit
-                                                            </a>
-                                                        </div><!-- Panel Body -->
-                                                    </div><!-- Panel Collapse -->
-                                                </div><!-- Panel -->
-                                                <div class="panel panel-default type-3">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
-                                                            Previous Job Card Details
-                                                            <span class="arrow"></span>
+                                                    </div><!-- Panel Body -->
+                                                </div><!-- Panel Collapse -->
+                                            </div><!-- Panel -->
+                                            <div class="panel panel-default type-3">
+                                                <div class="panel-heading">
+                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
+                                                        Previous Job Card Details
+                                                        <span class="arrow"></span>
+                                                    </a>
+                                                </div>
+                                                <div id="collapse3" class="panel-collapse collapse">
+                                                    <div class="panel-body" ng-if="job_card.job_order.vehicle.last_job_order && job_card.job_order.vehicle.last_job_order.job_card">
+                                                        <div class="view-details mb-no">
+                                                            <ul class="view-row pb-none">
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Job Card No
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.vehicle.last_job_order.job_card.number}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Date & Time
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.vehicle.last_job_order.created_at}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        KM Reading
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.vehicle.last_job_order.km_reading}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label"></span>
+                                                                    <span class="view-col-value"><b></b></span>
+                                                                </li>
+                                                            </ul>
+                                                        </div><!-- View Data -->
+                                                        <a href=".#!/job-card/view/{{job_card.job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a>
+                                                    </div><!-- Panel Body -->
+                                                    <div class="panel-body" ng-if=" !job_card.job_order.vehicle.last_job_order|| !job_card.job_order.vehicle.last_job_order.job_card">
+                                                        No Previous Job Card Details Found
+                                                    </div><!-- Panel Body -->
+                                                </div><!-- Panel Collapse -->
+                                            </div><!-- Panel -->
+                                            <div class="panel panel-default type-3">
+                                                <div class="panel-heading">
+                                                    <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse4">
+                                                        Documents
+                                                        <span class="arrow"></span>
+                                                    </a>
+                                                </div>
+                                                <div id="collapse4" class="panel-collapse collapse">
+                                                    <div class="panel-body">
+                                                        <div class="view-details mb-no">
+                                                            <ul class="view-row pb-none">
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Licence Expiry Date
+                                                                    </span>
+                                                                    <span class="view-data-list-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.driver_license_expiry_date}}
+                                                                        </b></span>
+                                                                </li>
+                                                                <li class="view-col-3">
+                                                                    <span class="view-col-label">
+                                                                        Insurance Expiry Date
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.insurance_expiry_date }}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                            </ul>
+                                                        </div><!-- View Data -->
+                                                        <div class="mb-15"></div><!-- Spacing -->
+                                                        <div class="multi-docs">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.driver_license_attachment.name}}" alt="Driver License">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.insurance_attachment.name}}" alt="Insurance" />
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.rc_book_attachment.name}}" alt="RC Book" />
+                                                        </div>
+                                                        <div class="mb-10"></div><!-- Spacing -->
+                                                        <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
+                                                            Edit
                                                         </a>
-                                                    </div>
-                                                    <div id="collapse3" class="panel-collapse collapse" ng-if="job_card.job_order.vehicle.last_job_order && job_card.job_order.vehicle.last_job_order.job_card">
-                                                        <div class="panel-body">
-                                                            <div class="view-details mb-no">
-                                                                <ul class="view-row pb-none">
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Job Card No
-                                                                        </span>
-                                                                        <span class="view-data-list-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.vehicle.last_job_order.job_card.number}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Date & Time
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.vehicle.last_job_order.created_at}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            KM Reading
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.vehicle.last_job_order.km_reading}}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label"></span>
-                                                                        <span class="view-col-value"><b></b></span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div><!-- View Data -->
-                                                            <a href=".#!/job-card/view/{{job_card.job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a>
-                                                        </div><!-- Panel Body -->
-                                                    </div><!-- Panel Collapse -->
-                                                </div><!-- Panel -->
-                                                <div class="panel panel-default type-3">
-                                                    <div class="panel-heading">
-                                                        <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse4">
-                                                            Documents
-                                                            <span class="arrow"></span>
-                                                        </a>
-                                                    </div>
-                                                    <div id="collapse4" class="panel-collapse collapse">
-                                                        <div class="panel-body">
-                                                            <div class="view-details mb-no">
-                                                                <ul class="view-row pb-none">
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Licence Expiry Date
-                                                                        </span>
-                                                                        <span class="view-data-list-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.driver_license_expiry_date}}
-                                                                            </b></span>
-                                                                    </li>
-                                                                    <li class="view-col-3">
-                                                                        <span class="view-col-label">
-                                                                            Insurance Expiry Date
-                                                                        </span>
-                                                                        <span class="view-col-value">
-                                                                            <b>
-                                                                                {{job_card.job_order.insurance_expiry_date }}
-                                                                            </b>
-                                                                        </span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div><!-- View Data -->
-                                                            <div class="mb-15"></div><!-- Spacing -->
-                                                            <div class="multi-docs">
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.driver_license_attachment.name}}" alt="Driver License">
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.insurance_attachment.name}}" alt="Insurance" />
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.rc_book_attachment.name}}" alt="RC Book" />
-                                                            </div>
-                                                            <div class="mb-10"></div><!-- Spacing -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
-                                                                Edit
-                                                            </a>
-                                                        </div><!-- Panel Body -->
-                                                    </div><!-- Panel Collapse -->
-                                                </div><!-- Panel -->
-                                            </div><!-- Panel Group -->
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a href=".#!/job-card/inventory/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a href=".#!/job-card/customer-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                </div><!-- Column -->
-                                            </div><!-- Row -->
-                                        </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
+                                                    </div><!-- Panel Body -->
+                                                </div><!-- Panel Collapse -->
+                                            </div><!-- Panel -->
+                                        </div><!-- Panel Group -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a href=".#!/job-card/inventory/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a href=".#!/job-card/customer-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div><!-- Column -->
+                                        </div><!-- Row -->
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
             </div><!-- Tab Form Wrap -->
