@@ -662,7 +662,7 @@ app.component('jobCardBayForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/job-card/table-list');
+                            $location.path('/job-card/card-list');
                             $scope.$apply();
                             $('.submit').button('reset');
                         })
