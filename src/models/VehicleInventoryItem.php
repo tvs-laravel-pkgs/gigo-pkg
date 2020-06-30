@@ -3,22 +3,123 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
-use App\Company;
-use App\Config;
+use App\BaseModel;
 use App\JobOrder;
 use Auth;
-use Illuminate\Database\Eloquent\Model;
+// use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class VehicleInventoryItem extends Model {
+class VehicleInventoryItem extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	public static $AUTO_GENERATE_CODE = true;
+
 	protected $table = 'vehicle_inventory_items';
 	public $timestamps = true;
 	protected $fillable =
 		["id", "company_id", "code", "name", "field_type_id"]
 	;
+	protected static $excelColumnRules = [
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Code' => [
+			'table_column_name' => 'code',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Field Type Short Name' => [
+			'table_column_name' => 'field_type_id',
+			'rules' => [
+				'required' => [
+				],
+				'fk' => [
+					'class' => 'App\FieldType',
+					'foreign_table_column' => 'short_name',
+				],
+			],
+		],
+		'Display Order' => [
+			'table_column_name' => 'display_order',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+	];
 
+	public static function saveFromObject($record_data) {
+		$record = [
+			'Company Code' => $record_data->company_code,
+			'Code' => $record_data->code,
+			'Name' => $record_data->name,
+			'Field Type Short Name' => $record_data->field_type_short_name,
+			'Display Order' => $record_data->display_order,
+		];
+		return static::saveFromExcelArray($record);
+	}
+
+	public static function saveFromExcelArray($record_data) {
+		$errors = [];
+		$company = Company::where('code', $record_data['Company Code'])->first();
+		if (!$company) {
+			return [
+				'success' => false,
+				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
+			];
+		}
+
+		if (!isset($record_data['created_by_id'])) {
+			$admin = $company->admin();
+
+			if (!$admin) {
+				return [
+					'success' => false,
+					'errors' => ['Default Admin user not found'],
+				];
+			}
+			$created_by_id = $admin->id;
+		} else {
+			$created_by_id = $record_data['created_by_id'];
+		}
+
+		if (empty($record_data['Field Type Short Name'])) {
+			$errors[] = 'Field Type Short Name is empty';
+		} else {
+			$group = FieldType::where([
+				'short_name' => $record_data['Field Type Short Name'],
+			])->first();
+			if (!$group) {
+				$errors[] = 'Invalid Field Type Short Name : ' . $record_data['Field Type Short Name'];
+			}
+		}
+		if (empty($record_data['Code'])) {
+			$errors[] = 'Code is empty';
+		}
+
+		$record = self::firstOrNew([
+			'company_id' => $company->id,
+			'code' => $record_data['Code'],
+		]);
+
+		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+		if (!$result['success']) {
+			return $result;
+		}
+		// $record->company_id = $company->id;
+		$record->group_id = $group->id;
+		$record->created_by_id = $created_by_id;
+		$record->save();
+		return [
+			'success' => true,
+		];
+	}
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
@@ -27,7 +128,7 @@ class VehicleInventoryItem extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
-	public static function createFromObject($record_data) {
+	/*public static function createFromObject($record_data) {
 
 		$errors = [];
 		$company = Company::where('code', $record_data->company)->first();
@@ -60,7 +161,7 @@ class VehicleInventoryItem extends Model {
 		$record->created_by_id = $admin->id;
 		$record->save();
 		return $record;
-	}
+	}*/
 
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Vehicle Inventory Item') {
 		$list = Self::select([

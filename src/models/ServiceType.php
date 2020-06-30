@@ -5,7 +5,6 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use App\Company;
-use App\Config;
 use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -17,8 +16,24 @@ class ServiceType extends BaseModel {
 	protected $fillable =
 		["company_id", "code", "name"]
 	;
-
 	public static $AUTO_GENERATE_CODE = true;
+
+	protected static $excelColumnRules = [
+		'Code' => [
+			'table_column_name' => 'code',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+	];
 
 	public function serviceTypeLabours() {
 		return $this->belongsToMany('Abs\GigoPkg\RepairOrder', 'repair_order_service_type', 'service_type_id', 'repair_order_id')->withPivot(['is_free_service']);
@@ -28,7 +43,7 @@ class ServiceType extends BaseModel {
 		return $this->belongsToMany('Abs\PartPkg\Part', 'part_service_type', 'service_type_id', 'part_id')->withPivot(['quantity', 'amount', 'is_free_service']);
 	}
 
-	public static function createFromObject($record_data) {
+	/*public static function createFromObject($record_data) {
 
 		$errors = [];
 		$company = Company::where('code', $record_data->company)->first();
@@ -61,7 +76,7 @@ class ServiceType extends BaseModel {
 		$record->created_by_id = $admin->id;
 		$record->save();
 		return $record;
-	}
+	}*/
 
 	public static function getDropDownList($params = [], $add_default = true, $default_text = 'Select Service Type') {
 		$list = Collect(Self::select([
@@ -77,4 +92,70 @@ class ServiceType extends BaseModel {
 		return $list;
 	}
 
+	public static function saveFromObject($record_data) {
+		$record = [
+			'Company Code' => $record_data->company_code,
+			'Code' => $record_data->code,
+			'Name' => $record_data->name,
+		];
+		return static::saveFromExcelArray($record);
+	}
+
+	public static function saveFromExcelArray($record_data) {
+		try {
+			$errors = [];
+			$company = Company::where('code', $record_data['Company Code'])->first();
+			if (!$company) {
+				return [
+					'success' => false,
+					'errors' => ['Invalid Company : ' . $record_data['Company Code']],
+				];
+			}
+
+			if (!isset($record_data['created_by_id'])) {
+				$admin = $company->admin();
+
+				if (!$admin) {
+					return [
+						'success' => false,
+						'errors' => ['Default Admin user not found'],
+					];
+				}
+				$created_by_id = $admin->id;
+			} else {
+				$created_by_id = $record_data['created_by_id'];
+			}
+
+			if (count($errors) > 0) {
+				return [
+					'success' => false,
+					'errors' => $errors,
+				];
+			}
+
+			$record = Self::firstOrNew([
+				'company_id' => $company->id,
+				'code' => $record_data['Code'],
+			]);
+
+			$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+			if (!$result['success']) {
+				return $result;
+			}
+
+			$record->company_id = $company->id;
+			$record->created_by_id = $created_by_id;
+			$record->save();
+			return [
+				'success' => true,
+			];
+		} catch (\Exception $e) {
+			return [
+				'success' => false,
+				'errors' => [
+					$e->getMessage(),
+				],
+			];
+		}
+	}
 }

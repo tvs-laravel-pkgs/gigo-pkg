@@ -3,20 +3,38 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
-use App\Company;
-use App\Config;
+use App\BaseModel;
 use Auth;
-use Illuminate\Database\Eloquent\Model;
+// use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class QuoteType extends Model {
+class QuoteType extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	public static $AUTO_GENERATE_CODE = false;
+
 	protected $table = 'quote_types';
 	public $timestamps = true;
 	protected $fillable =
 		["id", "company_id", "code", "name"]
 	;
+
+	protected static $excelColumnRules = [
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Code' => [
+			'table_column_name' => 'code',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+	];
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -26,7 +44,7 @@ class QuoteType extends Model {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
-	public static function createFromObject($record_data) {
+	/*public static function createFromObject($record_data) {
 
 		$errors = [];
 		$company = Company::where('code', $record_data->company)->first();
@@ -59,7 +77,7 @@ class QuoteType extends Model {
 		$record->created_by_id = $admin->id;
 		$record->save();
 		return $record;
-	}
+	}*/
 
 	public static function getDropDownList($params = [], $add_default = true, $default_text = 'Select Quote Type') {
 		$list = Collect(Self::select([

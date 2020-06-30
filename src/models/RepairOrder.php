@@ -43,7 +43,7 @@ class RepairOrder extends BaseModel {
 				],
 				'fk' => [
 					'class' => 'App\RepairOrderType',
-					'foreign_table_column' => 'code',
+					'foreign_table_column' => 'short_name',
 					'check_with_company' => true,
 				],
 			],
@@ -102,7 +102,7 @@ class RepairOrder extends BaseModel {
 		'Amount' => [
 			'table_column_name' => 'amount',
 			'rules' => [
-				'reuired' => [
+				'required' => [
 				],
 				'unsigned_decimal' => [
 					'size' => '12,2',
@@ -112,7 +112,7 @@ class RepairOrder extends BaseModel {
 		'Claim Amount' => [
 			'table_column_name' => 'claim_amount',
 			'rules' => [
-				'reuired' => [
+				'required' => [
 				],
 				'unsigned_decimal' => [
 					'size' => '12,2',
@@ -122,7 +122,7 @@ class RepairOrder extends BaseModel {
 		'Maximum Claim Amount' => [
 			'table_column_name' => 'maximum_claim_amount',
 			'rules' => [
-				'reuired_if' => [
+				'required_if' => [
 					'claim_amount',
 				],
 				'nullable' => [
@@ -333,22 +333,30 @@ class RepairOrder extends BaseModel {
 		}
 
 		$type_id = null;
-		if (!empty($record['Group Code'])) {
+		if (!empty($record_data['Group Code'])) {
 			$type = RepairOrderType::where([
-				'company_id' => $record['company_id'],
-				'short_name' => $record['Group Code'],
+				// 'company_id' => $record['company_id'],
+				'company_id' => $company->id,
+				'short_name' => $record_data['Group Code'],
 			])->first();
 			if (!$type) {
-				$status['errors'][] = 'Invalid Group Code';
+				$errors[] = 'Invalid Group Code';
 			} else {
 				$type_id = $type->id;
 			}
 		}
 
+		if (empty($record_data['Amount'])) {
+			$errors[] = 'Amount is empty';
+		} else {
+			$amount = $record_data['Amount'];
+		}
+
 		if (count($errors) > 0) {
 			return [
 				'success' => false,
-				'errors' => $status['errors'],
+				'errors' => $errors,
+				// 'errors' => $status['errors'],
 			];
 		}
 
@@ -361,6 +369,7 @@ class RepairOrder extends BaseModel {
 		if (!$result['success']) {
 			return $result;
 		}
+		$record->amount = $amount;
 		$record->created_by_id = $created_by_id;
 		$record->save();
 		return [

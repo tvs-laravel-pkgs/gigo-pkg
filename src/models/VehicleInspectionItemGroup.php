@@ -3,20 +3,40 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\BaseModel;
 use App\Company;
+// use Illuminate\Database\Eloquent\Model;
 use App\Config;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class VehicleInspectionItemGroup extends Model {
+class VehicleInspectionItemGroup extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'vehicle_inspection_item_groups';
 	public $timestamps = true;
+	public static $AUTO_GENERATE_CODE = false;
+
 	protected $fillable = [
 		"company_id",
 		"code",
 		"name",
+	];
+
+	protected static $excelColumnRules = [
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Code' => [
+			'table_column_name' => 'code',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
 	];
 
 	public function getDateOfJoinAttribute($value) {

@@ -11,6 +11,7 @@ use Validator;
 class VehiclePrimaryApplication extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
+	public static $AUTO_GENERATE_CODE = true;
 	protected $table = 'vehicle_primary_applications';
 	public $timestamps = true;
 	protected $fillable = [

@@ -12,6 +12,8 @@ class VehicleSecondaryApplication extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'vehicle_secondary_applications';
+	public static $AUTO_GENERATE_CODE = true;
+
 	public $timestamps = true;
 	protected $fillable = [
 		"id",
