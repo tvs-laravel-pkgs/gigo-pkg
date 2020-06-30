@@ -197,89 +197,138 @@ class VehicleGatePassController extends Controller {
 	public function getVehicleGatePassList(Request $request) {
 		// dd($request->all());
 		try {
-			$vehicle_gate_pass_list = GateLog::select([
-				'gate_logs.id as gate_log_id',
-				'gate_logs.driver_name',
-				'gate_logs.contact_number',
+			$vehicle_gate_pass_list = GatePass::select([
+				'job_orders.driver_name',
+				'job_orders.driver_mobile_number',
 				'vehicles.registration_number',
 				'models.model_name',
 				'job_cards.job_card_number',
 				'gate_passes.number as gate_pass_no',
+				'gate_passes.id',
+				'gate_logs.id as gate_log_id',
 				'configs.name as status',
-				'gate_logs.status_id',
-				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y %h:%s %p") as gate_in_date_time'),
+				'gate_passes.status_id',
+				DB::raw('DATE_FORMAT(gate_passes.created_at,"%d/%m/%Y, %h:%s %p") as date_and_time'),
 			])
-				->join('vehicles', 'vehicles.id', 'gate_logs.vehicle_id')
+				->join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')
+				->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')
+				->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
+				->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
 				->join('models', 'models.id', 'vehicles.model_id')
-				->join('gate_passes', 'gate_passes.id', 'gate_logs.gate_pass_id')
-				->join('job_orders', 'job_orders.gate_log_id', 'gate_logs.id')
-				->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')
-				->join('configs', 'configs.id', 'gate_logs.status_id')
+				->join('configs', 'configs.id', 'gate_passes.status_id')
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
-							->orWhere('gate_logs.driver_name', 'LIKE', '%' . $request->search_key . '%')
-							->orWhere('gate_logs.contact_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('job_orders.driver_name', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('job_orders.driver_mobile_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('models.model_name', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('job_cards.job_card_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('gate_passes.number', 'LIKE', '%' . $request->search_key . '%')
 						;
 					}
 				})
-				->whereIn('gate_logs.status_id', [8123, 8124]) //GATE OUT PENDING, GATE OUT COMPLETED
-				->get()
+				->where(function ($query) use ($request) {
+					if (!empty($request->gate_pass_created_date)) {
+						$query->whereDate('gate_passes.created_at', date('Y-m-d', strtotime($request->gate_pass_created_date)));
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->registration_number)) {
+						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->registration_number . '%');
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->driver_name)) {
+						$query->where('job_orders.driver_name', 'LIKE', '%' . $request->driver_name . '%');
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->driver_mobile_number)) {
+						$query->where('job_orders.driver_mobile_number', 'LIKE', '%' . $request->driver_mobile_number . '%');
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->model_id)) {
+						$query->where('vehicles.model_id', $request->model_id);
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->job_card_number)) {
+						$query->where('job_cards.job_card_number', 'LIKE', '%' . $request->job_card_number . '%');
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->number)) {
+						$query->where('gate_passes.number', 'LIKE', '%' . $request->number . '%');
+					}
+				})
+				->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
+				->where('gate_passes.type_id', 8280) // Vehicle Gate Pass
+				->groupBy('gate_passes.id')
 			;
 
-			$available_gate_passes = count($vehicle_gate_pass_list);
+			$total_records = $vehicle_gate_pass_list->get()->count();
+
+			if ($request->offset) {
+				$vehicle_gate_pass_list->offset($request->offset);
+			}
+			if ($request->limit) {
+				$vehicle_gate_pass_list->limit($request->limit);
+			}
+
+			$vehicle_gate_passes = $vehicle_gate_pass_list->get();
 
 			return response()->json([
 				'success' => true,
-				'data' => $vehicle_gate_pass_list, //NAME CHANGED FOR WEB DATATABLE LIST
-				// 'vehicle_gate_pass_list' => $vehicle_gate_pass_list,
-				'available_gate_passes' => $available_gate_passes,
+				'vehicle_gate_passes' => $vehicle_gate_passes,
+				'total_records' => $total_records,
 			]);
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
 
-	public function viewVehicleGatePass($gate_log_id) {
-		// dd($gate_log_id);
+	public function viewVehicleGatePass(Request $r) {
+		// dd($r->all());
 		try {
 			$view_vehicle_gate_pass = GateLog::
 				with([
 				'vehicleAttachment',
 				'kmAttachment',
 				'driverAttachment',
+				'chassisAttachment',
 				'status',
 				'gatePass',
-				'vehicleDetail',
-				'vehicleDetail.vehicleModel',
 				'jobOrder',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
 				'jobOrder.jobCard',
 				'jobOrder.jobCard.jobCardReturnableItems',
 				'jobOrder.jobCard.jobCardReturnableItems.attachment',
 			])
-				->find($gate_log_id)
+				->find($r->gate_log_id)
 			;
-
-			$view_vehicle_gate_pass->gate_in_attachment_path = url('storage/app/public/gigo/gate_in/attachments/');
-			$view_vehicle_gate_pass->returnable_item_attachment_path = url('storage/app/public/gigo/job_card/returnable_items/');
 
 			if (!$view_vehicle_gate_pass) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Vehicle Gate Pass Not Found!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Vehicle Gate Pass Not Found!',
+					],
 				]);
 			}
+			$view_vehicle_gate_pass->gate_in_attachment_path = url('storage/app/public/gigo/gate_in/attachments/');
+			$view_vehicle_gate_pass->returnable_item_attachment_path = url('storage/app/public/gigo/job_card/returnable_items/');
 
 			// CHANGE FORMAT OF GATE IN DATE AND TIME
-			if (!empty($view_vehicle_gate_pass)) {
-				$view_vehicle_gate_pass->gate_in_date_time = date('d/m/Y h:i a', strtotime($view_vehicle_gate_pass->gate_in_date));
-			}
+			$view_vehicle_gate_pass->gate_in_date_time = date('d/m/Y h:i a', strtotime($view_vehicle_gate_pass->gate_in_date));
 
 			return response()->json([
 				'success' => true,
@@ -288,8 +337,10 @@ class VehicleGatePassController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}
@@ -311,8 +362,6 @@ class VehicleGatePassController extends Controller {
 			]);
 
 			if ($validator->fails()) {
-				$errors = $validator->errors()->all();
-				$success = false;
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
@@ -322,7 +371,10 @@ class VehicleGatePassController extends Controller {
 
 			DB::beginTransaction();
 
-			$gate_log = GateLog::with(['vehicleDetail'])->find($request->gate_log_id);
+			$gate_log = GateLog::with([
+				'jobOrder',
+				'jobOrder.vehicle',
+			])->find($request->gate_log_id);
 
 			$gate_log_update = GateLog::where('id', $request->gate_log_id)
 				->update([
@@ -338,12 +390,16 @@ class VehicleGatePassController extends Controller {
 				if (!$gate_pass) {
 					return response()->json([
 						'success' => false,
-						'error' => 'Gate Pass Not Found!',
+						'error' => 'Validation Error',
+						'errors' => [
+							'Gate Pass Not Found!',
+						],
 					]);
 				}
 
 				$gate_pass_update = GatePass::where('id', $gate_pass->id)
 					->update([
+						'status_id' => 8341, //GATE OUT COMPLETED
 						'gate_out_date' => Carbon::now(),
 						'updated_by_id' => Auth::user()->id,
 						'updated_at' => Carbon::now(),
@@ -353,7 +409,7 @@ class VehicleGatePassController extends Controller {
 			DB::commit();
 
 			$gate_out_data['gate_pass_no'] = !empty($gate_pass->number) ? $gate_pass->number : NULL;
-			$gate_out_data['registration_number'] = !empty($gate_log->vehicleDetail) ? $gate_log->vehicleDetail->registration_number : NULL;
+			$gate_out_data['registration_number'] = !empty($gate_log->jobOrder->vehicle) ? $gate_log->jobOrder->vehicle->registration_number : NULL;
 
 			return response()->json([
 				'success' => true,
@@ -364,8 +420,10 @@ class VehicleGatePassController extends Controller {
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => ['Exception Error' => $e->getMessage()],
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
 			]);
 		}
 	}

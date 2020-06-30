@@ -507,11 +507,15 @@ app.config(['$routeProvider', function($routeProvider) {
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
     //Vehicle Gate Pass
-    when('/gigo-pkg/vehicle-gate-pass/list', {
-        template: '<vehicle-gate-pass-list></vehicle-gate-pass-list>',
-        title: 'Vehicle Gate Passes',
+    when('/vehicle-gate-pass/card-list', {
+        template: '<vehicle-gate-pass-card-list></vehicle-gate-pass-card-list>',
+        title: 'Vehicle Gate Pass - Card List',
     }).
-    when('/gigo-pkg/vehicle-gate-pass/view/:id', {
+    when('/vehicle-gate-pass/table-list', {
+        template: '<vehicle-gate-pass-table-list></vehicle-gate-pass-table-list>',
+        title: 'Vehicle Gate Pass - Table List',
+    }).
+    when('/vehicle-gate-pass/view/:id', {
         template: '<vehicle-gate-pass-view></vehicle-gate-pass-view>',
         title: 'View Vehicle Gate Pass',
     });

@@ -47,7 +47,7 @@ class GateLog extends Model {
 	}
 
 	public function jobOrder() {
-		return $this->hasOne('App\JobOrder', 'job_order_id');
+		return $this->belongsTo('App\JobOrder', 'job_order_id');
 	}
 	public function status() {
 		return $this->belongsTo('App\Config', 'status_id');

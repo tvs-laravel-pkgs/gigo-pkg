@@ -5,13 +5,13 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/vehicle-gate-pass/list" type="button" class="btn-back btn-img my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">
+                    <a href="#!/vehicle-gate-pass/card-list" type="button" class="btn-back btn-img my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
                     </a>
                 </div>
                 <div class="page-header-content title-block">
-                    <h1 class="title">View Gate Pass</h1>
-                    <p class="subtitle"><a href="#!/gigo-pkg/vehicle-gate-pass/list">Vehicle Gate Passes </a> / View </p>
+                    <h1 class="title">Vehicle Gate Out</h1>
+                    <p class="subtitle"><a href="#!/vehicle-gate-pass/card-list">Vehicle Gate Out </a> / View </p>
                 </div>
             </div>
         </div><!-- Page Header Inner -->
@@ -24,10 +24,10 @@
                     <div class="col-sm-12">
                         <div class="page-form pb-60">
                             <div class="row">
-                                <div class="col-lg-10">
+                                <div class="col-lg-12">
                                     <input type="hidden" name="gate_log_id" value="{{$ctrl.vehicle_gate_pass.id}}">
-                                    <h5 class="font-semi-dark mb-0">{{$ctrl.vehicle_gate_pass.vehicle_detail ? $ctrl.vehicle_gate_pass.vehicle_detail.registration_number : '--'}}</h5>
-                                    <h6 class=""><b>{{$ctrl.vehicle_gate_pass.vehicle_detail.vehicle_model ? $ctrl.vehicle_gate_pass.vehicle_detail.vehicle_model.model_number : '--'}}</b></h6>
+                                    <h5 class="font-semi-dark mb-0">{{$ctrl.vehicle_gate_pass.job_order.vehicle ? $ctrl.vehicle_gate_pass.job_order.vehicle.registration_number : '--'}}</h5>
+                                    <h6 class=""><b>{{$ctrl.vehicle_gate_pass.job_order.vehicle.model ? $ctrl.vehicle_gate_pass.job_order.vehicle.model.model_number : '--'}}</b></h6>
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="border-box">
@@ -37,11 +37,11 @@
                                                             <tbody>
                                                                 <tr>
                                                                     <td><b>Driver Name</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass.driver_name}}</td>
+                                                                    <td>{{$ctrl.vehicle_gate_pass.job_order.driver_name ? $ctrl.vehicle_gate_pass.job_order.driver_name : '--'}}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td><b>Driver Mobile No.</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass.contact_number}}</td>
+                                                                    <td>{{$ctrl.vehicle_gate_pass.job_order.driver_mobile_number ? $ctrl.vehicle_gate_pass.job_order.driver_mobile_number : '--'}}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td><b>Gate In No</b></td>
@@ -68,9 +68,10 @@
                                                     </div><!-- Column -->
                                                     <div class="col-md-6">
                                                         <div class="multi-img">
-                                                            <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.driver_attachment[0].name}}" alt="Images" />
-                                                            <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.km_attachment[0].name}}" alt="Images" />
-                                                            <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.vehicle_attachment[0].name}}" alt="Images" />
+                                                            <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.vehicle_attachment.name}}" alt="Images" />
+                                                            <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.km_attachment.name}}" alt="Images" />
+                                                            <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.driver_attachment.name}}" alt="Images" />
+                                                            <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.chassis_attachment.name}}" alt="Images" />
                                                         </div>
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
@@ -128,9 +129,8 @@
                 <div class="page-form-footer">
                     <div class="row">
                         <div class="col-md-12">
-                            <!-- <a href="#!/gigo-pkg/vehicle-gate-pass/list" class="btn btn-bordered btn-grey btn-md my-tooltip" ng-shortcut="'meta+shift+up'" ng-shortcut-click data-title="ctrl+shift+up">Back</a> -->
-                            <a href="#!/gigo-pkg/vehicle-gate-pass/list" class="btn btn-bordered btn-grey my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">Cancel</a>
-                            <button type="submit" class="btn btn-secondary-dark submit" ng-show="$ctrl.vehicle_gate_pass.status_id == 8123">Confirm Gate Out</button>
+                            <a href="#!/vehicle-gate-pass/card-list" class="btn btn-bordered btn-grey my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">Cancel</a>
+                            <button type="submit" class="btn btn-secondary-dark submit" ng-show="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340">Confirm Gate Out</button>
                         </div>
                     </div>
                 </div><!-- Page Form Footer -->
