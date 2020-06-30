@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class QuoteType extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
-	public static $AUTO_GENERATE_CODE = false;
+	public static $AUTO_GENERATE_CODE = true;
 
 	protected $table = 'quote_types';
 	public $timestamps = true;
