@@ -1,6 +1,6 @@
 app.component('vehicleGatePassCardList', {
     templateUrl: vehicle_gate_pass_card_list_template_url,
-    controller: function($http, $location, HelperService, $scope, $rootScope, $route, $element) {
+    controller: function($http, $location, HelperService, $scope, $rootScope, $route, $element,$mdSelect) {
         $rootScope.loading = true;
         $('#search_vehicle_gate_pass').focus();
         var self = this;
@@ -21,6 +21,7 @@ app.component('vehicleGatePassCardList', {
         self.driver_mobile_number = '';
         self.number = '';
         self.model_id = '';
+        self.status_id = '';
         self.job_card_number = '';
 
         if (!localStorage.getItem('search_key')) {
@@ -43,6 +44,7 @@ app.component('vehicleGatePassCardList', {
                         driver_mobile_number: self.driver_mobile_number,
                         number: self.number,
                         model_id: self.model_id,
+                        status_id: self.status_id,
                         job_card_number: self.job_card_number,
                     },
                     beforeSend: function(xhr) {
@@ -62,6 +64,13 @@ app.component('vehicleGatePassCardList', {
                 });
         }
         $scope.fetchData();
+
+        // FOR FILTER
+        $http.get(
+            laravel_routes['getVehicleGatePassFilter']
+        ).then(function(response) {
+            self.extras = response.data.extras;
+        });
 
         $('.refresh_table').on("click", function() {
             $scope.fetchData();
@@ -145,6 +154,11 @@ app.component('vehicleGatePassCardList', {
             self.model_id = id;
         }
 
+        $scope.onSelectedStatus = function(id) {
+            $('#status_id').val(id);
+            self.status_id = id;
+        }
+
         $scope.applyFilter = function() {
             $scope.fetchData();
             $('#vehicle-gate-pass-filter-modal').modal('hide');
@@ -155,6 +169,7 @@ app.component('vehicleGatePassCardList', {
             $("#driver_name").val('');
             $("#driver_mobile_number").val('');
             $("#model_id").val('');
+            $("#status_id").val('');
             $("#number").val('');
             $("#job_card_number").val('');
             self.gate_pass_created_date = '';
@@ -163,6 +178,7 @@ app.component('vehicleGatePassCardList', {
             self.driver_mobile_number = '';
             self.number = '';
             self.model_id = '';
+            self.status_id = '';
             self.job_card_number = '';
             setTimeout(function() {
                 $scope.fetchData();
@@ -211,7 +227,7 @@ app.component('vehicleGatePassCardList', {
 
 app.component('vehicleGatePassTableList', {
     templateUrl: vehicle_gate_pass_table_list_template_url,
-    controller: function($http, $location, HelperService, $scope, $rootScope, $route, $element) {
+    controller: function($http, $location, HelperService, $scope, $rootScope, $route, $element,$mdSelect) {
         $rootScope.loading = true;
         var self = this;
         HelperService.isLoggedIn()
@@ -271,6 +287,7 @@ app.component('vehicleGatePassTableList', {
                     d.driver_mobile_number = $("#driver_mobile_number").val();
                     d.number = $("#number").val();
                     d.model_id = $("#model_id").val();
+                    d.status_id = $("#status_id").val();
                     d.job_card_number = $("#job_card_number").val();
                 },
                 beforeSend: function(xhr) {
@@ -342,6 +359,13 @@ app.component('vehicleGatePassTableList', {
             }
         }
 
+        // FOR FILTER
+        $http.get(
+            laravel_routes['getVehicleGatePassFilter']
+        ).then(function(response) {
+            self.extras = response.data.extras;
+        });
+
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -362,6 +386,10 @@ app.component('vehicleGatePassTableList', {
             $('#model_id').val(id);
             self.model_id = id;
         }
+         $scope.onSelectedStatus = function(id) {
+            $('#status_id').val(id);
+            self.status_id = id;
+        }
         $scope.applyFilter = function() {
             dataTables.fnFilter();
             $('#vehicle-gate-pass-filter-modal').modal('hide');
@@ -373,6 +401,7 @@ app.component('vehicleGatePassTableList', {
             $("#driver_name").val('');
             $("#driver_mobile_number").val('');
             $("#model_id").val('');
+            $("#status_id").val('');
             $("#job_card_number").val('');
             dataTables.fnFilter();
             $('#vehicle-gate-pass-filter-modal').modal('hide');

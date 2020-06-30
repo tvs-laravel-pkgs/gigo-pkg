@@ -199,6 +199,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 
 	//Vehicle Gate Pass
 	Route::get('/vehicle-gate-pass/get-list', 'VehicleGatePassController@getVehicleGatePassList')->name('getVehicleGatePassList');
+	Route::get('/vehicle-gate-pass/get-filter-data', 'VehicleGatePassController@getVehicleGatePassFilter')->name('getVehicleGatePassFilter');
 
 	//Gate Log
 	Route::get('/gate-log/get-list', 'GateLogController@getGateLogList')->name('getGateLogList');

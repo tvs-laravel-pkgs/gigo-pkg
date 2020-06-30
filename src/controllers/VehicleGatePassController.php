@@ -1,6 +1,7 @@
 <?php
 
 namespace Abs\GigoPkg;
+use App\Config;
 use App\GatePass;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -12,6 +13,18 @@ class VehicleGatePassController extends Controller {
 
 	public function __construct() {
 		$this->data['theme'] = config('custom.theme');
+	}
+
+	public function getVehicleGatePassFilter() {
+		$params = [
+			'config_type_id' => 48,
+			'add_default' => true,
+			'default_text' => "Select Status",
+		];
+		$this->data['extras'] = [
+			'status_list' => Config::getDropDownList($params),
+		];
+		return response()->json($this->data);
 	}
 
 	public function getVehicleGatePassList(Request $request) {
@@ -58,6 +71,11 @@ class VehicleGatePassController extends Controller {
 			->where(function ($query) use ($request) {
 				if (!empty($request->model_id)) {
 					$query->where('vehicles.model_id', $request->model_id);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->status_id)) {
+					$query->where('gate_passes.status_id', $request->status_id);
 				}
 			})
 			->where(function ($query) use ($request) {

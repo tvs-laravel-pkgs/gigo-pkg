@@ -224,6 +224,7 @@ class VehicleGatePassController extends Controller {
 							->orWhere('models.model_name', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('job_cards.job_card_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('gate_passes.number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('configs.name', 'LIKE', '%' . $request->search_key . '%')
 						;
 					}
 				})
@@ -250,6 +251,11 @@ class VehicleGatePassController extends Controller {
 				->where(function ($query) use ($request) {
 					if (!empty($request->model_id)) {
 						$query->where('vehicles.model_id', $request->model_id);
+					}
+				})
+				->where(function ($query) use ($request) {
+					if (!empty($request->status_id)) {
+						$query->where('gate_passes.status_id', $request->status_id);
 					}
 				})
 				->where(function ($query) use ($request) {

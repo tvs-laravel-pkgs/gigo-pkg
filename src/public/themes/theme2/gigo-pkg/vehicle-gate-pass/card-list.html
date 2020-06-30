@@ -173,13 +173,27 @@
                                 <input type="hidden" id="model_id" name="model_id" value="">
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <md-select ng-model="$ctrl.status_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedStatus($ctrl.status_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm1" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status_list | filter:searchTerm1">{{status.name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="status_id" id="status_id" value="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Modal Form -->
             </div><!-- Modal Body -->
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_pass_created_date='';$ctrl.number='';$ctrl.registration_number='';$ctrl.driver_name='';$ctrl.driver_mobile_number='';$ctrl.vehicleModelSearchText='';$ctrl.job_card_number='';">Reset Filter</button>
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_pass_created_date='';$ctrl.number='';$ctrl.registration_number='';$ctrl.driver_name='';$ctrl.driver_mobile_number='';$ctrl.vehicleModelSearchText='';$ctrl.job_card_number='';$ctrl.status_selected='';">Reset Filter</button>
                     </div><!-- Column -->
                     <div class="col-md-6 text-right">
                         <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">Apply</button>
