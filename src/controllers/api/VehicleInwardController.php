@@ -16,6 +16,7 @@ use App\EstimationType;
 use App\FinancialYear;
 use App\GateLog;
 use App\Http\Controllers\Controller;
+use App\JobCard;
 use App\JobOrder;
 use App\JobOrderCampaign;
 use App\JobOrderCampaignChassisNumber;
@@ -3173,11 +3174,7 @@ class VehicleInwardController extends Controller {
 					'updated_at' => Carbon::now(),
 				]);
 
-			$url = url('/') . '/vehicle-inward/estimate/view/' . $job_order->id;
-
-			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
-
-			$customer_detail = Customer::select('name', 'mobile_no', 'vehicles.registration_number')
+			$customer_detail = Customer::select('customers.name', 'customers.mobile_no', 'vehicles.registration_number')
 				->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
 				->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
 				->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
@@ -3194,14 +3191,19 @@ class VehicleInwardController extends Controller {
 
 			$mobile_number = $customer_detail->mobile_no;
 
-			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . '<br> Vehicle Reg Number : ' . $customer_detail->registration_number;
-
 			if (!$mobile_number) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Customer Mobile Number Not Found',
 				]);
 			}
+
+			$url = url('/') . '/vehicle-inward/estimate/view/' . $job_order->id;
+
+			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . '<br> Vehicle Reg Number : ' . $customer_detail->registration_number;
+
 			$msg = sendSMSNotification($mobile_number, $message);
 
 			DB::commit();
@@ -3476,6 +3478,70 @@ class VehicleInwardController extends Controller {
 				'updated_by_id' => Auth::user()->id,
 				'updated_at' => Carbon::now(),
 			]);
+
+			if (date('m') > 3) {
+				$year = date('Y') + 1;
+			} else {
+				$year = date('Y');
+			}
+			//GET FINANCIAL YEAR ID
+			$financial_year = FinancialYear::where('from', $year)
+				->where('company_id', Auth::user()->company_id)
+				->first();
+			if (!$financial_year) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Fiancial Year Not Found',
+					],
+				]);
+			}
+			//GET BRANCH/OUTLET
+			$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+
+			//GENERATE GATE IN VEHICLE NUMBER
+			$generateNumber = SerialNumberGroup::generateNumber(23, $financial_year->id, $branch->state_id, $branch->id);
+			if (!$generateNumber['success']) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'No Job Card Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+					],
+				]);
+			}
+
+			$error_messages_1 = [
+				'number.required' => 'Serial number is required',
+				'number.unique' => 'Serial number is already taken',
+			];
+
+			$validator_1 = Validator::make($generateNumber, [
+				'number' => [
+					'required',
+					'unique:job_cards,local_job_card_number,' . $job_order->id . ',job_order_id,company_id,' . Auth::user()->company_id,
+				],
+			], $error_messages_1);
+
+			if ($validator_1->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator_1->errors()->all(),
+				]);
+			}
+
+			//JOB Card SAVE
+			$job_card = JobCard::firstOrNew([
+				'job_order_id' => $job_order->id,
+			]);
+			$job_card->local_job_card_number = $generateNumber['number'];
+			$job_card->date = date('Y-m-d');
+			$job_card->outlet_id = $job_order->outlet_id;
+			$job_card->company_id = Auth::user()->company_id;
+			$job_card->created_by = Auth::user()->id;
+			$job_card->save();
 
 			DB::commit();
 

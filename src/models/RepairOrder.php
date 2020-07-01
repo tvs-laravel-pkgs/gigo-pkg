@@ -161,7 +161,7 @@ class RepairOrder extends BaseModel {
 	}
 
 	public function taxCode() {
-		return $this->belongsTo('App\TaxCode', 'tax_code_id');
+		return $this->belongsTo('Abs\TaxPkg\TaxCode', 'tax_code_id');
 	}
 
 	public function skillLevel() {
