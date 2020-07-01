@@ -90,7 +90,7 @@
                                                                             <td ng-if="part.is_free_service == 1">
                                                                                 <p class="text-danger">Yes</p>
                                                                             </td>
-                                                                            <td ng-if="part.is_free_service == 0">
+                                                                            <td ng-if="part.is_free_service == 0 || labour.is_free_service == NULL">
                                                                                 <p class="text-success">No</p>
                                                                             </td>
                                                                             <td>{{part.name}}</td>
@@ -160,7 +160,7 @@
                                                                             <td ng-if="part.is_free_service == 1">
                                                                                 <p class="text-danger">Yes</p>
                                                                             </td>
-                                                                            <td ng-if="part.is_free_service == 0">
+                                                                            <td ng-if="part.is_free_service == 0 || labour.is_free_service == NULL">
                                                                                 <p class="text-success">No</p>
                                                                             </td>
                                                                             <td>{{part.name}}</td>

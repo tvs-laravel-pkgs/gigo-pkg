@@ -85,6 +85,7 @@ class VehicleInwardController extends Controller {
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
 					'job_orders.driver_name',
+					'job_orders.is_customer_agreed',
 					'job_orders.driver_mobile_number as driver_mobile_number',
 					DB::raw('GROUP_CONCAT(amc_policies.name) as amc_policies'),
 					'status.name as status_name',
@@ -3164,6 +3165,14 @@ class VehicleInwardController extends Controller {
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
 
+			//Update Gatelog Status
+			$gate_log = Gatelog::where('job_order_id', $job_order->id)
+				->update([
+					'status_id' => 8122, //Vehicle Inward Completed
+					'updated_by_id' => Auth::user()->id,
+					'updated_at' => Carbon::now(),
+				]);
+
 			$url = url('/') . '/vehicle-inward/estimate/view/' . $job_order->id;
 
 			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
@@ -3185,9 +3194,7 @@ class VehicleInwardController extends Controller {
 
 			$mobile_number = $customer_detail->mobile_no;
 
-			$mobile_number = "9965098134";
-
-			$message = 'Dear Cutomer,Kindly click below link to pay for TVS job order ' . $short_url . '<br> Vehicle Reg Number : ' . $customer_detail->registration_number;
+			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . '<br> Vehicle Reg Number : ' . $customer_detail->registration_number;
 
 			if (!$mobile_number) {
 				return response()->json([
