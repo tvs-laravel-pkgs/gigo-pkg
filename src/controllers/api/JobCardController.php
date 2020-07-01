@@ -15,6 +15,7 @@ use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
+use Abs\GigoPkg\ShortUrl;
 use Abs\PartPkg\Part;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use Abs\TaxPkg\Tax;
@@ -483,6 +484,7 @@ class JobCardController extends Controller {
 	}
 
 	public function generateUrl(Request $request) {
+		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -518,7 +520,7 @@ class JobCardController extends Controller {
 
 			DB::beginTransaction();
 
-			$customer_detail = Customer::select('name', 'mobile_no')
+			$customer_detail = Customer::select('customers.name', 'customers.mobile_no', 'vehicles.registration_number')
 				->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
 				->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
 				->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
@@ -545,17 +547,22 @@ class JobCardController extends Controller {
 
 			$mobile_number = $customer_detail->mobile_no;
 
-			$approval_link = url('/vehicle-inward/estimate/customer/view/' . $request->job_order_id . '/' . $job_card->otp_no);
-
-			$message = 'Click <a href="' . url($approval_link) . '">Here</a> to Approval for Inward Vehicle Information.';
-
 			if (!$mobile_number) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Customer Mobile Number Not Found',
 				]);
 			}
+
+			$url = url('/') . '/vehicle-inward/estimate/customer/view/' . $request->job_order_id . '/' . $job_card->otp_no;
+
+			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+			$message = 'Dear Customer,Kindly click below link to approve for TVS job order ' . $short_url . ' <br> Vehicle Reg Number : ' . $customer_detail->registration_number;
+
 			$msg = sendSMSNotification($mobile_number, $message);
+
+			DB::commit();
 			// dd($msg);
 			//Enable After Sms Issue Resloved
 			/*if(!$msg){

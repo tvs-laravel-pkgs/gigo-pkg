@@ -3174,11 +3174,7 @@ class VehicleInwardController extends Controller {
 					'updated_at' => Carbon::now(),
 				]);
 
-			$url = url('/') . '/vehicle-inward/estimate/view/' . $job_order->id;
-
-			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
-
-			$customer_detail = Customer::select('name', 'mobile_no', 'vehicles.registration_number')
+			$customer_detail = Customer::select('customers.name', 'customers.mobile_no', 'vehicles.registration_number')
 				->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
 				->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
 				->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
@@ -3195,14 +3191,19 @@ class VehicleInwardController extends Controller {
 
 			$mobile_number = $customer_detail->mobile_no;
 
-			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . '<br> Vehicle Reg Number : ' . $customer_detail->registration_number;
-
 			if (!$mobile_number) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Customer Mobile Number Not Found',
 				]);
 			}
+
+			$url = url('/') . '/vehicle-inward/estimate/view/' . $job_order->id;
+
+			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . '<br> Vehicle Reg Number : ' . $customer_detail->registration_number;
+
 			$msg = sendSMSNotification($mobile_number, $message);
 
 			DB::commit();
