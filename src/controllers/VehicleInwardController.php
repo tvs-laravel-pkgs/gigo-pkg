@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use App\JobOrder;
 use App\Part;
 use App\VehicleModel;
-use App\Config;
 use Auth;
 use DB;
 use Entrust;
