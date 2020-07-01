@@ -27,7 +27,7 @@ class TaxCode extends BaseModel {
 			],
 		],
 		'Type Name' => [
-			'table_column_name' => 'code',
+			'table_column_name' => 'type_id',
 			'rules' => [
 				'required' => [
 				],
@@ -35,16 +35,16 @@ class TaxCode extends BaseModel {
 					'class' => 'App\Config',
 					'foreign_table_column' => 'name',
 				],
-
 			],
 		],
 
 	];
 
 	public static function saveFromObject($record_data) {
+		dd($record_data);
 		$record = [
 			'Company Code' => $record_data->company_code,
-			'Tax Name' => $record_data->tax_name,
+			'Code' => $record_data->code,
 			'Type Name' => $record_data->type_name,
 		];
 		return static::saveFromExcelArray($record);
@@ -74,6 +74,8 @@ class TaxCode extends BaseModel {
 			$created_by_id = $record_data['created_by_id'];
 		}
 
+		$type_id = null;
+
 		if (empty($record_data['Type Name'])) {
 			$errors[] = 'Type Name is empty';
 		} else {
@@ -88,14 +90,22 @@ class TaxCode extends BaseModel {
 			}
 		}
 
+		if (count($errors) > 0) {
+			return [
+				'success' => false,
+				'errors' => $errors,
+			];
+		}
+
 		$record = Self::firstOrNew([
 			'company_id' => $company->id,
-			'name' => $record_data['Tax Name'],
+			'code' => $record_data['Code'],
 		]);
 		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
 		if (!$result['success']) {
 			return $result;
 		}
+
 		$record->type_id = $type_id;
 		$record->company_id = $company->id;
 		$record->created_by_id = $created_by_id;
@@ -104,6 +114,7 @@ class TaxCode extends BaseModel {
 			'success' => true,
 		];
 	}
+
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Tax Code') {
 		$list = Collect(Self::select([
 			'id',
