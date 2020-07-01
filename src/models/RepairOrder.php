@@ -10,6 +10,7 @@ use Abs\ImportCronJobPkg\ImportCronJob;
 use Abs\UomPkg\Uom;
 use App\BaseModel;
 use App\Company;
+use App\Part;
 use Auth;
 use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -402,27 +403,30 @@ class RepairOrder extends BaseModel {
 		}
 	}
 
+	public function parts() {
+		return $this->belongsToMany('App\Part', 'repair_order_part', 'repair_order_id', 'part_id');
+	}
+
 	public static function mapPart($record_data) {
-		dump($record_data);
-		/*$company = Company::where('code', $record_data->company)->first();
-			$admin = $company->admin();
+		$company = Company::where('code', $record_data['company_code'])->first();
 
-			$errors = [];
-			$record = Outlet::where('code', $record_data->outlet)->where('company_id', $company->id)->first();
-			if (!$record) {
-				$errors[] = 'Invalid Outlet : ' . $record_data->outlet;
-			}
+		$errors = [];
+		$record = RepairOrder::where('code', $record_data['repair_order_code'])->where('company_id', $company->id)->first();
+		if (!$record) {
+			$errors[] = 'Invalid Repair Order : ' . $record_data['repair_order_code'];
+		}
 
-			$lob = Lob::where('name', $record_data->lob)->where('company_id', $company->id)->first();
-			if (!$lob) {
-				$errors[] = 'Invalid LOB : ' . $record_data->lob;
-			}
+		$part = Part::where('code', $record_data['part_code'])->where('company_id', $company->id)->first();
+		if (!$part) {
+			$errors[] = 'Invalid Part : ' . $record_data['part_code'];
+		}
 
-			if (count($errors) > 0) {
-				dump($errors);
-				return;
-			}
-			$record->lobs()->syncWithoutDetaching([$lob->id]);
-		*/
+		if (count($errors) > 0) {
+			dump($errors);
+			return;
+		}
+		$record->parts()->syncWithoutDetaching([$part->id]);
+		// return $record;
+
 	}
 }
