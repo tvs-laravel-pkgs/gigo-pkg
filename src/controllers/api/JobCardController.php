@@ -3112,7 +3112,7 @@ class JobCardController extends Controller {
 						'success' => false,
 						'error' => 'Validation Error',
 						'errors' => [
-							'No Material Gate Pass Serial number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+							'No Material Gate Pass Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
 						],
 					]);
 				}
