@@ -4,8 +4,12 @@ namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
+use App\Company;
+use App\FieldType;
 use App\JobOrder;
+use App\SerialNumberGroup;
 use Auth;
+
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -99,21 +103,46 @@ class VehicleInventoryItem extends BaseModel {
 				$errors[] = 'Invalid Field Type Short Name : ' . $record_data['Field Type Short Name'];
 			}
 		}
-		if (empty($record_data['Code'])) {
-			$errors[] = 'Code is empty';
+
+		if (Self::$AUTO_GENERATE_CODE) {
+			if (empty($record_data['Code'])) {
+				$record = static::firstOrNew([
+					'company_id' => $company->id,
+					'name' => $record_data['Name'],
+				]);
+				$result = SerialNumberGroup::generateNumber(static::$SERIAL_NUMBER_CATEGORY_ID);
+				if ($result['success']) {
+					$record_data['Code'] = $result['number'];
+				} else {
+					return [
+						'success' => false,
+						'errors' => $result['error'],
+					];
+				}
+			} else {
+				$record = static::firstOrNew([
+					'company_id' => $company->id,
+					'code' => $record_data['Code'],
+				]);
+			}
+		} else {
+			$record = static::firstOrNew([
+				'company_id' => $company->id,
+				'code' => $record_data['Code'],
+			]);
 		}
 
-		$record = self::firstOrNew([
+		/*$record = self::firstOrNew([
 			'company_id' => $company->id,
 			'code' => $record_data['Code'],
-		]);
+		]);*/
 
 		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
 		if (!$result['success']) {
 			return $result;
 		}
 		// $record->company_id = $company->id;
-		$record->group_id = $group->id;
+		$record->field_type_id = $group->id;
 		$record->created_by_id = $created_by_id;
 		$record->save();
 		return [

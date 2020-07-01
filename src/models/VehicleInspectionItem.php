@@ -5,7 +5,7 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use App\Company;
-use App\Config;
+use App\SerialNumberGroup;
 use App\VehicleInspectionItemGroup;
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -96,14 +96,44 @@ class VehicleInspectionItem extends BaseModel {
 			}
 		}
 
-		if (empty($record_data['Code'])) {
-			$errors[] = 'Group Name is empty';
+		if (count($errors) > 0) {
+			return [
+				'success' => false,
+				'errors' => $errors,
+			];
 		}
 
-		$record = self::firstOrNew([
+		if (Self::$AUTO_GENERATE_CODE) {
+			if (empty($record_data['Code'])) {
+				$record = static::firstOrNew([
+					'group_id' => $group->id,
+					'name' => $record_data['Name'],
+				]);
+				$result = SerialNumberGroup::generateNumber(static::$SERIAL_NUMBER_CATEGORY_ID);
+				if ($result['success']) {
+					$record_data['Code'] = $result['number'];
+				} else {
+					return [
+						'success' => false,
+						'errors' => $result['error'],
+					];
+				}
+			} else {
+				$record = static::firstOrNew([
+					'group_id' => $group->id,
+					'code' => $record_data['Code'],
+				]);
+			}
+		} else {
+			$record = static::firstOrNew([
+				'group_id' => $group->id,
+				'code' => $record_data['Code'],
+			]);
+		}
+		/*$record = self::firstOrNew([
 			'group_id' => $group->id,
 			'code' => $record_data['Code'],
-		]);
+		]);*/
 
 		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
 		if (!$result['success']) {
@@ -126,7 +156,7 @@ class VehicleInspectionItem extends BaseModel {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
-	public static function createFromObject($record_data) {
+	/*public static function createFromObject($record_data) {
 
 		$errors = [];
 		$company = Company::where('code', $record_data->company)->first();
@@ -159,7 +189,7 @@ class VehicleInspectionItem extends BaseModel {
 		$record->created_by_id = $admin->id;
 		$record->save();
 		return $record;
-	}
+	}*/
 
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Vehicle Inspection Item') {
 		$list = Collect(Self::select([

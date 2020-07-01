@@ -5,6 +5,7 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use App\Company;
+use App\SerialNumberGroup;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VehicleServiceSchedule extends BaseModel {
@@ -143,11 +144,38 @@ class VehicleServiceSchedule extends BaseModel {
 					'errors' => $errors,
 				];
 			}
+			if (Self::$AUTO_GENERATE_CODE) {
+				if (empty($record_data['Code'])) {
+					$record = static::firstOrNew([
+						'company_id' => $company->id,
+						'name' => $record_data['Name'],
+					]);
+					$result = SerialNumberGroup::generateNumber(static::$SERIAL_NUMBER_CATEGORY_ID);
+					if ($result['success']) {
+						$record_data['Code'] = $result['number'];
+					} else {
+						return [
+							'success' => false,
+							'errors' => $result['error'],
+						];
+					}
+				} else {
+					$record = static::firstOrNew([
+						'company_id' => $company->id,
+						'code' => $record_data['Code'],
+					]);
+				}
+			} else {
+				$record = static::firstOrNew([
+					'company_id' => $company->id,
+					'code' => $record_data['Code'],
+				]);
+			}
 
-			$record = Self::firstOrNew([
+			/*$record = Self::firstOrNew([
 				'company_id' => $company->id,
 				'code' => $record_data['Code'],
-			]);
+			]);*/
 			$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
 
 			if (!$result['success']) {

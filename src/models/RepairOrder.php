@@ -389,5 +389,40 @@ class RepairOrder extends BaseModel {
 		}
 		return $list;
 	}
+	public static function mapParts($records) {
+		foreach ($records as $key => $record_data) {
+			try {
+				if (!$record_data->company_code) {
+					continue;
+				}
+				$record = self::mapPart($record_data);
+			} catch (Exception $e) {
+				dd($e);
+			}
+		}
+	}
 
+	public static function mapPart($record_data) {
+		dump($record_data);
+		/*$company = Company::where('code', $record_data->company)->first();
+			$admin = $company->admin();
+
+			$errors = [];
+			$record = Outlet::where('code', $record_data->outlet)->where('company_id', $company->id)->first();
+			if (!$record) {
+				$errors[] = 'Invalid Outlet : ' . $record_data->outlet;
+			}
+
+			$lob = Lob::where('name', $record_data->lob)->where('company_id', $company->id)->first();
+			if (!$lob) {
+				$errors[] = 'Invalid LOB : ' . $record_data->lob;
+			}
+
+			if (count($errors) > 0) {
+				dump($errors);
+				return;
+			}
+			$record->lobs()->syncWithoutDetaching([$lob->id]);
+		*/
+	}
 }
