@@ -55,7 +55,6 @@ class JobCardController extends Controller {
 			'service_types.name as service_type',
 			'quote_types.name as quote_type',
 			'service_order_types.name as job_order_type',
-
 		])
 			->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')
 			->leftJoin('gate_passes', 'gate_passes.job_card_id', 'job_cards.id')

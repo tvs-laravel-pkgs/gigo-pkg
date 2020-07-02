@@ -69,7 +69,7 @@ class JobCardController extends Controller {
 				'job_cards.job_card_number',
 				'job_cards.bay_id',
 				'job_orders.id as job_order_id',
-				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y - %h:%i %p") as date'),
+				'job_cards.created_at',
 				'vehicles.registration_number',
 				'models.model_name as vehicle_model',
 				'customers.name as customer_name',
