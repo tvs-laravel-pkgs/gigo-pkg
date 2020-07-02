@@ -3,8 +3,12 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Attachment;
 use App\BaseModel;
+use App\FinancialYear;
+use App\JobCard;
+use App\Outlet;
 use App\WjorPart;
 use App\WjorRepairOrder;
 use Auth;
@@ -12,10 +16,6 @@ use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Storage;
 use Validator;
-use App\JobCard;
-use App\FinancialYear;
-use App\Outlet;
-use Abs\SerialNumberPkg\SerialNumberGroup;
 
 class WarrantyJobOrderRequest extends BaseModel {
 	use SeederTrait;
@@ -142,11 +142,11 @@ class WarrantyJobOrderRequest extends BaseModel {
 	}
 
 	public function repairOrders() {
-		return $this->belongsToMany('App\RepairOrder', 'wjor_repair_orders', 'wjor_id')->withPivot(['net_amount','tax_total','total_amount'])->with(['skillLevel','category','taxCode','taxCode.taxes']);
+		return $this->belongsToMany('App\RepairOrder', 'wjor_repair_orders', 'wjor_id')->withPivot(['net_amount', 'tax_total', 'total_amount'])->with(['skillLevel', 'category', 'taxCode', 'taxCode.taxes']);
 	}
 
 	public function parts() {
-		return $this->belongsToMany('App\Part', 'wjor_parts', 'wjor_id')->withPivot(['net_amount','tax_total','total_amount','quantity','purchase_type'])->with(['uom','taxCode','taxCode.taxes']);
+		return $this->belongsToMany('App\Part', 'wjor_parts', 'wjor_id')->withPivot(['net_amount', 'tax_total', 'total_amount', 'quantity', 'purchase_type'])->with(['uom', 'taxCode', 'taxCode.taxes']);
 	}
 
 	// public function repairOrders() {
@@ -331,34 +331,21 @@ class WarrantyJobOrderRequest extends BaseModel {
 		try {
 			DB::beginTransaction();
 			$owner = !is_null($owner) ? $owner : Auth::user();
-			// dd($input);
+
 			if ($input['form_type'] == "manual") {
 				$job_card_number = $input['job_card_number'];
-				$isJobCard = JobCard::where('job_card_number',$job_card_number)->first();
+				$isJobCard = JobCard::where('job_card_number', $job_card_number)->first();
 
-				if (date('m') > 3) {
-					$year = date('Y') + 1;
-				} else {
-					$year = date('Y');
+				$result = FinancialYear::getCurrentFinancialYear();
+				if (!$result['success']) {
+					return response()->json($result);
 				}
-				//GET FINANCIAL YEAR ID
-				$financial_year = FinancialYear::where('from', $year)
-					->where('company_id', Auth::user()->company_id)
-					->first();
-				if (!$financial_year) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => [
-							'Fiancial Year Not Found',
-						],
-					]);
-				}
-				$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+				$financial_year = $result['financial_year'];
+				$branch = Outlet::find($input['outlet_id']);
 
 				$generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
 
-				if (is_null($isJobCard)) {
+				if (!$isJobCard) {
 					$job_order = new JobOrder;
 					$job_order->company_id = $owner->company_id;
 					$job_order->number = $generateJONumber['number'];
@@ -382,10 +369,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 					$job_card->save();
 
 					$job_order_id = $job_order->id;
-				}else{
+				} else {
 					$job_order_id = $isJobCard->job_order_id;
 				}
-			}else{
+			} else {
 				$job_order_id = $input['job_order_id'];
 			}
 
@@ -420,7 +407,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 			}
 
 			if (isset($input['repair_orders'])) {
-				WjorRepairOrder::where('wjor_id',$record->id)->delete();
+				WjorRepairOrder::where('wjor_id', $record->id)->delete();
 				foreach ($input['repair_orders'] as $repair_order) {
 					$wjorRepairOrder = new WjorRepairOrder;
 					$wjorRepairOrder->wjor_id = $record->id;
@@ -433,7 +420,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 			}
 
 			if (isset($input['parts'])) {
-				WjorPart::where('wjor_id',$record->id)->delete();
+				WjorPart::where('wjor_id', $record->id)->delete();
 				foreach ($input['parts'] as $part) {
 					$wjorPart = new WjorPart;
 					$wjorPart->wjor_id = $record->id;

@@ -7,43 +7,6 @@
                 </b>
             </h5>
             <ul class="view-row mb-no">
-                <li class="view-col-3" ng-if="form_type != 'manual'">
-                    <div class="form-group">
-                        <label>
-                            Job order number
-                            <sup class="mandatory">*</sup>
-                        </label>
-                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order" md-search-text="jobOrderSearchKey" md-items="job_order in searchJobOrders(jobOrderSearchKey)" md-item-text="job_order.number" md-min-length="3" md-escape-options="clear" placeholder="Ex. JO001">
-                            <md-item-template>
-                                <span>
-                                    {{job_order.number}}
-                                </span>
-                            </md-item-template>
-                            <md-not-found>
-                                No records matching "{{jobOrderSearchKey}}" were found.
-                            </md-not-found>
-                        </md-autocomplete>
-                        <input type="hidden" name="job_order_id" value="{{warranty_job_order_request.job_order.id}}">
-                    </div><!-- Feild -->
-                </li>
-                <li class="view-col-3" ng-if="form_type != 'manual'">
-                    <span class="view-col-label">
-                        Vehicle sold?
-                    </span>
-                    <span class="view-col-value">
-                        {{warranty_job_order_request.job_order.vehicle.is_sold ? 'Yes' : 'No'}}
-                    </span>
-                </li>
-                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle.is_sold && form_type != 'manual'">
-                    <span class="view-col-label">
-                        Sold date
-                    </span>
-                    <span class="view-data-list-value">
-                        <b>
-                            {{warranty_job_order_request.job_order.vehicle.sold_date}}
-                        </b>
-                    </span>
-                </li>
                 <li class="view-col-3" ng-if="form_type == 'manual'">
                     <div class="form-group">
                         <label>
@@ -153,6 +116,44 @@
                         </div>
                     </div><!-- Feild -->
                 </li>
+                <!-- Auto Form Fields -->
+                <li class="view-col-3" ng-if="form_type != 'manual'">
+                    <div class="form-group">
+                        <label>
+                            Job order number
+                            <sup class="mandatory">*</sup>
+                        </label>
+                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order" md-search-text="jobOrderSearchKey" md-items="job_order in searchJobOrders(jobOrderSearchKey)" md-item-text="job_order.number" md-min-length="3" md-escape-options="clear" placeholder="Ex. JO001">
+                            <md-item-template>
+                                <span>
+                                    {{job_order.number}}
+                                </span>
+                            </md-item-template>
+                            <md-not-found>
+                                No records matching "{{jobOrderSearchKey}}" were found.
+                            </md-not-found>
+                        </md-autocomplete>
+                        <input type="hidden" name="job_order_id" value="{{warranty_job_order_request.job_order.id}}">
+                    </div><!-- Feild -->
+                </li>
+                <li class="view-col-3" ng-if="form_type != 'manual'">
+                    <span class="view-col-label">
+                        Vehicle sold?
+                    </span>
+                    <span class="view-col-value">
+                        {{warranty_job_order_request.job_order.vehicle.is_sold ? 'Yes' : 'No'}}
+                    </span>
+                </li>
+                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle.is_sold && form_type != 'manual'">
+                    <span class="view-col-label">
+                        Sold date
+                    </span>
+                    <span class="view-data-list-value">
+                        <b>
+                            {{warranty_job_order_request.job_order.vehicle.sold_date}}
+                        </b>
+                    </span>
+                </li>
                 <li class="view-col-3" ng-if="false">
                     <span class="view-col-label">
                         Failure date
@@ -180,44 +181,6 @@
                     <span class="view-col-value">
                         No
                     </span>
-                </li>
-                <li class="view-col-3" ng-if="form_type=='manual'">
-                    <div class="form-group">
-                        <label>
-                            Customer
-                            <sup class="mandatory">*</sup>
-                        </label>
-                        <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
-                            <md-item-template>
-                                <span>
-                                    {{option.name}} / {{option.code}}
-                                </span>
-                            </md-item-template>
-                            <md-not-found>
-                                No Customer matching "{{$ctrl.customerSearchText}}" were found.
-                            </md-not-found>
-                        </md-autocomplete>
-                        <input required type="hidden" id="customer_id" name="customer_id" value="">
-                    </div><!-- Feild -->
-                </li>
-                <li class="view-col-3" ng-if="form_type == 'manual'">
-                    <div class="form-group">
-                        <label>
-                            Outlet
-                            <sup class="mandatory">*</sup>
-                        </label>
-                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order.outlet" md-search-text="outlet_search_key" md-items="outlet in searchOutlets(outlet_search_key)" md-item-text="outlet.code" md-min-length="3" md-escape-options="clear" placeholder="Outlet">
-                            <md-item-template>
-                                <span>
-                                    {{outlet.code}}
-                                </span>
-                            </md-item-template>
-                            <md-not-found>
-                                No records matching "{{outlet_search_key}}" were found.
-                            </md-not-found>
-                        </md-autocomplete>
-                        <input type="hidden" name="outlet_id" value="{{warranty_job_order_request.job_order.outlet.id}}">
-                    </div>
                 </li>
             </ul>
             <div class="panel-group" id="accordion">
@@ -331,7 +294,7 @@
                                             Fault code
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item="warranty_job_order_request.fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code" md-min-length="2" md-escape-options="clear" placeholder="Ex. AA">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code" md-min-length="1" md-escape-options="clear" placeholder="Ex. AA">
                                             <md-item-template>
                                                 <span>
                                                     {{fault.code}}
@@ -379,12 +342,31 @@
                                         {{warranty_job_order_request.supplier.name}}
                                     </span>
                                 </li>
+                                <li class="view-col-3" ng-if="form_type == 'manual'">
+                                    <div class="form-group">
+                                        <label>
+                                            Outlet
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order.outlet" md-search-text="outlet_search_key" md-items="outlet in searchOutlet(outlet_search_key)" md-item-text="outlet.code" md-min-length="2" md-escape-options="clear" placeholder="Outlet" ng-model-options="{trackBy: '$value.id' }" md-selected-item-change="outletChanged(warranty_job_order_request.job_order.outlet)">
+                                            <md-item-template>
+                                                <span>
+                                                    {{outlet.code}}
+                                                </span>
+                                            </md-item-template>
+                                            <md-not-found>
+                                                No records matching "{{outlet_search_key}}" were found.
+                                            </md-not-found>
+                                        </md-autocomplete>
+                                        <input type="hidden" name="outlet_id" value="{{warranty_job_order_request.job_order.outlet.id}}">
+                                    </div>
+                                </li>
                                 <li class="view-col-3">
                                     <span class="view-col-label">
                                         Servicing dealer name
                                     </span>
                                     <span class="view-col-value">
-                                        {{warranty_job_order_request.job_order.outlet.name}}
+                                        {{warranty_job_order_request.job_order.outlet.business.pivot.outlet_name}}
                                     </span>
                                 </li>
                                 <li class="view-col-3">
@@ -392,7 +374,7 @@
                                         Servicing Dealer Code
                                     </span>
                                     <span class="view-col-value">
-                                        {{warranty_job_order_request.job_order.outlet.code}}
+                                        {{warranty_job_order_request.job_order.outlet.business.pivot.outlet_code}}
                                     </span>
                                 </li>
                                 <li class="view-col-3">
@@ -433,13 +415,32 @@
                                         <input type="hidden" name="secondary_segment_id" value="{{warranty_job_order_request.secondary_segment.id}}">
                                     </div><!-- Feild -->
                                 </li>
+                                <li class="view-col-3" ng-if="form_type=='manual'">
+                                    <div class="form-group">
+                                        <label>
+                                            Customer
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-autocomplete class="type-sm" md-items="option in searchCustomer(customerSearchText)" md-selected-item="customer" md-search-text="customerSearchText" md-selected-item-change="customerChanged(customer)" md-item-text="option.code" md-min-length="3" placeholder="Customer Name" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-item-template>
+                                                <span>
+                                                    {{option.name}} / {{option.code}}
+                                                </span>
+                                            </md-item-template>
+                                            <md-not-found>
+                                                No Customer matching "{{$ctrl.customerSearchText}}" were found.
+                                            </md-not-found>
+                                        </md-autocomplete>
+                                        <input type="hidden" id="customer_id" name="customer_id" value="{{warranty_job_order_request.job_order.customer}}">
+                                    </div><!-- Feild -->
+                                </li>
                                 <li class="view-col-3">
                                     <span class="view-col-label">
                                         Customer name and address
                                     </span>
                                     <span class="view-col-value">
-                                        {{job_order.customer.name}}
-                                        {{job_order.customer.address.formatted_address}}
+                                        {{warranty_job_order_request.job_order.customer.name}}
+                                        {{warranty_job_order_request.job_order.customer.address}}
                                     </span>
                                 </li>
                             </ul>
