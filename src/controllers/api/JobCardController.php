@@ -988,7 +988,7 @@ class JobCardController extends Controller {
 
 			$employee_details = Employee::select([
 				'users.id',
-				'users.name as user_name',
+				DB::RAW('CONCAT(users.ecode, " / ",users.name) as user_name'),
 				'users.ecode as user_code',
 				'outlets.code as outlet_code',
 				'deputed_outlet.code as deputed_outlet_code',
