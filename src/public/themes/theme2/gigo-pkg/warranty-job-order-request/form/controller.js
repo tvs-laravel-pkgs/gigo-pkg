@@ -65,6 +65,7 @@ app.component('warrantyJobOrderRequestForm', {
                                 customer: {},
                                 outlet: {},
                             },
+                            photos: [],
                         }
 
                         //for quick test
@@ -75,13 +76,7 @@ app.component('warrantyJobOrderRequestForm', {
                             has_warranty: 1,
                             has_amc: 0,
                             unit_serial_number: 'UNIT0001',
-                            service_types: [{
-                                    id: 2
-                                },
-                                {
-                                    id: 3
-                                },
-                            ],
+                            service_types: [],
                             // complaint: {
                             //     id: 1
                             // },
@@ -132,6 +127,7 @@ app.component('warrantyJobOrderRequestForm', {
                                 customer: {},
                                 outlet: {},
                             },
+                            photos: [],
                         };
                     }
                     $scope.customer = $scope.warranty_job_order_request.job_order.customer;
@@ -158,7 +154,7 @@ app.component('warrantyJobOrderRequestForm', {
                         showCaption: false,
                         showCancel: false,
                         showBrowse: false,
-                        // showRemove:true,
+                        showRemove: false,
                         // maxFilesNum: 10,
                         // initialPreview: [
                         //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
@@ -343,9 +339,14 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         // Handlers   ---------------------------------------------
+        $scope.addPhoto = function() {
+            $scope.warranty_job_order_request.photos.push($scope.warranty_job_order_request.photos.length + 1);
+        }
 
         $scope.outletChanged = function(outlet) {
-
+            if (!outlet) {
+                return;
+            }
             OutletSvc.getBusiness({ outletId: outlet.id, businessName: 'ALSERV' })
                 .then(function(response) {
                     $scope.warranty_job_order_request.job_order.outlet.business = response.data.business;
@@ -555,7 +556,7 @@ app.component('warrantyJobOrderRequestForm', {
                             return;
                         }
                         showNoty('success', 'Warranty job order request saved successfully');
-                        $location.path('/warranty-job-order-request/card-list');
+                        $location.path('/warranty-job-order-request/table-list');
                         $scope.$apply();
                     })
                     .fail(function(xhr) {

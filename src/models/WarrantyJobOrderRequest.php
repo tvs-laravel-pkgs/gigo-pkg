@@ -376,7 +376,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$job_order_id = $input['job_order_id'];
 			}
 
-			if (!isset($input['id']) || !$input['id']) {
+			if (!$input['id']) {
 				$record = new Self();
 				$record->company_id = $owner->company_id;
 				$record->created_by_id = Auth::id();
@@ -394,6 +394,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 			$record->job_order_id = $job_order_id;
 			$record->fill($input);
 			$record->status_id = 9100; //New
+			// dd($record);
 			$record->save();
 			$record->number = 'WJOR-' . $record->id;
 			$record->save();
@@ -457,6 +458,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 					$attachement->attachment_type_id = 244;
 					$attachement->entity_id = $record->id;
 					$attachement->name = $name;
+					$attachement->path = $input['attachment_descriptions'][$key];
 					$attachement->save();
 				}
 			}
