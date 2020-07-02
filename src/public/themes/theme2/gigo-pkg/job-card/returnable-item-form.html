@@ -28,7 +28,8 @@
                     <span class="page-tab-form-top-left-info-content">
                         JC No: {{job_card.job_card_number ? job_card.job_card_number : ''}}
                         | {{job_card.job_order.vehicle.registration_number ? job_card.job_order.vehicle.registration_number : ''}}
-                        | {{job_card.job_order.vehicle.model.model_name ? job_card.job_order.vehicle.model_name : ''}}
+                        | {{job_card.job_order.vehicle.model ? job_card.job_order.vehicle.model.model_name : ''}}
+                        | {{job_card.job_order.driver_name}}
                         | {{job_card.created_at}}
                     </span>
                 </div>

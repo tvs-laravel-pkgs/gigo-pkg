@@ -4,7 +4,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/inward-vehicle/card-list" type="button" class="btn-back btn-img">
+                    <a href="#!/gate-log/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
                     </a>
                 </div>
@@ -36,10 +36,10 @@
                                                 <input type="file" name="km_reading_photo" class="km_reading_photo image_uploadify" accept=".png, .jpg, .jpeg" />
                                             </li>
                                             <li class="gatein-img-list-item driver-img">
-                                                <input type="file" name="driver_photo" class="driver_photo image_uploadify" accept=".png, .jpg, .jpeg"/>
+                                                <input type="file" name="driver_photo" class="driver_photo image_uploadify" accept=".png, .jpg, .jpeg" />
                                             </li>
                                             <li class="gatein-img-list-item chassis-img">
-                                                <input type="file" name="chassis_photo" class="chassis_photo image_uploadify" accept=".png, .jpg, .jpeg"/>
+                                                <input type="file" name="chassis_photo" class="chassis_photo image_uploadify" accept=".png, .jpg, .jpeg" />
                                             </li>
                                         </ul>
                                     </div><!-- Field -->
@@ -62,7 +62,7 @@
                                         <label>
                                             Vehicle Registration Number
                                             <sup class="mandatory">*</sup></label>
-                                        <input type="text" class="form-control" minlength="8" maxlength="10"placeholder="Enter Vehicle Registration Number" value="" autocomplete="off" name="registration_number" oninput="this.value = this.value.toUpperCase()"/>
+                                        <input type="text" class="form-control" minlength="8" maxlength="10" placeholder="Enter Vehicle Registration Number" value="" autocomplete="off" name="registration_number" oninput="this.value = this.value.toUpperCase()" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-4 col-lg-3" ng-if="$ctrl.is_registered == 0">
@@ -82,7 +82,7 @@
                                         <input type="text" class="form-control" minlength="10" maxlength="64" placeholder="Enter Chassis Number" autocomplete="off" name="chassis_number" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
-<!--                                 <div class="col-md-4 col-lg-3">
+                                <!--                                 <div class="col-md-4 col-lg-3">
                                     <div class="form-group">
                                         <label>
                                             VIN Number
@@ -90,7 +90,7 @@
                                         </label>
                                         <input type="text" class="form-control" minlength="17" maxlength="17" placeholder="Enter VIN No" autocomplete="off" name="vin_number" />
                                     </div>
-                                </div> -->                                
+                                </div> -->
                                 <div class="col-md-4 col-lg-3">
                                     <div class="form-group">
                                         <label>
@@ -198,7 +198,7 @@
                     </span>
                 </p>
                 <div class="mt-30 mb-30">
-                    <button type="button" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></button>
+                    <button ng-click="reloadPage()" type="button" class="btn btn-success btn-square btn-block" data-dismiss="modal"><b>Done</b></button>
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->

@@ -87,6 +87,7 @@ class MaterialGatePassController extends Controller {
 				})
 				->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
 				->where('gate_passes.type_id', 8281) // Material Gate Pass
+				->orderBy('gate_passes.id', 'DESC')
 				->groupBy('gate_passes.id')
 			;
 			$total_records = $material_gate_passes_list->get()->count();

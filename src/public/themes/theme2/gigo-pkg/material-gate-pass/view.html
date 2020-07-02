@@ -128,16 +128,20 @@
                                                         <table class="table-info">
                                                             <tbody>
                                                                 <tr>
-                                                                    <td><b>Gate Out Date</b></td>
+                                                                    <td><b>Gate Out Date & Time</b></td>
                                                                     <td>{{$ctrl.material_gate_pass.gate_out_date ? $ctrl.material_gate_pass.gate_out_date : '' }}</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td><b>Gate In Remarks</b></td>
-                                                                    <td>{{$ctrl.material_gate_pass.gate_in_remarks ? $ctrl.material_gate_pass.gate_in_remarks : '' }}</td>
-                                                                </tr>
-                                                                <tr>
                                                                     <td><b>Gate Out Remarks</b></td>
-                                                                    <td>{{$ctrl.material_gate_pass.gate_out_remarks ? $ctrl.material_gate_pass.gate_out_remarks : '' }}</td>
+                                                                    <td>{{$ctrl.material_gate_pass.gate_out_remarks ? $ctrl.material_gate_pass.gate_out_remarks : '-' }}</td>
+                                                                </tr>
+                                                                <tr ng-if="$ctrl.material_gate_pass.gate_in_date">
+                                                                    <td><b>Gate In Date & Time</b></td>
+                                                                    <td>{{$ctrl.material_gate_pass.gate_in_date ? $ctrl.material_gate_pass.gate_in_date : '' }}</td>
+                                                                </tr>
+                                                                <tr ng-if="$ctrl.material_gate_pass.gate_in_date">
+                                                                    <td><b>Gate In Remarks</b></td>
+                                                                    <td>{{$ctrl.material_gate_pass.gate_in_remarks ? $ctrl.material_gate_pass.gate_in_remarks : '-' }}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>

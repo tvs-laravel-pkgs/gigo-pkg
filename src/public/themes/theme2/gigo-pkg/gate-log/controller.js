@@ -47,19 +47,19 @@ app.component('gateLogList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
-                    d.name = $("#name").val();
-                    d.description = $("#description").val();
-                    d.status = $("#status").val();
+                    d.date_range = $("#date_range").val();
+                    d.model_id = $("#model_id").val();
+                    d.status_id = $("#status_id").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'gate_logs.short_name' },
-                { data: 'name', name: 'gate_logs.name' },
-                { data: 'description', name: 'gate_logs.description' },
-                { data: 'status', name: '' },
+                { data: 'number', name: 'gate_logs.number', searchable: true },
+                { data: 'gate_in_date', name: 'gate_logs.gate_in_date' },
+                { data: 'registration_number', name: 'vehicles.registration_number', searchable: true },
+                { data: 'model_name', name: 'models.model_name', searchable: true },
+                { data: 'status', name: 'configs.name' },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -91,17 +91,17 @@ app.component('gateLogList', {
         }
         $scope.deleteConfirm = function() {
             $id = $('#gate_log_id').val();
-            $http.get(
+            $http.post(
                 laravel_routes['deleteGateLog'], {
-                    params: {
-                        id: $id,
-                    }
+                    id: $id
                 }
             ).then(function(response) {
                 if (response.data.success) {
                     custom_noty('success', 'Gate Log Deleted Successfully');
                     $('#gate_logs_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/gate-log/list');
+                    $location.path('/gate-log/list');
+                } else {
+                    custom_noty('error', 'Gate Log cannot be deleted!');
                 }
             });
         }
@@ -111,11 +111,21 @@ app.component('gateLogList', {
             laravel_routes['getGateLogFilter']
         ).then(function(response) {
             // console.log(response);
-            self.extras = response.data.extras;
+            self.status = response.data.status;
+            self.model_list = response.data.model_list;
         });
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
+
+        $scope.onSelectedmodel = function(model_selected) {
+            $('#model_ids').val(model_selected);
+        }
+
+        $scope.onSelectedStatus = function(status_selected) {
+            $('#status').val(status_selected);
+        }
+
         $scope.clearSearchTerm = function() {
             $scope.searchTerm = '';
             $scope.searchTerm1 = '';
@@ -128,21 +138,46 @@ app.component('gateLogList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
+
+        /* DateRange Picker */
+        $('.daterange').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
+        });
+
+        $('.align-left.daterange').daterangepicker({
+            autoUpdateInput: false,
+            "opens": "left",
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
+        });
+
+        $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
             dataTables.fnFilter();
         });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
+
+        $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
         });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
+
+        $scope.applyFilter = function() {
+            // $('#status').val(self.status);
             dataTables.fnFilter();
+            $('#gate-log-filter-modal').modal('hide');
         }
+
         $scope.reset_filter = function() {
-            $("#short_name").val('');
-            $("#name").val('');
-            $("#status").val('');
+            $("#date_range").val('');
+            $("#model_id").val('');
+            $("#status_id").val('');
             dataTables.fnFilter();
+            $('#gate-log-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }
@@ -217,7 +252,7 @@ app.component('gateLogForm', {
                 },
                 'registration_number': {
                     required: function(element) {
-                        if(self.is_registered == '1'){
+                        if (self.is_registered == '1') {
                             return true;
                         }
                         return false;
@@ -248,7 +283,7 @@ app.component('gateLogForm', {
                 'km_reading': {
                     required: true,
                     digits: true,
-                    maxlength: 10,
+                    maxlength: 7,
                     // regex: /^-?[0-9]+(?:\.[0-9]{1,2})?$/,
                 },
                 'hr_reading': {
@@ -290,7 +325,7 @@ app.component('gateLogForm', {
                 },
                 'km_reading': {
                     // minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 10 Number',
+                    maxlength: 'Maximum 7 Number',
                 },
                 'gate_in_remarks': {
                     minlength: 'Minimum 3 Characters',
@@ -300,13 +335,13 @@ app.component('gateLogForm', {
             errorPlacement: function(error, element) {
                 if (element.hasClass("vehicle_photo")) {
                     custom_noty('error', 'Vehicle Photo is Required')
-                }else if (element.hasClass("km_reading_photo")) {
+                } else if (element.hasClass("km_reading_photo")) {
                     custom_noty('error', 'KM Reading Photo is Required')
-                }else if (element.hasClass("driver_photo")) {
+                } else if (element.hasClass("driver_photo")) {
                     custom_noty('error', 'Driver Photo is Required')
-                }else if (element.hasClass("chassis_photo")) {
+                } else if (element.hasClass("chassis_photo")) {
                     custom_noty('error', 'Chassis Photo is Required')
-                }else{
+                } else {
                     error.insertAfter(element)
                 }
             },
@@ -327,12 +362,12 @@ app.component('gateLogForm', {
                         if (!res.success) {
                             $('#submit').button('reset');
                             showErrorNoty(res);
-                        }else{
+                        } else {
                             custom_noty('success', res.message);
                             self.gate_log = res.gate_log;
                             $('#confirm_notification').modal('show');
                             $('#number').html(res.gate_log.number);
-                            $('#registration_number').html(res.gate_log.registration_number);                            
+                            $('#registration_number').html(res.gate_log.registration_number);
                         }
                     })
                     .fail(function(xhr) {
@@ -346,7 +381,8 @@ app.component('gateLogForm', {
             $('#confirm_notification').modal('hide');
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
-            $route.reload();
+            $location.path('/gate-log/list');
+            // $route.reload();
         }
     }
 });

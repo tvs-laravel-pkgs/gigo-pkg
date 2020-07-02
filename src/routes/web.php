@@ -2,13 +2,6 @@
 
 Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'prefix' => 'gigo-pkg'], function () {
 
-	//Vehicle Segment
-	Route::get('/vehicle-segment/get-list', 'VehicleSegmentController@getVehicleSegmentList')->name('getVehicleSegmentList');
-	Route::get('/vehicle-segment/get-form-data', 'VehicleSegmentController@getVehicleSegmentFormData')->name('getVehicleSegmentFormData');
-	Route::post('/vehicle-segment/save', 'VehicleSegmentController@saveVehicleSegment')->name('saveVehicleSegment');
-	Route::get('/vehicle-segment/delete', 'VehicleSegmentController@deleteVehicleSegment')->name('deleteVehicleSegment');
-	Route::get('/vehicle-segment/get-filter-data', 'VehicleSegmentController@getVehicleSegmentFilter')->name('getVehicleSegmentFilter');
-
 	//Part Supplier
 	Route::get('/part-supplier/get-list', 'PartSupplierController@getPartSupplierList')->name('getPartSupplierList');
 	Route::get('/part-supplier/get-form-data', 'PartSupplierController@getPartSupplierFormData')->name('getPartSupplierFormData');
@@ -203,11 +196,15 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/vehicle-gate-pass/get-filter-data', 'VehicleGatePassController@getVehicleGatePassFilter')->name('getVehicleGatePassFilter');
 
 	//Gate Log
-	Route::get('/gate-log/get-list', 'GateLogController@getGateLogList')->name('getGateLogList');
-	Route::get('/gate-log/get-form-data', 'GateLogController@getGateLogFormData')->name('getGateLogFormData');
-	Route::post('/gate-log/save', 'GateLogController@saveGateLog')->name('saveGateLog');
-	Route::get('/gate-log/delete', 'GateLogController@deleteGateLog')->name('deleteGateLog');
-	Route::get('/gate-log/get-filter-data', 'GateLogController@getGateLogFilterData')->name('getGateLogFilterData');
+	Route::get('gate-log/get-list', 'Api\GateInController@getGateLogList')->name('getGateLogList');
+	Route::get('/gate-log/get-filter-data', 'Api\GateInController@getGateLogFilter')->name('getGateLogFilter');
+	Route::post('/gate-log/delete', 'Api\GateInController@deleteGateLog')->name('deleteGateLog');
+
+	//Gate Log
+	// Route::get('/gate-log/get-list', 'GateLogController@getGateLogList')->name('getGateLogList');
+	// Route::get('/gate-log/get-form-data', 'GateLogController@getGateLogFormData')->name('getGateLogFormData');
+	// Route::post('/gate-log/save', 'GateLogController@saveGateLog')->name('saveGateLog');
+	// Route::get('/gate-log/get-filter-data', 'GateLogController@getGateLogFilterData')->name('getGateLogFilterData');
 
 	//Vehicle Inward
 	Route::get('/vehicle-inward/get-list', 'VehicleInwardController@getVehicleInwardList')->name('getVehicleInwardList');

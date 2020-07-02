@@ -2,6 +2,7 @@
 
 namespace Abs\GigoPkg\Api;
 
+use Abs\GigoPkg\ModelType;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Config;
 use App\FinancialYear;
@@ -13,12 +14,18 @@ use App\Vehicle;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use Entrust;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
+use Yajra\Datatables\Datatables;
 
 class GateInController extends Controller {
 	public $successStatus = 200;
+
+	public function __construct() {
+		$this->data['theme'] = config('custom.theme');
+	}
 
 	public function getFormData() {
 		try {
@@ -427,6 +434,131 @@ class GateInController extends Controller {
 				],
 			]);
 		}
+
+	}
+
+	public function deleteGateLog(Request $request) {
+		// dd($request->all());
+		if ($request->id) {
+			$gate_log = GateLog::find($request->id);
+			if ($gate_log->status_id == 8120) {
+				GateLog::where('id', $request->id)->forceDelete();
+
+				return response()->json([
+					'success' => true,
+					'message' => 'Gatelog Deleted Successfully!!',
+				]);
+			} else {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'error' => [
+						'Gatelog Cannot be deleted!',
+					],
+				]);
+			}
+		} else {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'error' => [
+					'Gatelog not Found!',
+				],
+			]);
+		}
+	}
+	public function getGateLogList(Request $request) {
+		// dd($request->all());
+		if ($request->date_range) {
+			$date_range = explode(' to ', $request->date_range);
+			$start_date = date('Y-m-d', strtotime($date_range[0]));
+			$start_date = $start_date . ' 00:00:00';
+
+			$end_date = date('Y-m-d', strtotime($date_range[1]));
+			$end_date = $end_date . ' 23:59:59';
+		} else {
+			$start_date = date('Y-m-01 00:00:00');
+			$end_date = date('Y-m-t 23:59:59');
+		}
+
+		$gate_pass_lists = GateLog::select([
+			'gate_logs.id as gate_log_id',
+			'gate_logs.number',
+			'gate_logs.gate_in_date',
+			'gate_logs.status_id',
+			'vehicles.registration_number',
+			'models.model_name',
+			'configs.name as status',
+		])
+			->leftjoin('job_orders', 'job_orders.id', 'gate_logs.job_order_id')
+			->leftjoin('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
+			->leftjoin('models', 'models.id', 'vehicles.model_id')
+			->join('configs', 'configs.id', 'gate_logs.status_id')
+
+			->where(function ($query) use ($request) {
+				if (!empty($request->model_ids)) {
+					$query->where('vehicles.model_id', $request->model_ids);
+				}
+			})
+
+			->where(function ($query) use ($request) {
+				if (!empty($request->status)) {
+					$query->where('gate_logs.status_id', $request->status);
+				}
+			})
+
+			->where(function ($query) use ($start_date) {
+				if (!empty($start_date)) {
+					$query->where('gate_logs.created_at', '>=', $start_date);
+				}
+			})
+
+			->where(function ($query) use ($end_date) {
+				if (!empty($end_date)) {
+					$query->where('gate_logs.created_at', '<=', $end_date);
+				}
+			})
+
+			->orderBy('gate_logs.id', 'DESC')
+
+		;
+
+		return Datatables::of($gate_pass_lists)
+			->addColumn('status', function ($gate_pass_list) {
+				// $status = $gate_pass_list->status == 'Active' ? 'green' : 'red';
+				return $gate_pass_list->status;
+				// '<span class="status-indigator ' . $status . '"></span>' . $gate_pass_list->status;
+			})
+			->addColumn('action', function ($gate_pass_list) {
+				$img_edit = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
+				$img_edit_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
+				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
+				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
+				$output = '';
+
+				// if (Entrust::can('edit-gate-log')) {
+				// $output .= '<a href="#!/gate-log/edit/' . $gate_pass_list->id . '" id = "" title="Edit"><img src="' . $img_edit . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img_edit_active . '" onmouseout=this.src="' . $img_edit . '"></a>';
+				// }
+
+				if ($gate_pass_list->status_id == 8120) {
+					if (Entrust::can('delete-gate-log')) {
+						$output .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_gate_log" onclick="angular.element(this).scope().deleteGateLog(' . $gate_pass_list->gate_log_id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete_active . '" onmouseout=this.src="' . $img_delete . '"></a>
+					';
+					}
+				} else {
+					$output .= '-';
+				}
+
+				return $output;
+			})
+			->make(true);
+	}
+
+	public function getGateLogFilter() {
+		$this->data['model_list'] = collect(ModelType::select('id', 'model_name')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'model_name' => 'Select Model Name']);
+		$this->data['status'] = collect(Config::select('id', 'name')->where('config_type_id', 37)->get())->prepend(['id' => '', 'name' => 'Select Status']);
+
+		return response()->json($this->data);
 
 	}
 
