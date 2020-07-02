@@ -28,62 +28,79 @@
                 <div class="tab-form-body side-tab-open">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
-                          <div class="tab-pane fade in active" id="gatein_detail" data-animation="fadeInUp" data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>Gate In Details</b></h5>
-                                            <hr class="hr-15"><!-- Separater -->
-                                            <div class="border-box">
-                                                <div class="row">
-                                                    <div class="col-md-6">
+                        <div class="tab-pane fade in active" id="gatein_detail" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Gate In Details</b></h5>
+                                        <hr class="hr-15"><!-- Separater -->
+                                        <div class="border-box">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <table class="table-info">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td><b>Gate In Date</b></td>
+                                                                <td>{{job_order.date}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><b>Gate In Time</b></td>
+                                                                <td>{{job_order.time}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><b>Captured by</b></td>
+                                                                <td>
+                                                                    {{job_card.job_order.gate_log.created_by.name}}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><b>Outlet</b></td>
+                                                                <td>{{job_card.job_order.outlet.name}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div><!-- Column -->
+                                                <div class="col-md-6">
+                                                    <div class="multi-img">
                                                         <table class="table-info">
                                                             <tbody>
                                                                 <tr>
-                                                                    <td><b>Gate In Date</b></td>
-                                                                    <td>{{job_order.date}}</td>
+                                                                    <td class="text-center">Vehicle Image</td>
+                                                                    <td></td>
+                                                                    <td class="text-center">KM Image</td>
+                                                                    <td></td>
+                                                                    <td class="text-center">Driver Image</td>
+                                                                    <td></td>
+                                                                    <td class="text-center">Chassis Image</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td><b>Gate In Time</b></td>
-                                                                    <td>{{job_order.time}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Captured by</b></td>
-                                                                    <td>
-                                                                        {{job_card.job_order.gate_log.created_by.name}}
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Outlet</b></td>
-                                                                    <td>{{job_card.job_order.outlet.name}}</td>
+                                                                    <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.vehicle_attachment.name}}" alt="Vehicle Image" /></td>
+                                                                    <td></td>
+                                                                    <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.km_attachment.name}}" alt="KM" /></td>
+                                                                    <td>&nbsp;&nbsp;</td>
+                                                                    <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.driver_attachment.name}}" alt="Driver Image" /></td>
+                                                                    <td></td>
+                                                                    <td><img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_order.gate_log.chassis_attachment.name}}" alt="Chassis Image" /></td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
-                                                    </div><!-- Column -->
-                                                    <div class="col-md-6">
-                                                        <div class="multi-img">
-                                                            <!-- <img class="img-responsive" src="./public/theme/img/tatkal.png" alt="Images" /> -->
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_card.job_order.gate_log.driver_attachment.name}}" alt="Driver Image" />
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_card.job_order.gate_log.km_attachment.name}}" alt="KM" />
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_card.job_order.gate_log.vehicle_attachment.name}}" alt="Vehicle Image" />
-                                                            <img class="img-responsive" src="storage/app/public/gigo/gate_in/attachments/{{job_card.job_order.gate_log.chassis_attachment.name}}" alt="Chassis Image" />
-                                                        </div>
-                                                    </div><!-- Column -->
-                                                </div><!-- Row -->
-                                            </div><!-- Border Box -->
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="col-md-12">
-                                                        <a href=".#!/job-card/vehicle-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     </div>
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Border Box -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="col-md-12">
+                                                    <a href=".#!/job-card/vehicle-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 </div>
                                             </div>
-                                        </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
             </div><!-- Tab Form Wrap -->

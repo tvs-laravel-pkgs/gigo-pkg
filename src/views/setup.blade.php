@@ -7,10 +7,6 @@
 <script type="text/javascript">
     var gigo_pkg_url = "{{url($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg')}}";
 
-	//Vehicle Segments
-    var vehicle_segment_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/list.html')}}";
-    var vehicle_segment_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/form.html')}}";
-
 	//Vehicle Primary Applications
     var vehicle_primary_application_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-primary-application/list.html')}}";
     var vehicle_primary_application_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-primary-application/form.html')}}";
