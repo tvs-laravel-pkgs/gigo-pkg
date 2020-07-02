@@ -48,8 +48,8 @@ app.component('gateLogList', {
                 dataType: "json",
                 data: function(d) {
                     d.date_range = $("#date_range").val();
-                    d.model_ids = $("#model_ids").val();
-                    d.status = $("#status").val();
+                    d.model_id = $("#model_id").val();
+                    d.status_id = $("#status_id").val();
                 },
             },
 
@@ -57,8 +57,8 @@ app.component('gateLogList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'number', name: 'gate_logs.number', searchable: true },
                 { data: 'gate_in_date', name: 'gate_logs.gate_in_date' },
-                { data: 'registration_number', name: 'vehicles.registration_number' },
-                { data: 'model_name', name: 'models.model_name' },
+                { data: 'registration_number', name: 'vehicles.registration_number', searchable: true },
+                { data: 'model_name', name: 'models.model_name', searchable: true },
                 { data: 'status', name: 'configs.name' },
 
             ],
@@ -91,17 +91,17 @@ app.component('gateLogList', {
         }
         $scope.deleteConfirm = function() {
             $id = $('#gate_log_id').val();
-            $http.get(
+            $http.post(
                 laravel_routes['deleteGateLog'], {
-                    params: {
-                        id: $id,
-                    }
+                    id: $id
                 }
             ).then(function(response) {
                 if (response.data.success) {
                     custom_noty('success', 'Gate Log Deleted Successfully');
                     $('#gate_logs_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/gate-log/list');
+                    $location.path('/gate-log/list');
+                } else {
+                    custom_noty('error', 'Gate Log cannot be deleted!');
                 }
             });
         }
@@ -159,6 +159,7 @@ app.component('gateLogList', {
 
         $('.daterange').on('apply.daterangepicker', function(ev, picker) {
             $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
+            dataTables.fnFilter();
         });
 
         $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
@@ -173,8 +174,8 @@ app.component('gateLogList', {
 
         $scope.reset_filter = function() {
             $("#date_range").val('');
-            $("#model_ids").val('');
-            $("#status").val('');
+            $("#model_id").val('');
+            $("#status_id").val('');
             dataTables.fnFilter();
             $('#gate-log-filter-modal').modal('hide');
         }
@@ -282,7 +283,7 @@ app.component('gateLogForm', {
                 'km_reading': {
                     required: true,
                     digits: true,
-                    maxlength: 10,
+                    maxlength: 7,
                     // regex: /^-?[0-9]+(?:\.[0-9]{1,2})?$/,
                 },
                 'hr_reading': {
@@ -324,7 +325,7 @@ app.component('gateLogForm', {
                 },
                 'km_reading': {
                     // minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 10 Number',
+                    maxlength: 'Maximum 7 Number',
                 },
                 'gate_in_remarks': {
                     minlength: 'Minimum 3 Characters',
@@ -380,7 +381,8 @@ app.component('gateLogForm', {
             $('#confirm_notification').modal('hide');
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
-            $route.reload();
+            $location.path('/gate-log/list');
+            // $route.reload();
         }
     }
 });
