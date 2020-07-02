@@ -191,7 +191,7 @@ class VehicleSegment extends BaseModel {
 					} else {
 						return [
 							'success' => false,
-							'errors' => $result['error'],
+							'errors' => $result['errors'],
 						];
 					}
 				} else {

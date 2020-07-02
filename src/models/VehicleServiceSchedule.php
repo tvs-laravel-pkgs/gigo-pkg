@@ -156,7 +156,7 @@ class VehicleServiceSchedule extends BaseModel {
 					} else {
 						return [
 							'success' => false,
-							'errors' => $result['error'],
+							'errors' => $result['errors'],
 						];
 					}
 				} else {
