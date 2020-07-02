@@ -91,9 +91,9 @@
                                                             <div class="form-group">
                                                                 <label>Vendor Type <sup class="mandatory">*</sup></label>
                                                                 <div class="common-radio-button type-4">
-                                                                    <input type="radio" id="type_yes" ng-checked="gate_pass.gate_pass_detail.vendor_type_id==121" value="121" name="vendor_type_id" ng-change='vendorTypeOnchange()' ng-model="gate_pass.gate_pass_detail.vendor_type_id"/>
+                                                                    <input type="radio" id="type_yes" ng-checked="gate_pass.gate_pass_detail.vendor_type_id==121" value="121" name="vendor_type_id" ng-change='vendorTypeOnchange()' ng-model="gate_pass.gate_pass_detail.vendor_type_id" />
                                                                     <label for="type_yes">Internal</label>
-                                                                    <input type="radio" ng-checked="gate_pass.gate_pass_detail.vendor_type_id==122" id="type_no" value="122" name="vendor_type_id" ng-change='vendorTypeOnchange()' ng-model="gate_pass.gate_pass_detail.vendor_type_id"/>
+                                                                    <input type="radio" ng-checked="gate_pass.gate_pass_detail.vendor_type_id==122" id="type_no" value="122" name="vendor_type_id" ng-change='vendorTypeOnchange()' ng-model="gate_pass.gate_pass_detail.vendor_type_id" />
                                                                     <label for="type_no">External</label>
                                                                 </div>
                                                             </div><!-- Feild -->
@@ -101,10 +101,10 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label>
-                                                                    OSL Vendor Code
+                                                                    Vendor Code
                                                                     <sup class="mandatory">*</sup>
                                                                 </label>
-                                                                <md-autocomplete md-items="option in $ctrl.searchVendorCode($ctrl.modelSearchText, gate_pass.gate_pass_detail.vendor_type_id)" md-selected-item="$ctrl.vendor" md-selected-item-change="selectedVendorCode($ctrl.vendor.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.code" md-search-text-change="vendorTextChange()" md-min-length="3" placeholder="OSL Vendor Code" md-autofocus md-no-cache="true">
+                                                                <md-autocomplete md-items="option in $ctrl.searchVendorCode($ctrl.modelSearchText, gate_pass.gate_pass_detail.vendor_type_id)" md-selected-item="$ctrl.vendor" md-selected-item-change="selectedVendorCode($ctrl.vendor.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.code" md-search-text-change="vendorTextChange()" md-min-length="3" placeholder="Vendor Code/Name" md-autofocus md-no-cache="true">
                                                                     <md-item-template>
                                                                         <span>
                                                                             {{option.code}} / {{option.name}}
@@ -113,7 +113,7 @@
                                                                     <md-not-found>
                                                                         No Vendor Code matching "{{$ctrl.modelSearchText}}" were found.
                                                                     </md-not-found>
-                                                                </md-autocomplete>  
+                                                                </md-autocomplete>
                                                                 <input type="hidden" name="vendor_id" class="requried" value="{{$ctrl.vendor.id}}">
                                                             </div><!-- Feild -->
                                                         </div><!-- Column -->
@@ -197,19 +197,19 @@
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Make</label>
-                                                            <input type="text" class="form-control" ng-model="gate_pass_item.item_make" placeholder="Enter Make" autocomplete="off" value="" name="item_details[{{index}}][item_make]" minlength="3" maxlength="191"/>
+                                                            <input type="text" class="form-control" ng-model="gate_pass_item.item_make" placeholder="Enter Make" autocomplete="off" value="" name="item_details[{{index}}][item_make]" minlength="3" maxlength="191" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Model</label>
-                                                            <input type="text" class="form-control" ng-model="gate_pass_item.item_model" placeholder="Enter Model" autocomplete="off" value="" name="item_details[{{index}}][item_model]" minlength="3" maxlength="191"/>
+                                                            <input type="text" class="form-control" ng-model="gate_pass_item.item_model" placeholder="Enter Model" autocomplete="off" value="" name="item_details[{{index}}][item_model]" minlength="3" maxlength="191" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Item Serial No <sup class="mandatory">*</sup></label>
-                                                            <input type="text" class="form-control required" ng-model="gate_pass_item.item_serial_no" placeholder="Enter Serial No" autocomplete="off" value="" name="item_details[{{index}}][item_serial_no]" minlength="3" maxlength="191"/>
+                                                            <input type="text" class="form-control required" ng-model="gate_pass_item.item_serial_no" placeholder="Enter Serial No" autocomplete="off" value="" name="item_details[{{index}}][item_serial_no]" minlength="3" maxlength="191" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
@@ -221,7 +221,7 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label>Remarks <sup class="mandatory">*</sup></label>
-                                                            <input type="text" ng-model="gate_pass_item.remarks" class="form-control required" placeholder="Enter Remark" autocomplete="off" value="" name="item_details[{{index}}][remarks]" minlength="3" maxlength="191"/>
+                                                            <input type="text" ng-model="gate_pass_item.remarks" class="form-control required" placeholder="Enter Remark" autocomplete="off" value="" name="item_details[{{index}}][remarks]" minlength="3" maxlength="191" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-12">
