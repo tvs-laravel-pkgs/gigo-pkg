@@ -33,7 +33,7 @@
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/gate-log/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">
+                    <a href="#!/gate-log/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">
                         Add New
                     </a>
                     <div class="dropdown">
@@ -42,7 +42,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
                             <li>
-                                <a href="#!/gigo-pkg/gate-log/add">
+                                <a href="#!/gate-log/add">
                                     Form
                                 </a>
                             </li>
@@ -60,9 +60,10 @@
                         <thead>
                             <tr>
                                 <th>Actions</th>
-                                <th>Short Name</th>
-                                <th>Name</th>
-                                <th>Description</th>
+                                <th>Vehicle Registration Number</th>
+                                <th>Gate In Date</th>
+                                <th>Vehicle Number</th>
+                                <th>Vehicle Model</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -78,43 +79,67 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title" id="myModalLabel">Gate Log Filter</h5>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Short Name</label>
-                                <input type="text" class="form-control" id="short_name" name="short_name" placeholder="Enter Short Name" autocomplete="off">
-                            </div><!-- Field -->
+                                <label>Date Range Picker </label>
+                                <div class="input-group date">
+                                    <input class="form-control daterange align-left" placeholder="Select a Date Range" name="date_range" id="date_range">
+                                    <span class="input-group-addon">
+                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                    </span>
+                                </div><!-- Input Group -->
+                            </div><!-- Feild -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" autocomplete="off">
+                                <label>Vehicle Model</label>
+                                <md-select ng-model="$ctrl.model_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedmodel($ctrl.model_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Model Type">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm" type="search" placeholder="Search Model" class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="model_list.id" ng-repeat="model_list in $ctrl.model_list | filter:searchTerm">{{model_list.model_name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="model_ids" id="model_ids" value="">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Status</label>
-                                <md-select ng-model="$ctrl.status" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status" ng-change="onSelectedStatus($ctrl.status)">
+                                <md-select ng-model="$ctrl.status_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedStatus($ctrl.status_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a From Account" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">{{status.name}}</md-option>
+                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.status | filter:searchTerm3">{{status.name}}</md-option>
                                     </md-optgroup>
                                 </md-select>
                                 <input type="hidden" class="form-control type-sm" name="status" id="status" value="">
                             </div><!-- Field -->
                         </div><!-- Column -->
-                        <div class="col-md-6">
-                            <button type="button" class="btn btn-rose my-tooltip" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
-                        </div>
                     </div><!-- Row -->
                 </div><!-- Modal Form -->
             </div><!-- Modal Body -->
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.model_selected='';$ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                            Reset Filter
+                        </button>
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">
+                            Apply
+                        </button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Footer -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->

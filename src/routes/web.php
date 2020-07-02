@@ -203,11 +203,15 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/vehicle-gate-pass/get-filter-data', 'VehicleGatePassController@getVehicleGatePassFilter')->name('getVehicleGatePassFilter');
 
 	//Gate Log
-	Route::get('/gate-log/get-list', 'GateLogController@getGateLogList')->name('getGateLogList');
+	Route::get('gate-log/get-list', 'Api\GateInController@getGateLogList')->name('getGateLogList');
+	Route::get('/gate-log/get-filter-data', 'Api\GateInController@getGateLogFilter')->name('getGateLogFilter');
+
+	//Gate Log
+	// Route::get('/gate-log/get-list', 'GateLogController@getGateLogList')->name('getGateLogList');
 	Route::get('/gate-log/get-form-data', 'GateLogController@getGateLogFormData')->name('getGateLogFormData');
 	Route::post('/gate-log/save', 'GateLogController@saveGateLog')->name('saveGateLog');
 	Route::get('/gate-log/delete', 'GateLogController@deleteGateLog')->name('deleteGateLog');
-	Route::get('/gate-log/get-filter-data', 'GateLogController@getGateLogFilterData')->name('getGateLogFilterData');
+	// Route::get('/gate-log/get-filter-data', 'GateLogController@getGateLogFilterData')->name('getGateLogFilterData');
 
 	//Vehicle Inward
 	Route::get('/vehicle-inward/get-list', 'VehicleInwardController@getVehicleInwardList')->name('getVehicleInwardList');

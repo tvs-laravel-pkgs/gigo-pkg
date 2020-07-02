@@ -47,19 +47,19 @@ app.component('gateLogList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.short_name = $("#short_name").val();
-                    d.name = $("#name").val();
-                    d.description = $("#description").val();
+                    d.date_range = $("#date_range").val();
+                    d.model_ids = $("#model_ids").val();
                     d.status = $("#status").val();
                 },
             },
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'gate_logs.short_name' },
-                { data: 'name', name: 'gate_logs.name' },
-                { data: 'description', name: 'gate_logs.description' },
-                { data: 'status', name: '' },
+                { data: 'number', name: 'gate_logs.number', searchable: true },
+                { data: 'gate_in_date', name: 'gate_logs.gate_in_date' },
+                { data: 'registration_number', name: 'vehicles.registration_number' },
+                { data: 'model_name', name: 'models.model_name' },
+                { data: 'status', name: 'configs.name' },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -111,11 +111,21 @@ app.component('gateLogList', {
             laravel_routes['getGateLogFilter']
         ).then(function(response) {
             // console.log(response);
-            self.extras = response.data.extras;
+            self.status = response.data.status;
+            self.model_list = response.data.model_list;
         });
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
+
+        $scope.onSelectedmodel = function(model_selected) {
+            $('#model_ids').val(model_selected);
+        }
+
+        $scope.onSelectedStatus = function(status_selected) {
+            $('#status').val(status_selected);
+        }
+
         $scope.clearSearchTerm = function() {
             $scope.searchTerm = '';
             $scope.searchTerm1 = '';
@@ -128,21 +138,45 @@ app.component('gateLogList', {
                 $mdSelect.hide();
             }
         });
-        $('#short_name').on('keyup', function() {
-            dataTables.fnFilter();
+
+        /* DateRange Picker */
+        $('.daterange').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
         });
-        $('#name').on('keyup', function() {
-            dataTables.fnFilter();
+
+        $('.align-left.daterange').daterangepicker({
+            autoUpdateInput: false,
+            "opens": "left",
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
         });
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
+
+        $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
+        });
+
+        $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+
+        $scope.applyFilter = function() {
+            // $('#status').val(self.status);
             dataTables.fnFilter();
+            $('#gate-log-filter-modal').modal('hide');
         }
+
         $scope.reset_filter = function() {
-            $("#short_name").val('');
-            $("#name").val('');
+            $("#date_range").val('');
+            $("#model_ids").val('');
             $("#status").val('');
             dataTables.fnFilter();
+            $('#gate-log-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }
@@ -217,7 +251,7 @@ app.component('gateLogForm', {
                 },
                 'registration_number': {
                     required: function(element) {
-                        if(self.is_registered == '1'){
+                        if (self.is_registered == '1') {
                             return true;
                         }
                         return false;
@@ -300,13 +334,13 @@ app.component('gateLogForm', {
             errorPlacement: function(error, element) {
                 if (element.hasClass("vehicle_photo")) {
                     custom_noty('error', 'Vehicle Photo is Required')
-                }else if (element.hasClass("km_reading_photo")) {
+                } else if (element.hasClass("km_reading_photo")) {
                     custom_noty('error', 'KM Reading Photo is Required')
-                }else if (element.hasClass("driver_photo")) {
+                } else if (element.hasClass("driver_photo")) {
                     custom_noty('error', 'Driver Photo is Required')
-                }else if (element.hasClass("chassis_photo")) {
+                } else if (element.hasClass("chassis_photo")) {
                     custom_noty('error', 'Chassis Photo is Required')
-                }else{
+                } else {
                     error.insertAfter(element)
                 }
             },
@@ -327,12 +361,12 @@ app.component('gateLogForm', {
                         if (!res.success) {
                             $('#submit').button('reset');
                             showErrorNoty(res);
-                        }else{
+                        } else {
                             custom_noty('success', res.message);
                             self.gate_log = res.gate_log;
                             $('#confirm_notification').modal('show');
                             $('#number').html(res.gate_log.number);
-                            $('#registration_number').html(res.gate_log.registration_number);                            
+                            $('#registration_number').html(res.gate_log.registration_number);
                         }
                     })
                     .fail(function(xhr) {
