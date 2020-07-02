@@ -643,7 +643,7 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<inward-vehicle-payable-add-labour-form></inward-vehicle-payable-add-labour-form>',
         title: 'Inward Vehicle - Payable Add Labour',
     }).
-    when('/inward-vehicle/estimation-status-detail/form/:job_order_id', {
+    when('/inward-vehicle/estimation-denied/form/:job_order_id', {
         template: '<inward-vehicle-estimation-status-detail-form></inward-vehicle-estimation-status-detail-form>',
         title: 'Inward Vehicle - Estimation Status',
     }).

@@ -10,6 +10,7 @@ use Abs\ImportCronJobPkg\ImportCronJob;
 use Abs\UomPkg\Uom;
 use App\BaseModel;
 use App\Company;
+use App\Part;
 use Auth;
 use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -160,7 +161,7 @@ class RepairOrder extends BaseModel {
 	}
 
 	public function taxCode() {
-		return $this->belongsTo('App\TaxCode', 'tax_code_id');
+		return $this->belongsTo('Abs\TaxPkg\TaxCode', 'tax_code_id');
 	}
 
 	public function skillLevel() {
@@ -389,5 +390,43 @@ class RepairOrder extends BaseModel {
 		}
 		return $list;
 	}
+	public static function mapParts($records) {
+		foreach ($records as $key => $record_data) {
+			try {
+				if (!$record_data->company_code) {
+					continue;
+				}
+				$record = self::mapPart($record_data);
+			} catch (Exception $e) {
+				dd($e);
+			}
+		}
+	}
 
+	public function parts() {
+		return $this->belongsToMany('App\Part', 'repair_order_part', 'repair_order_id', 'part_id');
+	}
+
+	public static function mapPart($record_data) {
+		$company = Company::where('code', $record_data['company_code'])->first();
+
+		$errors = [];
+		$record = RepairOrder::where('code', $record_data['repair_order_code'])->where('company_id', $company->id)->first();
+		if (!$record) {
+			$errors[] = 'Invalid Repair Order : ' . $record_data['repair_order_code'];
+		}
+
+		$part = Part::where('code', $record_data['part_code'])->where('company_id', $company->id)->first();
+		if (!$part) {
+			$errors[] = 'Invalid Part : ' . $record_data['part_code'];
+		}
+
+		if (count($errors) > 0) {
+			dump($errors);
+			return;
+		}
+		$record->parts()->syncWithoutDetaching([$part->id]);
+		// return $record;
+
+	}
 }

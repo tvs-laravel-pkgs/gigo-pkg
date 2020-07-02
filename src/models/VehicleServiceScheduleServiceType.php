@@ -5,6 +5,7 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use App\Company;
+use App\Config;
 use App\ServiceType;
 use App\VehicleServiceSchedule;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -224,6 +225,30 @@ class VehicleServiceScheduleServiceType extends BaseModel {
 				}
 			}
 
+			if (empty($record_data['Period Tolerance Type Name'])) {
+				$errors[] = 'Period Tolerance Type Name is empty';
+			} else {
+				$period_tolerance = Config::where([
+					'config_type_id' => 307,
+					'name' => $record_data['Period Tolerance Type Name'],
+				])->first();
+				if (!$period_tolerance) {
+					$errors[] = 'Invalid Period Tolerance Type Name : ' . $record_data['Period Tolerance Type Name'];
+				}
+			}
+
+			if (empty($record_data['KM Tolerance Type Name'])) {
+				$errors[] = 'KM Tolerance Type Name is empty';
+			} else {
+				$km_tolerance = Config::where([
+					'config_type_id' => 307,
+					'name' => $record_data['KM Tolerance Type Name'],
+				])->first();
+				if (!$km_tolerance) {
+					$errors[] = 'Invalid KM Tolerance Type Name : ' . $record_data['KM Tolerance Type Name'];
+				}
+			}
+
 			if (count($errors) > 0) {
 				return [
 					'success' => false,
@@ -239,6 +264,10 @@ class VehicleServiceScheduleServiceType extends BaseModel {
 			if (!$result['success']) {
 				return $result;
 			}
+			$record->vehicle_service_schedule_id = $vehicle_service_schedule->id;
+			$record->service_type_id = $service_type->id;
+			$record->km_tolerance_type_id = $km_tolerance->id;
+			$record->period_tolerance_type_id = $period_tolerance->id;
 			$record->created_by_id = $created_by_id;
 			$record->save();
 			return [

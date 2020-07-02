@@ -8,7 +8,6 @@ use App\Http\Controllers\Controller;
 use App\JobOrder;
 use App\Part;
 use App\VehicleModel;
-use App\Config;
 use Auth;
 use DB;
 use Entrust;
@@ -60,6 +59,7 @@ class VehicleInwardController extends Controller {
 				DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y, %h:%i %p") as date'),
 				'job_orders.driver_name',
 				'job_orders.driver_mobile_number as driver_mobile_number',
+				'job_orders.is_customer_agreed',
 				DB::raw('COALESCE(GROUP_CONCAT(amc_policies.name), "-") as amc_policies'),
 				'configs.name as status',
 				DB::raw('COALESCE(customers.name, "-") as customer_name')
@@ -136,7 +136,7 @@ class VehicleInwardController extends Controller {
 				if ($vehicle_inward->status_id == 8120 || $vehicle_inward->status_id == 8121) {
 					$output .= '<a href="#!/inward-vehicle/vehicle-detail/' . $vehicle_inward->id . '" id = "" title="Initiate" class="btn btn-secondary-dark btn-xs">Initiate</a>';
 				}
-				if ($vehicle_inward->status_id == 8122) {
+				if ($vehicle_inward->status_id == 8122 && $vehicle_inward->is_customer_agreed == 1) {
 					$output .= '<a href="#!/inward-vehicle/update-jc/form/' . $vehicle_inward->id . '" id = "" title="Update JC" class="btn btn-secondary-dark btn-xs">Update JC</a>';
 				}
 				return $output;

@@ -282,7 +282,7 @@ class GateInController extends Controller {
 					'success' => false,
 					'error' => 'Validation Error',
 					'errors' => [
-						'No Gate In Serial number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+						'No Gate In Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
 					],
 				]);
 			}
@@ -316,7 +316,7 @@ class GateInController extends Controller {
 					'success' => false,
 					'error' => 'Validation Error',
 					'errors' => [
-						'No Job Order Serial number found',
+						'No Job Order Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
 					],
 				]);
 			}

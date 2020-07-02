@@ -1400,7 +1400,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
 
                     console.log($scope.job_order);
                     if ($scope.job_order.is_customer_agreed != 1) {
-                        $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order.id);
+                        $location.path('/inward-vehicle/estimation-denied/form/' + $scope.job_order.id);
                     }
                     $scope.base_url = res.extras.base_url;
                     $scope.cameraOn();
@@ -1645,7 +1645,7 @@ app.component('inwardVehicleEstimateForm', {
                 $("#estimate_next").attr("href", ".#!/inward-vehicle/customer-confirmation/" + $routeParams.job_order_id);
             } else {
                 $('#is_customer_agreed').val(0);
-                $("#estimate_next").attr("href", ".#!/inward-vehicle/estimation-status-detail/form/" + $routeParams.job_order_id);
+                $("#estimate_next").attr("href", ".#!/inward-vehicle/estimation-denied/form/" + $routeParams.job_order_id);
             }
         });
 
@@ -1656,7 +1656,7 @@ app.component('inwardVehicleEstimateForm', {
                 $("#estimate_next").attr("href", ".#!/inward-vehicle/customer-confirmation/" + $routeParams.job_order_id);
             } else {
                 $('#is_customer_agreed').val(0);
-                $("#estimate_next").attr("href", ".#!/inward-vehicle/estimation-status-detail/form/" + $routeParams.job_order_id);
+                $("#estimate_next").attr("href", ".#!/inward-vehicle/estimation-denied/form/" + $routeParams.job_order_id);
             }
         }
 
@@ -1709,7 +1709,7 @@ app.component('inwardVehicleEstimateForm', {
                                 if ($('#is_customer_agreed').val() == 1) {
                                     $location.path('/inward-vehicle/customer-confirmation/' + $scope.job_order.id);
                                 } else {
-                                    $location.path('/inward-vehicle/estimation-status-detail/form/' + $scope.job_order.id);
+                                    $location.path('/inward-vehicle/estimation-denied/form/' + $scope.job_order.id);
                                 }
                             }
                             $scope.$apply();
@@ -3709,6 +3709,9 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
             });
         }
 
+        $scope.redirectPage = function() {
+            window.location = base_url + '#!/inward-vehicle/card-list';
+        }
         $scope.button_action = function(id, type) {
             if (type == 1) {
                 if (id == 1) {

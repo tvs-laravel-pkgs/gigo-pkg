@@ -51,7 +51,7 @@ class ShortUrl extends BaseModel {
 			$link->url = $url;
 		}
 
-		$short_url = url('/estimate/' . $shortCode);
+		$short_url = url('/link/' . $shortCode);
 
 		$link->token = $short_url;
 		$link->save();

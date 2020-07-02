@@ -122,7 +122,7 @@
                                                 <a href=".#!/inward-vehicle/vehicle-detail/{{gate_log.id}}" class="btn btn-square btn-md btn-secondary-dark" ng-if="gate_log.status_id == 8120 || gate_log.status_id == 8121">
                                                     Initiate
                                                 </a>
-                                                <a href=".#!/inward-vehicle/update-jc/form/{{gate_log.id}}" class="btn btn-square btn-md btn-secondary-dark" ng-if="gate_log.status_id == 8122">
+                                                <a href=".#!/inward-vehicle/update-jc/form/{{gate_log.id}}" class="btn btn-square btn-md btn-secondary-dark" ng-if="gate_log.status_id == 8122 && gate_log.is_customer_agreed == 1">
                                                     Update JC
                                                 </a>
                                             </div>
@@ -194,7 +194,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Customer</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
+                                <md-autocomplete  md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.name}}
@@ -210,7 +210,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Vehicle Model</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                <md-autocomplete  md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.model_name}}
