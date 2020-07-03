@@ -29,9 +29,10 @@
                             <th class="text-right">
                                 Net Amount
                             </th>
-                            <th ng-repeat="(tax_key, tax) in warranty_job_order_request.repair_orders[0].tax_code.taxes" ng-if="warranty_job_order_request.repair_orders[0].tax_code">
+                            <!--                             <th ng-repeat="(tax_key, tax) in warranty_job_order_request.repair_orders[0].tax_code.taxes" ng-if="warranty_job_order_request.repair_orders[0].tax_code">
                                 {{tax.name}} ({{tax.pivot.percentage}}%)
                             </th>
+ -->
                             <th class="text-right">
                                 Total Tax Amount
                             </th>
@@ -61,20 +62,17 @@
                                 {{job_order_labour.hours | number:2}}
                             </td>
                             <td class="text-right">
-                                {{job_order_labour.net_amount_without_tax| currency}}
+                                {{job_order_labour.pivot.net_amount | currency}}
                             </td>
-                            <td class="text-right" ng-repeat="(tax_key, tax) in job_order_labour.tax_code.taxes" ng-if="job_order_labour.tax_code">
+                            <!--                             <td class="text-right" ng-repeat="(tax_key, tax) in job_order_labour.tax_code.taxes" ng-if="job_order_labour.tax_code">
                                 {{(job_order_labour.net_amount_without_tax*tax.pivot.percentage)/100 | currency}}
                             </td>
+ -->
                             <td class="text-right">
-                                {{job_order_labour.tax_amount| currency}}
+                                {{job_order_labour.pivot.tax_total | currency}}
                             </td>
                             <td class="white-space-unset text-right">
-                                {{job_order_labour.net_amount| currency}}
-                                <!-- <input type="hidden" name="repair_orders[{{index}}][amount]" value="{{job_order_labour.amount}}"> -->
-                                <input type="hidden" name="repair_orders[{{index}}][net_amount]" value="{{job_order_labour.net_amount_without_tax}}">
-                                <input type="hidden" name="repair_orders[{{index}}][tax_total]" value="{{job_order_labour.tax_amount}}">
-                                <input type="hidden" name="repair_orders[{{index}}][total_amount]" value="{{job_order_labour.net_amount_with_tax}}">
+                                {{job_order_labour.pivot.total_amount | currency}}
                             </td>
                         </tr>
                         <tr class="ptb-9">
@@ -94,6 +92,7 @@
                         </tr>
                     </tbody>
                 </table>
+                <input type="hidden" name="repair_orders" value="{{job_order_labour.repair_orders}}">
             </div><!-- Table Responsive -->
             <div class="mb-15"></div><!-- Spacing -->
             <hr class="hr-15"><!-- Separater -->
@@ -184,7 +183,8 @@
                         </tr>
                     </tbody>
                 </table>
-            </div> --><!-- Table Responsive -->
+            </div> -->
+            <!-- Table Responsive -->
             <div class="mb-20"></div><!-- Spacing -->
             <div class="table-transparent-wrap">
                 <div class="table-responsive">

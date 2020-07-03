@@ -6,78 +6,7 @@
                     Repair Estimate
                 </b>
             </h5>
-            <!-- Separater -->
-            <!-- <hr class="hr-15"> -->
-            <!-- <h6>
-                Labour Details
-            </h6>
-            <div class="table-responsive">
-                <table class="table table-dark-grey">
-                    <thead>
-                        <tr>                        
-                            <th>
-                                ROT Code
-                            </th>
-                            <th>
-                                ROT Description
-                            </th>
-                            <th class="text-right">
-                                Hours
-                            </th>
-                            <th class="text-right">
-                                Net Amount
-                            </th>
-                            <th ng-repeat="(tax_key, tax) in warranty_job_order_request.repair_orders[0].tax_code.taxes" ng-if="warranty_job_order_request.repair_orders[0].tax_code">
-                                {{tax.name}} ({{tax.pivot.percentage}}%)
-                            </th>
-                            <th class="text-right">
-                                Total Tax Amount
-                            </th>
-                            <th class="wid-100 white-space-unset text-right">
-                                Labour Value
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="ptb-12" ng-repeat="(index,job_order_labour) in warranty_job_order_request.repair_orders">
-                            <td>
-                                {{job_order_labour.code}}
-                                <input type="hidden" name="repair_orders[{{index}}][id]" value="{{job_order_labour.id}}">
-                            </td>
-                            <td>
-                                {{job_order_labour.name}}
-                            </td>
-                            <td class="text-right">
-                                {{job_order_labour.hours | number:2}}
-                            </td>
-                            <td class="text-right">
-                                {{job_order_labour.net_amount_without_tax| currency}}
-                            </td>
-                            <td ng-repeat="(tax_key, tax) in job_order_labour.tax_code.taxes" ng-if="job_order_labour.tax_code">
-                                {{(job_order_labour.net_amount_without_tax*tax.pivot.percentage)/100 | currency}}
-                            </td>
-                            <td class="text-right">
-                                {{job_order_labour.tax_amount| currency}}
-                            </td>
-                            <td class="white-space-unset text-right">
-                                {{job_order_labour.net_amount| currency}}
-                            </td>
-                        </tr>
-                        <tr class="ptb-9">
-                            <td>
-                            </td>
-                            <td class="text-right">
-                            </td>
-                            <td colspan="7" class="wid-180 white-space-unset  text-right">
-                                <b>
-                                    Total Labour :
-                                    {{warranty_job_order_request.repair_order_total | currency}}
-                                </b>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div> --><!-- Table Responsive -->
+            <!-- Table Responsive -->
             <div class="mb-15"></div><!-- Spacing -->
             <hr class="hr-15"><!-- Separater -->
             <h6>
@@ -99,9 +28,13 @@
                             <th class="text-right">
                                 Rate
                             </th>
-                            <th ng-repeat="(tax_key, tax) in warranty_job_order_request.parts[0].tax_code.taxes" ng-if="warranty_job_order_request.parts[0].tax_code">
+                            <th class="text-right">
+                                Net Amount
+                            </th>
+                            <!--                             <th ng-repeat="(tax_key, tax) in warranty_job_order_request.parts[0].tax_code.taxes" ng-if="warranty_job_order_request.parts[0].tax_code">
                                 {{tax.name}} ({{tax.pivot.percentage}}%)
                             </th>
+ -->
                             <th class="text-right">
                                 Tax Amount
                             </th>
@@ -128,17 +61,19 @@
                             <!-- <td class="text-right">
                                 {{job_order_part.qty | number:2}}
                             </td> -->
-                            <td ng-repeat="(tax_key, tax) in job_order_part.tax_code.taxes" ng-if="job_order_part.tax_code">
+                            <!--                             <td ng-repeat="(tax_key, tax) in job_order_part.tax_code.taxes" ng-if="job_order_part.tax_code">
                                 {{(job_order_part.rate*tax.pivot.percentage)/100 | currency}}
                             </td>
+ -->
                             <td class="text-right">
-                                {{job_order_part.tax_amount| currency}}
+                                {{job_order_part.pivot.net_amount | currency}}
+                            </td>
+                            <td class="text-right">
+                                {{job_order_part.pivot.tax_total | currency}}
                             </td>
                             <td class="wid-180 white-space-unset text-right">
-                                {{job_order_part.net_amount | currency}}
+                                {{job_order_part.pivot.total_amount | currency}}
                             </td>
-
-                            
                         </tr>
                         <tr class="ptb-9">
                             <td>

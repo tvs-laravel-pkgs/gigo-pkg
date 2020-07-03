@@ -1,6 +1,6 @@
 app.component('warrantyJobOrderRequestView', {
     templateUrl: warrantyJobOrderRequestView,
-    controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc) {
+    controller: function($http, $location, $ngBootbox, HelperService, OutletSvc, CustomerSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc) {
         $rootScope.loading = true;
         var self = this;
 
@@ -10,6 +10,9 @@ app.component('warrantyJobOrderRequestView', {
         }
 
         $scope.user = HelperService.getLoggedUser();
+
+        $scope.form_type = 'manual';
+
 
         $scope.init = function() {
             $rootScope.loading = true;
@@ -21,33 +24,47 @@ app.component('warrantyJobOrderRequestView', {
             $q.all(promises)
                 .then(function(responses) {
                     $scope.warranty_job_order_request = responses.warranty_job_order_request_read.data.warranty_job_order_request;
-                    $scope.calculateLabourTotal();
-                    $scope.calculatePartTotal();
-                    $("#file-1").fileinput({
-                        theme: 'fas',
-                        overwriteInitial: true,
-                        // minFileCount: 1,
-                        maxFileSize: 5000,
-                        // required: true,
-                        showUpload: false,
-                        browseOnZoneClick: true,
-                        removeFromPreviewOnError: true,
-                        initialPreviewShowDelete: true,
-                        deleteUrl: '',
-                        // showRemove:true,
-                        // maxFilesNum: 10,
-                        // initialPreview: [
-                        //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
-                        //     "<img src='/images/jellyfish.jpg' class='file-preview-image' alt='Jelly Fish' title='Jelly Fish'>",
-                        // ],
-                        // allowedFileTypes: ['image'],
-                        slugCallback: function(filename) {
-                            return filename.replace('(', '_').replace(']', '_');
-                        }
-                    });
 
-                    $rootScope.loading = false;
+                    let promises2 = {
+                        customer_service: CustomerSvc.read($scope.warranty_job_order_request.job_order.customer_id),
+                        outlet_service: OutletSvc.getBusiness({ outletId: $scope.warranty_job_order_request.job_order.outlet.id, businessName: 'ALSERV' }),
+                    };
+
+                    $q.all(promises2)
+                        .then(function(responses) {
+
+                            $scope.warranty_job_order_request.job_order.customer = responses.customer_service.data.customer;
+                            $scope.warranty_job_order_request.job_order.outlet.business = responses.outlet_service.data.business;
+
+                            $scope.calculateLabourTotal();
+                            $scope.calculatePartTotal();
+                            $("#file-1").fileinput({
+                                theme: 'fas',
+                                overwriteInitial: true,
+                                // minFileCount: 1,
+                                maxFileSize: 5000,
+                                // required: true,
+                                showUpload: false,
+                                browseOnZoneClick: true,
+                                removeFromPreviewOnError: true,
+                                initialPreviewShowDelete: true,
+                                deleteUrl: '',
+                                // showRemove:true,
+                                // maxFilesNum: 10,
+                                // initialPreview: [
+                                //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
+                                //     "<img src='/images/jellyfish.jpg' class='file-preview-image' alt='Jelly Fish' title='Jelly Fish'>",
+                                // ],
+                                // allowedFileTypes: ['image'],
+                                slugCallback: function(filename) {
+                                    return filename.replace('(', '_').replace(']', '_');
+                                }
+                            });
+
+                            $rootScope.loading = false;
+                        });
                 });
+
         };
         $scope.init();
 
@@ -170,7 +187,7 @@ app.component('warrantyJobOrderRequestView', {
 
         $scope.calculateLabourTotal = function() {
             $same_state = $scope.isSameState();
-            
+
             var total = 0;
             angular.forEach($scope.warranty_job_order_request.repair_orders, function(repair_order) {
                 // var amount = repair_order.amount;
@@ -181,11 +198,11 @@ app.component('warrantyJobOrderRequestView', {
 
                 if (repair_order.tax_code) {
                     angular.forEach(repair_order.tax_code.taxes, function(tax) {
-                        if ($same_state==true) {
+                        if ($same_state == true) {
                             if (tax.type_id != 1160) {
                                 tax.pivot.percentage = 0;
                             }
-                        }else{
+                        } else {
                             if (tax.type_id == 1160) {
                                 tax.pivot.percentage = 0;
                             }
@@ -223,17 +240,17 @@ app.component('warrantyJobOrderRequestView', {
                 var tax_total = 0;
                 if (part.tax_code) {
                     angular.forEach(part.tax_code.taxes, function(tax) {
-                        if ($same_state==true) {
+                        if ($same_state == true) {
                             if (tax.type_id == 1160) {
                                 tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
-                            }else{
+                            } else {
                                 tax.pivot.percentage = 0;
                                 tax_total += 0;
                             }
-                        }else{
+                        } else {
                             if (tax.type_id != 1160) {
                                 tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
-                            }else{
+                            } else {
                                 tax.pivot.percentage = 0;
                                 tax_total += 0;
                             }
@@ -264,14 +281,14 @@ app.component('warrantyJobOrderRequestView', {
         $scope.calculateEstimateTotal = function() {
             $scope.warranty_job_order_request.estimate_total = parseFloat($scope.warranty_job_order_request.repair_order_total) + parseFloat($scope.warranty_job_order_request.part_total);
         }
-        $scope.isSameState = function(){
+        $scope.isSameState = function() {
             $same_state = false;
             if ($scope.warranty_job_order_request.job_order != undefined) {
                 var customer_state = $scope.warranty_job_order_request.job_order.customer.state_id;
                 var job_order_state = $scope.warranty_job_order_request.job_order.outlet.state_id;
                 if (customer_state == job_order_state) {
                     $same_state = true;
-                }else{
+                } else {
                     $same_state = false;
                 }
             }

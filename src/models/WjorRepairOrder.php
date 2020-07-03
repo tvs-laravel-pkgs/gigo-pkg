@@ -26,6 +26,13 @@ class WjorRepairOrder extends BaseModel {
 
 	// Relationships --------------------------------------------------------------
 
+	public function taxes() {
+		return $this->belongsTo('App\Tax', 'wjor_repair_order_tax')->withPivot([
+			'percentage',
+			'amount',
+		]);
+	}
+
 	public function wjor() {
 		return $this->belongsTo('App\WarrantyJobOrderRequest');
 	}

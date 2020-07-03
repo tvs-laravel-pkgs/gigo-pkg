@@ -30,9 +30,9 @@ app.directive('wjorPprForm', function() {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('wjorEstimateForm', function() {
+app.directive('wjorEstimateLabourForm', function() {
     return {
-        templateUrl: warrantyJobOrderRequestEstimateForm,
+        templateUrl: gigo_pkg_url + '/warranty-job-order-request/partials/estimate-labour-form.html',
         controller: function() {}
     }
 });

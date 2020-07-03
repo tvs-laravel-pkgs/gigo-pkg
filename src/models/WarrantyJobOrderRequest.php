@@ -170,6 +170,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 			'jobOrder.serviceType',
 			'jobOrder.status',
 			'jobOrder.customer',
+			'jobOrder.jobCard',
 			'complaint',
 			'fault',
 			'supplier',
@@ -328,6 +329,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 	}
 
 	public static function saveFromFormArray($input, $owner = null) {
+		dd($input);
 		try {
 			DB::beginTransaction();
 			$owner = !is_null($owner) ? $owner : Auth::user();
@@ -353,6 +355,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 					$job_order->outlet_id = $input['outlet_id'];
 					$job_order->type_id = 4;
 					$job_order->quote_type_id = 2;
+					$job_order->customer_id = $input['customer_id'];
 					$job_order->save();
 					// $job_order->status_id = 8460; //Ready for Inward
 					// $job_order->number = 'JO-' . $job_order->id;
@@ -417,6 +420,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 					$wjorRepairOrder->tax_total = $repair_order['tax_total'];
 					$wjorRepairOrder->total_amount = $repair_order['total_amount'];
 					$wjorRepairOrder->save();
+
+					foreach ($input['repair_orders'] as $key => $value) {
+						# code...
+					}
 				}
 			}
 
