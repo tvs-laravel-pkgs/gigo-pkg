@@ -70,7 +70,7 @@
                                                                 {{labour_details.qty}}
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="labour_details.is_free_service == 1">
-                                                                <p class="text-danger">{{labour_details.amount | number:2}}</p>
+                                                                <p class="text-danger">0.00</p>
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="labour_details.is_free_service != 1">
                                                                 {{labour_details.amount | number:2}}
@@ -142,7 +142,7 @@
                                                                 <input type="hidden" name="job_order_parts[{{index}}][is_free_service]" value="{{part_details.is_free_service}}">
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="part_details.is_free_service == 1">
-                                                                <p class="text-danger">{{part_details.amount | number:2}}</p>
+                                                                <p class="text-danger">0.00</p>
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="part_details.is_free_service != 1">
                                                                 {{part_details.amount | number:2}}

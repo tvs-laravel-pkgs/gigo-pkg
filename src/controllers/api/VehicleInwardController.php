@@ -1653,8 +1653,6 @@ class VehicleInwardController extends Controller {
 						$labour_details[$key]['is_free_service'] = $value->pivot->is_free_service;
 						if ($value->pivot->is_free_service != 1) {
 							$labour_amount += $value->amount;
-						} else {
-							$labour_details[$key]['amount'] = "0.00";
 						}
 					}
 				}
@@ -1680,8 +1678,6 @@ class VehicleInwardController extends Controller {
 						$labour_details[$key]['is_free_service'] = $value->is_free_service;
 						if ($value->is_free_service != 1) {
 							$labour_amount += $value->amount;
-						} else {
-							$labour_details[$key]['amount'] = "0.00";
 						}
 					}
 				}
@@ -1700,8 +1696,6 @@ class VehicleInwardController extends Controller {
 						$part_details[$key]['is_free_service'] = $value->pivot->is_free_service;
 						if ($value->pivot->is_free_service != 1) {
 							$parts_rate += $value->pivot->amount;
-						} else {
-							$part_details[$key]['amount'] = "0.00";
 						}
 					}
 				}
@@ -1725,8 +1719,6 @@ class VehicleInwardController extends Controller {
 						$part_details[$key]['is_free_service'] = $value->is_free_service;
 						if ($value->is_free_service != 1) {
 							$parts_rate += $value->amount;
-						} else {
-							$part_details[$key]['amount'] = "0.00";
 						}
 					}
 				}

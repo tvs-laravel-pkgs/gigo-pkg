@@ -219,6 +219,7 @@ app.component('myJobcardView', {
                     $("#finish_work").hide();
                     $('body').removeClass('modal-open');
                     $('.modal-backdrop').remove();
+                    $('.confirm_finish').button('reset');
 
                     custom_noty('success', res.message);
                     setTimeout(function() {
