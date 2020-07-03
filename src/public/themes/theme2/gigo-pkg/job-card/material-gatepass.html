@@ -88,7 +88,7 @@
                                                     <div class="col-lg-4" ng-if="gate_passes.gate_pass_items.length > 0">
                                                         <div id="myCarousel" class="carousel mgpass-carousel slide" data-ride="carousel">
                                                             <ol class="carousel-indicators">
-                                                                <li style="margin-right: 5px" data-target="#myCarousel" data-slide-to="{{key}}{{index}}" class="carousel_li"  id ="carousel_li_{{gate_passes.id}}{{index}}" ng-repeat="(index, gate_pass_items) in gate_passes.gate_pass_items"  ng-click="carouselLiChange(gate_passes.id,index)"></li>
+                                                                <li style="margin-right: 5px" data-target="#myCarousel" data-slide-to="{{key}}{{index}}" class="carousel_li" id="carousel_li_{{gate_passes.id}}{{index}}" ng-repeat="(index, gate_pass_items) in gate_passes.gate_pass_items" ng-click="carouselLiChange(gate_passes.id,index)"></li>
                                                             </ol>
                                                             <div class="carousel-inner">
                                                                 <div class="item carousel_inner_item" id="carousel_inner_item_{{gate_passes.id}}{{keys}}" ng-repeat="(keys, gate_pass_item) in gate_passes.gate_pass_items">

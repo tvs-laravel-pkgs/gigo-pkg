@@ -2176,6 +2176,7 @@ class JobCardController extends Controller {
 	}
 
 	public function getPayableLabourPart(Request $request) {
+
 		$job_card = JobCard::with(['jobOrder',
 			'jobOrder.type',
 			'jobOrder.vehicle',
@@ -2195,6 +2196,15 @@ class JobCardController extends Controller {
 			'vehicle.status',
 			'status',
 			'gateLog',
+			'jobOrderRepairOrders' => function ($query) {
+				$query->where('is_recommended_by_oem', 0);
+			},
+			'jobOrderRepairOrders.repairOrder',
+			'jobOrderRepairOrders.repairOrder.repairOrderType',
+			'jobOrderParts' => function ($query) {
+				$query->where('is_oem_recommended', 0);
+			},
+			'jobOrderParts.part',
 		])
 			->select([
 				'job_orders.*',
@@ -2212,38 +2222,15 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$part_details = JobOrderPart::with([
-			'part',
-			'part.uom',
-			'part.taxCode',
-			'splitOrderType',
-			'status',
-		])
-			->where('job_order_id', $job_order->id)
-			->get();
-
-		$labour_details = JobOrderRepairOrder::with([
-			'repairOrder',
-			'repairOrder.repairOrderType',
-			'repairOrder.uom',
-			'repairOrder.taxCode',
-			'repairOrder.skillLevel',
-			'splitOrderType',
-			'status',
-		])
-			->where('job_order_id', $job_order->id)
-			->get();
 		$parts_total_amount = 0;
 		$labour_total_amount = 0;
 		$total_amount = 0;
-
 		if ($job_order->jobOrderRepairOrders) {
 			foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
 				$labour_total_amount += $labour->amount;
 
 			}
 		}
-
 		if ($job_order->jobOrderParts) {
 			foreach ($job_order->jobOrderParts as $key => $part) {
 				$parts_total_amount += $part->amount;
@@ -2255,8 +2242,6 @@ class JobCardController extends Controller {
 		return response()->json([
 			'success' => true,
 			'job_order' => $job_order,
-			'part_details' => $part_details,
-			'labour_details' => $labour_details,
 			'total_amount' => number_format($total_amount, 2),
 			'parts_total_amount' => number_format($parts_total_amount, 2),
 			'labour_total_amount' => number_format($labour_total_amount, 2),
