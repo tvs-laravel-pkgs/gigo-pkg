@@ -173,13 +173,13 @@
                                                                     <td>: {{item.item_model}}</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td>Seriel no</td>
+                                                                    <td>Serial no</td>
                                                                     <td>: {{item.item_serial_no}} </td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
                                                         <div class="mb-10"></div><!-- Spacing -->
-                                                        <img class="img-responsive wid-60" src="{{$ctrl.material_gate_pass.attachement_path}}/{{item.attachment.name}}" alt="Parts Image" />
+                                                        <img class="img-responsive wid-60" ng-if="item.attachment" src="{{$ctrl.material_gate_pass.attachement_path}}/{{item.attachment.name}}" alt="Parts Image" />
                                                     </div><!-- Border Box -->
                                                 </li>
                                             </ul><!-- Flex Row -->
@@ -255,7 +255,7 @@
                 </div><!-- Modal Header -->
                 <div class="modal-body">
                     <h6 class="title">ENTER OTP</h6>
-                    <p class="info">Received in Customer Mobile +91<span class="customer_mobile_no"></span></p>
+                    <p class="info">Received in Floor Supervisor Mobile +91<span class="customer_mobile_no"></span></p>
                     <div class="form-group">
                         <input type="text" autofocus name="otp_no" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
                         <input type="hidden" name="gate_pass_id" id="gate_pass_id" value="" />

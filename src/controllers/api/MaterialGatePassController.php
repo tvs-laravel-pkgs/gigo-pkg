@@ -5,6 +5,8 @@ namespace Abs\GigoPkg\Api;
 use App\Customer;
 use App\GatePass;
 use App\Http\Controllers\Controller;
+use App\JobCard;
+use App\User;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -264,25 +266,37 @@ class MaterialGatePassController extends Controller {
 					],
 				]);
 			}
-			//GET CUSTOMER INFO
-			if ($material_gate_pass->jobCard->jobOrder->vehicle->currentOwner) {
-				if ($material_gate_pass->jobCard->jobOrder->vehicle->currentOwner->customer) {
-					$customer = $material_gate_pass->jobCard->jobOrder->vehicle->currentOwner->customer;
-				} else {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => [
-							'Customer Not Found!',
-						],
-					]);
-				}
-			} else {
+
+			$job_card = JobCard::find($material_gate_pass->job_card_id);
+
+			if (!$job_card) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
 					'errors' => [
-						'Customer Not Found!',
+						'JobCard Not Found!',
+					],
+				]);
+			}
+
+			$user = User::find($job_card->floor_supervisor_id);
+			if (!$user) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Floor Supervisor Not Found!',
+					],
+				]);
+			}
+
+			$mobile_number = $user->contact_number;
+			if (!$mobile_number) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Mobile Number Not Found!',
 					],
 				]);
 			}
@@ -307,18 +321,10 @@ class MaterialGatePassController extends Controller {
 			//Get material Gate pass After Otp Update
 			$material_gate_pass = GatePass::find($id);
 			$otp = $material_gate_pass->otp_no;
-			// $mobile_number = $customer->mobile_no;
-			$mobile_number = '9976334752'; //FOR TESTING
+
 			$message = 'OTP is ' . $otp . ' for material gate out. Please enter OTP to verify your material gate out';
-			if (!$mobile_number) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Customer Mobile Number Not Found',
-					],
-				]);
-			}
+
+			$mobile_number = '9965098134';
 			$msg = sendSMSNotification($mobile_number, $message);
 			//dd($msg);
 			//Enable After Sms Issue Resloved
@@ -331,7 +337,7 @@ class MaterialGatePassController extends Controller {
 			return response()->json([
 				'success' => true,
 				'gate_pass' => $material_gate_pass,
-				'customer_detail' => $customer,
+				'user' => $user,
 				'type' => 'Out',
 				'message' => 'OTP Sent successfully!!',
 			]);
