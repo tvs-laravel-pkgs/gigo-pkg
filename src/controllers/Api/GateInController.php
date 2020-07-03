@@ -545,8 +545,6 @@ class GateInController extends Controller {
 						$output .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_gate_log" onclick="angular.element(this).scope().deleteGateLog(' . $gate_pass_list->gate_log_id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete_active . '" onmouseout=this.src="' . $img_delete . '"></a>
 					';
 					}
-				} else {
-					$output .= '-';
 				}
 
 				return $output;

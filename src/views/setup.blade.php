@@ -494,6 +494,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_bay_view_template_url  = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/bay-view.html')}}";
 
     var job_card_split_order_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/split-order.html')}}";
+    var job_card_pdf_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/pdf.html')}}';
 
 
     var job_card_part_indent_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/parts-indent.html')}}';

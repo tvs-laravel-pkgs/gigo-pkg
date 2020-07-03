@@ -1259,6 +1259,52 @@ app.component('jobCardVehicleInspectionForm', {
     }
 });
 
+//PDF
+app.component('jobCardPdf', {
+    templateUrl: job_card_pdf_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/jobcard/vehicle-inspection/get',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_card = res.job_card;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        //Covering Letter
+    }
+});
+
 //---------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------
 //DMS Check list
