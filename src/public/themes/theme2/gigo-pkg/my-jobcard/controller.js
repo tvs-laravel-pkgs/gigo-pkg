@@ -163,7 +163,8 @@ app.component('myJobcardView', {
 
                     custom_noty('success', 'Work has been started');
                     setTimeout(function() {
-                        location.reload();
+                        // location.reload();
+                        $scope.fetchData();
                     }, 1000);
 
                 })
@@ -215,8 +216,15 @@ app.component('myJobcardView', {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                     },
                 }).done(function(res) {
+                    $("#finish_work").hide();
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
                     custom_noty('success', res.message);
-                    setTimeout(function() { location.reload(); }, 1000);
+                    setTimeout(function() {
+                        // location.reload(); 
+                        $scope.fetchData();
+                    }, 1000);
                 })
                 .fail(function(xhr) {
                     $('.confirm_finish').button('reset');
@@ -256,6 +264,9 @@ app.component('myJobcardView', {
                     },
                 }).done(function(res) {
                     $("#pause_work_modal").hide();
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
                     $('.break_confirm').button('reset');
                     if (!res.success) {
                         showErrorNoty(res);
@@ -264,8 +275,9 @@ app.component('myJobcardView', {
 
                     custom_noty('success', 'Work has Paused');
                     setTimeout(function() {
-                        location.reload();
-                    }, 1000);
+                        // location.reload();
+                        $scope.fetchData();
+                    }, 2000);
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
