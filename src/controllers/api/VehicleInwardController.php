@@ -3194,7 +3194,7 @@ class VehicleInwardController extends Controller {
 
 			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . '<br> Vehicle Reg Number : ' . $customer_detail->registration_number;
+			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $customer_detail->registration_number;
 
 			$msg = sendSMSNotification($mobile_number, $message);
 
