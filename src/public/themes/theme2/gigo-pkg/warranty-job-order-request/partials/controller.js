@@ -30,17 +30,17 @@ app.directive('wjorPprForm', function() {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('wjorEstimateLabourForm', function() {
+app.directive('wjorRepairOrders', function() {
     return {
-        templateUrl: gigo_pkg_url + '/warranty-job-order-request/partials/estimate-labour-form.html',
+        templateUrl: gigo_pkg_url + '/warranty-job-order-request/partials/repair-orders.html',
         controller: function() {}
     }
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
-app.directive('wjorEstimateFormPart', function() {
+app.directive('wjorParts', function() {
     return {
-        templateUrl: warrantyJobOrderRequestEstimateFormPart,
+        templateUrl: gigo_pkg_url + '/warranty-job-order-request/partials/parts.html',
         controller: function() {}
     }
 });
