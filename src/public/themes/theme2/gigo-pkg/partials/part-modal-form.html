@@ -6,18 +6,18 @@
                     <i class="icon ion-md-close"></i>
                 </button>
                 <h5 class="modal-title">
-                    Add/Edit Part
+                    {{modal_action}} Part
                 </h5>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>
                                 Part Code
                                 <span class="mandatory">*</span>
                             </label>
-                            <md-autocomplete md-selected-item="part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)">
+                            <md-autocomplete md-selected-item="wjor_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
                                 <md-item-template>
                                     <span>
                                         {{part.code}}
@@ -27,95 +27,90 @@
                                     No records matching "{{partSearchKey}}" were found.
                                 </md-not-found>
                             </md-autocomplete>
-                            <input type="hidden" name="part_id" value="{{part.id}}">
+                            <input type="hidden" name="part_id" value="{{wjor_part.part.id}}">
                         </div><!-- Field -->
                     </div><!-- Column -->
-                    <div class="col-md-6">
+                    <div class="col-md-4" ng-if="wjor_part.part">
                         <div class="form-group">
                             <label>
                                 Part Description
                             </label>
                             <label>
-                                {{part.name}}
+                                {{wjor_part.part.name}}
                             </label>
                         </div><!-- Field -->
                     </div><!-- Column -->
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4" ng-if="wjor_part.part">
                         <div class="form-group">
                             <label>
                                 Purchase Type
                             </label>
-                            <!-- <input ng-checked="true" type="radio" id="option_stock" name="purchase_type" ng-model="part.purchase_type" value="stock">
-                            <label for="option_stock">Stock</label>
-                            <input type="radio" id="option_local" name="purchase_type" ng-model="part.purchase_type" value="local">
-                            <label for="option_local">Local Purchase</label> -->
-
-                            <input type="radio" id="option_stock" name="purchase_type" ng-model="part.purchase_type" ng-value="8480">
+                            <input type="radio" id="option_stock" name="purchase_type" ng-model="wjor_part.purchase_type" ng-value="8480">
                             <label for="option_stock">
                                 Stock
                             </label>
-                            <input type="radio" id="option_local" name="purchase_type" ng-model="part.purchase_type" ng-value="8481">
+                            <input type="radio" id="option_local" name="purchase_type" ng-model="wjor_part.purchase_type" ng-value="8481">
                             <label for="option_local">
                                 Local Purchase
                             </label>
-
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                UOM
-                            </label>
-                            <label>
-                                {{part.uom.name}}
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                Rate
-                            </label>
-                            <input type="text" ng-keyup="partAmountChange(part)" class="form-control" name="rate" ng-model="part.rate" maxlength="12" ng-readonly="part.purchase_type != '8481'">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                Quantity
-                            </label>
-                            <input type="text" ng-keyup="partQuantityChange(part)" class="form-control" name="quantity" ng-model="part.quantity" maxlength="12">
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
+                <div class="row" ng-if="wjor_part.part">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>
                                 MRP
                             </label>
                             <label>
-                                {{part.mrp}}
+                                {{wjor_part.part.mrp | currency}}
                             </label>
                         </div><!-- Field -->
                     </div><!-- Column -->
-                    <div class="col-md-6" ng-repeat="(tax_key, tax) in part.tax_code.taxes" ng-if="part.tax_code">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                Quantity
+                            </label>
+                            <div class="input-group">
+                                <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="quantity" ng-model="wjor_part.qty" maxlength="12">
+                                <span class="input-group-addon">
+                                    {{wjor_part.part.uom.name}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                Rate
+                            </label>
+                            <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="rate" ng-model="wjor_part.rate" maxlength="12" ng-readonly="wjor_part.purchase_type != '8481'">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                Net Amount
+                            </label>
+                            <label>
+                                {{wjor_part.net_amount | currency}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4" ng-repeat="(tax_key, tax) in wjor_part.taxes" ng-if="wjor_part.part.tax_code && wjor_part.part">
                         <div class="form-group">
                             <label>
                                 {{tax.name}} ({{tax.pivot.percentage}}%)
                             </label>
                             <label>
-                                {{((part.rate*part.quantity)*tax.pivot.percentage)/100 | currency}}
+                                {{tax.amount | currency}}
                             </label>
                         </div><!-- Field -->
                     </div><!-- Column -->
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
+                <div class="row" ng-if="wjor_part.part">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label>
                                 <b>
@@ -124,7 +119,7 @@
                             </label>
                             <label>
                                 <b>
-                                    {{part.total_amount | currency}}
+                                    {{wjor_part.total_amount | currency}}
                                 </b>
                             </label>
                         </div><!-- Field -->

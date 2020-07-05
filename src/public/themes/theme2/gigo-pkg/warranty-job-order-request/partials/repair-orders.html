@@ -26,9 +26,10 @@
                             <th class="text-right">
                                 Hours
                             </th>
-                            <th class="text-right">
+                            <!--                             <th class="text-right">
                                 Rate
                             </th>
+ -->
                             <th class="text-right">
                                 Net Amount
                             </th>
@@ -37,10 +38,10 @@
                             </th>
  -->
                             <th class="text-right">
-                                Total Tax Amount
+                                Total Tax
                             </th>
                             <th class="wid-100 white-space-unset text-right">
-                                Labour Value
+                                Amount
                             </th>
                         </tr>
                     </thead>
@@ -65,9 +66,10 @@
                             <td class="text-right">
                                 {{job_order_labour.repair_order.hours | number:2}}
                             </td>
-                            <td class="text-right">
+                            <!--                             <td class="text-right">
                                 {{job_order_labour.rate | currency}}
                             </td>
+ -->
                             <td class="text-right">
                                 {{job_order_labour.net_amount | currency}}
                             </td>

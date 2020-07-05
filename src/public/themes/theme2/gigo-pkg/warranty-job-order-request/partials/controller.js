@@ -1,6 +1,6 @@
 app.directive('warrantyJobOrderRequestFormTabs', function() {
     return {
-        templateUrl: warrantyJobOrderRequestFormTabs,
+        templateUrl: gigo_pkg_url + '/warranty-job-order-request/partials/tab-menus.html',
         controller: function() {}
     }
 });

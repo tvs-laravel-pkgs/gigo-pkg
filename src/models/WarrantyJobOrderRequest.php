@@ -196,7 +196,8 @@ class WarrantyJobOrderRequest extends BaseModel {
 			'wjorRepairOrders.taxes',
 			'wjorRepairOrders.repairOrder',
 			'wjorParts',
-			// 'parts.part',
+			'wjorParts.taxes',
+			'wjorParts.part',
 			'attachments',
 		];
 
@@ -340,10 +341,9 @@ class WarrantyJobOrderRequest extends BaseModel {
 		try {
 			DB::beginTransaction();
 			$owner = !is_null($owner) ? $owner : Auth::user();
-
 			if ($input['form_type'] == "manual") {
 				$job_card_number = $input['job_card_number'];
-				$isJobCard = JobCard::where('job_card_number', $job_card_number)->first();
+				$job_card = JobCard::where('job_card_number', $job_card_number)->first();
 
 				$result = FinancialYear::getCurrentFinancialYear();
 				if (!$result['success']) {
@@ -356,7 +356,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 				$customer = json_decode($input['customer_id']);
 
-				if (!$isJobCard) {
+				if (!$job_card) {
 					$job_order = new JobOrder;
 					$job_order->company_id = $owner->company_id;
 					$job_order->number = $generateJONumber['number'];
@@ -386,7 +386,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 					$job_order_id = $job_order->id;
 				} else {
-					$job_order_id = $isJobCard->job_order_id;
+					$job_order_id = $job_card->job_order_id;
 				}
 			} else {
 				$job_order_id = $input['job_order_id'];
@@ -430,8 +430,8 @@ class WarrantyJobOrderRequest extends BaseModel {
 			}
 
 			if (isset($input['wjor_parts'])) {
-				$wjorParts = json_decode($input['wjor_parts']);
-				$record->syncParts($wjorParts);
+				$wjorPartsInput = json_decode($input['wjor_parts']);
+				$record->syncParts($wjorPartsInput);
 			}
 
 			//SAVE ATTACHMENTS
@@ -504,24 +504,25 @@ class WarrantyJobOrderRequest extends BaseModel {
 	public function syncParts($wjorParts) {
 		WjorPart::where('wjor_id', $this->id)->delete();
 		foreach ($wjorParts as $wjorPartInput) {
-			$wjorPart = new WjorRepairOrder;
+			$wjorPart = new WjorPart;
 			$wjorPart->wjor_id = $this->id;
 			$wjorPart->part_id = $wjorPartInput->part->id;
-			$wjorPart->purchase_type = $wjorPartInput->purchase_type_id;
-			$wjorPart->quantity = $wjorPartInput->quantity;
+			$wjorPart->purchase_type = $wjorPartInput->purchase_type;
+			$wjorPart->qty = $wjorPartInput->qty;
+			$wjorPart->rate = $wjorPartInput->rate;
 			$wjorPart->net_amount = $wjorPartInput->net_amount;
 			$wjorPart->tax_total = $wjorPartInput->tax_total;
 			$wjorPart->total_amount = $wjorPartInput->total_amount;
 			$wjorPart->save();
 
 			$taxes = [];
-			foreach ($partInput->taxes as $key => $tax) {
+			foreach ($wjorPartInput->taxes as $key => $tax) {
 				$taxes[$tax->id] = [
 					'percentage' => $tax->pivot->percentage,
 					'amount' => $tax->pivot->amount,
 				];
 			}
-			$wjorPart->taxes()->sync($taxes);
+			// $wjorPart->taxes()->sync($taxes);
 		}
 
 	}
