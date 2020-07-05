@@ -618,7 +618,6 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var wjorEstimateView = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/wjor-estimate-view.html")}}';
     var wjorEstimateViewPart = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/wjor-estimate-view-part.html")}}';
     var wjorAttachmentView = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/partials/wjor-attachment-view.html")}}';
-    var wjorHeader = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/partials/wjor-header.html")}}';
 
     var labourModalForm = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/partials/labour-modal-form.html")}}';
     var partModalForm = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/partials/part-modal-form.html")}}';

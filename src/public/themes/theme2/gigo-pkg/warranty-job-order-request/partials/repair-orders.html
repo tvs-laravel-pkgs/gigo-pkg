@@ -14,7 +14,7 @@
                 <table class="table table-dark-grey">
                     <thead>
                         <tr>
-                            <th class="wid-100">
+                            <th class="wid-100" ng-if="page == 'form'">
                                 Actions
                             </th>
                             <th>
@@ -47,7 +47,7 @@
                     </thead>
                     <tbody>
                         <tr class="ptb-12" ng-repeat="(index,job_order_labour) in warranty_job_order_request.wjor_repair_orders">
-                            <td class="wid-100">
+                            <td class="wid-100" ng-if="page == 'form'">
                                 <!--                                 <button type="button" ng-click="showLabourForm(index)" class="btn img-btn btn-delete">
                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                 </button>

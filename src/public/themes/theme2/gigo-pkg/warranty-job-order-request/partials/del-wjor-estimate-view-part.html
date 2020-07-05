@@ -6,62 +6,78 @@
                     Repair Estimate
                 </b>
             </h5>
+            <!-- Table Responsive -->
+            <div class="mb-15"></div><!-- Spacing -->
             <hr class="hr-15"><!-- Separater -->
             <h6>
-                Labour Details
+                Part Details
             </h6>
             <div class="table-responsive">
                 <table class="table table-dark-grey">
                     <thead>
                         <tr>
                             <th>
-                                ROT Code
+                                Parts Code
                             </th>
                             <th>
-                                ROT Description
+                                Name
+                            </th>
+                            <th>
+                                Purchase Type
                             </th>
                             <th class="text-right">
-                                Hours
+                                Quantity
+                            </th>
+                            <th class="text-right">
+                                Rate
                             </th>
                             <th class="text-right">
                                 Net Amount
                             </th>
-                            <!--                             <th ng-repeat="(tax_key, tax) in warranty_job_order_request.repair_orders[0].tax_code.taxes" ng-if="warranty_job_order_request.repair_orders[0].tax_code">
+                            <!--                             <th ng-repeat="(tax_key, tax) in warranty_job_order_request.parts[0].tax_code.taxes" ng-if="warranty_job_order_request.parts[0].tax_code">
                                 {{tax.name}} ({{tax.pivot.percentage}}%)
                             </th>
  -->
                             <th class="text-right">
-                                Total Tax Amount
+                                Tax Amount
                             </th>
                             <th class="wid-100 white-space-unset text-right">
-                                Labour Value
+                                Amount
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="ptb-12" ng-repeat="(index,job_order_labour) in warranty_job_order_request.repair_orders">
+                        <tr class="ptb-12" ng-repeat="(index,wjor_part) in warranty_job_order_request.wjor_parts">
                             <td>
-                                {{job_order_labour.code}}
-                                <input type="hidden" name="repair_orders[{{index}}][id]" value="{{job_order_labour.id}}">
+                                {{wjor_part.part.code}}
                             </td>
                             <td>
-                                {{job_order_labour.name}}
+                                {{wjor_part.part.name}}
+                            </td>
+                            <td>
+                                {{wjor_part.part.name}}
                             </td>
                             <td class="text-right">
-                                {{job_order_labour.hours | number:2}}
+                                {{wjor_part.qty | number:2}}
                             </td>
                             <td class="text-right">
-                                {{job_order_labour.pivot.net_amount| currency}}
+                                {{wjor_part.rate | currency}}
                             </td>
-                            <!--                             <td ng-repeat="(tax_key, tax) in job_order_labour.tax_code.taxes" ng-if="job_order_labour.tax_code">
-                                {{(job_order_labour.net_amount_without_tax*tax.pivot.percentage)/100 | currency}}
+                            <!-- <td class="text-right">
+                                {{job_order_part.qty | number:2}}
+                            </td> -->
+                            <!--                             <td ng-repeat="(tax_key, tax) in job_order_part.tax_code.taxes" ng-if="job_order_part.tax_code">
+                                {{(job_order_part.rate*tax.pivot.percentage)/100 | currency}}
                             </td>
  -->
                             <td class="text-right">
-                                {{job_order_labour.pivot.tax_total | currency}}
+                                {{job_order_part.pivot.net_amount | currency}}
                             </td>
-                            <td class="white-space-unset text-right">
-                                {{job_order_labour.pivot.total_amount | currency}}
+                            <td class="text-right">
+                                {{job_order_part.pivot.tax_total | currency}}
+                            </td>
+                            <td class="wid-180 white-space-unset text-right">
+                                {{job_order_part.pivot.total_amount | currency}}
                             </td>
                         </tr>
                         <tr class="ptb-9">
@@ -69,18 +85,16 @@
                             </td>
                             <td class="text-right">
                             </td>
-                            <td colspan="7" class="wid-180 white-space-unset  text-right">
+                            <td colspan="7" class="wid-180 white-space-unset text-right">
                                 <b>
-                                    Total Labour :
-                                    {{warranty_job_order_request.repair_order_total | currency}}
+                                    Total Parts :
+                                    {{warranty_job_order_request.part_total | currency}}
                                 </b>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div><!-- Table Responsive -->
-            <div class="mb-15"></div><!-- Spacing -->
-            <!-- Table Responsive -->
             <div class="mb-20"></div><!-- Spacing -->
             <div class="table-transparent-wrap">
                 <div class="table-responsive">

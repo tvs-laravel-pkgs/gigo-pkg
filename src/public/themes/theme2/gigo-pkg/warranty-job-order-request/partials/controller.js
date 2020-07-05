@@ -8,7 +8,7 @@ app.directive('warrantyJobOrderRequestFormTabs', function() {
 //------------------------------------------------------------------------------------------------------------------------
 app.directive('wjorHeader', function() {
     return {
-        templateUrl: wjorHeader,
+        templateUrl: gigo_pkg_url + '/partials/wjor-header.html',
         controller: function() {}
     }
 });

@@ -9,11 +9,11 @@
             <ul class="view-row mb-no">
                 <li class="view-col-3">
                     <span class="view-col-label">
-                        Job order
+                        Job Card
                     </span>
                     <span class="view-data-list-value">
                         <b>
-                            {{warranty_job_order_request.job_order.number}}
+                            {{warranty_job_order_request.job_order.job_card.job_card_number}}
                         </b>
                     </span>
                 </li>
@@ -22,10 +22,10 @@
                         Vehicle sold?
                     </span>
                     <span class="view-col-value">
-                        {{warranty_job_order_request.warranty_job_order_request.job_order.vehicle.is_sold ? 'Yes' : 'No'}}
+                        {{warranty_job_order_request.job_order.vehicle.is_sold ? 'Yes' : 'No'}}
                     </span>
                 </li>
-                <li class="view-col-3" ng-if="warranty_job_order_request.warranty_job_order_request.job_order.vehicle.is_sold">
+                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle.is_sold">
                     <span class="view-col-label">
                         Sold date
                     </span>
@@ -113,14 +113,6 @@
                                 </li>
                                 <li class="view-col-3">
                                     <span class="view-col-label">
-                                        Unit serial no.
-                                    </span>
-                                    <span class="view-col-value">
-                                        {{warranty_job_order_request.unit_serial_number}}
-                                    </span>
-                                </li>
-                                <li class="view-col-3">
-                                    <span class="view-col-label">
                                         Model
                                     </span>
                                     <span class="view-col-value">
@@ -129,12 +121,18 @@
                                 </li>
                                 <li class="view-col-3">
                                     <span class="view-col-label">
+                                        Unit serial no.
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.unit_serial_number}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
                                         Free services done
                                     </span>
                                     <span class="view-col-value" ng-if="warranty_job_order_request.service_types.length != 0">
-                                        <span ng-repeat="(key, free_service) in warranty_job_order_request.service_types">
-                                            {{free_service.name}}
-                                        </span>
+                                        {{service_types.join()}}
                                     </span>
                                     <span class="view-col-value" ng-if="warranty_job_order_request.service_types.length == 0">
                                         N/A
@@ -177,7 +175,7 @@
                                         Supplier code
                                     </span>
                                     <span class="view-col-value">
-                                        {{warranty_job_order_request.supplier.name}}
+                                        {{warranty_job_order_request.supplier.code}}
                                     </span>
                                 </li>
                                 <li class="view-col-3">
@@ -193,7 +191,7 @@
                                         Servicing dealer name
                                     </span>
                                     <span class="view-col-value">
-                                        {{warranty_job_order_request.job_order.outlet.name}}
+                                        {{warranty_job_order_request.job_order.outlet.business.pivot.outlet_name}}
                                     </span>
                                 </li>
                                 <li class="view-col-3">
@@ -201,7 +199,7 @@
                                         Servicing Dealer Code
                                     </span>
                                     <span class="view-col-value">
-                                        {{warranty_job_order_request.job_order.outlet.code}}
+                                        {{warranty_job_order_request.job_order.outlet.business.pivot.outlet_code}}
                                     </span>
                                 </li>
                                 <li class="view-col-3">
@@ -225,8 +223,8 @@
                                         Customer name and address
                                     </span>
                                     <span class="view-col-value">
-                                        {{job_order.customer.name}}
-                                        {{job_order.customer.address.formatted_address}}
+                                        {{warranty_job_order_request.job_order.customer.name}}
+                                        {{warranty_job_order_request.job_order.customer.address}}
                                     </span>
                                 </li>
                             </ul>

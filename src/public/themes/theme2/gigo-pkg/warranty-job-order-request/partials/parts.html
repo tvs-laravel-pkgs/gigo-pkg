@@ -14,7 +14,7 @@
                 <table class="table table-dark-grey">
                     <thead>
                         <tr>
-                            <th class="wid-100">
+                            <th class="wid-100" ng-if="page == 'form'">
                                 Actions
                             </th>
                             <th>
@@ -52,7 +52,7 @@
                     </thead>
                     <tbody>
                         <tr class="ptb-12" ng-repeat="(index,job_order_part) in warranty_job_order_request.wjor_parts track by index">
-                            <td class="wid-100">
+                            <td class="wid-100" ng-if="page == 'form'">
                                 <!--                                 <button type="button" ng-click="showPartForm(job_order_part,index)" class="btn img-btn btn-delete">
                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                 </button>
@@ -68,7 +68,7 @@
                             <td>
                                 {{job_order_part.part.name}}
                             </td>
-                            <td class="text-right">
+                            <td>
                                 {{job_order_part.purchase_type == 8480 ? 'Stock' : 'Local'}}
                             </td>
                             <td>
@@ -96,7 +96,7 @@
                         </tr>
                         <tr class="ptb-9">
                             <td>
-                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)">
+                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)" ng-if="page == 'form'">
                                     Add Part
                                 </button>
                             </td>

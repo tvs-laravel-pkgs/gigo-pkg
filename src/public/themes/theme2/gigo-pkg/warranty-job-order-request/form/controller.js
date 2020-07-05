@@ -18,6 +18,8 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.user = HelperService.getLoggedUser();
 
+        $scope.page = 'form';
+
         $scope.init = function() {
             $rootScope.loading = true;
 
