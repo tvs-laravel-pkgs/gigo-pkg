@@ -887,11 +887,11 @@ class VehicleInwardController extends Controller {
 					'max:10',
 				],
 				'driver_license_expiry_date' => [
-					'nullable',
+					'required',
 					'date',
 				],
 				'insurance_expiry_date' => [
-					'nullable',
+					'required',
 					'date',
 				],
 				'driving_license_image' => [

@@ -1910,7 +1910,7 @@ app.component('inwardVehicleVehicleDetail', {
                     if ($scope.job_order.vehicle.status_id == 8140) {
                         $scope.show_vehicle_detail = false;
                         $scope.show_vehicle_form = true;
-                        self.is_sold = 0;
+                        self.is_sold = 1;
                     } else {
                         $scope.show_vehicle_detail = true;
                         $scope.show_vehicle_form = false;
@@ -2145,6 +2145,13 @@ app.component('inwardVehicleCustomerDetail', {
                         self.country = $scope.job_order.country;
                     }
                     $scope.extras = res.extras;
+
+                    if ($scope.job_order.vehicle && $scope.job_order.vehicle.current_owner) {
+                        $scope.ownership_type_id = $scope.job_order.vehicle.current_owner.ownership_type.id;
+                    } else {
+                        $scope.ownership_type_id = 8160;
+                    }
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -2475,21 +2482,46 @@ app.component('inwardVehicleOrderDetailForm', {
                         maxlength: 10,
                     },
                     'driving_license_image': {
-                        // required: true,
+                        required: function(element) {
+                            if (!$scope.job_order.driver_license_attachment) {
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                     'insurance_image': {
-                        //required: true,
+                        required: function(element) {
+                            if (!$scope.job_order.insurance_attachment) {
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                     'rc_book_image': {
-                        //required: true,
+                        required: function(element) {
+                            if (!$scope.job_order.rc_book_attachment) {
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                     'driver_license_expiry_date': {
                         required: true,
-
                     },
                     'insurance_expiry_date': {
                         required: true,
                     },
+                },
+                errorPlacement: function(error, element) {
+                    if (element.attr('name') == 'driving_license_image') {
+                        error.appendTo($('.attachment_error'));
+                    } else if (element.attr('name') == 'insurance_image') {
+                        error.appendTo($('.attachment_error'));
+                    } else if (element.attr('name') == 'rc_book_image') {
+                        error.appendTo($('.attachment_error'));
+                    } else {
+                        error.insertAfter(element);
+                    }
                 },
                 invalidHandler: function(event, validator) {
                     custom_noty('error', 'You have errors, Please check all tabs');
