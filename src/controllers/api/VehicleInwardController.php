@@ -2500,10 +2500,10 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:users,id',
 				],
-				'road_test_report' => [
-					'required_if:is_road_test_required,1',
-					'string',
-				],
+				// 'road_test_report' => [
+				// 	'required_if:is_road_test_required,1',
+				// 	'string',
+				// ],
 			]);
 
 			if ($validator->fails()) {

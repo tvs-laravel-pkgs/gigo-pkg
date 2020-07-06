@@ -98,14 +98,14 @@ class MaterialGatePassController extends Controller {
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$output = '';
 				$output .= '<a href="#!/material-gate-pass/view/' . $material_gate_pass->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
-				//Gate Out Pending
-				if ($material_gate_pass->status_id == 8300) {
-					$output .= '<button class="btn btn-secondary-dark btn-sm confirm_gate_out_' . $material_gate_pass->id . ' " onclick="angular.element(this).scope().materialGateInOut(' . $material_gate_pass->id . ',' . $material_gate_pass->status_id . ' )" title="Gate Out">Confirm Gate Out</button>';
-				}
-				//Gate In Pending
-				if ($material_gate_pass->status_id == 8301) {
-					$output .= '<button class="btn btn-secondary-dark btn-sm confirm_gate_in_' . $material_gate_pass->id . '" onclick="angular.element(this).scope().materialGateInOut(' . $material_gate_pass->id . ',' . $material_gate_pass->status_id . ')" title="Gate In">Confirm Gate In</button>';
-				}
+				// //Gate Out Pending
+				// if ($material_gate_pass->status_id == 8300) {
+				// 	$output .= '<button class="btn btn-secondary-dark btn-sm confirm_gate_out_' . $material_gate_pass->id . ' " onclick="angular.element(this).scope().materialGateInOut(' . $material_gate_pass->id . ',' . $material_gate_pass->status_id . ' )" title="Gate Out">Confirm Gate Out</button>';
+				// }
+				// //Gate In Pending
+				// if ($material_gate_pass->status_id == 8301) {
+				// 	$output .= '<button class="btn btn-secondary-dark btn-sm confirm_gate_in_' . $material_gate_pass->id . '" onclick="angular.element(this).scope().materialGateInOut(' . $material_gate_pass->id . ',' . $material_gate_pass->status_id . ')" title="Gate In">Confirm Gate In</button>';
+				// }
 				return $output;
 			})
 			->make(true);
