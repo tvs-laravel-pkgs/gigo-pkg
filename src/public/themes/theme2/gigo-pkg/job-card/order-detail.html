@@ -68,9 +68,6 @@
                                                                 </li>
                                                             </ul>
                                                         </div><!-- View Data -->
-                                                        <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
-                                                            Edit
-                                                        </a>
                                                     </div><!-- Panel Body -->
                                                 </div><!-- Panel Collapse -->
                                             </div><!-- Panel -->
@@ -146,9 +143,6 @@
                                                                 </li>
                                                             </ul>
                                                         </div><!-- View Data -->
-                                                        <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
-                                                            Edit
-                                                        </a>
                                                     </div><!-- Panel Body -->
                                                 </div><!-- Panel Collapse -->
                                             </div><!-- Panel -->
@@ -240,14 +234,11 @@
                                                         </div><!-- View Data -->
                                                         <div class="mb-15"></div><!-- Spacing -->
                                                         <div class="multi-docs">
-                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.driver_license_attachment.name}}" alt="Driver License">
-                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.insurance_attachment.name}}" alt="Insurance" />
-                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.rc_book_attachment.name}}" alt="RC Book" />
+                                                            <img ng-if="job_card.job_order.driver_license_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.driver_license_attachment.name}}" alt="Driver License">
+                                                            <img ng-if="job_card.job_order.driver_license_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.insurance_attachment.name}}" alt="Insurance" />
+                                                            <img ng-if="job_card.job_order.driver_license_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.rc_book_attachment.name}}" alt="RC Book" />
                                                         </div>
                                                         <div class="mb-10"></div><!-- Spacing -->
-                                                        <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_card.job_order.id}}" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">
-                                                            Edit
-                                                        </a>
                                                     </div><!-- Panel Body -->
                                                 </div><!-- Panel Collapse -->
                                             </div><!-- Panel -->
@@ -270,40 +261,3 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<!-- Modal -->
-<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xs" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title">Search Vehicle</h5>
-            </div><!-- Modal Header -->
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Registration Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Customer Code <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>VIN Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div><!-- Modal Body -->
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
-<!-- Modal -->

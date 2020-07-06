@@ -53,30 +53,28 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index,job_order_labour) in labour_details">
+                                                    <tr class="ptb-12" ng-repeat="(index,job_order_labour) in job_order.job_order_repair_orders">
                                                         <td>
                                                             {{job_order_labour.repair_order.code ? job_order_labour.repair_order.code : ''}} | {{job_order_labour.repair_order.name ? job_order_labour.repair_order.name : ''}}
                                                         </td>
                                                         <td>
-                                                            {{job_order_labour.repair_order.repair_order_type.name ? job_order_labour.repair_order.repair_order_type.name : ''}}
+                                                            {{job_order_labour.repair_order.repair_order_type ? (job_order_labour.repair_order.repair_order_type.name ? job_order_labour.repair_order.repair_order_type.name: '') : ''}}
                                                         </td>
                                                         <td class="text-right">
                                                             {{job_order_labour.qty}}
                                                         </td>
-                                                        <td class="white-space-unset text-right">
-                                                            {{job_order_labour.amount}}
+                                                        <td class="wid-180 white-space text-right">
+                                                            {{job_order_labour.amount | number:2 }}
                                                             <input type="hidden" class="job_order_labours" name="labouramount[{{index}}][amount]" value="{{job_order_labour.amount}}">
                                                         </td>
                                                     </tr>
                                                     <tr class="ptb-9">
-                                                        <td>
-                                                        </td>
-                                                        <td colspan="2" class="text-right">
+                                                        <td colspan="3" class="text-right">
                                                             <b>
                                                                 Total Labour
                                                             </b>
                                                         </td>
-                                                        <td class="wid-180 white-space-unset  text-right">
+                                                        <td class="wid-180 white-space  text-right">
                                                             <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                             <b>
                                                                 {{labour_total_amount}}
@@ -109,7 +107,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index,job_order_part) in part_details">
+                                                    <tr class="ptb-12" ng-repeat="(index,job_order_part) in job_order.job_order_parts">
                                                         <td>
                                                             {{job_order_part.part.code ? job_order_part.part.code : ''}} | {{job_order_part.part.name ? job_order_part.part.name : ''}}
                                                         </td>
@@ -117,25 +115,23 @@
                                                             {{job_order_part.split_order_type.name ? job_order_part.split_order_type.name : ''}}
                                                         </td>
                                                         <td class="text-right">
-                                                            {{job_order_part.rate}}
+                                                            {{job_order_part.rate | number:2}}
                                                         </td>
                                                         <td class="text-right">
                                                             {{job_order_part.qty}}
                                                         </td>
-                                                        <td class="wid-180 white-space-unset text-right">
-                                                            {{job_order_part.amount}}
+                                                        <td class="wid-180 white-space text-right">
+                                                            {{job_order_part.amount | number:2}}
                                                             <input type="hidden" class="job_order_parts" name="part_amount[{{index}}][amount]" value="{{job_order_part.amount}}">
                                                         </td>
                                                     </tr>
                                                     <tr class="ptb-9">
-                                                        <td>
-                                                        </td>
-                                                        <td colspan="3" class="text-right">
+                                                        <td colspan="4" class="text-right">
                                                             <b>
                                                                 Total Parts
                                                             </b>
                                                         </td>
-                                                        <td class="wid-180 white-space-unset text-right">
+                                                        <td class="wid-180 white-space text-right">
                                                             <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                             <b>
                                                                 {{parts_total_amount}}
@@ -186,40 +182,3 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<!-- Modal -->
-<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xs" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title">Search Vehicle</h5>
-            </div><!-- Modal Header -->
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Registration Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Customer Code <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>VIN Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div><!-- Modal Body -->
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
-<!-- Modal -->

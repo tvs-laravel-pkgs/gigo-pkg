@@ -141,7 +141,7 @@ class JobCardController extends Controller {
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
 				if (Entrust::can('job-cards')) {
-					$output .= '<a href="#!/job-card/schedule/' . $job_card->job_card_id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
+					$output .= '<a href="#!/job-card/bay-view/' . $job_card->job_card_id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
 					if (!$job_card->bay_id) {
 						$output .= '<a href="#!/job-card/assign-bay/' . $job_card->job_card_id . '"  class="btn btn-secondary-dark btn-sm">Assign Bay</a>';
 					}

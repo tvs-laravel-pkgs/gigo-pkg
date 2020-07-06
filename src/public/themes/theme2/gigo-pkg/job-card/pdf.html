@@ -13,8 +13,8 @@
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>Expert Diagnosis Report</b></h1>
-                    <p class="subtitle">Job Card / Expert Diagnosis Report</p>
+                    <h1 class="title"><b>Vehicle Inspection Report</b></h1>
+                    <p class="subtitle">Job Card / Vehicle Inspection Report</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -24,44 +24,34 @@
         <div class="page-tab-form pb-70">
             <jobcard-header></jobcard-header>
             <div class="tab-form-wrap type-2 side-tab-open">
-                <jobcard-tabs ng-init="active_tab = 'expert-diagnosis'"></jobcard-tabs>
+                <jobcard-tabs ng-init="active_tab = 'pdf'"></jobcard-tabs>
                 <div class="tab-form-body side-tab-open">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
-                        <div class="tab-pane fade in active" id="expert_diagnosis_details" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade in active" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 class="color-primary mb-10"><b>Expert Diagnosis Report</b></h5>
-                                        <div class="view-details mb-no">
-                                            <ul class="view-row pb-none">
-                                                <li class="view-col-4">
-                                                    <span class="view-col-label">
-                                                        Done by
-                                                    </span>
-                                                    <span class="view-data-list-value">
-                                                        <b>
-                                                            {{job_card.job_order.expert_diagnosis_report_by.name}}
-                                                        </b></span>
-                                                </li>
-                                                <li class="view-col-8">
-                                                    <span class="view-col-label">
-                                                        Expert Diagnosis Outcome
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        <b>
-                                                            {{job_card.job_order.expert_diagnosis_report}}
-                                                        </b>
-                                                    </span>
+                                        <div class="checklist-form-wrap">
+                                            <ul class="checklist-form-ul">
+                                                <li>
+                                                    <div class="checklist-item-wrap pad-big">
+                                                        <div class="checklist-item-value">
+                                                            Covering Letter
+                                                        </div>
+                                                        <div class="checklist-item-value-sm">
+                                                            <a class="btn btn-secondary-dark btn-square btn-block">PDF</a>
+                                                        </div>
+                                                    </div>
                                                 </li>
                                             </ul>
-                                        </div><!-- View Data -->
+                                        </div>
+                                        <div class="mb-10"></div><!-- Spacing -->
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <a href=".#!/job-card/vehicle-inspection/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                <a href=".#!/job-card/road-test-observation/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                <a href=".#!/job-card/gatein-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->

@@ -120,8 +120,9 @@
                         </span>
                     </div><!-- Title Wrap -->
                     <ul class="assign-labour-list">
-                        <li class="assign-labour-list-item check_uncheck_{{employee.id}} " ng-repeat="(key,employee) in employee_details" ng-click="selectedEmployee(employee.id,key)" ng-class="{'my-disable':!employee.user_id}">
-                            <div class="left-wrap" ng-class="{'my-disable':!employee.user_id}">
+                        <li class="assign-labour-list-item check_uncheck_{{employee.id}} " ng-repeat="(key,employee) in employee_details" ng-click="selectedEmployee(employee.id,key)">
+                            <div class="left-wrap">
+                                <!-- ng-class="{'my-disable':!employee.user_id}" -->
                                 <h4 class="title">{{employee.user_name}}</h4>
                                 <p class="info {{employee.user_id ? '' : 'color-red'}}">{{employee.user_id ? 'Present' : 'Absent'}} | {{employee.outlet_code}}</p>
                             </div>

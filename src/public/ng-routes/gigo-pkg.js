@@ -836,6 +836,11 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Gate In Details',
     }).
 
+    when('/job-card/pdf/:job_card_id', {
+        template: '<job-card-pdf></job-card-pdf>',
+        title: 'Job Card PDF',
+    }).
+
     when('/job-card/material-gatepass/:job_card_id', {
         template: '<job-card-material-gatepass-form></job-card-material-gatepass-form>',
         title: 'Job Card Material Gate Pass',

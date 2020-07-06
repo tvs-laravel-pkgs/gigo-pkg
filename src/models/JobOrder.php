@@ -117,6 +117,7 @@ class JobOrder extends BaseModel {
 			'vehicle',
 			'vehicle.model',
 			'customer',
+			'jobCard',
 			'serviceType',
 			'status',
 		];

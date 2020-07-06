@@ -23,6 +23,13 @@ class WjorPart extends BaseModel {
 
 	// Relationships --------------------------------------------------------------
 
+	public function taxes() {
+		return $this->belongsToMany('App\Tax', 'wjor_part_tax')->withPivot([
+			'percentage',
+			'amount',
+		]);
+	}
+
 	public function wjor() {
 		return $this->belongsTo('App\WarrantyJobOrderRequest');
 	}
