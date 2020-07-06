@@ -259,6 +259,12 @@ class JobOrder extends BaseModel {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 253);
 	}
 
+	public function serviceAdviser() {
+		return $this->belongsTo('App\Employee', 'service_advisor_id')
+		// ->where('company_id', Auth::user()->company_id)
+		;
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {

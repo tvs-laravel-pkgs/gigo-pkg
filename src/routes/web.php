@@ -277,6 +277,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 
 	//Job Card PDF
 	Route::get('/job-card/get-covering-letter-pdf/{id}', 'PDFController@getJobCardCoveringLetterPDF')->name('getJobCardCoveringLetterPDF');
+	Route::get('/job-card/get-gate-pass-pdf/{jobcard_id}', 'PDFController@getjobCardGatePassPDF')->name('getjobCardGatePassPDF');
 
 	//Repair Order Types
 	Route::get('/repair-order-type/get-list', 'RepairOrderTypeController@getRepairOrderTypeList')->name('getRepairOrderTypeList');
