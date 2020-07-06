@@ -169,7 +169,7 @@ app.factory('WarrantyJobOrderRequestSvc', function($q, RequestSvc, $rootScope, $
             return RequestSvc.get('/api/' + model + '/list', params);
         },
         outlets: function(params) { // outlets
-            return RequestSvc.post('/api/' + model + '/outlets',params);
+            return RequestSvc.post('/api/' + model + '/outlets', params);
         },
 
     };
@@ -404,3 +404,57 @@ app.factory('JobOrderSvc', function(RequestSvc) {
     };
 
 });
+
+app.factory('VehicleServiceScheduleSvc', function(RequestSvc) {
+
+    var model = 'vehicle-service-schedule';
+
+    function index(params) {
+        return RequestSvc.get('/api/' + model + '/index', params);
+    }
+
+    function read(id) {
+        return RequestSvc.get('/api/' + model + '/read/' + id);
+    }
+
+    function save(params) {
+        return RequestSvc.post('/api/' + model + '/save', params);
+    }
+
+    function remove(params) {
+        return RequestSvc.post('api/' + model + '/delete', params);
+    }
+
+    function options(params) {
+        return RequestSvc.get('/api/' + model + '/options', params);
+    }
+
+    function list(params) {
+        return RequestSvc.get('/api/' + model + '/list', params);
+    }
+
+    return {
+        index: index,
+        read: read,
+        save: save,
+        remove: remove,
+        options: options,
+        list: list,
+    };
+
+});
+/*
+
+app.factory('VehicleServiceScheduleServiceTypeSvc', function(RequestSvc) {
+
+    var model = 'vehicle-service-schedule-service-type';
+
+    function read(id) {
+        return RequestSvc.get('/api/' + model + '/read/' + id);
+    }
+
+    return {
+        read: read,
+    };
+
+});*/
