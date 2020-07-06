@@ -246,6 +246,7 @@ class PDFController extends Controller {
 			$this->data['total_parts_tax'] = $total_parts_tax;
 			$this->data['parts_total_amount'] = number_format($parts_amount, 2);
 			$this->data['labour_total_amount'] = number_format($labour_amount, 2);
+			$this->data['round_total_amount'] = round($total_amount);
 			$this->data['total_amount'] = number_format($total_amount, 2);
 
 			
