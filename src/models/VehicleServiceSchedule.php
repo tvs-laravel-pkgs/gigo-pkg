@@ -48,10 +48,23 @@ class VehicleServiceSchedule extends BaseModel {
 		],
 	];
 
+	public static function relationships($action = '') {
+		$relationships = [
+			'vehicle_service_schedule_service_types',
+			'vehicle_service_schedule_service_types.serviceType',
+			'vehicle_service_schedule_service_types.tolerance_km',
+			'vehicle_service_schedule_service_types.tolerance_period',
+		];
+
+		return $relationships;
+	}
 	// Getter & Setters --------------------------------------------------------------
 
 	// Relations --------------------------------------------------------------
 
+	public function vehicle_service_schedule_service_types() {
+		return $this->hasMany('App\VehicleServiceScheduleServiceType');
+	}
 	public function company() {
 		return $this->belongsTo('App\Company');
 	}

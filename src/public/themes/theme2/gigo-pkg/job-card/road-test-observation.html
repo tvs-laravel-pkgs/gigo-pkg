@@ -13,8 +13,8 @@
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>Road Test Observations</b></h1>
-                    <p class="subtitle">Job Card / Road Test Observations</p>
+                    <h1 class="title"><b>Road Test</b></h1>
+                    <p class="subtitle">Job Card / Road Test</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -29,111 +29,68 @@
                     <div class="tab-content">
                         <!-- TAB PANEL -->
                         <div class="tab-pane fade in active" id="road_test_details" data-animation="fadeInUp" data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>Road Test Observations</b></h5>
-                                            <div class="view-details mb-no">
-                                                <ul class="view-row pb-none">
-                                                    <li class="view-col-3">
-                                                        <span class="view-col-label">
-                                                            Road Test
-                                                        </span>
-                                                        <span class="view-data-list-value">
-                                                            <b>
-                                                                {{job_card.job_order.is_road_test_required ==1 ? "Registered" : "UnRegistered"}}
-                                                            </b></span>
-                                                    </li>
-                                                    <li class="view-col-3" ng-show="job_card.job_order.is_road_test_required==1">
-                                                        <span class="view-col-label">
-                                                            Road Test by
-                                                        </span>
-                                                        <span class="view-col-value">
-                                                            <b>
-                                                                {{job_card.job_order.road_test_done_by.name}}
-                                                            </b>
-                                                        </span>
-                                                    </li>
-                                                    <li class="view-col-3" ng-show="job_card.job_order.is_road_test_required==1 && job_card.job_order.road_test_done_by.name=='Employee'">
-                                                        <span class="view-col-label">
-                                                            Driver Name
-                                                        </span>
-                                                        <span class="view-col-value">
-                                                            <b>
-                                                                {{job_card.job_order.road_test_prefered_by.name}}
-                                                            </b>
-                                                        </span>
-                                                    </li>
-                                                    <li class="view-col-3">
-                                                        <span class="view-col-label"></span>
-                                                        <span class="view-col-value"><b></b></span>
-                                                    </li>
-                                                    <li class="view-col-12" ng-show="job_card.job_order.is_road_test_required==1">
-                                                        <span class="view-col-label">
-                                                            Observations
-                                                        </span>
-                                                        <span class="view-col-value">
-                                                            <b>
-                                                                {{job_card.job_order.road_test_report}}
-                                                            </b>
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/road-test-detail/form/{{job_card.job_order.id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_card.job_order.gate_log.status_id == 8120 || job_card.job_order.gate_log.status_id == 8121 ">Edit</a>
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a href=".#!/job-card/expert-diagnosis/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a href=".#!/job-card/capture-voc/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                </div>
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Road Test</b></h5>
+                                        <div class="view-details mb-no">
+                                            <ul class="view-row pb-none">
+                                                <li class="view-col-4">
+                                                    <span class="view-col-label">
+                                                        Road Test
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_card.job_order.is_road_test_required ==1 ? "Registered" : "UnRegistered"}}
+                                                        </b></span>
+                                                </li>
+                                                <li class="view-col-4" ng-show="job_card.job_order.is_road_test_required==1">
+                                                    <span class="view-col-label">
+                                                        Road Test by
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_card.job_order.road_test_done_by.name}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-4" ng-show="job_card.job_order.is_road_test_required==1 && job_card.job_order.road_test_done_by.name=='Employee'">
+                                                    <span class="view-col-label">
+                                                        Driver Name
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_card.job_order.road_test_prefered_by.name}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-12" ng-show="job_card.job_order.is_road_test_required==1">
+                                                    <span class="view-col-label">
+                                                        Observations
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_card.job_order.road_test_report}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div><!-- View Data -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a href=".#!/job-card/expert-diagnosis/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a href=".#!/job-card/capture-voc/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
                                             </div>
-                                        </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
-
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
             </div><!-- Tab Form Wrap -->
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<!-- Modal -->
-<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xs" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title">Search Vehicle</h5>
-            </div><!-- Modal Header -->
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Registration Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Customer Code <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>VIN Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div><!-- Modal Body -->
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
-<!-- Modal -->

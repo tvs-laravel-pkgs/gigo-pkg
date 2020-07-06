@@ -225,6 +225,19 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Edit Vehicle Secoundary Application',
     }).
 
+    //Vehicle Service Schedule
+    when('/gigo-pkg/vehicle-service-schedule/list', {
+        template: '<vehicle-service-schedule-list></vehicle-service-schedule-list>',
+        title: 'Vehicle Service Schedules',
+    }).
+    when('/gigo-pkg/vehicle-service-schedule/add', {
+        template: '<vehicle-service-schedule-form></vehicle-service-schedule-form>',
+        title: 'Add Vehicle Service Schedule',
+    }).
+    when('/gigo-pkg/vehicle-service-schedule/edit/:id', {
+        template: '<vehicle-service-schedule-form></vehicle-service-schedule-form>',
+        title: 'Edit Vehicle Service Schedule',
+    }).
 
     //Kanban App
     when('/kanban-app', {

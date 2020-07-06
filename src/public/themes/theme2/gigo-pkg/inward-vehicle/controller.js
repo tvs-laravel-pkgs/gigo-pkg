@@ -3500,9 +3500,9 @@ app.component('inwardVehicleRoadTestDetailForm', {
                     'road_test_performed_by_id': {
                         required: true,
                     },
-                    'road_test_report': {
-                        required: true,
-                    },
+                    // 'road_test_report': {
+                    //     required: true,
+                    // },
                 },
                 errorPlacement: function(error, element) {
                     if (element.attr("name") == "is_road_test_required") {
@@ -3511,10 +3511,12 @@ app.component('inwardVehicleRoadTestDetailForm', {
                     } else if (element.attr("name") == "road_test_done_by_id") {
                         error.appendTo('#errorRoadTestDone');
                         return;
-                    } else if (element.attr("name") == "road_test_report") {
-                        error.appendTo('#errorRoadTestObservation');
-                        return;
-                    } else {
+                    }
+                    // else if (element.attr("name") == "road_test_report") {
+                    //     error.appendTo('#errorRoadTestObservation');
+                    //     return;
+                    // } 
+                    else {
                         error.insertAfter(element);
                     }
                 },

@@ -89,7 +89,7 @@
                                     </li>
                                     <li>
                                         <a data-target="#road_test_details" data-toggle="tab" aria-expanded="true" class="filter">
-                                            Road Test Observations
+                                            Road Test
                                         </a>
                                     </li>
                                     <li ng-if="job_order.is_expert_diagnosis_required">
@@ -621,9 +621,9 @@
                                                             </div><!-- View Data -->
                                                             <div class="mb-15"></div><!-- Spacing -->
                                                             <div class="multi-docs">
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}" alt="Driver License" ng-if="job_order.driver_license_attachment">
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment.name}}" alt="Insurance" />
-                                                                <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}" alt="RC Book" />
+                                                                <img ng-if="job_order.driver_license_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}" alt="Driver License" ng-if="job_order.driver_license_attachment">
+                                                                <img ng-if="job_order.insurance_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment.name}}" alt="Insurance" />
+                                                                <img ng-if="job_order.rc_book_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}" alt="RC Book" />
                                                             </div>
                                                             <div class="mb-10"></div><!-- Spacing -->
                                                             <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
@@ -740,7 +740,7 @@
                                 <div class="tab-pane-wrap">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>Read Test Observations</b></h5>
+                                            <h5 class="color-primary mb-10"><b>Read Test</b></h5>
                                             <div class="view-details mb-no">
                                                 <ul class="view-row pb-none">
                                                     <li class="view-col-4">
@@ -1066,7 +1066,7 @@
                                                                         {{job_order.is_campaign_carried == 1 ? "Yes" : "No"}}
                                                                     </b></span>
                                                             </li>
-                                                            <li class="view-col-4" ng-show="!job_order.is_campaign_carried">
+                                                            <li class="view-col-8" ng-show="!job_order.is_campaign_carried">
                                                                 <span class="view-col-label">
                                                                     Remarks
                                                                 </span>
@@ -1144,7 +1144,7 @@
                                                                 {{labour_detail.qty}}
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="labour_detail.is_free_service == 1">
-                                                                <p class="text-danger">{{labour_detail.amount | number:2}}</p>
+                                                                <p class="text-danger">0.00</p>
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="labour_detail.is_free_service != 1">
                                                                 {{labour_detail.amount | number:2}}
@@ -1203,7 +1203,7 @@
                                                                 {{part_detail.qty}}
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="part_detail.is_free_service == 1">
-                                                                <p class="text-danger">{{part_detail.amount | number:2}}</p>
+                                                                <p class="text-danger">0.00</p>
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="part_detail.is_free_service != 1">
                                                                 {{part_detail.amount | number:2}}

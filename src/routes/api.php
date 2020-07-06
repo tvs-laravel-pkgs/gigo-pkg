@@ -94,6 +94,21 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 			Route::get('options', $controller . '@options');
 		});
 
+		Route::group(['prefix' => 'vehicle-service-schedule'], function () {
+			$controller = 'VehicleServiceScheduleController';
+			Route::get('index', $controller . '@index');
+			Route::get('read/{id}', $controller . '@read');
+			Route::post('save', $controller . '@save');
+			Route::post('remove', $controller . '@remove');
+			Route::get('options', $controller . '@options');
+			Route::get('list', $controller . '@list');
+		});
+
+		Route::group(['prefix' => 'vehicle-service-schedule-service-type'], function () {
+			$controller = 'VehicleServiceScheduleServiceTypeController';
+			Route::get('read/{id}', $controller . '@read');
+		});
+
 		Route::group(['prefix' => 'part-supplier'], function () {
 			$controller = 'PartSupplierController';
 			Route::get('index', $controller . '@index');

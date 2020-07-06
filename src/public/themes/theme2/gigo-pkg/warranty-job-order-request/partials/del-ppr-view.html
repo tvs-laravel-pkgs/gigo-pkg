@@ -7,7 +7,7 @@
                 </b>
             </h5>
             <ul class="view-row mb-no">
-                <li class="view-col-3">
+                <li class="view-col-3" ng-if="form_type != 'manual'">
                     <span class="view-col-label">
                         Job order
                     </span>
@@ -15,6 +15,14 @@
                         <b>
                             {{warranty_job_order_request.job_order.number}}
                         </b>
+                    </span>
+                </li>
+                <li class="view-col-3">
+                    <span class="view-col-label">
+                        Job card #
+                    </span>
+                    <span class="view-col-value">
+                        {{warranty_job_order_request.job_order.job_card.number}}
                     </span>
                 </li>
                 <li class="view-col-3">
@@ -57,16 +65,6 @@
                     </span>
                     <span class="view-col-value">
                         {{warranty_job_order_request.has_amc ? 'Active' : 'Inactive'}}
-                    </span>
-                </li>
-                <li class="view-col-3" ng-if="false">
-                    <span class="view-col-label">
-                        Failure date
-                    </span>
-                    <span class="view-col-value">
-                        <b>
-                            23 Sep 2019
-                        </b>
                     </span>
                 </li>
             </ul>
@@ -225,8 +223,8 @@
                                         Customer name and address
                                     </span>
                                     <span class="view-col-value">
-                                        {{job_order.customer.name}}
-                                        {{job_order.customer.address.formatted_address}}
+                                        {{warranty_job_order_request.job_order.customer.name}}
+                                        {{warranty_job_order_request.job_order.customer.address}}
                                     </span>
                                 </li>
                             </ul>

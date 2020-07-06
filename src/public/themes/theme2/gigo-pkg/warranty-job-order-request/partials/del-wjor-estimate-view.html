@@ -1,0 +1,104 @@
+<div class="tab-pane-wrap">
+    <div class="row">
+        <div class="col-md-12">
+            <h5 class="color-primary mb-10">
+                <b>
+                    Repair Estimate
+                </b>
+            </h5>
+            <hr class="hr-15"><!-- Separater -->
+            <h6>
+                Labour Details
+            </h6>
+            <div class="table-responsive">
+                <table class="table table-dark-grey">
+                    <thead>
+                        <tr>
+                            <th>
+                                ROT Code
+                            </th>
+                            <th>
+                                ROT Description
+                            </th>
+                            <th class="text-right">
+                                Hours
+                            </th>
+                            <th class="text-right">
+                                Net Amount
+                            </th>
+                            <!--                             <th ng-repeat="(tax_key, tax) in warranty_job_order_request.repair_orders[0].tax_code.taxes" ng-if="warranty_job_order_request.repair_orders[0].tax_code">
+                                {{tax.name}} ({{tax.pivot.percentage}}%)
+                            </th>
+ -->
+                            <th class="text-right">
+                                Total Tax
+                            </th>
+                            <th class="wid-100 white-space-unset text-right">
+                                Amount
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="ptb-12" ng-repeat="(index,wjor_repair_order) in warranty_job_order_request.wjor_repair_orders">
+                            <td>
+                                {{wjor_repair_order.repair_order.code}}
+                            </td>
+                            <td>
+                                {{wjor_repair_order.repair_order.name}}
+                            </td>
+                            <td class="text-right">
+                                {{wjor_repair_order.repair_order.hours | number:2}}
+                            </td>
+                            <td class="text-right">
+                                {{wjor_repair_order.net_amount| currency}}
+                            </td>
+                            <!--                             <td ng-repeat="(tax_key, tax) in job_order_labour.tax_code.taxes" ng-if="job_order_labour.tax_code">
+                                {{(job_order_labour.net_amount_without_tax*tax.pivot.percentage)/100 | currency}}
+                            </td>
+ -->
+                            <td class="text-right">
+                                {{wjor_repair_order.tax_total | currency}}
+                            </td>
+                            <td class="white-space-unset text-right">
+                                {{wjor_repair_order.total_amount | currency}}
+                            </td>
+                        </tr>
+                        <tr class="ptb-9">
+                            <td>
+                            </td>
+                            <td class="text-right">
+                            </td>
+                            <td colspan="7" class="wid-180 white-space-unset  text-right">
+                                <b>
+                                    Total Labour :
+                                    {{warranty_job_order_request.repair_order_total | currency}}
+                                </b>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div><!-- Table Responsive -->
+            <div class="mb-15"></div><!-- Spacing -->
+            <!-- Table Responsive -->
+            <div class="mb-20"></div><!-- Spacing -->
+            <div class="table-transparent-wrap">
+                <div class="table-responsive">
+                    <table class="table-transparent">
+                        <tbody>
+                            <tr>
+                                <td class="text-right">
+                                </td>
+                                <td class="wid-180 text-right">
+                                    <b>
+                                        Total Labour & Parts :
+                                        {{warranty_job_order_request.estimate_total | currency}}
+                                    </b>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div><!-- Table Transparent Wrap -->
+        </div><!-- Column -->
+    </div><!-- Row -->
+</div><!-- Tab Pane Wrap -->

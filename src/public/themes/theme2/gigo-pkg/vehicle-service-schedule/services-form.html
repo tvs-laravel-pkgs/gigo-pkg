@@ -1,0 +1,120 @@
+<div class="tab-pane-wrap">
+    <div class="row">
+        <div class="col-md-12">
+            <h5 class="color-primary mb-10">
+                <b>
+                    Services
+                </b>
+            </h5>
+            <hr class="hr-15"><!-- Separater -->
+            <div class="table-responsive">
+                <table class="table table-dark-grey">
+                    <thead>
+                        <tr>
+                            <th class="wid-100">
+                                Actions
+                            </th>
+                            <th>
+                                Service
+                            </th>
+                            <th>
+                                KM
+                            </th>
+                            <th>
+                                KM Tolerance
+                            </th>
+                            <th>
+                                KM Tolerance Type
+                            </th>
+                            <th>
+                                Period
+                            </th>
+                            <th>
+                                Period Tolerance
+                            </th>
+                            <th>
+                                Period Tolerance Type
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="ptb-12" ng-repeat="(index,sch_serv_type) in vehicle_service_schedule.vehicle_service_schedule_service_types track by index">
+                            <input type="hidden" name="veh_serv_sch_service_types[{{index}}][service_type_id]" value="{{sch_serv_type.service_type_id}}">
+                            <input type="hidden" name="veh_serv_sch_service_types[{{index}}][km_reading]" value="{{sch_serv_type.km_reading}}">
+                            <input type="hidden" name="veh_serv_sch_service_types[{{index}}][km_tolerance]" value="{{sch_serv_type.km_tolerance}}">
+                            <input type="hidden" name="veh_serv_sch_service_types[{{index}}][km_tolerance_type_id]" value="{{sch_serv_type.km_tolerance_type_id}}">
+                            <input type="hidden" name="veh_serv_sch_service_types[{{index}}][period]" value="{{sch_serv_type.period}}">
+                            <input type="hidden" name="veh_serv_sch_service_types[{{index}}][period_tolerance]" value="{{sch_serv_type.period_tolerance}}">
+                            <input type="hidden" name="veh_serv_sch_service_types[{{index}}][period_tolerance_type_id]" value="{{sch_serv_type.period_tolerance_type_id}}">
+                            <input type="hidden" name="veh_serv_sch_service_types[{{index}}][is_free]" value="{{sch_serv_type.is_free}}">
+                            <td class="wid-100">
+                                <button type="button" ng-click="showServiceForm(sch_serv_type,index)" class="btn img-btn btn-delete">
+                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                </button>
+                                <button type="button" class="btn img-btn btn-delete" ng-click="removeService(index)">
+                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                </button>
+                            </td>
+                            <td>
+                                {{sch_serv_type.service_type.name}}
+                            </td>
+                            <td>
+                                {{sch_serv_type.km_reading}}
+                            </td>
+                            <td>
+                                {{sch_serv_type.km_tolerance}}
+                            </td>
+                            <td>
+                                {{sch_serv_type.tolerance_km.name}}
+                            </td>
+                            <td>
+                                {{sch_serv_type.period}}
+                            </td>
+                            <td>
+                                {{sch_serv_type.period_tolerance}}
+                            </td>
+                            <td>
+                                {{sch_serv_type.tolerance_period.name}}
+                            </td>
+                        </tr>
+                        <tr class="ptb-9">
+                            <td>
+                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showServiceForm()">
+                                    Add Service
+                                </button>
+                            </td>
+                            <td class="text-right">
+                            </td>
+                            <td colspan="8" class="wid-180 white-space-unset text-right">
+                                <!-- <b>
+                                    Total Parts :
+                                    {{warranty_job_order_request.part_total | currency}}
+                                </b> -->
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div><!-- Table Responsive -->
+            <div class="mb-20"></div><!-- Spacing -->
+            <!-- <div class="table-transparent-wrap">
+                <div class="table-responsive">
+                    <table class="table-transparent">
+                        <tbody>
+                            <tr>
+                                <td class="text-right">
+                                </td>
+                                <td class="wid-180 text-right">
+                                    <b>
+                                        Total Labour & Parts :
+                                        {{warranty_job_order_request.estimate_total | currency}}
+                                    </b>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div> -->
+            <!-- Table Transparent Wrap -->
+        </div><!-- Column -->
+    </div><!-- Row -->
+</div><!-- Tab Pane Wrap -->

@@ -23,6 +23,13 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/vehicle-secoundary-application/delete', 'VehicleSecoundaryApplicationController@deleteVehicleSecoundaryApp')->name('deleteVehicleSecoundaryApp');
 	Route::get('/vehicle-secoundary-application/get-filter-data', 'VehicleSecoundaryApplicationController@getVehicleSecoundaryAppFilterData')->name('getVehicleSecoundaryAppFilterData');
 
+	//Vehicle Service Schedule
+	Route::get('/vehicle-service-schedule/get-list', 'VehicleServiceScheduleController@getVehicleServiceScheduleList')->name('getVehicleServiceScheduleList');
+	Route::get('/vehicle-service-schedule/get-form-data', 'VehicleServiceScheduleController@getVehicleServiceScheduleFormData')->name('getVehicleServiceScheduleFormData');
+	Route::post('/vehicle-service-schedule/save', 'VehicleServiceScheduleController@saveVehicleServiceSchedule')->name('saveVehicleServiceSchedule');
+	Route::get('/vehicle-service-schedule/delete', 'VehicleServiceScheduleController@deleteVehicleServiceSchedule')->name('deleteVehicleServiceSchedule');
+	Route::get('/vehicle-service-schedule/get-filter-data', 'VehicleServiceScheduleController@getVehicleServiceScheduleFilterData')->name('getVehicleServiceScheduleFilterData');
+
 	//Fault
 	Route::get('/fault/get-list', 'FaultController@getFaultList')->name('getFaultList');
 	Route::get('/fault/get-form-data', 'FaultController@getFaultFormData')->name('getFaultFormData');

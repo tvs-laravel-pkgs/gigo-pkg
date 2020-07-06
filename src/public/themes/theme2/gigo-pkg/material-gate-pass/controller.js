@@ -174,7 +174,7 @@ app.component('materialGatePassCardList', {
                             $(this).find('[autofocus]').focus();
                         });
                         $('#gate_pass_id').val(response.gate_pass.id);
-                        $('.customer_mobile_no').html(response.customer_detail.mobile_no);
+                        $('.customer_mobile_no').html(response.user.contact_number);
 
                     } else {
                         $('#gate_in_confirm_notification').modal('show');
@@ -455,8 +455,7 @@ app.component('materialGatePassTableList', {
                             $(this).find('[autofocus]').focus();
                         });
                         $('#gate_pass_id').val(response.gate_pass.id);
-                        $('.customer_mobile_no').html(response.customer_detail.mobile_no);
-
+                        $('.customer_mobile_no').html(response.user.contact_number);
                     } else {
                         $('#gate_in_confirm_notification').modal('show');
                     }
@@ -655,7 +654,7 @@ app.component('materialGatePassView', {
                             });
                             $('#gate_out_remarks').val($('#remarks').val());
                             $('#gate_pass_id').val(res.gate_pass.id);
-                            $('.customer_mobile_no').html(res.customer_detail.mobile_no);
+                            $('.customer_mobile_no').html(res.user.contact_number);
                         } else {
                             $('#gate_in_confirm_notification').modal('show');
                             $('.submit').button('reset');

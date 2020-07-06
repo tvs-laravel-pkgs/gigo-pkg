@@ -1598,8 +1598,6 @@ app.component('jobCardPayableLabourPartsForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
-                    $scope.part_details = res.part_details;
-                    $scope.labour_details = res.labour_details;
                     $scope.total_amount = res.total_amount;
                     $scope.parts_total_amount = res.parts_total_amount;
                     $scope.labour_total_amount = res.labour_total_amount;

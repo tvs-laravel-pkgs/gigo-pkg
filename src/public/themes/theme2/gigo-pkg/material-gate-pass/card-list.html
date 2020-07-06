@@ -96,8 +96,8 @@
                                             </div>
                                             <div class="card-box-footer-right">
                                                 <a href="#!/material-gate-pass/view/{{gate_pass.id}}" class="btn btn-square btn-md btn-red">View</a>
-                                                <button class="btn btn-square btn-md btn-secondary-dark confirm_gate_out_{{gate_pass.id}}" ng-if="gate_pass.status_id==8300" ng-click="materialGateInOut(gate_pass.id, gate_pass.status_id)">Gate Out</button>
-                                                <button class="btn btn-square btn-md btn-secondary-dark confirm_gate_in_{{gate_pass.id}}" ng-if="gate_pass.status_id==8301" ng-click="materialGateInOut(gate_pass.id, gate_pass.status_id)">Gate In</button>
+                                                <!-- <button class="btn btn-square btn-md btn-secondary-dark confirm_gate_out_{{gate_pass.id}}" ng-if="gate_pass.status_id==8300" ng-click="materialGateInOut(gate_pass.id, gate_pass.status_id)">Gate Out</button>
+                                                <button class="btn btn-square btn-md btn-secondary-dark confirm_gate_in_{{gate_pass.id}}" ng-if="gate_pass.status_id==8301" ng-click="materialGateInOut(gate_pass.id, gate_pass.status_id)">Gate In</button> -->
                                             </div>
                                         </div><!-- Card Box Footer -->
                                     </div><!-- Card Box -->
@@ -240,7 +240,7 @@
                 </div><!-- Modal Header -->
                 <div class="modal-body">
                     <h6 class="title">ENTER OTP</h6>
-                    <p class="info">Received in Customer Mobile +91 <span class="customer_mobile_no"></span></p>
+                    <p class="info">Received in Floor Supervisor Mobile +91 <span class="customer_mobile_no"></span></p>
                     <div class="form-group">
                         <input type="text" autofocus name="otp_no" id="otp_no" class="form-control text-center" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter OTP" autocomplete="off" />
                         <input type="hidden" name="gate_pass_id" id="gate_pass_id" value="" />

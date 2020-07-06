@@ -1,6 +1,6 @@
 app.component('warrantyJobOrderRequestView', {
     templateUrl: warrantyJobOrderRequestView,
-    controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc) {
+    controller: function($http, $location, $ngBootbox, HelperService, OutletSvc, CustomerSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc) {
         $rootScope.loading = true;
         var self = this;
 
@@ -11,6 +11,9 @@ app.component('warrantyJobOrderRequestView', {
 
         $scope.user = HelperService.getLoggedUser();
 
+        $scope.form_type = 'manual';
+
+
         $scope.init = function() {
             $rootScope.loading = true;
 
@@ -18,36 +21,55 @@ app.component('warrantyJobOrderRequestView', {
                 warranty_job_order_request_read: WarrantyJobOrderRequestSvc.read($routeParams.request_id),
             };
 
+            $scope.page = 'view';
+
             $q.all(promises)
                 .then(function(responses) {
                     $scope.warranty_job_order_request = responses.warranty_job_order_request_read.data.warranty_job_order_request;
-                    $scope.calculateLabourTotal();
-                    $scope.calculatePartTotal();
-                    $("#file-1").fileinput({
-                        theme: 'fas',
-                        overwriteInitial: true,
-                        // minFileCount: 1,
-                        maxFileSize: 5000,
-                        // required: true,
-                        showUpload: false,
-                        browseOnZoneClick: true,
-                        removeFromPreviewOnError: true,
-                        initialPreviewShowDelete: true,
-                        deleteUrl: '',
-                        // showRemove:true,
-                        // maxFilesNum: 10,
-                        // initialPreview: [
-                        //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
-                        //     "<img src='/images/jellyfish.jpg' class='file-preview-image' alt='Jelly Fish' title='Jelly Fish'>",
-                        // ],
-                        // allowedFileTypes: ['image'],
-                        slugCallback: function(filename) {
-                            return filename.replace('(', '_').replace(']', '_');
-                        }
+                    $scope.service_types = [];
+                    angular.forEach($scope.warranty_job_order_request.service_types, function(service_type) {
+                        $scope.service_types.push(service_type.name);
                     });
 
-                    $rootScope.loading = false;
+                    let promises2 = {
+                        customer_service: CustomerSvc.read($scope.warranty_job_order_request.job_order.customer_id),
+                        outlet_service: OutletSvc.getBusiness({ outletId: $scope.warranty_job_order_request.job_order.outlet.id, businessName: 'ALSERV' }),
+                    };
+
+                    $q.all(promises2)
+                        .then(function(responses) {
+
+                            $scope.warranty_job_order_request.job_order.customer = responses.customer_service.data.customer;
+                            $scope.warranty_job_order_request.job_order.outlet.business = responses.outlet_service.data.business;
+
+                            $scope.calculateTotals();
+                            $("#file-1").fileinput({
+                                theme: 'fas',
+                                overwriteInitial: true,
+                                // minFileCount: 1,
+                                maxFileSize: 5000,
+                                // required: true,
+                                showUpload: false,
+                                browseOnZoneClick: true,
+                                removeFromPreviewOnError: true,
+                                initialPreviewShowDelete: true,
+                                deleteUrl: '',
+                                // showRemove:true,
+                                // maxFilesNum: 10,
+                                // initialPreview: [
+                                //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
+                                //     "<img src='/images/jellyfish.jpg' class='file-preview-image' alt='Jelly Fish' title='Jelly Fish'>",
+                                // ],
+                                // allowedFileTypes: ['image'],
+                                slugCallback: function(filename) {
+                                    return filename.replace('(', '_').replace(']', '_');
+                                }
+                            });
+
+                            $rootScope.loading = false;
+                        });
                 });
+
         };
         $scope.init();
 
@@ -167,115 +189,13 @@ app.component('warrantyJobOrderRequestView', {
             }
         });
 
+        // Common -------------------------------------
 
-        $scope.calculateLabourTotal = function() {
-            $same_state = $scope.isSameState();
-            
-            var total = 0;
-            angular.forEach($scope.warranty_job_order_request.repair_orders, function(repair_order) {
-                // var amount = repair_order.amount;
-                var tax_total = 0;
-
-                amount = repair_order.pivot.net_amount;
-                tax_total = repair_order.pivot.tax_total;
-
-                if (repair_order.tax_code) {
-                    angular.forEach(repair_order.tax_code.taxes, function(tax) {
-                        if ($same_state==true) {
-                            if (tax.type_id != 1160) {
-                                tax.pivot.percentage = 0;
-                            }
-                        }else{
-                            if (tax.type_id == 1160) {
-                                tax.pivot.percentage = 0;
-                            }
-                        }
-                        // tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
-                    })
-                }
-                repair_order.net_amount = parseFloat(amount) + parseFloat(tax_total);
-
-                repair_order.net_amount_without_tax = parseFloat(amount);
-                repair_order.tax_amount = parseFloat(tax_total);
-                repair_order.net_amount_with_tax = parseFloat(repair_order.net_amount);
-
-                total += parseFloat(amount) + parseFloat(tax_total);
-            });
-
-            $scope.warranty_job_order_request.repair_order_total = total;
-            $scope.calculateEstimateTotal()
-            /*
-            var total = 0;
-            angular.forEach($scope.warranty_job_order_request.repair_orders, function(repair_order) {
-                total += parseFloat(repair_order.amount);
-            });
-            $scope.warranty_job_order_request.repair_order_total = total;
-            $scope.calculateEstimateTotal()*/
+        $scope.calculateTotals = function() {
+            $scope.warranty_job_order_request.repair_order_total = HelperService.calculateTotal($scope.warranty_job_order_request.wjor_repair_orders);
+            $scope.warranty_job_order_request.part_total = HelperService.calculateTotal($scope.warranty_job_order_request.wjor_parts);
+            $scope.warranty_job_order_request.estimate_total = $scope.warranty_job_order_request.repair_order_total + $scope.warranty_job_order_request.part_total;
         }
 
-        $scope.calculatePartTotal = function() {
-            $same_state = $scope.isSameState();
-
-            var total = 0;
-
-            angular.forEach($scope.warranty_job_order_request.parts, function(part) {
-                var amount = part.rate;
-                var tax_total = 0;
-                if (part.tax_code) {
-                    angular.forEach(part.tax_code.taxes, function(tax) {
-                        if ($same_state==true) {
-                            if (tax.type_id == 1160) {
-                                tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
-                            }else{
-                                tax.pivot.percentage = 0;
-                                tax_total += 0;
-                            }
-                        }else{
-                            if (tax.type_id != 1160) {
-                                tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
-                            }else{
-                                tax.pivot.percentage = 0;
-                                tax_total += 0;
-                            }
-                        }
-                        // tax_total += parseFloat(amount) * parseFloat(tax.pivot.percentage) / 100;
-                    })
-                }
-                part.net_amount = parseFloat(amount) + tax_total;
-                part.net_amount_without_tax = parseFloat(amount);
-                part.tax_amount = parseFloat(tax_total);
-                part.net_amount_with_tax = part.net_amount;
-
-                console.log(tax_total);
-                total += parseFloat(amount) + tax_total;
-                part.quantity = Math.trunc(part.pivot.quantity);
-            });
-            $scope.warranty_job_order_request.part_total = total.toFixed(2);
-            $scope.calculateEstimateTotal()
-
-            /*var total = 0;
-            angular.forEach($scope.warranty_job_order_request.parts, function(part) {
-                total += parseFloat(part.amount);
-            });
-            $scope.warranty_job_order_request.part_total = total.toFixed(2);
-            $scope.calculateEstimateTotal()*/
-        }
-
-        $scope.calculateEstimateTotal = function() {
-            $scope.warranty_job_order_request.estimate_total = parseFloat($scope.warranty_job_order_request.repair_order_total) + parseFloat($scope.warranty_job_order_request.part_total);
-        }
-        $scope.isSameState = function(){
-            $same_state = false;
-            if ($scope.warranty_job_order_request.job_order != undefined) {
-                var customer_state = $scope.warranty_job_order_request.job_order.customer.state_id;
-                var job_order_state = $scope.warranty_job_order_request.job_order.outlet.state_id;
-                if (customer_state == job_order_state) {
-                    $same_state = true;
-                }else{
-                    $same_state = false;
-                }
-            }
-            return $same_state;
-        }
     }
 });

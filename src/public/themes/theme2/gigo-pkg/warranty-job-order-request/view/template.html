@@ -23,21 +23,23 @@
         <div class="page-tab-form pb-70">
             <wjor-header></wjor-header>
             <div class="tab-form-wrap type-2">
-                <wjor-view-tabs></wjor-view-tabs>
+                <warranty-job-order-request-form-tabs></warranty-job-order-request-form-tabs>
                 <div class="tab-form-body">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
-                        <div class="tab-pane fade in active" id="ppr_view" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade in active" id="ppr_form_tab" data-animation="fadeInUp" data-animation-delay="300">
                             <wjor-ppr-view></wjor-ppr-view>
                         </div>
-                        <div class="tab-pane fade" id="estimate_view" data-animation="fadeInUp" data-animation-delay="300">
-                            <wjor-estimate-view></wjor-estimate-view>
+                        <div class="tab-pane fade" id="estimate_form_tab" data-animation="fadeInUp" data-animation-delay="300">
+                            <wjor-repair-orders></wjor-repair-orders>
+                            <!-- <wjor-estimate-view></wjor-estimate-view> -->
                         </div>
-                        <div class="tab-pane fade" id="estimate_view_part" data-animation="fadeInUp" data-animation-delay="300">
-                            <wjor-estimate-view-part></wjor-estimate-view-part>
+                        <div class="tab-pane fade" id="estimate_form_tab_part" data-animation="fadeInUp" data-animation-delay="300">
+                            <wjor-parts></wjor-parts>
+                            <!-- <wjor-estimate-view-part></wjor-estimate-view-part> -->
                             <!-- Part details view -->
                         </div>
-                        <div class="tab-pane fade" id="attachment_view" data-animation="fadeInUp" data-animation-delay="300">
+                        <div class="tab-pane fade" id="photos_form_tab" data-animation="fadeInUp" data-animation-delay="300">
                             <wjor-attachment-view ng-init="self.attachments = warranty_job_order_request.attachments"></wjor-attachment-view>
                         </div>
                         <div class="tab-pane fade" id="approval_attachment_form" data-animation="fadeInUp" data-animation-delay="300">
