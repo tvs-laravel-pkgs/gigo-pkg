@@ -1357,7 +1357,7 @@ app.component('jobCardDmsChecklistForm', {
 //Part Indent
 app.component('jobCardPartIndentForm', {
     templateUrl: job_card_part_indent_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,$route) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $route) {
         var self = this;
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
@@ -1417,19 +1417,19 @@ app.component('jobCardPartIndentForm', {
                         $scope.job_order_part = response.data.job_order_parts;
                         $scope.add_part.name = $scope.job_order_part.name;
                         $scope.add_part.req_qty = $scope.job_order_part.qty + " " + "nos";
-                        if(!$scope.job_order_part.issued_qty){
+                        if (!$scope.job_order_part.issued_qty) {
                             $scope.add_part.issue_qty = "0 nos";
                             var issued_qty = 0;
-                        }else{
+                        } else {
                             $scope.add_part.issue_qty = $scope.job_order_part.issued_qty + " " + "nos";
                             var issued_qty = $scope.job_order_part.issued_qty;
                         }
                         $scope.add_part.balance_qty = parseInt($scope.job_order_part.qty) - parseInt(issued_qty);
-                        $scope.add_part.balance_qty_nos = $scope.add_part.balance_qty+ " " + "nos";
+                        $scope.add_part.balance_qty_nos = $scope.add_part.balance_qty + " " + "nos";
                     });
-            }else{
+            } else {
                 $scope.add_part = [];
-            }           
+            }
         }
 
         $element.find('input').on('keydown', function(ev) {
@@ -1458,7 +1458,7 @@ app.component('jobCardPartIndentForm', {
         }
 
         //Save Form Data 
-        $scope.submitPart = function(){
+        $scope.submitPart = function() {
             var form_id = '#part_add';
             var v = jQuery(form_id).validate({
                 ignore: '',
@@ -2165,7 +2165,7 @@ app.component('jobCardSplitOrder', {
             return arr;
         }
 
-        $scope.splitOrderLabourChange = function(id, type, key,split_id) {
+        $scope.splitOrderLabourChange = function(id, type, key, split_id) {
             var split_order_types;
             split_order_types = $scope.extras.split_order_types;
             if (type == 0) {} else {
@@ -2183,7 +2183,7 @@ app.component('jobCardSplitOrder', {
             $('#split_order_change').modal('show');
         }
 
-        $scope.splitOrderPartChange = function(id, type, key,split_id) {
+        $scope.splitOrderPartChange = function(id, type, key, split_id) {
             var split_order_types;
             split_order_types = $scope.extras.split_order_types;
             if (type == 0) {} else {
@@ -2621,8 +2621,7 @@ app.component('jobCardOrderDetailView', {
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_card = res.job_card;
                     console.log(res);
-                    if($scope.job_card.job_order.vehicle.last_job_order == null || $scope.job_card.job_order.vehicle.last_job_order.job_card == null)
-                    {
+                    if ($scope.job_card.job_order.vehicle.last_job_order == null || $scope.job_card.job_order.vehicle.last_job_order.job_card == null) {
                         console.log(' == ');
                     }
                     $scope.$apply();
@@ -2731,7 +2730,28 @@ app.component('jobCardCaptureVocView', {
     }
 });
 
+//---------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
 
+//Job Card PDF
+app.component('jobCardPdfForm', {
+    templateUrl: job_card_pdf_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        self.angular_routes = angular_routes;
+        // self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        var pdf_url = base_url + 'gigo-pkg/job-card/get-covering-letter-pdf/' + $scope.job_card_id;
+        // $scope.job_card_id = $routeParams.job_card_id;
+    }
+});
 
 
 //------------------------------------------------------------------------------------------------------------------------
