@@ -218,7 +218,7 @@ class JobOrder extends BaseModel {
 	}
 
 	public function floorAdviser() {
-		return $this->belongsTo('App\Employee', 'floor_adviser_id')
+		return $this->belongsTo('App\Employee', 'floor_supervisor_id')
 		// ->where('company_id', Auth::user()->company_id)
 		;
 	}

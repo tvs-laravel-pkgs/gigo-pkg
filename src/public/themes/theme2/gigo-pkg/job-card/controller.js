@@ -1271,8 +1271,8 @@ app.component('jobCardPdf', {
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
 
-        $scope.gatepass_url  = base_url + '/gigo-pkg/pdf/gatepass/12';
-
+        $scope.gatepass_url  = base_url + '/gigo-pkg/pdf/gatepass/'+$routeParams.job_card_id;
+        
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 
