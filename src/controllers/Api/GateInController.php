@@ -418,6 +418,12 @@ class GateInController extends Controller {
 			$gate_in_data['number'] = $gate_log->number;
 			$gate_in_data['registration_number'] = $vehicle->registration_number;
 
+			//Send SMS to Driver
+			if ($request->driver_mobile_number) {
+				$message = 'Dear Customer,Gatein entry created for ' . $vehicle->registration_number . ' at ' . Auth::user()->employee->outlet->ax_name;
+				$msg = sendSMSNotification($request->driver_mobile_number, $message);
+			}
+
 			return response()->json([
 				'success' => true,
 				'gate_log' => $gate_in_data,

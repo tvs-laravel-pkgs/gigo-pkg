@@ -198,7 +198,7 @@
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
                                                 </div><!-- Panel -->
-                                                <div class="panel panel-default type-3" >
+                                                <div class="panel panel-default type-3">
                                                     <div class="panel-heading">
                                                         <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
                                                             Previous Job Card Details
@@ -269,14 +269,13 @@
                                                                     <div class="input-text form-group">
                                                                         <ul class="gatein-img-list">
                                                                             <li class="gatein-img-list-item driver-licence-img">
-                                                                                <label>Driver Licence</label>
+                                                                                <label>Driver Licence <sup class="mandatory">*</sup></label>
                                                                                 <div class="avatar-upload type-2">
                                                                                     <div class="avatar-edit" ng-class="{'in': job_order.driver_license_attachment != NULL}">
                                                                                         <input type="file" class="profile-img-upload" name="driving_license_image" id="driving_license_image" accept=".png, .jpg, .jpeg, .svg" />
                                                                                         <label for="driving_license_image">
                                                                                             <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
                                                                                         </label>
-                                                
                                                                                     </div>
                                                                                     <div class="avatar-preview in driver-licence-img" ng-if="job_order.driver_license_attachment != NULL">
                                                                                         <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.driver_license_attachment.name}}')">
@@ -289,14 +288,13 @@
                                                                                 </div><!-- Avatar Upload -->
                                                                             </li>
                                                                             <li class="gatein-img-list-item insurance-img">
-                                                                                <label>Insurance</label>
+                                                                                <label>Insurance <sup class="mandatory">*</sup></label>
                                                                                 <div class="avatar-upload type-2">
                                                                                     <div class="avatar-edit" ng-class="{'in': job_order.insurance_attachment != NULL}">
                                                                                         <input type="file" class="profile-img-upload" name="insurance_image" id="insurance_image" accept=".png, .jpg, .jpeg, .svg" />
                                                                                         <label for="insurance_image">
                                                                                             <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
                                                                                         </label>
-                                                
                                                                                     </div>
                                                                                     <div class="avatar-preview in insurance-img" ng-if="job_order.insurance_attachment != NULL">
                                                                                         <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.insurance_attachment.name}}')">
@@ -309,14 +307,13 @@
                                                                                 </div><!-- Avatar Upload -->
                                                                             </li>
                                                                             <li class="gatein-img-list-item rc-book-img">
-                                                                                <label>RC Book</label>
+                                                                                <label>RC Book <sup class="mandatory">*</sup></label>
                                                                                 <div class="avatar-upload type-2">
                                                                                     <div class="avatar-edit" ng-class="{'in': job_order.rc_book_attachment != NULL}">
                                                                                         <input type="file" class="profile-img-upload" name="rc_book_image" id="rc_book_image" accept=".png, .jpg, .jpeg, .svg" />
                                                                                         <label for="rc_book_image">
                                                                                             <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
                                                                                         </label>
-                                                
                                                                                     </div>
                                                                                     <div class="avatar-preview in rc-book-img" ng-if="job_order.rc_book_attachment != NULL">
                                                                                         <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}')">
@@ -329,6 +326,7 @@
                                                                                 </div><!-- Avatar Upload -->
                                                                             </li>
                                                                         </ul>
+                                                                        <div class="attachment_error"></div>
                                                                     </div><!-- Field -->
                                                                 </div><!-- Column -->
                                                                 <div class="col-md-3">
