@@ -1252,6 +1252,38 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Mapped Outlets',
 			],
 
+			//Vehicle Service Schedule
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'vehicle-service-schedules',
+				'display_name' => 'Vehicle Service Schedules',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'vehicle-service-schedules',
+				'name' => 'add-vehicle-service-schedule',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'vehicle-service-schedules',
+				'name' => 'edit-vehicle-service-schedule',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicle-service-schedules',
+				'name' => 'delete-vehicle-service-schedule',
+				'display_name' => 'Delete',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicle-service-schedules',
+				'name' => 'view-vehicle-service-schedule',
+				'display_name' => 'View',
+			],
+
 		];
 		Permission::createFromArrays($permissions);
 	}

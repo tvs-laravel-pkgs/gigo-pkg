@@ -13,7 +13,7 @@
                     {{warranty_job_order_request.number}}
                 </b>
                 <span ng-if="warranty_job_order_request.job_order">
-                    | {{warranty_job_order_request.job_order.number}}
+                    | {{warranty_job_order_request.job_order.job_card.job_card_number}}
                 </span>
                 <span ng-if="warranty_job_order_request.job_order">
                     | {{warranty_job_order_request.job_order.vehicle.registration_number}}

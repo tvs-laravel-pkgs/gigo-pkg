@@ -1,4 +1,3 @@
-
 app.component('warrantyJobOrderRequestTableList', {
     templateUrl: warrantyJobOrderRequestTableList,
     controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect) {
@@ -18,38 +17,6 @@ app.component('warrantyJobOrderRequestTableList', {
             ev.stopPropagation();
         });
 
-        /*var params = {
-            page: 1, // show first page
-            count: 100, // count per page
-            sorting: {
-                created_at: 'asc' // initial sorting
-            },
-            filter: {
-                // search: '',
-                statusIn: [9100, 9101, 9103], //new, waiting for approval and rejected
-            },
-        };*/
-
-        // typeIn: [2, 5], //warranty & free service orders
-
-        //FETCH DATA
-        /*$scope.fetchData = function() {
-            WarrantyJobOrderRequestSvc.index(params)
-                .then(function(response) {
-                    $scope.warranty_job_order_requests = response.data.warranty_job_order_request_collection;
-                    $rootScope.loading = false;
-                });
-        }
-        $scope.fetchData();
-        
-        $scope.fetchListData = function() {
-            WarrantyJobOrderRequestSvc.list(params)
-                .then(function(response) {
-                    // $scope.warranty_job_order_requests = response.data.warranty_job_order_request_collection;
-                    $rootScope.loading = false;
-                });
-        }
-        $scope.fetchListData();*/
 
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
@@ -80,19 +47,15 @@ app.component('warrantyJobOrderRequestTableList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: base_url+'/api/warranty-job-order-request/list',
+                url: base_url + '/api/warranty-job-order-request/list',
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
                     d.request_date = $("#request_date").val();
                     d.reg_no = $("#reg_no").val();
-                    d.customer_id = $("#customer_id").val();
-                    d.model_id = $("#model_id").val();
+                    // d.customer_id = $("#customer_id").val();
+                    // d.model_id = $("#model_id").val();
                     d.job_card_no = $("#job_card_no").val();
-                    // d.membership = $("#membership").val();
-                    // d.gate_in_no = $("#gate_in_no").val();
-                    // d.status_id = $("#status_id").val();
-                    // d.service_advisor_id = self.user.id;
                 },
             },
             // data : response,
@@ -130,7 +93,7 @@ app.component('warrantyJobOrderRequestTableList', {
             $('#warranty_job_order_request_list').DataTable().search('').draw();
         }
 
-        
+
         $scope.sendToApproval = function(id) {
             $scope.warranty_job_order_request = {};
             $scope.warranty_job_order_request.id = id;
@@ -216,12 +179,12 @@ app.component('warrantyJobOrderRequestTableList', {
                 return [];
             }
         }
-        $scope.selectedVehicleModel = function(id) {
-            $('#model_id').val(id);
-        }
-        $scope.selectedCustomer = function(id) {
-            $('#customer_id').val(id);
-        }
+        // $scope.selectedVehicleModel = function(id) {
+        //     $('#model_id').val(id);
+        // }
+        // $scope.selectedCustomer = function(id) {
+        //     $('#customer_id').val(id);
+        // }
     }
 });
 

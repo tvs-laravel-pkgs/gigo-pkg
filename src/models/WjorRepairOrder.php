@@ -27,7 +27,7 @@ class WjorRepairOrder extends BaseModel {
 	// Relationships --------------------------------------------------------------
 
 	public function taxes() {
-		return $this->belongsTo('App\Tax', 'wjor_repair_order_tax')->withPivot([
+		return $this->belongsToMany('App\Tax', 'wjor_repair_order_tax')->withPivot([
 			'percentage',
 			'amount',
 		]);

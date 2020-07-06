@@ -141,12 +141,18 @@ class WarrantyJobOrderRequest extends BaseModel {
 		return $this->belongsToMany('App\ServiceType', 'wjor_service_type', 'wjor_id', 'service_type_id');
 	}
 
-	public function repairOrders() {
-		return $this->belongsToMany('App\RepairOrder', 'wjor_repair_orders', 'wjor_id')->withPivot(['net_amount', 'tax_total', 'total_amount'])->with(['skillLevel', 'category', 'taxCode', 'taxCode.taxes']);
+	public function wjorRepairOrders() {
+		return $this->hasMany('App\WjorRepairOrder', 'wjor_id')
+		// ->withPivot(['net_amount', 'tax_total', 'total_amount'])
+		//->with(['skillLevel', 'category', 'taxCode', 'taxCode.taxes'])
+		;
 	}
 
-	public function parts() {
-		return $this->belongsToMany('App\Part', 'wjor_parts', 'wjor_id')->withPivot(['net_amount', 'tax_total', 'total_amount', 'quantity', 'purchase_type'])->with(['uom', 'taxCode', 'taxCode.taxes']);
+	public function wjorParts() {
+		return $this->hasMany('App\WjorPart', 'wjor_id')
+		//->withPivot(['net_amount', 'tax_total', 'total_amount', 'quantity', 'purchase_type'])
+		//->with(['uom', 'taxCode', 'taxCode.taxes'])
+		;
 	}
 
 	// public function repairOrders() {
@@ -167,6 +173,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 			'jobOrder.type',
 			'jobOrder.outlet',
 			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
 			'jobOrder.serviceType',
 			'jobOrder.status',
 			'jobOrder.customer',
@@ -185,10 +192,12 @@ class WarrantyJobOrderRequest extends BaseModel {
 			'readingType',
 			'status',
 			'serviceTypes',
-			'repairOrders',
-			// 'repairOrders.repairOrder',
-			'parts',
-			// 'parts.part',
+			'wjorRepairOrders',
+			'wjorRepairOrders.taxes',
+			'wjorRepairOrders.repairOrder',
+			'wjorParts',
+			'wjorParts.taxes',
+			'wjorParts.part',
 			'attachments',
 		];
 
@@ -329,14 +338,12 @@ class WarrantyJobOrderRequest extends BaseModel {
 	}
 
 	public static function saveFromFormArray($input, $owner = null) {
-		dd($input);
 		try {
 			DB::beginTransaction();
 			$owner = !is_null($owner) ? $owner : Auth::user();
-
 			if ($input['form_type'] == "manual") {
 				$job_card_number = $input['job_card_number'];
-				$isJobCard = JobCard::where('job_card_number', $job_card_number)->first();
+				$job_card = JobCard::where('job_card_number', $job_card_number)->first();
 
 				$result = FinancialYear::getCurrentFinancialYear();
 				if (!$result['success']) {
@@ -347,7 +354,9 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 				$generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
 
-				if (!$isJobCard) {
+				$customer = json_decode($input['customer_id']);
+
+				if (!$job_card) {
 					$job_order = new JobOrder;
 					$job_order->company_id = $owner->company_id;
 					$job_order->number = $generateJONumber['number'];
@@ -355,7 +364,11 @@ class WarrantyJobOrderRequest extends BaseModel {
 					$job_order->outlet_id = $input['outlet_id'];
 					$job_order->type_id = 4;
 					$job_order->quote_type_id = 2;
-					$job_order->customer_id = $input['customer_id'];
+					$job_order->km_reading_type_id = $input['reading_type_id'];
+					$job_order->km_reading = $input['failed_at'];
+					$job_order->hr_reading = $input['failed_at'];
+					$job_order->quote_type_id = 2;
+					$job_order->customer_id = $customer->id;
 					$job_order->save();
 					// $job_order->status_id = 8460; //Ready for Inward
 					// $job_order->number = 'JO-' . $job_order->id;
@@ -373,7 +386,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 					$job_order_id = $job_order->id;
 				} else {
-					$job_order_id = $isJobCard->job_order_id;
+					$job_order_id = $job_card->job_order_id;
 				}
 			} else {
 				$job_order_id = $input['job_order_id'];
@@ -409,40 +422,17 @@ class WarrantyJobOrderRequest extends BaseModel {
 					$service_type_ids[] = $service_type->id;
 				}
 			}
-
-			if (isset($input['repair_orders'])) {
-				WjorRepairOrder::where('wjor_id', $record->id)->delete();
-				foreach ($input['repair_orders'] as $repair_order) {
-					$wjorRepairOrder = new WjorRepairOrder;
-					$wjorRepairOrder->wjor_id = $record->id;
-					$wjorRepairOrder->repair_order_id = $repair_order['id'];
-					$wjorRepairOrder->net_amount = $repair_order['net_amount'];
-					$wjorRepairOrder->tax_total = $repair_order['tax_total'];
-					$wjorRepairOrder->total_amount = $repair_order['total_amount'];
-					$wjorRepairOrder->save();
-
-					foreach ($input['repair_orders'] as $key => $value) {
-						# code...
-					}
-				}
-			}
-
-			if (isset($input['parts'])) {
-				WjorPart::where('wjor_id', $record->id)->delete();
-				foreach ($input['parts'] as $part) {
-					$wjorPart = new WjorPart;
-					$wjorPart->wjor_id = $record->id;
-					$wjorPart->part_id = $part['id'];
-					$wjorPart->purchase_type = $part['purchase_type'];
-					$wjorPart->net_amount = $part['net_amount'];
-					$wjorPart->quantity = $part['quantity'];
-					$wjorPart->tax_total = $part['tax_total'];
-					$wjorPart->total_amount = $part['total_amount'];
-					$wjorPart->save();
-				}
-			}
-
 			$record->serviceTypes()->sync($service_type_ids);
+
+			if (isset($input['wjor_repair_orders'])) {
+				$wjorRepair_orders = json_decode($input['wjor_repair_orders']);
+				$record->syncRepairOrders($wjorRepair_orders);
+			}
+
+			if (isset($input['wjor_parts'])) {
+				$wjorPartsInput = json_decode($input['wjor_parts']);
+				$record->syncParts($wjorPartsInput);
+			}
 
 			//SAVE ATTACHMENTS
 			$attachement_path = storage_path('app/public/wjor/');
@@ -482,6 +472,57 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'success' => false,
 				'error' => $e->getMessage(),
 			]);
+		}
+
+	}
+
+	public function syncRepairOrders($wjor_repair_orders) {
+		WjorRepairOrder::where('wjor_id', $this->id)->delete();
+		foreach ($wjor_repair_orders as $wjor_repair_order_input) {
+			$wjorRepairOrder = new WjorRepairOrder;
+			$wjorRepairOrder->wjor_id = $this->id;
+			$wjorRepairOrder->repair_order_id = $wjor_repair_order_input->repair_order->id;
+			$wjorRepairOrder->net_amount = $wjor_repair_order_input->net_amount;
+			$wjorRepairOrder->tax_total = $wjor_repair_order_input->tax_total;
+			$wjorRepairOrder->total_amount = $wjor_repair_order_input->total_amount;
+			$wjorRepairOrder->save();
+
+			$taxes = [];
+			foreach ($wjor_repair_order_input->taxes as $key => $tax) {
+				$taxes[$tax->id] = [
+					'percentage' => $tax->pivot->percentage,
+					'amount' => $tax->pivot->amount,
+				];
+			}
+
+			$wjorRepairOrder->taxes()->sync($taxes);
+
+		}
+
+	}
+
+	public function syncParts($wjorParts) {
+		WjorPart::where('wjor_id', $this->id)->delete();
+		foreach ($wjorParts as $wjorPartInput) {
+			$wjorPart = new WjorPart;
+			$wjorPart->wjor_id = $this->id;
+			$wjorPart->part_id = $wjorPartInput->part->id;
+			$wjorPart->purchase_type = $wjorPartInput->purchase_type;
+			$wjorPart->qty = $wjorPartInput->qty;
+			$wjorPart->rate = $wjorPartInput->rate;
+			$wjorPart->net_amount = $wjorPartInput->net_amount;
+			$wjorPart->tax_total = $wjorPartInput->tax_total;
+			$wjorPart->total_amount = $wjorPartInput->total_amount;
+			$wjorPart->save();
+
+			$taxes = [];
+			foreach ($wjorPartInput->taxes as $key => $tax) {
+				$taxes[$tax->id] = [
+					'percentage' => $tax->pivot->percentage,
+					'amount' => $tax->pivot->amount,
+				];
+			}
+			// $wjorPart->taxes()->sync($taxes);
 		}
 
 	}

@@ -6,7 +6,7 @@
                     <i class="icon ion-md-close"></i>
                 </button>
                 <h5 class="modal-title">
-                    Add/Edit Labour
+                    {{modal_action}} Labour
                 </h5>
             </div>
             <div class="modal-body">
@@ -17,7 +17,7 @@
                                 ROT Code
                                 <span class="mandatory">*</span>
                             </label>
-                            <md-autocomplete md-selected-item="repair_order" md-search-text="repairOrderSearchKey" md-items="repair_order in searchRepairOrders(repairOrderSearchKey)" md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. ABS100" md-selected-item-change="console.log(1);repairOrderSelected(repair_order)">
+                            <md-autocomplete md-selected-item="wjor_repair_order.repair_order" md-search-text="repairOrderSearchKey" md-items="repair_order in searchRepairOrders(repairOrderSearchKey)" md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. ABS100" md-selected-item-change="repairOrderSelected(wjor_repair_order.repair_order)" md-input-id="repairOrderAutoCompleteId">
                                 <md-item-template>
                                     <span>
                                         {{repair_order.code}}
@@ -27,28 +27,28 @@
                                     No records matching "{{repairOrderSearchKey}}" were found.
                                 </md-not-found>
                             </md-autocomplete>
-                            <input type="hidden" name="repair_order_id" value="{{repair_order.id}}">
+                            <input type="hidden" name="repair_order_id" value="{{wjor_repair_order.repair_order.id}}">
                         </div><!-- Field -->
                     </div><!-- Column -->
-                    <div class="col-md-6">
+                    <div class="col-md-6" ng-if="wjor_repair_order.repair_order">
                         <div class="form-group">
                             <label>
                                 ROT Description
                             </label>
                             <label>
-                                {{repair_order.name}}
+                                {{wjor_repair_order.repair_order.name}}
                             </label>
                         </div><!-- Field -->
                     </div><!-- Column -->
                 </div>
-                <div class="row">
+                <div class="row" ng-if="wjor_repair_order.repair_order">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>
                                 Category
                             </label>
                             <label>
-                                {{repair_order.category.name}}
+                                {{wjor_repair_order.repair_order.category.name}}
                             </label>
                         </div><!-- Field -->
                     </div><!-- Column -->
@@ -58,7 +58,7 @@
                                 Skill Level
                             </label>
                             <label>
-                                {{repair_order.skill_level.short_name}}
+                                {{wjor_repair_order.repair_order.skill_level.short_name}}
                             </label>
                         </div><!-- Field -->
                     </div><!-- Column -->
@@ -68,26 +68,26 @@
                                 Hours
                             </label>
                             <label>
-                                {{repair_order.hours}}
+                                {{wjor_repair_order.repair_order.hours}}
                             </label>
                         </div><!-- Field -->
                     </div><!-- Column -->
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>
-                                Net Amount <span ng-if="repair_order.category_id == 9140">( Maximum Claim : {{repair_order.maximum_claim_amount|currency}})</span>
+                                Net Amount <span ng-if="wjor_repair_order.repair_order.category_id == 9140">( Maximum Claim : {{wjor_repair_order.repair_order.maximum_claim_amount|currency}})</span>
                             </label>
-                            <input type="text" ng-keyup="claimAmountChange(repair_order)" class="form-control" name="net_amount" ng-model="repair_order.pivot.net_amount" maxlength="12" ng-readonly="repair_order.category_id != 9140">
+                            <input type="text" ng-keyup="claimAmountChange(wjor_repair_order)" class="form-control" name="net_amount" ng-model="wjor_repair_order.rate" maxlength="12" ng-readonly="wjor_repair_order.repair_order.category_id != 9140">
                             <!-- Editable only if Miscellaneous -->
                         </div><!-- Field -->
                     </div><!-- Column -->
-                    <div class="col-md-6" ng-repeat="(tax_key, tax) in repair_order.taxes" ng-if="repair_order.tax_code">
+                    <div class="col-md-6" ng-repeat="(tax_key, tax) in wjor_repair_order.taxes" ng-if="wjor_repair_order.repair_order.tax_code">
                         <div class="form-group">
                             <label>
                                 {{tax.name}} ({{tax.pivot.percentage}}%)
                             </label>
                             <label>
-                                {{(repair_order.pivot.net_amount*tax.pivot.percentage)/100 | currency}}
+                                {{tax.amount | currency}}
                             </label>
                         </div><!-- Field -->
                     </div><!-- Column -->
@@ -100,7 +100,7 @@
                             </label>
                             <label>
                                 <b>
-                                    {{repair_order.pivot.total_amount | currency}}
+                                    {{wjor_repair_order.total_amount | currency}}
                                 </b>
                             </label>
                         </div><!-- Field -->

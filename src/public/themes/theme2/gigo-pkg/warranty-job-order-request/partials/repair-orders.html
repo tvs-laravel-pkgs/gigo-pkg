@@ -8,103 +8,104 @@
             </h5>
             <hr class="hr-15"><!-- Separater -->
             <h6>
-                Part Details
+                Labour Details
             </h6>
             <div class="table-responsive">
                 <table class="table table-dark-grey">
                     <thead>
                         <tr>
-                            <th class="wid-100">
+                            <th class="wid-100" ng-if="page == 'form'">
                                 Actions
                             </th>
                             <th>
-                                Parts Code
+                                ROT Code
                             </th>
                             <th>
-                                Name
-                            </th>
-                            <th>
-                                Quantity
+                                ROT Description
                             </th>
                             <th class="text-right">
+                                Hours
+                            </th>
+                            <!--                             <th class="text-right">
                                 Rate
                             </th>
-                            <!--                             <th ng-repeat="(tax_key, tax) in warranty_job_order_request.parts[0].tax_code.taxes" ng-if="warranty_job_order_request.parts[0].tax_code">
+ -->
+                            <th class="text-right">
+                                Net Amount
+                            </th>
+                            <!--                             <th ng-repeat="(tax_key, tax) in warranty_job_order_request.repair_orders[0].tax_code.taxes" ng-if="warranty_job_order_request.repair_orders[0].tax_code">
                                 {{tax.name}} ({{tax.pivot.percentage}}%)
                             </th>
  -->
                             <th class="text-right">
-                                Tax Amount
+                                Total Tax
                             </th>
-                            <!-- <th class="text-right">
-                                Quantity
-                            </th> -->
                             <th class="wid-100 white-space-unset text-right">
                                 Amount
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="ptb-12" ng-repeat="(index,job_order_part) in warranty_job_order_request.parts track by index">
-                            <td class="wid-100">
-                                <button type="button" ng-click="showPartForm(job_order_part,index)" class="btn img-btn btn-delete">
+                        <tr class="ptb-12" ng-repeat="(index,job_order_labour) in warranty_job_order_request.wjor_repair_orders">
+                            <td class="wid-100" ng-if="page == 'form'">
+                                <!--                                 <button type="button" ng-click="showLabourForm(index)" class="btn img-btn btn-delete">
                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                 </button>
-                                <button type="button" class="btn img-btn btn-delete" ng-click="removePart(index)">
+ -->
+                                <button type="button" class="btn img-btn btn-delete" ng-click="removeRepairOrder(index,job_order_labour)">
                                     <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                 </button>
                             </td>
                             <td>
-                                {{job_order_part.code}}
-                                <input type="hidden" name="parts[{{index}}][id]" value="{{job_order_part.id}}">
+                                {{job_order_labour.repair_order.code}}
+                                <input type="hidden" name="repair_orders[{{index}}][id]" value="{{job_order_labour.id}}">
                             </td>
                             <td>
-                                {{job_order_part.name}}
-                            </td>
-                            <td>
-                                {{job_order_part.quantity}}
+                                {{job_order_labour.repair_order.name}}
                             </td>
                             <td class="text-right">
-                                {{job_order_part.rate | currency}}
+                                {{job_order_labour.repair_order.hours | number:2}}
                             </td>
-                            <!-- <td class="text-right">
-                                {{job_order_part.qty | number:2}}
-                            </td> -->
-                            <!--                             <td class="text-right" ng-repeat="(tax_key, tax) in job_order_part.tax_code.taxes" ng-if="job_order_part.tax_code">
-                                {{(job_order_part.rate*tax.pivot.percentage)/100 | currency}}
+                            <!--                             <td class="text-right">
+                                {{job_order_labour.rate | currency}}
                             </td>
  -->
                             <td class="text-right">
-                                {{job_order_part.tax_amount| currency}}
+                                {{job_order_labour.net_amount | currency}}
                             </td>
-                            <td class="wid-180 white-space-unset text-right">
-                                {{job_order_part.net_amount | currency}}
-                                <!-- <input type="hidden" name="parts[{{index}}][amount]" value="{{job_order_part.net_amount}}"> -->
-                                <input type="hidden" name="parts[{{index}}][quantity]" value="{{job_order_part.quantity}}">
-                                <input type="hidden" name="parts[{{index}}][net_amount]" value="{{job_order_part.net_amount_without_tax}}">
-                                <input type="hidden" name="parts[{{index}}][tax_total]" value="{{job_order_part.tax_amount}}">
-                                <input type="hidden" name="parts[{{index}}][total_amount]" value="{{job_order_part.net_amount_with_tax}}">
-                                <input type="hidden" name="parts[{{index}}][purchase_type]" value="{{job_order_part.purchase_type}}">
+                            <!--                             <td class="text-right" ng-repeat="(tax_key, tax) in job_order_labour.tax_code.taxes" ng-if="job_order_labour.tax_code">
+                                {{(job_order_labour.net_amount_without_tax*tax.pivot.percentage)/100 | currency}}
+                            </td>
+ -->
+                            <td class="text-right">
+                                {{job_order_labour.tax_total | currency}}
+                            </td>
+                            <td class="white-space-unset text-right">
+                                {{job_order_labour.total_amount | currency}}
                             </td>
                         </tr>
                         <tr class="ptb-9">
                             <td>
-                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)">
-                                    Add Part
+                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
+                                    Add Labour
                                 </button>
                             </td>
                             <td class="text-right">
                             </td>
-                            <td colspan="8" class="wid-180 white-space-unset text-right">
+                            <td colspan="8" class="wid-180 white-space-unset  text-right">
                                 <b>
-                                    Total Parts :
-                                    {{warranty_job_order_request.part_total | currency}}
+                                    Total Labour :
+                                    {{warranty_job_order_request.repair_order_total | currency}}
                                 </b>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <input type="hidden" name="wjor_repair_orders" value="{{warranty_job_order_request.wjor_repair_orders}}">
             </div><!-- Table Responsive -->
+            <div class="mb-15"></div><!-- Spacing -->
+            <hr class="hr-15"><!-- Separater -->
+            <!-- Table Responsive -->
             <div class="mb-20"></div><!-- Spacing -->
             <div class="table-transparent-wrap">
                 <div class="table-responsive">

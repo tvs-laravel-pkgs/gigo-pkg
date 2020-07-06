@@ -138,6 +138,16 @@ class VehicleServiceScheduleServiceType extends BaseModel {
 
 	// Relations --------------------------------------------------------------
 
+	public static function relationships($action = '') {
+		$relationships = [
+			'serviceType',
+			'tolerance_km',
+			'tolerance_period',
+		];
+
+		return $relationships;
+	}
+
 	public function vehicleServiceSchedule() {
 		return $this->belongsTo('App\VehicleServiceSchedule');
 	}
@@ -156,6 +166,14 @@ class VehicleServiceScheduleServiceType extends BaseModel {
 
 	public function deletedBy() {
 		return $this->belongsTo('App\User', 'deleted_by_id');
+	}
+
+	public function tolerance_km() {
+		return $this->belongsTo('App\Config', 'km_tolerance_type_id');
+	}
+
+	public function tolerance_period() {
+		return $this->belongsTo('App\Config', 'period_tolerance_type_id');
 	}
 
 	// Static Operations --------------------------------------------------------------

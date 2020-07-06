@@ -1,0 +1,154 @@
+<div class="modal fade filter" id="service_form_modal">
+    <div class="modal-dialog" style="width: auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                    <i class="icon ion-md-close"></i>
+                </button>
+                <h5 class="modal-title">
+                    Add/Edit Service
+                </h5>
+                <!-- {{service_type_item}} -->
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="input-text form-group">
+                            <label>
+                                Service
+                                <sup class="mandatory">*</sup>
+                            </label>
+                            <md-select ng-model="service_type_item.service_type" placeholder="Select service" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                <md-select-header class="demo-select-header">
+                                    <input ng-model="searchServiceTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                </md-select-header>
+                                <md-optgroup>
+                                    <md-option ng-value="service_type" ng-repeat="service_type in options.service_types | filter:searchServiceTypeKey">
+                                        {{service_type.name}}
+                                    </md-option>
+                                </md-optgroup>
+                            </md-select>
+                            <input type="hidden" name="service_type_id" value="{{service_type_item.service_type.id}}">
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-3">
+                        <div class="input-text form-group">
+                            <label>
+                                Is Free
+                                <sup class="mandatory">*</sup>
+                            </label>
+                            <div class="tab-switch">
+                                <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
+                                    {{ $ctrl.switch_value }}
+                                </md-switch>
+                                <input type="hidden" name="is_free" value="{{$ctrl.switch_value}}">
+                            </div>
+                        </div><!-- Form Group -->
+                    </div><!-- Column -->
+                    <div class="col-md-3">
+                        <div class="input-text form-group">
+                            <label>
+                                KM
+                                <sup class="mandatory">*</sup>
+                            </label>
+                            <input type="text" class="form-control" ng-model="service_type_item.km_reading" name="km_reading" placeholder="Enter KM" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-3">
+                        <div class="input-text form-group">
+                            <label>
+                                KM Tolerance
+                                <sup class="mandatory">*</sup>
+                            </label>
+                            <input type="text" class="form-control" ng-model="service_type_item.km_tolerance" name="km_tolerance" placeholder="Enter Name" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="input-text form-group">
+                            <label>
+                                KM Tolerance Type
+                                <sup class="mandatory">*</sup>
+                            </label>
+                            <md-select ng-model="service_type_item.tolerance_km" placeholder="Select KM Tolerance" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                <md-select-header class="demo-select-header">
+                                    <input ng-model="searchKmToleranceTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                </md-select-header>
+                                <md-optgroup>
+                                    <md-option ng-value="km_tolerance_type" ng-repeat="km_tolerance_type in options.tolerance_types | filter:searchKmToleranceTypeKey">
+                                        {{km_tolerance_type.name}}
+                                    </md-option>
+                                </md-optgroup>
+                            </md-select>
+                            <input type="hidden" name="km_tolerance_type_id" value="{{service_type_item.tolerance_km.id}}">
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-3">
+                        <div class="input-text form-group">
+                            <label>
+                                Period
+                                <sup class="mandatory">*</sup>
+                            </label>
+                            <input type="text" class="form-control" ng-model="service_type_item.period" name="period" placeholder="Enter Period" />
+                        </div><!-- Form Group -->
+                    </div><!-- Column -->
+                    <div class="col-md-3">
+                        <div class="input-text form-group">
+                            <label>
+                                Period Tolerance
+                                <sup class="mandatory">*</sup>
+                            </label>
+                            <input type="text" class="form-control" ng-model="service_type_item.period_tolerance" name="period_tolerance" placeholder="Enter Period Tolerance" />
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                    <div class="col-md-3">
+                        <div class="input-text form-group">
+                            <label>
+                                Period Tolerance Type
+                                <sup class="mandatory">*</sup>
+                            </label>
+                            <md-select ng-model="service_type_item.tolerance_period" placeholder="Select Period Tolerance" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                <md-select-header class="demo-select-header">
+                                    <input ng-model="searchPeriodToleranceTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                </md-select-header>
+                                <md-optgroup>
+                                    <md-option ng-value="period_tolerance_type" ng-repeat="period_tolerance_type in options.tolerance_types | filter:searchPeriodToleranceTypeKey">
+                                        {{period_tolerance_type.name}}
+                                    </md-option>
+                                </md-optgroup>
+                            </md-select>
+                            <input type="hidden" name="period_tolerance_type_id" value="{{service_type_item.tolerance_period.id}}">
+                        </div><!-- Feild -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <!-- <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>
+                                <b>
+                                    Amount
+                                </b>
+                            </label>
+                            <label>
+                                <b>
+                                    {{part.total_amount | currency}}
+                                </b>
+                            </label>
+                        </div>
+                    </div>
+                </div> -->
+                <div class="row">
+                    <div class="col-md-12 text-right mb-15">
+                        <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-bordered btn-red approve_btn">
+                            Submit
+                        </button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
