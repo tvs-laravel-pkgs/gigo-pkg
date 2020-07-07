@@ -1279,6 +1279,7 @@ app.component('jobCardPdf', {
         $scope.job_card_pdf_url  = base_url + '/gigo-pkg/pdf/job-card/'+$routeParams.job_card_id;
         $scope.job_card_spare_requisition_pdf_url  = base_url + '/gigo-pkg/pdf/job-card-spare-requisition/'+$routeParams.job_card_id;
         $scope.work_order_outward_pdf_url  = base_url + '/gigo-pkg/pdf/work-order-outward/'+$routeParams.job_card_id;
+        $scope.work_order_inward_pdf_url  = base_url + '/gigo-pkg/pdf/work-order-inward/'+$routeParams.job_card_id;
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
