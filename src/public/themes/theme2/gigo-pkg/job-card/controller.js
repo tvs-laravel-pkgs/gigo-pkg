@@ -1274,6 +1274,8 @@ app.component('jobCardPdf', {
         $scope.gatepass_url  = base_url + '/gigo-pkg/pdf/gatepass/'+$routeParams.job_card_id;
         $scope.covering_letter_url  = base_url + '/gigo-pkg/pdf/covering-letter/'+$routeParams.job_card_id;
         $scope.estimate_url  = base_url + '/gigo-pkg/pdf/estimate/'+$routeParams.job_card_id;
+        $scope.insurance_estimate_url  = base_url + '/gigo-pkg/pdf/insurance-estimate/'+$routeParams.job_card_id;
+        $scope.revised_estimate_url  = base_url + '/gigo-pkg/pdf/revised-estimate/'+$routeParams.job_card_id;
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
