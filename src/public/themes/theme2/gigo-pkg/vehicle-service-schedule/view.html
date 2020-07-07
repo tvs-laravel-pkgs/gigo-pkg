@@ -54,50 +54,49 @@
                             <div class="tab-pane fade in active" id="general-information" data-animation="fadeInUp" data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
-                                        <!-- <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
+                                        <ul class="view-row mb-no">
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
                                                     Code
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" class="form-control required" ng-model="vehicle_service_schedule.code" name="code" placeholder="Enter Code" autofocus />
-                                            </div>
-                                        </div> -->
-                                        <!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Name
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <input type="text" class="form-control" ng-model="vehicle_service_schedule.name" name="name" placeholder="Enter Name" autofocus />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Active Status
-                                                    <sup class="mandatory">*</sup>
-                                                </label>
-                                                <div class="tab-switch">
-                                                    <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
-                                                        {{ $ctrl.switch_value }}
-                                                    </md-switch>
-                                                    <input type="hidden" name="status" value="{{$ctrl.switch_value}}">
-                                                </div>
-                                            </div><!-- Form Group -->
-                                        </div><!-- Column -->
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{vehicle_service_schedule.code}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Code
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{vehicle_service_schedule.code}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Status
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{$ctrl.switch_value}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                        </ul>
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
                             <div class="tab-pane fade" id="services" data-animation="fadeInUp" data-animation-delay="300">
-                                <schedule-form></schedule-form>
+                                <schedule-view></schedule-view>
                             </div><!-- Tabe Pane -->
                             <div class="tab-pane-footer">
                                 <div class="row">
                                     <div class="col-md-12">
                                         <a href="#!/gigo-pkg/vehicle-service-schedule/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
-                                        <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
+                                        <!-- <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button> -->
                                     </div>
                                 </div>
                             </div><!-- Tab Footer -->
@@ -109,11 +108,5 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap-->
 <form id="service-modal-form">
-    <service-modal-form></service-modal-form>
-</form>
-<form id="labour-form">
-    <service-modal-labour-modal-form></service-modal-labour-modal-form>
-</form>
-<form id="part-form">
-    <service-modal-part-modal-form></service-modal-part-modal-form>
+    <service-modal-view></service-modal-view>
 </form>

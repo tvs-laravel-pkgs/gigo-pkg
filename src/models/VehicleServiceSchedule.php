@@ -54,6 +54,8 @@ class VehicleServiceSchedule extends BaseModel {
 			'vehicle_service_schedule_service_types.serviceType',
 			'vehicle_service_schedule_service_types.tolerance_km',
 			'vehicle_service_schedule_service_types.tolerance_period',
+			'vehicle_service_schedule_service_types.parts',
+			'vehicle_service_schedule_service_types.repair_orders',
 		];
 
 		return $relationships;

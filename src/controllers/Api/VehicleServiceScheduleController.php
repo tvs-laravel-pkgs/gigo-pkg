@@ -89,7 +89,7 @@ class VehicleServiceScheduleController extends Controller {
 			VehicleServiceScheduleServiceType::where('vehicle_service_schedule_id', $vehicle_service_schedules->id)->forceDelete();
 
 			foreach ($request->veh_serv_sch_service_types as $key => $vssst) {
-				// dd($vssst);
+				// dd($request->parts, $vssst);
 				$vssst_obj = new VehicleServiceScheduleServiceType;
 				$vssst_obj->vehicle_service_schedule_id = $vehicle_service_schedules->id;
 				$vssst_obj->service_type_id = $vssst['service_type_id'];
@@ -101,6 +101,25 @@ class VehicleServiceScheduleController extends Controller {
 				$vssst_obj->period_tolerance = $vssst['period_tolerance'];
 				$vssst_obj->period_tolerance_type_id = $vssst['period_tolerance_type_id'];
 				$vssst_obj->save();
+
+				if (isset($request->parts[$vssst['schedule_type_id']])) {
+					$parts = [];
+					foreach ($request->parts[$vssst['schedule_type_id']] as $key => $part) {
+						$parts[$key]['schedule_id'] = $vssst_obj->id;
+						$parts[$key]['part_id'] = $part['part_id'];
+						$parts[$key]['quantity'] = $part['quantity'];
+						$parts[$key]['amount'] = $part['amount'];
+					}
+					$vssst_obj->parts()->syncWithoutDetaching($parts);
+				}
+				if (isset($request->labours[$vssst['schedule_type_id']])) {
+					$labours = [];
+					foreach ($request->labours[$vssst['schedule_type_id']] as $key => $labour) {
+						$labours[$key]['schedule_id'] = $vssst_obj->id;
+						$labours[$key]['repair_order_id'] = $labour['repair_order_id'];
+					}
+					$vssst_obj->repair_orders()->syncWithoutDetaching($labours);
+				}
 			}
 
 			DB::commit();

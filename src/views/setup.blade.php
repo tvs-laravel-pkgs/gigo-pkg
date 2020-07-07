@@ -80,8 +80,15 @@
     var vehicle_service_schedule_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/list.html')}}";
     var vehicle_service_schedule_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/form.html')}}";
     var vehicle_service_schedule_services_form = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/services-form.html')}}";
+    var vehicle_service_schedule_services_view = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/services-view.html')}}";
     var serviceModalForm = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/service-modal-form.html')}}";
+    var serviceModalView = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/service-modal-view.html')}}";
+    var labour_details_list_service_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/labour-details-list-service-form-template.html')}}";
+    var part_details_list_service_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/part-details-list-service-form-template.html')}}";
+    var vehicle_service_schedule_labour_modal_form = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/labour-modal-form.html')}}";
+    var vehicle_service_schedule_part_modal_form = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/part-modal-form.html')}}";
 
+    var vehicle_service_schedule_view_template_url= "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-service-schedule/view.html')}}";
 </script>
 <!-- <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-primary-application/controller.js')}}"></script>

@@ -1,0 +1,90 @@
+<div class="row">
+    <div class="col-md-12">
+        <h6>
+            Part Details
+        </h6>
+        <div class="table-responsive">
+            <table class="table table-dark-grey">
+                <thead>
+                    <tr>
+                        <th class="wid-100" ng-if="page == 'form'">
+                            Actions
+                        </th>
+                        <th>
+                            Parts Code
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th class="text-right">
+                            Quantity
+                        </th>
+                        <th class="wid-100 white-space-unset text-right">
+                            Amount
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="ptb-12" ng-repeat="(index,service_type_item_part) in service_type_item.parts track by index">
+                        <td class="wid-100" ng-if="page == 'form'">
+                            <button type="button" ng-click="showPartForm(index,service_type_item_part)" class="btn img-btn btn-delete">
+                                <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                            </button>
+                            <button type="button" class="btn img-btn btn-delete" ng-click="removePart(index)">
+                                <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                            </button>
+                        </td>
+                        <td>
+                            {{service_type_item_part.code}}
+                            <!-- {{service_type_item_part.part.code}} -->
+                        </td>
+                        <td>
+                            {{service_type_item_part.name}}
+                        </td>
+                        <td class="text-right">
+                            {{service_type_item_part.pivot.quantity | number}}
+                        </td>
+                        <td class="text-right">
+                            {{service_type_item_part.pivot.amount | currency}}
+                        </td>
+                    </tr>
+                    <tr class="ptb-9">
+                        <td>
+                            <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)" ng-if="page == 'form'">
+                                Add Part
+                            </button>
+                        </td>
+                        <td class="text-right">
+                        </td>
+                        <td colspan="8" class="wid-180 white-space-unset text-right">
+                            <b>
+                                Total Parts :
+                                {{service_type_item.part_total | currency}}
+                            </b>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="hidden" name="parts" value="{{service_type_item.parts}}">
+        </div><!-- Table Responsive -->
+        <div class="mb-20"></div><!-- Spacing -->
+        <div class="table-transparent-wrap">
+            <div class="table-responsive">
+                <table class="table-transparent">
+                    <tbody>
+                        <tr>
+                            <td class="text-right">
+                            </td>
+                            <td class="wid-180 text-right">
+                                <b>
+                                    Total Labour & Parts :
+                                    {{service_type_item.total_part_labour_amount | currency}}
+                                </b>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- Table Transparent Wrap -->
+    </div><!-- Column -->
+</div><!-- Row -->
