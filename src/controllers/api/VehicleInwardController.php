@@ -1426,6 +1426,8 @@ class VehicleInwardController extends Controller {
 	//DMS CHECKLIST SAVE
 	public function saveDmsCheckList(Request $request) {
 		// dd($request->all());
+		$request['warranty_expiry_date'] = date('d-m-Y', strtotime($request->warranty_expiry_date));
+		$request['ewp_expiry_date'] = date('d-m-Y', strtotime($request->ewp_expiry_date));
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -1433,26 +1435,26 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:job_orders,id',
 				],
-				// 'warranty_expiry_date' => [
-				// 	'nullable',
-				// 	'date_format:"d-m-Y',
-				// ],
-				// 'ewp_expiry_date' => [
-				// 	'nullable',
-				// 	'date_format:"d-m-Y',
-				// ],
-				// 'warranty_expiry_attachment' => [
-				// 	'nullable',
-				// 	'mimes:jpeg,jpg,png',
-				// ],
-				// 'ewp_expiry_attachment' => [
-				// 	'nullable',
-				// 	'mimes:jpeg,jpg,png',
-				// ],
-				// 'membership_attachment' => [
-				// 	'nullable',
-				// 	'mimes:jpeg,jpg,png',
-				// ],
+				'warranty_expiry_date' => [
+					"required_if:warrany_status,==,1",
+					'date_format:"d-m-Y',
+				],
+				'warranty_expiry_attachment' => [
+					// "required_if:warrany_status,==,1",
+					'mimes:jpeg,jpg,png',
+				],
+				'ewp_expiry_date' => [
+					"required_if:exwarrany_status,==,1",
+					'date_format:"d-m-Y',
+				],
+				'ewp_expiry_attachment' => [
+					// "required_if:exwarrany_status,==,1",
+					'mimes:jpeg,jpg,png',
+				],
+				'membership_attachment.*' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
 				'is_verified' => [
 					// 'nullable',
 					'numeric',
@@ -1469,8 +1471,23 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 			$job_order = JobOrder::find($request->job_order_id);
-			$job_order->warranty_expiry_date = $request->warranty_expiry_date;
-			$job_order->ewp_expiry_date = $request->ewp_expiry_date;
+			if ($request->warrany_status == 1) {
+				$job_order->ewp_expiry_date = NULL;
+				$job_order->warranty_expiry_date = $request->warranty_expiry_date;
+				$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
+			}
+			if ($request->exwarrany_status == 1) {
+				$job_order->ewp_expiry_date = $request->ewp_expiry_date;
+				$job_order->warranty_expiry_date = NULL;
+				$attachment = Attachment::where('id', $request->warrenty_policy_attachment_id)->forceDelete();
+			}
+			if ($request->exwarrany_status == 0 && $request->warrany_status == 0) {
+				$job_order->warranty_expiry_date = NULL;
+				$job_order->ewp_expiry_date = NULL;
+				$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
+				$attachment = Attachment::where('id', $request->warrenty_policy_attachment_id)->forceDelete();
+			}
+
 			$job_order->is_dms_verified = $request->is_verified;
 			if (isset($request->is_campaign_carried)) {
 				$job_order->is_campaign_carried = $request->is_campaign_carried;
@@ -1561,12 +1578,31 @@ class VehicleInwardController extends Controller {
 				$attachment_type_id = 257; //EWP
 				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
-			if (!empty($request->membership_attachment)) {
-				$attachment = $request->membership_attachment;
-				$entity_id = $job_order->id;
-				$attachment_of_id = 227; //Job order
-				$attachment_type_id = 258; //AMC
-				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+
+			//MULTIPLE ATTACHMENT REMOVAL
+			$attachment_removal_ids = json_decode($request->attachment_removal_ids);
+			if (!empty($attachment_removal_ids)) {
+				Attachment::whereIn('id', $attachment_removal_ids)->forceDelete();
+			}
+
+			if (!empty($request->membership_attachments)) {
+				foreach ($request->membership_attachments as $key => $membership_attachment) {
+					$value = rand(1, 100);
+					$image = $membership_attachment;
+
+					$file_name_with_extension = $image->getClientOriginalName();
+					$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+					$extension = $image->getClientOriginalExtension();
+					$name = $job_order->id . '_' . $file_name . '_' . rand(10, 1000) . '.' . $extension;
+
+					$membership_attachment->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+					$attachement = new Attachment;
+					$attachement->attachment_of_id = 227; //Job order
+					$attachement->attachment_type_id = 258; //AMC
+					$attachement->entity_id = $job_order->id;
+					$attachement->name = $name;
+					$attachement->save();
+				}
 			}
 
 			// INWARD PROCESS CHECK - DMS CHECKLIST
