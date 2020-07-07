@@ -121,7 +121,7 @@
                                             Estimate
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="job_order.is_customer_agreed != 1 || (job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1)">
                                         <a data-target="#status_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Estimation Status
                                         </a>
@@ -198,7 +198,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -295,7 +295,7 @@
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square" >
                                                 Edit
                                             </button> -->
-                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/vehicle-detail/{{job_order_id}}/1" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/vehicle-detail/{{job_order_id}}/1" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">
                                                 Edit
                                             </a>
                                             <!-- <a type="button" class="btn btn-red" ng-click="showVehicleForm()">
@@ -307,7 +307,7 @@
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -388,10 +388,10 @@
                                                 </li>
                                             </ul>
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
-                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/customer-detail/{{job_order_id}}/1" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/customer-detail/{{job_order_id}}/1" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">
                                                 Edit
                                             </a>
-                                            <button class="btn btn-bordered btn-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                            <button class="btn btn-bordered btn-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">
                                                 <a href=".#!/inward-vehicle/customer-detail/{{job_order_id}}/2">
                                                     Add New Owner
                                                 </a>
@@ -402,7 +402,7 @@
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -449,7 +449,7 @@
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">
                                                                 Edit
                                                             </a>
                                                         </div><!-- Panel Body -->
@@ -527,7 +527,7 @@
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">
                                                                 Edit
                                                             </a>
                                                         </div><!-- Panel Body -->
@@ -626,7 +626,7 @@
                                                                 <img ng-if="job_order.rc_book_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.rc_book_attachment.name}}" alt="RC Book" />
                                                             </div>
                                                             <div class="mb-10"></div><!-- Spacing -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">
                                                                 Edit
                                                             </a>
                                                         </div><!-- Panel Body -->
@@ -639,7 +639,7 @@
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
                                         </div><!-- Tab Footer -->
@@ -688,7 +688,7 @@
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <a href=".#!/inward-vehicle/inventory-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                                    <a href=".#!/inward-vehicle/inventory-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">Edit</a>
                                                 </div>
                                             </div><!-- Row -->
                                         </div><!-- Column -->
@@ -697,7 +697,7 @@
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -722,14 +722,14 @@
                                                 </li>
                                             </ul>
                                             <hr class="hr-15"><!-- Separater -->
-                                            <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -784,14 +784,14 @@
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -826,14 +826,14 @@
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -876,14 +876,14 @@
                                                 </div><!-- Panel -->
                                             </div><!-- Panel Group -->
                                             <div class="mb-10"></div><!-- Spacing -->
-                                            <a href="#!/inward-vehicle/inspection-detail/form/{{job_order.id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                            <a href="#!/inward-vehicle/inspection-detail/form/{{job_order.id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -1094,14 +1094,14 @@
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
-                                            <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -1248,14 +1248,14 @@
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -1303,7 +1303,7 @@
                                                         </tr>
                                                         <tr class="ptb-9">
                                                             <td>
-                                                                <a href=".#!/inward-vehicle/payable-labour-part/add-labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                                <a href=".#!/inward-vehicle/payable-labour-part/add-labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">
                                                                     Add Labour
                                                                 </a>
                                                             </td>
@@ -1364,7 +1364,7 @@
                                                         </tr>
                                                         <tr class="ptb-9">
                                                             <td>
-                                                                <a href=".#!/inward-vehicle/payable-labour-part/add-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                                <a href=".#!/inward-vehicle/payable-labour-part/add-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">
                                                                     Add Parts
                                                                 </a>
                                                             </td>
@@ -1406,14 +1406,14 @@
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -1471,7 +1471,7 @@
                                                                         </li>
                                                                     </ul>
                                                                     <div class="text-center">
-                                                                        <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                                        <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">
                                                                             Edit
                                                                         </a>
                                                                     </div>
@@ -1520,7 +1520,7 @@
                                                                         </li>
                                                                     </ul>
                                                                     <div class="text-center">
-                                                                        <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">
+                                                                        <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">
                                                                             Edit
                                                                         </a>
                                                                     </div>
@@ -1614,14 +1614,14 @@
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -1652,7 +1652,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -1687,14 +1687,14 @@
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/estimation-denied/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.gate_log.status_id == 8120 || job_order.gate_log.status_id == 8121 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/estimation-denied/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a class="btn btn-red" ng-if="job_order.gate_log.status_id == 8122">Initiate Job card</a>
+                                                    <a class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->

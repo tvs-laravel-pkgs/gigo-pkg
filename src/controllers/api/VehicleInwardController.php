@@ -82,7 +82,7 @@ class VehicleInwardController extends Controller {
 					'vehicles.registration_number',
 					'models.model_number',
 					'gate_logs.number',
-					'gate_logs.status_id',
+					'job_orders.status_id',
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
 					'job_orders.driver_name',
@@ -141,7 +141,7 @@ class VehicleInwardController extends Controller {
 				})
 				->where(function ($query) use ($request) {
 					if (!empty($request->status_id)) {
-						$query->where('gate_logs.status_id', $request->status_id);
+						$query->where('job_orders.status_id', $request->status_id);
 					}
 				})
 				->where('job_orders.company_id', Auth::user()->company_id)
@@ -151,7 +151,7 @@ class VehicleInwardController extends Controller {
 					$vehicle_inward_list_get->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 				} else {
 					$vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
-						->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
+						->whereRaw("IF (`job_orders`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
 				}
 			}
 			$vehicle_inward_list_get->groupBy('job_orders.id');
@@ -488,6 +488,7 @@ class VehicleInwardController extends Controller {
 			}
 			//MAPPING SERVICE ADVISOR
 			$job_order->service_advisor_id = $r->service_advisor_id;
+			$job_order->status_id = 8463;
 			$job_order->save();
 
 			//UPDATE GATE LOG STATUS
@@ -928,6 +929,7 @@ class VehicleInwardController extends Controller {
 
 			$job_order->fill($request->all());
 			$job_order->is_expert_diagnosis_required = $service_order_type->is_expert_diagnosis_required;
+			$job_order->status_id = 8463;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
@@ -1245,6 +1247,8 @@ class VehicleInwardController extends Controller {
 			}*/
 
 			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->status_id = 8463;
+			$job_order->save();
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -1472,6 +1476,7 @@ class VehicleInwardController extends Controller {
 			$job_order->warranty_expiry_date = $request->warranty_expiry_date;
 			$job_order->ewp_expiry_date = $request->ewp_expiry_date;
 			$job_order->is_dms_verified = $request->is_verified;
+			$job_order->status_id = 8463;
 			if (isset($request->is_campaign_carried)) {
 				$job_order->is_campaign_carried = $request->is_campaign_carried;
 			}
@@ -1849,6 +1854,8 @@ class VehicleInwardController extends Controller {
 			}
 			// INWARD PROCESS CHECK - Schedule Maintenance
 			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->status_id = 8463;
+			$job_order->save();
 			$job_order->inwardProcessChecks()->where('tab_id', 8705)->update(['is_form_filled' => 1]);
 
 			DB::commit();
@@ -2379,6 +2386,8 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->status_id = 8463;
+			$job_order->save();
 			$job_order->customerVoices()->sync([]);
 			if (!empty($request->customer_voices)) {
 				//UNIQUE CHECK
@@ -2545,6 +2554,7 @@ class VehicleInwardController extends Controller {
 			}
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
+			$job_order->status_id = 8463;
 			$job_order->save();
 
 			// INWARD PROCESS CHECK - ROAD TEST OBSERVATIONS
@@ -2655,6 +2665,7 @@ class VehicleInwardController extends Controller {
 			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->expert_diagnosis_report = $request->expert_diagnosis_report;
 			$job_order->expert_diagnosis_report_by_id = $request->expert_diagnosis_report_by_id;
+			$job_order->status_id = 8463;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
@@ -2796,6 +2807,8 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = jobOrder::find($request->job_order_id);
+			$job_order->status_id = 8463;
+			$job_order->save();
 			// if ($request->vehicle_inspection_groups) {
 			// 	$job_order->vehicleInspectionItems()->sync([]);
 			// 	foreach ($request->vehicle_inspection_groups as $key => $vehicle_inspection_group) {
@@ -3054,6 +3067,7 @@ class VehicleInwardController extends Controller {
 			$job_order_otp_update = JobOrder::where('id', $request->id)
 				->update([
 					'otp_no' => mt_rand(111111, 999999),
+					'status_id' => 8469, //Waiting for Customer Approval
 					'updated_by_id' => Auth::user()->id,
 					'updated_at' => Carbon::now(),
 				]);
@@ -3148,12 +3162,6 @@ class VehicleInwardController extends Controller {
 			$job_order_status_update->is_customer_approved = 1;
 			$job_order_status_update->updated_at = Carbon::now();
 			$job_order_status_update->save();
-
-			//UPDATE GATE LOG STATUS
-			$gate_log_status_update = GateLog::find($job_order->gateLog->id);
-			$gate_log_status_update->status_id = 8123; //Gate Out Pending
-			$gate_log_status_update->updated_at = Carbon::now();
-			$gate_log_status_update->save();
 
 			DB::commit();
 
@@ -3379,6 +3387,7 @@ class VehicleInwardController extends Controller {
 			$job_order->estimation_type_id = $request->estimation_type_id;
 			$job_order->minimum_payable_amount = $request->minimum_payable_amount;
 			$job_order->estimate_ref_no = $generateNumber['number'];
+			$job_order->status_id = 8470;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();

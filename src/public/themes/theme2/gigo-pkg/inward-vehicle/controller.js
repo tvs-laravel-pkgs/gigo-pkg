@@ -1660,10 +1660,18 @@ app.component('inwardVehicleEstimateForm', {
                         $('#is_customer_agreed').val('0');
                     }
 
-                    if ($scope.job_order && $scope.job_order.is_customer_approved == 1) {
+                    if ($scope.job_order && $scope.job_order.is_customer_approved == null && $scope.job_order.is_customer_agreed == 1) {
+                        $('.is_customer_agreed').show();
+                        $('.btn-nxt').hide();
+                    } else {
                         $('.is_customer_agreed').hide();
+                        $('.btn-nxt').show();
                     }
 
+                    $scope.estimated_amount = $scope.job_order.estimated_amount;
+                    $scope.est_delivery_date = $scope.job_order.est_delivery_date;
+                    $scope.est_delivery_time = $scope.job_order.est_delivery_time;
+                    $scope.status_id = $scope.job_order.status_id;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1675,10 +1683,10 @@ app.component('inwardVehicleEstimateForm', {
         $(document).on('click', ".check_agree", function() {
             if ($("#check_agree").prop('checked')) {
                 $('.is_customer_agreed').show();
-                $('.customer_denied').hide();
+                $('.btn-nxt').hide();
             } else {
                 $('.is_customer_agreed').hide();
-                $('.customer_denied').show();
+                $('.btn-nxt').show();
             }
         });
 
@@ -1755,6 +1763,21 @@ app.component('inwardVehicleEstimateForm', {
                                         $scope.approveBehalfCustomer();
                                     } else if (id == 4) {
                                         $scope.send_customer_approval();
+                                    } else if (id == 2) {
+                                        var est_delivery_time = $('#est_delivery_time').val();
+                                        var res = est_delivery_time.split(":");
+                                        if (res[0].length == 1) {
+                                            est_delivery_time = '0' + res[0] + ':' + res[1];
+                                        } else {
+                                            est_delivery_time = $('#est_delivery_time').val();
+                                        }
+
+                                        //Check Estimated details are same or not.If not Custoerm OTP send
+                                        if (($('#estimated_amount').val() != $scope.estimated_amount) || ($('#est_delivery_date').val() != $scope.est_delivery_date) || ($('#est_delivery_time').val() != est_delivery_time)) {
+                                            $scope.approveBehalfCustomer();
+                                        } else {
+                                            $location.path('/inward-vehicle/customer-confirmation/' + $scope.job_order.id);
+                                        }
                                     }
                                 } else {
                                     $location.path('/inward-vehicle/estimation-denied/form/' + $scope.job_order.id);
