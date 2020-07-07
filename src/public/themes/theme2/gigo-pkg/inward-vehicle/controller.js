@@ -1653,6 +1653,17 @@ app.component('inwardVehicleEstimateForm', {
                         return;
                     }
                     $scope.job_order = res.job_order;
+
+                    if ($scope.job_order && $scope.job_order.is_customer_agreed == 1) {
+                        $('#is_customer_agreed').val('1');
+                    } else {
+                        $('#is_customer_agreed').val('0');
+                    }
+
+                    if ($scope.job_order && $scope.job_order.is_customer_approved == 1) {
+                        $('.is_customer_agreed').hide();
+                    }
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1660,6 +1671,16 @@ app.component('inwardVehicleEstimateForm', {
                 });
         }
         $scope.fetchData();
+
+        $(document).on('click', ".check_agree", function() {
+            if ($("#check_agree").prop('checked')) {
+                $('.is_customer_agreed').show();
+                $('.customer_denied').hide();
+            } else {
+                $('.is_customer_agreed').hide();
+                $('.customer_denied').show();
+            }
+        });
 
         //APPEND LINK ON LOAD
         $(document).ready(function() {
@@ -1707,7 +1728,7 @@ app.component('inwardVehicleEstimateForm', {
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
-                    $scope.button_action(id, 1);
+                    // $scope.button_action(id, 1);
                     $.ajax({
                             url: base_url + '/api/vehicle-inward/estimate/save',
                             method: "POST",
@@ -1719,7 +1740,7 @@ app.component('inwardVehicleEstimateForm', {
                             contentType: false,
                         })
                         .done(function(res) {
-                            $scope.button_action(id, 2);
+                            // $scope.button_action(id, 2);
                             if (!res.success) {
                                 showErrorNoty(res);
                                 return;
@@ -1730,7 +1751,11 @@ app.component('inwardVehicleEstimateForm', {
                                 $scope.$apply();
                             } else {
                                 if ($('#is_customer_agreed').val() == 1) {
-                                    $location.path('/inward-vehicle/customer-confirmation/' + $scope.job_order.id);
+                                    if (id == 3) {
+                                        $scope.approveBehalfCustomer();
+                                    } else if (id == 4) {
+                                        $scope.send_customer_approval();
+                                    }
                                 } else {
                                     $location.path('/inward-vehicle/estimation-denied/form/' + $scope.job_order.id);
                                 }
@@ -1738,12 +1763,157 @@ app.component('inwardVehicleEstimateForm', {
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
-                            $scope.button_action(id, 2);
+                            // $scope.button_action(id, 2);
                             custom_noty('error', 'Something went wrong at server');
                         });
                 }
             });
         }
+
+        //URL SEND TO CUSTOMER
+        $scope.send_customer_approval = function() {
+            $(".send_to_customer_approval").button('loading');
+            $.ajax({
+                url: base_url + '/api/vehicle-inward/estimate/link/generate',
+                type: "POST",
+                data: {
+                    job_order_id: $routeParams.job_order_id,
+                },
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+                success: function(response) {
+                    custom_noty('success', response.message);
+                    $(".send_to_customer_approval").button('reset');
+                    $location.path('/inward-vehicle/card-list');
+                    $scope.$apply();
+                },
+                error: function(textStatus, errorThrown) {
+                    $(".send_to_customer_approval").button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                }
+            });
+        }
+
+        //SEND OTP TO CUSTOMER
+        $scope.approveBehalfCustomer = function() {
+            $(".approval_behalf").button('loading');
+            $.ajax({
+                url: base_url + '/api/vehicle-inward/send/customer/otp',
+                type: "POST",
+                data: {
+                    id: $routeParams.job_order_id,
+                },
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+                success: function(response) {
+                    $(".approval_behalf").button('loading');
+                    console.log(response);
+                    $('#otp').modal('show');
+                    $('#otp_no').val('');
+                    $('#otp').on('shown.bs.modal', function() {
+                        $(this).find('[autofocus]').focus();
+                    });
+                    $('.customer_mobile_no').html(response.mobile_number);
+                    $(".approval_behalf").button('reset');
+                },
+                error: function(textStatus, errorThrown) {
+                    $(".approval_behalf").button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                }
+            });
+        }
+
+        //RESEND OTP
+        $scope.ResendOtp = function() {
+            $.ajax({
+                url: base_url + '/api/vehicle-inward/send/customer/otp',
+                type: "POST",
+                data: {
+                    id: $routeParams.job_order_id,
+                },
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+                success: function(response) {
+                    console.log(response);
+                    custom_noty('success', response.message);
+                },
+                error: function(textStatus, errorThrown) {
+                    custom_noty('error', 'Something went wrong at server');
+                }
+            });
+        }
+
+        //SAVE OTP
+        $scope.saveOTP = function(id) {
+            var form_id = '#approve_behalf_customer_confirm';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'otp_no': {
+                        required: true,
+                        number: true,
+                        minlength: 6,
+                        maxlength: 6,
+                    },
+                },
+                messages: {
+                    'otp_no': {
+                        required: 'OTP is required',
+                        number: 'OTP Must be a number',
+                        minlength: 'OTP Minimum 6 Characters',
+                        maxlength: 'OTP Maximum 6 Characters',
+                    },
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit_confirm').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/verify/otp',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                        })
+                        .done(function(res) {
+                            console.log(res);
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                $('.submit_confirm').button('reset');
+                                $('#otp_no').val('');
+                                $('#otp_no').focus();
+                                return;
+                            }
+                            console.log(res);
+                            $('.submit_confirm').button('reset');
+                            custom_noty('success', res.message);
+                            $('#otp_no').val('');
+                            $('#otp').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+
+                            $location.path('/inward-vehicle/customer-confirmation/' + $scope.job_order_id);
+
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            console.log(xhr);
+                            $('#otp_no').val('');
+                            $('.submit_confirm').button('reset');
+                            showServerErrorNoty();
+                        });
+                }
+            });
+        }
+
 
         $scope.showVehicleForm = function() {
             $scope.show_vehicle_detail = false;
