@@ -276,10 +276,11 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/job-card/get-vendor-details', 'JobCardController@getVendorDetails')->name('getVendorDetails');
 
 	//Job Card PDF
-	Route::get('/job-card/get-covering-letter-pdf/{id}', 'PDFController@getJobCardCoveringLetterPDF')->name('getJobCardCoveringLetterPDF');
 	Route::get('/pdf/gatepass/{id}', 'PDFController@gatePass')->name('gatePass');
 	Route::get('/pdf/covering-letter/{id}', 'PDFController@coveringletter')->name('coveringletter');
 	Route::get('/pdf/estimate/{id}', 'PDFController@estimate')->name('estimate');
+	Route::get('/pdf/insurance-estimate/{id}', 'PDFController@InsuranceEstimate')->name('InsuranceEstimate');
+	Route::get('/pdf/revised-estimate/{id}', 'PDFController@RevisedEstimate')->name('RevisedEstimate');
 
 	//Repair Order Types
 	Route::get('/repair-order-type/get-list', 'RepairOrderTypeController@getRepairOrderTypeList')->name('getRepairOrderTypeList');
