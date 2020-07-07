@@ -198,7 +198,7 @@
                                                     <div class="form-group">
                                                         <label>Estimated Delivery Date <sup class="mandatory">*</sup></label>
                                                         <div class="input-group date" data-provide="datepicker" data-date-start-date="0d">
-                                                            <input type="text" class="form-control"  placeholder="Select Estimated Delivery Date" name="est_delivery_date" ng-model="job_order.est_delivery_date"/>
+                                                            <input type="text" class="form-control" placeholder="Select Estimated Delivery Date" name="est_delivery_date" ng-model="job_order.est_delivery_date" />
                                                             <div class="input-group-addon">
                                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                             </div>
@@ -215,13 +215,13 @@
                                                             </span>
                                                         </div><!-- Input Group -->
                                                     </div><!-- Feild -->
-                                                </div><!-- Column -->                               
+                                                </div><!-- Column -->
                                             </div><!-- Row -->
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="common-checkbox type-2">
-                                                            <input type="checkbox" id="check_agree" ng-value="1" ng-checked="job_order.is_customer_agreed == 1" ng-click="$ctrl.checkbox()" />
+                                                            <input class="check_agree" type="checkbox" id="check_agree" ng-value="1" ng-checked="job_order.is_customer_agreed == 1" ng-click="$ctrl.checkbox()" />
                                                             <label for="check_agree">Customer Agreed?</label>
                                                             <input type="hidden" name="is_customer_agreed" id="is_customer_agreed" />
                                                         </div>
@@ -236,9 +236,11 @@
                                                         Save & Close
                                                     </button>
                                                     <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}">Previous</a>
-                                                    <button ng-click="saveEstimate(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                    <button ng-click="saveEstimate(2)" class="btn btn-secondary-dark btn-min-wdth customer_denied btn-nxt">
                                                         Next
                                                     </button>
+                                                    <button class="btn btn-bordered btn-grey btn-min-wdth approval_behalf is_customer_agreed" ng-click="saveEstimate(3)">Approve on behalf of Customer</button>
+                                                    <button class="btn btn-secondary-dark btn-min-wdth send_to_customer_approval is_customer_agreed" ng-click="saveEstimate(4)">Send to Customer for Approval</button>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -252,40 +254,25 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<!-- Modal -->
-<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xs" role="document">
+<div class="modal modal-otp alert-modal fade" id="otp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title">Search Vehicle</h5>
-            </div><!-- Modal Header -->
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Registration Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Customer Code <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>VIN Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div><!-- Modal Body -->
+            <form id="approve_behalf_customer_confirm">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <h6 class="title">ENTER OTP</h6>
+                    <p class="info">Received in Customer Mobile +91<span class="customer_mobile_no"></span></p>
+                    <div class="form-group">
+                        <input type="text" autofocus name="otp_no" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
+                        <input type="hidden" name="job_order_id" id="job_order_id" value="{{job_order.id}}" />
+                        <input type="hidden" name="verify_otp" id="id" value="1" />
+                    </div><!-- Feild -->
+                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm" ng-click="saveOTP()">SUBMIT</button>
+                    <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
+                </div><!-- Modal Body -->
+            </form>
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
-<!-- Modal -->
+</div><!-- Modal -->

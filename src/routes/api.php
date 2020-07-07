@@ -216,6 +216,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/customer-confirmation/get-form-data', 'VehicleInwardController@getCustomerConfirmationFormData');
 		Route::post('vehicle-inward/customer-confirmation/save', 'VehicleInwardController@saveCustomerConfirmation');
 
+		//CUSTOMER OTP
+		Route::post('vehicle-inward/send/customer/otp', 'VehicleInwardController@sendCustomerOtp');
+		Route::post('vehicle-inward/verify/otp', 'VehicleInwardController@verifyOtp');
+		Route::post('vehicle-inward/estimate/link/generate', 'VehicleInwardController@generateUrl');
+
 		//INITIATE JOB SAVE
 		Route::post('vehicle-inward/initiate-job/save', 'VehicleInwardController@saveInitiateJob');
 
@@ -228,9 +233,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//Update Job Card
 		Route::post('vehicle-inward/update-jc/get-form-data', 'JobCardController@getUpdateJcFormData');
 		Route::post('vehicle-inward/job-card/save', 'JobCardController@saveJobCard');
-		Route::post('vehicle-inward/send/customer/otp', 'JobCardController@sendCustomerOtp');
-		Route::post('vehicle-inward/verify/otp', 'JobCardController@verifyOtp');
-		Route::post('vehicle-inward/estimate/link/generate', 'JobCardController@generateUrl');
 
 		//GET BAY ASSIGNMENT FORM DATA
 		Route::post('job-card/bay/get-form-data', 'JobCardController@getBayFormData');
