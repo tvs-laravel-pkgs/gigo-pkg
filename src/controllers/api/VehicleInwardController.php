@@ -75,7 +75,7 @@ class VehicleInwardController extends Controller {
 				->leftJoin('models', 'models.id', 'vehicles.model_id')
 				->leftJoin('amc_members', 'amc_members.vehicle_id', 'vehicles.id')
 				->leftJoin('amc_policies', 'amc_policies.id', 'amc_members.policy_id')
-				->join('configs as status', 'status.id', 'gate_logs.status_id')
+				->join('configs as status', 'status.id', 'job_orders.status_id')
 				->select([
 					'job_orders.id',
 					DB::raw('IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle") as registration_type'),
@@ -1426,6 +1426,8 @@ class VehicleInwardController extends Controller {
 	//DMS CHECKLIST SAVE
 	public function saveDmsCheckList(Request $request) {
 		// dd($request->all());
+		$request['warranty_expiry_date'] = date('d-m-Y', strtotime($request->warranty_expiry_date));
+		$request['ewp_expiry_date'] = date('d-m-Y', strtotime($request->ewp_expiry_date));
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -1433,26 +1435,26 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:job_orders,id',
 				],
-				// 'warranty_expiry_date' => [
-				// 	'nullable',
-				// 	'date_format:"d-m-Y',
-				// ],
-				// 'ewp_expiry_date' => [
-				// 	'nullable',
-				// 	'date_format:"d-m-Y',
-				// ],
-				// 'warranty_expiry_attachment' => [
-				// 	'nullable',
-				// 	'mimes:jpeg,jpg,png',
-				// ],
-				// 'ewp_expiry_attachment' => [
-				// 	'nullable',
-				// 	'mimes:jpeg,jpg,png',
-				// ],
-				// 'membership_attachment' => [
-				// 	'nullable',
-				// 	'mimes:jpeg,jpg,png',
-				// ],
+				'warranty_expiry_date' => [
+					"required_if:warrany_status,==,1",
+					'date_format:"d-m-Y',
+				],
+				'warranty_expiry_attachment' => [
+					// "required_if:warrany_status,==,1",
+					'mimes:jpeg,jpg,png',
+				],
+				'ewp_expiry_date' => [
+					"required_if:exwarrany_status,==,1",
+					'date_format:"d-m-Y',
+				],
+				'ewp_expiry_attachment' => [
+					// "required_if:exwarrany_status,==,1",
+					'mimes:jpeg,jpg,png',
+				],
+				'membership_attachment.*' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
 				'is_verified' => [
 					// 'nullable',
 					'numeric',
@@ -1469,8 +1471,23 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 			$job_order = JobOrder::find($request->job_order_id);
-			$job_order->warranty_expiry_date = $request->warranty_expiry_date;
-			$job_order->ewp_expiry_date = $request->ewp_expiry_date;
+			if ($request->warrany_status == 1) {
+				$job_order->ewp_expiry_date = NULL;
+				$job_order->warranty_expiry_date = $request->warranty_expiry_date;
+				$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
+			}
+			if ($request->exwarrany_status == 1) {
+				$job_order->ewp_expiry_date = $request->ewp_expiry_date;
+				$job_order->warranty_expiry_date = NULL;
+				$attachment = Attachment::where('id', $request->warrenty_policy_attachment_id)->forceDelete();
+			}
+			if ($request->exwarrany_status == 0 && $request->warrany_status == 0) {
+				$job_order->warranty_expiry_date = NULL;
+				$job_order->ewp_expiry_date = NULL;
+				$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
+				$attachment = Attachment::where('id', $request->warrenty_policy_attachment_id)->forceDelete();
+			}
+
 			$job_order->is_dms_verified = $request->is_verified;
 			if (isset($request->is_campaign_carried)) {
 				$job_order->is_campaign_carried = $request->is_campaign_carried;
@@ -1561,12 +1578,31 @@ class VehicleInwardController extends Controller {
 				$attachment_type_id = 257; //EWP
 				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
-			if (!empty($request->membership_attachment)) {
-				$attachment = $request->membership_attachment;
-				$entity_id = $job_order->id;
-				$attachment_of_id = 227; //Job order
-				$attachment_type_id = 258; //AMC
-				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+
+			//MULTIPLE ATTACHMENT REMOVAL
+			$attachment_removal_ids = json_decode($request->attachment_removal_ids);
+			if (!empty($attachment_removal_ids)) {
+				Attachment::whereIn('id', $attachment_removal_ids)->forceDelete();
+			}
+
+			if (!empty($request->membership_attachments)) {
+				foreach ($request->membership_attachments as $key => $membership_attachment) {
+					$value = rand(1, 100);
+					$image = $membership_attachment;
+
+					$file_name_with_extension = $image->getClientOriginalName();
+					$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+					$extension = $image->getClientOriginalExtension();
+					$name = $job_order->id . '_' . $file_name . '_' . rand(10, 1000) . '.' . $extension;
+
+					$membership_attachment->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+					$attachement = new Attachment;
+					$attachement->attachment_of_id = 227; //Job order
+					$attachement->attachment_type_id = 258; //AMC
+					$attachement->entity_id = $job_order->id;
+					$attachement->name = $name;
+					$attachement->save();
+				}
 			}
 
 			// INWARD PROCESS CHECK - DMS CHECKLIST
@@ -3000,6 +3036,7 @@ class VehicleInwardController extends Controller {
 			$job_order->estimated_delivery_date = date('Y-m-d H:i:s', strtotime($estimated_delivery_date));
 			$job_order->is_customer_agreed = $request->is_customer_agreed;
 			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->status_id = 8463;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
 
@@ -3020,6 +3057,230 @@ class VehicleInwardController extends Controller {
 				'errors' => [
 					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
 				],
+			]);
+		}
+	}
+
+	public function sendCustomerOtp(Request $request) {
+		// dd($request->all());
+		try {
+			$job_order = JobOrder::with([
+				'customer',
+			])
+				->find($request->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Order Found!',
+				]);
+			}
+
+			$customer_mobile = $job_order->customer->mobile_no;
+
+			if (!$customer_mobile) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Customer Mobile Number Not Found',
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$job_order_otp_update = JobOrder::where('id', $request->id)
+				->update([
+					'otp_no' => mt_rand(111111, 999999),
+					'updated_by_id' => Auth::user()->id,
+					'updated_at' => Carbon::now(),
+				]);
+
+			DB::commit();
+			if (!$job_order_otp_update) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Card OTP Update Failed',
+				]);
+			}
+
+			$job_order = JobOrder::find($request->id);
+
+			$otp = $job_order->otp_no;
+
+			$message = 'OTP is ' . $otp . ' for Job Card Approve On Behalf of Customer. Please enter OTP to verify your Job Card Approval';
+
+			$msg = sendSMSNotification($customer_mobile, $message);
+
+			return response()->json([
+				'success' => true,
+				'mobile_number' => $customer_mobile,
+				'message' => 'OTP Sent successfully!!',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function verifyOtp(Request $request) {
+		// dd($request->all());
+		try {
+
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'exists:job_orders,id',
+					'integer',
+				],
+				'otp_no' => [
+					'required',
+					'min:8',
+					'integer',
+				],
+				'verify_otp' => [
+					'required',
+					'integer',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			$job_order = JobOrder::with([
+				'gateLog',
+			])
+				->find($request->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$otp_validate = JobOrder::where('id', $request->job_order_id)
+				->where('otp_no', '=', $request->otp_no)
+				->first();
+			if (!$otp_validate) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Order Approve Behalf of Customer OTP is worng. Please try again.',
+				]);
+			}
+
+			//UPDATE JOB ORDER STATUS
+			$job_order_status_update = JobOrder::find($request->job_order_id);
+			$job_order_status_update->status_id = 8463; //Vehicle Inward Inprogress
+			$job_order_status_update->is_customer_approved = 1;
+			$job_order_status_update->updated_at = Carbon::now();
+			$job_order_status_update->save();
+
+			//UPDATE GATE LOG STATUS
+			$gate_log_status_update = GateLog::find($job_order->gateLog->id);
+			$gate_log_status_update->status_id = 8123; //Gate Out Pending
+			$gate_log_status_update->updated_at = Carbon::now();
+			$gate_log_status_update->save();
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Customer Approved Successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function generateUrl(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'exists:job_orders,id',
+					'integer',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			$job_order = JobOrder::with([
+				'customer',
+				'vehicle',
+			])
+				->find($request->job_order_id);
+
+			// dd($job_order);
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$customer_mobile = $job_order->customer->mobile_no;
+			$vehicle_no = $job_order->vehicle->registration_number;
+
+			if (!$customer_mobile) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Customer Mobile Number Not Found',
+				]);
+			}
+
+			$job_card_otp = JobOrder::where('id', $request->job_order_id)
+				->update([
+					'otp_no' => mt_rand(111111, 999999),
+					'status_id' => 8469, //Waiting for Customer Approval
+					'updated_by_id' => Auth::user()->id,
+					'updated_at' => Carbon::now(),
+				]);
+
+			$job_order = JobOrder::find($request->job_order_id);
+
+			$url = url('/') . '/vehicle-inward/estimate/customer/view/' . $request->job_order_id . '/' . $job_order->otp_no;
+
+			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+			$message = 'Dear Customer,Kindly click below link to approve for TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no;
+
+			$msg = sendSMSNotification($customer_mobile, $message);
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'URL send to Customer Successfully',
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
 			]);
 		}
 	}

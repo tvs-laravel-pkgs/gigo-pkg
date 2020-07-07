@@ -28,6 +28,8 @@
                                 <div class="row">
                                     <form id="form" autocomplete="off">
                                         <input type="hidden" name="job_order_id" value="{{job_order_id}}">
+                                        <input type="hidden" name="e_w_p_attachment_id" value="{{job_order.e_w_p_attachment.id}}">
+                                        <input type="hidden" name="warrenty_policy_attachment_id" value="{{job_order.warrenty_policy_attachment.id}}">
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>DMS Check list</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
@@ -43,7 +45,6 @@
                                                             <input type="radio" id="not_sold" name="warrany_status" ng-model="$ctrl.warrany_status" ng-value="0">
                                                             <label for="not_sold">No</label>
                                                         </div>
-                                                        <div id="errorRoadTestRequired"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-4" ng-if="$ctrl.warrany_status">
@@ -95,7 +96,6 @@
                                                             <input type="radio" id="exwarrany_status_no" name="exwarrany_status" ng-model="$ctrl.exwarrany_status" ng-value="0">
                                                             <label for="exwarrany_status_no">No</label>
                                                         </div>
-                                                        <div id="errorRoadTestRequired"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-4" ng-if="$ctrl.exwarrany_status && $ctrl.warrany_status == 0">
@@ -136,6 +136,26 @@
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
+                                            </div><!-- Row -->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="light-box form-group">
+                                                        <h6 class=""><b>Memberships Attachments</b></h6>
+                                                        <div class="img-upload-preview">
+                                                            <input type="file" class="image_uploadify" accept="image/*,application/pdf" name="membership_attachments[]" multiple />
+                                                            <div class="imageuploadify">
+                                                                <div class="imageuploadify-images-list">
+                                                                    <div class="imageuploadify-container" style="margin-left: 4px; margin-right: 4px;" ng-repeat="(key,a_m_c_attachment) in job_order.a_m_c_attachment">
+                                                                        <button type="button" class="btn btn-danger glyphicon glyphicon-remove" ng-click="remove_attachment(a_m_c_attachment.id,key)">
+                                                                        </button>
+                                                                        <img src="./storage/app/public/gigo/job_order/attachments/{{a_m_c_attachment.name}}">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <input type="hidden" name="attachment_removal_ids" id="attachment_removal_ids" value="">
+                                                    </div><!-- Form Group -->
+                                                </div>
                                             </div><!-- Row -->
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="col-md-12">
@@ -307,4 +327,5 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Modal -->
-<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
+<!-- Drag & Drop File Upload Plugins -->
+<script src="./public/theme/js/imageuploadify-common-preview.min.js"></script>
