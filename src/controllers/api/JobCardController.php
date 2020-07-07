@@ -273,6 +273,9 @@ class JobCardController extends Controller {
 			$job_card->created_by = Auth::user()->id;
 			$job_card->save();
 
+			//Update Job Order status
+			JobOrder::where('id', $request->job_order_id)->update(['status_id' => 8470, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_card/attachments/');
 			Storage::makeDirectory($attachment_path, 0777);
@@ -287,10 +290,10 @@ class JobCardController extends Controller {
 			}
 
 			//UPDATE JOB ORDER REPAIR ORDER STATUS
-			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->update(['status_id' => 8180, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->update(['status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			//UPDATE JOB ORDER PARTS STATUS
-			JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8200, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+			JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			DB::commit();
 
