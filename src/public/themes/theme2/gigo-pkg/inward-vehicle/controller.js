@@ -684,7 +684,14 @@ app.component('inwardVehicleDmsCheckListForm', {
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 
-        $('.image_uploadify').imageuploadify();
+        /* Profile Upload */
+        setTimeout(function() {
+            profileImgUpload();
+        }, 1000);
+
+        setTimeout(function() {
+            $('.image_uploadify').imageuploadify();
+        }, 1000);
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
@@ -704,6 +711,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    console.log(res);
                     $scope.job_order = res.job_order;
                     $scope.campaigns = res.campaigns;
                     $scope.job_order_id = $routeParams.job_order_id;
@@ -749,6 +757,16 @@ app.component('inwardVehicleDmsCheckListForm', {
             }
         }
 
+        self.attachment_removal_id = [];
+        $scope.remove_attachment = function(attachment_id, index) {
+            console.log(attachment_id, index);
+            if (attachment_id) {
+                self.attachment_removal_id.push(attachment_id);
+                $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
+            }
+            $scope.job_order.a_m_c_attachment.splice(index, 1);
+        }
+
         //Save Form Data 
         $scope.saveDms = function(id) {
             var form_id = '#form';
@@ -763,12 +781,28 @@ app.component('inwardVehicleDmsCheckListForm', {
                             return false;
                         },
                     },
+                    'ewp_expiry_date': {
+                        required: function(element) {
+                            if (self.exwarrany_status == '1') {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
                     // 'ewp_expiry_date': {
                     //     required: true,
                     // },
                     'warranty_expiry_attachment': {
                         required: function(element) {
-                            if (self.warrany_status == '1') {
+                            if (self.warrany_status == '1' && !$scope.job_order.warrenty_policy_attachment) {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
+                    'ewp_expiry_attachment': {
+                        required: function(element) {
+                            if (self.exwarrany_status == '1' && !$scope.job_order.e_w_p_attachment) {
                                 return true;
                             }
                             return false;

@@ -38,10 +38,10 @@
                                 <sup class="mandatory">*</sup>
                             </label>
                             <div class="tab-switch">
-                                <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
-                                    {{ $ctrl.switch_value }}
+                                <md-switch ng-model="$ctrl.is_free" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
+                                    {{ $ctrl.is_free }}
                                 </md-switch>
-                                <input type="hidden" name="is_free" value="{{$ctrl.switch_value}}">
+                                <input type="hidden" name="is_free" value="{{$ctrl.is_free}}">
                             </div>
                         </div><!-- Form Group -->
                     </div><!-- Column -->
@@ -122,6 +122,16 @@
                         </div><!-- Feild -->
                     </div><!-- Column -->
                 </div><!-- Row -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <labour-details></labour-details>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <part-details></part-details>
+                    </div>
+                </div>
                 <!-- <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -143,7 +153,7 @@
                         <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-bordered btn-red approve_btn">
+                        <button type="submit" class="btn btn-bordered btn-red approve_btn" ng-if="page == 'form'">
                             Submit
                         </button>
                     </div><!-- Column -->

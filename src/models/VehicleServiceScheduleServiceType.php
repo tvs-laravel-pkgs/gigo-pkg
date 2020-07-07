@@ -143,6 +143,8 @@ class VehicleServiceScheduleServiceType extends BaseModel {
 			'serviceType',
 			'tolerance_km',
 			'tolerance_period',
+			'parts',
+			'repair_orders',
 		];
 
 		return $relationships;
@@ -174,6 +176,16 @@ class VehicleServiceScheduleServiceType extends BaseModel {
 
 	public function tolerance_period() {
 		return $this->belongsTo('App\Config', 'period_tolerance_type_id');
+	}
+
+	public function parts() {
+		return $this->belongsToMany('App\Part', 'part_service_type',
+			'schedule_id', 'part_id')->withPivot(['quantity', 'amount'])->with(['uom']);
+	}
+
+	public function repair_orders() {
+		return $this->belongsToMany('App\RepairOrder', 'repair_order_service_type',
+			'schedule_id', 'repair_order_id')->with(['category', 'skillLevel']);
 	}
 
 	// Static Operations --------------------------------------------------------------

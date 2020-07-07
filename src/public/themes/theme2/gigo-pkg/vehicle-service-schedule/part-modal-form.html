@@ -1,0 +1,151 @@
+<div class="modal fade filter" id="part_form_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                    <i class="icon ion-md-close"></i>
+                </button>
+                <h5 class="modal-title">
+                    {{modal_action}} Part
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                Part Code
+                                <span class="mandatory">*</span>
+                            </label>
+                            <md-autocomplete md-selected-item="service_type_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
+                                <md-item-template>
+                                    <span>
+                                        {{part.code}}
+                                    </span>
+                                </md-item-template>
+                                <md-not-found>
+                                    No records matching "{{partSearchKey}}" were found.
+                                </md-not-found>
+                            </md-autocomplete>
+                            <input type="hidden" name="part_id" value="{{service_type_part.part.id}}">
+                        </div><!-- Field -->
+                    </div><!-- Column -->
+                    <div class="col-md-4" ng-if="service_type_part.part">
+                        <div class="form-group">
+                            <label>
+                                Part Description
+                            </label>
+                            <label>
+                                {{service_type_part.part.name}}
+                            </label>
+                        </div><!-- Field -->
+                    </div><!-- Column -->
+                    <!-- <div class="col-md-4" ng-if="wjor_part.part">
+                        <div class="form-group">
+                            <label>
+                                Purchase Type
+                            </label>
+                            <input type="radio" id="option_stock" name="purchase_type" ng-model="wjor_part.purchase_type" ng-value="8480">
+                            <label for="option_stock">
+                                Stock
+                            </label>
+                            <input type="radio" id="option_local" name="purchase_type" ng-model="wjor_part.purchase_type" ng-value="8481">
+                            <label for="option_local">
+                                Local Purchase
+                            </label>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="row" ng-if="service_type_part.part">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                MRP
+                            </label>
+                            <label>
+                                {{service_type_part.part.mrp | currency}}
+                            </label>
+                        </div><!-- Field -->
+                    </div><!-- Column -->
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                Quantity
+                            </label>
+                            <div class="input-group">
+                                <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="quantity" ng-model="service_type_part.part.qty" maxlength="12">
+                                <!-- <span class="input-group-addon">
+                                    {{wjor_part.part.uom.name}}
+                                </span> -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                Rate
+                            </label>
+                            <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="rate" ng-model="wjor_part.rate" maxlength="12" ng-readonly="wjor_part.purchase_type != '8481'">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                Net Amount
+                            </label>
+                            <label>
+                                {{wjor_part.net_amount | currency}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4" ng-repeat="(tax_key, tax) in wjor_part.taxes" ng-if="wjor_part.part.tax_code && wjor_part.part">
+                        <div class="form-group">
+                            <label>
+                                {{tax.name}} ({{tax.pivot.percentage}}%)
+                            </label>
+                            <label>
+                                {{tax.amount | currency}}
+                            </label>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="row" ng-if="service_type_part.part">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                UOM
+                            </label>
+                            <label>
+                                {{service_type_part.part.uom.code}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>
+                                <b>
+                                    Amount
+                                </b>
+                            </label>
+                            <label>
+                                <b>
+                                    {{service_type_part.part.total_amount | currency}}
+                                </b>
+                            </label>
+                        </div><!-- Field -->
+                    </div><!-- Column -->
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-right mb-15">
+                        <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-bordered btn-red approve_btn">
+                            Submit
+                        </button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->

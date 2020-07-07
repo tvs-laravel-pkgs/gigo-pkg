@@ -51,11 +51,11 @@
                             <input type="hidden" name="veh_serv_sch_service_types[{{index}}][is_free]" value="{{sch_serv_type.is_free}}">
                             <td class="wid-100">
                                 <button type="button" ng-click="showServiceForm(sch_serv_type,index)" class="btn img-btn btn-delete">
-                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/view.svg" alt="View" />
                                 </button>
-                                <button type="button" class="btn img-btn btn-delete" ng-click="removeService(index)">
+                                <!-- <button type="button" class="btn img-btn btn-delete" ng-click="removeService(index)">
                                     <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
-                                </button>
+                                </button> -->
                             </td>
                             <td>
                                 {{sch_serv_type.service_type.name}}

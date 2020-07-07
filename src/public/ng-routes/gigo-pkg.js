@@ -238,6 +238,10 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<vehicle-service-schedule-form></vehicle-service-schedule-form>',
         title: 'Edit Vehicle Service Schedule',
     }).
+    when('/gigo-pkg/vehicle-service-schedule/view/:id', {
+        template: '<vehicle-service-schedule-view></vehicle-service-schedule-view>',
+        title: 'View Vehicle Service Schedule',
+    }).
 
     //Kanban App
     when('/kanban-app', {

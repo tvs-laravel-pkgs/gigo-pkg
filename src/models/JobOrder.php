@@ -240,7 +240,7 @@ class JobOrder extends BaseModel {
 	}
 
 	public function AMCAttachment() {
-		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 258);
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 258);
 	}
 
 	public function driverLicenseAttachment() {
