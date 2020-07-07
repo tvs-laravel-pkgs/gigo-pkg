@@ -712,6 +712,19 @@ app.component('inwardVehicleDmsCheckListForm', {
                     } else {
                         $scope.job_order.is_campaign_carried = 1;
                     }
+
+                    if ($scope.job_order.ewp_expiry_date) {
+                        self.exwarrany_status = 1;
+                    } else {
+                        self.exwarrany_status = 0;
+                    }
+
+                    if ($scope.job_order.warranty_expiry_date) {
+                        self.warrany_status = 1;
+                    } else {
+                        self.warrany_status = 0;
+                    }
+
                     $scope.$apply();
 
                     setTimeout(function() {
@@ -742,15 +755,25 @@ app.component('inwardVehicleDmsCheckListForm', {
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    // 'warranty_expiry_date': {
-                    //     required: true,
-                    // },
+                    'warranty_expiry_date': {
+                        required: function(element) {
+                            if (self.warrany_status == '1') {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
                     // 'ewp_expiry_date': {
                     //     required: true,
                     // },
-                    // 'warranty_expiry_attachment': {
-                    //     required: true,
-                    // },
+                    'warranty_expiry_attachment': {
+                        required: function(element) {
+                            if (self.warrany_status == '1') {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
                     // 'ewp_expiry_attachment': {
                     //     required: true,
                     // },
