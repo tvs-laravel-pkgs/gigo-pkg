@@ -28,11 +28,26 @@
                                 <div class="row">
                                     <form id="form" autocomplete="off">
                                         <input type="hidden" name="job_order_id" value="{{job_order_id}}">
+                                        <input type="hidden" name="e_w_p_attachment_id" value="{{job_order.e_w_p_attachment.id}}">
+                                        <input type="hidden" name="warrenty_policy_attachment_id" value="{{job_order.warrenty_policy_attachment.id}}">
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>DMS Check list</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Warranty
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="sold" name="warrany_status" ng-model="$ctrl.warrany_status" ng-value="1">
+                                                            <label for="sold">Yes</label>
+                                                            <input type="radio" id="not_sold" name="warrany_status" ng-model="$ctrl.warrany_status" ng-value="0">
+                                                            <label for="not_sold">No</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="$ctrl.warrany_status">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo">
                                                             <div class="avatar-upload type-3">
@@ -61,7 +76,7 @@
                                                             <div class="form-group">
                                                                 <label>Eligible Upto</label>
                                                                 <div class="input-group date" data-provide="datepicker">
-                                                                    <input type="text" value="{{job_order.ewp_expiry_date}}" name="warranty_expiry_date" class="form-control" placeholder="Ex : 10-06-2020" />
+                                                                    <input type="text" value="{{job_order.warranty_expiry_date}}" name="warranty_expiry_date" class="form-control" placeholder="Ex : 10-06-2020" />
                                                                     <div class="input-group-addon">
                                                                         <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                                     </div>
@@ -70,7 +85,20 @@
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
-                                                <div class="col-md-4">
+                                                <div class="col-md-2" ng-if="$ctrl.warrany_status == 0">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Extended Warranty
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="exwarrany_status_yes" name="exwarrany_status" ng-model="$ctrl.exwarrany_status" ng-value="1">
+                                                            <label for="exwarrany_status_yes">Yes</label>
+                                                            <input type="radio" id="exwarrany_status_no" name="exwarrany_status" ng-model="$ctrl.exwarrany_status" ng-value="0">
+                                                            <label for="exwarrany_status_no">No</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="$ctrl.exwarrany_status && $ctrl.warrany_status == 0">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo">
                                                             <div class="avatar-upload type-3">
@@ -99,7 +127,7 @@
                                                             <div class="form-group">
                                                                 <label>Eligible Upto</label>
                                                                 <div class="input-group date" data-provide="datepicker">
-                                                                    <input type="text" name="ewp_expiry_date" value="{{job_order.warranty_expiry_date}}" class="form-control" placeholder="Ex : 10-06-2020" />
+                                                                    <input type="text" name="ewp_expiry_date" value="{{job_order.ewp_expiry_date}}" class="form-control" placeholder="Ex : 10-06-2020" />
                                                                     <div class="input-group-addon">
                                                                         <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                                     </div>
@@ -108,41 +136,26 @@
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
-                                                <div class="col-md-4">
-                                                    <div class="gatein-img-list">
-                                                        <div class="gatein-img-list-item attach-photo">
-                                                            <div class="avatar-upload type-3">
-                                                                <div class="avatar-edit" ng-class="{'in': job_order.a_m_c_attachment != NULL}">
-                                                                    <input type="file" class="profile-img-upload membership_attachment" name="membership_attachment" id="membership_attachment" accept=".png, .jpg, .jpeg, .svg" />
-                                                                    <label for="membership_attachment">
-                                                                        <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
-                                                                    </label>
-                                                                </div>
-                                                                <div class="avatar-preview in" ng-if="job_order.a_m_c_attachment != NULL">
-                                                                    <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_order/attachments/{{job_order.a_m_c_attachment.name}}')">
+                                            </div><!-- Row -->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="light-box form-group">
+                                                        <h6 class=""><b>Memberships Attachments</b></h6>
+                                                        <div class="img-upload-preview">
+                                                            <input type="file" class="image_uploadify" accept="image/*,application/pdf" name="membership_attachments[]" multiple />
+                                                            <div class="imageuploadify">
+                                                                <div class="imageuploadify-images-list">
+                                                                    <div class="imageuploadify-container" style="margin-left: 4px; margin-right: 4px;" ng-repeat="(key,a_m_c_attachment) in job_order.a_m_c_attachment">
+                                                                        <button type="button" class="btn btn-danger glyphicon glyphicon-remove" ng-click="remove_attachment(a_m_c_attachment.id,key)">
+                                                                        </button>
+                                                                        <img src="./storage/app/public/gigo/job_order/attachments/{{a_m_c_attachment.name}}">
                                                                     </div>
                                                                 </div>
-                                                                <div class="avatar-preview" ng-if="job_order.a_m_c_attachment == NULL">
-                                                                    <div class="avatar-img" id="imagePreview" style="">
-                                                                    </div>
-                                                                </div><!-- Avatar Preview -->
-                                                            </div><!-- Avatar Upload -->
+                                                            </div>
                                                         </div>
-                                                        <div class="attach-form-wrap">
-                                                            <p class="color-secondary-dark">
-                                                                <b>
-                                                                    Memberships
-                                                                </b>
-                                                            </p>
-                                                            <p class="font-md">
-                                                                TVSCARE-GOLD Eligible Upto 20/03/2022
-                                                            </p>
-                                                            <p class="font-md">
-                                                                TVSONE-GOLD Eligible Upto 20/03/2022
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div><!-- Column -->
+                                                        <input type="hidden" name="attachment_removal_ids" id="attachment_removal_ids" value="">
+                                                    </div><!-- Form Group -->
+                                                </div>
                                             </div><!-- Row -->
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="col-md-12">
@@ -223,7 +236,7 @@
                                                                                 Part Code
                                                                             </th>
                                                                             <th>
-                                                                                Part Number 
+                                                                                Part Number
                                                                             </th>
                                                                         </tr>
                                                                     </thead>
@@ -268,7 +281,7 @@
                                                         <div id="errorCampaignNotCarriedRemarks"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                            </div> 
+                                            </div>
                                             <br>
                                             <div class="row">
                                                 <div class="col-md-3">
@@ -314,40 +327,5 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Modal -->
-<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
-<div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-xs" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title">Search Vehicle</h5>
-            </div><!-- Modal Header -->
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Registration Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Registration Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Customer Code <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter Customer Code" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>VIN Number <sup class="mandatory">*</sup></label>
-                            <input type="text" class="form-control" placeholder="Enter VIN Number" autocomplete="off" />
-                        </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-12">
-                        <button type="button" class="btn btn-secondary-dark btn-square btn-block" data-dismiss="modal"><b>Submit</b></button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div><!-- Modal Body -->
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
-<!-- Modal
+<!-- Drag & Drop File Upload Plugins -->
+<script src="./public/theme/js/imageuploadify-common-preview.min.js"></script>
