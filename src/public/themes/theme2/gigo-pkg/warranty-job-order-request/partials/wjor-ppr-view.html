@@ -69,6 +69,26 @@
                         </b>
                     </span>
                 </li>
+                <li class="view-col-3" ng-if="warranty_job_order_request.authorization_number">
+                    <span class="view-col-label">
+                        Authorization Number
+                    </span>
+                    <span class="view-col-value">
+                        <b>
+                            {{warranty_job_order_request.authorization_number}}
+                        </b>
+                    </span>
+                </li>
+                <li class="view-col-3">
+                    <span class="view-col-label">
+                        Status
+                    </span>
+                    <span class="view-col-value">
+                        <b>
+                            {{warranty_job_order_request.status.name}}
+                        </b>
+                    </span>
+                </li>
             </ul>
             <div class="panel-group" id="accordion">
                 <div class="panel panel-default type-3">
@@ -397,26 +417,5 @@
                 </div>
             </div>
         </div><!-- Column -->
-        <div class="tab-pane-footer">
-            <div class="row">
-                <div class="col-md-12">
-                    <button type="button" ng-if="warranty_job_order_request.status.id == 9100" ng-click1="savePPRForm('close')" class="btn btn-red">
-                        Edit
-                    </button>
-                    <button type="button" ng-click1="savePPRForm('close')" class="btn btn-red">
-                        Delete
-                    </button>
-                    <button type="button" ng-if="warranty_job_order_request.status.id == 9100" ng-click="sendToApproval(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
-                        Send to approval
-                    </button>
-                    <button type="button" ng-if="warranty_job_order_request.status.id == 9101" ng-click="showApprovalForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
-                        Approve
-                    </button>
-                    <button type="button" ng-if="warranty_job_order_request.status.id == 9101" ng-click="showRejectForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
-                        Reject
-                    </button>
-                </div>
-            </div>
-        </div><!-- Tab Footer -->
     </div><!-- Row -->
 </div><!-- Tab Pane Wrap -->

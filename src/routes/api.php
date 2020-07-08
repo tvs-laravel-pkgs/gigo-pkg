@@ -97,9 +97,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::group(['prefix' => 'vehicle-service-schedule'], function () {
 			$controller = 'VehicleServiceScheduleController';
 			Route::get('index', $controller . '@index');
-			Route::get('read/{id}', $controller . '@read');
+			Route::get('read/{id}/{withtrashed?}', $controller . '@read');
 			Route::post('save', $controller . '@save');
-			Route::post('remove', $controller . '@remove');
+			Route::get('remove', $controller . '@remove');
 			Route::get('options', $controller . '@options');
 			Route::get('list', $controller . '@list');
 		});

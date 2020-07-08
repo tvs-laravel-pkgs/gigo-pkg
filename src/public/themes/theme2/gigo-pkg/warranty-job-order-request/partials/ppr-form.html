@@ -195,6 +195,34 @@
                         <div class="panel-body">
                             <ul class="view-row mb-no">
                                 <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle">
+                                    <div class="form-group">
+                                        <label>
+                                            Chassis number
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" autocomplete="off" ng-model="warranty_job_order_request.job_order.vehicle.chassis_number" name="chassis_number" maxlength="32" />
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle">
+                                    <div class="form-group">
+                                        <label>
+                                            Engine number
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" autocomplete="off" ng-model="warranty_job_order_request.job_order.vehicle.engine_number" name="engine_number" maxlength="32" />
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle">
+                                    <div class="form-group">
+                                        <label>
+                                            Registration number
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" autocomplete="off" ng-model="warranty_job_order_request.job_order.vehicle.registration_number" name="registration_number" maxlength="10" />
+                                    </div><!-- Feild -->
+                                </li>
+
+                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle && false">
                                     <span class="view-col-label">
                                         Chassis number
                                     </span>
@@ -204,7 +232,7 @@
                                         </b>
                                     </span>
                                 </li>
-                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle">
+                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle && false">
                                     <span class="view-col-label">
                                         Engine number
                                     </span>
@@ -214,7 +242,7 @@
                                         </b>
                                     </span>
                                 </li>
-                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle">
+                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle && false">
                                     <span class="view-col-label">
                                         Registration number
                                     </span>

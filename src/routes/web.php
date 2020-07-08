@@ -285,6 +285,12 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/pdf/job-card-spare-requisition/{id}', 'PDFController@JobCardrequisitionPDF')->name('JobCardrequisitionPDF');
 	Route::get('/pdf/work-order-outward/{id}', 'PDFController@WorkorderOutwardPDF')->name('WorkorderOutwardPDF');
 	Route::get('/pdf/work-order-inward/{id}', 'PDFController@WorkorderInwardPDF')->name('WorkorderInwardPDF');
+	Route::get('/pdf/warrenty-pick-list/{id}', 'PDFController@WarrentyPickListPDF')->name('WarrentyPickListPDF');
+	Route::get('/pdf/vehicle-inward/{id}', 'PDFController@VehicleInwardPDF')->name('VehicleInwardPDF');
+	Route::get('/pdf/vehicle-inspection/{id}', 'PDFController@VehicleInspectionPDF')->name('VehicleInspectionPDF');
+	Route::get('/pdf/tax-invoice/{id}', 'PDFController@TaxInvoicePDF')->name('TaxInvoicePDF');
+	Route::get('/pdf/service-proforma/{id}', 'PDFController@serviceProformaPDF')->name('serviceProformaPDF');
+	Route::get('/pdf/service-proforma-cumulative/{id}', 'PDFController@serviceProformaCumulativePDF')->name('serviceProformaCumulativePDF');
 
 	//Repair Order Types
 	Route::get('/repair-order-type/get-list', 'RepairOrderTypeController@getRepairOrderTypeList')->name('getRepairOrderTypeList');
