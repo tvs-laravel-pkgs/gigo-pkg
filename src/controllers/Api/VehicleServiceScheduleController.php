@@ -238,4 +238,19 @@ class VehicleServiceScheduleController extends Controller {
 			})
 			->make(true);
 	}
+
+	public function remove(Request $request) {
+		DB::beginTransaction();
+		// dd($request->id);
+		try {
+			$vehicle_service_schedule = VehicleServiceSchedule::withTrashed()->where('id', $request->id)->forceDelete();
+			if ($vehicle_service_schedule) {
+				DB::commit();
+				return response()->json(['success' => true, 'message' => 'Vehicle Service Schedule Deleted Successfully']);
+			}
+		} catch (Exception $e) {
+			DB::rollBack();
+			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
+		}
+	}
 }
