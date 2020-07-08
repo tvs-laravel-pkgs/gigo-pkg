@@ -77,6 +77,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 	// Relationships --------------------------------------------------------------
 
+	public function company() {
+		return $this->belongsTo('App\Company');
+	}
+
 	public function jobOrder() {
 		return $this->belongsTo('App\JobOrder');
 	}

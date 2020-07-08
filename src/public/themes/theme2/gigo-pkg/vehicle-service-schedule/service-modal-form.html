@@ -38,10 +38,10 @@
                                 <sup class="mandatory">*</sup>
                             </label>
                             <div class="tab-switch">
-                                <md-switch ng-model="$ctrl.is_free" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
+                                <md-switch ng-change="isFreeChange()" ng-model="$ctrl.is_free" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
                                     {{ $ctrl.is_free }}
                                 </md-switch>
-                                <input type="hidden" name="is_free" value="{{$ctrl.is_free}}">
+                                <input type="hidden" ng-model="service_type_item.is_free" class="is_free_change" name="is_free" value="{{$ctrl.is_free}}">
                             </div>
                         </div><!-- Form Group -->
                     </div><!-- Column -->
@@ -124,12 +124,12 @@
                 </div><!-- Row -->
                 <div class="row">
                     <div class="col-md-12">
-                        <labour-details></labour-details>
+                        <vehicle-labour-details></vehicle-labour-details>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <part-details></part-details>
+                        <vehicle-part-details></vehicle-part-details>
                     </div>
                 </div>
                 <!-- <div class="row">
@@ -153,7 +153,7 @@
                         <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-bordered btn-red approve_btn" ng-if="page == 'form'">
+                        <button type="submit" class="btn btn-bordered btn-red approve_btn">
                             Submit
                         </button>
                     </div><!-- Column -->
