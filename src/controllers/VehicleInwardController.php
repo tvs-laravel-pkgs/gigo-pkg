@@ -112,7 +112,7 @@ class VehicleInwardController extends Controller {
 				$vehicle_inwards->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 			} else {
 				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
-					->whereRaw("IF (`gate_logs`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
+					->whereRaw("IF (`job_orders`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
 			}
 		}
 		$vehicle_inwards->groupBy('job_orders.id');
