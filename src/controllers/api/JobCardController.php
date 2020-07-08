@@ -1925,11 +1925,13 @@ class JobCardController extends Controller {
 			'jobOrderRepairOrders' => function ($query) {
 				$query->where('is_recommended_by_oem', 0);
 			},
+			'jobOrderRepairOrders.splitOrderType',
 			'jobOrderRepairOrders.repairOrder',
 			'jobOrderRepairOrders.repairOrder.repairOrderType',
 			'jobOrderParts' => function ($query) {
 				$query->where('is_oem_recommended', 0);
 			},
+			'jobOrderParts.splitOrderType',
 			'jobOrderParts.part',
 		])
 			->select([
@@ -1974,6 +1976,56 @@ class JobCardController extends Controller {
 			'job_card' => $job_card,
 		]);
 
+	}
+
+	public function deletePayable(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'payable_type' => [
+					'required',
+					'integer',
+				],
+				'payable_id' => [
+					'required',
+					'integer',
+				],
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			if ($request->payable_type == 1) {
+				JobOrderRepairOrder::where('id', $request->payable_id)->forceDelete();
+				$message = 'Labour Deleted Successfully!!';
+			} else {
+				JobOrderPart::where('id', $request->payable_id)->forceDelete();
+				$message = 'Part Deleted Successfully!!';
+			}
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => $message,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
 	}
 
 	//VEHICLE INSPECTION GET FORM DATA

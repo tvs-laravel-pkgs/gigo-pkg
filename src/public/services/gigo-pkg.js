@@ -415,7 +415,7 @@ app.factory('VehicleServiceScheduleSvc', function(RequestSvc) {
     }
 
     function read(id) {
-        return RequestSvc.get('/api/' + model + '/read/' + id);
+        return RequestSvc.get('/api/' + model + '/read/' + id + '/withtrashed');
     }
 
     function save(params) {
@@ -423,7 +423,7 @@ app.factory('VehicleServiceScheduleSvc', function(RequestSvc) {
     }
 
     function remove(params) {
-        return RequestSvc.post('api/' + model + '/delete', params);
+        return RequestSvc.get('/api/' + model + '/remove', params);
     }
 
     function options(params) {

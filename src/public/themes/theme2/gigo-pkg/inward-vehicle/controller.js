@@ -3205,32 +3205,33 @@ app.component('inwardVehiclePayableAddPartForm', {
             self.action = 'Add';
         }
 
-        // //FETCH DATA
-        // $scope.fetchData = function() {
-        //     $.ajax({
-        //             url: base_url + '/api/vehicle-inward/part-list/get',
-        //             method: "POST",
-        //             data: {
-        //                 id: $routeParams.job_order_id
-        //             },
-        //         })
-        //         .done(function(res) {
-        //             if (!res.success) {
-        //                 showErrorNoty(res);
-        //                 return;
-        //             }
-        //             $scope.job_order = res.job_order;
-        //             $scope.extras = res.extras;
-        //             if ($scope.job_order_part_id) {
-        //                 $scope.getJobOrderPartFormData($scope.job_order_part_id);
-        //             }
-        //             $scope.$apply();
-        //         })
-        //         .fail(function(xhr) {
-        //             custom_noty('error', 'Something went wrong at server');
-        //         });
-        // }
-        // $scope.fetchData();
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/part-list/get',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    $scope.split_order_list = res.extras.split_order_list;
+                    if ($scope.job_order_part_id) {
+                        $scope.getJobOrderPartFormData($scope.job_order_part_id);
+                    }
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
 
 
         //GET PART LIST
@@ -3272,6 +3273,8 @@ app.component('inwardVehiclePayableAddPartForm', {
                     $scope.job_order_part.qty = res.job_order_part.qty;
                     $scope.job_order_part.amount = res.job_order_part.amount;
                     $scope.job_order_part.uom = res.job_order_part.part.uom;
+                    $scope.split_order_type_id = res.job_order_part.split_order_type_id;
+                    $scope.split_order_list = res.split_order_list;
                     self.qty = parseInt(res.job_order_part.qty);
                     self.part = res.job_order_part.part;
                     $scope.$apply();
@@ -3303,10 +3306,12 @@ app.component('inwardVehiclePayableAddPartForm', {
                         showErrorNoty(res);
                         return;
                     }
+
                     $scope.job_order = res.job_order;
                     $scope.job_order_part = res.part;
                     $scope.job_order_part.amount = '0.00';
                     $scope.job_order_part.qty = 0;
+                    $scope.split_order_list = res.split_order_list;
                     if (!isNaN(self.qty)) {
                         $scope.job_order_part.qty = self.qty;
                         $scope.job_order_part.amount = parseFloat($scope.job_order_part.qty * parseFloat($scope.job_order_part.rate)).toFixed(2);
@@ -3424,6 +3429,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
                     }
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
+                    $scope.split_order_list = res.extras.split_order_list;
                     if ($scope.job_order_repair_order_id) {
                         $scope.getJobOrderRotFormData($scope.job_order_repair_order_id);
                     }
@@ -3450,13 +3456,13 @@ app.component('inwardVehiclePayableAddLabourForm', {
                         return;
                     }
                     $scope.job_order_labour = res.job_order_repair_order;
+                    $scope.split_order_type_id = res.job_order_repair_order.split_order_type_id;
                     $scope.repair_order_type = res.job_order_repair_order.repair_order.repair_order_type;
                     $scope.fetchRotData($scope.repair_order_type.id);
                     $scope.repair_order = res.job_order_repair_order.repair_order;
                     $scope.job_order_labour.code = res.job_order_repair_order.repair_order.code;
                     $scope.job_order_labour.name = res.job_order_repair_order.repair_order.name;
                     $scope.job_order_labour.uom = res.job_order_repair_order.repair_order.uom;
-                    // console.log($scope.job_order_labour);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -3478,6 +3484,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
                         return;
                     }
                     $scope.extras_rot = res.extras_list;
+                    $scope.split_order_list = res.split_order_list;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -4066,6 +4073,18 @@ app.component('inwardVehicleView', {
                     $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.inventory_list = res.inventory_list;
                     $scope.$apply();
+
+                    if ($scope.job_order.warranty_expiry_date) {
+                        self.warrany_status = 1;
+                    } else {
+                        self.warrany_status = 0;
+                    }
+
+                    if ($scope.job_order.ewp_expiry_date) {
+                        self.exwarrany_status = 1;
+                    } else {
+                        self.exwarrany_status = 0;
+                    }
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');

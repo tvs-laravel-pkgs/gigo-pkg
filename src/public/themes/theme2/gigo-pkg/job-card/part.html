@@ -5,7 +5,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" type="button" class="btn-back btn-img">
+                    <a href=".#!/job-card/payable-labour-parts/{{job_order.job_card.id}}" type="button" class="btn-back btn-img">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
                     </a>
                 </div>
@@ -122,7 +122,7 @@
                 <div class="page-form-footer">
                     <div class="row">
                         <div class="col-md-12">
-                            <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn btn-bordered btn-grey">Cancel</a>
+                            <a href=".#!/job-card/payable-labour-parts/{{job_order.job_card.id}}" class="btn btn-bordered btn-grey">Cancel</a>
                             <button type="submit" class="btn btn-secondary-dark submit" ng-click="savePartForm()">Submit</button>
                         </div>
                     </div>

@@ -77,6 +77,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 	// Relationships --------------------------------------------------------------
 
+	public function company() {
+		return $this->belongsTo('App\Company');
+	}
+
 	public function jobOrder() {
 		return $this->belongsTo('App\JobOrder');
 	}
@@ -163,43 +167,60 @@ class WarrantyJobOrderRequest extends BaseModel {
 	// 	return $this->hasMany('App\WjorPart', 'wjor_id');
 	// }
 
-	public function attachments() {
+	public function photos() {
 		return $this->hasMany('App\Attachment', 'entity_id')->where('attachment_of_id', 9120);
 	}
 
+	public function approvalAttachments() {
+		return $this->hasMany('App\Attachment', 'entity_id')->where('attachment_of_id', 9121);
+	}
+
 	public static function relationships($action = '') {
-		$relationships = [
-			'jobOrder',
-			'jobOrder.type',
-			'jobOrder.outlet',
-			'jobOrder.vehicle',
-			'jobOrder.vehicle.model',
-			'jobOrder.serviceType',
-			'jobOrder.status',
-			'jobOrder.customer',
-			'jobOrder.jobCard',
-			'complaint',
-			'fault',
-			'supplier',
-			'primarySegment',
-			'secondarySegment',
-			'operatingCondition',
-			'normalRoadCondition',
-			'failureRoadCondition',
-			'loadCarriedType',
-			'loadRange',
-			'terrainAtFailure',
-			'readingType',
-			'status',
-			'serviceTypes',
-			'wjorRepairOrders',
-			'wjorRepairOrders.taxes',
-			'wjorRepairOrders.repairOrder',
-			'wjorParts',
-			'wjorParts.taxes',
-			'wjorParts.part',
-			'attachments',
-		];
+		if ($action == 'index') {
+			$relationships = [
+				'jobOrder',
+				'jobOrder.outlet',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'jobOrder.customer',
+				'jobOrder.jobCard',
+				'status',
+				'serviceTypes',
+			];
+		} else if ($action == 'read') {
+			$relationships = [
+				'jobOrder',
+				'jobOrder.type',
+				'jobOrder.outlet',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'jobOrder.status',
+				'jobOrder.customer',
+				'jobOrder.jobCard',
+				'complaint',
+				'fault',
+				'supplier',
+				'primarySegment',
+				'secondarySegment',
+				'operatingCondition',
+				'normalRoadCondition',
+				'failureRoadCondition',
+				'loadCarriedType',
+				'loadRange',
+				'terrainAtFailure',
+				'readingType',
+				'status',
+				'serviceTypes',
+				'wjorRepairOrders',
+				'wjorRepairOrders.taxes',
+				'wjorRepairOrders.repairOrder',
+				'wjorParts',
+				'wjorParts.taxes',
+				'wjorParts.part',
+				'photos',
+				'approvalAttachments',
+			];
+		}
 
 		return $relationships;
 	}
