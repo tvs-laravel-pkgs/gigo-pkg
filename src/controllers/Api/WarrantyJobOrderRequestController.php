@@ -10,6 +10,7 @@ use App\User;
 use App\WarrantyJobOrderRequest;
 use Auth;
 use DB;
+use Entrust;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
@@ -20,6 +21,92 @@ class WarrantyJobOrderRequestController extends Controller {
 
 	public function __construct() {
 		$this->data['theme'] = config('custom.theme');
+	}
+
+	public function list(Request $request) {
+		$list_data = WarrantyJobOrderRequest::select([
+			'warranty_job_order_requests.id',
+			'job_orders.number as job_card_number',
+			DB::raw('DATE_FORMAT(warranty_job_order_requests.created_at,"%d/%m/%Y") as request_date'),
+			'outlets.code as outlet_name',
+			'customers.name as customer_name',
+			'vehicles.chassis_number',
+			'vehicles.registration_number',
+			'models.model_number',
+			'users.name as requested_by',
+			'warranty_job_order_requests.status_id',
+			'configs.name as status',
+		])
+			->leftJoin('job_orders', 'job_orders.id', 'warranty_job_order_requests.job_order_id')
+			->leftJoin('outlets', 'outlets.id', 'job_orders.outlet_id')
+			->leftJoin('customers', 'customers.id', 'job_orders.customer_id')
+			->leftJoin('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
+			->leftJoin('models', 'models.id', 'vehicles.model_id')
+			->leftJoin('configs', 'configs.id', 'warranty_job_order_requests.status_id')
+			->leftJoin('users', 'users.id', 'warranty_job_order_requests.created_by_id')
+		;
+
+		if ($request->request_date != null) {
+			$date = date('Y-m-d', strtotime($request->request_date));
+			$list_data->whereDate('warranty_job_order_requests.created_at', $date);
+		}
+		if ($request->reg_no != null) {
+			$list_data->where('vehicles.registration_number', 'like', '%' . $request->reg_no . '%');
+		}
+		if ($request->customer_id != null) {
+			$list_data->where('customers.id', $request->customer_id);
+		}
+		if ($request->model_id != null) {
+			$list_data->where('models.id', $request->model_id);
+		}
+		if ($request->job_card_no != null) {
+			$list_data->where('job_orders.number', 'like', '%' . $request->job_card_no . '%');
+		}
+
+		if (Entrust::can('own-warranty-job-order-request')) {
+			$list_data->where('warranty_job_order_requests.created_by_id', Auth::id());
+		} else if (Entrust::can('own-outlet-warranty-job-order-request')) {
+			$list_data->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+		}
+
+		if (Entrust::can('verify-only-warranty-job-order-request')) {
+			$list_data->whereIn('warranty_job_order_requests.status_id', [9101]);
+		} else {
+			$list_data->whereIn('warranty_job_order_requests.status_id', [9100, 9103]);
+		}
+
+		$list_data->orderBy('warranty_job_order_requests.id', 'DESC');
+
+		return Datatables::of($list_data)
+			->rawColumns(['action'])
+			->addColumn('action', function ($list_data) {
+
+				$view = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
+				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
+				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
+				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
+				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
+				$output = '';
+
+				$output .= '<a title="View" href="#!/warranty-job-order-request/view/' . $list_data->id . '" class="btn btn-sm btn-default"><span class="glyphicon glyphicon glyphicon-eye-open"></span></a>';
+
+				if ($list_data->status_id == 9100) {
+					if (Entrust::can('edit-warranty-job-order-requests')) {
+						$output .= '<a href="#!/warranty-job-order-request/form/' . $list_data->id . '" id = "" title="Edit" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-pencil"></span></a>';
+					}
+
+					if (Entrust::can('send-to-approval-warranty-job-order-request')) {
+						$output .= '<a onclick="angular.element(this).scope().sendToApproval(' . $list_data->id . ')" id = "" title="Send to Approval" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-send"></span></a>';
+					}
+				}
+
+				if (Entrust::can('delete-warranty-job-order-request')) {
+					$output .= '<a onclick="angular.element(this).scope().confirmDelete(' . $list_data->id . ')" id = "" title="Delete" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-trash"></span></a>';
+				}
+
+				return $output;
+			})
+			->make(true);
 	}
 
 	private function beforeCrudAction($action, $response, $wjor) {
@@ -57,7 +144,7 @@ class WarrantyJobOrderRequestController extends Controller {
 			$warranty_job_order_request->jobOrder->outlet->business = $result['business'];
 			$warranty_job_order_request->status_id = 9101; //waiting for approval
 			//check before commit
-			// $warranty_job_order_request->save();
+			$warranty_job_order_request->save();
 			$warranty_manager = User::find($warranty_job_order_request->jobOrder->outlet->business->pivot->warranty_manager_id);
 			if (!$warranty_manager) {
 				return [
@@ -124,74 +211,6 @@ class WarrantyJobOrderRequestController extends Controller {
 			DB::rollBack();
 			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
 		}
-	}
-
-	public function list(Request $request) {
-		$list_data = WarrantyJobOrderRequest::select([
-			'warranty_job_order_requests.id',
-			'warranty_job_order_requests.created_at as request_date',
-			'job_orders.number as job_card_number',
-			DB::raw('DATE_FORMAT(warranty_job_order_requests.created_at,"%d/%m/%Y") as request_date'),
-			'outlets.code as outlet_name',
-			'customers.name as customer_name',
-			'vehicles.chassis_number',
-			'vehicles.registration_number',
-			'models.model_number',
-			'users.name as requested_by',
-			'warranty_job_order_requests.status_id',
-			'configs.name as status',
-		])
-			->leftJoin('job_orders', 'job_orders.id', 'warranty_job_order_requests.job_order_id')
-			->leftJoin('outlets', 'outlets.id', 'job_orders.outlet_id')
-			->leftJoin('customers', 'customers.id', 'job_orders.customer_id')
-			->leftJoin('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
-			->leftJoin('models', 'models.id', 'vehicles.model_id')
-			->leftJoin('configs', 'configs.id', 'warranty_job_order_requests.status_id')
-			->leftJoin('users', 'users.id', 'warranty_job_order_requests.created_by_id')
-			->whereIn('configs.id', [9100, 9101, 9103]);
-
-		if ($request->request_date != null) {
-			$date = date('Y-m-d', strtotime($request->request_date));
-			$list_data->whereDate('warranty_job_order_requests.created_at', $date);
-		}
-		if ($request->reg_no != null) {
-			$list_data->where('vehicles.registration_number', 'like', '%' . $request->reg_no . '%');
-		}
-		if ($request->customer_id != null) {
-			$list_data->where('customers.id', $request->customer_id);
-		}
-		if ($request->model_id != null) {
-			$list_data->where('models.id', $request->model_id);
-		}
-		if ($request->job_card_no != null) {
-			$list_data->where('job_orders.number', 'like', '%' . $request->job_card_no . '%');
-		}
-
-		return Datatables::of($list_data)
-			->rawColumns(['action'])
-			->addColumn('action', function ($list_data) {
-
-				$view = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
-				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow.svg');
-				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
-				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
-				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
-				$output = '';
-
-				$output .= '<a title="View" href="#!/warranty-job-order-request/view/' . $list_data->id . '" class="btn btn-sm btn-default"><span class="glyphicon glyphicon glyphicon-eye-open"></span></a>';
-
-				if ($list_data->status_id == 9100) {
-					//<img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '">
-					$output .= '<a href="#!/warranty-job-order-request/form/' . $list_data->id . '" id = "" title="Edit" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-pencil"></span></a>';
-
-					$output .= '<a onclick="angular.element(this).scope().sendToApproval(' . $list_data->id . ')" id = "" title="Send Approval" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-send"></span></a>';
-				}
-
-				$output .= '<a onclick="angular.element(this).scope().confirmDelete(' . $list_data->id . ')" id = "" title="Delete" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-trash"></span></a>';
-
-				return $output;
-			})
-			->make(true);
 	}
 
 	public function getOutlets(Request $r) {

@@ -2,6 +2,7 @@ app.component('warrantyJobOrderRequestCardList', {
     templateUrl: warrantyJobOrderRequestCardList,
     controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect) {
         $rootScope.loading = true;
+        return;
         $('#search').focus();
         var self = this;
         self.hasPermission = HelperService.hasPermission;

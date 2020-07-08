@@ -12,6 +12,7 @@ app.component('warrantyJobOrderRequestTableList', {
         }
 
         $scope.user = HelperService.getLoggedUser();
+        $scope.hasPerm = HelperService.hasPerm;
 
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();

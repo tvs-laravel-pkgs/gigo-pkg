@@ -10,6 +10,7 @@ app.component('warrantyJobOrderRequestView', {
         }
 
         $scope.user = HelperService.getLoggedUser();
+        $scope.hasPerm = HelperService.hasPerm;
 
         $scope.form_type = 'manual';
 
@@ -26,6 +27,10 @@ app.component('warrantyJobOrderRequestView', {
             $q.all(promises)
                 .then(function(responses) {
                     $scope.warranty_job_order_request = responses.warranty_job_order_request_read.data.warranty_job_order_request;
+
+                    if ($scope.warranty_job_order_request.status_id == 9101) {
+                        $scope.warranty_job_order_request.authorized_date = HelperService.getCurrentDate();
+                    }
                     $scope.service_types = [];
                     angular.forEach($scope.warranty_job_order_request.service_types, function(service_type) {
                         $scope.service_types.push(service_type.name);
@@ -90,7 +95,7 @@ app.component('warrantyJobOrderRequestView', {
                                 return;
                             }
                             showNoty('success', 'Warranty job order request initiated successfully');
-                            $location.path('/warranty-job-order-request/card-list');
+                            $location.path('/warranty-job-order-request/table-list');
                             $scope.$apply();
                         });
                 });
@@ -112,7 +117,7 @@ app.component('warrantyJobOrderRequestView', {
                                 return;
                             }
                             showNoty('success', 'Warranty job order request deleted successfully');
-                            $location.path('/warranty-job-order-request/card-list');
+                            $location.path('/warranty-job-order-request/table-list');
                         });
                 });
         }
@@ -153,7 +158,7 @@ app.component('warrantyJobOrderRequestView', {
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
                         showNoty('success', 'Warranty job order request approved successfully');
-                        $location.path('/warranty-job-order-request/card-list');
+                        $location.path('/warranty-job-order-request/table-list');
                     });
             }
         });
@@ -184,7 +189,7 @@ app.component('warrantyJobOrderRequestView', {
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
                         showNoty('success', 'Warranty job order request rejected successfully');
-                        $location.path('/warranty-job-order-request/card-list');
+                        $location.path('/warranty-job-order-request/table-list');
                     });
             }
         });

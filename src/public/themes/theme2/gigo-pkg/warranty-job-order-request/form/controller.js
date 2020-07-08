@@ -17,6 +17,7 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.user = HelperService.getLoggedUser();
+        $scope.hasPerm = HelperService.hasPerm;
 
         $scope.page = 'form';
 
