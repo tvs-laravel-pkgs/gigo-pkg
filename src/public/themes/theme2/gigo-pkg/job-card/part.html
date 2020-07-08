@@ -1,0 +1,133 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href=".#!/job-card/payable-labour-parts/{{job_order.job_card.id}}" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">{{$ctrl.action}} Parts</h1>
+                    <p class="subtitle">Inward Vehicle / {{$ctrl.action}} Parts</p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <form id="part_form">
+            <input type="hidden" name="job_order_id" value="{{job_order_id}}">
+            <input type="hidden" name="job_order_part_id" value="{{job_order_part_id}}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Part Code <sup class="mandatory">*</sup></label>
+                                        <md-autocomplete md-items="option in $ctrl.searchPart($ctrl.partSearchText)" md-selected-item="$ctrl.part" md-selected-item-change="getPartFormData($ctrl.part.id)" md-search-text="$ctrl.partSearchText" md-item-text="option.code" md-min-length="3" placeholder="Part Code" md-autofocus>
+                                            <md-item-template>
+                                                <span>
+                                                    {{option.code}}
+                                                </span>
+                                            </md-item-template>
+                                            <md-not-found>
+                                                No Part matching "{{$ctrl.partSearchText}}" were found.
+                                            </md-not-found>
+                                        </md-autocomplete>
+                                        <input type="hidden" id="part_id" name="part_id" value="{{$ctrl.part.id}}">
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Quantity <sup class="mandatory">*</sup></label>
+                                        <input type="text" name="qty" ng-model="$ctrl.qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" ng-change="onChangeQty()" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Split Order Type<sup class="mandatory">*</sup></label>
+                                        <md-select ng-model="split_order_type_id" placeholder="Select Split Order Type" data-md-container-class="selectdemoSelectHeader">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchRot" type="search" placeholder="Search Split Order.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option.id" ng-repeat="option in split_order_list | filter:searchRot">
+                                                    {{option.code}} / {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="split_order_id" class="required" value="{{split_order_type_id}}">
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-12">
+                                    <div class="separator-line mb-20"></div><!-- Spacing -->
+                                    <div class="table-responsive">
+                                        <table class="table table-dark-grey">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        Part Code
+                                                    </th>
+                                                    <th>
+                                                        Description
+                                                    </th>
+                                                    <th>
+                                                        UOM
+                                                    </th>
+                                                    <th class="text-right">
+                                                        Rate
+                                                    </th>
+                                                    <th class="text-right">
+                                                        Quantity
+                                                    </th>
+                                                    <th class="text-right">
+                                                        Total Amount
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="ptb-12" ng-if="job_order_part">
+                                                    <td>
+                                                        {{job_order_part.code ? job_order_part.code : ''}}
+                                                    </td>
+                                                    <td>
+                                                        {{job_order_part.name ? job_order_part.name : ''}}
+                                                    </td>
+                                                    <td>
+                                                        {{job_order_part.uom.name ? job_order_part.uom.name : ''}}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{job_order_part.rate | number: 2}}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        {{job_order_part.qty}}
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" /> {{job_order_part.amount | number: 2}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div><!-- Table Responsive -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Page Form -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <div class="page-form-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href=".#!/job-card/payable-labour-parts/{{job_order.job_card.id}}" class="btn btn-bordered btn-grey">Cancel</a>
+                            <button type="submit" class="btn btn-secondary-dark submit" ng-click="savePartForm()">Submit</button>
+                        </div>
+                    </div>
+                </div><!-- Page Form Footer -->
+            </div><!-- Container -->
+        </form>
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

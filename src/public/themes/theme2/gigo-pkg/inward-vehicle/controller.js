@@ -4073,6 +4073,18 @@ app.component('inwardVehicleView', {
                     $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.inventory_list = res.inventory_list;
                     $scope.$apply();
+
+                    if ($scope.job_order.warranty_expiry_date) {
+                        self.warrany_status = 1;
+                    } else {
+                        self.warrany_status = 0;
+                    }
+
+                    if ($scope.job_order.ewp_expiry_date) {
+                        self.exwarrany_status = 1;
+                    } else {
+                        self.exwarrany_status = 0;
+                    }
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');

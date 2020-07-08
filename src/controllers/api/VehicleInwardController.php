@@ -2057,7 +2057,7 @@ class VehicleInwardController extends Controller {
 	//Get Addtional Part Form Data
 	public function getPartList(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::with(['jobcard'])->find($r->id);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -2093,7 +2093,10 @@ class VehicleInwardController extends Controller {
 	//Get Addtional Rot Form Data
 	public function getRepairOrderTypeList(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::with([
+				'jobCard',
+			])->find($r->id);
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -2237,7 +2240,7 @@ class VehicleInwardController extends Controller {
 	//Get Addtional Part
 	public function getPartData(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->job_order_id);
+			$job_order = JobOrder::with('jobcard')->find($r->job_order_id);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -2283,7 +2286,7 @@ class VehicleInwardController extends Controller {
 	//Get Job Order Part
 	public function getJobOrderPartData(Request $r) {
 		try {
-			$job_order = JobOrder::find($r->job_order_id);
+			$job_order = JobOrder::with(['jobcard'])->find($r->job_order_id);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,

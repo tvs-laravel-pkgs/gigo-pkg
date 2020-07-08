@@ -889,6 +889,24 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Payable Labour Parts',
 
     }).
+    when('/job-card/payable/labour/form/:job_order_id', {
+        template: '<jobcard-payable-labour-form></jobcard-payable-labour-form>',
+        title: 'Jobcard - Add Labour',
+    }).
+    when('/job-card/payable/labour/form/edit/:job_order_id/:job_order_repair_order_id', {
+        template: '<jobcard-payable-labour-form></jobcard-payable-labour-form>',
+        title: 'Jobcard - Edit Labour',
+    }).
+
+    when('/job-card/payable/part/form/:job_order_id', {
+        template: '<jobcard-payable-part-form></jobcard-payable-part-form>',
+        title: 'Jobcard - Payable Add Part',
+    }).
+    when('/job-card/payable/part/form/edit/:job_order_id/:job_order_part_id', {
+        template: '<jobcard-payable-part-form></jobcard-payable-part-form>',
+        title: 'Jobcard - Payable Edit Part',
+    }).
+
     when('/job-card/estimate/:job_card_id', {
         template: '<job-card-estimate-form></job-card-estimate-form>',
         title: 'Job Card Estimate',

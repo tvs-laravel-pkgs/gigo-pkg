@@ -1,0 +1,135 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href=".#!/job-card/payable-labour-parts/{{job_order.job_card.id}}" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">{{$ctrl.action}} Labour</h1>
+                    <p class="subtitle">JobCard / {{$ctrl.action}} Labour</p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content">
+        <form id="labour_form">
+            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <input type="hidden" name="job_order_repair_order_id" value="{{job_order_repair_order_id}}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>ROT Type <sup class="mandatory">*</sup></label>
+                                        <md-select ng-model="repair_order_type" placeholder="Select Rot Type" ng-change="fetchRotData(repair_order_type.id);repair_order='';job_order_labour=''" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchRotType" type="search" placeholder="Search for a Rot Type.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option" ng-repeat="option in extras.rot_type_list | filter:searchRotType">
+                                                    {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="rot_type_id" id="rot_type_id" value="{{repair_order_type.id}}">
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Select ROT <sup class="mandatory">*</sup></label>
+                                        <md-select ng-model="repair_order" ng-change="getRotFormData(repair_order.id)" placeholder="Select Rot" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchRot" type="search" placeholder="Search for a Rot.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option" ng-repeat="option in extras_rot.rot_list | filter:searchRot">
+                                                    {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="rot_id" value="{{repair_order.id}}">
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Split Order Type<sup class="mandatory">*</sup></label>
+                                        <md-select ng-model="split_order_type_id" placeholder="Select Split Order Type" data-md-container-class="selectdemoSelectHeader">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchRot" type="search" placeholder="Search Split Order.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option.id" ng-repeat="option in extras.split_order_list | filter:searchRot">
+                                                    {{option.code}} / {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="split_order_id" class="required" value="{{split_order_type_id}}">
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-12">
+                                    <div class="separator-line mb-20"></div><!-- Spacing -->
+                                    <div class="table-responsive">
+                                        <table class="table table-dark-grey">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        DBM Code
+                                                    </th>
+                                                    <th>
+                                                        DMS Code
+                                                    </th>
+                                                    <th>
+                                                        Name
+                                                    </th>
+                                                    <th class="text-right">
+                                                        Hours
+                                                    </th>
+                                                    <th class="text-right">
+                                                        Amount
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tr ng-if="job_order_labour">
+                                                <td>
+                                                    {{job_order_labour.code ? job_order_labour.code : ''}} </td>
+                                                <td>
+                                                    {{job_order_labour.alt_code ? job_order_labour.alt_code : ''}}
+                                                </td>
+                                                <td>
+                                                    {{job_order_labour.name ? job_order_labour.name : ''}}
+                                                </td>
+                                                <td class="text-right">
+                                                    {{job_order_labour.qty}}
+                                                </td>
+                                                <td class="wid-180 white-space text-right">
+                                                    <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" /> {{job_order_labour.amount | number: 2}}
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div><!-- Table Responsive -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Page Form -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <div class="page-form-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href=".#!/job-card/payable-labour-parts/{{job_order.job_card.id}}" class="btn btn-bordered btn-grey">Cancel</a>
+                            <button type="submit" class="btn btn-secondary-dark submit" ng-click="saveLabourForm()">Submit</button>
+                        </div>
+                    </div>
+                </div><!-- Page Form Footer -->
+            </div><!-- Container -->
+        </form>
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
