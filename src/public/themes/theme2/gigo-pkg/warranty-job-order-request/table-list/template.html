@@ -24,24 +24,6 @@
                     <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#warranty-job-order-request-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
-            <!-- <div class="page-header-content-right">
-                <div class="page-header-content tab-block">
-                    <div class="list-card-icon-wrap">
-                        <div class="list-icon in" ng-click="listRedirect('table')">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                        <div class="card-icon" ng-click="listRedirect('card')">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
             <div class="page-header-content-right">
                 <div class="page-header-content button-block">
                     <a href="#!/warranty-job-order-request/form/" type="button" class="btn btn-primary" ng-if="hasPerm('add-warranty-job-order-request')">
@@ -92,7 +74,7 @@
                             <div class="form-group">
                                 <label>Date</label>
                                 <div class="input-group date" data-provide="datepicker">
-                                    <input type="text" id="request_date" class="form-control" placeholder="Select Date" ng-model="$ctrl.date" id="date" />
+                                    <input type="text" id="request_date" class="form-control" placeholder="Select Date" ng-model="filters.date" id="date" />
                                     <div class="input-group-addon">
                                         <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                     </div>
@@ -104,39 +86,39 @@
                                 <label>
                                     Registration No
                                 </label>
-                                <input type="text" class="form-control" id="reg_no" name="reg_no" placeholder="Enter Registration No" autocomplete="off" ng-model="$ctrl.reg_no">
+                                <input type="text" class="form-control" id="reg_no" name="reg_no" placeholder="Enter Registration No" autocomplete="off" ng-model="filters.reg_no">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Customer</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
+                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCustomer(filters.customerSearchText)" md-selected-item="filters.customer" md-search-text="customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.name}} / {{option.code}}
                                         </span>
                                     </md-item-template>
                                     <md-not-found>
-                                        No Customer matching "{{$ctrl.customerSearchText}}" were found.
+                                        No Customer matching "{{customerSearchText}}" were found.
                                     </md-not-found>
                                 </md-autocomplete>
-                                <input type="hidden" id="customer_id" name="customer_id" value="{{$ctrl.customer.id}}">
+                                <input type="hidden" id="customer_id" name="customer_id" value="{{filters.customer.id}}">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Vehicle Model</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel(vehicleModelSearchText)" md-selected-item="filters.vehicle_model" md-search-text="vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.model_name}} / {{option.number}}
                                         </span>
                                     </md-item-template>
                                     <md-not-found>
-                                        No Vehicle Model matching "{{$ctrl.vehicleModelSearchText}}" were found.
+                                        No Vehicle Model matching "{{vehicleModelSearchText}}" were found.
                                     </md-not-found>
                                 </md-autocomplete>
-                                <input type="hidden" id="model_id" name="model_id" value="{{$ctrl.vehicle_model.id}}">
+                                <input type="hidden" id="model_id" name="model_id" value="{{filters.vehicle_model.id}}">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -144,7 +126,25 @@
                                 <label>
                                     Job Card No
                                 </label>
-                                <input type="text" class="form-control" id="job_card_no" name="job_card_no" placeholder="Enter Job Card No" autocomplete="off" ng-model="$ctrl.job_card_no">
+                                <input type="text" class="form-control" id="job_card_no" name="job_card_no" placeholder="Enter Job Card No" autocomplete="off" ng-model="filters.job_card_no">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Status
+                                </label>
+                                <md-select ng-model="filter.statuses" placeholder="Select status" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchStatusKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="status" ng-repeat="status in options.status_options | filter:searchStatusKey">
+                                            {{status.name}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" name="status_id" id="status_id" value="{{ filter.statuses }}">
                             </div><!-- Field -->
                         </div><!-- Column -->
                     </div><!-- Row -->

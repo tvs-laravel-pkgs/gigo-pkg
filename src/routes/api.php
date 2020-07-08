@@ -1,4 +1,5 @@
 <?php
+Route::get('pdf', 'Abs\GigoPkg\Api\WarrantyJobOrderRequestController@pdf')->name('pdf');
 Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:api']], function () {
 	Route::group(['prefix' => 'api'], function () {
 

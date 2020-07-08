@@ -1,6 +1,6 @@
 app.component('warrantyJobOrderRequestTableList', {
     templateUrl: warrantyJobOrderRequestTableList,
-    controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect) {
+    controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect, ConfigSvc) {
         $rootScope.loading = true;
         $('#search').focus();
         var self = this;
@@ -18,6 +18,42 @@ app.component('warrantyJobOrderRequestTableList', {
             ev.stopPropagation();
         });
 
+        var defaultParams = function() {
+            var defaultParams = {
+                filters: {
+                    requestDate: $("#request_date").val(),
+                    registrationNumber: $("#reg_no").val(),
+                    // customer_id : $("#customer_id").val();
+                    // model_id : $("#model_id").val();
+                    jobCardNo: $("#job_card_no").val(),
+                    statusId: $("#status_id").val(),
+                }
+            };
+            return defaultParams;
+        };
+
+        $scope.options = [];
+        ConfigSvc.options({ filter: { configType: 305 } })
+            .then(function(response) {
+                $scope.options.status_options = response.data.options;
+            });
+
+        var initialParams = function() {
+            // if (angular.isDefined($localStorage.wjorIndexParams)) {
+            //     return angular.extend({}, defaultParams(), $localStorage.wjorIndexParams);
+            // } else {
+            return angular.extend({}, defaultParams());
+            // }
+        };
+
+        var params = initialParams();
+        $scope.filters = angular.copy(params.filters);
+
+
+        // $scope.$watch('filters', function(value) {
+        //     init();
+        //     $scope.getActiveFilters();
+        // }, true);
 
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
@@ -52,11 +88,14 @@ app.component('warrantyJobOrderRequestTableList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
+                    // d = $scope.filters;
                     d.request_date = $("#request_date").val();
                     d.reg_no = $("#reg_no").val();
                     // d.customer_id = $("#customer_id").val();
                     // d.model_id = $("#model_id").val();
                     d.job_card_no = $("#job_card_no").val();
+                    d.statusIds = $("#status_id").val();
+                    // console.log($scope.filters);
                 },
             },
             // data : response,

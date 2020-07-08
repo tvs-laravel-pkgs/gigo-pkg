@@ -38,6 +38,10 @@ class WjorPart extends BaseModel {
 		return $this->belongsTo('App\Part');
 	}
 
+	public function purchaseType() {
+		return $this->belongsTo('App\Config', 'purchase_type');
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	// Static Operations --------------------------------------------------------------

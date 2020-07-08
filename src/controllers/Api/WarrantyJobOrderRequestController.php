@@ -12,6 +12,7 @@ use Auth;
 use DB;
 use Entrust;
 use Illuminate\Http\Request;
+use PDF;
 use Yajra\Datatables\Datatables;
 
 class WarrantyJobOrderRequestController extends Controller {
@@ -72,9 +73,14 @@ class WarrantyJobOrderRequestController extends Controller {
 		if (Entrust::can('verify-only-warranty-job-order-request')) {
 			$list_data->whereIn('warranty_job_order_requests.status_id', [9101]);
 		} else {
-			$list_data->whereIn('warranty_job_order_requests.status_id', [9100, 9103]);
+			// if ($request->status_ids) {
+			// $list_data->whereIn('warranty_job_order_requests.status_id', [9100, 9103]);
+			// }
 		}
 
+		// dump($request->all());
+
+		$list_data->orderBy('warranty_job_order_requests.status_id', 'ASC');
 		$list_data->orderBy('warranty_job_order_requests.id', 'DESC');
 
 		return Datatables::of($list_data)
@@ -115,6 +121,15 @@ class WarrantyJobOrderRequestController extends Controller {
 
 	}
 
+	/**
+	 * Presents an opportunity to modify the contents of the ApiResponse before crud action completes
+	 * @param string $action = index|create|read|update|delete|options
+	 * @param ApiResponse $response
+	 */
+	// public function alterCrudResponse($action, ApiResponse $Response) {
+	// 	// DO NOT PLACE CODE IN HERE, THIS IS FOR DOCUMENTATION PURPOSES ONLY
+	// }
+
 	public function save(Request $request) {
 		$result = WarrantyJobOrderRequest::saveFromFormArray($request->all());
 		return response()->json($result);
@@ -136,15 +151,12 @@ class WarrantyJobOrderRequestController extends Controller {
 					'error' => 'Request already sent for approval',
 				];
 			}
-			$warranty_job_order_request->load($this->model::relationships('read'));
-			$result = $warranty_job_order_request->jobOrder->outlet->getBusiness(['businessName' => 'ALSERV']);
-			if (!$result['success']) {
-				return response()->json($result);
-			}
-			$warranty_job_order_request->jobOrder->outlet->business = $result['business'];
 			$warranty_job_order_request->status_id = 9101; //waiting for approval
-			//check before commit
 			$warranty_job_order_request->save();
+			$warranty_job_order_request->load($this->model::relationships('read'));
+
+			//SENDING EMAIL TO BUSINESS'S WARRANTY MANAGER
+			$warranty_job_order_request->loadBusiness('ALSERV');
 			$warranty_manager = User::find($warranty_job_order_request->jobOrder->outlet->business->pivot->warranty_manager_id);
 			if (!$warranty_manager) {
 				return [
@@ -156,6 +168,9 @@ class WarrantyJobOrderRequestController extends Controller {
 			$warranty_manager->notify(new WjorNotification([
 				'wjor' => $warranty_job_order_request,
 			]));
+
+			$warranty_job_order_request->generatePDF();
+
 			DB::commit();
 
 			return Self::read($warranty_job_order_request->id);
@@ -168,6 +183,16 @@ class WarrantyJobOrderRequestController extends Controller {
 		}
 	}
 
+	public function pdf() {
+		$warranty_job_order_request = WarrantyJobOrderRequest::find(20);
+		$warranty_job_order_request->load($this->model::relationships('read'));
+		$warranty_job_order_request->loadBusiness('ALSERV');
+		// dd($warranty_job_order_request);
+
+		return $warranty_job_order_request->generatePDF()->stream();
+
+	}
+
 	public function approve(Request $request) {
 		try {
 			$warranty_job_order_request = WarrantyJobOrderRequest::find($request->id);
@@ -175,7 +200,11 @@ class WarrantyJobOrderRequestController extends Controller {
 			$warranty_job_order_request->remarks = $request->remarks;
 			$warranty_job_order_request->status_id = 9102; //approved
 			$warranty_job_order_request->save();
-			return Self::read($warranty_job_order_request->id);
+
+			$warranty_job_order_request->load($this->model::relationships('read'));
+
+			$warranty_job_order_request->generatePDF();
+
 		} catch (Exceprion $e) {
 			return response()->json([
 				'success' => false,
