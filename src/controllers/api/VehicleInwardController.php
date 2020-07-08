@@ -27,6 +27,7 @@ use App\Part;
 use App\QuoteType;
 use App\RepairOrderType;
 use App\ServiceType;
+use App\SplitOrderType;
 use App\State;
 use App\User;
 use App\VehicleInspectionItem;
@@ -1012,6 +1013,11 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:parts,id',
 				],
+				'split_order_id' => [
+					'required',
+					'integer',
+					'exists:split_order_types,id',
+				],
 				'qty' => [
 					'required',
 					'numeric',
@@ -1041,6 +1047,7 @@ class VehicleInwardController extends Controller {
 			$job_order_part->qty = $request->qty;
 			$job_order_part->rate = $part->rate;
 			$job_order_part->is_oem_recommended = 0;
+			$job_order_part->split_order_type_id = $request->split_order_id;
 			$job_order_part->amount = $request->qty * $part->rate;
 			$job_order_part->status_id = 8200; //Customer Approval Pending
 			$job_order_part->save();
@@ -1064,7 +1071,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveAddtionalLabour(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 			$error_messages = [
 				'rot_id.unique' => 'Labour is already taken',
@@ -1081,6 +1088,11 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:repair_orders,id',
 					'unique:job_order_repair_orders,repair_order_id,' . $request->job_order_repair_order_id . ',id,job_order_id,' . $request->job_order_id,
+				],
+				'split_order_id' => [
+					'required',
+					'integer',
+					'exists:split_order_types,id',
 				],
 			], $error_messages);
 
@@ -1105,6 +1117,7 @@ class VehicleInwardController extends Controller {
 			$job_order_repair_order->job_order_id = $request->job_order_id;
 			$job_order_repair_order->repair_order_id = $request->rot_id;
 			$job_order_repair_order->qty = $repair_order->hours;
+			$job_order_repair_order->split_order_type_id = $request->split_order_id;
 			$job_order_repair_order->amount = $repair_order->amount;
 			$job_order_repair_order->is_recommended_by_oem = 0;
 			$job_order_repair_order->is_customer_approved = 0;
@@ -1924,11 +1937,13 @@ class VehicleInwardController extends Controller {
 				'jobOrderRepairOrders' => function ($query) {
 					$query->where('is_recommended_by_oem', 0);
 				},
+				'jobOrderRepairOrders.splitOrderType',
 				'jobOrderRepairOrders.repairOrder',
 				'jobOrderRepairOrders.repairOrder.repairOrderType',
 				'jobOrderParts' => function ($query) {
 					$query->where('is_oem_recommended', 0);
 				},
+				'jobOrderParts.splitOrderType',
 				'jobOrderParts.part',
 			])
 				->select([
@@ -2055,6 +2070,7 @@ class VehicleInwardController extends Controller {
 
 			$extras = [
 				'part_list' => Part::getList(),
+				'split_order_list' => SplitOrderType::get(),
 			];
 
 			return response()->json([
@@ -2089,6 +2105,7 @@ class VehicleInwardController extends Controller {
 			}
 			$extras = [
 				'rot_type_list' => RepairOrderType::getList(),
+				'split_order_list' => SplitOrderType::get(),
 			];
 			return response()->json([
 				'success' => true,
@@ -2125,6 +2142,7 @@ class VehicleInwardController extends Controller {
 
 			$extras_list = [
 				'rot_list' => $rot_list,
+				'split_order_list' => SplitOrderType::get(),
 			];
 
 			return response()->json([
@@ -2248,6 +2266,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'part' => $part,
 				'job_order' => $job_order,
+				'split_order_list' => SplitOrderType::get(),
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -2294,6 +2313,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'job_order_part' => $job_order_part,
 				'job_order' => $job_order,
+				'split_order_list' => SplitOrderType::get(),
 			]);
 		} catch (\Exception $e) {
 			return response()->json([

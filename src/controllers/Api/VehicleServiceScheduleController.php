@@ -86,42 +86,82 @@ class VehicleServiceScheduleController extends Controller {
 			}
 			$vehicle_service_schedules->save();
 
-			VehicleServiceScheduleServiceType::where('vehicle_service_schedule_id', $vehicle_service_schedules->id)->forceDelete();
+			if ($request->id != null) {
+				if ($request->veh_serv_sch_service_types != null) {
+					VehicleServiceScheduleServiceType::where('vehicle_service_schedule_id', $vehicle_service_schedules->id)->forceDelete();
+					foreach ($request->veh_serv_sch_service_types as $key => $vssst) {
+						// dd($request->parts, $vssst);
+						$vssst_obj = new VehicleServiceScheduleServiceType;
+						$vssst_obj->vehicle_service_schedule_id = $vehicle_service_schedules->id;
+						$vssst_obj->service_type_id = $vssst['service_type_id'];
+						$vssst_obj->is_free = ($vssst['is_free']) ? 1 : 0;
+						$vssst_obj->km_reading = $vssst['km_reading'];
+						$vssst_obj->km_tolerance = $vssst['km_tolerance'];
+						$vssst_obj->km_tolerance_type_id = $vssst['km_tolerance_type_id'];
+						$vssst_obj->period = $vssst['period'];
+						$vssst_obj->period_tolerance = $vssst['period_tolerance'];
+						$vssst_obj->period_tolerance_type_id = $vssst['period_tolerance_type_id'];
+						$vssst_obj->save();
 
-			foreach ($request->veh_serv_sch_service_types as $key => $vssst) {
-				// dd($request->parts, $vssst);
-				$vssst_obj = new VehicleServiceScheduleServiceType;
-				$vssst_obj->vehicle_service_schedule_id = $vehicle_service_schedules->id;
-				$vssst_obj->service_type_id = $vssst['service_type_id'];
-				$vssst_obj->is_free = ($vssst['is_free']) ? 1 : 0;
-				$vssst_obj->km_reading = $vssst['km_reading'];
-				$vssst_obj->km_tolerance = $vssst['km_tolerance'];
-				$vssst_obj->km_tolerance_type_id = $vssst['km_tolerance_type_id'];
-				$vssst_obj->period = $vssst['period'];
-				$vssst_obj->period_tolerance = $vssst['period_tolerance'];
-				$vssst_obj->period_tolerance_type_id = $vssst['period_tolerance_type_id'];
-				$vssst_obj->save();
-
-				if (isset($request->parts[$vssst['schedule_type_id']])) {
-					$parts = [];
-					foreach ($request->parts[$vssst['schedule_type_id']] as $key => $part) {
-						$parts[$key]['schedule_id'] = $vssst_obj->id;
-						$parts[$key]['part_id'] = $part['part_id'];
-						$parts[$key]['quantity'] = $part['quantity'];
-						$parts[$key]['amount'] = $part['amount'];
+						if (isset($request->parts[$vssst['schedule_type_id']])) {
+							$parts = [];
+							foreach ($request->parts[$vssst['schedule_type_id']] as $key => $part) {
+								$parts[$key]['schedule_id'] = $vssst_obj->id;
+								$parts[$key]['part_id'] = $part['part_id'];
+								$parts[$key]['quantity'] = $part['quantity'];
+								$parts[$key]['amount'] = $part['amount'];
+							}
+							$vssst_obj->parts()->syncWithoutDetaching($parts);
+						}
+						if (isset($request->labours[$vssst['schedule_type_id']])) {
+							$labours = [];
+							foreach ($request->labours[$vssst['schedule_type_id']] as $key => $labour) {
+								$labours[$key]['schedule_id'] = $vssst_obj->id;
+								$labours[$key]['repair_order_id'] = $labour['repair_order_id'];
+							}
+							$vssst_obj->repair_orders()->syncWithoutDetaching($labours);
+						}
 					}
-					$vssst_obj->parts()->syncWithoutDetaching($parts);
 				}
-				if (isset($request->labours[$vssst['schedule_type_id']])) {
-					$labours = [];
-					foreach ($request->labours[$vssst['schedule_type_id']] as $key => $labour) {
-						$labours[$key]['schedule_id'] = $vssst_obj->id;
-						$labours[$key]['repair_order_id'] = $labour['repair_order_id'];
+
+			} else {
+				if ($request->veh_serv_sch_service_types != null) {
+
+					foreach ($request->veh_serv_sch_service_types as $key => $vssst) {
+						// dd($request->parts, $vssst);
+						$vssst_obj = new VehicleServiceScheduleServiceType;
+						$vssst_obj->vehicle_service_schedule_id = $vehicle_service_schedules->id;
+						$vssst_obj->service_type_id = $vssst['service_type_id'];
+						$vssst_obj->is_free = ($vssst['is_free']) ? 1 : 0;
+						$vssst_obj->km_reading = $vssst['km_reading'];
+						$vssst_obj->km_tolerance = $vssst['km_tolerance'];
+						$vssst_obj->km_tolerance_type_id = $vssst['km_tolerance_type_id'];
+						$vssst_obj->period = $vssst['period'];
+						$vssst_obj->period_tolerance = $vssst['period_tolerance'];
+						$vssst_obj->period_tolerance_type_id = $vssst['period_tolerance_type_id'];
+						$vssst_obj->save();
+
+						if (isset($request->parts[$vssst['schedule_type_id']])) {
+							$parts = [];
+							foreach ($request->parts[$vssst['schedule_type_id']] as $key => $part) {
+								$parts[$key]['schedule_id'] = $vssst_obj->id;
+								$parts[$key]['part_id'] = $part['part_id'];
+								$parts[$key]['quantity'] = $part['quantity'];
+								$parts[$key]['amount'] = $part['amount'];
+							}
+							$vssst_obj->parts()->syncWithoutDetaching($parts);
+						}
+						if (isset($request->labours[$vssst['schedule_type_id']])) {
+							$labours = [];
+							foreach ($request->labours[$vssst['schedule_type_id']] as $key => $labour) {
+								$labours[$key]['schedule_id'] = $vssst_obj->id;
+								$labours[$key]['repair_order_id'] = $labour['repair_order_id'];
+							}
+							$vssst_obj->repair_orders()->syncWithoutDetaching($labours);
+						}
 					}
-					$vssst_obj->repair_orders()->syncWithoutDetaching($labours);
 				}
 			}
-
 			DB::commit();
 			if (!($request->id)) {
 				return response()->json([
@@ -186,7 +226,7 @@ class VehicleServiceScheduleController extends Controller {
 				$img_view = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$output = '';
 				if (Entrust::can('view-vehicle-service-schedule')) {
-					$output .= '<a href="#!/gigo-pkg/vehicle-service-schedule/edit/' . $vehicle_service_schedules->id . '" id = "" title="Edit"><img src="' . $img_view . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img_view . '" onmouseout=this.src="' . $img_view . '"></a>';
+					$output .= '<a href="#!/gigo-pkg/vehicle-service-schedule/view/' . $vehicle_service_schedules->id . '" id = "" title="View"><img src="' . $img_view . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img_view . '" onmouseout=this.src="' . $img_view . '"></a>';
 				}
 				if (Entrust::can('edit-vehicle-service-schedule')) {
 					$output .= '<a href="#!/gigo-pkg/vehicle-service-schedule/edit/' . $vehicle_service_schedules->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
@@ -197,5 +237,20 @@ class VehicleServiceScheduleController extends Controller {
 				return $output;
 			})
 			->make(true);
+	}
+
+	public function remove(Request $request) {
+		DB::beginTransaction();
+		// dd($request->id);
+		try {
+			$vehicle_service_schedule = VehicleServiceSchedule::withTrashed()->where('id', $request->id)->forceDelete();
+			if ($vehicle_service_schedule) {
+				DB::commit();
+				return response()->json(['success' => true, 'message' => 'Vehicle Service Schedule Deleted Successfully']);
+			}
+		} catch (Exception $e) {
+			DB::rollBack();
+			return response()->json(['success' => false, 'errors' => ['Exception Error' => $e->getMessage()]]);
+		}
 	}
 }

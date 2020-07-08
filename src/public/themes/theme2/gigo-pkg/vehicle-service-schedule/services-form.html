@@ -39,7 +39,8 @@
                     </thead>
                     <tbody>
                         <tr class="ptb-12" ng-repeat="(index,sch_serv_type) in vehicle_service_schedule.vehicle_service_schedule_service_types track by index">
-                            <input type="hidden" name="veh_serv_sch_service_types[{{index}}][schedule_type_id]" value="{{sch_serv_type.id}}">
+                            <input ng-if="sch_serv_type.id!=null" type="hidden" name="veh_serv_sch_service_types[{{index}}][schedule_type_id]" value="{{sch_serv_type.id}}">
+                            <input ng-if="sch_serv_type.id==null" type="hidden" name="veh_serv_sch_service_types[{{index}}][schedule_type_id]" value="{{index}}">
                             <!-- veh_serv_sch_service_types's auto incremenet id value -->
                             <input type="hidden" name="veh_serv_sch_service_types[{{index}}][service_type_id]" value="{{sch_serv_type.service_type_id}}">
                             <input type="hidden" name="veh_serv_sch_service_types[{{index}}][km_reading]" value="{{sch_serv_type.km_reading}}">
@@ -78,13 +79,17 @@
                             <td>
                                 {{sch_serv_type.tolerance_period.name}}
                                 <span class="parts_textboxes" ng-repeat="(part_index,service_type_item_part) in sch_serv_type.parts track by part_index">
-                                    <input type="hidden" name="parts[{{sch_serv_type.id}}][{{part_index}}][part_id]" value="{{service_type_item_part.id}}">
+                                    <input ng-if="sch_serv_type.id!=null" type="hidden" name="parts[{{sch_serv_type.id}}][{{part_index}}][part_id]" value="{{service_type_item_part.id}}">
+                                    <input ng-if="sch_serv_type.id==null" type="hidden" name="parts[{{index}}][{{part_index}}][part_id]" value="{{service_type_item_part.id}}">
                                     <!-- <input type="hidden" name="parts[{{sch_serv_type.id}}][{{part_index}}][schedule_id]" value="{{sch_serv_type.id}}"> -->
-                                    <input type="hidden" name="parts[{{sch_serv_type.id}}][{{part_index}}][quantity]" value="{{service_type_item_part.pivot.quantity}}">
-                                    <input type="hidden" name="parts[{{sch_serv_type.id}}][{{part_index}}][amount]" value="{{service_type_item_part.pivot.amount}}">
+                                    <input ng-if="sch_serv_type.id!=null" type="hidden" name="parts[{{sch_serv_type.id}}][{{part_index}}][quantity]" value="{{service_type_item_part.pivot.quantity}}">
+                                    <input ng-if="sch_serv_type.id!=null" type="hidden" name="parts[{{sch_serv_type.id}}][{{part_index}}][amount]" value="{{service_type_item_part.pivot.amount}}">
+                                    <input ng-if="sch_serv_type.id==null" type="hidden" name="parts[{{index}}][{{part_index}}][quantity]" value="{{service_type_item_part.pivot.quantity}}">
+                                    <input ng-if="sch_serv_type.id==null" type="hidden" name="parts[{{index}}][{{part_index}}][amount]" value="{{service_type_item_part.pivot.amount}}">
                                 </span>
                                 <span class="labour_textboxes" ng-repeat="(labour_index,service_type_item_labour) in sch_serv_type.repair_orders track by labour_index">
-                                    <input type="hidden" name="labours[{{sch_serv_type.id}}][{{labour_index}}][repair_order_id]" value="{{service_type_item_labour.id}}">
+                                    <input ng-if="sch_serv_type.id!=null" type="hidden" name="labours[{{sch_serv_type.id}}][{{labour_index}}][repair_order_id]" value="{{service_type_item_labour.id}}">
+                                    <input ng-if="sch_serv_type.id==null" type="hidden" name="labours[{{index}}][{{labour_index}}][repair_order_id]" value="{{service_type_item_labour.id}}">
                                     <!-- <input type="hidden" name="labours[{{sch_serv_type.id}}][{{labour_index}}][schedule_id]" value="{{sch_serv_type.id}}"> -->
                                 </span>
                             </td>

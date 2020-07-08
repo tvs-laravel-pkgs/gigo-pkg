@@ -58,6 +58,22 @@
                                         <input type="hidden" name="rot_id" value="{{repair_order.id}}">
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Split Order Type<sup class="mandatory">*</sup></label>
+                                        <md-select ng-model="split_order_type_id" placeholder="Select Split Order Type" data-md-container-class="selectdemoSelectHeader">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchRot" type="search" placeholder="Search Split Order.." class="demo-header-searchbox md-text">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="option.id" ng-repeat="option in extras.split_order_list | filter:searchRot">
+                                                    {{option.code}} / {{option.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="split_order_id" class="required" value="{{split_order_type_id}}">
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
                                 <div class="col-md-12">
                                     <div class="separator-line mb-20"></div><!-- Spacing -->
                                     <div class="table-responsive">
@@ -94,7 +110,7 @@
                                                     {{job_order_labour.qty}}
                                                 </td>
                                                 <td class="wid-180 white-space text-right">
-                                                   <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" /> {{job_order_labour.amount | number: 2}}
+                                                    <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" /> {{job_order_labour.amount | number: 2}}
                                                 </td>
                                             </tr>
                                             </tbody>
