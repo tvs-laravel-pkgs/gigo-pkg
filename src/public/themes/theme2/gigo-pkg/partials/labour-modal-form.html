@@ -1,5 +1,5 @@
 <div class="modal fade filter" id="labour_form_modal">
-    <div class="modal-dialog">
+    <div class="modal-dialog filter-sm">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
@@ -10,113 +10,115 @@
                 </h5>
             </div>
             <div class="modal-body">
+                <div class="modal-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    ROT Code
+                                    <span class="mandatory">*</span>
+                                </label>
+                                <md-autocomplete md-selected-item="wjor_repair_order.repair_order" md-search-text="repairOrderSearchKey" md-items="repair_order in searchRepairOrders(repairOrderSearchKey)" md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. ABS100" md-selected-item-change="repairOrderSelected(wjor_repair_order.repair_order)" md-input-id="repairOrderAutoCompleteId">
+                                    <md-item-template>
+                                        <span>
+                                            {{repair_order.code}}
+                                        </span>
+                                    </md-item-template>
+                                    <md-not-found>
+                                        No records matching "{{repairOrderSearchKey}}" were found.
+                                    </md-not-found>
+                                </md-autocomplete>
+                                <input type="hidden" name="repair_order_id" value="{{wjor_repair_order.repair_order.id}}">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6" ng-if="wjor_repair_order.repair_order">
+                            <div class="form-group">
+                                <label>
+                                    ROT Description
+                                </label>
+                                <label class="form-control-view">
+                                    {{wjor_repair_order.repair_order.name}}
+                                </label>
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-12" ng-if="wjor_repair_order.repair_order">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>
+                                            Category
+                                        </label>
+                                        <label class="form-control-view">
+                                            {{wjor_repair_order.repair_order.category.name}}
+                                        </label>
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>
+                                            Skill Level
+                                        </label>
+                                        <label class="form-control-view">
+                                            {{wjor_repair_order.repair_order.skill_level.short_name}}
+                                        </label>
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>
+                                            Hours
+                                        </label>
+                                        <label class="form-control-view">
+                                            {{wjor_repair_order.repair_order.hours}}
+                                        </label>
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>
+                                            Net Amount <span ng-if="wjor_repair_order.repair_order.category_id == 9140">( Maximum Claim : {{wjor_repair_order.repair_order.maximum_claim_amount|currency}})</span>
+                                        </label>
+                                        <input type="text" ng-keyup="claimAmountChange(wjor_repair_order)" class="form-control" name="net_amount" ng-model="wjor_repair_order.rate" maxlength="12" ng-readonly="wjor_repair_order.repair_order.category_id != 9140">
+                                        <!-- Editable only if Miscellaneous -->
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
+                                <div class="col-md-6" ng-repeat="(tax_key, tax) in wjor_repair_order.taxes" ng-if="wjor_repair_order.repair_order.tax_code">
+                                    <div class="form-group">
+                                        <label>
+                                            {{tax.name}} ({{tax.pivot.percentage}}%)
+                                        </label>
+                                        <label class="form-control-view">
+                                            {{tax.amount | currency}}
+                                        </label>
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>
+                                            Amount
+                                        </label>
+                                        <label class="form-control-view">
+                                            {{wjor_repair_order.total_amount | currency}}
+                                        </label>
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Form -->
+            </div><!-- Modal Body -->
+            <div class="modal-footer box-shadow">
                 <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                ROT Code
-                                <span class="mandatory">*</span>
-                            </label>
-                            <md-autocomplete md-selected-item="wjor_repair_order.repair_order" md-search-text="repairOrderSearchKey" md-items="repair_order in searchRepairOrders(repairOrderSearchKey)" md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. ABS100" md-selected-item-change="repairOrderSelected(wjor_repair_order.repair_order)" md-input-id="repairOrderAutoCompleteId">
-                                <md-item-template>
-                                    <span>
-                                        {{repair_order.code}}
-                                    </span>
-                                </md-item-template>
-                                <md-not-found>
-                                    No records matching "{{repairOrderSearchKey}}" were found.
-                                </md-not-found>
-                            </md-autocomplete>
-                            <input type="hidden" name="repair_order_id" value="{{wjor_repair_order.repair_order.id}}">
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-6" ng-if="wjor_repair_order.repair_order">
-                        <div class="form-group">
-                            <label>
-                                ROT Description
-                            </label>
-                            <label>
-                                {{wjor_repair_order.repair_order.name}}
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                </div>
-                <div class="row" ng-if="wjor_repair_order.repair_order">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                Category
-                            </label>
-                            <label>
-                                {{wjor_repair_order.repair_order.category.name}}
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                Skill Level
-                            </label>
-                            <label>
-                                {{wjor_repair_order.repair_order.skill_level.short_name}}
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                Hours
-                            </label>
-                            <label>
-                                {{wjor_repair_order.repair_order.hours}}
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                Net Amount <span ng-if="wjor_repair_order.repair_order.category_id == 9140">( Maximum Claim : {{wjor_repair_order.repair_order.maximum_claim_amount|currency}})</span>
-                            </label>
-                            <input type="text" ng-keyup="claimAmountChange(wjor_repair_order)" class="form-control" name="net_amount" ng-model="wjor_repair_order.rate" maxlength="12" ng-readonly="wjor_repair_order.repair_order.category_id != 9140">
-                            <!-- Editable only if Miscellaneous -->
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-6" ng-repeat="(tax_key, tax) in wjor_repair_order.taxes" ng-if="wjor_repair_order.repair_order.tax_code">
-                        <div class="form-group">
-                            <label>
-                                {{tax.name}} ({{tax.pivot.percentage}}%)
-                            </label>
-                            <label>
-                                {{tax.amount | currency}}
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                <b>
-                                    Amount
-                                </b>
-                            </label>
-                            <label>
-                                <b>
-                                    {{wjor_repair_order.total_amount | currency}}
-                                </b>
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                </div>
-                <div class="row">
-                    <div class="col-md-12 text-right mb-15">
-                        <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                    <div class="col-md-12 text-right">
+                        <button type="button" data-dismiss="modal" class="btn btn-grey cancel_modal_btn">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-bordered btn-red approve_btn">
+                        <button type="submit" class="btn btn-primary btn-md approve_btn">
                             Submit
                         </button>
                     </div><!-- Column -->
                 </div><!-- Row -->
-            </div>
+            </div><!-- Modal Footer -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
