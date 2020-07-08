@@ -97,9 +97,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::group(['prefix' => 'vehicle-service-schedule'], function () {
 			$controller = 'VehicleServiceScheduleController';
 			Route::get('index', $controller . '@index');
-			Route::get('read/{id}', $controller . '@read');
+			Route::get('read/{id}/{withtrashed?}', $controller . '@read');
 			Route::post('save', $controller . '@save');
-			Route::post('remove', $controller . '@remove');
+			Route::get('remove', $controller . '@remove');
 			Route::get('options', $controller . '@options');
 			Route::get('list', $controller . '@list');
 		});
@@ -303,6 +303,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('jobcard/part-indent/get', 'JobCardController@getPartsIndent');
 		Route::post('jobcard/schedule-maintenance/get', 'JobCardController@getScheduleMaintenance');
 		Route::post('jobcard/payable-labour-part/get', 'JobCardController@getPayableLabourPart');
+		Route::post('jobcard/payable/delete', 'JobCardController@deletePayable');
 		Route::post('jobcard/estimate/get', 'JobCardController@getEstimate');
 		Route::post('jobcard/estimate-status/get', 'JobCardController@getEstimateStatus');
 		Route::post('jobcard/outward-item/delete', 'JobCardController@deleteOutwardItem');

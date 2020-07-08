@@ -44,12 +44,16 @@
                                                         <th>
                                                             Type
                                                         </th>
+                                                        <th>
+                                                            Split Order Type
+                                                        </th>
                                                         <th class="text-right">
                                                             Quantity
                                                         </th>
-                                                        <th class="wid-100 white-space-unset text-right">
+                                                        <th class="wid-180 white-space text-right">
                                                             Labour Value
                                                         </th>
+                                                        <th class="wid-100"></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -60,6 +64,11 @@
                                                         <td>
                                                             {{job_order_labour.repair_order.repair_order_type ? (job_order_labour.repair_order.repair_order_type.name ? job_order_labour.repair_order.repair_order_type.name: '') : ''}}
                                                         </td>
+                                                        <td>
+                                                            {{job_order_labour.split_order_type.code}}
+                                                            {{job_order_labour.split_order_type ? '|' : ''}}
+                                                            {{job_order_labour.split_order_type.name}}
+                                                        </td>
                                                         <td class="text-right">
                                                             {{job_order_labour.qty}}
                                                         </td>
@@ -67,8 +76,21 @@
                                                             {{job_order_labour.amount | number:2 }}
                                                             <input type="hidden" class="job_order_labours" name="labouramount[{{index}}][amount]" value="{{job_order_labour.amount}}">
                                                         </td>
+                                                        <td class="wid-100">
+                                                            <a href="#!/job-card/payable/labour/form/edit/{{job_order.id}}/{{job_order_labour.id}}" ng-if="job_order_labour.status_id == 8180" class="btn img-btn btn-delete">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                            </a>
+                                                            <button class="btn img-btn btn-delete" ng-if="job_order_labour.status_id == 8180" data-toggle="modal" data-target="#delete_payable_details" ng-click="removePayable(job_order_labour.id,1)">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                            </button>
+                                                        </td>
                                                     </tr>
                                                     <tr class="ptb-9">
+                                                        <td>
+                                                            <a href=".#!/job-card/payable/labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                                Add Labour
+                                                            </a>
+                                                        </td>
                                                         <td colspan="3" class="text-right">
                                                             <b>
                                                                 Total Labour
@@ -79,6 +101,8 @@
                                                             <b>
                                                                 {{labour_total_amount}}
                                                             </b>
+                                                        </td>
+                                                        <td class="wid-100">
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -95,15 +119,19 @@
                                                         <th>
                                                             Type
                                                         </th>
+                                                        <th>
+                                                            Split Order Type
+                                                        </th>
                                                         <th class="text-right">
                                                             Rate
                                                         </th>
                                                         <th class="text-right">
                                                             Quantity
                                                         </th>
-                                                        <th class="wid-100 white-space-unset text-right">
+                                                        <th class="wid-180 white-space text-right">
                                                             Amount
                                                         </th>
+                                                        <th class="wid-100"></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -113,6 +141,11 @@
                                                         </td>
                                                         <td>
                                                             {{job_order_part.split_order_type.name ? job_order_part.split_order_type.name : ''}}
+                                                        </td>
+                                                        <td>
+                                                            {{job_order_part.split_order_type.code}}
+                                                            {{job_order_part.split_order_type ? '|' : ''}}
+                                                            {{job_order_part.split_order_type.name}}
                                                         </td>
                                                         <td class="text-right">
                                                             {{job_order_part.rate | number:2}}
@@ -124,8 +157,21 @@
                                                             {{job_order_part.amount | number:2}}
                                                             <input type="hidden" class="job_order_parts" name="part_amount[{{index}}][amount]" value="{{job_order_part.amount}}">
                                                         </td>
+                                                        <td class="wid-100">
+                                                            <a href="#!/job-card/payable/part/form/edit/{{job_order.id}}/{{job_order_part.id}}" ng-if="job_order_part.status_id == 8200" class="btn img-btn btn-delete">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                            </a>
+                                                            <button class="btn img-btn btn-delete" ng-if="job_order_part.status_id == 8200" data-toggle="modal" data-target="#delete_payable_details" ng-click="removePayable(job_order_part.id,2)">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                            </button>
+                                                        </td>
                                                     </tr>
                                                     <tr class="ptb-9">
+                                                        <td>
+                                                            <a href=".#!/job-card/payable/part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                                Add Parts
+                                                            </a>
+                                                        </td>
                                                         <td colspan="4" class="text-right">
                                                             <b>
                                                                 Total Parts
@@ -136,6 +182,8 @@
                                                             <b>
                                                                 {{parts_total_amount}}
                                                             </b>
+                                                        </td>
+                                                        <td class="wid-100">
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -157,6 +205,8 @@
                                                                 <b>
                                                                     {{total_amount}}
                                                                 </b>
+                                                            </td>
+                                                            <td class="wid-100">
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -182,3 +232,24 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal fade alert-modal failure" id="delete_payable_details" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="payable_form">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
+                </div>
+                <div class="modal-body">
+                    <h5>Delete</h5>
+                    <p>You can’t retrive the data again, Are you sure you want to delete? </p>
+                    <input type="hidden" name="payable_type" class="payable_type" value="">
+                    <input type="hidden" name="payable_id" class="payable_id" value="">
+                    <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
+                    <button type="submit" class="btn btn-rose delete_confirm" ng-click="deleteConfirm()">Yes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Modal -->

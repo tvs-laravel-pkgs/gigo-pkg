@@ -159,8 +159,12 @@ app.component('vehicleServiceScheduleList', {
         }
         $scope.deleteConfirm = function() {
             $id = $('#vehicle_service_schedule_id').val();
-            $http.get(
-                laravel_routes['deleteVehicleServiceSchedule'], {
+            var params = {
+                id: $id
+            };
+            /*$http.get(
+                // laravel_routes['deleteVehicleServiceSchedule'], {
+                base_url + '/api/vehicle-service-schedule/remove', {
                     params: {
                         id: $id,
                     }
@@ -171,7 +175,18 @@ app.component('vehicleServiceScheduleList', {
                     $('#vehicle_service_schedule_list').DataTable().ajax.reload(function(json) {});
                     $location.path('/gigo-pkg/vehicle-service-schedule/list');
                 }
-            });
+            });*/
+
+            VehicleServiceScheduleSvc.remove(params)
+                .then(function(response) {
+                    if (!response.data.success) {
+                        showErrorNoty(response.data);
+                        return;
+                    }
+                    custom_noty('success', 'Vehicle Service Schedule Deleted Successfully');
+                    $('#vehicle_service_schedule_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/gigo-pkg/vehicle-service-schedule/list');
+                });
         }
 
         // FOR FILTER
@@ -181,13 +196,15 @@ app.component('vehicleServiceScheduleList', {
             // console.log(response);
             self.extras = response.data.extras;
         });
+
+
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
         $scope.clearSearchTerm = function() {
-            $scope.searchTerm = '';
+            /*$scope.searchTerm = '';
             $scope.searchTerm1 = '';
-            $scope.searchTerm2 = '';
+            $scope.searchTerm2 = '';*/
             $scope.searchTerm3 = '';
         };
         /* Modal Md Select Hide */
@@ -285,17 +302,10 @@ app.component('vehicleServiceScheduleForm', {
                             vehicle_service_schedule_service_types: [],
                             repair_order_total: 0,
                             part_total: 0,
-                            attachments: [],
-                            job_order: {
-                                vehicle: {},
-                                customer: {},
-                                outlet: {},
-                            },
-                            photos: [],
                         }
 
                     }
-                    /*$scope.customer = $scope.warranty_job_order_request.job_order.customer;
+                    /*
 
                     if ($scope.updating) {
                         $scope.calculateLabourTotal('update');

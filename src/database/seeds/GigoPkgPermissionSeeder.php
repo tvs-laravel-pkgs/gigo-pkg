@@ -1234,22 +1234,46 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 			[
-				'display_order' => 3,
-				'parent' => 'warranty-job-order-requests',
-				'name' => 'all-outlet-warranty-job-order-request',
-				'display_name' => 'All Outlet',
-			],
-			[
-				'display_order' => 3,
+				'display_order' => 4,
 				'parent' => 'warranty-job-order-requests',
 				'name' => 'own-outlet-warranty-job-order-request',
 				'display_name' => 'Own Outlet Only',
 			],
 			[
-				'display_order' => 3,
+				'display_order' => 6,
+				'parent' => 'warranty-job-order-requests',
+				'name' => 'own-outlet-warranty-job-order-request',
+				'display_name' => 'Own Outlet Only',
+			],
+			[
+				'display_order' => 7,
 				'parent' => 'warranty-job-order-requests',
 				'name' => 'mapped-outlets-warranty-job-order-request',
 				'display_name' => 'Mapped Outlets',
+			],
+			[
+				'display_order' => 8,
+				'parent' => 'warranty-job-order-requests',
+				'name' => 'all-warranty-job-order-request',
+				'display_name' => 'All',
+			],
+			[
+				'display_order' => 4,
+				'parent' => 'warranty-job-order-requests',
+				'name' => 'send-to-approval-warranty-job-order-request',
+				'display_name' => 'Send to approval',
+			],
+			[
+				'display_order' => 5,
+				'parent' => 'warranty-job-order-requests',
+				'name' => 'approve-warranty-job-order-request',
+				'display_name' => 'Verify',
+			],
+			[
+				'display_order' => 11,
+				'parent' => 'warranty-job-order-requests',
+				'name' => 'verify-only-warranty-job-order-request',
+				'display_name' => 'Verify Only',
 			],
 
 			//Vehicle Service Schedule

@@ -32,12 +32,9 @@
                         </div>
                         <div class="tab-pane fade" id="estimate_form_tab" data-animation="fadeInUp" data-animation-delay="300">
                             <wjor-repair-orders></wjor-repair-orders>
-                            <!-- <wjor-estimate-view></wjor-estimate-view> -->
                         </div>
                         <div class="tab-pane fade" id="estimate_form_tab_part" data-animation="fadeInUp" data-animation-delay="300">
                             <wjor-parts></wjor-parts>
-                            <!-- <wjor-estimate-view-part></wjor-estimate-view-part> -->
-                            <!-- Part details view -->
                         </div>
                         <div class="tab-pane fade" id="photos_form_tab" data-animation="fadeInUp" data-animation-delay="300">
                             <wjor-attachment-view ng-init="self.attachments = warranty_job_order_request.attachments"></wjor-attachment-view>
@@ -45,29 +42,29 @@
                         <div class="tab-pane fade" id="approval_attachment_form" data-animation="fadeInUp" data-animation-delay="300">
                             <wjor-approval-attachment-form></wjor-approval-attachment-form>
                         </div>
-                        <div class="tab-pane-footer">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <!-- <button type="button" ng-if="warranty_job_order_request.status.id == 9100" ng-click1="savePPRForm('close')" class="btn btn-red">
-                                        Edit
-                                    </button> -->
-                                    <button type="button" ng-click="confirmDelete(warranty_job_order_request)" class="btn btn-red">
-                                        Delete
-                                    </button>
-                                    <button type="button" ng-if="warranty_job_order_request.status.id == 9100" ng-click="sendToApproval(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
-                                        Send to approval
-                                    </button>
-                                    <button type="button" ng-if="warranty_job_order_request.status.id == 9101" ng-click="showApprovalForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
-                                        Approve
-                                    </button>
-                                    <button type="button" ng-if="warranty_job_order_request.status.id == 9101" ng-click="showRejectForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
-                                        Request Resubmit
-                                    </button>
-                                </div>
-                            </div>
-                        </div><!-- Tab Footer -->
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
+                <div class="tab-pane-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="./#!/warranty-job-order-request/form/{{warranty_job_order_request.id}}" ng-if="(warranty_job_order_request.status.id == 9100 || warranty_job_order_request.status.id == 9103) && hasPerm('edit-warranty-job-order-requests')" class="btn btn-red">
+                                Edit
+                            </a>
+                            <button ng-if="hasPerm('delete-warranty-job-order-request')" type="button" ng-click="confirmDelete(warranty_job_order_request)" class="btn btn-red">
+                                Delete
+                            </button>
+                            <button type="button" ng-if="warranty_job_order_request.status.id == 9100 && hasPerm('send-to-approval-warranty-job-order-request')" ng-click="sendToApproval(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                Send to approval
+                            </button>
+                            <button type="button" ng-if="warranty_job_order_request.status.id == 9101 && hasPerm('approve-warranty-job-order-request')" ng-click="showApprovalForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                Approve
+                            </button>
+                            <button type="button" ng-if="warranty_job_order_request.status.id == 9101 && hasPerm('approve-warranty-job-order-request')" ng-click="showRejectForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                Request Resubmit
+                            </button>
+                        </div>
+                    </div>
+                </div><!-- Tab Footer -->
             </div><!-- Tab Form Wrap -->
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
@@ -114,7 +111,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>
-                                    Aproved By
+                                    Approved By
                                 </label>
                                 <input type="text" disabled="disabled" class="form-control" ng-model="user.name">
                             </div><!-- Field -->

@@ -12,6 +12,7 @@ app.component('warrantyJobOrderRequestTableList', {
         }
 
         $scope.user = HelperService.getLoggedUser();
+        $scope.hasPerm = HelperService.hasPerm;
 
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -130,7 +131,7 @@ app.component('warrantyJobOrderRequestTableList', {
                     className: 'text-center',
                 })
                 .then(function() {
-                    alert();
+                    // alert();
                     WarrantyJobOrderRequestSvc.remove($scope.warranty_job_order_request)
                         .then(function(response) {
                             if (!response.data.success) {
