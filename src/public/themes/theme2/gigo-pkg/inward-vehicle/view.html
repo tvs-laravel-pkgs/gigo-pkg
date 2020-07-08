@@ -912,7 +912,7 @@
                                             <h5 class="color-primary mb-10"><b>DMS Check list</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="row">
-                                                <div class="col-md-4">
+                                                <div class="col-md-4" ng-if="$ctrl.warrany_status == 1">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
                                                             <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.warrenty_policy_attachment.name}}" alt="Warranty">
@@ -933,7 +933,7 @@
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
-                                                <div class="col-md-4">
+                                                <div class="col-md-4" ng-if="$ctrl.exwarrany_status == 1">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
                                                             <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.e_w_p_attachment.name}}" alt="EWP">
@@ -956,9 +956,6 @@
                                                 </div><!-- Column -->
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
-                                                        <div class="gatein-img-list-item attach-photo-view">
-                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.a_m_c_attachment.name}}" alt="Memberships">
-                                                        </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
                                                                 <b>
@@ -966,11 +963,18 @@
                                                                 </b>
                                                             </p>
                                                             <p class="font-md">
-                                                                <!-- TVSCARE-GOLD Eligible Upto 20/03/2022 -->
+                                                                TVSCARE-GOLD Eligible Upto 20/03/2022
                                                             </p>
                                                             <p class="font-md">
-                                                                <!-- TVSONE-GOLD Eligible Upto 20/03/2022 -->
+                                                                TVSONE-GOLD Eligible Upto 20/03/2022
                                                             </p>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="job_order.a_m_c_attachment.length > 0">
+                                                    <div class="gatein-img-list">
+                                                        <div class="gatein-img-list-item attach-photo-view" ng-repeat="(key,a_m_c_attachment) in job_order.a_m_c_attachment">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{a_m_c_attachment.name}}" alt="Memberships">
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
