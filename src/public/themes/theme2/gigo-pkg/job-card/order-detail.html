@@ -234,9 +234,24 @@
                                                         </div><!-- View Data -->
                                                         <div class="mb-15"></div><!-- Spacing -->
                                                         <div class="multi-docs">
-                                                            <img ng-if="job_card.job_order.driver_license_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.driver_license_attachment.name}}" alt="Driver License">
-                                                            <img ng-if="job_card.job_order.driver_license_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.insurance_attachment.name}}" alt="Insurance" />
-                                                            <img ng-if="job_card.job_order.driver_license_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.rc_book_attachment.name}}" alt="RC Book" />
+                                                            <table class="table-info">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="text-center">Driver License</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">Insurance</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">RC Book</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td> <img ng-if="job_card.job_order.driver_license_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.driver_license_attachment.name}}" alt="Driver License"></td>
+                                                                        <td></td>
+                                                                        <td><img ng-if="job_card.job_order.driver_license_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.insurance_attachment.name}}" alt="Insurance" /></td>
+                                                                        <td>&nbsp;&nbsp;</td>
+                                                                        <td><img ng-if="job_card.job_order.driver_license_attachment" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.rc_book_attachment.name}}" alt="RC Book" /></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
                                                         </div>
                                                         <div class="mb-10"></div><!-- Spacing -->
                                                     </div><!-- Panel Body -->

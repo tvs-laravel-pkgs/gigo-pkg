@@ -27,6 +27,7 @@ use App\Part;
 use App\QuoteType;
 use App\RepairOrderType;
 use App\ServiceType;
+use App\SplitOrderType;
 use App\State;
 use App\User;
 use App\VehicleInspectionItem;
@@ -82,7 +83,7 @@ class VehicleInwardController extends Controller {
 					'vehicles.registration_number',
 					'models.model_number',
 					'gate_logs.number',
-					'gate_logs.status_id',
+					'job_orders.status_id',
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%d/%m/%Y") as date'),
 					DB::raw('DATE_FORMAT(gate_logs.gate_in_date,"%h:%i %p") as time'),
 					'job_orders.driver_name',
@@ -141,7 +142,7 @@ class VehicleInwardController extends Controller {
 				})
 				->where(function ($query) use ($request) {
 					if (!empty($request->status_id)) {
-						$query->where('gate_logs.status_id', $request->status_id);
+						$query->where('job_orders.status_id', $request->status_id);
 					}
 				})
 				->where('job_orders.company_id', Auth::user()->company_id)
@@ -151,7 +152,7 @@ class VehicleInwardController extends Controller {
 					$vehicle_inward_list_get->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 				} else {
 					$vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
-						->whereRaw("IF (`gate_logs`.`status_id` = '8120', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
+						->whereRaw("IF (`job_orders`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
 				}
 			}
 			$vehicle_inward_list_get->groupBy('job_orders.id');
@@ -488,6 +489,7 @@ class VehicleInwardController extends Controller {
 			}
 			//MAPPING SERVICE ADVISOR
 			$job_order->service_advisor_id = $r->service_advisor_id;
+			$job_order->status_id = 8463;
 			$job_order->save();
 
 			//UPDATE GATE LOG STATUS
@@ -928,6 +930,7 @@ class VehicleInwardController extends Controller {
 
 			$job_order->fill($request->all());
 			$job_order->is_expert_diagnosis_required = $service_order_type->is_expert_diagnosis_required;
+			$job_order->status_id = 8463;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
@@ -1010,6 +1013,11 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:parts,id',
 				],
+				'split_order_id' => [
+					'required',
+					'integer',
+					'exists:split_order_types,id',
+				],
 				'qty' => [
 					'required',
 					'numeric',
@@ -1039,6 +1047,7 @@ class VehicleInwardController extends Controller {
 			$job_order_part->qty = $request->qty;
 			$job_order_part->rate = $part->rate;
 			$job_order_part->is_oem_recommended = 0;
+			$job_order_part->split_order_type_id = $request->split_order_id;
 			$job_order_part->amount = $request->qty * $part->rate;
 			$job_order_part->status_id = 8200; //Customer Approval Pending
 			$job_order_part->save();
@@ -1062,7 +1071,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveAddtionalLabour(Request $request) {
-		//dd($request->all());
+		// dd($request->all());
 		try {
 			$error_messages = [
 				'rot_id.unique' => 'Labour is already taken',
@@ -1079,6 +1088,11 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:repair_orders,id',
 					'unique:job_order_repair_orders,repair_order_id,' . $request->job_order_repair_order_id . ',id,job_order_id,' . $request->job_order_id,
+				],
+				'split_order_id' => [
+					'required',
+					'integer',
+					'exists:split_order_types,id',
 				],
 			], $error_messages);
 
@@ -1103,6 +1117,7 @@ class VehicleInwardController extends Controller {
 			$job_order_repair_order->job_order_id = $request->job_order_id;
 			$job_order_repair_order->repair_order_id = $request->rot_id;
 			$job_order_repair_order->qty = $repair_order->hours;
+			$job_order_repair_order->split_order_type_id = $request->split_order_id;
 			$job_order_repair_order->amount = $repair_order->amount;
 			$job_order_repair_order->is_recommended_by_oem = 0;
 			$job_order_repair_order->is_customer_approved = 0;
@@ -1245,6 +1260,8 @@ class VehicleInwardController extends Controller {
 			}*/
 
 			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->status_id = 8463;
+			$job_order->save();
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -1489,6 +1506,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order->is_dms_verified = $request->is_verified;
+			$job_order->status_id = 8463;
 			if (isset($request->is_campaign_carried)) {
 				$job_order->is_campaign_carried = $request->is_campaign_carried;
 			}
@@ -1885,6 +1903,8 @@ class VehicleInwardController extends Controller {
 			}
 			// INWARD PROCESS CHECK - Schedule Maintenance
 			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->status_id = 8463;
+			$job_order->save();
 			$job_order->inwardProcessChecks()->where('tab_id', 8705)->update(['is_form_filled' => 1]);
 
 			DB::commit();
@@ -1917,11 +1937,13 @@ class VehicleInwardController extends Controller {
 				'jobOrderRepairOrders' => function ($query) {
 					$query->where('is_recommended_by_oem', 0);
 				},
+				'jobOrderRepairOrders.splitOrderType',
 				'jobOrderRepairOrders.repairOrder',
 				'jobOrderRepairOrders.repairOrder.repairOrderType',
 				'jobOrderParts' => function ($query) {
 					$query->where('is_oem_recommended', 0);
 				},
+				'jobOrderParts.splitOrderType',
 				'jobOrderParts.part',
 			])
 				->select([
@@ -2048,6 +2070,7 @@ class VehicleInwardController extends Controller {
 
 			$extras = [
 				'part_list' => Part::getList(),
+				'split_order_list' => SplitOrderType::get(),
 			];
 
 			return response()->json([
@@ -2082,6 +2105,7 @@ class VehicleInwardController extends Controller {
 			}
 			$extras = [
 				'rot_type_list' => RepairOrderType::getList(),
+				'split_order_list' => SplitOrderType::get(),
 			];
 			return response()->json([
 				'success' => true,
@@ -2118,6 +2142,7 @@ class VehicleInwardController extends Controller {
 
 			$extras_list = [
 				'rot_list' => $rot_list,
+				'split_order_list' => SplitOrderType::get(),
 			];
 
 			return response()->json([
@@ -2241,6 +2266,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'part' => $part,
 				'job_order' => $job_order,
+				'split_order_list' => SplitOrderType::get(),
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -2287,6 +2313,7 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'job_order_part' => $job_order_part,
 				'job_order' => $job_order,
+				'split_order_list' => SplitOrderType::get(),
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -2415,6 +2442,8 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->status_id = 8463;
+			$job_order->save();
 			$job_order->customerVoices()->sync([]);
 			if (!empty($request->customer_voices)) {
 				//UNIQUE CHECK
@@ -2581,6 +2610,7 @@ class VehicleInwardController extends Controller {
 			}
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
+			$job_order->status_id = 8463;
 			$job_order->save();
 
 			// INWARD PROCESS CHECK - ROAD TEST OBSERVATIONS
@@ -2691,6 +2721,7 @@ class VehicleInwardController extends Controller {
 			$job_order = JobOrder::find($request->job_order_id);
 			$job_order->expert_diagnosis_report = $request->expert_diagnosis_report;
 			$job_order->expert_diagnosis_report_by_id = $request->expert_diagnosis_report_by_id;
+			$job_order->status_id = 8463;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
@@ -2832,6 +2863,8 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = jobOrder::find($request->job_order_id);
+			$job_order->status_id = 8463;
+			$job_order->save();
 			// if ($request->vehicle_inspection_groups) {
 			// 	$job_order->vehicleInspectionItems()->sync([]);
 			// 	foreach ($request->vehicle_inspection_groups as $key => $vehicle_inspection_group) {
@@ -3090,6 +3123,7 @@ class VehicleInwardController extends Controller {
 			$job_order_otp_update = JobOrder::where('id', $request->id)
 				->update([
 					'otp_no' => mt_rand(111111, 999999),
+					'status_id' => 8469, //Waiting for Customer Approval
 					'updated_by_id' => Auth::user()->id,
 					'updated_at' => Carbon::now(),
 				]);
@@ -3184,12 +3218,6 @@ class VehicleInwardController extends Controller {
 			$job_order_status_update->is_customer_approved = 1;
 			$job_order_status_update->updated_at = Carbon::now();
 			$job_order_status_update->save();
-
-			//UPDATE GATE LOG STATUS
-			$gate_log_status_update = GateLog::find($job_order->gateLog->id);
-			$gate_log_status_update->status_id = 8123; //Gate Out Pending
-			$gate_log_status_update->updated_at = Carbon::now();
-			$gate_log_status_update->save();
 
 			DB::commit();
 
@@ -3415,6 +3443,7 @@ class VehicleInwardController extends Controller {
 			$job_order->estimation_type_id = $request->estimation_type_id;
 			$job_order->minimum_payable_amount = $request->minimum_payable_amount;
 			$job_order->estimate_ref_no = $generateNumber['number'];
+			$job_order->status_id = 8470;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();

@@ -1694,10 +1694,18 @@ app.component('inwardVehicleEstimateForm', {
                         $('#is_customer_agreed').val('0');
                     }
 
-                    if ($scope.job_order && $scope.job_order.is_customer_approved == 1) {
+                    if ($scope.job_order && $scope.job_order.is_customer_approved == null && $scope.job_order.is_customer_agreed == 1) {
+                        $('.is_customer_agreed').show();
+                        $('.btn-nxt').hide();
+                    } else {
                         $('.is_customer_agreed').hide();
+                        $('.btn-nxt').show();
                     }
 
+                    $scope.estimated_amount = $scope.job_order.estimated_amount;
+                    $scope.est_delivery_date = $scope.job_order.est_delivery_date;
+                    $scope.est_delivery_time = $scope.job_order.est_delivery_time;
+                    $scope.status_id = $scope.job_order.status_id;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1709,10 +1717,10 @@ app.component('inwardVehicleEstimateForm', {
         $(document).on('click', ".check_agree", function() {
             if ($("#check_agree").prop('checked')) {
                 $('.is_customer_agreed').show();
-                $('.customer_denied').hide();
+                $('.btn-nxt').hide();
             } else {
                 $('.is_customer_agreed').hide();
-                $('.customer_denied').show();
+                $('.btn-nxt').show();
             }
         });
 
@@ -1789,6 +1797,21 @@ app.component('inwardVehicleEstimateForm', {
                                         $scope.approveBehalfCustomer();
                                     } else if (id == 4) {
                                         $scope.send_customer_approval();
+                                    } else if (id == 2) {
+                                        var est_delivery_time = $('#est_delivery_time').val();
+                                        var res = est_delivery_time.split(":");
+                                        if (res[0].length == 1) {
+                                            est_delivery_time = '0' + res[0] + ':' + res[1];
+                                        } else {
+                                            est_delivery_time = $('#est_delivery_time').val();
+                                        }
+
+                                        //Check Estimated details are same or not.If not Custoerm OTP send
+                                        if (($('#estimated_amount').val() != $scope.estimated_amount) || ($('#est_delivery_date').val() != $scope.est_delivery_date) || ($('#est_delivery_time').val() != est_delivery_time)) {
+                                            $scope.approveBehalfCustomer();
+                                        } else {
+                                            $location.path('/inward-vehicle/customer-confirmation/' + $scope.job_order.id);
+                                        }
                                     }
                                 } else {
                                     $location.path('/inward-vehicle/estimation-denied/form/' + $scope.job_order.id);
@@ -3182,32 +3205,33 @@ app.component('inwardVehiclePayableAddPartForm', {
             self.action = 'Add';
         }
 
-        // //FETCH DATA
-        // $scope.fetchData = function() {
-        //     $.ajax({
-        //             url: base_url + '/api/vehicle-inward/part-list/get',
-        //             method: "POST",
-        //             data: {
-        //                 id: $routeParams.job_order_id
-        //             },
-        //         })
-        //         .done(function(res) {
-        //             if (!res.success) {
-        //                 showErrorNoty(res);
-        //                 return;
-        //             }
-        //             $scope.job_order = res.job_order;
-        //             $scope.extras = res.extras;
-        //             if ($scope.job_order_part_id) {
-        //                 $scope.getJobOrderPartFormData($scope.job_order_part_id);
-        //             }
-        //             $scope.$apply();
-        //         })
-        //         .fail(function(xhr) {
-        //             custom_noty('error', 'Something went wrong at server');
-        //         });
-        // }
-        // $scope.fetchData();
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/part-list/get',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+                    $scope.extras = res.extras;
+                    $scope.split_order_list = res.extras.split_order_list;
+                    if ($scope.job_order_part_id) {
+                        $scope.getJobOrderPartFormData($scope.job_order_part_id);
+                    }
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
 
 
         //GET PART LIST
@@ -3249,6 +3273,8 @@ app.component('inwardVehiclePayableAddPartForm', {
                     $scope.job_order_part.qty = res.job_order_part.qty;
                     $scope.job_order_part.amount = res.job_order_part.amount;
                     $scope.job_order_part.uom = res.job_order_part.part.uom;
+                    $scope.split_order_type_id = res.job_order_part.split_order_type_id;
+                    $scope.split_order_list = res.split_order_list;
                     self.qty = parseInt(res.job_order_part.qty);
                     self.part = res.job_order_part.part;
                     $scope.$apply();
@@ -3280,10 +3306,12 @@ app.component('inwardVehiclePayableAddPartForm', {
                         showErrorNoty(res);
                         return;
                     }
+
                     $scope.job_order = res.job_order;
                     $scope.job_order_part = res.part;
                     $scope.job_order_part.amount = '0.00';
                     $scope.job_order_part.qty = 0;
+                    $scope.split_order_list = res.split_order_list;
                     if (!isNaN(self.qty)) {
                         $scope.job_order_part.qty = self.qty;
                         $scope.job_order_part.amount = parseFloat($scope.job_order_part.qty * parseFloat($scope.job_order_part.rate)).toFixed(2);
@@ -3401,6 +3429,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
                     }
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
+                    $scope.split_order_list = res.extras.split_order_list;
                     if ($scope.job_order_repair_order_id) {
                         $scope.getJobOrderRotFormData($scope.job_order_repair_order_id);
                     }
@@ -3427,13 +3456,13 @@ app.component('inwardVehiclePayableAddLabourForm', {
                         return;
                     }
                     $scope.job_order_labour = res.job_order_repair_order;
+                    $scope.split_order_type_id = res.job_order_repair_order.split_order_type_id;
                     $scope.repair_order_type = res.job_order_repair_order.repair_order.repair_order_type;
                     $scope.fetchRotData($scope.repair_order_type.id);
                     $scope.repair_order = res.job_order_repair_order.repair_order;
                     $scope.job_order_labour.code = res.job_order_repair_order.repair_order.code;
                     $scope.job_order_labour.name = res.job_order_repair_order.repair_order.name;
                     $scope.job_order_labour.uom = res.job_order_repair_order.repair_order.uom;
-                    // console.log($scope.job_order_labour);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -3455,6 +3484,7 @@ app.component('inwardVehiclePayableAddLabourForm', {
                         return;
                     }
                     $scope.extras_rot = res.extras_list;
+                    $scope.split_order_list = res.split_order_list;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {

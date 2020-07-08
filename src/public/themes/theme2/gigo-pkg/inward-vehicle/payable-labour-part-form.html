@@ -46,6 +46,9 @@
                                                             <th>
                                                                 Type
                                                             </th>
+                                                            <th>
+                                                                Split Order Type
+                                                            </th>
                                                             <th class="text-right">
                                                                 Quantity
                                                             </th>
@@ -62,6 +65,11 @@
                                                             </td>
                                                             <td>
                                                                 {{job_order_labour.repair_order.repair_order_type ? (job_order_labour.repair_order.repair_order_type.name ? job_order_labour.repair_order.repair_order_type.name: '') : ''}}
+                                                            </td>
+                                                            <td>
+                                                                {{job_order_labour.split_order_type.code}}
+                                                                {{job_order_labour.split_order_type ? '|' : ''}}
+                                                                {{job_order_labour.split_order_type.name}}
                                                             </td>
                                                             <td class="text-right">
                                                                 {{job_order_labour.qty}}
@@ -85,7 +93,7 @@
                                                                     Add Labour
                                                                 </a>
                                                             </td>
-                                                            <td colspan="2" class="text-right">
+                                                            <td colspan="3" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
@@ -112,6 +120,9 @@
                                                                 Parts Details
                                                             </th>
                                                             <!--<th>Type</th>-->
+                                                            <th>
+                                                                Split Order Type
+                                                            </th>
                                                             <th class="text-right">
                                                                 Rate
                                                             </th>
@@ -132,7 +143,11 @@
                                                             <!--                                                             <td>
                                                                 {{job_order_part.split_order_type.name ? job_order_part.split_order_type.name : ''}}
                                                             </td>
- -->
+ -->                                                        <td>
+                                                                {{job_order_part.split_order_type.code}}
+                                                                {{job_order_part.split_order_type ? '|' : ''}}
+                                                                {{job_order_part.split_order_type.name}}
+                                                            </td>
                                                             <td class="text-right">
                                                                 {{job_order_part.rate | number:2}}
                                                             </td>
@@ -158,7 +173,7 @@
                                                                     Add Parts
                                                                 </a>
                                                             </td>
-                                                            <td colspan="2" class="text-right">
+                                                            <td colspan="3" class="text-right">
                                                                 <b>
                                                                     Total Parts
                                                                 </b>

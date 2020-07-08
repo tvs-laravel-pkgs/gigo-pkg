@@ -24,7 +24,6 @@ use Auth;
 use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
-use Storage;
 use Validator;
 
 class JobOrderController extends Controller {
@@ -183,96 +182,6 @@ class JobOrderController extends Controller {
 				'success' => false,
 				'error' => 'Server Network Down!',
 				'errors' => ['Exception Error' => $e->getMessage()],
-			]);
-		}
-	}
-
-	public function saveJobCard(Request $request) {
-		try {
-			$validator = Validator::make($request->all(), [
-				'job_order_id' => [
-					'required',
-					'exists:job_orders,id',
-					'integer',
-				],
-				'job_card_number' => [
-					'required',
-					'min:10',
-					'integer',
-				],
-				'job_card_photo' => [
-					'required',
-					'mimes:jpeg,jpg,png',
-				],
-				'job_card_date' => [
-					'required',
-					'date_format:"d-m-Y',
-				],
-			]);
-
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
-				]);
-			}
-
-			$job_order = JobOrder::with([
-				'jobCard',
-				'gateLog',
-				'jobOrderRepairOrders',
-				'jobOrderParts',
-			])
-				->find($request->job_order_id);
-
-			DB::beginTransaction();
-
-			//JOB Card SAVE
-			$job_card = JobCard::firstOrNew([
-				'job_order_id' => $request->job_order_id,
-			]);
-			$job_card->job_card_number = $request->job_card_number;
-			$job_card->date = date('Y-m-d', strtotime($request->job_card_date));
-			$job_card->outlet_id = $job_order->outlet_id;
-			$job_card->status_id = 8220; //Floor Supervisor not Assigned
-			$job_card->company_id = Auth::user()->company_id;
-			$job_card->created_by = Auth::user()->id;
-			$job_card->save();
-
-			//CREATE DIRECTORY TO STORAGE PATH
-			$attachment_path = storage_path('app/public/gigo/job_card/attachments/');
-			Storage::makeDirectory($attachment_path, 0777);
-
-			//SAVE Job Card ATTACHMENT
-			if (!empty($request->job_card_photo)) {
-				$attachment = $request->job_card_photo;
-				$entity_id = $job_card->id;
-				$attachment_of_id = 228; //Job Card
-				$attachment_type_id = 255; //Jobcard Photo
-				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
-			}
-
-			//UPDATE JOB ORDER REPAIR ORDER STATUS
-			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->update(['status_id' => 8180, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
-
-			//UPDATE JOB ORDER PARTS STATUS
-			JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8200, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
-
-			DB::commit();
-
-			return response()->json([
-				'success' => true,
-				'message' => 'Job Card Updated successfully!!',
-			]);
-
-		} catch (\Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Network Down!',
-				'errors' => [
-					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
-				],
 			]);
 		}
 	}
