@@ -1271,15 +1271,15 @@ app.component('jobCardPdf', {
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
 
-        $scope.gatepass_url  = base_url + '/gigo-pkg/pdf/gatepass/'+$routeParams.job_card_id;
-        $scope.covering_letter_url  = base_url + '/gigo-pkg/pdf/covering-letter/'+$routeParams.job_card_id;
-        $scope.estimate_url  = base_url + '/gigo-pkg/pdf/estimate/'+$routeParams.job_card_id;
-        $scope.insurance_estimate_url  = base_url + '/gigo-pkg/pdf/insurance-estimate/'+$routeParams.job_card_id;
-        $scope.revised_estimate_url  = base_url + '/gigo-pkg/pdf/revised-estimate/'+$routeParams.job_card_id;
-        $scope.job_card_pdf_url  = base_url + '/gigo-pkg/pdf/job-card/'+$routeParams.job_card_id;
-        $scope.job_card_spare_requisition_pdf_url  = base_url + '/gigo-pkg/pdf/job-card-spare-requisition/'+$routeParams.job_card_id;
-        $scope.work_order_outward_pdf_url  = base_url + '/gigo-pkg/pdf/work-order-outward/'+$routeParams.job_card_id;
-        $scope.work_order_inward_pdf_url  = base_url + '/gigo-pkg/pdf/work-order-inward/'+$routeParams.job_card_id;
+        $scope.gatepass_url = base_url + '/gigo-pkg/pdf/gatepass/' + $routeParams.job_card_id;
+        $scope.covering_letter_url = base_url + '/gigo-pkg/pdf/covering-letter/' + $routeParams.job_card_id;
+        $scope.estimate_url = base_url + '/gigo-pkg/pdf/estimate/' + $routeParams.job_card_id;
+        $scope.insurance_estimate_url = base_url + '/gigo-pkg/pdf/insurance-estimate/' + $routeParams.job_card_id;
+        $scope.revised_estimate_url = base_url + '/gigo-pkg/pdf/revised-estimate/' + $routeParams.job_card_id;
+        $scope.job_card_pdf_url = base_url + '/gigo-pkg/pdf/job-card/' + $routeParams.job_card_id;
+        $scope.job_card_spare_requisition_pdf_url = base_url + '/gigo-pkg/pdf/job-card-spare-requisition/' + $routeParams.job_card_id;
+        $scope.work_order_outward_pdf_url = base_url + '/gigo-pkg/pdf/work-order-outward/' + $routeParams.job_card_id;
+        $scope.work_order_inward_pdf_url = base_url + '/gigo-pkg/pdf/work-order-inward/' + $routeParams.job_card_id;
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -2004,7 +2004,41 @@ app.component('jobCardBillDetailView', {
                     }
                     console.log(res);
                     $scope.job_card = res.job_card;
-                    console.log($scope.job_card);
+                    $scope.part_details = res.part_details;
+                    $scope.labour_details = res.labour_details;
+                    $scope.extras = res.extras;
+                    setTimeout(function() {
+                        if ($scope.extras.split_order_types) {
+                            angular.forEach($scope.extras.split_order_types, function(split_order, key) {
+                                // split_order.total_items = 0;
+                                var labour_sub_total = 0;
+                                var part_sub_total = 0;
+                                var grand_total = 0;
+                                if (key == 0) {
+                                    $('.split_order_panel_' + key).addClass('active in')
+                                    $('.split_order_tab_' + key).addClass('active')
+                                }
+                                angular.forEach($scope.labour_details, function(labour, key1) {
+                                    if (split_order.id == labour.split_order_type_id) {
+                                        labour_sub_total += parseInt(labour.total_amount);
+                                        // split_order.total_items += 1;
+                                    }
+                                });
+                                $('.labour_sub_total_' + key).html(parseFloat(labour_sub_total).toFixed(2));
+
+                                angular.forEach($scope.part_details, function(part, key2) {
+                                    if (split_order.id == part.split_order_type_id) {
+                                        part_sub_total += parseInt(part.total_amount);
+                                        // split_order.total_items += 1;
+                                    }
+                                });
+                                $('.part_sub_total_' + key).html(parseFloat(part_sub_total).toFixed(2));
+
+                                grand_total = labour_sub_total + part_sub_total;
+                                $('.amount_' + key).html(parseFloat(grand_total).toFixed(2));
+                            });
+                        }
+                    }, 1000);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
