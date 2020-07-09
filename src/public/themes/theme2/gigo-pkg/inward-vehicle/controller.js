@@ -1165,11 +1165,10 @@ app.component('inwardVehicleUpdatejcForm', {
         // }
         self.angular_routes = angular_routes;
 
-        /* Image Uploadify Funtion */
+        /* Profile Upload */
         setTimeout(function() {
-            $('.image_uploadify').imageuploadify();
+            profileImgUpload();
         }, 1000);
-
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -2691,6 +2690,11 @@ app.component('inwardVehicleOrderDetailForm', {
                 });
         }
         $scope.fetchData();
+
+        /* Profile Upload */
+        setTimeout(function() {
+            profileImgUpload();
+        }, 1000);
 
         //Save Form Data 
         $scope.saveOrderDetailForm = function(id) {

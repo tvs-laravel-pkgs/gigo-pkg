@@ -63,12 +63,12 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <a ng-if="job_card.status_id != 8224 || job_card.status_id != 8225 || job_card.status_id != 8226" href="#!/gigo-pkg/job-card/returnable-item/edit/{{job_card.id}}/{{returnable_item.id}}" class="btn btn-md type2 btn-secondary-dark btn-square mt-15">Edit</a>
+                                                    <a ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" href="#!/gigo-pkg/job-card/returnable-item/edit/{{job_card.id}}/{{returnable_item.id}}" class="btn btn-md type2 btn-secondary-dark btn-square mt-15">Edit</a>
                                                 </div><!-- Border Box -->
                                             </li>
                                         </ul><!-- Flex Row -->
                                         <hr ng-if="returnable_items.length > 0">
-                                        <a href="#!/gigo-pkg/job-card/returnable-item/add/{{job_card.id}}" ng-if="job_card.status_id != 8224 || job_card.status_id != 8225 || job_card.status_id != 8226">
+                                        <a href="#!/gigo-pkg/job-card/returnable-item/add/{{job_card.id}}" ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226">
                                             <button class="btn btn-md type2 btn-green btn-square">Add {{returnable_items.length > 0 ? 'Another' : ''}} Item</button>
                                         </a>
                                     </div><!-- Column -->

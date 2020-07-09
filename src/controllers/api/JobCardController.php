@@ -15,6 +15,7 @@ use Abs\GigoPkg\JobOrderRepairOrder;
 use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\RepairOrderMechanic;
+use Abs\GigoPkg\ShortUrl;
 use Abs\PartPkg\Part;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use Abs\TaxPkg\Tax;
@@ -1178,6 +1179,16 @@ class JobCardController extends Controller {
 
 			DB::beginTransaction();
 
+			//Check All material items returned or not
+			$material = GatePass::where('job_card_id', $request->id)->where('status_id', 8301)->count();
+			if ($material > 0) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Some OSL works are not completed!'],
+				]);
+			}
+
 			$job_card = JobCard::find($request->id);
 			$job_card->status_id = 8224; //Ready for Billing
 			$job_card->updated_by = Auth::user()->id;
@@ -1966,6 +1977,15 @@ class JobCardController extends Controller {
 		}
 		$total_amount = $parts_total_amount + $labour_total_amount;
 
+		//Check Newly added Part or Labour
+		$labour_count = JobOrderRepairOrder::where('job_order_id', $job_card->job_order_id)->where('status_id', 8180)->count();
+		$part_count = JobOrderPart::where('job_order_id', $job_card->job_order_id)->where('status_id', 8200)->count();
+
+		$send_approval_status = 0;
+		if ($labour_count > 0 || $part_count > 0) {
+			$send_approval_status = 1;
+		}
+
 		return response()->json([
 			'success' => true,
 			'job_order' => $job_order,
@@ -1973,6 +1993,7 @@ class JobCardController extends Controller {
 			'parts_total_amount' => number_format($parts_total_amount, 2),
 			'labour_total_amount' => number_format($labour_total_amount, 2),
 			'job_card' => $job_card,
+			'send_approval_status' => $send_approval_status,
 		]);
 
 	}
@@ -2010,6 +2031,84 @@ class JobCardController extends Controller {
 				JobOrderPart::where('id', $request->payable_id)->forceDelete();
 				$message = 'Part Deleted Successfully!!';
 			}
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => $message,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function sendConfirmation(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'exists:job_orders,id',
+					'integer',
+				],
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			$job_order = JobOrder::with([
+				'customer',
+				'vehicle',
+			])
+				->find($request->job_order_id);
+
+			// dd($job_order);
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$customer_mobile = $job_order->customer->mobile_no;
+			$vehicle_no = $job_order->vehicle->registration_number;
+
+			if (!$customer_mobile) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Customer Mobile Number Not Found',
+				]);
+			}
+
+			$job_order->otp_no = mt_rand(111111, 999999);
+			$job_order->status_id = 8469; //Waiting for Customer Approval
+			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->updated_at = Carbon::now();
+			$job_order->save();
+
+			$url = url('/') . '/vehicle-inward/estimate/customer/view/' . $request->job_order_id . '/' . $job_order->otp_no;
+
+			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+			$message = 'Dear Customer,Kindly click below link to approve for revised TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no;
+
+			$msg = sendSMSNotification($customer_mobile, $message);
 
 			DB::commit();
 

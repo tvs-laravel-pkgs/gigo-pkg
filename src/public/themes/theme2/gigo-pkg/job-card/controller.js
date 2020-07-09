@@ -1646,6 +1646,7 @@ app.component('jobCardPayableLabourPartsForm', {
                     $scope.parts_total_amount = res.parts_total_amount;
                     $scope.labour_total_amount = res.labour_total_amount;
                     $scope.job_card = res.job_card;
+                    $scope.send_approval_status = res.send_approval_status;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1702,6 +1703,36 @@ app.component('jobCardPayableLabourPartsForm', {
                         });
                 }
             });
+        }
+
+        $scope.sendConfirm = function() {
+            var job_order_id = $scope.job_order.id;
+            if (job_order_id) {
+                $('.send_confirm').button('loading');
+                $.ajax({
+                        url: base_url + '/api/job-card/send/confirmation',
+                        method: "POST",
+                        data: {
+                            job_order_id: job_order_id,
+                        },
+                    })
+                    .done(function(res) {
+                        $('.send_confirm').button('reset');
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        }
+                        console.log(res);
+                        custom_noty('success', 'URL send to Customer Successfully!!');
+                        $("#confirmation_modal").modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                        $scope.fetchData();
+                    })
+                    .fail(function(xhr) {
+                        $('.send_confirm').button('reset');
+                    });
+            }
         }
     }
 });
@@ -2317,12 +2348,12 @@ app.component('jobCardScheduleForm', {
                     },
                 })
                 .done(function(res) {
+                    $('.job_completed').button('reset');
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
                     }
 
-                    $('.job_completed').button('reset');
                     custom_noty('success', res.message);
                     $route.reload();
                     $scope.$apply();

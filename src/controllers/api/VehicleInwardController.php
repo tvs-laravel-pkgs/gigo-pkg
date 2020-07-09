@@ -3319,15 +3319,11 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$job_card_otp = JobOrder::where('id', $request->job_order_id)
-				->update([
-					'otp_no' => mt_rand(111111, 999999),
-					'status_id' => 8469, //Waiting for Customer Approval
-					'updated_by_id' => Auth::user()->id,
-					'updated_at' => Carbon::now(),
-				]);
-
-			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->otp_no = mt_rand(111111, 999999);
+			$job_order->status_id = 8469; //Waiting for Customer Approval
+			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->updated_at = Carbon::now();
+			$job_order->save();
 
 			$url = url('/') . '/vehicle-inward/estimate/customer/view/' . $request->job_order_id . '/' . $job_order->otp_no;
 

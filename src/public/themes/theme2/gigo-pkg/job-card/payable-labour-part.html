@@ -77,17 +77,17 @@
                                                             <input type="hidden" class="job_order_labours" name="labouramount[{{index}}][amount]" value="{{job_order_labour.amount}}">
                                                         </td>
                                                         <td class="wid-100">
-                                                            <a href="#!/job-card/payable/labour/form/edit/{{job_order.id}}/{{job_order_labour.id}}" ng-if="job_order_labour.status_id == 8180 && (job_card.status_id != 8224 || job_card.status_id != 8225 || job_card.status_id != 8226)" class="btn img-btn btn-delete">
+                                                            <a href="#!/job-card/payable/labour/form/edit/{{job_order.id}}/{{job_order_labour.id}}" ng-if="job_order_labour.status_id == 8180 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)" class="btn img-btn btn-delete">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </a>
-                                                            <button class="btn img-btn btn-delete" ng-if="job_order_labour.status_id == 8180 && (job_card.status_id != 8224 || job_card.status_id != 8225 || job_card.status_id != 8226)" data-toggle="modal" data-target="#delete_payable_details" ng-click="removePayable(job_order_labour.id,1)">
+                                                            <button class="btn img-btn btn-delete" ng-if="job_order_labour.status_id == 8180 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)" data-toggle="modal" data-target="#delete_payable_details" ng-click="removePayable(job_order_labour.id,1)">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                         </td>
                                                     </tr>
                                                     <tr class="ptb-9">
                                                         <td>
-                                                            <a ng-if="job_card.status_id != 8224 || job_card.status_id != 8225 || job_card.status_id != 8226" href=".#!/job-card/payable/labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                            <a ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" href=".#!/job-card/payable/labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
                                                                 Add Labour
                                                             </a>
                                                         </td>
@@ -158,17 +158,17 @@
                                                             <input type="hidden" class="job_order_parts" name="part_amount[{{index}}][amount]" value="{{job_order_part.amount}}">
                                                         </td>
                                                         <td class="wid-100">
-                                                            <a href="#!/job-card/payable/part/form/edit/{{job_order.id}}/{{job_order_part.id}}" ng-if="job_order_part.status_id == 8200 && (job_card.status_id != 8224 || job_card.status_id != 8225 || job_card.status_id != 8226)" class="btn img-btn btn-delete">
+                                                            <a href="#!/job-card/payable/part/form/edit/{{job_order.id}}/{{job_order_part.id}}" ng-if="job_order_part.status_id == 8200 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)" class="btn img-btn btn-delete">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </a>
-                                                            <button class="btn img-btn btn-delete" ng-if="job_order_part.status_id == 8200 && (job_card.status_id != 8224 || job_card.status_id != 8225 || job_card.status_id != 8226)" data-toggle="modal" data-target="#delete_payable_details" ng-click="removePayable(job_order_part.id,2)">
+                                                            <button class="btn img-btn btn-delete" ng-if="job_order_part.status_id == 8200 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)" data-toggle="modal" data-target="#delete_payable_details" ng-click="removePayable(job_order_part.id,2)">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                         </td>
                                                     </tr>
                                                     <tr class="ptb-9">
                                                         <td>
-                                                            <a ng-if="job_card.status_id != 8224 || job_card.status_id != 8225 || job_card.status_id != 8226" href=".#!/job-card/payable/part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                            <a ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" href=".#!/job-card/payable/part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
                                                                 Add Parts
                                                             </a>
                                                         </td>
@@ -214,6 +214,12 @@
                                             </div>
                                         </div><!-- Table Transparent Wrap -->
                                         <div class="mb-20"></div><!-- Spacing -->
+                                        <hr>
+                                        <div class="col-md-12" ng-if="send_approval_status == 1">
+                                            <div class="text-center pt-40">
+                                                <a class="btn btn-red job_completed" data-toggle="modal" data-target="#confirmation_modal">Send for Customer Approval</a>
+                                            </div>
+                                        </div>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
@@ -232,6 +238,23 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<!-- Modal Delete -->
+<div class="modal fade alert-modal failure" id="confirmation_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>   
+            </div>
+            <div class="modal-body">
+                <p>Are you sure? do you want to send for customer Approval? </p>
+                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
+                <button class="btn btn-rose send_confirm" ng-click="sendConfirm()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal -->
 <div class="modal fade alert-modal failure" id="delete_payable_details" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">

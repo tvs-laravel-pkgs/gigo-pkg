@@ -316,6 +316,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('jobcard/schedule-maintenance/get', 'JobCardController@getScheduleMaintenance');
 		Route::post('jobcard/payable-labour-part/get', 'JobCardController@getPayableLabourPart');
 		Route::post('jobcard/payable/delete', 'JobCardController@deletePayable');
+		Route::post('job-card/send/confirmation', 'JobCardController@sendConfirmation');
 		Route::post('jobcard/estimate/get', 'JobCardController@getEstimate');
 		Route::post('jobcard/estimate-status/get', 'JobCardController@getEstimateStatus');
 		Route::post('jobcard/outward-item/delete', 'JobCardController@deleteOutwardItem');
