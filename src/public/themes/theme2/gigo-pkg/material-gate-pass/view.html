@@ -218,7 +218,7 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Submit Alert Modal -->
-<div class="modal modal-success alert-modal fade" id="gate_in_confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal modal-success alert-modal fade" id="gate_in_confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-body text-center">
@@ -235,7 +235,7 @@
 </div><!-- Modal Content -->
 <!-- Modal -->
 <!-- Submit Alert Modal -->
-<div class="modal modal-success alert-modal fade" id="gate_out_confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal modal-success alert-modal fade" id="gate_out_confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-body text-center">
@@ -267,7 +267,7 @@
                         <input type="hidden" name="gate_pass_id" id="gate_pass_id" value="" />
                         <input type="hidden" name="remarks" id="gate_out_remarks" value="" />
                     </div><!-- Feild -->
-                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm">SUBMIT</button>
+                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm" ng-click="submit_confirm()">SUBMIT</button>
                     <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
                 </div><!-- Modal Body -->
             </form>

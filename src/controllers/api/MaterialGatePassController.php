@@ -4,6 +4,7 @@ namespace Abs\GigoPkg\Api;
 
 use App\Customer;
 use App\GatePass;
+use App\GatePassDetail;
 use App\Http\Controllers\Controller;
 use App\JobCard;
 use App\User;
@@ -267,49 +268,15 @@ class MaterialGatePassController extends Controller {
 				]);
 			}
 
-			$job_card = JobCard::find($material_gate_pass->job_card_id);
-
-			if (!$job_card) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'JobCard Not Found!',
-					],
-				]);
-			}
-
-			$user = User::find($job_card->floor_supervisor_id);
-			if (!$user) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Floor Supervisor Not Found!',
-					],
-				]);
-			}
-
-			$mobile_number = $user->contact_number;
-			if (!$mobile_number) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Mobile Number Not Found!',
-					],
-				]);
-			}
-
 			DB::beginTransaction();
-			$material_gate_pass_otp_update = GatePass::where('id', $id)->update([
-				'otp_no' => mt_rand(111111, 999999),
-				'updated_by_id' => Auth::user()->id,
-				'updated_at' => Carbon::now(),
-			]);
+
+			$material_gate_pass->otp_no = mt_rand(111111, 999999);
+			$material_gate_pass->updated_by_id = Auth::user()->id;
+			$material_gate_pass->updated_at = Carbon::now();
+			$material_gate_pass->save();
 
 			DB::commit();
-			if (!$material_gate_pass_otp_update) {
+			if (!$material_gate_pass) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
@@ -319,25 +286,29 @@ class MaterialGatePassController extends Controller {
 				]);
 			}
 			//Get material Gate pass After Otp Update
-			$material_gate_pass = GatePass::find($id);
 			$otp = $material_gate_pass->otp_no;
+
+			$gate_pass_detail = GatePassDetail::where('gate_pass_id', $material_gate_pass->id)->first();
+			if (!$gate_pass_detail) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Vendor Details not found!',
+					],
+				]);
+			}
 
 			$message = 'OTP is ' . $otp . ' for material gate out. Please enter OTP to verify your material gate out';
 
-			$mobile_number = '9965098134';
-			$msg = sendSMSNotification($mobile_number, $message);
-			//dd($msg);
-			//Enable After Sms Issue Resloved
-			/*if(!$msg){
-				return response()->json([
-					'success' => false,
-					'error' => 'OTP SMS Not Sent.Please Try again ',
-				]);
-			}*/
+			if ($gate_pass_detail->vendor_contact_no) {
+				$msg = sendSMSNotification($gate_pass_detail->vendor_contact_no, $message);
+			}
+
 			return response()->json([
 				'success' => true,
 				'gate_pass' => $material_gate_pass,
-				'user' => $user,
+				'mobile_number' => $gate_pass_detail->vendor_contact_no,
 				'type' => 'Out',
 				'message' => 'OTP Sent successfully!!',
 			]);

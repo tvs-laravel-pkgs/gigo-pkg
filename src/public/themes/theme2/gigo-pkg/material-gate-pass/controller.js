@@ -139,14 +139,14 @@ app.component('materialGatePassCardList', {
             $('#material-gate-pass-filter-modal').modal('hide');
         }
 
-       //GATE IN / OUT 
+        //GATE IN / OUT 
         $scope.materialGateInOut = function(id, status_id) {
             // console.log(id, status_id);
-            if(status_id == 8300){
-                var type = 'Out';                
+            if (status_id == 8300) {
+                var type = 'Out';
                 var button_class = '.confirm_gate_out_' + id;
-            }else{
-                var type = 'In';                
+            } else {
+                var type = 'In';
                 var button_class = '.confirm_gate_in_' + id;
             }
             $(button_class).button('loading');
@@ -306,7 +306,7 @@ app.component('materialGatePassTableList', {
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
         // $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#material_gate_pass_list').dataTable({
-           "dom": cndn_dom_structure,
+            "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
                 // "searchPlaceholder": "Search",
@@ -349,13 +349,13 @@ app.component('materialGatePassTableList', {
             },
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'date_and_time', searchable: false},
+                { data: 'date_and_time', searchable: false },
                 { data: 'gate_pass_no', name: 'gate_passes.number' },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
                 { data: 'work_order_no', name: 'gate_pass_details.work_order_no' },
                 { data: 'code', name: 'vendors.code' },
                 { data: 'name', name: 'vendors.name' },
-                { data: 'items', searchable: false},
+                { data: 'items', searchable: false },
                 { data: 'status', name: 'configs.name' },
 
             ],
@@ -423,11 +423,11 @@ app.component('materialGatePassTableList', {
         //GATE IN / OUT 
         $scope.materialGateInOut = function(id, status_id) {
             // console.log(id, status_id);
-            if(status_id == 8300){
-                var type = 'Out';                
+            if (status_id == 8300) {
+                var type = 'Out';
                 var button_class = '.confirm_gate_out_' + id;
-            }else{
-                var type = 'In';                
+            } else {
+                var type = 'In';
                 var button_class = '.confirm_gate_in_' + id;
             }
             $(button_class).button('loading');
@@ -534,7 +534,7 @@ app.component('materialGatePassTableList', {
             }
         });
 
-       $scope.ResendOtp = function() {
+        $scope.ResendOtp = function() {
             var id = $('#gate_pass_id').val();
             $.ajax({
                 url: base_url + '/api/material-gate-pass/gate-out/otp-resend/' + id,
@@ -596,7 +596,6 @@ app.component('materialGatePassView', {
                     return;
                 }
                 self.material_gate_pass = response.material_gate_pass;
-                self.customer_detail = response.customer_detail;
                 if (self.material_gate_pass.status_id == 8300) { //Gate Out Pending
                     self.type = 'Out';
                 } else {
@@ -654,7 +653,7 @@ app.component('materialGatePassView', {
                             });
                             $('#gate_out_remarks').val($('#remarks').val());
                             $('#gate_pass_id').val(res.gate_pass.id);
-                            $('.customer_mobile_no').html(res.user.contact_number);
+                            $('.customer_mobile_no').html(res.mobile_number);
                         } else {
                             $('#gate_in_confirm_notification').modal('show');
                             $('.submit').button('reset');
@@ -669,62 +668,64 @@ app.component('materialGatePassView', {
         });
 
         //GATE OUT
-        var form_gate_out_confirm = '#material_gate_out_confirm';
-        var v = jQuery(form_gate_out_confirm).validate({
-            ignore: '',
-            rules: {
-                'otp_no': {
-                    required: true,
-                    number: true,
-                    minlength: 6,
-                    maxlength: 6,
+        $scope.submit_confirm = function() {
+            var form_gate_out_confirm = '#material_gate_out_confirm';
+            var v = jQuery(form_gate_out_confirm).validate({
+                ignore: '',
+                rules: {
+                    'otp_no': {
+                        required: true,
+                        number: true,
+                        minlength: 6,
+                        maxlength: 6,
+                    },
                 },
-            },
-            messages: {
-                'otp_no': {
-                    required: 'OTP is required',
-                    number: 'OTP Must be a number',
-                    minlength: 'OTP Minimum 6 Characters',
-                    maxlength: 'OTP Maximum 6 Characters',
+                messages: {
+                    'otp_no': {
+                        required: 'OTP is required',
+                        number: 'OTP Must be a number',
+                        minlength: 'OTP Minimum 6 Characters',
+                        maxlength: 'OTP Maximum 6 Characters',
+                    },
                 },
-            },
-            submitHandler: function(form) {
-                let formData = new FormData($(form_gate_out_confirm)[0]);
-                $('.submit_confirm').button('loading');
-                $.ajax({
-                        url: base_url + '/api/material-gate-pass/gate-out/confirm',
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
-                            showErrorNoty(res);
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_gate_out_confirm)[0]);
+                    $('.submit_confirm').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/material-gate-pass/gate-out/confirm',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                $('#otp_no').val('');
+                                $('#otp_no').focus();
+                                $('.submit_confirm').button('reset');
+                                return;
+                            }
+                            $('.submit_confirm').button('reset');
+                            $('#otp_no').val('');
+                            $('#otp').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $('.submit').button('reset');
+                            $('#gate_out_confirm_notification').modal('show');
+                        })
+                        .fail(function(xhr) {
+                            $('.submit_confirm').button('reset');
                             $('#otp_no').val('');
                             $('#otp_no').focus();
-                            $('.submit_confirm').button('reset');
-                            return;
-                        }
-                        $('.submit_confirm').button('reset');
-                        $('#otp_no').val('');
-                        $('#otp').modal('hide');
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
-                        $('.submit').button('reset');
-                        $('#gate_out_confirm_notification').modal('show');
-                    })
-                    .fail(function(xhr) {
-                        $('.submit_confirm').button('reset');
-                        $('#otp_no').val('');
-                        $('#otp_no').focus();
-                        showServerErrorNoty();
-                    });
-            }
-        });
+                            showServerErrorNoty();
+                        });
+                }
+            });
+        }
 
         $scope.ResendOtp = function() {
             var id = $('#gate_pass_id').val();
