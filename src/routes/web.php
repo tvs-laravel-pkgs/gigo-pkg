@@ -291,6 +291,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/pdf/tax-invoice/{id}', 'PDFController@TaxInvoicePDF')->name('TaxInvoicePDF');
 	Route::get('/pdf/service-proforma/{id}', 'PDFController@serviceProformaPDF')->name('serviceProformaPDF');
 	Route::get('/pdf/service-proforma-cumulative/{id}', 'PDFController@serviceProformaCumulativePDF')->name('serviceProformaCumulativePDF');
+	Route::get('/pdf/job-card/bill-detail/{id}/{split_order_type_id}', 'PDFController@JobCardBillDetailPDF')->name('JobCardBillDetailPDF');
 
 	//Repair Order Types
 	Route::get('/repair-order-type/get-list', 'RepairOrderTypeController@getRepairOrderTypeList')->name('getRepairOrderTypeList');

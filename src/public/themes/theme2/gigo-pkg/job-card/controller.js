@@ -1270,21 +1270,21 @@ app.component('jobCardPdf', {
 
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
-        $scope.gatepass_url  = base_url + '/gigo-pkg/pdf/gatepass/'+$routeParams.job_card_id;
-        $scope.covering_letter_url  = base_url + '/gigo-pkg/pdf/covering-letter/'+$routeParams.job_card_id;
-        $scope.estimate_url  = base_url + '/gigo-pkg/pdf/estimate/'+$routeParams.job_card_id;
-        $scope.insurance_estimate_url  = base_url + '/gigo-pkg/pdf/insurance-estimate/'+$routeParams.job_card_id;
-        $scope.revised_estimate_url  = base_url + '/gigo-pkg/pdf/revised-estimate/'+$routeParams.job_card_id;
-        $scope.job_card_pdf_url  = base_url + '/gigo-pkg/pdf/job-card/'+$routeParams.job_card_id;
-        $scope.job_card_spare_requisition_pdf_url  = base_url + '/gigo-pkg/pdf/job-card-spare-requisition/'+$routeParams.job_card_id;
-        $scope.work_order_outward_pdf_url  = base_url + '/gigo-pkg/pdf/work-order-outward/'+$routeParams.job_card_id;
-        $scope.work_order_inward_pdf_url  = base_url + '/gigo-pkg/pdf/work-order-inward/'+$routeParams.job_card_id;
-        $scope.warrenty_pick_list_pdf_url  = base_url + '/gigo-pkg/pdf/warrenty-pick-list/'+$routeParams.job_card_id;
-        $scope.vehicle_inward_pdf_url  = base_url + '/gigo-pkg/pdf/vehicle-inward/'+$routeParams.job_card_id;
-        $scope.vehicle_inspection_pdf_url  = base_url + '/gigo-pkg/pdf/vehicle-inspection/'+$routeParams.job_card_id;
-        $scope.tax_invoice_pdf_url  = base_url + '/gigo-pkg/pdf/tax-invoice/'+$routeParams.job_card_id;
-        $scope.service_proforma_pdf_url  = base_url + '/gigo-pkg/pdf/service-proforma/'+$routeParams.job_card_id;
-        $scope.service_proforma_cumulative_pdf_url  = base_url + '/gigo-pkg/pdf/service-proforma-cumulative/'+$routeParams.job_card_id;
+        $scope.gatepass_url = base_url + '/gigo-pkg/pdf/gatepass/' + $routeParams.job_card_id;
+        $scope.covering_letter_url = base_url + '/gigo-pkg/pdf/covering-letter/' + $routeParams.job_card_id;
+        $scope.estimate_url = base_url + '/gigo-pkg/pdf/estimate/' + $routeParams.job_card_id;
+        $scope.insurance_estimate_url = base_url + '/gigo-pkg/pdf/insurance-estimate/' + $routeParams.job_card_id;
+        $scope.revised_estimate_url = base_url + '/gigo-pkg/pdf/revised-estimate/' + $routeParams.job_card_id;
+        $scope.job_card_pdf_url = base_url + '/gigo-pkg/pdf/job-card/' + $routeParams.job_card_id;
+        $scope.job_card_spare_requisition_pdf_url = base_url + '/gigo-pkg/pdf/job-card-spare-requisition/' + $routeParams.job_card_id;
+        $scope.work_order_outward_pdf_url = base_url + '/gigo-pkg/pdf/work-order-outward/' + $routeParams.job_card_id;
+        $scope.work_order_inward_pdf_url = base_url + '/gigo-pkg/pdf/work-order-inward/' + $routeParams.job_card_id;
+        $scope.warrenty_pick_list_pdf_url = base_url + '/gigo-pkg/pdf/warrenty-pick-list/' + $routeParams.job_card_id;
+        $scope.vehicle_inward_pdf_url = base_url + '/gigo-pkg/pdf/vehicle-inward/' + $routeParams.job_card_id;
+        $scope.vehicle_inspection_pdf_url = base_url + '/gigo-pkg/pdf/vehicle-inspection/' + $routeParams.job_card_id;
+        $scope.tax_invoice_pdf_url = base_url + '/gigo-pkg/pdf/tax-invoice/' + $routeParams.job_card_id;
+        $scope.service_proforma_pdf_url = base_url + '/gigo-pkg/pdf/service-proforma/' + $routeParams.job_card_id;
+        $scope.service_proforma_cumulative_pdf_url = base_url + '/gigo-pkg/pdf/service-proforma-cumulative/' + $routeParams.job_card_id;
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -2483,6 +2483,11 @@ app.component('jobCardBillDetailView', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
+
+        $scope.billDetailPDF = function(split_order_type_id) {
+            $scope.job_card_solit_order_bill_details = base_url + '/gigo-pkg/pdf/job-card/bill-detail/' + $routeParams.job_card_id + '/' + split_order_type_id;
+        }
+
         $scope.fetchData();
     }
 });
