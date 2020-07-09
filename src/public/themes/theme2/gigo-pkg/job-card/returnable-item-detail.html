@@ -56,7 +56,13 @@
                                                         </tbody>
                                                     </table>
                                                     <div class="mb-10"></div><!-- Spacing -->
-                                                    <img ng-repeat="(key,attachment) in returnable_item.attachment" class="img-responsive wid-60" src="{{returnable_item_attachement_path}}/{{attachment.name}}" alt="Parts Image" />
+                                                    <div class="row" ng-if="returnable_item.attachment.length > 0">
+                                                        <div class="col-md-12">
+                                                            <div class="col-md-4" ng-repeat="(indexx, attach) in returnable_item.attachment">
+                                                                <img class="img-responsive wid-60" src="storage/app/public/gigo/returnable_items/{{attach.name}}" alt="Image" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <a href="#!/gigo-pkg/job-card/returnable-item/edit/{{job_card.id}}/{{returnable_item.id}}" class="btn btn-md type2 btn-secondary-dark btn-square mt-15">Edit</a>
                                                 </div><!-- Border Box -->
                                             </li>

@@ -772,6 +772,17 @@ app.component('jobCardReturnableItemForm', {
                 });
         }
         $scope.fetchData();
+
+        self.attachment_removal_id = [];
+        $scope.remove_attachment = function(attachment_id, index) {
+            console.log(attachment_id, index);
+            if (attachment_id) {
+                self.attachment_removal_id.push(attachment_id);
+                $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
+            }
+            $scope.returnable_item.attachment.splice(index, 1);
+        }
+
         //Save Form Data 
         $scope.saveReturnableItem = function() {
             var form_id = '#returnable_item';
@@ -835,10 +846,9 @@ app.component('jobCardReturnableItemForm', {
             });
         }
 
-
-        /* Image Uploadify Funtion */
-        $('.image_uploadify').imageuploadify();
-
+        setTimeout(function() {
+            $('.image_uploadify').imageuploadify();
+        }, 1000);
     }
 });
 
@@ -928,6 +938,7 @@ app.component('jobCardMaterialOutwardForm', {
         $scope.job_card_id = $routeParams.job_card_id;
         $scope.gatepass_id = $routeParams.gatepass_id;
         self.gate_pass_item_removal_ids = [];
+        var i = 0;
 
         //FETCH DATA
         $scope.fetchData = function() {
@@ -955,6 +966,8 @@ app.component('jobCardMaterialOutwardForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.$apply();
+
+                    i = $scope.gate_pass.gate_pass_items ? $scope.gate_pass.gate_pass_items.length : 0;
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -1018,6 +1031,10 @@ app.component('jobCardMaterialOutwardForm', {
         }
 
         $scope.addNewItem = function() {
+            var class_name = '.material_image_' + i;
+            setTimeout(function() {
+                $(class_name).imageuploadify();
+            }, 100);
             $scope.gate_pass.gate_pass_items.push({
                 item_description: '',
                 item_make: '',
@@ -1026,14 +1043,26 @@ app.component('jobCardMaterialOutwardForm', {
                 qty: '',
                 remarks: '',
             });
+            i++;
         }
 
         self.removeItem = function(index, $id) {
+            i--;
             if ($id) {
                 self.gate_pass_item_removal_ids.push($id);
                 $('#gate_pass_item_removal_id').val(JSON.stringify(self.gate_pass_item_removal_ids));
             }
             $scope.gate_pass.gate_pass_items.splice(index, 1);
+        }
+
+        self.attachment_removal_id = [];
+        $scope.remove_attachment = function(attachment_id, index) {
+            console.log(attachment_id, index);
+            if (attachment_id) {
+                self.attachment_removal_id.push(attachment_id);
+                $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
+            }
+            $(".attach_" + index).remove();
         }
 
         //Save Form Data 
@@ -1270,21 +1299,21 @@ app.component('jobCardPdf', {
 
         self.hasPermission = HelperService.hasPermission;
         self.angular_routes = angular_routes;
-        $scope.gatepass_url  = base_url + '/gigo-pkg/pdf/gatepass/'+$routeParams.job_card_id;
-        $scope.covering_letter_url  = base_url + '/gigo-pkg/pdf/covering-letter/'+$routeParams.job_card_id;
-        $scope.estimate_url  = base_url + '/gigo-pkg/pdf/estimate/'+$routeParams.job_card_id;
-        $scope.insurance_estimate_url  = base_url + '/gigo-pkg/pdf/insurance-estimate/'+$routeParams.job_card_id;
-        $scope.revised_estimate_url  = base_url + '/gigo-pkg/pdf/revised-estimate/'+$routeParams.job_card_id;
-        $scope.job_card_pdf_url  = base_url + '/gigo-pkg/pdf/job-card/'+$routeParams.job_card_id;
-        $scope.job_card_spare_requisition_pdf_url  = base_url + '/gigo-pkg/pdf/job-card-spare-requisition/'+$routeParams.job_card_id;
-        $scope.work_order_outward_pdf_url  = base_url + '/gigo-pkg/pdf/work-order-outward/'+$routeParams.job_card_id;
-        $scope.work_order_inward_pdf_url  = base_url + '/gigo-pkg/pdf/work-order-inward/'+$routeParams.job_card_id;
-        $scope.warrenty_pick_list_pdf_url  = base_url + '/gigo-pkg/pdf/warrenty-pick-list/'+$routeParams.job_card_id;
-        $scope.vehicle_inward_pdf_url  = base_url + '/gigo-pkg/pdf/vehicle-inward/'+$routeParams.job_card_id;
-        $scope.vehicle_inspection_pdf_url  = base_url + '/gigo-pkg/pdf/vehicle-inspection/'+$routeParams.job_card_id;
-        $scope.tax_invoice_pdf_url  = base_url + '/gigo-pkg/pdf/tax-invoice/'+$routeParams.job_card_id;
-        $scope.service_proforma_pdf_url  = base_url + '/gigo-pkg/pdf/service-proforma/'+$routeParams.job_card_id;
-        $scope.service_proforma_cumulative_pdf_url  = base_url + '/gigo-pkg/pdf/service-proforma-cumulative/'+$routeParams.job_card_id;
+        $scope.gatepass_url = base_url + '/gigo-pkg/pdf/gatepass/' + $routeParams.job_card_id;
+        $scope.covering_letter_url = base_url + '/gigo-pkg/pdf/covering-letter/' + $routeParams.job_card_id;
+        $scope.estimate_url = base_url + '/gigo-pkg/pdf/estimate/' + $routeParams.job_card_id;
+        $scope.insurance_estimate_url = base_url + '/gigo-pkg/pdf/insurance-estimate/' + $routeParams.job_card_id;
+        $scope.revised_estimate_url = base_url + '/gigo-pkg/pdf/revised-estimate/' + $routeParams.job_card_id;
+        $scope.job_card_pdf_url = base_url + '/gigo-pkg/pdf/job-card/' + $routeParams.job_card_id;
+        $scope.job_card_spare_requisition_pdf_url = base_url + '/gigo-pkg/pdf/job-card-spare-requisition/' + $routeParams.job_card_id;
+        $scope.work_order_outward_pdf_url = base_url + '/gigo-pkg/pdf/work-order-outward/' + $routeParams.job_card_id;
+        $scope.work_order_inward_pdf_url = base_url + '/gigo-pkg/pdf/work-order-inward/' + $routeParams.job_card_id;
+        $scope.warrenty_pick_list_pdf_url = base_url + '/gigo-pkg/pdf/warrenty-pick-list/' + $routeParams.job_card_id;
+        $scope.vehicle_inward_pdf_url = base_url + '/gigo-pkg/pdf/vehicle-inward/' + $routeParams.job_card_id;
+        $scope.vehicle_inspection_pdf_url = base_url + '/gigo-pkg/pdf/vehicle-inspection/' + $routeParams.job_card_id;
+        $scope.tax_invoice_pdf_url = base_url + '/gigo-pkg/pdf/tax-invoice/' + $routeParams.job_card_id;
+        $scope.service_proforma_pdf_url = base_url + '/gigo-pkg/pdf/service-proforma/' + $routeParams.job_card_id;
+        $scope.service_proforma_cumulative_pdf_url = base_url + '/gigo-pkg/pdf/service-proforma-cumulative/' + $routeParams.job_card_id;
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();

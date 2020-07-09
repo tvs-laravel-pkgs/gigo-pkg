@@ -116,13 +116,20 @@
                                                                             </tbody>
                                                                         </table>
                                                                         <div class="mb-10"></div>
-                                                                        <img ng-if="gate_pass_item.attachment" class="img-responsive wid-60" src="storage/app/public/gigo/material_gate_pass/attachments/{{gate_pass_item.attachment.name}}" alt="Image" />
+                                                                        <div class="row" ng-if="gate_pass_item.attachment.length > 0">
+                                                                            <div class="col-md-12">
+                                                                                <div class="col-md-4" ng-repeat="(indexx, attach) in gate_pass_item.attachment">
+                                                                                    <img class="img-responsive wid-60" src="storage/app/public/gigo/material_gate_pass/attachments/{{attach.name}}" alt="Image" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
                                                                     </div><!-- Border Box -->
                                                                 </div><!-- Item -->
                                                             </div><!-- Carousel Inner -->
                                                         </div><!-- Carousel -->
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
+                                                <div class="mb-10"></div>
                                             </div>
                                         </div>
                                         <div class="text-center pt-40">
