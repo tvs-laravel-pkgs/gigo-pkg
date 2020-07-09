@@ -431,6 +431,10 @@ class JobCardController extends Controller {
 			$bay->updated_at = Carbon::now();
 			$bay->save();
 
+			$job_order = JobOrder::where('id', $job_card->job_order_id)->first();
+			$job_order->floor_supervisor_id = $request->floor_supervisor_id;
+			$job_order->save();
+
 			DB::commit();
 
 			return response()->json([

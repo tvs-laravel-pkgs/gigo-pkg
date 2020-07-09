@@ -20,6 +20,8 @@ class PDFController extends Controller {
 			'gatePasses',
 			'jobOrder',
 			'jobOrder.type',
+			'jobOrder.quoteType',
+			'jobOrder.serviceType',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'jobOrder.vehicle.status',
@@ -30,11 +32,13 @@ class PDFController extends Controller {
 			'jobOrder.vehicle.currentOwner.customer.address.country',
 			'jobOrder.vehicle.currentOwner.customer.address.state',
 			'jobOrder.vehicle.currentOwner.customer.address.city',
-			'jobOrder.serviceType',
 			'jobOrder.jobOrderRepairOrders.repairOrder',
 			'jobOrder.jobOrderRepairOrders.repairOrder.repairOrderType',
 			'jobOrder.floorAdviser',
-			'jobOrder.serviceAdviser'])
+			'jobOrder.floorAdviser.user',
+			'jobOrder.serviceAdviser',
+			'jobOrder.serviceAdviser.user',
+		])
 			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as jobdate'),
@@ -42,7 +46,7 @@ class PDFController extends Controller {
 			])
 			->find($id);
 
-		//dd($this->data['gate_pass']);
+		// dd($this->data['gate_pass']);
 
 		$pdf = PDF::loadView('pdf-gigo/gate-pass-pdf', $this->data);
 
