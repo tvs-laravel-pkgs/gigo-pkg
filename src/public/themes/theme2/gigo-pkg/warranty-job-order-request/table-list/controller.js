@@ -102,14 +102,15 @@ app.component('warrantyJobOrderRequestTableList', {
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'request_date', searchable: false },
+                { data: 'number', name: 'warranty_job_order_requests.number', searchable: true },
                 { data: 'job_card_number', name: 'job_orders.number' },
                 { data: 'outlet_name', name: 'outlets.code' },
+                { data: 'status', name: 'configs.name' },
                 { data: 'requested_by', name: 'users.name' },
                 { data: 'customer_name', name: 'customers.name' },
                 { data: 'model_number', name: 'models.model_number' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'chassis_number', name: 'vehicles.chassis_number' },
-                { data: 'status', name: 'configs.name' }
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)

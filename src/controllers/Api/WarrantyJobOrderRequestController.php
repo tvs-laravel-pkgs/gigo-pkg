@@ -27,6 +27,7 @@ class WarrantyJobOrderRequestController extends Controller {
 	public function list(Request $request) {
 		$list_data = WarrantyJobOrderRequest::select([
 			'warranty_job_order_requests.id',
+			'warranty_job_order_requests.number',
 			'job_orders.number as job_card_number',
 			DB::raw('DATE_FORMAT(warranty_job_order_requests.created_at,"%d/%m/%Y") as request_date'),
 			'outlets.code as outlet_name',
@@ -169,7 +170,7 @@ class WarrantyJobOrderRequestController extends Controller {
 				'wjor' => $warranty_job_order_request,
 			]));
 
-			$warranty_job_order_request->generatePDF();
+			// $warranty_job_order_request->generatePDF();
 
 			DB::commit();
 
@@ -203,7 +204,7 @@ class WarrantyJobOrderRequestController extends Controller {
 
 			$warranty_job_order_request->load($this->model::relationships('read'));
 
-			$warranty_job_order_request->generatePDF();
+			// $warranty_job_order_request->generatePDF();
 
 		} catch (Exceprion $e) {
 			return response()->json([
