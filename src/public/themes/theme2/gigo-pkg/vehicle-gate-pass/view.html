@@ -107,7 +107,13 @@
                                                             </tbody>
                                                         </table>
                                                         <div class="mb-10"></div><!-- Spacing -->
-                                                        <img class="img-responsive wid-60" src="{{$ctrl.vehicle_gate_pass.returnable_item_attachment_path}}/{{job_card_returnable_item.attachment[0].name}}" alt="Parts Image" />
+                                                        <div class="row" ng-if="job_card_returnable_item.attachment.length > 0">
+                                                            <div class="col-md-12">
+                                                                <div class="col-md-4" ng-repeat="(indexx, attach) in job_card_returnable_item.attachment">
+                                                                    <img class="img-responsive wid-60" src="storage/app/public/gigo/returnable_items/{{attach.name}}" alt="Image" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div><!-- Border Box -->
                                                 </li>
                                             </ul><!-- Flex Row -->
