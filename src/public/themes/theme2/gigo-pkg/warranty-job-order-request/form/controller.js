@@ -2,7 +2,7 @@ angular.module('app').requires.push('angularBootstrapFileinput');
 
 app.component('warrantyJobOrderRequestForm', {
     templateUrl: warrantyJobOrderRequestForm,
-    controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc, VehicleSvc, OutletSvc, CustomerSvc) {
+    controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc, VehicleSvc, OutletSvc, CustomerSvc, ComplaintGroupSvc) {
         $rootScope.loading = true;
         $('#search').focus();
         var self = this;
@@ -211,9 +211,18 @@ app.component('warrantyJobOrderRequestForm', {
             });
         }
 
+        $scope.searchCompaintGroup = function(query) {
+            return new Promise(function(resolve, reject) {
+                ComplaintGroupSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+
         $scope.searchCompaints = function(query) {
             return new Promise(function(resolve, reject) {
-                ComplaintSvc.options({ filter: { search: query } })
+                ComplaintSvc.options({ filter: { search: query, complaintGroup: $scope.warranty_job_order_request.complaint_group.id } })
                     .then(function(response) {
                         resolve(response.data.options);
                     });

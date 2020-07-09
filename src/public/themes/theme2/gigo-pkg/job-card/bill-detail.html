@@ -52,8 +52,8 @@
                                                             <img class="img-responsive bill-img" src="./public/theme/img/content/bill.svg" />
                                                             <span class="info">Bill No : {{job_card.dealer_specific_bill_no ? job_card.dealer_specific_bill_no : '--'}} | Billed Date : 13/04/2020</span>
                                                             <div class="bill-btn">
-                                                                <a href="#!/gigo-pkg/job-card/bill-detail-update/{{job_card.id}}" class="btn btn-secondary-dark btn-square btn-sm">Update Bill Details</a>
-                                                                <a class="btn btn-red btn-square btn-sm">Download PDF</a>
+                                                                <!-- <a href="#!/gigo-pkg/job-card/bill-detail-update/{{job_card.id}}" class="btn btn-secondary-dark btn-square btn-sm">Update Bill Details</a> -->
+                                                                <a href="{{job_card_solit_order_bill_details}}" class="btn btn-red btn-square btn-sm" ng-click="billDetailPDF(split_order_type.id)" target="_blank">Download PDF</a>
                                                             </div>
                                                         </div>
                                                     </div><!-- Column -->
@@ -168,9 +168,7 @@
                                                                                         <th>Labour Value</th>
                                                                                         <th>Discount</th>
                                                                                         <th>Taxable Amount</th>
-                                                                                        <th>CGST</th>
-                                                                                        <th>SGST</th>
-                                                                                        <th>IGST</th>
+                                                                                        <th ng-repeat="(key,tax) in extras.taxes">{{tax.name}}</th>
                                                                                         <th>Total Price</th>
                                                                                     </tr>
                                                                                 </thead>
@@ -207,9 +205,7 @@
                                                                                         <th>Price</th>
                                                                                         <th>Discount</th>
                                                                                         <th>Taxable Amount</th>
-                                                                                        <th>CGST</th>
-                                                                                        <th>SGST</th>
-                                                                                        <th>IGST</th>
+                                                                                        <th ng-repeat="(key,tax) in extras.taxes">{{tax.name}}</th>
                                                                                         <th>Total Price</th>
                                                                                     </tr>
                                                                                 </thead>
@@ -258,8 +254,8 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <a class="btn btn-secondary-dark btn-min-wdth">Send Bill to Customer</a>
-                                            <a href=".#!/gigo-pkg/job-card/returnable-item/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
-                                            <a href=".#!/job-card/payable-labour-parts/{{job_card_id}}" class="btn btn-secondary-dark btn-nxt">Next</a>
+                                            <!-- <a href=".#!/gigo-pkg/job-card/returnable-item/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a> -->
+                                            <!-- <a href=".#!/job-card/payable-labour-parts/{{job_card_id}}" class="btn btn-secondary-dark btn-nxt">Next</a> -->
                                         </div>
                                     </div>
                                 </div><!-- Tab Footer -->

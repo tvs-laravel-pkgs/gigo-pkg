@@ -13,6 +13,17 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		Route::get('service-type/options', ServiceTypeController::class . '@options');
 
+		Route::group(['prefix' => 'complaint-group'], function () {
+			$controller = 'ComplaintGroup';
+			Route::get('index', $controller . 'Controller@index');
+			Route::get('read/{id}', $controller . 'Controller@read');
+			Route::post('save', $controller . 'Controller@save');
+			Route::post('save-from-form-data', $controller . 'Controller@saveFromFormData');
+			Route::post('save-from-ng-data', $controller . 'Controller@saveFromNgData');
+			Route::post('remove', $controller . 'Controller@remove');
+			Route::get('options', $controller . 'Controller@options');
+		});
+
 		Route::group(['prefix' => 'wjor-repair-order'], function () {
 			$controller = 'WjorRepairOrder';
 			Route::get('index', $controller . 'Controller@index');

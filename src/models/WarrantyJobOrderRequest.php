@@ -14,7 +14,6 @@ use App\WjorRepairOrder;
 use Auth;
 use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use PDF;
 use Storage;
 use Validator;
 
@@ -556,13 +555,13 @@ class WarrantyJobOrderRequest extends BaseModel {
 		// }
 
 		// dd($this->photos);
-		$pdf = PDF::loadView('pdf-gigo/wjor', [
-			'wjor' => $this,
-			'company' => $this->company,
-			'outlet' => $this->jobOrder->outlet,
-			'title' => 'Warranty Job Order Request',
-		]);
-		return $pdf->save(storage_path('app/public/wjor-pdfs/' . $this->number . '.pdf'));
+		// $pdf = PDF::loadView('pdf-gigo/wjor', [
+		// 	'wjor' => $this,
+		// 	'company' => $this->company,
+		// 	'outlet' => $this->jobOrder->outlet,
+		// 	'title' => 'Warranty Job Order Request',
+		// ]);
+		// return $pdf->save(storage_path('app/public/wjor-pdfs/' . $this->number . '.pdf'));
 	}
 
 	public function loadBusiness($business_code) {

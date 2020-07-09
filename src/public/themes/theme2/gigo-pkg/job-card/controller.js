@@ -2512,6 +2512,11 @@ app.component('jobCardBillDetailView', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
+
+        $scope.billDetailPDF = function(split_order_type_id) {
+            $scope.job_card_solit_order_bill_details = base_url + '/gigo-pkg/pdf/job-card/bill-detail/' + $routeParams.job_card_id + '/' + split_order_type_id;
+        }
+
         $scope.fetchData();
     }
 });

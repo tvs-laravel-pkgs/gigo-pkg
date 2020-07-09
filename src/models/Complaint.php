@@ -75,6 +75,7 @@ class Complaint extends BaseModel {
 			],
 		],
 	];
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {
@@ -84,6 +85,11 @@ class Complaint extends BaseModel {
 				$query->orWhere('name', 'LIKE', '%' . $term . '%');
 			});
 		}
+	}
+
+	public function scopeFilterComplaintGroup($query, $complaint_group_id) {
+		$query->where('group_id', $complaint_group_id);
+		dd($query->toSql());
 	}
 
 	// Static Operations --------------------------------------------------------------
