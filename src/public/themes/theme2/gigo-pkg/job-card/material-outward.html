@@ -228,7 +228,7 @@
                                                         <div class="light-box">
                                                             <h6 class=""><b>Attachments</b></h6>
                                                             <div class="img-upload-preview">
-                                                                <input type="file" class="image_uploadify" accept="image/*,application/pdf" name="item_details[{{index}}][material_outward_attachment][]" multiple>
+                                                                <input type="file" class="image_uploadify material_image_{{index}}" accept="image/*,application/pdf" name="item_details[{{index}}][material_outward_attachment][]" multiple>
                                                                 <div class="imageuploadify">
                                                                     <div class="imageuploadify-images-list">
                                                                         <div class="imageuploadify-container attach_{{indexx}}" style="margin-left: 4px; margin-right: 4px;" ng-repeat="(indexx, attach) in gate_pass_item.attachment">
@@ -269,4 +269,4 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<script src="./public/theme/js/imageuploadify-common-preview.min.js"></script>
+<script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>

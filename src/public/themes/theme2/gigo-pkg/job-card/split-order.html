@@ -61,7 +61,7 @@
                                                                     <tbody class="connectedSortable">
                                                                         <tr data-itemid="labour.id" data-split_id="split_order_type.id" ng-if="labour.split_order_type_id == null" ng-repeat="(labour_key,labour) in labour_details">
                                                                             <td class="action width-100">
-                                                                                <a ng-click="splitOrderLabourChange(labour.id,0,'',split_order_type.id)">
+                                                                                <a href="" ng-click="splitOrderLabourChange(labour.id,0,'',split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
                                                                             </td>
@@ -82,7 +82,7 @@
                                                                         </tr>
                                                                         <tr data-itemid="part.id" data-split_id="split_order_type.id" ng-if="part.split_order_type_id == null" ng-repeat="(part_key,part) in part_details">
                                                                             <td class="action width-100">
-                                                                                <a ng-click="splitOrderPartChange(part.id,0,'',split_order_type.id)">
+                                                                                <a href="" ng-click="splitOrderPartChange(part.id,0,'',split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
                                                                             </td>
@@ -131,7 +131,7 @@
                                                                     <tbody class="connectedSortable">
                                                                         <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(labour_key,labour) in labour_details">
                                                                             <td class="action width-100">
-                                                                                <a ng-click="splitOrderLabourChange(labour.id,1,key,split_order_type.id)">
+                                                                                <a href="" ng-click="splitOrderLabourChange(labour.id,1,key,split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
                                                                             </td>
@@ -152,7 +152,7 @@
                                                                         </tr>
                                                                         <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(part_key,part) in part_details">
                                                                             <td class="action width-100">
-                                                                                <a ng-click="splitOrderPartChange(part.id,1,key,split_order_type.id)">
+                                                                                <a href="" ng-click="splitOrderPartChange(part.id,1,key,split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
                                                                             </td>
