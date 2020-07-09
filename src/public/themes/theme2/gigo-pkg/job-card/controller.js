@@ -772,6 +772,17 @@ app.component('jobCardReturnableItemForm', {
                 });
         }
         $scope.fetchData();
+
+        self.attachment_removal_id = [];
+        $scope.remove_attachment = function(attachment_id, index) {
+            console.log(attachment_id, index);
+            if (attachment_id) {
+                self.attachment_removal_id.push(attachment_id);
+                $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
+            }
+            $scope.returnable_item.attachment.splice(index, 1);
+        }
+
         //Save Form Data 
         $scope.saveReturnableItem = function() {
             var form_id = '#returnable_item';
@@ -835,10 +846,9 @@ app.component('jobCardReturnableItemForm', {
             });
         }
 
-
-        /* Image Uploadify Funtion */
-        $('.image_uploadify').imageuploadify();
-
+        setTimeout(function() {
+            $('.image_uploadify').imageuploadify();
+        }, 1000);
     }
 });
 
@@ -928,6 +938,7 @@ app.component('jobCardMaterialOutwardForm', {
         $scope.job_card_id = $routeParams.job_card_id;
         $scope.gatepass_id = $routeParams.gatepass_id;
         self.gate_pass_item_removal_ids = [];
+        var i = 0;
 
         //FETCH DATA
         $scope.fetchData = function() {
@@ -955,6 +966,8 @@ app.component('jobCardMaterialOutwardForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.$apply();
+
+                    i = $scope.gate_pass.gate_pass_items ? $scope.gate_pass.gate_pass_items.length : 0;
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -1018,6 +1031,10 @@ app.component('jobCardMaterialOutwardForm', {
         }
 
         $scope.addNewItem = function() {
+            var class_name = '.material_image_' + i;
+            setTimeout(function() {
+                $(class_name).imageuploadify();
+            }, 100);
             $scope.gate_pass.gate_pass_items.push({
                 item_description: '',
                 item_make: '',
@@ -1026,14 +1043,26 @@ app.component('jobCardMaterialOutwardForm', {
                 qty: '',
                 remarks: '',
             });
+            i++;
         }
 
         self.removeItem = function(index, $id) {
+            i--;
             if ($id) {
                 self.gate_pass_item_removal_ids.push($id);
                 $('#gate_pass_item_removal_id').val(JSON.stringify(self.gate_pass_item_removal_ids));
             }
             $scope.gate_pass.gate_pass_items.splice(index, 1);
+        }
+
+        self.attachment_removal_id = [];
+        $scope.remove_attachment = function(attachment_id, index) {
+            console.log(attachment_id, index);
+            if (attachment_id) {
+                self.attachment_removal_id.push(attachment_id);
+                $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
+            }
+            $(".attach_" + index).remove();
         }
 
         //Save Form Data 

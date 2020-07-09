@@ -13,6 +13,20 @@ class GigoPkgPermissionSeeder extends Seeder {
 	public function run() {
 		$permissions = [
 
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'gigo-masters',
+				'display_name' => 'GIGO Masters',
+			],
+
+			[
+				'display_order' => 99,
+				'parent' => null,
+				'name' => 'gigo-pages',
+				'display_name' => 'GIGO Pages',
+			],
+
 			//Vehicle Segment
 			[
 				'display_order' => 99,
@@ -42,7 +56,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Vehicle Primary Application
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'vehicle-primary-applications',
 				'display_name' => 'Vehicle Primary Application',
 			],
@@ -68,7 +82,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Part Supplier
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'part-suppliers',
 				'display_name' => 'Part Supplier',
 			],
@@ -94,7 +108,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Fault
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'faults',
 				'display_name' => 'Faults',
 			],
@@ -170,7 +184,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Complaint Group
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'complaint-groups',
 				'display_name' => 'Complaint Group',
 			],
@@ -196,7 +210,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Complaint
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'complaint',
 				'display_name' => 'Complaint',
 			],
@@ -222,7 +236,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Vehicle Secoundary Application
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'vehicle-secoundary-applications',
 				'display_name' => 'Vehicle Secounday Application',
 			],
@@ -248,7 +262,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Pause Work Reason
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'pause-work-reasons',
 				'display_name' => 'Pause Work Reason',
 			],
@@ -274,7 +288,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Service Types
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'service-types',
 				'display_name' => 'Service Types',
 			],
@@ -300,7 +314,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Service Order Types
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'service-order-types',
 				'display_name' => 'Service Order Types',
 			],
@@ -326,7 +340,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Vehicle Owners
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'vehicle-owners',
 				'display_name' => 'Vehicle Owners',
 			],
@@ -430,7 +444,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Quote Types
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'quote-types',
 				'display_name' => 'Quote Types',
 			],
@@ -456,7 +470,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Vehicle Inventory Items
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'vehicle-inventory-items',
 				'display_name' => 'Vehicle Inventory Items',
 			],
@@ -482,7 +496,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Vehicle Inspection Item Groups
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'vehicle-inspection-item-groups',
 				'display_name' => 'Vehicle Inspection Item Groups',
 			],
@@ -508,7 +522,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Vehicle Inspection Items
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'vehicle-inspection-items',
 				'display_name' => 'Vehicle Inspection Items',
 			],
@@ -534,7 +548,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Customer Voices
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'customer-voices',
 				'display_name' => 'Customer Voices',
 			],
@@ -560,7 +574,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Split Order Types
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'split-order-types',
 				'display_name' => 'Split Order Types',
 			],
@@ -586,7 +600,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Bays
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'outlet-masters',
 				'name' => 'bays',
 				'display_name' => 'Bays',
 			],
@@ -612,7 +626,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Estimation Types
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'estimation-types',
 				'display_name' => 'Estimation Types',
 			],
@@ -638,7 +652,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Gate Passes
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'gate-passes',
 				'display_name' => 'Gate Passes',
 			],
@@ -664,7 +678,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Gate Logs
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'gate-logs',
 				'display_name' => 'Gate Logs',
 			],
@@ -690,7 +704,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//VEHICLE GATE PASS
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'vehicle-gate-passes',
 				'display_name' => 'Vehicle Gate Passes',
 			],
@@ -710,7 +724,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//MATERIAl GATE PASS
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'material-gate-passes',
 				'display_name' => 'Material Gate Passes',
 			],
@@ -736,7 +750,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Repair Order
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'repair-orders',
 				'display_name' => 'Repair Order',
 			],
@@ -762,7 +776,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Repair Order Types
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'repair-order-types',
 				'display_name' => 'Repair Order Types',
 			],
@@ -788,7 +802,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Vehicle Inward
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'inward-vehicle',
 				'display_name' => 'Inward Vehicle',
 			],
@@ -832,7 +846,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//My JobCard
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'my-jobcard',
 				'display_name' => 'My JobCard List',
 			],
@@ -840,7 +854,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Job Order Repair Orders
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'job-order-repair-orders',
 				'display_name' => 'Job Order Repair Orders',
 			],
@@ -866,7 +880,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Repair Order Mechanics
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'repair-order-mechanics',
 				'display_name' => 'Repair Order Mechanics',
 			],
@@ -892,7 +906,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Mechanic Time Logs
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'mechanic-time-logs',
 				'display_name' => 'Mechanic Time Logs',
 			],
@@ -918,7 +932,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Job Order Parts
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'job-order-parts',
 				'display_name' => 'Job Order Parts',
 			],
@@ -944,7 +958,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Job Order Issued Parts
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'job-order-issued-parts',
 				'display_name' => 'Job Order Issued Parts',
 			],
@@ -970,7 +984,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Job Cards
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'job-cards',
 				'display_name' => 'Job Cards',
 			],
@@ -1185,7 +1199,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Campaign
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'campaigns',
 				'display_name' => 'Campaigns',
 			],
@@ -1211,9 +1225,9 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//WARRANTY JOB ORDER REQUEST
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'warranty-job-order-requests',
-				'display_name' => 'Warranty Job Order Request',
+				'display_name' => 'PPR',
 			],
 			[
 				'display_order' => 1,
@@ -1279,7 +1293,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Vehicle Service Schedule
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-masters',
 				'name' => 'vehicle-service-schedules',
 				'display_name' => 'Vehicle Service Schedules',
 			],

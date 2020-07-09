@@ -102,27 +102,21 @@
                                     </div><!-- Row -->
                                 </div><!-- Column -->
                                 <div class="col-md-12">
-                                    <ul class="gatein-img-list">
-                                        <li class="gatein-img-list-item item-img">
-                                            <div class="avatar-upload type-3">
-                                                <div class="avatar-edit" ng-class="{'in': returnable_item.attachment.length > 0}">
-                                                    <input type="file" class="profile-img-upload" name="job_card_returnable_items[0][attachments][]" id="image_Upload_4" accept=".png, .jpg, .jpeg" />
-                                                    <label for="image_Upload_4">
-                                                        <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
-                                                    </label>
-                                                </div>
-                                                <div class="avatar-preview in" ng-if="returnable_item.attachment.length > 0">
-                                                    <div class="avatar-img" id="imagePreview" style="background-image:url('./storage/app/public/gigo/job_card/returnable_items/{{returnable_item.attachment[0].name}}')">
+                                    <div class="light-box">
+                                        <h6 class=""><b>Attachments</b></h6>
+                                        <div class="img-upload-preview">
+                                            <input type="file" class="image_uploadify" accept="image/*,application/pdf" name="job_card_returnable_items[0][attachments][]" multiple />
+                                            <div class="imageuploadify">
+                                                <div class="imageuploadify-images-list">
+                                                    <div class="imageuploadify-container" style="margin-left: 4px; margin-right: 4px;" ng-repeat="(key,attach) in returnable_item.attachment">
+                                                        <button type="button" class="btn btn-danger glyphicon glyphicon-remove" ng-click="remove_attachment(attach.id,key)">
+                                                        </button>
+                                                        <img src="./storage/app/public/gigo/returnable_items/{{attach.name}}">
                                                     </div>
                                                 </div>
-                                                <div class="avatar-preview" ng-if="!returnable_item.attachment || returnable_item.attachment.length == 0">
-                                                    <div class="avatar-img" id="imagePreview" style="">
-                                                    </div>
-                                                </div>
-                                            </div><!-- Avatar Upload -->
-                                            <!-- <input type="file" class="image_uploadify" accept="image/*," name="job_card_returnable_items[0][attachments][]" /> -->
-                                        </li>
-                                    </ul>
+                                            </div>
+                                        </div>
+                                    </div><!-- Light Box -->
                                 </div><!-- Column -->
                             </div><!-- Row -->
                         </div><!-- Page Form -->
@@ -131,6 +125,7 @@
                 <div class="page-form-footer">
                     <div class="row">
                         <div class="col-md-12">
+                            <input type="hidden" name="attachment_removal_ids" id="attachment_removal_ids" value="">
                             <a href=".#!/gigo-pkg/job-card/returnable-item/{{job_card.id}}" class="btn btn-bordered btn-grey btn-min-wdth">Cancel</a>
                             <button type="submit" class="btn btn-secondary-dark btn-min-wdth submit" ng-click="saveReturnableItem()">Save</button>
                         </div><!-- Column -->
@@ -140,4 +135,4 @@
         </div><!-- Container -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
+<script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>

@@ -221,7 +221,6 @@
                                         <input type="text" class="form-control" autocomplete="off" ng-model="warranty_job_order_request.job_order.vehicle.registration_number" name="registration_number" maxlength="10" />
                                     </div><!-- Feild -->
                                 </li>
-
                                 <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle && false">
                                     <span class="view-col-label">
                                         Chassis number
@@ -292,13 +291,32 @@
                                 <li class="view-col-3">
                                     <div class="form-group">
                                         <label>
+                                            Complaint group
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.complaint_group" md-search-text="complaintGroupSearchKey" md-items="complaintGroup in searchCompaintGroup(complaintGroupSearchKey)" md-item-text="complaintGroup.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. Engine - Block">
+                                            <md-item-template>
+                                                <span>
+                                                    {{complaintGroup.code+' / '+complaintGroup.name}}
+                                                </span>
+                                            </md-item-template>
+                                            <md-not-found>
+                                                No complaints matching "{{complaintGroupSearchKey}}" were found.
+                                            </md-not-found>
+                                        </md-autocomplete>
+                                        <input type="hidden" name="complaint_group_id" value="{{warranty_job_order_request.complaint_group.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3" ng-if="warranty_job_order_request.complaint_group">
+                                    <div class="form-group">
+                                        <label>
                                             Complaint code
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item="warranty_job_order_request.complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. 01C4">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code+' / '+complaint.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. 01C4">
                                             <md-item-template>
                                                 <span>
-                                                    {{complaint.code}}
+                                                    {{complaint.code+' / '+complaint.name}}
                                                 </span>
                                             </md-item-template>
                                             <md-not-found>
@@ -322,10 +340,10 @@
                                             Fault code
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item="warranty_job_order_request.fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code" md-min-length="1" md-escape-options="clear" placeholder="Ex. AA">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.fault" md-search-text="faultSearchKey" md-items="fault in searchFaults(faultSearchKey)" md-item-text="fault.code+' / '+fault.name" md-min-length="1" md-escape-options="clear" placeholder="Ex. AA">
                                             <md-item-template>
                                                 <span>
-                                                    {{fault.code}}
+                                                    {{fault.code+' / '+fault.name}}
                                                 </span>
                                             </md-item-template>
                                             <md-not-found>
@@ -349,10 +367,10 @@
                                             Supplier code
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item="warranty_job_order_request.supplier" md-search-text="supplierSearchKey" md-items="supplier in searchPartSuppliers(supplierSearchKey)" md-item-text="supplier.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. Kumar Auto Eng.">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.supplier" md-search-text="supplierSearchKey" md-items="supplier in searchPartSuppliers(supplierSearchKey)" md-item-text="supplier.code +' /  '+supplier.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. Kumar Auto Eng.">
                                             <md-item-template>
                                                 <span>
-                                                    {{supplier.code}}
+                                                    {{supplier.code+' / '+supplier.name}}
                                                 </span>
                                             </md-item-template>
                                             <md-not-found>
@@ -376,7 +394,7 @@
                                             Outlet
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order.outlet" md-search-text="outlet_search_key" md-items="outlet in searchOutlet(outlet_search_key)" md-item-text="outlet.code" md-min-length="2" md-escape-options="clear" placeholder="Outlet" ng-model-options="{trackBy: '$value.id' }" md-selected-item-change="outletChanged(warranty_job_order_request.job_order.outlet)">
+                                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order.outlet" md-search-text="outlet_search_key" md-items="outlet in searchOutlet(outlet_search_key)" md-item-text="outlet.code+' / '+outlet.name" md-min-length="2" md-escape-options="clear" placeholder="Outlet" ng-model-options="{trackBy: '$value.id' }" md-selected-item-change="outletChanged(warranty_job_order_request.job_order.outlet)">
                                             <md-item-template>
                                                 <span>
                                                     {{outlet.code}}
@@ -467,7 +485,7 @@
                                         Customer name and address
                                     </span>
                                     <span class="view-col-value">
-                                        {{warranty_job_order_request.job_order.customer.name}}
+                                        {{warranty_job_order_request.job_order.customer.name}}<br />
                                         {{warranty_job_order_request.job_order.customer.address}}
                                     </span>
                                 </li>
@@ -578,13 +596,18 @@
                                         </div>
                                     </div><!-- Feild -->
                                 </li>
-                                <li class="view-col-3">
+                                <li class="view-col-3" ng-if="warranty_job_order_request.load_carried_type_id">
                                     <div class="form-group">
                                         <label>
-                                            Load carried / No. of passengers
+                                            <span ng-if="warranty_job_order_request.load_carried_type_id == 9040">
+                                                Load carried
+                                            </span>
+                                            <span ng-if="warranty_job_order_request.load_carried_type_id == 9041">
+                                                No. of passengers
+                                            </span>
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input type="text" class="form-control" name="load_carried" autocomplete="off" ng-model="warranty_job_order_request.load_carried" />
+                                        <input type="text" class="form-control" name="load_carried" autocomplete="off" ng-model="warranty_job_order_request.load_carried" maxlength="2" />
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3">
@@ -609,10 +632,16 @@
                                 <li class="view-col-3">
                                     <div class="form-group">
                                         <label>
-                                            Pay load / passengers at failure time
+                                            <span ng-if="warranty_job_order_request.load_carried_type_id == 9040">
+                                                Pay load
+                                            </span>
+                                            <span ng-if="warranty_job_order_request.load_carried_type_id == 9041">
+                                                Passengers
+                                            </span>
+                                            at failure time
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input type="text" class="form-control" name="load_at_failure" autocomplete="off" ng-model="warranty_job_order_request.load_at_failure" />
+                                        <input type="text" class="form-control" name="load_at_failure" autocomplete="off" ng-model="warranty_job_order_request.load_at_failure" maxlength="2" />
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3">
@@ -621,7 +650,7 @@
                                             Last lube change on failed aggregate(KM)
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input type="text" class="form-control" autocomplete="off" name="last_lube_changed" ng-model="warranty_job_order_request.last_lube_changed" maxlength="10" />
+                                        <input type="text" class="form-control" autocomplete="off" name="last_lube_changed" ng-model="warranty_job_order_request.last_lube_changed" maxlength="6" />
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3">
@@ -664,19 +693,31 @@
                                 <li class="view-col-3">
                                     <div class="form-group">
                                         <label>
-                                            KM / HRS run per day
+                                            <span ng-if="warranty_job_order_request.reading_type_id == 8040">
+                                                KMs
+                                            </span>
+                                            <span ng-if="warranty_job_order_request.reading_type_id == 8040">
+                                                HRS
+                                            </span>
+                                            run per day
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input type="text" class="form-control" autocomplete="off" name="runs_per_day" ng-model="warranty_job_order_request.runs_per_day" maxlength="10" />
+                                        <input type="text" class="form-control" autocomplete="off" name="runs_per_day" ng-model="warranty_job_order_request.runs_per_day" maxlength="3" />
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3">
                                     <div class="form-group">
                                         <label>
-                                            Failed KM / HRS
+                                            Failed
+                                            <span ng-if="warranty_job_order_request.reading_type_id == 8040">
+                                                KM
+                                            </span>
+                                            <span ng-if="warranty_job_order_request.reading_type_id == 8041">
+                                                HRS
+                                            </span>
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input type="text" class="form-control" autocomplete="off" name="failed_at" ng-model="warranty_job_order_request.failed_at" maxlength="10" />
+                                        <input type="text" class="form-control" autocomplete="off" name="failed_at" ng-model="warranty_job_order_request.failed_at" maxlength="5" />
                                     </div><!-- Feild -->
                                 </li>
                             </ul>

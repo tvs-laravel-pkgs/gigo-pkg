@@ -1807,7 +1807,7 @@ app.component('inwardVehicleEstimateForm', {
                                         }
 
                                         //Check Estimated details are same or not.If not Custoerm OTP send
-                                        if (($('#estimated_amount').val() != $scope.estimated_amount) || ($('#est_delivery_date').val() != $scope.est_delivery_date) || ($('#est_delivery_time').val() != est_delivery_time)) {
+                                        if (($('#estimated_amount').val() != $scope.estimated_amount) || ($('#est_delivery_date').val() != $scope.est_delivery_date) || ($scope.est_delivery_time != est_delivery_time)) {
                                             $scope.approveBehalfCustomer();
                                         } else {
                                             $location.path('/inward-vehicle/customer-confirmation/' + $scope.job_order.id);

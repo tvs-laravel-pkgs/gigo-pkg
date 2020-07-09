@@ -23,6 +23,6 @@ class GatePassItem extends Model {
 	];
 
 	public function attachment() {
-		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 231)->where('attachment_type_id', 238);
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 231)->where('attachment_type_id', 238);
 	}
 }

@@ -1033,6 +1033,19 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			//Estimate Order ID
+			$job_repair_order = JobOrderPart::where('job_order_id', $request->job_order_id)->where('status_id', 8200)->first();
+			if ($job_repair_order) {
+				$estimate_order_id = $job_repair_order->estimate_order_id;
+			} else {
+				$job_repair_order = JobOrderPart::where('job_order_id', $request->job_order_id)->orderBy('estimate_order_id', 'DESC')->first();
+				if ($job_repair_order) {
+					$estimate_order_id = ($job_repair_order->estimate_order_id) + 1;
+				} else {
+					$estimate_order_id = 0;
+				}
+			}
+
 			DB::beginTransaction();
 			$part = Part::where('id', $request->part_id)->first();
 
@@ -1040,6 +1053,8 @@ class VehicleInwardController extends Controller {
 				$job_order_part = JobOrderPart::find($request->job_order_part_id);
 			} else {
 				$job_order_part = new JobOrderPart;
+				$job_order_part->estimate_order_id = $estimate_order_id;
+				$job_order_part->is_customer_approved = 0;
 			}
 			$job_order_part->job_order_id = $request->job_order_id;
 			$job_order_part->part_id = $request->part_id;
@@ -1104,6 +1119,19 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			//Estimate Order ID
+			$job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('status_id', 8080)->first();
+			if ($job_repair_order) {
+				$estimate_order_id = $job_repair_order->estimate_order_id;
+			} else {
+				$job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->orderBy('estimate_order_id', 'DESC')->first();
+				if ($job_repair_order) {
+					$estimate_order_id = ($job_repair_order->estimate_order_id) + 1;
+				} else {
+					$estimate_order_id = 0;
+				}
+			}
+
 			$repair_order = RepairOrder::find($request->rot_id);
 
 			DB::beginTransaction();
@@ -1112,17 +1140,19 @@ class VehicleInwardController extends Controller {
 				$job_order_repair_order = JobOrderRepairOrder::find($request->job_order_repair_order_id);
 			} else {
 				$job_order_repair_order = new JobOrderRepairOrder;
-
+				$job_order_repair_order->estimate_order_id = $estimate_order_id;
+				$job_order_repair_order->is_customer_approved = 0;
 			}
+
 			$job_order_repair_order->job_order_id = $request->job_order_id;
 			$job_order_repair_order->repair_order_id = $request->rot_id;
 			$job_order_repair_order->qty = $repair_order->hours;
 			$job_order_repair_order->split_order_type_id = $request->split_order_id;
 			$job_order_repair_order->amount = $repair_order->amount;
 			$job_order_repair_order->is_recommended_by_oem = 0;
-			$job_order_repair_order->is_customer_approved = 0;
 			$job_order_repair_order->status_id = 8180; //Customer Approval Pending
 			$job_order_repair_order->save();
+
 			DB::commit();
 
 			return response()->json([
@@ -3221,6 +3251,12 @@ class VehicleInwardController extends Controller {
 			$job_order_status_update->is_customer_approved = 1;
 			$job_order_status_update->updated_at = Carbon::now();
 			$job_order_status_update->save();
+
+			//UPDATE JOB ORDER REPAIR ORDER STATUS
+			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_customer_approved', 0)->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
+			//UPDATE JOB ORDER PARTS STATUS
+			JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_customer_approved', 0)->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			DB::commit();
 
