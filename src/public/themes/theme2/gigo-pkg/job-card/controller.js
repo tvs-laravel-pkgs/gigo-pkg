@@ -772,6 +772,17 @@ app.component('jobCardReturnableItemForm', {
                 });
         }
         $scope.fetchData();
+
+        self.attachment_removal_id = [];
+        $scope.remove_attachment = function(attachment_id, index) {
+            console.log(attachment_id, index);
+            if (attachment_id) {
+                self.attachment_removal_id.push(attachment_id);
+                $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
+            }
+            $scope.returnable_item.attachment.splice(index, 1);
+        }
+
         //Save Form Data 
         $scope.saveReturnableItem = function() {
             var form_id = '#returnable_item';
@@ -835,10 +846,9 @@ app.component('jobCardReturnableItemForm', {
             });
         }
 
-
-        /* Image Uploadify Funtion */
-        $('.image_uploadify').imageuploadify();
-
+        setTimeout(function() {
+            $('.image_uploadify').imageuploadify();
+        }, 1000);
     }
 });
 

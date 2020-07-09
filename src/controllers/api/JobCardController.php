@@ -35,7 +35,6 @@ use Auth;
 use Carbon\Carbon;
 use DB;
 use Entrust;
-use File;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
@@ -2175,7 +2174,7 @@ class JobCardController extends Controller {
 			'success' => true,
 			'job_card' => $job_card,
 			'returnable_item' => $returnable_item,
-			'attachement_path' => url('storage/app/public/gigo/job_card/returnable_items/'),
+			'attachement_path' => url('storage/app/public/gigo/returnable_items/'),
 		]);
 	}
 
@@ -2244,6 +2243,12 @@ class JobCardController extends Controller {
 				]);
 			}
 			DB::beginTransaction();
+
+			if (!empty($request->attachment_removal_ids)) {
+				$attachment_remove = json_decode($request->attachment_removal_ids, true);
+				Attachment::whereIn('id', $attachment_remove)->delete();
+			}
+
 			if (isset($request->job_card_returnable_items) && count($request->job_card_returnable_items) > 0) {
 				//Inserting Job card returnable items
 				foreach ($request->job_card_returnable_items as $key => $job_card_returnable_item) {
@@ -2264,28 +2269,12 @@ class JobCardController extends Controller {
 					$returnable_item->save();
 
 					//Attachment Save
-					$attachment_path = storage_path('app/public/gigo/job_card/returnable_items/');
+					$attachment_path = storage_path('app/public/gigo/returnable_items/');
 					Storage::makeDirectory($attachment_path, 0777);
 
 					//SAVE RETURNABLE ITEMS PHOTO ATTACHMENT
 					if (!empty($job_card_returnable_item['attachments']) && count($job_card_returnable_item['attachments']) > 0) {
-						//REMOVE OLD ATTACHEMNTS
-						$remove_previous_attachments = Attachment::where([
-							'entity_id' => $returnable_item->id,
-							'attachment_of_id' => 232, //Job Card Returnable Item
-							'attachment_type_id' => 239, //Job Card Returnable Item
-						])->get();
-						if (!empty($remove_previous_attachments)) {
-							foreach ($remove_previous_attachments as $key => $remove_previous_attachment) {
-								$img_path = $attachment_path . $remove_previous_attachment->name;
-								if (File::exists($img_path)) {
-									File::delete($img_path);
-								}
-								$remove = $remove_previous_attachment->forceDelete();
-							}
-						}
 						foreach ($job_card_returnable_item['attachments'] as $key => $returnable_item_attachment) {
-							//dump('save');
 							$file_name_with_extension = $returnable_item_attachment->getClientOriginalName();
 							$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
 							$extension = $returnable_item_attachment->getClientOriginalExtension();
