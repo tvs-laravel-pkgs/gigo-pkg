@@ -225,24 +225,21 @@
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-12">
-                                                        <ul class="gatein-img-list">
-                                                            <div class="avatar-upload type-3">
-                                                                <div class="avatar-edit" ng-class="{'in': gate_pass_item.attachment != NULL}">
-                                                                    <input type="file" class="profile-img-upload warranty_expiry_attachment" name="item_details[{{index}}][material_outward_attachment]" id="item{{index}}" accept=".png, .jpg, .jpeg" />
-                                                                    <label for="item{{index}}">
-                                                                        <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
-                                                                    </label>
-                                                                </div>
-                                                                <div class="avatar-preview in" ng-if="gate_pass_item.attachment != NULL">
-                                                                    <div class="avatar-img" id="imagePreview" style="background-image:url('storage/app/public/gigo/material_gate_pass/attachments/{{gate_pass_item.attachment.name}}')">
+                                                        <div class="light-box">
+                                                            <h6 class=""><b>Attachments</b></h6>
+                                                            <div class="img-upload-preview">
+                                                                <input type="file" class="image_uploadify" accept="image/*,application/pdf" name="item_details[{{index}}][material_outward_attachment][]" multiple>
+                                                                <div class="imageuploadify">
+                                                                    <div class="imageuploadify-images-list">
+                                                                        <div class="imageuploadify-container attach_{{indexx}}" style="margin-left: 4px; margin-right: 4px;" ng-repeat="(indexx, attach) in gate_pass_item.attachment">
+                                                                            <button type="button" class="btn btn-danger glyphicon glyphicon-remove" ng-click="remove_attachment(attach.id,indexx)">
+                                                                            </button>
+                                                                            <img src="./storage/app/public/gigo/material_gate_pass/attachments/{{attach.name}}">
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="avatar-preview" ng-if="gate_pass_item.attachment == NULL">
-                                                                    <div class="avatar-img" id="imagePreview" style="">
-                                                                    </div>
-                                                                </div><!-- Avatar Preview -->
-                                                            </div><!-- Avatar Upload -->
-                                                        </ul>
+                                                            </div><!-- Image Upload Preview -->
+                                                        </div><!-- Light Box -->
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
                                             </div>
@@ -254,6 +251,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <input type="hidden" id="gate_pass_item_removal_id" name="gate_pass_item_removal_id">
+                                                    <input type="hidden" name="attachment_removal_ids" id="attachment_removal_ids" value="">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <button type="submit" ng-click="saveItemDetails()" class="btn btn-red submit">
                                                         Save & Close
@@ -271,4 +269,4 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
+<script src="./public/theme/js/imageuploadify-common-preview.min.js"></script>

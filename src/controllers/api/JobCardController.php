@@ -2927,7 +2927,12 @@ class JobCardController extends Controller {
 				GatePassItem::whereIn('id', $gate_pass_item_removal_id)->delete();
 
 				$attachment_remove = json_decode($request->gate_pass_item_removal_id, true);
-				Attachment::where('entity_id', $attachment_remove)->where('attachment_of_id', 3440)->delete();
+				Attachment::where('entity_id', $attachment_remove)->where('attachment_of_id', 231)->delete();
+			}
+
+			if (!empty($request->attachment_removal_ids)) {
+				$attachment_remove = json_decode($request->attachment_removal_ids, true);
+				Attachment::whereIn('id', $attachment_remove)->delete();
 			}
 
 			//CREATE DIRECTORY TO STORAGE PATH
@@ -2958,11 +2963,20 @@ class JobCardController extends Controller {
 
 					//SAVE MATERIAL OUTWARD ATTACHMENT
 					if (!empty($item_detail['material_outward_attachment'])) {
-						$attachment = $item_detail['material_outward_attachment'];
-						$entity_id = $gate_pass_item->id;
-						$attachment_of_id = 231; //Material Gate Pass
-						$attachment_type_id = 238; //Material Gate Pass
-						saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
+						foreach ($item_detail['material_outward_attachment'] as $key => $material_outward_attachment) {
+							$image = $material_outward_attachment;
+							$file_name = $image->getClientOriginalName();
+
+							$name = $gate_pass_item->id . '_' . rand(10, 1000) . $file_name;
+							$name = str_replace(' ', '-', $name); // Replaces all spaces with hyphens.
+							$material_outward_attachment->move(storage_path('app/public/gigo/material_gate_pass/attachments/'), $name);
+							$attachement = new Attachment;
+							$attachement->entity_id = $gate_pass_item->id;
+							$attachement->attachment_of_id = 231; //Material Gate Pass
+							$attachement->attachment_type_id = 238; //Material Gate Pass
+							$attachement->name = $name;
+							$attachement->save();
+						}
 					}
 				}
 			}
