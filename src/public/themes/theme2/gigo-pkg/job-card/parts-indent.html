@@ -35,7 +35,7 @@
                                         <h5 class="title-red" ng-if="$ctrl.add_part_indent">
                                             Issue Part
                                         </h5>
-                                        <div class="row" ng-if="$ctrl.add_part_indent">
+                                        <div class="row" ng-if="$ctrl.add_part_indent && (job_card.status_id != 8224 || job_card.status_id != 8225 || job_card.status_id != 8226)">
                                             <div class="col-md-12">
                                                 <div class="parts-border">
                                                     <div class="row">

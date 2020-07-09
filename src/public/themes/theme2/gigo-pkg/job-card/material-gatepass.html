@@ -83,7 +83,7 @@
                                                                 </li>
                                                             </ul>
                                                         </div>
-                                                        <a ng-if="gate_passes.status_id == 8300" href="#!/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
+                                                        <a ng-if="gate_passes.status_id == 8300 && (job_card.status_id != 8224 || job_card.status_id != 8225 || job_card.status_id != 8226)" href="#!/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
                                                     </div><!-- Column -->
                                                     <div class="col-lg-4" ng-if="gate_passes.gate_pass_items.length > 0">
                                                         <div id="myCarousel" class="carousel mgpass-carousel slide" data-ride="carousel">
@@ -132,7 +132,7 @@
                                                 <div class="mb-10"></div>
                                             </div>
                                         </div>
-                                        <div class="text-center pt-40">
+                                        <div class="text-center pt-40" ng-if="job_card.status_id != 8224 || job_card.status_id != 8225 || job_card.status_id != 8226">
                                             <a href="#!/job-card/material-outward/{{job_card.id}}" class="btn btn-red">Add {{job_card.gate_passes.length > 0 ? 'Another' : ''}} Material Gate Pass</a>
                                         </div>
                                     </div><!-- Column -->
