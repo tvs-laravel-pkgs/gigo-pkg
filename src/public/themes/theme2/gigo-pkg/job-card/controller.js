@@ -1319,32 +1319,7 @@ app.component('jobCardPdf', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_card_id = $routeParams.job_card_id;
-        //FETCH DATA
-        $scope.fetchData = function() {
-            $.ajax({
-                    url: base_url + '/api/jobcard/vehicle-inspection/get',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_card_id
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.job_card = res.job_card;
-                    $scope.$apply();
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });
-        }
-        $scope.fetchData();
-
+        
         //Covering Letter
     }
 });
