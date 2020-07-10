@@ -75,7 +75,7 @@
                                                                 {{job_order_labour.qty}}
                                                             </td>
                                                             <td class="wid-180 white-space text-right">
-                                                                {{job_order_labour.amount | number:2 }}
+                                                                {{(job_order_labour.split_order_type.paid_by_id =='10013' || job_order_labour.split_order_type.paid_by_id == NULL) ? (job_order_labour.amount | number:2) : '0.00' }}
                                                                 <input type="hidden" class="job_order_labours" name="labouramount[{{index}}][amount]" value="{{job_order_labour.amount}}">
                                                             </td>
                                                             <td class="wid-100">
@@ -155,7 +155,7 @@
                                                                 {{job_order_part.qty}}
                                                             </td>
                                                             <td class="wid-180 white-space text-right">
-                                                                {{job_order_part.amount | number:2}}
+                                                                {{(job_order_part.split_order_type.paid_by_id =='10013' || job_order_part.split_order_type.paid_by_id == NULL) ? (job_order_part.amount | number:2) : '0.00' }}
                                                                 <input type="hidden" class="job_order_parts" name="part_amount[{{index}}][amount]" value="{{job_order_part.amount}}">
                                                             </td>
                                                             <td class="wid-100">

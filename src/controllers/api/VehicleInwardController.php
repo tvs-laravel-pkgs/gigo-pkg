@@ -1674,7 +1674,7 @@ class VehicleInwardController extends Controller {
 
 	//ScheduleMaintenance Form Data
 	public function getScheduleMaintenanceFormData(Request $r) {
-		// dd($id);
+		// dd($r->all());
 		try {
 			$job_order = JobOrder::with([
 				'vehicle',
@@ -1968,6 +1968,7 @@ class VehicleInwardController extends Controller {
 					$query->where('is_recommended_by_oem', 0);
 				},
 				'jobOrderRepairOrders.splitOrderType',
+				'jobOrderRepairOrders.splitOrderType.paidBy',
 				'jobOrderRepairOrders.repairOrder',
 				'jobOrderRepairOrders.repairOrder.repairOrderType',
 				'jobOrderParts' => function ($query) {
@@ -1999,13 +2000,19 @@ class VehicleInwardController extends Controller {
 			$total_amount = 0;
 			if ($job_order->jobOrderRepairOrders) {
 				foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
-					$labour_total_amount += $labour->amount;
+					if ($labour->splitOrderType->paid_by_id == 10013 || empty($labour->splitOrderType->paid_by_id)) {
+						//CUSTOMER
+						$labour_total_amount += $labour->amount;
+					}
 
 				}
 			}
 			if ($job_order->jobOrderParts) {
 				foreach ($job_order->jobOrderParts as $key => $part) {
-					$parts_total_amount += $part->amount;
+					if ($part->splitOrderType->paid_by_id == 10013 || empty($labour->splitOrderType->paid_by_id)) {
+						//CUSTOMER
+						$parts_total_amount += $part->amount;
+					}
 
 				}
 			}
@@ -2942,6 +2949,7 @@ class VehicleInwardController extends Controller {
 				'vehicle',
 				'vehicle.model',
 				'jobOrderRepairOrders',
+				'jobOrderRepairOrders.splitOrderType',
 				'jobOrderParts',
 				'type',
 				'quoteType',
@@ -2970,14 +2978,16 @@ class VehicleInwardController extends Controller {
 
 			if ($job_order->jobOrderRepairOrders) {
 				foreach ($job_order->jobOrderRepairOrders as $oemrecomentation_labour) {
+					if ($oemrecomentation_labour->splitOrderType->paid_by_id == 10013 || empty($oemrecomentation_labour->splitOrderType->paid_by_id)) {
+						if ($oemrecomentation_labour['is_recommended_by_oem'] == 1 && $oemrecomentation_labour['is_free_service'] == 0) {
+							//SCHEDULED MAINTANENCE
+							$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
+						}
 
-					if ($oemrecomentation_labour['is_recommended_by_oem'] == 1 && $oemrecomentation_labour['is_free_service'] == 0) {
-						//SCHEDULED MAINTANENCE
-						$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
-					}
-					if ($oemrecomentation_labour['is_recommended_by_oem'] == 0) {
-						//ADDITIONAL ROT AND PARTS
-						$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
+						if ($oemrecomentation_labour['is_recommended_by_oem'] == 0) {
+							//ADDITIONAL ROT AND PARTS
+							$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
+						}
 					}
 				}
 			}
@@ -2987,13 +2997,15 @@ class VehicleInwardController extends Controller {
 
 			if ($job_order->jobOrderParts) {
 				foreach ($job_order->jobOrderParts as $oemrecomentation_labour) {
-					if ($oemrecomentation_labour['is_oem_recommended'] == 1 && $oemrecomentation_labour['is_free_service'] == 0) {
-						//SCHEDULED MAINTANENCE
-						$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
-					}
-					if ($oemrecomentation_labour['is_oem_recommended'] == 0) {
-						//ADDITIONAL ROT AND PARTS
-						$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
+					if ($oemrecomentation_labour->splitOrderType->paid_by_id == 10013 || empty($oemrecomentation_labour->splitOrderType->paid_by_id)) {
+						if ($oemrecomentation_labour['is_oem_recommended'] == 1 && $oemrecomentation_labour['is_free_service'] == 0) {
+							//SCHEDULED MAINTANENCE
+							$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
+						}
+						if ($oemrecomentation_labour['is_oem_recommended'] == 0) {
+							//ADDITIONAL ROT AND PARTS
+							$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
+						}
 					}
 				}
 			}

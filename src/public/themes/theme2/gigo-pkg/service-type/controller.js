@@ -232,7 +232,7 @@ app.component('serviceTypeForm', {
                 return new Promise(function(resolve, reject) {
                     $http
                         .post(
-                            laravel_routes['getPartSearchList'], {
+                            laravel_routes['getServicePartSearchList'], {
                                 key: query,
                             }
                         )
