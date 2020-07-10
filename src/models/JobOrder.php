@@ -83,7 +83,7 @@ class JobOrder extends BaseModel {
 	}
 
 	public function getEstimatedAmountAttribute($value) {
-		return empty($value) ? '' : intval($value);
+		return empty($value) ? '' : round($value);
 	}
 
 	public function getEstDeliveryDateAttribute() {
