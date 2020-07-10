@@ -24,6 +24,10 @@ class SplitOrderType extends BaseModel {
 		"paid_by_id",
 	];
 
+	public function paidBy() {
+		return $this->belongsTo('App\Config', 'paid_by_id');
+	}
+
 	protected static $excelColumnRules = [
 		'Name' => [
 			'table_column_name' => 'name',
