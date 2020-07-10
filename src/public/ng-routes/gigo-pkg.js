@@ -821,16 +821,16 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Split Order',
     }).
 
-    when('/gigo-pkg/job-card/returnable-item/:job_card_id', {
+    when('/job-card/returnable-item/:job_card_id', {
         template: '<job-card-returnable-item-list></job-card-returnable-item-list>',
         title: 'Job Card Returnable Items',
     }).
 
-    when('/gigo-pkg/job-card/returnable-item/add/:job_card_id', {
+    when('/job-card/returnable-item/add/:job_card_id', {
         template: '<job-card-returnable-item-form></job-card-returnable-item-form>',
         title: 'Add Returnable Item',
     }).
-    when('/gigo-pkg/job-card/returnable-item/edit/:job_card_id/:id', {
+    when('/job-card/returnable-item/edit/:job_card_id/:id', {
         template: '<job-card-returnable-item-form></job-card-returnable-item-form>',
         title: 'Edit Returnable Item',
     }).
@@ -926,11 +926,11 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<job-card-schedule-form></job-card-schedule-form>',
         title: 'Job Card Schedules',
     }).
-    when('/gigo-pkg/job-card/labour-review/:job_card_id/:job_order_repair_order_id', {
+    when('/job-card/labour-review/:job_card_id/:job_order_repair_order_id', {
         template: '<job-card-labour-review></job-card-labour-review>',
         title: 'Job Card Schedules',
     }).
-    when('/gigo-pkg/job-card/bill-detail/:job_card_id', {
+    when('/job-card/bill-detail/:job_card_id', {
         template: '<job-card-bill-detail-view></job-card-bill-detail-view>',
         title: 'Job Card Bill Detail',
     }).
@@ -954,11 +954,11 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<job-card-capture-voc-view></job-card-capture-voc-view>',
         title: 'Job Card Capture Voc',
     }).
-    when('/gigo-pkg/job-card/bill-detail-update/:job_card_id', {
+    when('/job-card/bill-detail-update/:job_card_id', {
         template: '<job-card-update-bill-detail></job-card-update-bill-detail>',
         title: 'Job Card Bill Detail Update',
     }).
-    when('/gigo-pkg/job-card/pdf/:job_card_id', {
+    when('/job-card/pdf/:job_card_id', {
         template: '<job-card-pdf-form></job-card-pdf-form>',
         title: 'Job Card PDF',
     });
