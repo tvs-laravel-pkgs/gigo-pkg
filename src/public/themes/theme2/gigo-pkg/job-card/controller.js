@@ -1319,7 +1319,6 @@ app.component('jobCardPdf', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_card_id = $routeParams.job_card_id;
-        
         //Covering Letter
     }
 });
@@ -2515,6 +2514,34 @@ app.component('jobCardBillDetailView', {
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        $scope.sendCustomerPayment = function() {
+            $('.job_completed').button('loading');
+            $.ajax({
+                    url: base_url + '/api/job-card/customer/approval',
+                    method: "POST",
+                    data: {
+                        job_card_id: $routeParams.job_card_id,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    $('.job_completed').button('reset');
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    custom_noty('success', res.message);
+                    $scope.$apply();
+                    $scope.fetchData();
+                })
+                .fail(function(xhr) {
+                    $('.job_completed').button('reset');
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
