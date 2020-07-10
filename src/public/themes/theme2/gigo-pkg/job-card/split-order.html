@@ -46,7 +46,7 @@
                                                                 <table id="table1" class="table split-order-table table-form  childgrid">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th class="action">Action</th>
+                                                                            <th class="action" ng-if="job_card.status_id == 8224">Action</th>
                                                                             <th>Item Type</th>
                                                                             <th>Free Service</th>
                                                                             <th>Item</th>
@@ -60,7 +60,7 @@
                                                                     </thead>
                                                                     <tbody class="connectedSortable">
                                                                         <tr data-itemid="labour.id" data-split_id="split_order_type.id" ng-if="labour.split_order_type_id == null" ng-repeat="(labour_key,labour) in labour_details">
-                                                                            <td class="action width-100">
+                                                                            <td class="action width-100" ng-if="job_card.status_id == 8224">
                                                                                 <a href="" ng-click="splitOrderLabourChange(labour.id,0,'',split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
@@ -81,7 +81,7 @@
                                                                             <td class="text-right">{{labour.total_amount}}</td>
                                                                         </tr>
                                                                         <tr data-itemid="part.id" data-split_id="split_order_type.id" ng-if="part.split_order_type_id == null" ng-repeat="(part_key,part) in part_details">
-                                                                            <td class="action width-100">
+                                                                            <td class="action width-100" ng-if="job_card.status_id == 8224">
                                                                                 <a href="" ng-click="splitOrderPartChange(part.id,0,'',split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
@@ -116,7 +116,7 @@
                                                                 <table id="table{{key}}" class="table split-order-table table-form childgrid">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th ng-if="split_order_type.paid_by_id !=10013" class="action">Action</th>
+                                                                            <th ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8224" class="action">Action</th>
                                                                             <th>Item Type</th>
                                                                             <th>Free Service</th>
                                                                             <th>Item</th>
@@ -130,7 +130,7 @@
                                                                     </thead>
                                                                     <tbody class="connectedSortable">
                                                                         <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(labour_key,labour) in labour_details">
-                                                                            <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013">
+                                                                            <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8224">
                                                                                 <a href="" ng-click="splitOrderLabourChange(labour.id,1,key,split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
@@ -151,7 +151,7 @@
                                                                             <td class="text-right">{{labour.total_amount}}</td>
                                                                         </tr>
                                                                         <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(part_key,part) in part_details">
-                                                                            <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013">
+                                                                            <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8224">
                                                                                 <a href="" ng-click="splitOrderPartChange(part.id,1,key,split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>

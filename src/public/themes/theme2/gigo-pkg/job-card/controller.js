@@ -2490,18 +2490,29 @@ app.component('jobCardBillDetailView', {
                                     $('.split_order_panel_' + key).addClass('active in')
                                     $('.split_order_tab_' + key).addClass('active')
                                 }
+                               
                                 angular.forEach($scope.labour_details, function(labour, key1) {
                                     if (split_order.id == labour.split_order_type_id) {
-                                        labour_sub_total += parseInt(labour.total_amount);
+                                        labour_sub_total += parseFloat(labour.total_amount);
                                         // split_order.total_items += 1;
+                                    }
+
+                                    if(!labour.split_order_type_id && split_order.paid_by_id == '10013')
+                                    {
+                                        labour_sub_total += parseFloat(labour.total_amount);
                                     }
                                 });
                                 $('.labour_sub_total_' + key).html(parseFloat(labour_sub_total).toFixed(2));
 
                                 angular.forEach($scope.part_details, function(part, key2) {
                                     if (split_order.id == part.split_order_type_id) {
-                                        part_sub_total += parseInt(part.total_amount);
+                                        part_sub_total += parseFloat(part.total_amount);
                                         // split_order.total_items += 1;
+                                    }
+
+                                    if(!part.split_order_type_id && split_order.paid_by_id == '10013')
+                                    {
+                                        part_sub_total += parseFloat(part.total_amount);
                                     }
                                 });
                                 $('.part_sub_total_' + key).html(parseFloat(part_sub_total).toFixed(2));
@@ -2537,6 +2548,10 @@ app.component('jobCardBillDetailView', {
                         return;
                     }
                     custom_noty('success', res.message);
+                    $("#confirmation_modal").modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
                     $scope.$apply();
                     $scope.fetchData();
                 })
