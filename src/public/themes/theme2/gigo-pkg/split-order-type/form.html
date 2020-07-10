@@ -68,6 +68,23 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
+                                                    Paid By
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <md-select ng-model="$ctrl.split_order_type.paid_by_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Paid By">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Paid By" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="paid_by.id" ng-repeat="paid_by in $ctrl.extras.paid_by | filter:searchTerm">{{paid_by.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" name="paid_by_id" id="paid_by_id" value="{{$ctrl.split_order_type.paid_by_id}}">
+                                            </div><!-- Form Group -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
                                                     Active Status
                                                     <sup class="mandatory">*</sup>
                                                 </label>

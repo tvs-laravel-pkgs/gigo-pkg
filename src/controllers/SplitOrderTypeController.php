@@ -1,6 +1,7 @@
 <?php
 
 namespace Abs\GigoPkg;
+use App\Config;
 use App\Http\Controllers\Controller;
 use App\SplitOrderType;
 use Auth;
@@ -18,7 +19,11 @@ class SplitOrderTypeController extends Controller {
 	}
 
 	public function getSplitOrderTypeFilter() {
+		$params['config_type_id'] = 400; //PAID BY
+		$params['add_default'] = true;
+		$params['default_text'] = 'Select Paid By';
 		$this->data['extras'] = [
+			'paid_by' => Config::getDropDownList($params),
 			'status' => [
 				['id' => '', 'name' => 'Select Status'],
 				['id' => '1', 'name' => 'Active'],
@@ -35,9 +40,10 @@ class SplitOrderTypeController extends Controller {
 				'split_order_types.id',
 				'split_order_types.code',
 				'split_order_types.name',
-
+				DB::raw('IF(configs.name IS NULL, "--",configs.name) as paid_by'),
 				DB::raw('IF(split_order_types.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
+			->leftJoin('configs', 'configs.id', 'split_order_types.paid_by_id')
 			->where('split_order_types.company_id', Auth::user()->company_id)
 
 			->where(function ($query) use ($request) {
@@ -49,6 +55,12 @@ class SplitOrderTypeController extends Controller {
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
 					$query->where('split_order_types.name', 'LIKE', '%' . $request->name . '%');
+				}
+			})
+
+			->where(function ($query) use ($request) {
+				if (!empty($request->paid_by_id)) {
+					$query->where('split_order_types.paid_by_id', $request->paid_by_id);
 				}
 			})
 
@@ -99,6 +111,14 @@ class SplitOrderTypeController extends Controller {
 		$this->data['success'] = true;
 		$this->data['split_order_type'] = $split_order_type;
 		$this->data['action'] = $action;
+
+		$params['config_type_id'] = 400; //PAID BY
+		$params['add_default'] = true;
+		$params['default_text'] = 'Select Paid By';
+		$this->data['extras'] = [
+			'paid_by' => Config::getDropDownList($params),
+		];
+
 		return response()->json($this->data);
 	}
 
@@ -126,6 +146,11 @@ class SplitOrderTypeController extends Controller {
 					'max:191',
 					'nullable',
 					// 'unique:split_order_types,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				],
+				'paid_by_id' => [
+					'required:true',
+					'exists:configs,id',
+					'integer',
 				],
 			], $error_messages);
 			if ($validator->fails()) {

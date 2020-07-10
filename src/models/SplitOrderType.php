@@ -21,6 +21,7 @@ class SplitOrderType extends BaseModel {
 		"company_id",
 		"code",
 		"name",
+		"paid_by_id",
 	];
 
 	protected static $excelColumnRules = [

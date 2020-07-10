@@ -49,6 +49,7 @@ app.component('splitOrderTypeList', {
                 data: function(d) {
                     d.code = $("#code").val();
                     d.name = $("#name").val();
+                    d.paid_by_id = $("#paid_by").val();
                     d.status = $("#status").val();
                 },
             },
@@ -57,6 +58,7 @@ app.component('splitOrderTypeList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'code', name: 'split_order_types.code' },
                 { data: 'name', name: 'split_order_types.name' },
+                { data: 'paid_by', name: 'configs.name' },
                 { data: 'status', name: '' },
 
             ],
@@ -117,8 +119,6 @@ app.component('splitOrderTypeList', {
         $scope.clearSearchTerm = function() {
             $scope.searchTerm = '';
             $scope.searchTerm1 = '';
-            $scope.searchTerm2 = '';
-            $scope.searchTerm3 = '';
         };
         /* Modal Md Select Hide */
         $('.modal').bind('click', function(event) {
@@ -129,6 +129,7 @@ app.component('splitOrderTypeList', {
 
         $scope.applyFilter = function() {
             $('#status').val(self.status);
+            $('#paid_by').val(self.paid_by);
             dataTables.fnFilter();
             $('#split-order-type-filter-modal').modal('hide');
         }
@@ -136,6 +137,7 @@ app.component('splitOrderTypeList', {
         $scope.reset_filter = function() {
             $("#code").val('');
             $("#name").val('');
+            $("#paid_by").val('');
             $("#status").val('');
             dataTables.fnFilter();
             $('#split-order-type-filter-modal').modal('hide');
@@ -158,6 +160,9 @@ app.component('splitOrderTypeForm', {
             window.location = "#!/permission-denied";
             return false;
         }
+         $scope.clearSearchTerm = function() {
+            $scope.searchTerm = '';
+        };
 
         self.angular_routes = angular_routes;
         $http.get(
@@ -168,6 +173,7 @@ app.component('splitOrderTypeForm', {
             }
         ).then(function(response) {
             self.split_order_type = response.data.split_order_type;
+            self.extras = response.data.extras;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
