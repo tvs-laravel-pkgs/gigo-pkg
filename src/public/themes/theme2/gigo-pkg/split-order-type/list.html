@@ -62,6 +62,7 @@
                                 <th>Actions</th>
                                 <th>Code</th>
                                 <th>Name</th>
+                                <th>Paid By</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -103,14 +104,30 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>
+                                    Paid By
+                                </label>
+                                <md-select ng-model="$ctrl.paid_by" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Paid By" ng-change="onSelectedPaidBy($ctrl.paid_by)">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Paid By" class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="paid_by.id" ng-repeat="paid_by in $ctrl.extras.paid_by | filter:searchTerm">{{paid_by.name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="paid_by" id="paid_by" value="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
                                     Status
                                 </label>
                                 <md-select ng-model="$ctrl.status" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status" ng-change="onSelectedStatus($ctrl.status)">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text">
+                                        <input ng-model="searchTerm1" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">{{status.name}}</md-option>
+                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm1">{{status.name}}</md-option>
                                     </md-optgroup>
                                 </md-select>
                                 <input type="hidden" class="form-control type-sm" name="status" id="status" value="">
@@ -122,7 +139,7 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.status='';$ctrl.paid_by='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
                             Reset Filter
                         </button>
                     </div><!-- Column -->
