@@ -1223,6 +1223,95 @@ class JobCardController extends Controller {
 		}
 	}
 
+	public function sendCustomerApproval(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_card_id' => [
+					'required',
+					'exists:job_cards,id',
+					'integer',
+				],
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			$job_card = JobCard::with([
+				'jobOrder',
+				'jobOrder.customer',
+				'jobOrder.vehicle',
+			])
+				->find($request->job_card_id);
+
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Card Not Found!'],
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$customer_mobile = $job_card->jobOrder->customer->mobile_no;
+			$vehicle_no = $job_card->jobOrder->vehicle->registration_number;
+
+			if (!$customer_mobile) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Customer Mobile Number Not Found',
+				]);
+			}
+			$job_order = JobOrder::find($job_card->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
+				]);
+			}
+
+			$job_card->status_id = 8225; //Waiting for Customer Payment
+			$job_card->save();
+
+			$job_order->otp_no = mt_rand(111111, 999999);
+			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->updated_at = Carbon::now();
+			$job_order->save();
+
+			$url = url('/') . '/jobcard/bill-details/view/' . $job_order->id . '/' . $job_order->otp_no;
+
+			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no;
+
+			$msg = sendSMSNotification($customer_mobile, $message);
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'URL send to Customer Successfully!',
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
 	public function VendorList(Request $request) {
 		try {
 			$validator = Validator::make($request->all(), [

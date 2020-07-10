@@ -1319,7 +1319,6 @@ app.component('jobCardPdf', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_card_id = $routeParams.job_card_id;
-        
         //Covering Letter
     }
 });
@@ -2519,6 +2518,34 @@ app.component('jobCardBillDetailView', {
                 });
         }
 
+        $scope.sendCustomerPayment = function() {
+            $('.job_completed').button('loading');
+            $.ajax({
+                    url: base_url + '/api/job-card/customer/approval',
+                    method: "POST",
+                    data: {
+                        job_card_id: $routeParams.job_card_id,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    $('.job_completed').button('reset');
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    custom_noty('success', res.message);
+                    $scope.$apply();
+                    $scope.fetchData();
+                })
+                .fail(function(xhr) {
+                    $('.job_completed').button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
         $scope.billDetailPDF = function(split_order_type_id) {
             $scope.job_card_solit_order_bill_details = base_url + '/gigo-pkg/pdf/job-card/bill-detail/' + $routeParams.job_card_id + '/' + split_order_type_id;
         }
@@ -2639,23 +2666,37 @@ app.component('jobCardSplitOrder', {
 
                     $scope.$apply();
 
-                    if ($scope.active_panel && $scope.active_panel != 0) {
-                        if ($scope.extras.split_order_types[$scope.active_panel].total_items > 0) {
-                            $('.panel').removeClass('active in');
-                            $('.unassigned_tab').removeClass('active');
-                            $('.split_order_tab_' + $scope.active_panel).addClass('active');
-                            $('.split_order_panel_' + $scope.active_panel).addClass('active in');
+                    if ($scope.unassigned_total_count == 0) {
+                        var i = 0;
+                        angular.forEach($scope.extras.split_order_types, function(key, value) {
+                            if (key.total_items > 0) {
+                                $('.panel').removeClass('active in');
+                                $('.unassigned_tab').removeClass('active');
+                                $('.split_order_tab_' + i).addClass('active');
+                                $('.split_order_panel_' + i).addClass('active in');
+                                return;
+                            }
+                            i++;
+                        });
+                    } else {
+                        if ($scope.active_panel && $scope.active_panel != 0) {
+                            if ($scope.extras.split_order_types[$scope.active_panel].total_items > 0) {
+                                $('.panel').removeClass('active in');
+                                $('.unassigned_tab').removeClass('active');
+                                $('.split_order_tab_' + $scope.active_panel).addClass('active');
+                                $('.split_order_panel_' + $scope.active_panel).addClass('active in');
+                            } else {
+                                $('.panel').removeClass('active in');
+                                $('.split_order_tabs').removeClass('active');
+                                $('.unassigned_panel').addClass('active in');
+                                $('.unassigned_tab').addClass('active');
+                            }
                         } else {
                             $('.panel').removeClass('active in');
                             $('.split_order_tabs').removeClass('active');
                             $('.unassigned_panel').addClass('active in');
                             $('.unassigned_tab').addClass('active');
                         }
-                    } else {
-                        $('.panel').removeClass('active in');
-                        $('.split_order_tabs').removeClass('active');
-                        $('.unassigned_panel').addClass('active in');
-                        $('.unassigned_tab').addClass('active');
                     }
                 })
                 .fail(function(xhr) {

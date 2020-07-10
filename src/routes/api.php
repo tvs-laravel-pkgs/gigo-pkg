@@ -287,6 +287,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//JOB CARD WORK COMPLETED
 		Route::post('job-card/update-status', 'JobCardController@updateJobCardStatus');
 
+		//JOB CARD EMPLOYEE PAYEMNT
+		Route::post('job-card/customer/approval', 'JobCardController@sendCustomerApproval');
+
 		//JOB CARD MATRIAL GATE PASS
 		Route::post('material-gatepass/view', 'JobCardController@viewMeterialGatePass');
 		Route::post('material-gatepass/get-form-data', 'JobCardController@getMeterialGatePassData');

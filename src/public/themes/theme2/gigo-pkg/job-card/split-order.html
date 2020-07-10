@@ -30,7 +30,7 @@
                                             <!-- Filters -->
                                             <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300" id="tabs">
                                                 <ul class="nav nav-pills editDetails-tabs">
-                                                    <li class="unassigned_tab"><a class="btn-pills" data-target="#unassigned_items" role="tab" data-toggle="tab" aria-expanded="true">Unassigned Items - {{unassigned_total_count}} Items</a></li>
+                                                    <li class="unassigned_tab" ng-if="unassigned_total_count > 0"><a class="btn-pills" data-target="#unassigned_items" role="tab" data-toggle="tab" aria-expanded="true">Unassigned Items - {{unassigned_total_count}} Items</a></li>
                                                     <li class="split_order_tabs split_order_tab_{{key}}" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-if="split_order_type.total_items > 0"><a data-target="#{{split_order_type.id}}" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">{{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}}
                                                             {{split_order_type.total_items > 1 ? 'items' : 'item'}}</a></li>
                                                 </ul>
@@ -38,7 +38,7 @@
                                         </div>
                                         <div class="tab-content">
                                             <!-- TAB PANEL -->
-                                            <div class="tab-pane panel fade unassigned_panel" id="unassigned_items" data-animation="fadeInUp" data-animation-delay="300">
+                                            <div class="tab-pane panel fade unassigned_panel" id="unassigned_items" data-animation="fadeInUp" data-animation-delay="300" ng-if="unassigned_total_count > 0">
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="table-responsive">
@@ -116,7 +116,7 @@
                                                                 <table id="table{{key}}" class="table split-order-table table-form childgrid">
                                                                     <thead>
                                                                         <tr>
-                                                                            <th class="action">Action</th>
+                                                                            <th ng-if="split_order_type.paid_by_id !=10013" class="action">Action</th>
                                                                             <th>Item Type</th>
                                                                             <th>Free Service</th>
                                                                             <th>Item</th>
@@ -130,7 +130,7 @@
                                                                     </thead>
                                                                     <tbody class="connectedSortable">
                                                                         <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(labour_key,labour) in labour_details">
-                                                                            <td class="action width-100">
+                                                                            <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013">
                                                                                 <a href="" ng-click="splitOrderLabourChange(labour.id,1,key,split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>
@@ -151,7 +151,7 @@
                                                                             <td class="text-right">{{labour.total_amount}}</td>
                                                                         </tr>
                                                                         <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(part_key,part) in part_details">
-                                                                            <td class="action width-100">
+                                                                            <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013">
                                                                                 <a href="" ng-click="splitOrderPartChange(part.id,1,key,split_order_type.id)">
                                                                                     <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
                                                                                 </a>

@@ -22,18 +22,18 @@
                         OSL
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'split-order'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'split-order'}" ng-if="!$ctrl.view_only_part_indent && (job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226)">
                     <a class="filter" href=".#!/job-card/split-order/{{job_card_id}}">
                         Split Order
                     </a>
                 </li>
                 <li ng-class="{active:active_tab == 'returnable-items'}" ng-if="!$ctrl.view_only_part_indent">
-                    <a class="filter" href=".#!/gigo-pkg/job-card/returnable-item/{{job_card_id}}">
+                    <a class="filter" href=".#!/job-card/returnable-item/{{job_card_id}}">
                         Returnable Items
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'bill-detail'}" ng-if="!$ctrl.view_only_part_indent">
-                    <a class="filter" href=".#!/gigo-pkg/job-card/bill-detail/{{job_card_id}}">
+                <li ng-class="{active:active_tab == 'bill-detail'}" ng-if="!$ctrl.view_only_part_indent && (job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226)">
+                    <a class="filter" href=".#!/job-card/bill-detail/{{job_card_id}}">
                         Bill Details
                     </a>
                 </li>
