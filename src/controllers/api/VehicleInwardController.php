@@ -256,11 +256,15 @@ class VehicleInwardController extends Controller {
 			$namespaceModel = $nameSpace . $entity;
 			$job_order->campaigns = $this->compaigns($namespaceModel, $job_order, 1);
 
-			//Check which tax applicable for customer
-			if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
-				$tax_type = 1160; //Within State
+			if ($job_order->vehicle->currentOwner) {
+				//Check which tax applicable for customer
+				if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+					$tax_type = 1160; //Within State
+				} else {
+					$tax_type = 1161; //Inter State
+				}
 			} else {
-				$tax_type = 1161; //Inter State
+				$tax_type = 1160; //Within State
 			}
 
 			//Count Tax Type
