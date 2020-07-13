@@ -28,16 +28,16 @@ class PDFController extends Controller {
 			'jobOrder.outlet',
 			'jobOrder.gateLog',
 			'jobOrder.vehicle.currentOwner.customer',
-			'jobOrder.vehicle.currentOwner.customer.address',
-			'jobOrder.vehicle.currentOwner.customer.address.country',
-			'jobOrder.vehicle.currentOwner.customer.address.state',
-			'jobOrder.vehicle.currentOwner.customer.address.city',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress.country',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress.state',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress.city',
 			'jobOrder.jobOrderRepairOrders.repairOrder',
 			'jobOrder.jobOrderRepairOrders.repairOrder.repairOrderType',
 			'jobOrder.floorAdviser',
-			'jobOrder.floorAdviser.user',
+			// 'jobOrder.floorAdviser.user',
 			'jobOrder.serviceAdviser',
-			'jobOrder.serviceAdviser.user',
+			// 'jobOrder.serviceAdviser.user',
 		])
 			->select([
 				'job_cards.*',
@@ -98,10 +98,10 @@ class PDFController extends Controller {
 			'jobOrder.outlet',
 			'jobOrder.gateLog',
 			'jobOrder.vehicle.currentOwner.customer',
-			'jobOrder.vehicle.currentOwner.customer.address',
-			'jobOrder.vehicle.currentOwner.customer.address.country',
-			'jobOrder.vehicle.currentOwner.customer.address.state',
-			'jobOrder.vehicle.currentOwner.customer.address.city',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress.country',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress.state',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress.city',
 			'jobOrder.serviceType',
 			'jobOrder.jobOrderRepairOrders.repairOrder',
 			'jobOrder.jobOrderRepairOrders.repairOrder.repairOrderType',
@@ -132,6 +132,12 @@ class PDFController extends Controller {
 		//Count Tax Type
 		$taxes = Tax::get();
 
+		//GET SEPERATE TAXEX
+		$seperate_tax = array();
+		for ($i = 0; $i < count($taxes); $i++) {
+			$seperate_tax[$i] = 0.00;
+		}
+
 		$labour_details = array();
 		if ($job_order->jobOrder->jobOrderRepairOrders) {
 			$i = 1;
@@ -149,16 +155,25 @@ class PDFController extends Controller {
 				$labour_details[$key]['rate'] = $labour->repairOrder->amount;
 				$labour_details[$key]['is_free_service'] = $labour->is_free_service;
 				$tax_amount = 0;
+				$tax_percentage = 0;
 				$tax_values = array();
 				if ($labour->repairOrder->taxCode) {
 					foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
 						$percentage_value = 0;
 						if ($value->type_id == $tax_type) {
+							$tax_percentage += $value->pivot->percentage;
 							$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
 							$percentage_value = number_format((float) $percentage_value, 2, '.', '');
 						}
 						$tax_values[$tax_key] = $percentage_value;
 						$tax_amount += $percentage_value;
+
+						if (count($seperate_tax) > 0) {
+							$seperate_tax_value = $seperate_tax[$tax_key];
+						} else {
+							$seperate_tax_value = 0;
+						}
+						$seperate_tax[$tax_key] = $seperate_tax_value + $percentage_value;
 					}
 				} else {
 					for ($i = 0; $i < count($taxes); $i++) {
@@ -200,16 +215,25 @@ class PDFController extends Controller {
 				$part_details[$key]['amount'] = $parts->amount;
 				$part_details[$key]['is_free_service'] = $parts->is_free_service;
 				$tax_amount = 0;
+				$tax_percentage = 0;
 				$tax_values = array();
 				if ($parts->part->taxCode) {
 					foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
 						$percentage_value = 0;
 						if ($value->type_id == $tax_type) {
+							$tax_percentage += $value->pivot->percentage;
 							$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
 							$percentage_value = number_format((float) $percentage_value, 2, '.', '');
 						}
 						$tax_values[$tax_key] = $percentage_value;
 						$tax_amount += $percentage_value;
+
+						if (count($seperate_tax) > 0) {
+							$seperate_tax_value = $seperate_tax[$tax_key];
+						} else {
+							$seperate_tax_value = 0;
+						}
+						$seperate_tax[$tax_key] = $seperate_tax_value + $percentage_value;
 					}
 				} else {
 					for ($i = 0; $i < count($taxes); $i++) {
@@ -233,6 +257,15 @@ class PDFController extends Controller {
 				$i++;
 			}
 		}
+
+		foreach ($seperate_tax as $key => $s_tax) {
+			$seperate_tax[$key] = convert_number_to_words($s_tax);
+		}
+		$this->data['seperate_taxes'] = $seperate_tax;
+
+		$total_taxable_amount = $total_labour_tax + $total_parts_tax;
+		$this->data['tax_percentage'] = convert_number_to_words($tax_percentage);
+		$this->data['total_taxable_amount'] = convert_number_to_words($total_taxable_amount);
 
 		$total_amount = $parts_amount + $labour_amount;
 		$this->data['taxes'] = $taxes;
@@ -305,6 +338,12 @@ class PDFController extends Controller {
 		//Count Tax Type
 		$taxes = Tax::get();
 
+		//GET SEPERATE TAXEX
+		$seperate_tax = array();
+		for ($i = 0; $i < count($taxes); $i++) {
+			$seperate_tax[$i] = 0.00;
+		}
+
 		$labour_details = array();
 		if ($job_order->jobOrder->jobOrderRepairOrders) {
 			$i = 1;
@@ -322,16 +361,25 @@ class PDFController extends Controller {
 				$labour_details[$key]['rate'] = $labour->repairOrder->amount;
 				$labour_details[$key]['is_free_service'] = $labour->is_free_service;
 				$tax_amount = 0;
+				$tax_percentage = 0;
 				$tax_values = array();
 				if ($labour->repairOrder->taxCode) {
 					foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
 						$percentage_value = 0;
 						if ($value->type_id == $tax_type) {
+							$tax_percentage += $value->pivot->percentage;
 							$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
 							$percentage_value = number_format((float) $percentage_value, 2, '.', '');
 						}
 						$tax_values[$tax_key] = $percentage_value;
 						$tax_amount += $percentage_value;
+
+						if (count($seperate_tax) > 0) {
+							$seperate_tax_value = $seperate_tax[$tax_key];
+						} else {
+							$seperate_tax_value = 0;
+						}
+						$seperate_tax[$tax_key] = $seperate_tax_value + $percentage_value;
 					}
 				} else {
 					for ($i = 0; $i < count($taxes); $i++) {
@@ -373,16 +421,25 @@ class PDFController extends Controller {
 				$part_details[$key]['amount'] = $parts->amount;
 				$part_details[$key]['is_free_service'] = $parts->is_free_service;
 				$tax_amount = 0;
+				$tax_percentage = 0;
 				$tax_values = array();
 				if ($parts->part->taxCode) {
 					foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
 						$percentage_value = 0;
 						if ($value->type_id == $tax_type) {
+							$tax_percentage += $value->pivot->percentage;
 							$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
 							$percentage_value = number_format((float) $percentage_value, 2, '.', '');
 						}
 						$tax_values[$tax_key] = $percentage_value;
 						$tax_amount += $percentage_value;
+
+						if (count($seperate_tax) > 0) {
+							$seperate_tax_value = $seperate_tax[$tax_key];
+						} else {
+							$seperate_tax_value = 0;
+						}
+						$seperate_tax[$tax_key] = $seperate_tax_value + $percentage_value;
 					}
 				} else {
 					for ($i = 0; $i < count($taxes); $i++) {
@@ -406,6 +463,15 @@ class PDFController extends Controller {
 				$i++;
 			}
 		}
+
+		foreach ($seperate_tax as $key => $s_tax) {
+			$seperate_tax[$key] = convert_number_to_words($s_tax);
+		}
+		$this->data['seperate_taxes'] = $seperate_tax;
+
+		$total_taxable_amount = $total_labour_tax + $total_parts_tax;
+		$this->data['tax_percentage'] = convert_number_to_words($tax_percentage);
+		$this->data['total_taxable_amount'] = convert_number_to_words($total_taxable_amount);
 
 		$total_amount = $parts_amount + $labour_amount;
 		$this->data['taxes'] = $taxes;
@@ -1462,13 +1528,13 @@ class PDFController extends Controller {
 		//Count Tax Type
 		$taxes = Tax::get();
 
-		$labour_details = array();
 		//GET SEPERATE TAXEX
 		$seperate_tax = array();
 		for ($i = 0; $i < count($taxes); $i++) {
 			$seperate_tax[$i] = 0.00;
 		}
 
+		$labour_details = array();
 		if ($job_card->jobOrder->jobOrderRepairOrders) {
 			$i = 1;
 			$total_labour_qty = 0;
