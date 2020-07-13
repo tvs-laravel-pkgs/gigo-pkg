@@ -45,7 +45,7 @@
                                                                 <div class="col-md-6" ng-repeat="(key, vehicle_inspection_item) in vehicle_inspection_item_group.vehicle_inspection_items">
                                                                     <div class="form-group">
                                                                         <label>{{vehicle_inspection_item.name}}</label>
-                                                                        <label style="display: none">{{vehicle_inspection_item.status_id ? vehicle_inspection_item.status_id : vehicle_inspection_item.status_id = 8022}}</label>
+                                                                        <label style="display: none"></label>
                                                                         <div class="color-radio-group">
                                                                             <div class="color-radio-item">
                                                                                 <input type="radio" id="radio_good_{{index}}_{{key}}" name="vehicle_inspection_items[{{vehicle_inspection_item.id}}]" value="8020" ng-value="8020" ng-model="vehicle_inspection_item.status_id" ng-checked="vehicle_inspection_item.status_id == 8020 || !vehicle_inspection_item.status_id" />
@@ -60,6 +60,7 @@
                                                                                 <label for="radio_bad_{{index}}_{{key}}" class="radio-bad"></label>
                                                                             </div>
                                                                         </div>
+                                                                        <input type="hidden" class="required" name="vehicle_inspections[{{index}}][{{key}}][]" value="{{vehicle_inspection_item.status_id}}">
                                                                     </div><!-- Feild -->
                                                                 </div><!-- Column -->
                                                             </div><!-- Row -->

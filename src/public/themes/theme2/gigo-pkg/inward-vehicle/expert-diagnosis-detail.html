@@ -32,13 +32,26 @@
                                             <hr class="hr-15">
                                             <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Expert Diagnosis Required ?
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="sold" name="warrany_status" ng-model="$ctrl.expert_diagnosis_status" ng-value="1">
+                                                            <label for="sold">Yes</label>
+                                                            <input type="radio" id="not_sold" name="warrany_status" ng-model="$ctrl.expert_diagnosis_status" ng-value="0">
+                                                            <label for="not_sold">No</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-6" ng-if="$ctrl.expert_diagnosis_status">
                                                     <div class="form-group">
                                                         <label>Expert Diagnosis Outcome <sup class="mandatory">*</sup></label>
                                                         <textarea class="form-control" name="expert_diagnosis_report" rows="4" placeholder="Enter Observations">{{job_order.expert_diagnosis_report}}</textarea>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-4">
+                                                <div class="col-md-4" ng-if="$ctrl.expert_diagnosis_status">
                                                     <div class="form-group">
                                                         <label>Diagnosed by <sup class="mandatory">*</sup></label>
                                                         <md-select ng-model="job_order.expert_diagnosis_report_by_id" placeholder="Select Diagnosis" md-on-close="clearSearchDriver()" data-md-container-class="selectdemoSelectHeader">

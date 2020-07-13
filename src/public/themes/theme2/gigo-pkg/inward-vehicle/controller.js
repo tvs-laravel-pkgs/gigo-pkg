@@ -445,6 +445,13 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
                     }
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
+
+                    if ($scope.job_order.expert_diagnosis_report) {
+                        self.expert_diagnosis_status = 1;
+                    } else {
+                        self.expert_diagnosis_status = 0;
+                    }
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -3770,6 +3777,7 @@ app.component('inwardVehicleRoadTestDetailForm', {
                     }
 
                     $scope.extras = res.extras;
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -3841,11 +3849,7 @@ app.component('inwardVehicleRoadTestDetailForm', {
                                 $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
-                                if ($scope.job_order.is_expert_diagnosis_required) {
-                                    $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order_id);
-                                } else {
-                                    $location.path('/inward-vehicle/inspection-detail/form/' + $scope.job_order_id);
-                                }
+                                $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order_id);
                                 $scope.$apply();
                             }
                         })
@@ -4076,7 +4080,6 @@ app.component('inwardVehicleView', {
                     $scope.extras = res.extras;
                     $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.inventory_list = res.inventory_list;
-                    $scope.$apply();
 
                     if ($scope.job_order.warranty_expiry_date) {
                         self.warrany_status = 1;
@@ -4089,6 +4092,8 @@ app.component('inwardVehicleView', {
                     } else {
                         self.exwarrany_status = 0;
                     }
+
+                    $scope.$apply();
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');

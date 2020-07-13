@@ -957,10 +957,6 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/job-card/bill-detail-update/:job_card_id', {
         template: '<job-card-update-bill-detail></job-card-update-bill-detail>',
         title: 'Job Card Bill Detail Update',
-    }).
-    when('/job-card/pdf/:job_card_id', {
-        template: '<job-card-pdf-form></job-card-pdf-form>',
-        title: 'Job Card PDF',
     });
 }]);
 

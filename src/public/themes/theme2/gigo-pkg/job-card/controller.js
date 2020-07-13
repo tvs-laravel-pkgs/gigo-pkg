@@ -3306,30 +3306,6 @@ app.component('jobCardCaptureVocView', {
     }
 });
 
-//---------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------
-
-//Job Card PDF
-app.component('jobCardPdfForm', {
-    templateUrl: job_card_pdf_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
-        $element.find('input').on('keydown', function(ev) {
-            ev.stopPropagation();
-        });
-        var self = this;
-        self.hasPermission = HelperService.hasPermission;
-        self.angular_routes = angular_routes;
-        // self.view_only_part_indent = self.hasPermission('view-only-parts-indent');
-
-        HelperService.isLoggedIn();
-        self.user = $scope.user = HelperService.getLoggedUser();
-
-        var pdf_url = base_url + 'gigo-pkg/job-card/get-covering-letter-pdf/' + $scope.job_card_id;
-        // $scope.job_card_id = $routeParams.job_card_id;
-    }
-});
-
-
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
