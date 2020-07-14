@@ -8,6 +8,7 @@ use App\QuoteType;
 use App\ServiceOrderType;
 use App\ServiceType;
 use App\Vendor;
+use App\User;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -396,5 +397,80 @@ class JobCardController extends Controller {
 			'success' => true,
 			'vendor_details' => $vendor_details,
 		]);
+	}
+
+	public function getMyJobCardtableList(Request $request) {
+		$user_id = Auth::user()->id;
+		$user_details = User::with([
+				'employee',
+				'employee.outlet',
+				'employee.outlet.state',
+			])
+				->find($user_id);
+
+		$date = explode('to', $request->date);
+
+		$my_job_table_list = JobCard::select([
+				'job_cards.id',
+				'job_cards.job_card_number as jc_number',
+				'vehicles.registration_number',
+				DB::raw('COUNT(job_order_repair_orders.id) as no_of_ROTs'),
+				'configs.name as status', 'job_cards.created_at',
+				'models.model_number',
+				'customers.name as customer_name',
+			])
+				->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')
+				->join('job_order_repair_orders', 'job_order_repair_orders.job_order_id', 'job_orders.id')
+				->join('repair_order_mechanics', 'repair_order_mechanics.job_order_repair_order_id', 'job_order_repair_orders.id')
+				->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
+				->join('vehicle_owners', function ($join) {
+					$join->on('vehicle_owners.vehicle_id', 'job_orders.vehicle_id')
+						->whereRaw('vehicle_owners.from_date = (select MAX(vehicle_owners1.from_date) from vehicle_owners as vehicle_owners1 where vehicle_owners1.vehicle_id = job_orders.vehicle_id)');
+				})
+				->join('customers', 'customers.id', 'vehicle_owners.customer_id')
+				->join('models', 'models.id', 'vehicles.model_id')
+				->join('configs', 'configs.id', 'repair_order_mechanics.status_id')
+				->where('repair_order_mechanics.mechanic_id', $user_id)
+				->groupBy('job_order_repair_orders.job_order_id')
+				->orderBy('job_cards.created_at', 'DESC')
+
+			->where(function ($query) use ($request, $date) {
+				if (!empty($request->get('date'))) {
+					$query->whereDate('job_cards.created_at', '>=', date('Y-m-d', strtotime($date[0])))
+						->whereDate('job_cards.created_at', '<=', date('Y-m-d', strtotime($date[1])));
+				}
+			})
+
+			->where(function ($query) use ($request) {
+				if (!empty($request->reg_no)) {
+					$query->where('vehicles.registration_number', 'LIKE', '%' . $request->reg_no . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->job_card_no)) {
+					$query->where('job_cards.job_card_number', 'LIKE', '%' . $request->job_card_no . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->status_id)) {
+					$query->where('job_cards.status_id', $request->status_id);
+				}
+			});
+
+		return Datatables::of($my_job_table_list)
+			->addColumn('action', function ($my_job_table_list) use ($user_id) {
+				$img1 = asset('./public/theme/img/table/cndn/view.svg');
+				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
+				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
+				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
+				$output = '';
+				if (Entrust::can('job-cards')) {
+					$output .= '<a href="#!/my-jobcard/view/'.$user_id.'/' . $my_job_table_list->id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
+					
+				}
+
+				return $output;
+			})
+			->make(true);
 	}
 }

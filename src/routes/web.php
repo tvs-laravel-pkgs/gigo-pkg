@@ -275,6 +275,8 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/job-card/get-vendor', 'JobCardController@getVendorCodeSearchList')->name('getVendorCodeSearchList');
 	Route::post('/job-card/get-vendor-details', 'JobCardController@getVendorDetails')->name('getVendorDetails');
 
+	Route::get('/myjob-card-table/get-list/{id}', 'JobCardController@getMyJobCardtableList')->name('getMyJobCardtableList');
+
 	//Job Card PDF
 	Route::get('/pdf/gatepass/{id}', 'PDFController@gatePass')->name('gatePass');
 	Route::get('/pdf/covering-letter/{id}', 'PDFController@coveringletter')->name('coveringletter');
