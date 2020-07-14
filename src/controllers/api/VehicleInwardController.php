@@ -893,10 +893,17 @@ class VehicleInwardController extends Controller {
 				$job_order->enable_estimate_status = true;
 			}
 
+			//Get Previous Service Types in Vehicle
+			$service_type_ids = JobOrder::where('vehicle_id', $job_order->vehicle_id)
+				->where('id', '!=', $job_order->id)
+				->pluck('service_type_id')->toArray();
+
+			$params['service_type_ids'] = $service_type_ids;
+
 			$extras = [
 				'job_order_type_list' => ServiceOrderType::getDropDownList(),
 				'quote_type_list' => QuoteType::getDropDownList(),
-				'service_type_list' => ServiceType::getDropDownList(),
+				'service_type_list' => ServiceType::getDropDownList($params),
 				'reading_type_list' => Config::getDropDownList([
 					'config_type_id' => 33,
 					'default_text' => 'Select Reading type',
@@ -2851,17 +2858,17 @@ class VehicleInwardController extends Controller {
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
-					'required',
+					'required_if:expert_diagnosis_status,1',
 					'integer',
 					'exists:job_orders,id',
 				],
 				'expert_diagnosis_report_by_id' => [
-					'required',
+					'required_if:expert_diagnosis_status,1',
 					'exists:users,id',
 					'integer',
 				],
 				'expert_diagnosis_report' => [
-					'required',
+					'required_if:expert_diagnosis_status,1',
 					'string',
 				],
 			]);
@@ -2877,8 +2884,14 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 
 			$job_order = JobOrder::find($request->job_order_id);
-			$job_order->expert_diagnosis_report = $request->expert_diagnosis_report;
-			$job_order->expert_diagnosis_report_by_id = $request->expert_diagnosis_report_by_id;
+			if ($request->expert_diagnosis_status == 1) {
+				$job_order->expert_diagnosis_report = $request->expert_diagnosis_report;
+				$job_order->expert_diagnosis_report_by_id = $request->expert_diagnosis_report_by_id;
+			} else {
+				$job_order->expert_diagnosis_report = NULL;
+				$job_order->expert_diagnosis_report_by_id = NULL;
+			}
+
 			$job_order->status_id = 8463;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();

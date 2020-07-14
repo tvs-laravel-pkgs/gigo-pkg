@@ -80,13 +80,17 @@ class ServiceType extends BaseModel {
 	}*/
 
 	public static function getDropDownList($params = [], $add_default = true, $default_text = 'Select Service Type') {
-		$list = Collect(Self::select([
+		$list = Self::select([
 			'id',
 			'name',
 		])
-				->orderBy('name')
-				->where('company_id', Auth::user()->company_id)
-				->get());
+			->orderBy('name')
+			->where('company_id', Auth::user()->company_id);
+
+		if ($params && $params['service_type_ids']) {
+			$list = $list->whereNotIn('id', $params['service_type_ids']);
+		}
+		$list = $list->get();
 		if ($add_default) {
 			$list->prepend(['id' => '', 'name' => $default_text]);
 		}

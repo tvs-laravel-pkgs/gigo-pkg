@@ -92,7 +92,7 @@
                                             Road Test
                                         </a>
                                     </li>
-                                    <li ng-if="job_order.is_expert_diagnosis_required">
+                                    <li>
                                         <a data-target="#expert_diagnosis_details" data-toggle="tab" aria-expanded="true" class="filter">Expert Diagnosis Report
                                         </a>
                                     </li>
@@ -113,7 +113,7 @@
                                     </li>
                                     <li>
                                         <a data-target="#payable_details" data-toggle="tab" aria-expanded="true" class="filter">
-                                            Payable Labour & Parts
+                                            Other Labour & Parts
                                         </a>
                                     </li>
                                     <li>
@@ -813,14 +813,23 @@
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
-                            <div class="tab-pane fade" id="expert_diagnosis_details" data-animation="fadeInUp" data-animation-delay="300" ng-if="job_order.is_expert_diagnosis_required">
+                            <div class="tab-pane fade" id="expert_diagnosis_details" data-animation="fadeInUp" data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>Expert Diagnosis Report</b></h5>
                                             <div class="view-details mb-no">
                                                 <ul class="view-row pb-none">
-                                                    <li class="view-col-4">
+                                                    <li class="view-col-4" ng-if="!job_order.expert_diagnosis_report_by">
+                                                        <span class="view-col-label">
+                                                            Expert Diagnosis
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                Not Required
+                                                            </b></span>
+                                                    </li>
+                                                    <li class="view-col-4" ng-if="job_order.expert_diagnosis_report_by">
                                                         <span class="view-col-label">
                                                             Done by
                                                         </span>
@@ -829,7 +838,7 @@
                                                                 {{job_order.expert_diagnosis_report_by.name}}
                                                             </b></span>
                                                     </li>
-                                                    <li class="view-col-8">
+                                                    <li class="view-col-8" ng-if="job_order.expert_diagnosis_report_by">
                                                         <span class="view-col-label">
                                                             Expert Diagnosis Outcome
                                                         </span>
@@ -1106,7 +1115,7 @@
                                                             <input type="checkbox" id="check_verify" ng-value="1" ng-disabled="true" ng-checked="job_order.is_dms_verified == 1" />
                                                             <label for="check_verify">
                                                                 <b>
-                                                                    Verified in DMS
+                                                                    Verified in DBM/SAP Portal
                                                                 </b>
                                                             </label>
                                                         </div>
