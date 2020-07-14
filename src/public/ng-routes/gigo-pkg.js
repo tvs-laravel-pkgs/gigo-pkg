@@ -675,6 +675,10 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<my-jobcard-card-list></my-jobcard-card-list>',
         title: 'My Job Card List',
     }).
+    when('/my-jobcard/table-list/:user_id', {
+            template: '<my-jobcard-table-list></my-jobcard-table-list>',
+            title: 'My Job Table List',
+    }).
     when('/my-jobcard/view/:user_id/:job_card_id', {
         template: '<my-jobcard-view></my-jobcard-view>',
         title: 'My Job Card View',
