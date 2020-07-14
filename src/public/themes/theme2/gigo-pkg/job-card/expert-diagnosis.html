@@ -35,7 +35,16 @@
                                         <h5 class="color-primary mb-10"><b>Expert Diagnosis Report</b></h5>
                                         <div class="view-details mb-no">
                                             <ul class="view-row pb-none">
-                                                <li class="view-col-4">
+                                                <li class="view-col-4" ng-if="!job_card.job_order.expert_diagnosis_report_by">
+                                                    <span class="view-col-label">
+                                                        Expert Diagnosis
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            Not Required
+                                                        </b></span>
+                                                </li>
+                                                <li class="view-col-4" ng-if="job_card.job_order.expert_diagnosis_report_by">
                                                     <span class="view-col-label">
                                                         Done by
                                                     </span>
@@ -44,7 +53,7 @@
                                                             {{job_card.job_order.expert_diagnosis_report_by.name}}
                                                         </b></span>
                                                 </li>
-                                                <li class="view-col-8">
+                                                <li class="view-col-8" ng-if="job_card.job_order.expert_diagnosis_report_by">
                                                     <span class="view-col-label">
                                                         Expert Diagnosis Outcome
                                                     </span>
