@@ -399,6 +399,7 @@ class JobCardController extends Controller {
 		]);
 	}
 
+//Myjob card table list
 	public function getMyJobCardtableList(Request $request) {
 		$user_id = Auth::user()->id;
 		$user_details = User::with([
@@ -473,4 +474,5 @@ class JobCardController extends Controller {
 			})
 			->make(true);
 	}
+
 }

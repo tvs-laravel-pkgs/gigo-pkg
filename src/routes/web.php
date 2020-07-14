@@ -275,7 +275,11 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/job-card/get-vendor', 'JobCardController@getVendorCodeSearchList')->name('getVendorCodeSearchList');
 	Route::post('/job-card/get-vendor-details', 'JobCardController@getVendorDetails')->name('getVendorDetails');
 
+    //My jobcard Kanban app 
 	Route::get('/myjob-card-table/get-list/{id}', 'JobCardController@getMyJobCardtableList')->name('getMyJobCardtableList');
+
+	Route::get('/myjob-card-time-sheet/get-list/{id}', 'Api\MyJobCardController@getMyJobCardtimeSheetList')->name('getMyJobCardtimeSheetList');
+	Route::get('/myjob-card-time-sheet/user-details', 'Api\MyJobCardController@getMyJobCarduserDetails')->name('getMyJobCarduserDetails');
 
 	//Job Card PDF
 	Route::get('/pdf/gatepass/{id}', 'PDFController@gatePass')->name('gatePass');
