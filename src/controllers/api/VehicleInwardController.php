@@ -2541,7 +2541,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			$customer_voice_list = CustomerVoice::select(
-				DB::raw('CONCAT(code,"/",name) as code'),
+				DB::raw('CONCAT(code," / ",name) as code'),
 				'id'
 			)
 				->where('company_id', Auth::user()->company_id)

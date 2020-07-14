@@ -77,7 +77,7 @@ app.component('myJobcardCardList', {
                 return false;
             }
         }
-        
+
         $rootScope.loading = false;
     }
 });
@@ -140,6 +140,7 @@ app.component('myJobcardTableList', {
                     d.reg_no = $("#reg_no").val();
                     d.job_card_no = $("#job_card_no").val();
                     d.status_id = $("#status_id").val();
+                    d.user_id = $routeParams.user_id;
                 },
             },
 
@@ -264,6 +265,170 @@ app.component('myJobcardTableList', {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
+
+app.component('myJobcardTimesheetList', {
+    templateUrl: myjobcard_timesheet_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
+        $scope.loading = true;
+        $('#searchmyJobCard').focus();
+        var self = this;
+        HelperService.isLoggedIn()
+        $('li').removeClass('active');
+        $('.job_cards').addClass('active').trigger('click');
+        self.hasPermission = HelperService.hasPermission;
+       /* if (!self.hasPermission('job-cards')) {
+            window.location = "#!/page-permission-denied";
+            return false;
+        }*/
+
+        self.user = $scope.user = HelperService.getLoggedUser();
+        self.search_key = '';
+        var table_scroll;
+        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        var dataTable = $('#myjob_timesheet_list').DataTable({
+            "dom": cndn_dom_structure,
+            "language": {
+                // "search": "",
+                // "searchPlaceholder": "Search",
+                "lengthMenu": "Rows _MENU_",
+                "paginate": {
+                    "next": '<i class="icon ion-ios-arrow-forward"></i>',
+                    "previous": '<i class="icon ion-ios-arrow-back"></i>'
+                },
+            },
+            pageLength: 10,
+            processing: true,
+            stateSaveCallback: function(settings, data) {
+                localStorage.setItem('CDataTables_' + settings.sInstance, JSON.stringify(data));
+            },
+            stateLoadCallback: function(settings) {
+                var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
+                if (state_save_val) {
+                    $('#search_my_job_card').val(state_save_val.search.search);
+                }
+                return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
+            },
+            serverSide: true,
+            paging: true,
+            stateSave: true,
+            scrollY: table_scroll + "px",
+            scrollCollapse: true,
+            ajax: {
+                url: laravel_routes['getMyJobCardtimeSheetList'],
+                type: "GET",
+                dataType: "json",
+                data: function(d) {
+                    d.date = $("#date_range").val();
+                    d.job_card_no = $("#job_card_no").val();
+                    d.user_id = $routeParams.user_id;
+                },
+            },
+
+            columns: [
+                { data: 'created_at'},
+                { data: 'jc_number', name: 'job_cards.job_card_number' ,searchable: true},
+                { data: 'outlet', name: 'outlets.code' ,searchable: true },
+                { data: 'start_time'},
+                { data: 'end_time'},
+                { data: 'duration' },
+            ],
+            "infoCallback": function(settings, start, end, max, total, pre) {
+                $('#table_infos').html(total)
+                $('.foot_info').html('Showing ' + start + ' to ' + end + ' of ' + max + ' entries')
+            },
+            rowCallback: function(row, data) {
+                $(row).addClass('highlight-row');
+            }
+        });
+        $('.dataTables_length select').select2();
+
+        $scope.clear_search = function() {
+            $('#search_my_job_card').val('');
+            $('#myjob_timesheet_list').DataTable().search('').draw();
+        }
+        $('.refresh_table').on("click", function() {
+            $('#myjob_timesheet_list').DataTable().ajax.reload();
+        });
+
+        var dataTables = $('#myjob_timesheet_list').dataTable();
+
+        $("#search_my_job_card").keyup(function() {
+            dataTables.fnFilter(this.value);
+        });
+
+        
+
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        $scope.clearSearchTerm = function() {
+            $scope.searchTerm = '';
+            $scope.searchTerm1 = '';
+            $scope.searchTerm2 = '';
+            $scope.searchTerm3 = '';
+        };
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function(event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
+        /* DateRange Picker */
+        $('.daterange').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
+        });
+
+        $('.align-left.daterange').daterangepicker({
+            autoUpdateInput: false,
+            "opens": "left",
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
+        });
+
+        $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
+            //dataTables.fnFilter();
+        });
+
+        $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+
+        $("#date").keyup(function() {
+            self.date = this.value;
+        });
+
+          // FOR FILTER
+        $http.get(
+            laravel_routes['getMyJobCarduserDetails']
+        ).then(function(response) {
+            $scope.user_details = response.data.user_details;
+        });
+
+
+        $scope.applyFilter = function() {
+            $('#myjob-card-filter-modal').modal('hide');
+            dataTables.fnFilter();
+        }
+        $scope.reset_filter = function() {
+            $("#date_range").val('');
+            $("#job_card_no").val('');
+            dataTables.fnFilter();
+            $('#myjob-card-filter-modal').modal('hide');
+            //$scope.fetchData();
+        }
+        $rootScope.loading = false;
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+
 app.component('myJobcardView', {
     templateUrl: myjobcard_view_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {

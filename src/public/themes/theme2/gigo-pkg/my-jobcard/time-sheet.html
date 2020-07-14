@@ -1,0 +1,118 @@
+<div class="content-wrap cndn-wrap">
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content title-block">
+                    <h1 class="title type-2">My Job Cards Time Sheet<span class="badge badge-secondary" id="table_infos"></span></h1>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content reset-block">
+                    <div class="reset-wrap">
+                        <button class="btn-reset reset-tooltip refresh_table">
+                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
+                        </button>
+                    </div>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content search-block">
+                    <div class="search_filter">
+                        <label>
+                            <input type="search" id="search_my_job_card" class="form-control" placeholder="Search" ng-model="$ctrl.search_key" autofocus/>
+                            <button class="btn-clear" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
+                        </label>
+                    </div><!-- Search Filter -->
+                </div><!-- Page Header Content -->
+                <div class="page-header-content button-block">
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#myjob-card-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+            <div class="page-header-content">
+                    <div class="jc-profile">
+                        <img class="img-responsive profile-image" src="./public/theme/img/content/profile.jpg" alt="Profile">
+                        <span>
+                            <b>
+                                {{user_details.name}} |
+                            </b>
+                            ECode : {{user_details.ecode}} | {{user_details.employee.outlet.state.code}} / {{user_details.employee.outlet.code}} / {{user_details.employee.is_mechanic == 1 ? 'Mechanic' : 'Not a Mechanic'}}
+                        </span>
+                    </div>
+                </div><!-- Page Header Content -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <div class="list-card-tab-wrap">
+        <div class="list-tab-content in">
+            <div class="page-main-content list-page-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table" id="myjob_timesheet_list" style="width: 100% !important;">
+                                <thead>
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Job Card No</th>
+                                        <th>Outlet</th>
+                                        <th>Start Time</th>
+                                        <th>End Time</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Container -->
+            </div><!-- Page Main Content -->
+        </div><!-- List Tab Content -->
+    </div><!-- List & Card Tab Wrap -->
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal fade filter" id="myjob-card-filter-modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">
+                    Filter
+                </h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="modal-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Date</label>
+                                <div class="input-group date">
+                                    <input class="form-control daterange align-left" placeholder="Select a Date Range" name="date" id="date_range">
+                                    <span class="input-group-addon">
+                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                    </span>
+                                </div><!-- Input Group -->
+                            </div><!-- Feild -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Job Card No
+                                </label>
+                                <input type="text" class="form-control" id="job_card_no" name="job_card_no" placeholder="Enter Job Card No" autocomplete="off" ng-model="$ctrl.job_card_no">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Form -->
+            </div><!-- Modal Body -->
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.date='';$ctrl.reg_no='';$ctrl.job_card_no=''; " ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                            Reset Filter
+                        </button>
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">
+                            Apply
+                        </button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Footer -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->

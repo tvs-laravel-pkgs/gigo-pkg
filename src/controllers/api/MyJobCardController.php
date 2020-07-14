@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
+use Yajra\Datatables\Datatables;
 
 class MyJobCardController extends Controller {
 	public $successStatus = 200;
@@ -380,5 +381,99 @@ class MyJobCardController extends Controller {
 				'errors' => ['Exception Error' => $e->getMessage()],
 			]);
 		}
+	}
+
+    public function getMyJobCarduserDetails()
+    {
+    	$user_id = Auth::user()->id;
+		$user_details = User::with([
+				'employee',
+				'employee.outlet',
+				'employee.outlet.state',
+			])
+			->find($user_id);
+	return response()->json([
+					'success' => true,
+					'user_details' => $user_details,
+				]);
+    }
+
+	//My jobcard Timesheet
+
+	public function getMyJobCardtimeSheetList(Request $request) {
+		$user_id = $request->user_id;
+		$date = explode('to', $request->date);
+
+		$my_job_timesheet = MechanicTimeLog::select([
+				'job_cards.id',
+				'job_cards.job_card_number as jc_number','outlets.code as outlet','repair_orders.code','mechanic_time_logs.end_date_time','mechanic_time_logs.start_date_time','mechanic_time_logs.created_at'
+			])
+				->join('repair_order_mechanics', 'repair_order_mechanics.id', 'mechanic_time_logs.repair_order_mechanic_id')
+				->join('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')
+				->join('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')
+				->join('job_cards', 'job_cards.job_order_id', 'job_order_repair_orders.job_order_id')
+				->join('outlets', 'outlets.id', 'job_cards.outlet_id')
+				->where('repair_order_mechanics.mechanic_id', $user_id)
+				//->groupBy('job_order_repair_orders.job_order_id')
+				->orderBy('mechanic_time_logs.created_at', 'DESC')
+
+			->where(function ($query) use ($request, $date) {
+				if (!empty($request->get('date'))) {
+					$query->whereDate('mechanic_time_logs.created_at', '>=', date('Y-m-d', strtotime($date[0])))
+						->whereDate('mechanic_time_logs.created_at', '<=', date('Y-m-d', strtotime($date[1])));
+				}
+				else
+				{
+					$query->whereYear('mechanic_time_logs.created_at', Carbon::now()->year)
+						 ->whereMonth('mechanic_time_logs.created_at', Carbon::now()->month);
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->job_card_no)) {
+					$query->where('job_cards.job_card_number', 'LIKE', '%' . $request->job_card_no . '%');
+				}
+			});
+
+		return Datatables::of($my_job_timesheet)
+		->addColumn('duration', function ($my_job_timesheet) {
+			$time1 = strtotime($my_job_timesheet['start_date_time']);
+			$time2 = strtotime($my_job_timesheet['end_date_time']);
+			if ($time2 < $time1) {
+			     $time2 += 86400;
+			}
+			$duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+
+			$total_duration = sum_mechanic_duration($duration);
+			$format_change = explode(':', $total_duration);
+
+			$hour = $format_change[0] . 'h';
+			$minutes = $format_change[1] . 'm';
+			$seconds = $format_change[2] . 's';
+			$total_hours = $hour . ' ' . $minutes . ' ' . $seconds;
+			return $total_hours;
+				
+			})
+
+		->addColumn('start_time', function ($my_job_timesheet) {
+			$start_time = date('H:i', strtotime($my_job_timesheet['start_date_time']));
+			$time = date("g:i a", strtotime($start_time));
+			return $time;
+			})
+
+		->addColumn('end_time', function ($my_job_timesheet) {
+			$end_time = date('H:i', strtotime($my_job_timesheet['end_date_time']));
+			$time = date("g:i a", strtotime($end_time));
+			return $time;
+			})
+
+		->addColumn('created_at', function ($my_job_timesheet) {
+			$created_at_date = date('Y-m-d', strtotime($my_job_timesheet['created_at']));
+			$created_at = date('H:i', strtotime($my_job_timesheet['created_at']));
+			$time = date("g:i a", strtotime($created_at));
+			return $created_at_date." ".$time;
+				
+			})
+
+			->make(true);
 	}
 }
