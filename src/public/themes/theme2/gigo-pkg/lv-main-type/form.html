@@ -5,16 +5,16 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/customer-voice/list" type="button" class="btn-back btn-img">
+                    <a href="#!/gigo-pkg/lv-main-type/list" type="button" class="btn-back btn-img">
                         <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>{{$ctrl.action}} Customer Voice</b></h1>
+                    <h1 class="title"><b>{{$ctrl.action}} LV Main Type</b></h1>
                     <p class="subtitle">
                         Masters /
-                        <a href="#!/gigo-pkg/customer-voice/list">
-                            Customer Voices
+                        <a href="#!/gigo-pkg/lv-main-type/list">
+                            LV Main Types
                         </a> /
                         {{$ctrl.action}}
                     </p>
@@ -24,8 +24,8 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
-        <form id="customer_voice_form" autocomplete="off">
-            <input type="hidden" name="id" value="{{$ctrl.customer_voice.id}}">
+        <form id="lv_main_type_form" autocomplete="off">
+            <input type="hidden" name="id" value="{{$ctrl.lv_main_type.id}}">
             <div class="page-tab-form pb-70">
                 <div class="tab-form-wrap">
                     <div class="tab-form-header">
@@ -51,35 +51,12 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
-                                                    Code
+                                                    Name
                                                     <sup class="mandatory">*</sup>
                                                 </label>
-                                                <input type="text" class="form-control required" ng-model="$ctrl.customer_voice.code" name="code" placeholder="Enter Code" autofocus />
+                                                <input type="text" class="form-control required" ng-model="$ctrl.lv_main_type.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Name
-                                                </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.customer_voice.name" name="name" placeholder="Enter Name" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>LV Main Type <sup class="mandatory">*</sup></label>
-                                                <md-select ng-model="$ctrl.customer_voice.lv_main_type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select LV Main Type">
-                                                    <md-select-header class="demo-select-header">
-                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a LV Main Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                    </md-select-header>
-                                                    <md-optgroup>
-                                                        <md-option ng-value="lv_main_type.id" ng-repeat="lv_main_type in $ctrl.extras.lv_main_type_list | filter:searchTerm">{{lv_main_type.name}}</md-option>
-                                                    </md-optgroup>
-                                                </md-select>
-                                                <input type="hidden" class="form-control type-sm required" name="lv_main_type_id" id="lv_main_type_id" value="{{$ctrl.customer_voice.lv_main_type_id}}">
-                                                <!-- <div class="designation_error"></div> -->
-                                            </div><!-- Field -->
-                                        </div><!-- column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
@@ -100,8 +77,12 @@
                             <div class="tab-pane-footer">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <a href="#!/gigo-pkg/customer-voice/list" class="btn btn-bordered btn-min-wdth my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">Cancel</a>
-                                        <button type="submit" class="btn btn-primary btn-min-wdth submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
+                                        <a href="#!/gigo-pkg/lv-main-type/list" class="btn btn-secondary btn-prev my-tooltip">
+                                            Cancel
+                                        </a>
+                                        <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">
+                                            Submit
+                                        </button>
                                     </div>
                                 </div>
                             </div><!-- Tab Footer -->

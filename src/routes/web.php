@@ -37,6 +37,13 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/fault/delete', 'FaultController@deleteFault')->name('deleteFault');
 	Route::get('/fault/get-filter-data', 'FaultController@getFaultFilter')->name('getFaultFilter');
 
+	//LV MAIN TYPES
+	Route::get('/lv-main-type/get-list', 'LvMainTypeController@getLvMainTypeList')->name('getLvMainTypeList');
+	Route::get('/lv-main-type/get-form-data', 'LvMainTypeController@getLvMainTypeFormData')->name('getLvMainTypeFormData');
+	Route::post('/lv-main-type/save', 'LvMainTypeController@saveLvMainType')->name('saveLvMainType');
+	Route::get('/lv-main-type/delete', 'LvMainTypeController@deleteLvMainType')->name('deleteLvMainType');
+	Route::get('/lv-main-type/get-filter-data', 'LvMainTypeController@getLvMainTypeFilter')->name('getLvMainTypeFilter');
+
 	//Complaint Group
 	Route::get('/complaint-group/get-list', 'ComplaintGroupController@getComplaintGroupList')->name('getComplaintGroupList');
 	Route::get('/complaint-group/get-form-data', 'ComplaintGroupController@getComplaintGroupFormData')->name('getComplaintGroupFormData');
@@ -275,7 +282,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::post('/job-card/get-vendor', 'JobCardController@getVendorCodeSearchList')->name('getVendorCodeSearchList');
 	Route::post('/job-card/get-vendor-details', 'JobCardController@getVendorDetails')->name('getVendorDetails');
 
-    //My jobcard Kanban app 
+	//My jobcard Kanban app
 	Route::get('/myjob-card-table/get-list/{id}', 'JobCardController@getMyJobCardtableList')->name('getMyJobCardtableList');
 
 	Route::get('/myjob-card-time-sheet/get-list/{id}', 'Api\MyJobCardController@getMyJobCardtimeSheetList')->name('getMyJobCardtimeSheetList');

@@ -3,6 +3,7 @@
 namespace Abs\GigoPkg;
 use App\CustomerVoice;
 use App\Http\Controllers\Controller;
+use App\LvMainType;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -35,9 +36,10 @@ class CustomerVoiceController extends Controller {
 				'customer_voices.id',
 				'customer_voices.name',
 				'customer_voices.code',
-
+				DB::raw('IF(lv_main_types.name IS NULL, "--",lv_main_types.name) as lv_main_type_name'),
 				DB::raw('IF(customer_voices.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
+			->leftJoin('lv_main_types', 'lv_main_types.id', 'customer_voices.lv_main_type_id')
 			->where('customer_voices.company_id', Auth::user()->company_id)
 			->where(function ($query) use ($request) {
 				if (!empty($request->name)) {
@@ -92,6 +94,10 @@ class CustomerVoiceController extends Controller {
 		$this->data['success'] = true;
 		$this->data['customer_voice'] = $customer_voice;
 		$this->data['action'] = $action;
+
+		$this->data['extras'] = [
+			'lv_main_type_list' => LvMainType::getList(),
+		];
 		return response()->json($this->data);
 	}
 
@@ -119,6 +125,11 @@ class CustomerVoiceController extends Controller {
 					'max:191',
 					'nullable',
 					'unique:customer_voices,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				],
+				'lv_main_type_id' => [
+					'required:true',
+					'exists:lv_main_types,id',
+					'integer',
 				],
 			], $error_messages);
 			if ($validator->fails()) {

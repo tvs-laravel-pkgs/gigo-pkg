@@ -17,6 +17,7 @@ class CustomerVoice extends BaseModel {
 		"code",
 		"name",
 		"repair_order_id",
+		"lv_main_type_id",
 	];
 
 	protected static $excelColumnRules = [

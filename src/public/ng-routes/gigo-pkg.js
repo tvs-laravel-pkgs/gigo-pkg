@@ -30,6 +30,20 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Edit Fault',
     }).
 
+    //LV Main Type
+    when('/gigo-pkg/lv-main-type/list', {
+        template: '<lv-main-type-list></lv-main-type-list>',
+        title: 'LV Main Types',
+    }).
+    when('/gigo-pkg/lv-main-type/add', {
+        template: '<lv-main-type-form></lv-main-type-form>',
+        title: 'Add LV Main Type',
+    }).
+    when('/gigo-pkg/lv-main-type/edit/:id', {
+        template: '<lv-main-type-form></lv-main-type-form>',
+        title: 'Edit LV Main Type',
+    }).
+        
     //Repair Order Types
     when('/gigo-pkg/repair-order-type/list', {
         template: '<repair-order-type-list></repair-order-type-list>',

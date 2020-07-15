@@ -131,6 +131,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Delete',
 			],
 
+			//LV Main Types
+			[
+				'display_order' => 99,
+				'parent' => 'gigo-masters',
+				'name' => 'lv-main-types',
+				'display_name' => 'LV Main Types',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'lv-main-types',
+				'name' => 'add-lv-main-type',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'lv-main-types',
+				'name' => 'edit-lv-main-type',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'lv-main-types',
+				'name' => 'delete-lv-main-type',
+				'display_name' => 'Delete',
+			],
+
 			//Parts Indent
 			[
 				'display_order' => 99,

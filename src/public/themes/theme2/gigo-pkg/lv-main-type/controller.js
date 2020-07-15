@@ -1,20 +1,20 @@
-app.component('customerVoiceList', {
-    templateUrl: customer_voice_list_template_url,
+app.component('lvMainTypeList', {
+    templateUrl: lv_main_type_list_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         $scope.loading = true;
-        $('#search_customer_voice').focus();
+        $('#search_lv_main_type').focus();
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('customer-voices')) {
-            window.location = "#!/page-permission-denied";
+        if (!self.hasPermission('lv-main-types')) {
+            window.location = "#!/permission-denied";
             return false;
         }
-        self.add_permission = self.hasPermission('add-customer-voice');
+        self.add_permission = self.hasPermission('add-lv-main-type');
         var table_scroll;
         table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        var dataTable = $('#customer_voices_list').DataTable({
+        var dataTable = $('#lv_main_types_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
                 // "search": "",
@@ -33,7 +33,7 @@ app.component('customerVoiceList', {
             stateLoadCallback: function(settings) {
                 var state_save_val = JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
                 if (state_save_val) {
-                    $('#search_customer_voice').val(state_save_val.search.search);
+                    $('#search_lv_main_type').val(state_save_val.search.search);
                 }
                 return JSON.parse(localStorage.getItem('CDataTables_' + settings.sInstance));
             },
@@ -43,11 +43,10 @@ app.component('customerVoiceList', {
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
-                url: laravel_routes['getCustomerVoiceList'],
+                url: laravel_routes['getLvMainTypeList'],
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.code = $("#code").val();
                     d.name = $("#name").val();
                     d.status = $("#status").val();
                 },
@@ -55,10 +54,9 @@ app.component('customerVoiceList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'customer_voices.code' },
-                { data: 'name', name: 'customer_voices.name' },
-                { data: 'lv_main_type_name', name: 'lv_main_types.name' },
-                { data: 'status', name: '', searchable: false },
+                { data: 'name', name: 'lv_main_types.name' },
+                { data: 'status', name: '' },
+
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
@@ -71,44 +69,44 @@ app.component('customerVoiceList', {
         $('.dataTables_length select').select2();
 
         $scope.clear_search = function() {
-            $('#search_customer_voice').val('');
-            $('#customer_voices_list').DataTable().search('').draw();
+            $('#search_lv_main_type').val('');
+            $('#lv_main_types_list').DataTable().search('').draw();
         }
         $('.refresh_table').on("click", function() {
-            $('#customer_voices_list').DataTable().ajax.reload();
+            $('#lv_main_types_list').DataTable().ajax.reload();
         });
 
-        var dataTables = $('#customer_voices_list').dataTable();
-        $("#search_customer_voice").keyup(function() {
+        var dataTables = $('#lv_main_types_list').dataTable();
+        $("#search_lv_main_type").keyup(function() {
             dataTables.fnFilter(this.value);
         });
 
         //DELETE
-        $scope.deleteCustomerVoice = function($id) {
-            $('#customer_voice_id').val($id);
+        $scope.deleteLvMainType = function($id) {
+            $('#lv_main_type_id').val($id);
         }
         $scope.deleteConfirm = function() {
-            $id = $('#customer_voice_id').val();
+            $id = $('#lv_main_type_id').val();
             $http.get(
-                laravel_routes['deleteCustomerVoice'], {
+                laravel_routes['deleteLvMainType'], {
                     params: {
                         id: $id,
                     }
                 }
             ).then(function(response) {
                 if (response.data.success) {
-                    custom_noty('success', response.data.message);
-                    $('#customer_voices_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/customer-voice/list');
+                    custom_noty('success', 'LV Main Type Deleted Successfully');
+                    $('#lv_main_types_list').DataTable().ajax.reload(function(json) {});
+                    $location.path('/gigo-pkg/lv-main-type/list');
                 }
             });
         }
 
         // FOR FILTER
         $http.get(
-            laravel_routes['getCustomerVoiceFilterData']
+            laravel_routes['getLvMainTypeFilter']
         ).then(function(response) {
-            console.log(response);
+            // console.log(response);
             self.extras = response.data.extras;
         });
         $element.find('input').on('keydown', function(ev) {
@@ -116,6 +114,9 @@ app.component('customerVoiceList', {
         });
         $scope.clearSearchTerm = function() {
             $scope.searchTerm = '';
+            $scope.searchTerm1 = '';
+            $scope.searchTerm2 = '';
+            $scope.searchTerm3 = '';
         };
         /* Modal Md Select Hide */
         $('.modal').bind('click', function(event) {
@@ -124,24 +125,17 @@ app.component('customerVoiceList', {
             }
         });
 
-        //STATUS ID ASSIGN
-        $scope.onSelectedStatus = function(id) {
-            $('#status').val(id);
+        $scope.applyFilter = function() {
+            $('#status').val(self.status);
+            dataTables.fnFilter();
+            $('#lv-main-type-filter-modal').modal('hide');
         }
 
-        //APPLY FILTER
-        $scope.apply_filter = function() {
-            // $('#status').val(id);
-            dataTables.fnFilter();
-            $('#customer-voice-filter-modal').modal('hide');
-        }
         $scope.reset_filter = function() {
-            $("#code").val('');
             $("#name").val('');
             $("#status").val('');
             dataTables.fnFilter();
-            $('#customer-voice-filter-modal').modal('hide');
-
+            $('#lv-main-type-filter-modal').modal('hide');
         }
         $rootScope.loading = false;
     }
@@ -150,29 +144,31 @@ app.component('customerVoiceList', {
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
-app.component('customerVoiceForm', {
-    templateUrl: customer_voice_form_template_url,
+app.component('lvMainTypeForm', {
+    templateUrl: lv_main_type_form_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
         var self = this;
+        $("input:text:visible:first").focus();
+
         self.hasPermission = HelperService.hasPermission;
-        if (!self.hasPermission('add-customer-voice') || !self.hasPermission('edit-customer-voice')) {
-            window.location = "#!/page-permission-denied";
+        if (!self.hasPermission('add-lv-main-type') && !self.hasPermission('edit-lv-main-type')) {
+            window.location = "#!/permission-denied";
             return false;
         }
+
         self.angular_routes = angular_routes;
         $http.get(
-            laravel_routes['getCustomerVoiceFormData'], {
+            laravel_routes['getLvMainTypeFormData'], {
                 params: {
                     id: typeof($routeParams.id) == 'undefined' ? null : $routeParams.id,
                 }
             }
         ).then(function(response) {
-            self.customer_voice = response.data.customer_voice;
-            self.extras = response.data.extras;
+            self.lv_main_type = response.data.lv_main_type;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
-                if (self.customer_voice.deleted_at) {
+                if (self.lv_main_type.deleted_at) {
                     self.switch_value = 'Inactive';
                 } else {
                     self.switch_value = 'Active';
@@ -182,31 +178,18 @@ app.component('customerVoiceForm', {
             }
         });
 
-        $("input:text:visible:first").focus();
-
         //Save Form Data 
-        var form_id = '#customer_voice_form';
+        var form_id = '#lv_main_type_form';
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 32,
-                },
                 'name': {
+                    required: true,
                     minlength: 3,
                     maxlength: 191,
                 },
-                'lv_main_type': {
-                    required: true,
-                },
             },
             messages: {
-                'short_name': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 32 Characters',
-                },
                 'name': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 191 Characters',
@@ -216,7 +199,7 @@ app.component('customerVoiceForm', {
                 let formData = new FormData($(form_id)[0]);
                 $('.submit').button('loading');
                 $.ajax({
-                        url: laravel_routes['saveCustomerVoice'],
+                        url: laravel_routes['saveLvMainType'],
                         method: "POST",
                         data: formData,
                         processData: false,
@@ -225,7 +208,7 @@ app.component('customerVoiceForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/customer-voice/list');
+                            $location.path('/gigo-pkg/lv-main-type/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -233,7 +216,7 @@ app.component('customerVoiceForm', {
                                 showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/gigo-pkg/customer-voice/list');
+                                $location.path('/gigo-pkg/lv-main-type/list');
                                 $scope.$apply();
                             }
                         }

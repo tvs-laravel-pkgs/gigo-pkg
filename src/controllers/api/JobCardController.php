@@ -1354,7 +1354,7 @@ class JobCardController extends Controller {
 			$vendor_details = Vendor::with([
 				'primaryAddress',
 			])
-				->find($request->id);
+				->find($vendor_id);
 
 			if (!$vendor_details) {
 				return response()->json([

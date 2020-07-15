@@ -9,18 +9,18 @@
 
 	    $routeProvider.
 	    //Vehicle Segment
-	    when('/gigo-pkg/vehicle-segment/list', {
-	        template: '<vehicle-segment-list></vehicle-segment-list>',
-	        title: 'Vehicle segments',
-	    }).
-	    when('/gigo-pkg/vehicle-segment/add', {
-	        template: '<vehicle-segment-form></vehicle-segment-form>',
-	        title: 'Add Vehicle segment',
-	    }).
-	    when('/gigo-pkg/vehicle-segment/edit/:id', {
-	        template: '<vehicle-segment-form></vehicle-segment-form>',
-	        title: 'Edit Vehicle segment',
-	    }).
+	    // when('/gigo-pkg/vehicle-segment/list', {
+	    //     template: '<vehicle-segment-list></vehicle-segment-list>',
+	    //     title: 'Vehicle segments',
+	    // }).
+	    // when('/gigo-pkg/vehicle-segment/add', {
+	    //     template: '<vehicle-segment-form></vehicle-segment-form>',
+	    //     title: 'Add Vehicle segment',
+	    // }).
+	    // when('/gigo-pkg/vehicle-segment/edit/:id', {
+	    //     template: '<vehicle-segment-form></vehicle-segment-form>',
+	    //     title: 'Edit Vehicle segment',
+	    // }).
 
 	    //Vehicle Primary Application
 	    when('/gigo-pkg/vehicle-primary-application/list', {
@@ -261,9 +261,9 @@
 
 	}]);
 
-	//Vehicle Segments
-    var vehicle_segment_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/list.html')}}";
-    var vehicle_segment_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/form.html')}}";
+	// //Vehicle Segments
+ //    var vehicle_segment_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/list.html')}}";
+ //    var vehicle_segment_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/form.html')}}";
 
 	//Vehicle Primary Applications
     var vehicle_primary_application_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-primary-application/list.html')}}";
@@ -334,9 +334,10 @@
      var parts_indent_edit_parts_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/edit-parts.html')}}";
 
 </script>
-<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/controller.js')}}"></script>
+<!-- <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-segment/controller.js')}}"></script> -->
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-primary-application/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/fault/controller.js')}}"></script>
+<script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/lv-main-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order-type/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/repair-order/controller.js')}}"></script>
 <script type="text/javascript" src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/service-type/controller.js')}}"></script>
