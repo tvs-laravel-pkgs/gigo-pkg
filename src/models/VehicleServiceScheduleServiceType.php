@@ -185,7 +185,7 @@ class VehicleServiceScheduleServiceType extends BaseModel {
 
 	public function repair_orders() {
 		return $this->belongsToMany('App\RepairOrder', 'repair_order_service_type',
-			'schedule_id', 'repair_order_id')->with(['category', 'skillLevel']);
+			'schedule_id', 'repair_order_id')->withPivot(['split_order_type_id'])->with(['category', 'skillLevel']);
 	}
 
 	// Static Operations --------------------------------------------------------------

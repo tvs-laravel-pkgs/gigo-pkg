@@ -55,6 +55,15 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 			Route::get('options', $controller . 'Controller@options');
 		});
 
+		Route::group(['prefix' => 'split-order-type'], function () {
+			$controller = 'SplitOrderType';
+			Route::get('index', $controller . 'Controller@index');
+			Route::get('read/{id}', $controller . 'Controller@read');
+			Route::post('save', $controller . 'Controller@save');
+			Route::post('remove', $controller . 'Controller@remove');
+			Route::get('options', $controller . 'Controller@options');
+		});
+
 		Route::group(['prefix' => 'part'], function () {
 			$controller = 'Part';
 			Route::get('index', $controller . 'Controller@index');

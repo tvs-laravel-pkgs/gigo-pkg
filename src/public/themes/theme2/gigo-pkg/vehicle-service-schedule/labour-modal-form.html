@@ -30,7 +30,39 @@
                             <input type="hidden" name="repair_order_id" value="{{service_type_ro.repair_order.id}}">
                         </div><!-- Field -->
                     </div><!-- Column -->
-                    <div class="col-md-6" ng-if="service_type_ro.repair_order">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>
+                                Split Order Type
+                                <span class="mandatory">*</span>
+                            </label>
+                            <md-select ng-model="service_type_ro.split_order_type" placeholder="Select service" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                <md-select-header class="demo-select-header">
+                                    <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                </md-select-header>
+                                <md-optgroup>
+                                    <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                        {{split_order_type.name}} / {{split_order_type.code}}
+                                    </md-option>
+                                </md-optgroup>
+                            </md-select>
+                            <!-- <md-autocomplete md-selected-item="service_type_ro.split_order_type" md-search-text="splitOrderTypeSearchKey" md-items="split_order_type in searchSplitOrders(splitOrderTypeSearchKey)" md-item-text="split_order_type.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. SOT0000000886" md-selected-item-change="splitOrderSelected(service_type_ro.split_order_type)" md-input-id="repairOrderAutoCompleteId">
+                                <md-item-template>
+                                    <span>
+                                        {{split_order_type.code}}
+                                    </span>
+                                </md-item-template>
+                                <md-not-found>
+                                    No records matching "{{splitOrderTypeSearchKey}}" were found.
+                                </md-not-found>
+                            </md-autocomplete> -->
+                            <input type="hidden" name="split_order_type_id" value="{{service_type_ro.split_order_type.id}}">
+                        </div><!-- Field -->
+                    </div><!-- Column -->
+                </div>
+                <div class="row" ng-if="service_type_ro.repair_order">
+                    <div class="col-md-6">
+                        <!-- ng-if="service_type_ro.repair_order"-->
                         <div class="form-group">
                             <label>
                                 ROT Description
@@ -40,8 +72,6 @@
                             </label>
                         </div><!-- Field -->
                     </div><!-- Column -->
-                </div>
-                <div class="row" ng-if="service_type_ro.repair_order">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>
