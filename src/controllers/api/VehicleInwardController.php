@@ -1232,7 +1232,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			//Estimate Order ID
-			$job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('status_id', 8080)->first();
+			$job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('status_id', 8180)->first();
 			if ($job_repair_order) {
 				$estimate_order_id = $job_repair_order->estimate_order_id;
 			} else {
@@ -2080,7 +2080,7 @@ class VehicleInwardController extends Controller {
 
 	//Addtional Rot & Part GetList
 	public function addtionalRotPartGetList(Request $r) {
-		//dd($r->all());
+		// dd($r->all());
 		try {
 
 			$job_order = JobOrder::with([
@@ -2513,6 +2513,7 @@ class VehicleInwardController extends Controller {
 			$job_order = JobOrder::with([
 				'vehicle',
 				'vehicle.model',
+				'vehicle.model.customerVoices',
 				'vehicle.status',
 				'status',
 				'customerVoices',
@@ -2540,12 +2541,14 @@ class VehicleInwardController extends Controller {
 				$action = 'add';
 			}
 
-			$customer_voice_list = CustomerVoice::select(
-				DB::raw('CONCAT(code," / ",name) as code'),
-				'id'
-			)
-				->where('company_id', Auth::user()->company_id)
-				->get();
+			$customer_voice_list = $job_order->vehicle->model->customerVoices;
+
+			// $customer_voice_list = CustomerVoice::select(
+			// 	DB::raw('CONCAT(code," / ",name) as code'),
+			// 	'id'
+			// )
+			// 	->where('company_id', Auth::user()->company_id)
+			// 	->get();
 			$extras = [
 				'customer_voice_list' => $customer_voice_list,
 			];
@@ -2606,10 +2609,22 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$job_order = JobOrder::find($request->job_order_id);
+			$job_order = JobOrder::with(['customerVoices'])->find($request->job_order_id);
 			$job_order->status_id = 8463;
 			$job_order->save();
+
+			$customer_voice_ids = collect($request->customer_voices)->pluck('id')->toArray();
+			//REMOVE REPAIR ORDER WHILE CHANGING VOC
+			foreach ($job_order->customerVoices as $customer_voice) {
+				// dump($customer_voice->id, $customer_voice_ids);
+				if (!in_array($customer_voice->id, $customer_voice_ids)) {
+					// dump('in');
+					$delete_job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('repair_order_id', $customer_voice->repair_order_id)->where('status_id', 8180)->forceDelete();
+				}
+			}
+
 			$job_order->customerVoices()->sync([]);
+
 			if (!empty($request->customer_voices)) {
 				//UNIQUE CHECK
 				$customer_voices = collect($request->customer_voices)->pluck('id')->count();
@@ -2623,10 +2638,53 @@ class VehicleInwardController extends Controller {
 						],
 					]);
 				}
+
+				$customer_voice_ids = collect($request->customer_voices)->pluck('id')->toArray();
+				// dd($customer_voice_ids);
+				$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->first();
+				// dd($customer_paid_type);
+
+				//Estimate Order ID
+				$job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('status_id', 8180)->first();
+				// dd($job_repair_order);
+				if ($job_repair_order) {
+					$estimate_order_id = $job_repair_order->estimate_order_id;
+				} else {
+					$job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->orderBy('estimate_order_id', 'DESC')->first();
+					if ($job_repair_order) {
+						$estimate_order_id = ($job_repair_order->estimate_order_id) + 1;
+					} else {
+						$estimate_order_id = 0;
+					}
+				}
+
 				foreach ($request->customer_voices as $key => $voice) {
+					$customer_voice = CustomerVoice::with(['repair_order'])
+						->where('id', $voice['id'])
+						->first();
+					$skip_job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('repair_order_id', $customer_voice->repair_order->id)
+					// ->where('status_id', 8180)
+						->first();
+
 					$job_order->customerVoices()->attach($voice['id'], [
 						'details' => isset($voice['details']) ? $voice['details'] : NULL,
 					]);
+
+					if ($skip_job_repair_order) {
+						continue;
+					} else {
+						$job_repair_order = new JobOrderRepairOrder;
+						$job_repair_order->job_order_id = $request->job_order_id;
+						$job_repair_order->repair_order_id = $customer_voice->repair_order->id;
+						$job_repair_order->is_recommended_by_oem = 0;
+						$job_repair_order->is_customer_approved = 0;
+						$job_repair_order->estimate_order_id = $estimate_order_id;
+						$job_repair_order->split_order_type_id = $customer_paid_type->id;
+						$job_repair_order->qty = $customer_voice->repair_order->hours;
+						$job_repair_order->amount = $customer_voice->repair_order->amount;
+						$job_repair_order->status_id = 8180;
+						$job_repair_order->save();
+					}
 				}
 			}
 

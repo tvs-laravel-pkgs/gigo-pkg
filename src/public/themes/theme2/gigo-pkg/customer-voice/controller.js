@@ -58,6 +58,7 @@ app.component('customerVoiceList', {
                 { data: 'code', name: 'customer_voices.code' },
                 { data: 'name', name: 'customer_voices.name' },
                 { data: 'lv_main_type_name', name: 'lv_main_types.name' },
+                { data: 'repair_order_name', name: 'repair_orders.name' },
                 { data: 'status', name: '', searchable: false },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
