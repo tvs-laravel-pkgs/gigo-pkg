@@ -3,7 +3,10 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Customer Voices<span class="badge badge-secondary" id="table_infos"></span></h1>
+                    <h1 class="title type-2">
+                        LV Main Types
+                        <span class="badge badge-secondary" id="table_infos"></span>
+                    </h1>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
@@ -15,19 +18,22 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_customer_voice" class="form-control" placeholder="Search" autofocus />
-                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
+                            <input type="search" id="search_lv_main_type" class="form-control" placeholder="Search" autofocus />
+                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">
+                                Clear
+                            </button>
                         </label>
                     </div><!-- Search Filter -->
                 </div>
                 <div class="page-header-content button-block">
-                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#customer-voice-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#lv-main-type-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>
+                        Filter
+                    </button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
-                <!-- Page Header Content -->
-                <div class="page-header-content button-block" ng-show="$ctrl.add_permission">
-                    <a href="#!/gigo-pkg/customer-voice/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">
+                <div class="page-header-content button-block">
+                    <a ng-if="$ctrl.add_permission" href="#!/gigo-pkg/lv-main-type/add" class="btn btn-primary my-tooltip" ng-shortcut="'meta+shift+n'" ng-shortcut-click data-title="ctrl+shift+n">
                         Add New
                     </a>
                     <div class="dropdown">
@@ -36,7 +42,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
                             <li>
-                                <a href="#!/gigo-pkg/customer-voice/add">
+                                <a href="#!/gigo-pkg/lv-main-type/add">
                                     Form
                                 </a>
                             </li>
@@ -50,13 +56,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table" id="customer_voices_list" style="width: 100% !important;">
+                    <table class="table" id="lv_main_types_list" style="width: 100% !important;">
                         <thead>
                             <tr>
                                 <th>Actions</th>
-                                <th>Code</th>
                                 <th>Name</th>
-                                <th>LV Main Type</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -67,37 +71,31 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Filter Modal -->
-<div class="modal fade filter" id="customer-voice-filter-modal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade filter" id="lv-main-type-filter-modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                <h5 class="modal-title" id="myModalLabel">Filter</h5>
+                <h5 class="modal-title" id="myModalLabel">
+                    Filter
+                </h5>
             </div><!-- Modal Header -->
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
-                        <!-- <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Code</label>
-                                <input type="text" class="form-control" id="code" name="code" placeholder="Enter Code" autocomplete="off">
-                            </div>
-                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Name</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" autocomplete="off">
-                            </div>
-                        </div> -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Status</label>
+                                <label>
+                                    Status
+                                </label>
                                 <md-select ng-model="$ctrl.status" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status" ng-change="onSelectedStatus($ctrl.status)">
                                     <md-select-header class="demo-select-header">
-                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                        <input ng-model="searchTerm3" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm">{{status.name}}</md-option>
+                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status | filter:searchTerm3">
+                                            {{status.name}}
+                                        </md-option>
                                     </md-optgroup>
                                 </md-select>
                                 <input type="hidden" class="form-control type-sm" name="status" id="status" value="">
@@ -109,10 +107,14 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link my-tooltip" ng-click="reset_filter();$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                            Reset Filter
+                        </button>
                     </div><!-- Column -->
                     <div class="col-md-6 text-right">
-                        <button type="submit" data-dismiss="modal" class="btn btn-primary btn-md" ng-click="apply_filter()">Apply</button>
+                        <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">
+                            Apply
+                        </button>
                     </div><!-- Column -->
                 </div><!-- Row -->
             </div><!-- Modal Footer -->
@@ -120,18 +122,28 @@
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
 <!-- Modal -->
-<div class="modal fade alert-modal failure" id="delete_customer_voice" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade alert-modal failure" id="delete_lv_main_type" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
+                <h4 class="modal-title" id="myModalLabel">
+                    ARE YOU SURE?
+                </h4>
             </div>
             <div class="modal-body">
-                <h5>Delete</h5>
-                <p>You can’t retrive the data again, Are you sure you want to delete? </p>
-                <input type="hidden" name="customer_voice_id" id="customer_voice_id" value="">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
+                <h5>
+                    Delete
+                </h5>
+                <p>
+                    You can’t retrive the data again, Are you sure you want to delete?
+                </p>
+                <input type="hidden" name="lv_main_type_id" id="lv_main_type_id" value="">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">
+                    Cancel
+                </button>
+                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">
+                    Yes
+                </button>
             </div>
         </div>
     </div>
