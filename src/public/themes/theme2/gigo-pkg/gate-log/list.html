@@ -52,7 +52,10 @@
                                 <th>Gate In Date</th>
                                 <th>Vehicle Number</th>
                                 <th>Vehicle Model</th>
-                                <th>Status</th>
+                                <th>Outlet</th>
+                                <th>Region</th>
+                                <th>State</th>
+                                <!-- <th>Status</th> -->
                             </tr>
                         </thead>
                     </table>
@@ -99,6 +102,20 @@
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label>Outlet</label>
+                                <md-select ng-model="$ctrl.outlet_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedoutlet($ctrl.outlet_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Model Type">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm" type="search" placeholder="Search Outlet" class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="outlet_list.id" ng-repeat="outlet_list in $ctrl.outlet_list | filter:searchTerm">{{outlet_list.code}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="outlet_id" id="outlet_id" value="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <!-- <div class="col-md-6">
+                            <div class="form-group">
                                 <label>Status</label>
                                 <md-select ng-model="$ctrl.status_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedStatus($ctrl.status_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
                                     <md-select-header class="demo-select-header">
@@ -109,15 +126,15 @@
                                     </md-optgroup>
                                 </md-select>
                                 <input type="hidden" class="form-control type-sm" name="status_id" id="status_id" value="">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
+                            </div>
+                        </div> -->
                     </div><!-- Row -->
                 </div><!-- Modal Form -->
             </div><!-- Modal Body -->
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.model_selected='';$ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.model_selected='';$ctrl.outlet_selected =''; $ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
                             Reset Filter
                         </button>
                     </div><!-- Column -->
