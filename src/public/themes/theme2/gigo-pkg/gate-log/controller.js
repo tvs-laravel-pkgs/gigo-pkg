@@ -184,7 +184,7 @@ app.component('gateLogList', {
         $scope.reset_filter = function() {
             $("#date_range").val('');
             $("#model_id").val('');
-            $("#status_id").val('');
+            $("#outlet_id").val('');
             dataTables.fnFilter();
             $('#gate-log-filter-modal').modal('hide');
         }
