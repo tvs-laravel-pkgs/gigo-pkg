@@ -49,6 +49,7 @@ app.component('gateLogList', {
                 data: function(d) {
                     d.date_range = $("#date_range").val();
                     d.model_id = $("#model_id").val();
+                    d.outlet_id = $("#outlet_id").val();
                     d.status_id = $("#status_id").val();
                 },
             },
@@ -59,7 +60,10 @@ app.component('gateLogList', {
                 { data: 'gate_in_date', name: 'gate_logs.gate_in_date' },
                 { data: 'registration_number', name: 'vehicles.registration_number', searchable: true },
                 { data: 'model_name', name: 'models.model_name', searchable: true },
-                { data: 'status', name: 'configs.name' },
+                { data: 'outlet', name: 'outlets.code', searchable: true },
+                { data: 'region', name: 'regions.name', searchable: true },
+                { data: 'state', name: 'states.name', searchable: true },
+                //{ data: 'status', name: 'configs.name' },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -113,6 +117,7 @@ app.component('gateLogList', {
             // console.log(response);
             self.status = response.data.status;
             self.model_list = response.data.model_list;
+            self.outlet_list = response.data.outlet_list;
         });
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -124,6 +129,10 @@ app.component('gateLogList', {
 
         $scope.onSelectedStatus = function(status_selected) {
             $('#status').val(status_selected);
+        }
+
+        $scope.onSelectedoutlet = function(outlet_selected) {
+            $('#outlet_id').val(outlet_selected);
         }
 
         $scope.clearSearchTerm = function() {
@@ -159,7 +168,7 @@ app.component('gateLogList', {
 
         $('.daterange').on('apply.daterangepicker', function(ev, picker) {
             $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
-            dataTables.fnFilter();
+            //dataTables.fnFilter();
         });
 
         $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
