@@ -796,6 +796,30 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'gate-in-material-gate-pass',
 				'display_name' => 'Gate In',
 			],
+			[
+				'display_order' => 4,
+				'parent' => 'material-gate-passes',
+				'name' => 'view-own-outlet-material-gate-pass',
+				'display_name' => 'View Own Outlet',
+			],
+			[
+				'display_order' => 5,
+				'parent' => 'material-gate-passes',
+				'name' => 'view-mapped-outlet-material-gate-pass',
+				'display_name' => 'View Mapped Outlet',
+			],
+			[
+				'display_order' => 6,
+				'parent' => 'material-gate-passes',
+				'name' => 'view-all-outlet-material-gate-pass',
+				'display_name' => 'View All Outlet',
+			],
+			[
+				'display_order' => 7,
+				'parent' => 'material-gate-passes',
+				'name' => 'view-only-material-gate-pass',
+				'display_name' => 'View Own Only',
+			],
 
 			//Repair Order
 			[
@@ -1081,6 +1105,12 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'view-overall-outlets-job-card',
 				'display_name' => 'View Overall Outlets',
 			],
+            [
+				'display_order' => 7,
+				'parent' => 'job-cards',
+				'name' => 'view-own-only-job-card',
+				'display_name' => 'View Own Only',
+			],
 
 			[
 				'display_order' => 99,
@@ -1088,6 +1118,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'mobile-simulation',
 				'display_name' => 'Mobile Simulation',
 			],
+
 
 			//Mobile Permissions
 			[
