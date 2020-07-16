@@ -893,7 +893,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'View Overall Outlets',
 			],
 			[
-				'display_order' => 4,
+				'display_order' => 7,
 				'parent' => 'inward-vehicle',
 				'name' => 'view-own-only',
 				'display_name' => 'View Own Only',
