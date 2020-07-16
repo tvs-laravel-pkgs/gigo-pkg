@@ -1081,6 +1081,12 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'view-overall-outlets-job-card',
 				'display_name' => 'View Overall Outlets',
 			],
+            [
+				'display_order' => 7,
+				'parent' => 'job-cards',
+				'name' => 'view-own-only-job-card',
+				'display_name' => 'View Own Only',
+			],
 
 			[
 				'display_order' => 99,
@@ -1088,6 +1094,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'mobile-simulation',
 				'display_name' => 'Mobile Simulation',
 			],
+
 
 			//Mobile Permissions
 			[

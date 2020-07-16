@@ -70,7 +70,7 @@ class JobCardController extends Controller {
 			->leftJoin('service_types', 'service_types.id', 'job_orders.service_type_id')
 			->leftJoin('quote_types', 'quote_types.id', 'job_orders.quote_type_id')
 			->leftJoin('service_order_types', 'service_order_types.id', 'job_orders.type_id')
-			->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . Auth::user()->id . "')")
+			/*->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . Auth::user()->id . "')")*/
 			->where(function ($query) use ($request) {
 				if (!empty($request->date)) {
 					$query->whereDate('job_cards.created_at', date('Y-m-d', strtotime($request->date)));
@@ -119,11 +119,21 @@ class JobCardController extends Controller {
 
 		if (!Entrust::can('view-overall-outlets-job-card')) {
 			if (Entrust::can('view-mapped-outlet-job-card')) {
+
 				$job_cards->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
-			} else {
-				$job_cards->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
-					->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')");
 			}
+			else if (Entrust::can('view-own-outlet-job-card')) {
+				$job_cards->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')");
+			}
+			else
+			{
+				$job_cards->where('job_cards.floor_supervisor_id' ,Auth::user()->id );
+			}
+			
+		}
+		else
+		{
+			$job_cards->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')");
 		}
 
 		$job_cards->groupBy('job_cards.id')
