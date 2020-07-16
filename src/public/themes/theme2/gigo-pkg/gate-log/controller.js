@@ -239,6 +239,34 @@ app.component('gateLogForm', {
         }
         $scope.fetchData();
 
+        $('.btn-nxt').on("click", function() {
+            $('.editDetails-tabs li.active').next().children('a').trigger("click");
+            tabPaneFooter();
+        });
+        $('.btn-prev').on("click", function() {
+            $('.editDetails-tabs li.active').prev().children('a').trigger("click");
+            tabPaneFooter();
+        });
+        $('.btn-pills').on("click", function() {
+            tabPaneFooter();
+        });
+
+        $scope.btnNxt = function() {}
+        $scope.prev = function() {}
+
+
+        $scope.showDiv = function(id) {
+            if (event.target.checked == true) {
+                $("#remarks_div_" + id).removeClass('ng-hide');
+                $("#remarks_div_" + id).val('');
+                $("#is_available_" + id).val('1');
+            } else {
+                $("#remarks_div_" + id).addClass('ng-hide');
+                $("#remarks_div_" + id).val('');
+                $("#is_available_" + id).val('0');
+            }
+        }
+
         //Save Form Data             
         var form_id = '#gate_in_vehicle_form';
         var v = jQuery(form_id).validate({

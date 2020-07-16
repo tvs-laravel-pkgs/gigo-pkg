@@ -209,7 +209,7 @@ class VehicleInventoryItem extends BaseModel {
 		return $list;
 	}
 
-	public static function getInventoryList($job_order_id, $params = [], $add_default = true, $default_text = '') {
+	public static function getInventoryList($job_order_id = NULL, $params = [], $add_default = true, $default_text = '') {
 		$list = Self::select([
 			'id',
 			'name',
@@ -224,80 +224,30 @@ class VehicleInventoryItem extends BaseModel {
 		}
 		$list = collect($list->get()->keyBy('id'));
 		$job_order = JobOrder::find($job_order_id);
-		if (!$job_order) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Validation Error',
-				'errors' => [
-					'Job Order Not Found!',
-				],
-			]);
-		}
-		$vehicle_inventory_items = $job_order->vehicleInventoryItem()->orderBy('id')->get()->toArray();
+		if ($job_order) {
+			$vehicle_inventory_items = $job_order->vehicleInventoryItem()->orderBy('id')->get()->toArray();
 
-		if (count($vehicle_inventory_items) > 0) {
-			foreach ($vehicle_inventory_items as $value) {
-				if (isset($list[$value['id']])) {
-					$list[$value['id']]->checked = true;
-					$list[$value['id']]->is_available = 1;
-					if (isset($value['pivot']['remarks'])) {
-						$list[$value['id']]->remarks = $value['pivot']['remarks'];
+			if (count($vehicle_inventory_items) > 0) {
+				foreach ($vehicle_inventory_items as $value) {
+					if (isset($list[$value['id']])) {
+						$list[$value['id']]->checked = true;
+						$list[$value['id']]->is_available = 1;
+						if (isset($value['pivot']['remarks'])) {
+							$list[$value['id']]->remarks = $value['pivot']['remarks'];
+						}
 					}
 				}
 			}
+			// return response()->json([
+			// 	'success' => false,
+			// 	'error' => 'Validation Error',
+			// 	'errors' => [
+			// 		'Job Order Not Found!',
+			// 	],
+			// ]);
 		}
 
 		return $list;
-
-		// $checked_item_ids = [];
-		// if (count($vehicle_inventory_items) > 0) {
-		// 	foreach ($vehicle_inventory_items as $key => $inv_item) {
-		// 		if ($inv_item['pivot']['is_available'] == 1) {
-		// 			$checked_item_ids[] = $inv_item['pivot']['vehicle_inventory_item_id'];
-		// 		}
-
-		// 	}
-		// }
-		// $checked_item_ids_unique = array_unique($checked_item_ids);
-
-		// $inventory_items = [];
-		// foreach ($list as $key => $item) {
-		// 	if (in_array($item->id, $checked_item_ids_unique)) {
-		// 		$inventory_items[$key]['id'] = $item->id;
-		// 		$inventory_items[$key]['name'] = $item->name;
-		// 		$inventory_items[$key]['field_type_id'] = $item->field_type_id;
-		// 		$inventory_items[$key]['checked'] = true;
-		// 		$inventory_items[$key]['is_available'] = 1;
-
-		// 		if (!empty($vehicle_inventory_items[$key])) {
-		// 			$inventory_items[$key]['remarks'] = $vehicle_inventory_items[$key]['pivot']['remarks'] ? $vehicle_inventory_items[$key]['pivot']['remarks'] : '';
-		// 		} else {
-		// 			$inventory_items[$key]['remarks'] = '';
-		// 		}
-		// 	} else {
-		// 		$inventory_items[$key]['id'] = $item->id;
-		// 		$inventory_items[$key]['name'] = $item->name;
-		// 		$inventory_items[$key]['field_type_id'] = $item->field_type_id;
-		// 		$inventory_items[$key]['checked'] = false;
-		// 		// if (!empty($vehicle_inventory_items[$key])) {
-		// 		// 	if ($item->field_type_id == 12) {
-		// 		// 		$inventory_items[$key]['remarks'] = $vehicle_inventory_items[$key]['pivot']['remarks'] ? $vehicle_inventory_items[$key]['pivot']['remarks'] : 0;
-		// 		// 	} else {
-		// 		// 		$inventory_items[$key]['remarks'] = $vehicle_inventory_items[$key]['pivot']['remarks'] ? $vehicle_inventory_items[$key]['pivot']['remarks'] : '';
-		// 		// 	}
-		// 		// } else {
-		// 		$inventory_items[$key]['is_available'] = 0;
-		// 		if ($item->field_type_id == 12) {
-		// 			$inventory_items[$key]['remarks'] = 0;
-		// 		} else {
-		// 			$inventory_items[$key]['remarks'] = '';
-		// 		}
-		// 		// }
-		// 	}
-		// }
-		// // dd($inventory_items);
-		// //dd($list);
-		// return $inventory_items;
 	}
 
 }

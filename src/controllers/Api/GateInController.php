@@ -12,6 +12,7 @@ use App\JobOrder;
 use App\Employee;
 use App\Outlet;
 use App\Vehicle;
+use App\VehicleInventoryItem;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -30,11 +31,15 @@ class GateInController extends Controller {
 
 	public function getFormData() {
 		try {
+
+			$params['field_type_id'] = [11, 12];
+
 			$extras = [
 				'reading_type_list' => Config::getDropDownList([
 					'config_type_id' => 33,
 					'default_text' => 'Select Reading type',
 				]),
+				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id = NULL, $params),
 			];
 			return response()->json([
 				'success' => true,
@@ -152,6 +157,14 @@ class GateInController extends Controller {
 				'gate_in_remarks' => [
 					'nullable',
 					'max:191',
+					'string',
+				],
+				'vehicle_inventory_items.*.is_available' => [
+					'required',
+					'numeric',
+				],
+				'vehicle_inventory_items.*.remarks' => [
+					'nullable',
 					'string',
 				],
 			]);
@@ -415,7 +428,25 @@ class GateInController extends Controller {
 				}
 			}
 
+			$job_order->vehicleInventoryItem()->sync([]);
+
+			if ($request->vehicle_inventory_items) {
+				foreach ($request->vehicle_inventory_items as $key => $vehicle_inventory_item) {
+					if (isset($vehicle_inventory_item['inventory_item_id']) && $vehicle_inventory_item['is_available'] == 1) {
+						$job_order->vehicleInventoryItem()
+							->attach(
+								$vehicle_inventory_item['inventory_item_id'],
+								[
+									'is_available' => 1,
+									'remarks' => $vehicle_inventory_item['remarks'],
+								]
+							);
+					}
+				}
+			}
+
 			DB::commit();
+
 			$gate_in_data['number'] = $gate_log->number;
 			$gate_in_data['registration_number'] = $vehicle->registration_number;
 
