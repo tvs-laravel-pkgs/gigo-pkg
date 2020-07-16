@@ -234,7 +234,7 @@ app.component('vehicleServiceScheduleList', {
 
 app.component('vehicleServiceScheduleForm', {
     templateUrl: vehicle_service_schedule_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, VehicleServiceScheduleSvc, ServiceTypeSvc, ConfigSvc, PartSvc, RepairOrderSvc) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, VehicleServiceScheduleSvc, ServiceTypeSvc, ConfigSvc, PartSvc, RepairOrderSvc, SplitOrderTypeSvc) {
         var self = this;
         $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
@@ -272,6 +272,7 @@ app.component('vehicleServiceScheduleForm', {
             let promises = {
                 service_type_options: ServiceTypeSvc.options(),
                 tolerance_type_options: ConfigSvc.options({ filter: { configType: 307 } }),
+                split_order_type_options: SplitOrderTypeSvc.options(),
             };
 
             if (typeof($routeParams.id) != 'undefined') {
@@ -286,6 +287,7 @@ app.component('vehicleServiceScheduleForm', {
                 .then(function(responses) {
                     $scope.options.service_types = responses.service_type_options.data.options;
                     $scope.options.tolerance_types = responses.tolerance_type_options.data.options;
+                    $scope.options.split_order_types = responses.split_order_type_options.data.options;
 
                     if ($scope.updating) {
                         $scope.vehicle_service_schedule = responses.vehicle_service_schedule_read.data.vehicle_service_schedule;
@@ -465,11 +467,18 @@ app.component('vehicleServiceScheduleForm', {
                 angular.forEach(sch_serv_type.parts, function(part) {
                     // console.log(part);
                     if (load) {
+                        part.split_order_type_id = part.pivot.split_order_type_id;
+
                         if (!part.pivot) {
                             part.pivot = {};
                             part.pivot.quantity = part.qty;
                             part.pivot.amount = part.total_amount;
                         }
+                    }
+                });
+                angular.forEach(sch_serv_type.repair_orders, function(repair_order) {
+                    if (load) {
+                        repair_order.split_order_type_id = repair_order.pivot.split_order_type_id;
                     }
                 });
             });
@@ -526,6 +535,15 @@ app.component('vehicleServiceScheduleForm', {
             if (part_index === false) {
                 $scope.parts = {};
             } else {
+                if (service_type_item_part.split_order_type_id == undefined) {
+                    $split_id = service_type_item_part.pivot.split_order_type_id;
+                } else {
+                    $split_id = service_type_item_part.split_order_type_id;
+                }
+                SplitOrderTypeSvc.read($split_id)
+                    .then(function(response) {
+                        $scope.service_type_part.split_order_type = response.data.split_order_type;
+                    });
                 $scope.service_type_part.part = service_type_item_part;
                 /*$scope.service_type_part.part.qty = service_type_item_part.pivot.quantity;
                 $scope.service_type_part.part.amount = service_type_item_part.pivot.amount;*/
@@ -564,6 +582,15 @@ app.component('vehicleServiceScheduleForm', {
             if (labour_index === false) {
                 $scope.repair_orders = {};
             } else {
+                if (service_type_item_labour.split_order_type_id == undefined) {
+                    $split_id = service_type_item_labour.pivot.split_order_type_id;
+                } else {
+                    $split_id = service_type_item_labour.split_order_type_id;
+                }
+                SplitOrderTypeSvc.read($split_id)
+                    .then(function(response) {
+                        $scope.service_type_ro.split_order_type = response.data.split_order_type;
+                    });
                 $scope.service_type_ro.repair_order = service_type_item_labour;
             }
 
@@ -573,6 +600,14 @@ app.component('vehicleServiceScheduleForm', {
             $('#labour_form_modal').modal('show');
         }
 
+        $scope.searchSplitOrders = function(query) {
+            return new Promise(function(resolve, reject) {
+                SplitOrderTypeSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
         $scope.searchParts = function(query) {
             return new Promise(function(resolve, reject) {
                 PartSvc.options({ filter: { search: query } })
@@ -604,6 +639,12 @@ app.component('vehicleServiceScheduleForm', {
                     $scope.calculatePartAmount();
                 });
 
+        }
+        $scope.splitOrderSelected = function(split_order) {
+            if (!split_order) {
+                return;
+            }
+            $scope.service_type_ro.repair_order.split_order_type_id = split_order.id;
         }
         $scope.removePart = function(index) {
             var service_index = self.service_index;
@@ -660,6 +701,9 @@ app.component('vehicleServiceScheduleForm', {
                 'part_id': {
                     required: true,
                 },
+                'split_order_type_id': {
+                    required: true,
+                },
                 'quantity': {
                     required: true,
                 },
@@ -675,6 +719,7 @@ app.component('vehicleServiceScheduleForm', {
                 // alert($scope.part_index);
                 // console.log($scope.part_modal_action);
                 var service_index = self.service_index;
+                $scope.service_type_part.part.split_order_type_id = $scope.service_type_part.split_order_type.id;
                 if ($scope.part_modal_action == 'Add') {
                     angular.forEach($scope.vehicle_service_schedule.vehicle_service_schedule_service_types[service_index].parts, function(part, key) {
                         if (part.code == $scope.service_type_part.part.code) {
@@ -689,6 +734,7 @@ app.component('vehicleServiceScheduleForm', {
                 // $scope.calculatePartNetAmount();
                 $scope.updateServiceTypes();
                 $scope.service_type_part.part = '';
+                $scope.service_type_part.split_order_type = '';
                 $('#part_form_modal').modal('hide');
                 // $('body').removeClass('modal-open');
                 // $('.modal-backdrop').remove();
@@ -702,6 +748,9 @@ app.component('vehicleServiceScheduleForm', {
                 'repair_order_id': {
                     required: true,
                 },
+                'split_order_type_id': {
+                    required: true,
+                },
             },
             messages: {
 
@@ -712,6 +761,8 @@ app.component('vehicleServiceScheduleForm', {
             submitHandler: function(form) {
                 // console.log($scope.part_modal_action);
                 var service_index = self.service_index;
+                $scope.service_type_ro.repair_order.split_order_type_id = $scope.service_type_ro.split_order_type.id;
+                console.log($scope.service_type_ro.repair_order);
                 if ($scope.labour_modal_action == 'Add') {
                     /*console.log($scope.vehicle_service_schedule.vehicle_service_schedule_service_types[service_index]);
                     return false;*/
@@ -728,6 +779,7 @@ app.component('vehicleServiceScheduleForm', {
                 // $scope.calculatePartNetAmount();
                 $scope.updateServiceTypes();
                 $scope.service_type_ro.repair_order = '';
+                $scope.service_type_ro.split_order_type = '';
                 $('#labour_form_modal').modal('hide');
                 // $('body').removeClass('modal-open');
                 // $('.modal-backdrop').remove();

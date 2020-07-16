@@ -5,6 +5,7 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use App\Company;
+use App\JobOrder;
 use App\SerialNumberGroup;
 use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -86,7 +87,23 @@ class ServiceType extends BaseModel {
 		])
 			->orderBy('name')
 			->where('company_id', Auth::user()->company_id);
+		if ($params['job_order_id'] && $params) {
+			$list = JobOrder::leftjoin('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
+				->leftjoin('models', 'models.id', 'vehicles.model_id')
+				->leftjoin('vehicle_segments', 'vehicle_segments.id', 'models.vehicle_segment_id')
+				->leftjoin('vehicle_service_schedules', 'vehicle_service_schedules.id', 'vehicle_segments.vehicle_service_schedule_id')
+				->leftjoin('vehicle_service_schedule_service_types', 'vehicle_service_schedule_service_types.vehicle_service_schedule_id', 'vehicle_segments.vehicle_service_schedule_id')
+				->leftjoin('service_types', 'service_types.id', 'vehicle_service_schedule_service_types.service_type_id')
+				->select(
+					[
+						'service_types.id',
+						'service_types.name',
+					])
+				->orderBy('name')
+				->where('job_orders.id', $params['job_order_id'])
+				->where('service_types.company_id', Auth::user()->company_id);
 
+		}
 		if ($params && $params['service_type_ids']) {
 			$list = $list->whereNotIn('id', $params['service_type_ids']);
 		}

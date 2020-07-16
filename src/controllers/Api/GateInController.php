@@ -9,6 +9,7 @@ use App\FinancialYear;
 use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
+use App\Employee;
 use App\Outlet;
 use App\Vehicle;
 use App\VehicleInventoryItem;
@@ -505,8 +506,22 @@ class GateInController extends Controller {
 		}
 	}
 	public function getGateLogList(Request $request) {
-		// dd($request->all());
-		if ($request->date_range) {
+		$employee_outlet = Employee::with(['employee_outlets'])->find(Auth::user()->id);
+		$emp_outlet = array();
+		foreach ($employee_outlet->employee_outlets as $outlet) {
+			array_push($emp_outlet,[$outlet->id]);
+		}
+		 $outlet = array(); 
+		  foreach ($emp_outlet as $key => $value) { 
+		    if (is_array($value)) { 
+		      $outlet = array_merge($outlet, array_flatten($value)); 
+		    } 
+		    else { 
+		      $outlet[$key] = $value; 
+		    } 
+		  } 
+
+		/*if ($request->date_range) {
 			$date_range = explode(' to ', $request->date_range);
 			$start_date = date('Y-m-d', strtotime($date_range[0]));
 			$start_date = $start_date . ' 00:00:00';
@@ -516,7 +531,9 @@ class GateInController extends Controller {
 		} else {
 			$start_date = date('Y-m-01 00:00:00');
 			$end_date = date('Y-m-t 23:59:59');
-		}
+		}*/
+		
+		$date = explode('to', $request->date_range);
 
 		$gate_pass_lists = GateLog::select([
 			'gate_logs.id as gate_log_id',
@@ -525,26 +542,30 @@ class GateInController extends Controller {
 			'gate_logs.status_id',
 			'vehicles.registration_number',
 			'models.model_name',
+			'outlets.code as outlet',
+			'regions.name as region','states.name as state',
 			'configs.name as status',
 		])
 			->leftjoin('job_orders', 'job_orders.id', 'gate_logs.job_order_id')
 			->leftjoin('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
 			->leftjoin('models', 'models.id', 'vehicles.model_id')
+			->leftjoin('outlets', 'outlets.id', 'job_orders.outlet_id')
+			->leftjoin('regions', 'regions.id', 'outlets.region_id')
+			->leftjoin('states', 'states.id', 'outlets.state_id')
 			->join('configs', 'configs.id', 'gate_logs.status_id')
 
 			->where(function ($query) use ($request) {
-				if (!empty($request->model_ids)) {
-					$query->where('vehicles.model_id', $request->model_ids);
+				if (!empty($request->model_id)) {
+					$query->where('vehicles.model_id', $request->model_id);
 				}
 			})
 
 			->where(function ($query) use ($request) {
-				if (!empty($request->status)) {
-					$query->where('gate_logs.status_id', $request->status);
+				if (!empty($request->outlet_id)) {
+					$query->where('job_orders.outlet_id', $request->outlet_id);
 				}
 			})
-
-			->where(function ($query) use ($start_date) {
+			/*->where(function ($query) use ($start_date) {
 				if (!empty($start_date)) {
 					$query->where('gate_logs.created_at', '>=', $start_date);
 				}
@@ -554,11 +575,32 @@ class GateInController extends Controller {
 				if (!empty($end_date)) {
 					$query->where('gate_logs.created_at', '<=', $end_date);
 				}
-			})
+			});*/
+			->where(function ($query) use ($request, $date) {
+				if (!empty($request->get('date_range'))) {
+					$query->whereDate('gate_logs.created_at', '>=', date('Y-m-d', strtotime($date[0])))
+						->whereDate('gate_logs.created_at', '<=', date('Y-m-d', strtotime($date[1])));
+				}
+			});
 
-			->orderBy('gate_logs.id', 'DESC')
+            if (!Entrust::can('all')) 
+            {
+	            if(Entrust::can('mapped-outlet'))
+				{
+				   $gate_pass_lists->whereIn('job_orders.outlet_id', $outlet);
+				}
+				else if(Entrust::can('own-outlet'))
+				{
+				   $gate_pass_lists->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+				}
+				else{
+				    $gate_pass_lists->where('gate_logs.created_by_id', Auth::user()->id);
+				}
+			
+			}
 
-		;
+			//->orderBy('gate_logs.id', 'DESC');
+			
 
 		return Datatables::of($gate_pass_lists)
 			->addColumn('status', function ($gate_pass_list) {
@@ -592,6 +634,7 @@ class GateInController extends Controller {
 	public function getGateLogFilter() {
 		$this->data['model_list'] = collect(ModelType::select('id', 'model_name')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'model_name' => 'Select Model Name']);
 		$this->data['status'] = collect(Config::select('id', 'name')->where('config_type_id', 37)->get())->prepend(['id' => '', 'name' => 'Select Status']);
+		$this->data['outlet_list'] = collect(Outlet::select('id', 'code')->where('company_id',  Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']);
 
 		return response()->json($this->data);
 

@@ -86,10 +86,14 @@
                                     <input ng-if="sch_serv_type.id!=null" type="hidden" name="parts[{{sch_serv_type.id}}][{{part_index}}][amount]" value="{{service_type_item_part.pivot.amount}}">
                                     <input ng-if="sch_serv_type.id==null" type="hidden" name="parts[{{index}}][{{part_index}}][quantity]" value="{{service_type_item_part.pivot.quantity}}">
                                     <input ng-if="sch_serv_type.id==null" type="hidden" name="parts[{{index}}][{{part_index}}][amount]" value="{{service_type_item_part.pivot.amount}}">
+                                    <input ng-if="sch_serv_type.id!=null" type="hidden" name="parts[{{sch_serv_type.id}}][{{part_index}}][split_order_type_id]" value="{{service_type_item_part.split_order_type_id}}">
+                                    <input ng-if="sch_serv_type.id==null" type="hidden" name="parts[{{index}}][{{part_index}}][split_order_type_id]" value="{{service_type_item_part.split_order_type_id}}">
                                 </span>
                                 <span class="labour_textboxes" ng-repeat="(labour_index,service_type_item_labour) in sch_serv_type.repair_orders track by labour_index">
                                     <input ng-if="sch_serv_type.id!=null" type="hidden" name="labours[{{sch_serv_type.id}}][{{labour_index}}][repair_order_id]" value="{{service_type_item_labour.id}}">
                                     <input ng-if="sch_serv_type.id==null" type="hidden" name="labours[{{index}}][{{labour_index}}][repair_order_id]" value="{{service_type_item_labour.id}}">
+                                    <input ng-if="sch_serv_type.id!=null" type="hidden" name="labours[{{sch_serv_type.id}}][{{labour_index}}][split_order_type_id]" value="{{service_type_item_labour.split_order_type_id}}">
+                                    <input ng-if="sch_serv_type.id==null" type="hidden" name="labours[{{index}}][{{labour_index}}][split_order_type_id]" value="{{service_type_item_labour.split_order_type_id}}">
                                     <!-- <input type="hidden" name="labours[{{sch_serv_type.id}}][{{labour_index}}][schedule_id]" value="{{sch_serv_type.id}}"> -->
                                 </span>
                             </td>

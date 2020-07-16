@@ -110,6 +110,7 @@ class VehicleServiceScheduleController extends Controller {
 								$parts[$key]['part_id'] = $part['part_id'];
 								$parts[$key]['quantity'] = $part['quantity'];
 								$parts[$key]['amount'] = $part['amount'];
+								$parts[$key]['split_order_type_id'] = $part['split_order_type_id'];
 							}
 							$vssst_obj->parts()->syncWithoutDetaching($parts);
 						}
@@ -118,6 +119,7 @@ class VehicleServiceScheduleController extends Controller {
 							foreach ($request->labours[$vssst['schedule_type_id']] as $key => $labour) {
 								$labours[$key]['schedule_id'] = $vssst_obj->id;
 								$labours[$key]['repair_order_id'] = $labour['repair_order_id'];
+								$labours[$key]['split_order_type_id'] = $labour['split_order_type_id'];
 							}
 							$vssst_obj->repair_orders()->syncWithoutDetaching($labours);
 						}
@@ -156,6 +158,8 @@ class VehicleServiceScheduleController extends Controller {
 							foreach ($request->labours[$vssst['schedule_type_id']] as $key => $labour) {
 								$labours[$key]['schedule_id'] = $vssst_obj->id;
 								$labours[$key]['repair_order_id'] = $labour['repair_order_id'];
+								$labours[$key]['split_order_type_id'] = $labour['split_order_type_id'];
+
 							}
 							$vssst_obj->repair_orders()->syncWithoutDetaching($labours);
 						}

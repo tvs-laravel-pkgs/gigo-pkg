@@ -726,6 +726,30 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'delete-gate-log',
 				'display_name' => 'Delete',
 			],
+			[
+				'display_order' => 4,
+				'parent' => 'gate-logs',
+				'name' => 'own-only',
+				'display_name' => 'Own Only',
+			],
+			[
+				'display_order' => 5,
+				'parent' => 'gate-logs',
+				'name' => 'own-outlet',
+				'display_name' => 'Own Outlet',
+			],
+			[
+				'display_order' => 6,
+				'parent' => 'gate-logs',
+				'name' => 'mapped-outlet',
+				'display_name' => 'Mapped Outlet',
+			],
+			[
+				'display_order' => 7,
+				'parent' => 'gate-logs',
+				'name' => 'all',
+				'display_name' => 'All',
+			],
 
 			//VEHICLE GATE PASS
 			[
@@ -868,6 +892,13 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'view-overall-outlets-vehicle-inward',
 				'display_name' => 'View Overall Outlets',
 			],
+			[
+				'display_order' => 7,
+				'parent' => 'inward-vehicle',
+				'name' => 'view-own-only',
+				'display_name' => 'View Own Only',
+			],
+			
 
 			//My JobCard
 			[
@@ -1050,6 +1081,12 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'view-overall-outlets-job-card',
 				'display_name' => 'View Overall Outlets',
 			],
+            [
+				'display_order' => 7,
+				'parent' => 'job-cards',
+				'name' => 'view-own-only-job-card',
+				'display_name' => 'View Own Only',
+			],
 
 			[
 				'display_order' => 99,
@@ -1057,6 +1094,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'mobile-simulation',
 				'display_name' => 'Mobile Simulation',
 			],
+
 
 			//Mobile Permissions
 			[
