@@ -3141,23 +3141,104 @@ app.component('inwardVehiclePayableLabourPartForm', {
         /* Dropdown Arrow Function */
         arrowDropdown();
 
-        self.remove_job_order_part_ids = [];
-        $scope.removePayablePart = function(index, id) {
-            if (id) {
-                self.remove_job_order_part_ids.push(id);
-                $("#delete_job_order_part_ids").val(JSON.stringify(self.remove_job_order_part_ids));
-            }
-            $scope.job_order.job_order_parts.splice(index, 1);
-            $scope.calTotal();
+        // self.remove_job_order_part_ids = [];
+        $scope.removePayablePart = function(index, id, type) {
+            // console.log(index, id, type);
+            $scope.delete_reason = 10021;
+            $('#removal_reason').val('');
+            //HIDE REASON TEXTAREA 
+            $scope.customer_delete = false;
+
+            $scope.laboutPartsDelete(index, id, type);
+            // if (id) {
+            //     self.remove_job_order_part_ids.push(id);
+            //     $("#delete_job_order_part_ids").val(JSON.stringify(self.remove_job_order_part_ids));
+            // }
+            // $scope.job_order.job_order_parts.splice(index, 1);
+            // $scope.calTotal();
         }
-        self.remove_job_order_repair_order_ids = [];
-        $scope.removePayableLabour = function(index, id) {
-            if (id) {
-                self.remove_job_order_repair_order_ids.push(id);
-                $("#delete_job_order_repair_order_ids").val(JSON.stringify(self.remove_job_order_repair_order_ids));
+        // self.remove_job_order_repair_order_ids = [];
+        $scope.removePayableLabour = function(index, id, type) {
+            // console.log(index, id, type);
+            $scope.delete_reason = 10021;
+            $('#removal_reason').val('');
+            //HIDE REASON TEXTAREA 
+            $scope.customer_delete = false;
+
+            $scope.laboutPartsDelete(index, id, type);
+
+            // if (id) {
+            //     self.remove_job_order_repair_order_ids.push(id);
+            //     $("#delete_job_order_repair_order_ids").val(JSON.stringify(self.remove_job_order_repair_order_ids));
+            // }
+            // $scope.job_order.job_order_repair_orders.splice(index, 1);
+            // $scope.calTotal();
+        }
+
+        $scope.laboutPartsDelete = function(index, id, type) {
+            $('#delete_labour_parts').modal('show');
+            $('#labour_parts_id').val(id);
+            $('#payable_type').val(type);
+
+            $scope.saveLabourPartDeleteForm = function() {
+                var form_id = '#labour_parts_remove';
+                var v = jQuery(form_id).validate({
+                    ignore: '',
+                    rules: {
+                        'removal_reason_id': {
+                            required: true,
+                        },
+                        'removal_reason': {
+                            required: true,
+                        },
+                    },
+                    errorPlacement: function(error, element) {
+                        if (element.attr("name") == "removal_reason_id") {
+                            error.appendTo('#errorDeleteReasonRequired');
+                            return;
+                        } else {
+                            error.insertAfter(element);
+                        }
+                    },
+                    submitHandler: function(form) {
+                        let formData = new FormData($(form_id)[0]);
+                        $rootScope.loading = true;
+                        // $scope.button_action(id, 1);
+                        $.ajax({
+                                url: base_url + '/api/vehicle-inward/labour-parts-delete/update',
+                                method: "POST",
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                            })
+                            .done(function(res) {
+                                // $scope.button_action(id, 2);
+                                if (!res.success) {
+                                    $rootScope.loading = false;
+                                    showErrorNoty(res);
+                                    return;
+                                }
+                                $('#delete_labour_parts').modal('hide');
+                                $('body').removeClass('modal-open');
+                                $('.modal-backdrop').remove();
+                                $scope.fetchData();
+                                custom_noty('success', res.message);
+                                // if (id == 1) {
+                                //     $location.path('/inward-vehicle/card-list');
+                                //     $scope.$apply();
+                                // } else {
+                                //     $location.path('/inward-vehicle/estimate/' + $scope.job_order_id);
+                                //     $scope.$apply();
+                                // }
+                            })
+                            .fail(function(xhr) {
+                                $rootScope.loading = false;
+                                $scope.button_action(id, 2);
+                                custom_noty('error', 'Something went wrong at server');
+                            });
+                    }
+                });
             }
-            $scope.job_order.job_order_repair_orders.splice(index, 1);
-            $scope.calTotal();
         }
 
         $scope.calTotal = function() {

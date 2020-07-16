@@ -392,7 +392,7 @@ class VehicleInwardController extends Controller {
 				foreach ($payable_maintenance['labour_details']->jobOrderRepairOrders as $key => $value) {
 					$value->repair_order = $value->repairOrder;
 					$value->repair_order_type = $value->repairOrder->repairOrderType;
-					if (in_array($value->split_order_type_id, $customer_paid_type_id)) {
+					if ((in_array($value->split_order_type_id, $customer_paid_type_id)) && (empty($value->removal_reason_id))) {
 						if ($value->is_free_service != 1) {
 							if ($value->repairOrder->taxCode) {
 								$tax_amount = 0;
@@ -429,7 +429,7 @@ class VehicleInwardController extends Controller {
 			if (!empty($payable_maintenance['part_details']->jobOrderParts)) {
 				foreach ($payable_maintenance['part_details']->jobOrderParts as $key => $value) {
 					$value->part = $value->part;
-					if (in_array($value->split_order_type_id, $customer_paid_type_id)) {
+					if ((in_array($value->split_order_type_id, $customer_paid_type_id)) && (empty($value->removal_reason_id))) {
 						if ($value->is_free_service != 1) {
 							if ($value->part->taxCode) {
 								$tax_amount = 0;
@@ -2281,7 +2281,7 @@ class VehicleInwardController extends Controller {
 			$total_amount = 0;
 			if ($job_order->jobOrderRepairOrders) {
 				foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
-					if ($labour->splitOrderType->paid_by_id == 10013 || empty($labour->splitOrderType->paid_by_id)) {
+					if (($labour->splitOrderType->paid_by_id == 10013 || empty($labour->splitOrderType->paid_by_id)) && (empty($labour->removal_reason_id))) {
 						//CUSTOMER
 						$labour_total_amount += $labour->amount;
 					}
@@ -2290,7 +2290,7 @@ class VehicleInwardController extends Controller {
 			}
 			if ($job_order->jobOrderParts) {
 				foreach ($job_order->jobOrderParts as $key => $part) {
-					if ($part->splitOrderType->paid_by_id == 10013 || empty($labour->splitOrderType->paid_by_id)) {
+					if (($part->splitOrderType->paid_by_id == 10013 || empty($labour->splitOrderType->paid_by_id)) && (empty($part->removal_reason_id))) {
 						//CUSTOMER
 						$parts_total_amount += $part->amount;
 					}
@@ -2359,7 +2359,7 @@ class VehicleInwardController extends Controller {
 			DB::commit();
 			return response()->json([
 				'success' => true,
-				'message' => 'Payable details saved successfully!!',
+				'message' => 'Other Labour & Parts details saved successfully!!',
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -4313,6 +4313,94 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'message' => 'JOB Initiated Successfully',
 			]);
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+
+	//deleteLabourPartsStatusUpdate
+	public function deleteLabourPartsStatusUpdate(Request $request) {
+		// dd($request->all());
+		try {
+			DB::beginTransaction();
+			if ($request->payable_type == 'labour') {
+				$validator = Validator::make($request->all(), [
+					'labour_parts_id' => [
+						'required',
+						'integer',
+						'exists:job_order_repair_orders,id',
+					],
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				$job_order_repair_order = JobOrderRepairOrder::find($request->labour_parts_id);
+				if ($request->removal_reason_id == 10022) {
+					$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
+					$job_order_repair_order->removal_reason = $request->removal_reason;
+				} else {
+					$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
+					$job_order_repair_order->removal_reason = NULL;
+				}
+				$job_order_repair_order->updated_by_id = Auth::user()->id;
+				$job_order_repair_order->updated_at = Carbon::now();
+				$job_order_repair_order->save();
+
+			} else {
+				$validator = Validator::make($request->all(), [
+					'labour_parts_id' => [
+						'required',
+						'integer',
+						'exists:job_order_parts,id',
+					],
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				$job_order_parts = JobOrderPart::find($request->labour_parts_id);
+				if ($request->removal_reason_id == 10022) {
+					$job_order_parts->removal_reason_id = $request->removal_reason_id;
+					$job_order_parts->removal_reason = $request->removal_reason;
+				} else {
+					$job_order_parts->removal_reason_id = $request->removal_reason_id;
+					$job_order_parts->removal_reason = NULL;
+				}
+				$job_order_parts->updated_by_id = Auth::user()->id;
+				$job_order_parts->updated_at = Carbon::now();
+				$job_order_parts->save();
+			}
+
+			DB::commit();
+			if ($request->payable_type == 'labour') {
+				return response()->json([
+					'success' => true,
+					'message' => 'Labour Details Successfully',
+				]);
+			} else {
+				return response()->json([
+					'success' => true,
+					'message' => 'Parts Details Successfully',
+				]);
+			}
+
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
