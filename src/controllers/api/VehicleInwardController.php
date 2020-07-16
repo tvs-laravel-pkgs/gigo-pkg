@@ -1964,13 +1964,15 @@ class VehicleInwardController extends Controller {
 						if ($value->service_type_id == $job_order->service_type_id && $value->repair_orders) {
 							// dd($value->repair_orders->toArray());
 							foreach ($value->repair_orders as $rkey => $rvalue) {
-
+								$split_order_type = SplitOrderType::find($rvalue->pivot->split_order_type_id);
 								$labour_details[$rkey]['id'] = $rvalue->id;
 								$labour_details[$rkey]['name'] = $rvalue->code . ' | ' . $rvalue->name;
 								// $labour_details[$key]['type'] = $value->repairOrderType ? $value->repairOrderType->short_name : '-';
 								$labour_details[$rkey]['type'] = $rvalue->category->name;
 								$labour_details[$rkey]['qty'] = $rvalue->hours;
 								$labour_details[$rkey]['amount'] = $rvalue->amount;
+								$labour_details[$rkey]['split_order_type'] = $split_order_type->name;
+								//$split_order_type->code . ' | ' .
 								// $labour_details[$key]['is_free_service'] = $rvalue->pivot->is_free_service;
 								// if ($value->pivot->is_free_service != 1) {
 								// 	$labour_amount += $value->amount;
@@ -2021,6 +2023,7 @@ class VehicleInwardController extends Controller {
 						if ($value->service_type_id == $job_order->service_type_id && $value->parts) {
 							// dd($value->parts->toArray());
 							foreach ($value->parts as $rkey => $rvalue) {
+								$split_order_type = SplitOrderType::find($rvalue->pivot->split_order_type_id);
 
 								$part_details[$rkey]['id'] = $rvalue->id;
 								$part_details[$rkey]['name'] = $rvalue->code . ' | ' . $rvalue->name;
@@ -2028,6 +2031,9 @@ class VehicleInwardController extends Controller {
 								$part_details[$rkey]['rate'] = $rvalue->rate;
 								$part_details[$rkey]['qty'] = $rvalue->pivot->quantity;
 								$part_details[$rkey]['amount'] = $rvalue->pivot->amount;
+								$part_details[$rkey]['split_order_type'] = $split_order_type->name;
+								//$split_order_type->code . ' | ' .
+
 								/*$part_details[$key]['is_free_service'] = $rvalue->pivot->is_free_service;
 									if ($value->pivot->is_free_service != 1) {
 										$parts_rate += $value->pivot->amount;

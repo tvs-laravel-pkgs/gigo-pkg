@@ -41,6 +41,9 @@
                                                             <th>
                                                                 Type
                                                             </th>
+                                                            <th>
+                                                                Split Order Type
+                                                            </th>
                                                             <th class="text-right">
                                                                 Quantity
                                                             </th>
@@ -66,6 +69,9 @@
                                                             <td>
                                                                 {{labour_details.type}}
                                                             </td>
+                                                            <td>
+                                                                {{labour_details.split_order_type}}
+                                                            </td>
                                                             <td class="text-right">
                                                                 {{labour_details.qty}}
                                                             </td>
@@ -82,7 +88,7 @@
                                                             </td> -->
                                                         </tr>
                                                         <tr>
-                                                            <td colspan="3" class="text-right">
+                                                            <td colspan="4" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
@@ -110,6 +116,9 @@
                                                             <th>
                                                                 Type
                                                             </th>
+                                                            <th>
+                                                                Split Order Type
+                                                            </th>
                                                             <th class="text-right">
                                                                 Rate
                                                             </th>
@@ -129,6 +138,9 @@
                                                             </td>
                                                             <td>
                                                                 {{part_details.type}}
+                                                            </td>
+                                                            <td>
+                                                                {{part_details.split_order_type}}
                                                             </td>
                                                             <td class="text-right">
                                                                 {{part_details.rate | number:2}}
@@ -154,7 +166,7 @@
                                                             </td> -->
                                                         </tr>
                                                         <tr>
-                                                            <td colspan="4" class="text-right">
+                                                            <td colspan="5" class="text-right">
                                                                 <b>
                                                                     Total Parts
                                                                 </b>
@@ -177,7 +189,7 @@
                                                     <table class="table-transparent">
                                                         <tbody>
                                                             <tr>
-                                                                <td colspan="4" class="text-right">
+                                                                <td colspan="5" class="text-right">
                                                                     <b>
                                                                         Total Labour & Parts
                                                                     </b>
