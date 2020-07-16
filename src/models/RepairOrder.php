@@ -382,6 +382,7 @@ class RepairOrder extends BaseModel {
 		$list = Collect(Self::select([
 			'id',
 			'name',
+			'code',
 		])
 				->orderBy('name')
 				->get());

@@ -43,7 +43,7 @@
                                                                 <input ng-model="searchCustomerVoice" type="search" placeholder="Search for a Voice of Customer" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
                                                             <md-optgroup label="j">
-                                                                <md-option ng-value="j.id" ng-repeat="j in extras.customer_voice_list | filter:searchCustomerVoice">{{j.code}}</md-option>
+                                                                <md-option ng-value="j.id" ng-repeat="j in extras.customer_voice_list | filter:searchCustomerVoice">{{j.code}} / {{j.name}}</md-option>
                                                             </md-optgroup>
                                                         </md-select>
                                                         <input type="hidden" name="customer_voices[{{index}}][id]" value="{{customer_voice.id}}" class="required">

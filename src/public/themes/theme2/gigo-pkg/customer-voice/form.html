@@ -81,6 +81,20 @@
                                             </div><!-- Field -->
                                         </div><!-- column -->
                                         <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Repair Oredr <sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.customer_voice.repair_order_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Repair Order">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Repair Order" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="repair_order.id" ng-repeat="repair_order in $ctrl.extras.repair_order_list | filter:searchTerm">{{repair_order.code}} / {{repair_order.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control type-sm required" name="repair_order_id" id="repair_order_id" value="{{$ctrl.customer_voice.repair_order_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- column -->
+                                        <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Active Status

@@ -726,6 +726,30 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'delete-gate-log',
 				'display_name' => 'Delete',
 			],
+			[
+				'display_order' => 4,
+				'parent' => 'gate-logs',
+				'name' => 'own-only',
+				'display_name' => 'Own Only',
+			],
+			[
+				'display_order' => 5,
+				'parent' => 'gate-logs',
+				'name' => 'own-outlet',
+				'display_name' => 'Own Outlet',
+			],
+			[
+				'display_order' => 6,
+				'parent' => 'gate-logs',
+				'name' => 'mapped-outlet',
+				'display_name' => 'Mapped Outlet',
+			],
+			[
+				'display_order' => 7,
+				'parent' => 'gate-logs',
+				'name' => 'all',
+				'display_name' => 'All',
+			],
 
 			//VEHICLE GATE PASS
 			[
