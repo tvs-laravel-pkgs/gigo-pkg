@@ -111,7 +111,7 @@ class VehicleInwardController extends Controller {
 			if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
 				$vehicle_inwards->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 			}
-			if (Entrust::can('view-own-outlet-vehicle-inward')) {
+			else if (Entrust::can('view-own-outlet-vehicle-inward')) {
 				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)->whereNull('job_orders.service_advisor_id')->whereNull('job_orders.floor_supervisor_id');
 			}
 			else
