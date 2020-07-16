@@ -467,6 +467,8 @@ app.component('vehicleServiceScheduleForm', {
                 angular.forEach(sch_serv_type.parts, function(part) {
                     // console.log(part);
                     if (load) {
+                        part.split_order_type_id = part.pivot.split_order_type_id;
+
                         if (!part.pivot) {
                             part.pivot = {};
                             part.pivot.quantity = part.qty;
@@ -533,6 +535,15 @@ app.component('vehicleServiceScheduleForm', {
             if (part_index === false) {
                 $scope.parts = {};
             } else {
+                if (service_type_item_part.split_order_type_id == undefined) {
+                    $split_id = service_type_item_part.pivot.split_order_type_id;
+                } else {
+                    $split_id = service_type_item_part.split_order_type_id;
+                }
+                SplitOrderTypeSvc.read($split_id)
+                    .then(function(response) {
+                        $scope.service_type_part.split_order_type = response.data.split_order_type;
+                    });
                 $scope.service_type_part.part = service_type_item_part;
                 /*$scope.service_type_part.part.qty = service_type_item_part.pivot.quantity;
                 $scope.service_type_part.part.amount = service_type_item_part.pivot.amount;*/
@@ -690,6 +701,9 @@ app.component('vehicleServiceScheduleForm', {
                 'part_id': {
                     required: true,
                 },
+                'split_order_type_id': {
+                    required: true,
+                },
                 'quantity': {
                     required: true,
                 },
@@ -705,6 +719,7 @@ app.component('vehicleServiceScheduleForm', {
                 // alert($scope.part_index);
                 // console.log($scope.part_modal_action);
                 var service_index = self.service_index;
+                $scope.service_type_part.part.split_order_type_id = $scope.service_type_part.split_order_type.id;
                 if ($scope.part_modal_action == 'Add') {
                     angular.forEach($scope.vehicle_service_schedule.vehicle_service_schedule_service_types[service_index].parts, function(part, key) {
                         if (part.code == $scope.service_type_part.part.code) {
@@ -719,6 +734,7 @@ app.component('vehicleServiceScheduleForm', {
                 // $scope.calculatePartNetAmount();
                 $scope.updateServiceTypes();
                 $scope.service_type_part.part = '';
+                $scope.service_type_part.split_order_type = '';
                 $('#part_form_modal').modal('hide');
                 // $('body').removeClass('modal-open');
                 // $('.modal-backdrop').remove();
