@@ -560,7 +560,7 @@ class GateInController extends Controller {
 				}
 				else if(Entrust::can('own-outlet'))
 				{
-				   $gate_pass_lists->where('job_orders.outlet_id', Auth::user()->working_outlet_id);
+				   $gate_pass_lists->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
 				}
 				else{
 				    $gate_pass_lists->where('gate_logs.created_by_id', Auth::user()->id);

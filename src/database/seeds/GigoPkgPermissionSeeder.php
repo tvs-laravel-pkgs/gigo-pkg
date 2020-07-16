@@ -892,6 +892,13 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'view-overall-outlets-vehicle-inward',
 				'display_name' => 'View Overall Outlets',
 			],
+			[
+				'display_order' => 4,
+				'parent' => 'inward-vehicle',
+				'name' => 'view-own-only',
+				'display_name' => 'View Own Only',
+			],
+			
 
 			//My JobCard
 			[
