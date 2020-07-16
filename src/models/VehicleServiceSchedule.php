@@ -67,6 +67,7 @@ class VehicleServiceSchedule extends BaseModel {
 	public function vehicle_service_schedule_service_types() {
 		return $this->hasMany('App\VehicleServiceScheduleServiceType');
 	}
+
 	public function company() {
 		return $this->belongsTo('App\Company');
 	}
