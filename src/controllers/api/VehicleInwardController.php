@@ -389,9 +389,20 @@ class VehicleInwardController extends Controller {
 			$additional_rot_and_parts_labour_amount_include_tax = 0;
 			$additional_rot_and_parts_part_amount_include_tax = 0;
 
-			$payable_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 0)->get();
-			if (!empty($payable_maintenance['labour_details'])) {
-				foreach ($payable_maintenance['labour_details'] as $key => $value) {
+			// $payable_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 0)->get();
+			$payable_maintenance['labour_details'] = $job_order->with([
+				'jobOrderRepairOrders' => function ($query) {
+					$query->where('is_recommended_by_oem', 0);
+				},
+				'jobOrderRepairOrders.splitOrderType',
+				'jobOrderRepairOrders.splitOrderType.paidBy',
+				'jobOrderRepairOrders.repairOrder',
+				'jobOrderRepairOrders.repairOrder.repairOrderType',
+			])
+				->find($r->id);
+
+			if (!empty($payable_maintenance['labour_details']->jobOrderRepairOrders)) {
+				foreach ($payable_maintenance['labour_details']->jobOrderRepairOrders as $key => $value) {
 					$value->repair_order = $value->repairOrder;
 					$value->repair_order_type = $value->repairOrder->repairOrderType;
 					if (in_array($value->split_order_type_id, $customer_paid_type_id)) {
@@ -419,9 +430,17 @@ class VehicleInwardController extends Controller {
 			}
 			$payable_maintenance['labour_amount'] = $payable_labour_amount;
 
-			$payable_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 0)->get();
-			if (!empty($payable_maintenance['part_details'])) {
-				foreach ($payable_maintenance['part_details'] as $key => $value) {
+			// $payable_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 0)->get();
+			$payable_maintenance['part_details'] = $job_order->with([
+				'jobOrderParts' => function ($query) {
+					$query->where('is_oem_recommended', 0);
+				},
+				'jobOrderParts.splitOrderType',
+				'jobOrderParts.part',
+			])
+				->find($r->id);
+			if (!empty($payable_maintenance['part_details']->jobOrderParts)) {
+				foreach ($payable_maintenance['part_details']->jobOrderParts as $key => $value) {
 					$value->part = $value->part;
 					if (in_array($value->split_order_type_id, $customer_paid_type_id)) {
 						if ($value->is_free_service != 1) {
