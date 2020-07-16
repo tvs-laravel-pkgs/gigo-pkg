@@ -148,14 +148,27 @@ class VehicleInwardController extends Controller {
 				})
 				->where('job_orders.company_id', Auth::user()->company_id)
 			;
-			if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
+			/*if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
 				if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
 					$vehicle_inward_list_get->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 				} else {
 					$vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
 						->whereRaw("IF (`job_orders`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
 				}
+			}*/
+			if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
+			if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
+				$vehicle_inwards->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 			}
+			if (Entrust::can('view-own-outlet-vehicle-inward')) {
+				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)->whereNull('job_orders.service_advisor_id')->whereNull('job_orders.floor_supervisor_id');
+			}
+			else
+			{
+				$vehicle_inwards->where('job_orders.service_advisor_id' ,Auth::user()->id )->whereNull('job_orders.floor_supervisor_id');
+			}
+			
+		    }
 			$vehicle_inward_list_get->groupBy('job_orders.id');
 			$vehicle_inward_list_get->orderBy('job_orders.created_at', 'DESC');
 
@@ -1983,13 +1996,15 @@ class VehicleInwardController extends Controller {
 						if ($value->service_type_id == $job_order->service_type_id && $value->repair_orders) {
 							// dd($value->repair_orders->toArray());
 							foreach ($value->repair_orders as $rkey => $rvalue) {
-
+								$split_order_type = SplitOrderType::find($rvalue->pivot->split_order_type_id);
 								$labour_details[$rkey]['id'] = $rvalue->id;
 								$labour_details[$rkey]['name'] = $rvalue->code . ' | ' . $rvalue->name;
 								// $labour_details[$key]['type'] = $value->repairOrderType ? $value->repairOrderType->short_name : '-';
 								$labour_details[$rkey]['type'] = $rvalue->category->name;
 								$labour_details[$rkey]['qty'] = $rvalue->hours;
 								$labour_details[$rkey]['amount'] = $rvalue->amount;
+								$labour_details[$rkey]['split_order_type'] = $split_order_type->name;
+								//$split_order_type->code . ' | ' .
 								// $labour_details[$key]['is_free_service'] = $rvalue->pivot->is_free_service;
 								// if ($value->pivot->is_free_service != 1) {
 								// 	$labour_amount += $value->amount;
@@ -2040,6 +2055,7 @@ class VehicleInwardController extends Controller {
 						if ($value->service_type_id == $job_order->service_type_id && $value->parts) {
 							// dd($value->parts->toArray());
 							foreach ($value->parts as $rkey => $rvalue) {
+								$split_order_type = SplitOrderType::find($rvalue->pivot->split_order_type_id);
 
 								$part_details[$rkey]['id'] = $rvalue->id;
 								$part_details[$rkey]['name'] = $rvalue->code . ' | ' . $rvalue->name;
@@ -2047,6 +2063,9 @@ class VehicleInwardController extends Controller {
 								$part_details[$rkey]['rate'] = $rvalue->rate;
 								$part_details[$rkey]['qty'] = $rvalue->pivot->quantity;
 								$part_details[$rkey]['amount'] = $rvalue->pivot->amount;
+								$part_details[$rkey]['split_order_type'] = $split_order_type->name;
+								//$split_order_type->code . ' | ' .
+
 								/*$part_details[$key]['is_free_service'] = $rvalue->pivot->is_free_service;
 									if ($value->pivot->is_free_service != 1) {
 										$parts_rate += $value->pivot->amount;
