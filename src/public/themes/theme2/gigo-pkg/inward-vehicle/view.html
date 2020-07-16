@@ -1294,7 +1294,7 @@
                                 <div class="tab-pane-wrap">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>Payable Labour & Parts</b></h5>
+                                            <h5 class="color-primary mb-10"><b>Other Labour & Parts</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="table-responsive">
                                                 <table class="table table-dark-grey">
@@ -1306,6 +1306,9 @@
                                                             <th>
                                                                 Type
                                                             </th>
+                                                            <th>
+                                                                Split Order Type
+                                                            </th>
                                                             <th class="text-right">
                                                                 Quantity
                                                             </th>
@@ -1315,18 +1318,24 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in payable_maintenance.labour_details" id="tr_{{index}}">
+                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in payable_maintenance.labour_details.job_order_repair_orders" id="tr_{{index}}">
                                                             <td>
                                                                 {{labour_detail.repair_order.code}} | {{labour_detail.repair_order.name}}
                                                             </td>
                                                             <td>
                                                                 {{labour_detail.repair_order.repair_order_type.name}}
                                                             </td>
+                                                            <td>
+                                                                {{labour_detail.split_order_type.code}}
+                                                                {{labour_detail.split_order_type ? '|' : ''}}
+                                                                {{labour_detail.split_order_type.name}}
+                                                            </td>
                                                             <td class="text-right">
                                                                 {{labour_detail.repair_order.hours}}
                                                             </td>
                                                             <td class="wid-100 white-space text-right">
-                                                                {{labour_detail.amount | number:2}}
+                                                                <!-- {{labour_detail.amount | number:2}} -->
+                                                                {{(labour_detail.split_order_type.paid_by_id =='10013' || labour_detail.split_order_type.paid_by_id == NULL) ? (labour_detail.amount | number:2) : '0.00' }}
                                                             </td>
                                                         </tr>
                                                         <tr class="ptb-9">
@@ -1335,7 +1344,7 @@
                                                                     Add Labour
                                                                 </a>
                                                             </td>
-                                                            <td colspan="2" class="text-right">
+                                                            <td colspan="3" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
@@ -1358,8 +1367,11 @@
                                                             <th>
                                                                 Parts Details
                                                             </th>
-                                                            <th>
+                                                            <!-- <th>
                                                                 Type
+                                                            </th> -->
+                                                            <th>
+                                                                Split Order Type
                                                             </th>
                                                             <th class="text-right">
                                                                 Rate
@@ -1373,12 +1385,15 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in payable_maintenance.part_details" id="tp_{{index}}">
+                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in payable_maintenance.part_details.job_order_parts" id="tp_{{index}}">
                                                             <td>
                                                                 {{part_detail.part.code}} | {{part_detail.part.name}}
                                                             </td>
                                                             <td>
-                                                                {{part_detail.part.name}}
+                                                                <!-- {{part_detail.part.name}} -->
+                                                                {{part_detail.split_order_type.code}}
+                                                                {{part_detail.split_order_type ? '|' : ''}}
+                                                                {{part_detail.split_order_type.name}}
                                                             </td>
                                                             <td class="text-right">
                                                                 {{part_detail.rate | number:2}}
@@ -1387,7 +1402,8 @@
                                                                 {{part_detail.qty}}
                                                             </td>
                                                             <td class="wid-100 white-space text-right">
-                                                                {{part_detail.amount | number:2}}
+                                                                <!-- {{part_detail.amount | number:2}} -->
+                                                                {{(part_detail.split_order_type.paid_by_id =='10013' || part_detail.split_order_type.paid_by_id == NULL) ? (part_detail.amount | number:2) : '0.00' }}
                                                             </td>
                                                         </tr>
                                                         <tr class="ptb-9">
