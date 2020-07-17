@@ -48,7 +48,7 @@
                                                                 Split Order Type
                                                             </th>
                                                             <th class="text-right">
-                                                                Quantity
+                                                                Hours
                                                             </th>
                                                             <th class="wid-180 white-space text-right">
                                                                 Labour Value
@@ -58,7 +58,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index, labour_details) in labour_details" id="tr_{{index}}">
+                                                        <tr class="ptb-12" ng-repeat="(index, labour_details) in labour_details" id="tr_{{index}}" ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_details.removal_reason_id != '10021'">
                                                             <td>{{labour_details.code}}</td>
                                                             <td>
                                                                 {{labour_details.name}}
@@ -87,9 +87,12 @@
                                                             <td class="wid-180 white-space text-right" ng-if="labour_details.is_free_service != 1">
                                                                 {{labour_details.amount | number:2}}
                                                             </td>
-                                                            <td class="wid-100">
+                                                            <td class="wid-100" ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
                                                                 <button type="button" ng-click="showLabourForm(index,labour_details)" class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                                </button>
+                                                                <button class="btn img-btn btn-delete">
+                                                                    <img class="img-responsive radius-50" ng-click="removeScheduledLabour(index,labour_details.job_order_repair_order_id,'labour')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
                                                             </td>
                                                             <!-- <td class="wid-100">
@@ -152,7 +155,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index, part_details) in part_details" id="tp_{{index}}">
+                                                        <tr class="ptb-12" ng-repeat="(index, part_details) in part_details" id="tp_{{index}}" ng-class="part_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_details.removal_reason_id != '10021'">
                                                             <td>
                                                                 {{part_details.code}}
                                                             </td>
@@ -183,9 +186,12 @@
                                                             <td class="wid-180 white-space text-right" ng-if="part_details.is_free_service != 1">
                                                                 {{part_details.amount | number:2}}
                                                             </td>
-                                                            <td class="wid-100">
+                                                            <td class="wid-100" ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
                                                                 <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                                </button>
+                                                                <button class="btn img-btn btn-delete">
+                                                                    <img class="img-responsive radius-50" ng-click="removeScheduledPart(index,part_details.job_order_part_id,'parts')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
                                                             </td>
                                                             <!--  <td class="wid-100">
@@ -557,3 +563,68 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
+<style type="text/css">
+.strikethrough {
+    text-decoration: line-through;
+}
+
+.my-disable {
+    pointer-events: none;
+    opacity: 0.5;
+    /*cursor: not-allowed;*/
+}
+</style>
+<div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm finance-view-modal" role="document">
+        <form id="labour_parts_remove">
+            <input type="hidden" name="labour_parts_id" id="labour_parts_id" value="">
+            <input type="hidden" name="payable_type" id="payable_type" value="">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h4 class="modal-title">Delete Request</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>
+                                                Delete Reason
+                                                <sup class="mandatory">*</sup></label>
+                                            <div class="common-radio-button type-4">
+                                                <input type="radio" id="worngly_entered" name="removal_reason_id" ng-model="delete_reason" ng-value="10021" value="10021" ng-checked="delete_reason">
+                                                <label for="worngly_entered">
+                                                    Wrongly Entered
+                                                </label>
+                                                <input type="radio" ng-model="delete_reason" id="customer_delete" name="removal_reason_id" ng-value="10022" value="10022">
+                                                <label for="customer_delete">
+                                                    Customer Delete
+                                                </label>
+                                            </div>
+                                            <div id="errorDeleteReasonRequired"></div>
+                                        </div><!-- Feild -->
+                                    </div><!-- Column -->
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-12" ng-if="delete_reason == '10022'">
+                                <div class="form-group">
+                                    <label>Remarks <sup class="mandatory">*</sup></label>
+                                    <textarea class="form-control" rows="5" id="removal_reason" name="removal_reason"></textarea>
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Container -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">
+                        Cancel
+                    </button>
+                    <button class="btn btn-red submit" ng-click="saveLabourPartDeleteForm()">Submit</button>
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->

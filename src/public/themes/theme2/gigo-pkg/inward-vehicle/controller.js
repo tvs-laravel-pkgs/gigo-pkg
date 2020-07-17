@@ -1364,7 +1364,9 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         $scope.calculateLabourTotal = function() {
             $total_amount = 0;
             angular.forEach($scope.labour_details, function(labour, key) {
-                $total_amount += parseFloat(labour.amount);
+                if (labour.removal_reason_id == undefined || labour.removal_reason_id == null) {
+                    $total_amount += parseFloat(labour.amount);
+                }
             });
             $scope.labour_amount = $total_amount.toFixed(2);
             $scope.calculateTotalLabourParts();
@@ -1372,7 +1374,9 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         $scope.calculatePartTotal = function() {
             $total_amount = 0;
             angular.forEach($scope.part_details, function(part, key) {
-                $total_amount += parseFloat(part.amount);
+                if (part.removal_reason_id == null || part.removal_reason_id == undefined) {
+                    $total_amount += parseFloat(part.amount);
+                }
             });
             $scope.parts_rate = $total_amount.toFixed(2);
             $scope.calculateTotalLabourParts();
@@ -1380,6 +1384,90 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         $scope.calculateTotalLabourParts = function() {
             $scope.total_amount = parseFloat($scope.parts_rate) + parseFloat($scope.labour_amount);
             $scope.total_amount = $scope.total_amount.toFixed(2);
+        }
+
+        $scope.removeScheduledPart = function(index, id, type) {
+            if (id == undefined) {
+                $scope.part_details.splice(index, 1);
+                $scope.calculatePartTotal();
+            } else {
+                // console.log(index, id, type);
+                $scope.delete_reason = 10021;
+                $('#removal_reason').val('');
+                //HIDE REASON TEXTAREA 
+                $scope.customer_delete = false;
+                $scope.laboutPartsDelete(index, id, type);
+            }
+        }
+        $scope.removeScheduledLabour = function(index, id, type) {
+            if (id == undefined) {
+                $scope.labour_details.splice(index, 1);
+                $scope.calculateLabourTotal();
+            } else {
+                $scope.delete_reason = 10021;
+                $('#removal_reason').val('');
+                //HIDE REASON TEXTAREA 
+                $scope.customer_delete = false;
+                $scope.laboutPartsDelete(index, id, type);
+            }
+        }
+
+        $scope.laboutPartsDelete = function(index, id, type) {
+            $('#delete_labour_parts').modal('show');
+            $('#labour_parts_id').val(id);
+            $('#payable_type').val(type);
+
+            $scope.saveLabourPartDeleteForm = function() {
+                var delete_form_id = '#labour_parts_remove';
+                var v = jQuery(delete_form_id).validate({
+                    ignore: '',
+                    rules: {
+                        'removal_reason_id': {
+                            required: true,
+                        },
+                        'removal_reason': {
+                            required: true,
+                        },
+                    },
+                    errorPlacement: function(error, element) {
+                        if (element.attr("name") == "removal_reason_id") {
+                            error.appendTo('#errorDeleteReasonRequired');
+                            return;
+                        } else {
+                            error.insertAfter(element);
+                        }
+                    },
+                    submitHandler: function(form) {
+                        let formData = new FormData($(delete_form_id)[0]);
+                        $rootScope.loading = true;
+                        $.ajax({
+                                url: base_url + '/api/vehicle-inward/labour-parts-delete/update',
+                                method: "POST",
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                            })
+                            .done(function(res) {
+                                if (!res.success) {
+                                    $rootScope.loading = false;
+                                    showErrorNoty(res);
+                                    return;
+                                }
+                                $('#delete_labour_parts').modal('hide');
+                                $('body').removeClass('modal-open');
+                                $('.modal-backdrop').remove();
+                                $scope.fetchData();
+                                custom_noty('success', res.message);
+                            })
+                            .fail(function(xhr) {
+                                $rootScope.loading = false;
+                                $scope.button_action(id, 2);
+                                custom_noty('error', 'Something went wrong at server');
+                            });
+                    }
+                });
+
+            }
         }
     }
 });

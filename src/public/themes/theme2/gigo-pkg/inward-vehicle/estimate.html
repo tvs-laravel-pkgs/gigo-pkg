@@ -198,7 +198,7 @@
                                                     <div class="form-group">
                                                         <label>Estimated Delivery Date <sup class="mandatory">*</sup></label>
                                                         <div class="input-group date" data-provide="datepicker" data-date-start-date="0d">
-                                                            <input type="text" class="form-control" placeholder="Select Estimated Delivery Date" name="est_delivery_date" id="est_delivery_date" ng-model="job_order.est_delivery_date" />
+                                                            <input type="text" class="form-control" placeholder="Select Estimated Delivery Date" name="est_delivery_date" id="est_delivery_date" ng-model="job_order.est_date" />
                                                             <div class="input-group-addon">
                                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                             </div>
@@ -208,8 +208,8 @@
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>Estimated Delivery Time <sup class="mandatory">*</sup></label>
-                                                        <div class="input-group date" moment-picker="job_order.est_delivery_time" format="LT" show-header="false">
-                                                            <input class="form-control time-picker-form-contol" placeholder="Select Estimated Delivery Time" id="est_delivery_time" ng-model="job_order.est_delivery_time" name="est_delivery_time">
+                                                        <div class="input-group date" moment-picker="job_order.est_time" format="LT" show-header="false">
+                                                            <input class="form-control time-picker-form-contol" placeholder="Select Estimated Delivery Time" id="est_delivery_time" ng-model="job_order.est_time" name="est_delivery_time">
                                                             <span class="input-group-addon">
                                                                 <i class="icon ion-md-time"></i>
                                                             </span>
