@@ -157,18 +157,16 @@ class VehicleInwardController extends Controller {
 				}
 			}*/
 			if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
-			if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
-				$vehicle_inwards->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+				if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
+					$vehicle_inward_list_get->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+				}
+				if (Entrust::can('view-own-outlet-vehicle-inward')) {
+					$vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)->whereNull('job_orders.service_advisor_id')->whereNull('job_orders.floor_supervisor_id');
+				} else {
+					$vehicle_inward_list_get->where('job_orders.service_advisor_id', Auth::user()->id)->whereNull('job_orders.floor_supervisor_id');
+				}
+
 			}
-			if (Entrust::can('view-own-outlet-vehicle-inward')) {
-				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)->whereNull('job_orders.service_advisor_id')->whereNull('job_orders.floor_supervisor_id');
-			}
-			else
-			{
-				$vehicle_inwards->where('job_orders.service_advisor_id' ,Auth::user()->id )->whereNull('job_orders.floor_supervisor_id');
-			}
-			
-		    }
 			$vehicle_inward_list_get->groupBy('job_orders.id');
 			$vehicle_inward_list_get->orderBy('job_orders.created_at', 'DESC');
 
@@ -1663,22 +1661,28 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 			$job_order = JobOrder::find($request->job_order_id);
-			if ($request->warrany_status == 1) {
-				$job_order->ewp_expiry_date = NULL;
-				$job_order->warranty_expiry_date = $request->warranty_expiry_date;
-				$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
-			}
-			if ($request->exwarrany_status == 1) {
-				$job_order->ewp_expiry_date = $request->ewp_expiry_date;
-				$job_order->warranty_expiry_date = NULL;
-				$attachment = Attachment::where('id', $request->warrenty_policy_attachment_id)->forceDelete();
-			}
-			if ($request->exwarrany_status == 0 && $request->warrany_status == 0) {
-				$job_order->warranty_expiry_date = NULL;
-				$job_order->ewp_expiry_date = NULL;
-				$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
-				$attachment = Attachment::where('id', $request->warrenty_policy_attachment_id)->forceDelete();
-			}
+			// if ($request->warrany_status == 1) {
+			// 	$job_order->ewp_expiry_date = NULL;
+			$job_order->warranty_expiry_date = $request->warranty_expiry_date;
+			// 	$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
+			// }
+
+			// if ($request->warrany_status == 1) {
+			// 	$job_order->ewp_expiry_date = NULL;
+			// 	$job_order->warranty_expiry_date = $request->warranty_expiry_date;
+			// 	$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
+			// }
+			// if ($request->exwarrany_status == 1) {
+			$job_order->ewp_expiry_date = $request->ewp_expiry_date;
+			// 	$job_order->warranty_expiry_date = NULL;
+			// 	$attachment = Attachment::where('id', $request->warrenty_policy_attachment_id)->forceDelete();
+			// }
+			// if ($request->exwarrany_status == 0 && $request->warrany_status == 0) {
+			// 	$job_order->warranty_expiry_date = NULL;
+			// 	$job_order->ewp_expiry_date = NULL;
+			// 	$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
+			// 	$attachment = Attachment::where('id', $request->warrenty_policy_attachment_id)->forceDelete();
+			// }
 
 			$job_order->is_dms_verified = $request->is_verified;
 			$job_order->status_id = 8463;
@@ -3091,17 +3095,17 @@ class VehicleInwardController extends Controller {
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
-					'required_if:expert_diagnosis_status,1',
+					'required_if:is_expert_diagnosis_required,1',
 					'integer',
 					'exists:job_orders,id',
 				],
 				'expert_diagnosis_report_by_id' => [
-					'required_if:expert_diagnosis_status,1',
+					'required_if:is_expert_diagnosis_required,1',
 					'exists:users,id',
 					'integer',
 				],
 				'expert_diagnosis_report' => [
-					'required_if:expert_diagnosis_status,1',
+					'required_if:is_expert_diagnosis_required,1',
 					'string',
 				],
 			]);
@@ -3117,7 +3121,7 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 
 			$job_order = JobOrder::find($request->job_order_id);
-			if ($request->expert_diagnosis_status == 1) {
+			if ($request->is_expert_diagnosis_required == 1) {
 				$job_order->expert_diagnosis_report = $request->expert_diagnosis_report;
 				$job_order->expert_diagnosis_report_by_id = $request->expert_diagnosis_report_by_id;
 			} else {
@@ -3125,6 +3129,7 @@ class VehicleInwardController extends Controller {
 				$job_order->expert_diagnosis_report_by_id = NULL;
 			}
 
+			$job_order->is_expert_diagnosis_required = $request->is_expert_diagnosis_required;
 			$job_order->status_id = 8463;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
