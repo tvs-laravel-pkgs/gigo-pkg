@@ -2743,7 +2743,15 @@ class VehicleInwardController extends Controller {
 				$action = 'add';
 			}
 
-			$customer_voice_list = $job_order->vehicle->model->customerVoices;
+			$customer_voice_list = $job_order->vehicle->model->customerVoices->toArray();
+			$customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
+
+			//GET CUSTOMER VOICE OTHERS ID OF OTH
+			$customer_voice_other_id = $customer_voice_other[0]['id'];
+			$job_order['OTH_ID'] = $customer_voice_other_id;
+
+			$customer_voice_list_merge = array_merge($customer_voice_list, $customer_voice_other);
+			$customer_voice_list = collect($customer_voice_list_merge);
 
 			// $customer_voice_list = CustomerVoice::select(
 			// 	DB::raw('CONCAT(code," / ",name) as code'),
@@ -2798,7 +2806,7 @@ class VehicleInwardController extends Controller {
 					// 'distinct',
 				],
 				'customer_voices.*.details' => [
-					'nullable',
+					'required_if:customer_voices.*.id,' . $request->OTH_ID,
 					'string',
 				],
 			]);

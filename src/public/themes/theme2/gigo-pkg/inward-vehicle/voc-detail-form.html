@@ -27,6 +27,7 @@
                             <div class="tab-pane-wrap">
                                 <form id="voc_form">
                                     <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                    <input type="hidden" name="OTH_id" value="{{job_order.OTH_ID}}">
                                     <div class="row">
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10">
@@ -36,9 +37,9 @@
                                             </h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="row custom-row" ng-repeat="(index, customer_voice) in job_order.customer_voices">
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="form-group mb-no">
-                                                        <md-select ng-model="customer_voice.id" placeholder="Select Voice of Customer" ng-change="onSelectedVoc(customer_voice.id)" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select ng-model="customer_voice.id" placeholder="Select Voice of Customer" ng-change="onSelectedVoc(customer_voice.id,{{index}})" data-md-container-class="selectdemoSelectHeader">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchCustomerVoice" type="search" placeholder="Search for a Voice of Customer" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                                             </md-select-header>
@@ -49,18 +50,23 @@
                                                         <input type="hidden" name="customer_voices[{{index}}][id]" value="{{customer_voice.id}}" class="required">
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-6">
+                                                <div class="col-md-6 voc_remark_details_{{index}}" style="display: none;">
+                                                    <div class="form-group">
+                                                        <textarea ng-model="customer_voice.pivot.details" class="form-control customer_voice_remark_{{index}}" rows="4" placeholder="Enter Details" name="customer_voices[{{index}}][details]"></textarea>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-2">
                                                     <button class="img-btn" ng-click="$ctrl.removeCustomerVoice(index)" id="hidedelete">
                                                         <img class="img-responsive radius-50" src="./public/theme/img/content/delete-dark.svg" alt="Delete" />
                                                     </button>
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
                                             <div class="row">
-                                                <div class="col-md-6" id="voc_remark_details">
+                                                <!-- <div class="col-md-6" id="voc_remark_details">
                                                     <div class="form-group">
-                                                        <textarea class="form-control" rows="4" placeholder="Enter Details"></textarea>
-                                                    </div><!-- Feild -->
-                                                </div><!-- Column -->
+                                                        <textarea class="form-control" rows="4" placeholder="Enter Details" name="customer_voices[{{index}}][details]"></textarea>
+                                                    </div>
+                                                </div> -->
                                                 <div class="col-md-12">
                                                     <button class="btn btn-md type2 btn-green btn-square" ng-click="addNewCustomerVoice()">
                                                         Add More
