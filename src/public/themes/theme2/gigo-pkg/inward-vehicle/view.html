@@ -934,7 +934,7 @@
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
                                                                 <b>
-                                                                    Warranty
+                                                                    AMC
                                                                 </b>
                                                             </p>
                                                             <div class="mb-20"></div><!-- Spacing -->
@@ -946,7 +946,22 @@
                                                             </p>
                                                         </div>
                                                     </div>
-                                                </div><!-- Column -->
+                                                </div>
+                                                <div class="col-md-4" ng-if="$ctrl.warrany_status == 0">
+                                                    <div class="gatein-img-list">
+                                                        <div class="attach-form-wrap">
+                                                            <p class="color-secondary-dark">
+                                                                <b>
+                                                                    AMC
+                                                                </b>
+                                                            </p>
+                                                            <div class="mb-20"></div><!-- Spacing -->
+                                                            <p class="font-md mb-no">
+                                                                Not Available
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4" ng-if="$ctrl.exwarrany_status == 1">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo-view">
@@ -968,6 +983,21 @@
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="$ctrl.exwarrany_status == 0">
+                                                    <div class="gatein-img-list">
+                                                        <div class="attach-form-wrap">
+                                                            <p class="color-secondary-dark">
+                                                                <b>
+                                                                    Extended Warranty (EWP)
+                                                                </b>
+                                                            </p>
+                                                            <div class="mb-20"></div><!-- Spacing -->
+                                                            <p class="font-md mb-no">
+                                                                Not Available
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="attach-form-wrap">
