@@ -1165,6 +1165,11 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     $rootScope.loading = false;
 
                 });
+
+            setTimeout(function() {
+                $scope.calculateLabourTotal();
+                $scope.calculatePartTotal();
+            }, 2000);
         };
         $scope.init();
         $scope.searchRepairOrders = function(query) {
