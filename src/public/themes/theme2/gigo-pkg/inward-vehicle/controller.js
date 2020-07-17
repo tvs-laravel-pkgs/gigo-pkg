@@ -3986,7 +3986,6 @@ app.component('inwardVehicleVocDetailForm', {
         });
 
         var self = this;
-        $('#voc_remark_details').hide();
         self.hasPermission = HelperService.hasPermission;
         // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
         //     window.location = "#!/page-permission-denied";
@@ -3996,12 +3995,7 @@ app.component('inwardVehicleVocDetailForm', {
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
-        $scope.onSelectedVoc = function(id) {
-            if (id == 6)
-                $('#voc_remark_details').show();
-            else
-                $('#voc_remark_details').hide();
-        }
+
         $scope.job_order_id = $routeParams.job_order_id;
 
         //FETCH DATA
@@ -4021,9 +4015,16 @@ app.component('inwardVehicleVocDetailForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    console.log(res);
                     // self.job_order = $scope.job_order = res.job_order;
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
+                    angular.forEach($scope.job_order.customer_voices, function(value, key) {
+                        // console.log(value.id);
+                        setTimeout(function() {
+                            $scope.onSelectedVoc(value.id, key);
+                        }, 500);
+                    });
                     if (res.action == "add") {
                         $scope.addNewCustomerVoice();
                     }
@@ -4035,6 +4036,24 @@ app.component('inwardVehicleVocDetailForm', {
                 });
         }
         $scope.fetchData();
+
+        // $('.voc_remark_details_0').hide();
+        $scope.onSelectedVoc = function(id, index) {
+            console.log('run ' + id, $scope.job_order.OTH_ID, index);
+            if ($scope.job_order.OTH_ID == id) {
+                console.log('in');
+                $('.customer_voice_remark_' + index).prop('disabled', false);
+                $('.customer_voice_remark_' + index).addClass('required');
+                $('.voc_remark_details_' + index).show();
+                // $scope.voc_remark_details_+index = true;
+            } else {
+                console.log('out');
+                // $scope.voc_remark_details_+index = false;
+                $('.customer_voice_remark_' + index).prop('disabled', true);
+                $('.customer_voice_remark_' + index).removeClass('required');
+                $('.voc_remark_details_' + index).hide();
+            }
+        }
 
         //Save Form Data 
         $scope.saveVocDetailForm = function(id) {

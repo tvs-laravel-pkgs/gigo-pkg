@@ -1660,28 +1660,30 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 			$job_order = JobOrder::find($request->job_order_id);
-			// if ($request->warrany_status == 1) {
-			// 	$job_order->ewp_expiry_date = NULL;
-			$job_order->warranty_expiry_date = $request->warranty_expiry_date;
-			// 	$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
-			// }
 
-			// if ($request->warrany_status == 1) {
-			// 	$job_order->ewp_expiry_date = NULL;
-			// 	$job_order->warranty_expiry_date = $request->warranty_expiry_date;
-			// 	$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
-			// }
-			// if ($request->exwarrany_status == 1) {
-			$job_order->ewp_expiry_date = $request->ewp_expiry_date;
-			// 	$job_order->warranty_expiry_date = NULL;
-			// 	$attachment = Attachment::where('id', $request->warrenty_policy_attachment_id)->forceDelete();
-			// }
-			// if ($request->exwarrany_status == 0 && $request->warrany_status == 0) {
-			// 	$job_order->warranty_expiry_date = NULL;
-			// 	$job_order->ewp_expiry_date = NULL;
-			// 	$attachment = Attachment::where('id', $request->e_w_p_attachment_id)->forceDelete();
-			// 	$attachment = Attachment::where('id', $request->warrenty_policy_attachment_id)->forceDelete();
-			// }
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job order Not found!',
+					],
+				]);
+			}
+
+			if ($request->warrany_status == 0) {
+				$job_order->warranty_expiry_date = NULL;
+				$attachment = Attachment::where('id', $request->job_order_id)->where('attachment_of_id', 227)->where('attachment_type_id', 256)->forceDelete();
+			} else {
+				$job_order->warranty_expiry_date = $request->warranty_expiry_date;
+			}
+
+			if ($request->exwarrany_status == 0) {
+				$job_order->ewp_expiry_date = NULL;
+				$attachment = Attachment::where('id', $request->job_order_id)->where('attachment_of_id', 227)->where('attachment_type_id', 257)->forceDelete();
+			} else {
+				$job_order->ewp_expiry_date = $request->ewp_expiry_date;
+			}
 
 			$job_order->is_dms_verified = $request->is_verified;
 			$job_order->status_id = 8463;
@@ -2758,7 +2760,15 @@ class VehicleInwardController extends Controller {
 				$action = 'add';
 			}
 
-			$customer_voice_list = $job_order->vehicle->model->customerVoices;
+			$customer_voice_list = $job_order->vehicle->model->customerVoices->toArray();
+			$customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
+
+			//GET CUSTOMER VOICE OTHERS ID OF OTH
+			$customer_voice_other_id = $customer_voice_other[0]['id'];
+			$job_order['OTH_ID'] = $customer_voice_other_id;
+
+			$customer_voice_list_merge = array_merge($customer_voice_list, $customer_voice_other);
+			$customer_voice_list = collect($customer_voice_list_merge);
 
 			// $customer_voice_list = CustomerVoice::select(
 			// 	DB::raw('CONCAT(code," / ",name) as code'),
@@ -2813,7 +2823,7 @@ class VehicleInwardController extends Controller {
 					// 'distinct',
 				],
 				'customer_voices.*.details' => [
-					'nullable',
+					'required_if:customer_voices.*.id,' . $request->OTH_ID,
 					'string',
 				],
 			]);
