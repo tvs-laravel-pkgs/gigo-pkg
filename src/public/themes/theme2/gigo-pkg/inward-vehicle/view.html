@@ -1,4 +1,9 @@
 <!-- Content Wrap -->
+<style type="text/css">
+.strikethrough {
+    text-decoration: line-through;
+}
+</style>
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -1318,7 +1323,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in payable_maintenance.labour_details.job_order_repair_orders" id="tr_{{index}}">
+                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in payable_maintenance.labour_details.job_order_repair_orders" id="tr_{{index}}" ng-class="labour_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_detail.removal_reason_id != '10021'">
                                                             <td>
                                                                 {{labour_detail.repair_order.code}} | {{labour_detail.repair_order.name}}
                                                             </td>
@@ -1385,7 +1390,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in payable_maintenance.part_details.job_order_parts" id="tp_{{index}}">
+                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in payable_maintenance.part_details.job_order_parts" id="tp_{{index}}" ng-class="part_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_detail.removal_reason_id != '10021'">
                                                             <td>
                                                                 {{part_detail.part.code}} | {{part_detail.part.name}}
                                                             </td>

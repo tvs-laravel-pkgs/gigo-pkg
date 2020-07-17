@@ -6,6 +6,7 @@ use App\GatePass;
 use App\Http\Controllers\Controller;
 use Auth;
 use DB;
+use Entrust;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
@@ -84,8 +85,23 @@ class MaterialGatePassController extends Controller {
 			})
 			->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
 			->where('gate_passes.type_id', 8281) // Material Gate Pass
-			->groupBy('gate_passes.id')
-		;
+			->groupBy('gate_passes.id');
+
+			if (!Entrust::can('view-all-outlet-material-gate-pass')) 
+            {
+	            if(Entrust::can('view-mapped-outlet-material-gate-pass'))
+				{
+				   $material_gate_passes->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+				}
+				else if(Entrust::can('view-own-outlet-material-gate-pass'))
+				{
+				   $material_gate_passes->where('job_cards.outlet_id', Auth::user()->employee->outlet_id);
+				}
+				else{
+				    $material_gate_passes->where('gate_passes.created_by_id', Auth::user()->id);
+				}
+			
+			}
 
 		return Datatables::of($material_gate_passes)
 			->rawColumns(['status', 'action'])
