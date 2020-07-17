@@ -9,7 +9,7 @@
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>DMS Check List</b></h1>
-                    <p class="subtitle">Inward Vehicle / DMS Check List</p>
+                    <p class="subtitle">Inward Vehicle / Service Package Details</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -31,13 +31,13 @@
                                         <input type="hidden" name="e_w_p_attachment_id" value="{{job_order.e_w_p_attachment.id}}">
                                         <input type="hidden" name="warrenty_policy_attachment_id" value="{{job_order.warrenty_policy_attachment.id}}">
                                         <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>DMS Check list</b></h5>
+                                            <h5 class="color-primary mb-10"><b>Service Package Details</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="row">
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <label>
-                                                            Warranty
+                                                            AMC
                                                         </label>
                                                         <div class="common-radio-button type-4">
                                                             <input type="radio" id="sold" name="warrany_status" ng-model="$ctrl.warrany_status" ng-value="1">
@@ -70,12 +70,12 @@
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
                                                                 <b>
-                                                                    Warranty
+                                                                    AMC
                                                                 </b>
                                                             </p>
                                                             <div class="form-group">
                                                                 <label>Eligible Upto</label>
-                                                                <div class="input-group date" data-provide="datepicker">
+                                                                <div class="input-group date" data-date-start-view="2" data-provide="datepicker">
                                                                     <input type="text" value="{{job_order.warranty_expiry_date}}" name="warranty_expiry_date" class="form-control" placeholder="Ex : 10-06-2020" />
                                                                     <div class="input-group-addon">
                                                                         <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
@@ -85,7 +85,7 @@
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
-                                                <div class="col-md-2" ng-if="$ctrl.warrany_status == 0">
+                                                <div class="col-md-2">
                                                     <div class="form-group">
                                                         <label>
                                                             Extended Warranty
@@ -98,7 +98,7 @@
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-4" ng-if="$ctrl.exwarrany_status && $ctrl.warrany_status == 0">
+                                                <div class="col-md-4" ng-if="$ctrl.exwarrany_status">
                                                     <div class="gatein-img-list">
                                                         <div class="gatein-img-list-item attach-photo">
                                                             <div class="avatar-upload type-3">
@@ -126,7 +126,7 @@
                                                             </p>
                                                             <div class="form-group">
                                                                 <label>Eligible Upto</label>
-                                                                <div class="input-group date" data-provide="datepicker">
+                                                                <div class="input-group date" data-date-start-view="2" data-provide="datepicker">
                                                                     <input type="text" name="ewp_expiry_date" value="{{job_order.ewp_expiry_date}}" class="form-control" placeholder="Ex : 10-06-2020" />
                                                                     <div class="input-group-addon">
                                                                         <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
@@ -141,7 +141,7 @@
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
                                                                 <b>
-                                                                    Memberships Details
+                                                                    TVS Membership
                                                                 </b>
                                                             </p>
                                                             <p class="font-md">
@@ -157,7 +157,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="light-box form-group">
-                                                        <h6 class=""><b>Memberships Attachments</b></h6>
+                                                        <h6 class=""><b>TVS Memberships Attachments</b></h6>
                                                         <div class="img-upload-preview">
                                                             <input type="file" class="image_uploadify" accept="image/*,application/pdf" name="membership_attachments[]" multiple />
                                                             <div class="imageuploadify">
