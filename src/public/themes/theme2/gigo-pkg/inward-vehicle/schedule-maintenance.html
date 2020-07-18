@@ -1,4 +1,15 @@
 <!-- Content Wrap -->
+<style type="text/css">
+.strikethrough {
+    text-decoration: line-through;
+}
+
+.my-disable {
+    pointer-events: none;
+    opacity: 0.5;
+    /*cursor: not-allowed;*/
+}
+</style>
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -36,10 +47,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>
-                                                                Code
-                                                            </th>
-                                                            <th>
-                                                                Name
+                                                                Labour Details
                                                             </th>
                                                             <th>
                                                                 Type
@@ -59,18 +67,7 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr class="ptb-12" ng-repeat="(index, labour_details) in labour_details" id="tr_{{index}}" ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_details.removal_reason_id != '10021'">
-                                                            <td>{{labour_details.code}}</td>
-                                                            <td>
-                                                                {{labour_details.name}}
-                                                                <input type="hidden" class="lab_amount" id="labour_amount_{{index}}" name="job_order_repair_orders[{{index}}][amount]" value="{{labour_details.amount}}">
-                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][repair_order_id]" value="{{labour_details.id}}">
-                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][qty]" value="{{labour_details.qty}}">
-                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][amount]" value="{{labour_details.amount}}">
-                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][remarks]" value="{{labour_details.remarks}}">
-                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][observation]" value="{{labour_details.observation}}">
-                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][is_free_service]" value="{{labour_details.is_free_service}}">
-                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][action_taken]" value="{{labour_details.action_taken}}">
-                                                                <input type="hidden" name="job_order_repair_orders[{{index}}][split_order_type_id]" value="{{labour_details.split_order_type_id}}">
+                                                            <td>{{labour_details.code ? labour_details.code : ''}} | {{labour_details.name ? labour_details.name : ''}}
                                                             </td>
                                                             <td>
                                                                 {{labour_details.type}}
@@ -81,10 +78,7 @@
                                                             <td class="text-right">
                                                                 {{labour_details.qty}}
                                                             </td>
-                                                            <td class="wid-180 white-space text-right" ng-if="labour_details.is_free_service == 1">
-                                                                <p class="text-danger">0.00</p>
-                                                            </td>
-                                                            <td class="wid-180 white-space text-right" ng-if="labour_details.is_free_service != 1">
+                                                            <td class="wid-180 white-space text-right">
                                                                 {{labour_details.amount | number:2}}
                                                             </td>
                                                             <td class="wid-100" ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
@@ -92,14 +86,9 @@
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                                 </button>
                                                                 <button class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50" ng-click="removeScheduledLabour(index,labour_details.job_order_repair_order_id,'labour')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                    <img class="img-responsive radius-50" ng-click="removeScheduledLabour(index,labour_details.id,'labour')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
                                                             </td>
-                                                            <!-- <td class="wid-100">
-                                                                <button type="button" class="btn img-btn btn-delete">
-                                                                    <img href="javascript:;" data-toggle="modal" data-target="#delete_labour_details" ng-click="$ctrl.removeLabourDetails(index,labour_details.id)" class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
-                                                                </button>
-                                                            </td> -->
                                                         </tr>
                                                         <tr>
                                                             <td>
@@ -107,7 +96,7 @@
                                                                     Add Labour
                                                                 </button>
                                                             </td>
-                                                            <td colspan="4" class="text-right">
+                                                            <td colspan="3" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
@@ -173,12 +162,6 @@
                                                             </td>
                                                             <td class="text-right">
                                                                 {{part_details.qty}}
-                                                                <input type="hidden" name="job_order_parts[{{index}}][part_id]" value="{{part_details.id}}">
-                                                                <input type="hidden" name="job_order_parts[{{index}}][qty]" value="{{part_details.qty}}">
-                                                                <input type="hidden" id="part_amount_{{index}}" class="parts_rate" name="job_order_parts[{{index}}][rate]" value="{{part_details.rate}}">
-                                                                <input type="hidden" id="part_amount_{{index}}" class="parts_amount" name="job_order_parts[{{index}}][amount]" value="{{part_details.amount}}">
-                                                                <input type="hidden" name="job_order_parts[{{index}}][is_free_service]" value="{{part_details.is_free_service}}">
-                                                                <input type="hidden" name="job_order_parts[{{index}}][split_order_type_id]" value="{{part_details.split_order_type_id}}">
                                                             </td>
                                                             <td class="wid-180 white-space text-right" ng-if="part_details.is_free_service == 1">
                                                                 <p class="text-danger">0.00</p>
@@ -191,14 +174,9 @@
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                                 </button>
                                                                 <button class="btn img-btn btn-delete">
-                                                                    <img class="img-responsive radius-50" ng-click="removeScheduledPart(index,part_details.job_order_part_id,'parts')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                    <img class="img-responsive radius-50" ng-click="removeScheduledPart(index,part_details.id,'parts')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
                                                             </td>
-                                                            <!--  <td class="wid-100">
-                                                                <button type="button" class="btn img-btn btn-delete">
-                                                                    <img href="javascript:;" data-toggle="modal" data-target="#delete_parts_details" ng-click="$ctrl.delete_parts_details(index,part_details.id)" class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
-                                                                </button>
-                                                            </td> -->
                                                         </tr>
                                                         <tr>
                                                             <td>
@@ -627,4 +605,4 @@
             </div><!-- Modal Content -->
         </form>
     </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
+</div><!-- Modal Content

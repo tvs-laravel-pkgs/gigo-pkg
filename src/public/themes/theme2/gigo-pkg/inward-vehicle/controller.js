@@ -1065,66 +1065,13 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 
         //Save Form Data 
         $scope.saveSchedule = function(id) {
-            var form_id = '#form';
-            var v = jQuery(form_id).validate({
-                ignore: '',
-                rules: {
-                    /*'warranty_expiry_date': {
-                        required: true,
-                    },
-                    'ewp_expiry_date': {
-                        required: true,
-                    },
-                    'warranty_expiry_attachment': {
-                        required: true,
-                    },
-                    'ewp_expiry_attachment': {
-                        required: true,
-                    },
-                    'membership_attachment': {
-                        required: true,
-                    },*/
-                },
-                messages: {
-
-                },
-                invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check all tabs');
-                },
-                submitHandler: function(form) {
-                    let formData = new FormData($(form_id)[0]);
-                    $scope.button_action(id, 1);
-                    $.ajax({
-                            url: base_url + '/api/vehicle-inward/schedule-maintenance/save',
-                            method: "POST",
-                            data: formData,
-                            beforeSend: function(xhr) {
-                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                            },
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function(res) {
-                            $scope.button_action(id, 2);
-                            if (!res.success) {
-                                showErrorNoty(res);
-                                return;
-                            }
-                            custom_noty('success', res.message);
-                            if (id == 1) {
-                                $location.path('/inward-vehicle/card-list');
-                                $scope.$apply();
-                            } else {
-                                $location.path('/inward-vehicle/payable-labour-part-detail/form/' + $scope.job_order.id);
-                                $scope.$apply();
-                            }
-                        })
-                        .fail(function(xhr) {
-                            $('.submit').button('reset');
-                            custom_noty('error', 'Something went wrong at server');
-                        });
-                }
-            });
+            if (id == 1) {
+                $location.path('/inward-vehicle/card-list');
+                $scope.$apply();
+            } else {
+                $location.path('/inward-vehicle/payable-labour-part-detail/form/' + $scope.job_order.id);
+                $scope.$apply();
+            }
         }
 
         $scope.button_action = function(id, type) {
@@ -1400,16 +1347,13 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             }
         }
         $scope.removeScheduledLabour = function(index, id, type) {
-            if (id == undefined) {
-                $scope.labour_details.splice(index, 1);
-                $scope.calculateLabourTotal();
-            } else {
-                $scope.delete_reason = 10021;
-                $('#removal_reason').val('');
-                //HIDE REASON TEXTAREA 
-                $scope.customer_delete = false;
-                $scope.laboutPartsDelete(index, id, type);
-            }
+            // console.log(index, id, type);
+            $scope.delete_reason = 10021;
+            $('#removal_reason').val('');
+            //HIDE REASON TEXTAREA 
+            $scope.customer_delete = false;
+
+            $scope.laboutPartsDelete(index, id, type);
         }
 
         $scope.laboutPartsDelete = function(index, id, type) {

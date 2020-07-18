@@ -1951,7 +1951,8 @@ class VehicleInwardController extends Controller {
 					$labour_details[$key]['qty'] = $value->qty;
 					$labour_details[$key]['amount'] = $value->amount;
 					$labour_details[$key]['is_free_service'] = $value->is_free_service;
-					$labour_details[$key]['split_order_type'] = $value->splitOrderType->name;
+					$labour_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
+					$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 					if (in_array($value->split_order_type_id, $customer_paid_type)) {
 						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 							$labour_amount += $value->amount;
@@ -1973,7 +1974,8 @@ class VehicleInwardController extends Controller {
 					$part_details[$key]['qty'] = $value->qty;
 					$part_details[$key]['amount'] = $value->amount;
 					$part_details[$key]['is_free_service'] = $value->is_free_service;
-					$part_details[$key]['split_order_type'] = $value->splitOrderType->name;
+					$part_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
+					$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 					if (in_array($value->split_order_type_id, $customer_paid_type)) {
 						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 							$parts_rate += $value->amount;
@@ -1987,7 +1989,7 @@ class VehicleInwardController extends Controller {
 			$total_amount = $parts_rate + $labour_amount;
 
 			//ENABLE ESTIMATE STATUS
-			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
+			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 1)->first();
 			if ($inward_process_check) {
 				$job_order->enable_estimate_status = false;
 			} else {

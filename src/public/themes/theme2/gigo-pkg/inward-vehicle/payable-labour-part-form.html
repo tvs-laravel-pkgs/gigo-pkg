@@ -3,8 +3,9 @@
 .strikethrough {
     text-decoration: line-through;
 }
-.my-disable{
-    pointer-events:none;
+
+.my-disable {
+    pointer-events: none;
     opacity: 0.5;
     /*cursor: not-allowed;*/
 }
@@ -60,7 +61,7 @@
                                                                 Split Order Type
                                                             </th>
                                                             <th class="text-right">
-                                                                Quantity
+                                                                Hours
                                                             </th>
                                                             <th class="wid-180 white-space text-right">
                                                                 Labour Value
@@ -86,7 +87,6 @@
                                                             </td>
                                                             <td class="wid-180 white-space text-right">
                                                                 {{(job_order_labour.split_order_type.paid_by_id =='10013' || job_order_labour.split_order_type.paid_by_id == NULL) ? (job_order_labour.amount | number:2) : '0.00' }}
-                                                                <input type="hidden" class="job_order_labours" name="labouramount[{{index}}][amount]" value="{{job_order_labour.amount}}">
                                                             </td>
                                                             <td class="wid-100" ng-class="job_order_labour.removal_reason_id == 10022 ? 'my-disable' : ''">
                                                                 <a href="#!/inward-vehicle/payable-labour-part/add-labour/form/edit/{{job_order.id}}/{{job_order_labour.id}}" class="btn img-btn btn-delete">
