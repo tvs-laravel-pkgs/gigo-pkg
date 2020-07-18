@@ -163,7 +163,7 @@ class VehicleInwardController extends Controller {
 					$vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)->whereNull('job_orders.service_advisor_id')->whereNull('job_orders.floor_supervisor_id');
 				} else {
 					$vehicle_inward_list_get->where('job_orders.service_advisor_id', Auth::user()->id)->whereNull('job_orders.floor_supervisor_id');
-					$vehicle_inwards->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+					$vehicle_inward_list_get->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 				}
 			}
 			$vehicle_inward_list_get->groupBy('job_orders.id');
@@ -1063,15 +1063,52 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 
 			//Check Service Type changed or not.If changed remove all schedule maintenace
-			if ($job_order->service_type_id != $request->service_type_id) {
-				JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_oem_recommended', 1)->forceDelete();
-				JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_recommended_by_oem', 1)->forceDelete();
+			// if ($job_order->service_type_id != $request->service_type_id) {
+			JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_oem_recommended', 1)->forceDelete();
+			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_recommended_by_oem', 1)->forceDelete();
+			// }
+			if ($job_order->vehicle && $job_order->vehicle->model && $job_order->vehicle->model->vehicleSegment && $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule && $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types) {
+
+				foreach ($job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types as $key => $value) {
+
+					//Save Repair Orders
+					if ($value->service_type_id == $job_order->service_type_id && $value->repair_orders) {
+						foreach ($value->repair_orders as $rkey => $rvalue) {
+							$repair_order = JobOrderRepairOrder::firstOrNew(['job_order_id' => $request->job_order_id, 'repair_order_id' => $rvalue->id]);
+
+							$repair_order->is_recommended_by_oem = 1;
+							$repair_order->is_customer_approved = 0;
+							$repair_order->split_order_type_id = $rvalue->pivot->split_order_type_id;
+							$repair_order->qty = $rvalue->hours;
+							$repair_order->amount = $rvalue->amount;
+							$repair_order->is_free_service = $value->is_free;
+							$repair_order->status_id = 8180; //Customer Approval Pending
+							$repair_order->estimate_order_id = 0;
+							$repair_order->save();
+						}
+					}
+
+					//Save Parts
+					if ($value->service_type_id == $job_order->service_type_id && $value->parts) {
+						foreach ($value->parts as $pkey => $pvalue) {
+							$part_order = JobOrderPart::firstOrNew(['job_order_id' => $request->job_order_id, 'part_id' => $pvalue->id]);
+
+							$part_order->qty = $pvalue->pivot->quantity;
+							$part_order->split_order_type_id = $pvalue->pivot->split_order_type_id;
+							$part_order->rate = $pvalue->rate;
+							$part_order->amount = $pvalue->pivot->amount;
+							$part_order->is_free_service = $value->is_free;
+							$part_order->status_id = 8200; //Customer Approval Pending
+							$part_order->is_oem_recommended = 1;
+							$part_order->is_customer_approved = 0;
+							$part_order->estimate_order_id = 0;
+							$part_order->save();
+						}
+					}
+				}
 			}
-			//GET IS EXPERT DIAGNOSIS REQUIRED FROM SERVICE ORDER TYPE
-			$service_order_type = ServiceOrderType::find($request->type_id);
 
 			$job_order->fill($request->all());
-			$job_order->is_expert_diagnosis_required = $service_order_type->is_expert_diagnosis_required;
 			$job_order->status_id = 8463;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
@@ -1109,19 +1146,6 @@ class VehicleInwardController extends Controller {
 			// INWARD PROCESS CHECK - ORDER DETAIL
 			$job_order->inwardProcessChecks()->where('tab_id', 8702)->update(['is_form_filled' => 1]);
 
-			// INWARD PROCESS CHECK - EXPERT DIAGNOSIS BASED ON SERVICE ORDER TYPE
-			if (!$service_order_type->is_expert_diagnosis_required) {
-				$job_order->expert_diagnosis_report = NULL;
-				$job_order->expert_diagnosis_report_by_id = NULL;
-				$job_order->save();
-				$job_order->inwardProcessChecks()->where('tab_id', 8703)->update(['is_form_filled' => 1]);
-			} else {
-				if (!empty($job_order->expert_diagnosis_report)) {
-					$job_order->inwardProcessChecks()->where('tab_id', 8703)->update(['is_form_filled' => 1]);
-				} else {
-					$job_order->inwardProcessChecks()->where('tab_id', 8703)->update(['is_form_filled' => 0]);
-				}
-			}
 			DB::commit();
 
 			return response()->json([
@@ -1826,22 +1850,22 @@ class VehicleInwardController extends Controller {
 	public function getScheduleMaintenanceFormData(Request $r) {
 		// dd($r->all());
 		try {
-			$job_order = JobOrder::with([
-				'vehicle',
-				'vehicle.model',
-				'vehicle.status',
-				'vehicle.model.vehicleSegment.vehicle_service_schedule.vehicle_service_schedule_service_types.parts',
-				'vehicle.model.vehicleSegment.vehicle_service_schedule.vehicle_service_schedule_service_types.repair_orders',
-				'status',
-				'serviceType',
-			])
-				->select([
-					'job_orders.*',
-					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-				])
-				->where('company_id', Auth::user()->company_id)
-				->where('id', $r->id)->first();
+			// $job_order = JobOrder::with([
+			// 	'vehicle',
+			// 	'vehicle.model',
+			// 	'vehicle.status',
+			// 	'vehicle.model.vehicleSegment.vehicle_service_schedule.vehicle_service_schedule_service_types.parts',
+			// 	'vehicle.model.vehicleSegment.vehicle_service_schedule.vehicle_service_schedule_service_types.repair_orders',
+			// 	'status',
+			// 	'serviceType',
+			// ])
+			// 	->select([
+			// 		'job_orders.*',
+			// 		DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+			// 		DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			// 	])
+			// 	->where('company_id', Auth::user()->company_id)
+			// 	->where('id', $r->id)->first();
 
 			/*
 				$job_order = JobOrder::with([
@@ -1864,6 +1888,33 @@ class VehicleInwardController extends Controller {
 					->find($r->id);
 
 			*/
+
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'serviceType',
+				'jobOrderRepairOrders' => function ($query) {
+					$query->where('is_recommended_by_oem', 1);
+				},
+				'jobOrderRepairOrders.repairOrder',
+				'jobOrderRepairOrders.repairOrder.repairOrderType',
+				'jobOrderRepairOrders.splitOrderType',
+				'jobOrderParts' => function ($query) {
+					$query->where('is_oem_recommended', 1);
+				},
+				'jobOrderParts.part',
+				'jobOrderParts.part.taxCode',
+				'jobOrderParts.splitOrderType',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->where('company_id', Auth::user()->company_id)
+				->where('id', $r->id)->first();
 
 			if (!$job_order) {
 				return response()->json([
@@ -1890,260 +1941,45 @@ class VehicleInwardController extends Controller {
 			$labour_amount = 0;
 			$parts_rate = 0;
 
-			$job_order_parts = JobOrderPart::where('job_order_id', $r->id)
-				->where('job_order_parts.is_oem_recommended', 1)
-				->first();
-			$job_order_repair_orders = JobOrderRepairOrder::where('job_order_id', $r->id)
-				->where('job_order_repair_orders.is_recommended_by_oem', 1)
-				->first();
-
-			/*
-				if (!$job_order_repair_orders) {
-					if ($job_order->serviceType->serviceTypeLabours) {
-						$labour_details = array();
-						foreach ($job_order->serviceType->serviceTypeLabours as $key => $value) {
-							$labour_details[$key]['id'] = $value->id;
-							$labour_details[$key]['name'] = $value->code . ' | ' . $value->name;
-							$labour_details[$key]['type'] = $value->repairOrderType ? $value->repairOrderType->short_name : '-';
-							$labour_details[$key]['qty'] = $value->hours;
-							$labour_details[$key]['amount'] = $value->amount;
-							$labour_details[$key]['is_free_service'] = $value->pivot->is_free_service;
-							if ($value->pivot->is_free_service != 1) {
-								$labour_amount += $value->amount;
-							}
-						}
-					}
-				} else {
-					$repair_order_details = JobOrderRepairOrder::with([
-						'repairOrder',
-						'repairOrder.repairOrderType',
-					])
-						->where('job_order_repair_orders.is_recommended_by_oem', 1)
-						->where('job_order_repair_orders.job_order_id', $r->id)->get();
-
-					$labour_details = array();
-					if ($repair_order_details) {
-						foreach ($repair_order_details as $key => $value) {
-							$labour_details[$key]['id'] = $value->repair_order_id;
-							$labour_details[$key]['name'] = $value->repairOrder->code . ' | ' . $value->repairOrder->name;
-							$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
-							$labour_details[$key]['qty'] = $value->qty;
-							$labour_details[$key]['amount'] = $value->amount;
-							$labour_details[$key]['remarks'] = $value->remarks;
-							$labour_details[$key]['observation'] = $value->observation;
-							$labour_details[$key]['action_taken'] = $value->action_taken;
-							$labour_details[$key]['is_free_service'] = $value->is_free_service;
-							if (in_array($value->split_order_type_id, $customer_paid_type)) {
-								if ($value->is_free_service != 1) {
-									$labour_amount += $value->amount;
-								}
-							} else {
-								$labour_details[$key]['amount'] = 0;
-							}
-						}
-					}
-				}
-
-				if (!$job_order_parts) {
-					if ($job_order->serviceType->serviceTypeParts) {
-						$part_details = array();
-						foreach ($job_order->serviceType->serviceTypeParts as $key => $value) {
-							$part_details[$key]['id'] = $value->id;
-							$part_details[$key]['name'] = $value->code . ' | ' . $value->name;
-							$part_details[$key]['type'] = $value->taxCode ? $value->taxCode->code : '-';
-							$part_details[$key]['rate'] = $value->rate;
-							$part_details[$key]['qty'] = $value->pivot->quantity;
-							$part_details[$key]['amount'] = $value->pivot->amount;
-							$part_details[$key]['is_free_service'] = $value->pivot->is_free_service;
-							if ($value->pivot->is_free_service != 1) {
-								$parts_rate += $value->pivot->amount;
-							}
-						}
-					}
-				} else {
-					$parts_details = JobOrderPart::with([
-						'part',
-						'part.taxCode',
-					])
-						->where('job_order_parts.is_oem_recommended', 1)
-						->where('job_order_parts.job_order_id', $r->id)->get();
-
-					$part_details = array();
-					if ($parts_details) {
-						foreach ($parts_details as $key => $value) {
-							$part_details[$key]['id'] = $value->part_id;
-							$part_details[$key]['name'] = $value->part->code . ' | ' . $value->part->name;
-							$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
-							$part_details[$key]['rate'] = $value->rate;
-							$part_details[$key]['qty'] = $value->qty;
-							$part_details[$key]['amount'] = $value->amount;
-							$part_details[$key]['is_free_service'] = $value->is_free_service;
-
-							if (in_array($value->split_order_type_id, $customer_paid_type)) {
-								if ($value->is_free_service != 1) {
-									$parts_rate += $value->amount;
-								}
-							} else {
-								$part_details[$key]['amount'] = 0;
-							}
-						}
-					}
-				}
-			*/
-
-			if (!$job_order_repair_orders) {
-				// if ($job_order->serviceType->serviceTypeLabours) {
-				if ($job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types) {
-
-					$labour_details = array();
-					// foreach ($job_order->serviceType->serviceTypeLabours as $key => $value) {
-					foreach ($job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types as $key => $value) {
-						if ($value->service_type_id == $job_order->service_type_id && $value->repair_orders) {
-							// dd($value->repair_orders->toArray());
-							foreach ($value->repair_orders as $rkey => $rvalue) {
-								$split_order_type = SplitOrderType::find($rvalue->pivot->split_order_type_id);
-								$labour_details[$rkey]['job_order_repair_order_id'] = $value->id;
-
-								$labour_details[$rkey]['id'] = $rvalue->id;
-								// $labour_details[$rkey]['name'] = $rvalue->code . ' | ' . $rvalue->name;
-								$labour_details[$rkey]['name'] = $rvalue->name;
-								$labour_details[$rkey]['code'] = $rvalue->code;
-								// $labour_details[$key]['type'] = $value->repairOrderType ? $value->repairOrderType->short_name : '-';
-								$labour_details[$rkey]['type'] = $rvalue->category->name;
-								$labour_details[$rkey]['qty'] = $rvalue->hours;
-								$labour_details[$rkey]['amount'] = $rvalue->amount;
-								$labour_details[$rkey]['split_order_type'] = $split_order_type->name;
-								$labour_details[$rkey]['split_order_type_id'] = $rvalue->pivot->split_order_type_id;
-
-								//$split_order_type->code . ' | ' .
-								// $labour_details[$key]['is_free_service'] = $rvalue->pivot->is_free_service;
-								// if ($value->pivot->is_free_service != 1) {
-								// 	$labour_amount += $value->amount;
-								// }
-								$labour_amount += $rvalue->amount;
-
-							}
-						}
-					}
-				}
-			} else {
-				$repair_order_details = JobOrderRepairOrder::with([
-					'repairOrder',
-					'repairOrder.repairOrderType',
-				])
-					->where('job_order_repair_orders.is_recommended_by_oem', 1)
-					->where('job_order_repair_orders.job_order_id', $r->id)->get();
-
-				$labour_details = array();
-				if ($repair_order_details) {
-					foreach ($repair_order_details as $key => $value) {
-						$split_order_type = SplitOrderType::find($value->split_order_type_id);
-
-						$labour_details[$key]['id'] = $value->repair_order_id;
-						$labour_details[$key]['job_order_repair_order_id'] = $value->id;
-						// $labour_details[$key]['name'] = $value->repairOrder->code . ' | ' . $value->repairOrder->name;
-						$labour_details[$key]['name'] = $value->repairOrder->name;
-						$labour_details[$key]['code'] = $value->repairOrder->code;
-						$labour_details[$key]['type'] = $value->repairOrder->category ? $value->repairOrder->category->name : '-';
-						// $labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-'; //old
-						$labour_details[$key]['qty'] = $value->qty;
-						$labour_details[$key]['amount'] = $value->amount;
-						$labour_details[$key]['remarks'] = $value->remarks;
-						$labour_details[$key]['observation'] = $value->observation;
-						$labour_details[$key]['action_taken'] = $value->action_taken;
-						$labour_details[$key]['is_free_service'] = $value->is_free_service;
-						$labour_details[$key]['split_order_type'] = ($split_order_type) ? $split_order_type->name : '-';
-						$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
-
-						$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
-
-						if ($value->removal_reason_id == null) {
+			$labour_details = array();
+			if ($job_order->jobOrderRepairOrders) {
+				foreach ($job_order->jobOrderRepairOrders as $key => $value) {
+					$labour_details[$key]['id'] = $value->id;
+					$labour_details[$key]['code'] = $value->repairOrder->code;
+					$labour_details[$key]['name'] = $value->repairOrder->name;
+					$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
+					$labour_details[$key]['qty'] = $value->qty;
+					$labour_details[$key]['amount'] = $value->amount;
+					$labour_details[$key]['is_free_service'] = $value->is_free_service;
+					$labour_details[$key]['split_order_type'] = $value->splitOrderType->name;
+					if (in_array($value->split_order_type_id, $customer_paid_type)) {
+						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 							$labour_amount += $value->amount;
 						}
-						/*if (in_array($value->split_order_type_id, $customer_paid_type)) {
-								if ($value->is_free_service != 1) {
-									$labour_amount += $value->amount;
-								}
-							} else {
-								$labour_details[$key]['amount'] = 0;
-						*/
+					} else {
+						$labour_details[$key]['amount'] = 0;
 					}
 				}
 			}
 
-			if (!$job_order_parts) {
-				// if ($job_order->serviceType->serviceTypeParts) {
-				if ($job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types) {
-
-					$part_details = array();
-					foreach ($job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types as $key => $value) {
-						if ($value->service_type_id == $job_order->service_type_id && $value->parts) {
-							// dd($value->parts->toArray());
-							foreach ($value->parts as $rkey => $rvalue) {
-								$split_order_type = SplitOrderType::find($rvalue->pivot->split_order_type_id);
-
-								$part_details[$rkey]['id'] = $rvalue->id;
-								$part_details[$rkey]['job_order_part_id'] = $value->id;
-								// $part_details[$rkey]['name'] = $rvalue->code . ' | ' . $rvalue->name;
-								$part_details[$rkey]['name'] = $rvalue->name;
-								$part_details[$rkey]['code'] = $rvalue->code;
-								$part_details[$rkey]['type'] = $rvalue->taxCode ? $rvalue->taxCode->code : '-';
-								$part_details[$rkey]['rate'] = $rvalue->rate;
-								$part_details[$rkey]['qty'] = $rvalue->pivot->quantity;
-								$part_details[$rkey]['amount'] = $rvalue->pivot->amount;
-								$part_details[$rkey]['split_order_type'] = $split_order_type->name;
-								$part_details[$rkey]['split_order_type_id'] = $rvalue->pivot->split_order_type_id;
-
-								//$split_order_type->code . ' | ' .
-
-								/*$part_details[$key]['is_free_service'] = $rvalue->pivot->is_free_service;
-									if ($value->pivot->is_free_service != 1) {
-										$parts_rate += $value->pivot->amount;
-								*/
-								$parts_rate += $rvalue->pivot->amount;
-
-							}
-						}
-					}
-				}
-			} else {
-				$parts_details = JobOrderPart::with([
-					'part',
-					'part.taxCode',
-				])
-					->where('job_order_parts.is_oem_recommended', 1)
-					->where('job_order_parts.job_order_id', $r->id)->get();
-
-				$part_details = array();
-				if ($parts_details) {
-					foreach ($parts_details as $key => $value) {
-						$split_order_type = SplitOrderType::find($value->split_order_type_id);
-						$part_details[$key]['job_order_part_id'] = $value->id;
-
-						$part_details[$key]['id'] = $value->part_id;
-						// $part_details[$key]['name'] = $value->part->code . ' | ' . $value->part->name;
-						$part_details[$key]['name'] = $value->part->name;
-						$part_details[$key]['code'] = $value->part->code;
-						$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
-						$part_details[$key]['rate'] = $value->rate;
-						$part_details[$key]['qty'] = $value->qty;
-						$part_details[$key]['amount'] = $value->amount;
-						$part_details[$key]['is_free_service'] = $value->is_free_service;
-						$part_details[$key]['split_order_type'] = ($split_order_type) ? $split_order_type->name : '-';
-						$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
-						$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
-
-						if ($value->removal_reason_id == null) {
+			$part_details = array();
+			if ($job_order->jobOrderParts) {
+				foreach ($job_order->jobOrderParts as $key => $value) {
+					$part_details[$key]['id'] = $value->id;
+					$part_details[$key]['code'] = $value->part->code;
+					$part_details[$key]['name'] = $value->part->name;
+					$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
+					$part_details[$key]['rate'] = $value->rate;
+					$part_details[$key]['qty'] = $value->qty;
+					$part_details[$key]['amount'] = $value->amount;
+					$part_details[$key]['is_free_service'] = $value->is_free_service;
+					$part_details[$key]['split_order_type'] = $value->splitOrderType->name;
+					if (in_array($value->split_order_type_id, $customer_paid_type)) {
+						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 							$parts_rate += $value->amount;
 						}
-						/*if (in_array($value->split_order_type_id, $customer_paid_type)) {
-								if ($value->is_free_service != 1) {
-									$parts_rate += $value->amount;
-								}
-							} else {
-								$part_details[$key]['amount'] = 0;
-						*/
-
+					} else {
+						$part_details[$key]['amount'] = 0;
 					}
 				}
 			}
@@ -2841,12 +2677,11 @@ class VehicleInwardController extends Controller {
 			$job_order->save();
 
 			$customer_voice_ids = collect($request->customer_voices)->pluck('id')->toArray();
+
 			//REMOVE REPAIR ORDER WHILE CHANGING VOC
 			foreach ($job_order->customerVoices as $customer_voice) {
-				// dump($customer_voice->id, $customer_voice_ids);
 				if (!in_array($customer_voice->id, $customer_voice_ids)) {
-					// dump('in');
-					$delete_job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('repair_order_id', $customer_voice->repair_order_id)->where('status_id', 8180)->forceDelete();
+					$delete_job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('repair_order_id', $customer_voice->repair_order_id)->where('is_recommended_by_oem', 0)->forceDelete();
 				}
 			}
 
@@ -2866,14 +2701,10 @@ class VehicleInwardController extends Controller {
 					]);
 				}
 
-				$customer_voice_ids = collect($request->customer_voices)->pluck('id')->toArray();
-				// dd($customer_voice_ids);
 				$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->first();
-				// dd($customer_paid_type);
 
 				//Estimate Order ID
 				$job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('status_id', 8180)->first();
-				// dd($job_repair_order);
 				if ($job_repair_order) {
 					$estimate_order_id = $job_repair_order->estimate_order_id;
 				} else {
@@ -2889,28 +2720,35 @@ class VehicleInwardController extends Controller {
 					$customer_voice = CustomerVoice::with(['repair_order'])
 						->where('id', $voice['id'])
 						->first();
-					$skip_job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('repair_order_id', $customer_voice->repair_order->id)
-					// ->where('status_id', 8180)
-						->first();
 
-					$job_order->customerVoices()->attach($voice['id'], [
-						'details' => isset($voice['details']) ? $voice['details'] : NULL,
-					]);
+					if ($customer_voice->repair_order_id) {
 
-					if ($skip_job_repair_order) {
-						continue;
+						$skip_job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('repair_order_id', $customer_voice->repair_order->id)
+							->first();
+
+						$job_order->customerVoices()->attach($voice['id'], [
+							'details' => isset($voice['details']) ? $voice['details'] : NULL,
+						]);
+
+						if ($skip_job_repair_order) {
+							continue;
+						} else {
+							$job_repair_order = new JobOrderRepairOrder;
+							$job_repair_order->job_order_id = $request->job_order_id;
+							$job_repair_order->repair_order_id = $customer_voice->repair_order->id;
+							$job_repair_order->is_recommended_by_oem = 0;
+							$job_repair_order->is_customer_approved = 0;
+							$job_repair_order->estimate_order_id = $estimate_order_id;
+							$job_repair_order->split_order_type_id = $customer_paid_type->id;
+							$job_repair_order->qty = $customer_voice->repair_order->hours;
+							$job_repair_order->amount = $customer_voice->repair_order->amount;
+							$job_repair_order->status_id = 8180;
+							$job_repair_order->save();
+						}
 					} else {
-						$job_repair_order = new JobOrderRepairOrder;
-						$job_repair_order->job_order_id = $request->job_order_id;
-						$job_repair_order->repair_order_id = $customer_voice->repair_order->id;
-						$job_repair_order->is_recommended_by_oem = 0;
-						$job_repair_order->is_customer_approved = 0;
-						$job_repair_order->estimate_order_id = $estimate_order_id;
-						$job_repair_order->split_order_type_id = $customer_paid_type->id;
-						$job_repair_order->qty = $customer_voice->repair_order->hours;
-						$job_repair_order->amount = $customer_voice->repair_order->amount;
-						$job_repair_order->status_id = 8180;
-						$job_repair_order->save();
+						$job_order->customerVoices()->attach($voice['id'], [
+							'details' => isset($voice['details']) ? $voice['details'] : NULL,
+						]);
 					}
 				}
 			}

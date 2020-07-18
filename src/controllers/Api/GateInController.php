@@ -593,7 +593,7 @@ class GateInController extends Controller {
 
 		}
 
-		->orderBy('gate_logs.id', 'DESC');
+		$gate_pass_lists->orderBy('gate_logs.id', 'DESC');
 
 		return Datatables::of($gate_pass_lists)
 			->addColumn('status', function ($gate_pass_list) {
