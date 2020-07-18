@@ -220,10 +220,19 @@
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <div class="common-checkbox type-2">
+                                                        <!-- <div class="common-checkbox type-2">
                                                             <input class="check_agree" type="checkbox" id="check_agree" ng-value="1" ng-checked="job_order.is_customer_agreed == 1" ng-click="$ctrl.checkbox()" />
                                                             <label for="check_agree">Customer Agreed?</label>
-                                                            <input type="hidden" name="is_customer_agreed" id="is_customer_agreed" />
+                                                        </div> -->
+                                                        <label>
+                                                            Customer Agreed?
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="sold" name="is_customer_agreed" ng-model="$ctrl.estimate_aggreed" ng-value="1" ng-click="$ctrl.checkbox(1)">
+                                                            <label for="sold">Yes</label>
+                                                            <input type="radio" id="not_sold" name="is_customer_agreed" ng-model="$ctrl.estimate_aggreed" ng-value="0" ng-click="$ctrl.checkbox(2)">
+                                                            <label for="not_sold">No</label>
+                                                            <input type="hidden" id="is_customer_agreed" />
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->

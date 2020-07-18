@@ -1956,9 +1956,11 @@ app.component('inwardVehicleEstimateForm', {
                     }
                     $scope.job_order = res.job_order;
 
-                    if ($scope.job_order && $scope.job_order.is_customer_agreed == 1) {
-                        $('#is_customer_agreed').val('1');
+                    if ($scope.job_order.is_customer_agreed == 1) {
+                        self.estimate_aggreed = 1;
+                        $('#is_customer_agreed').val(1);
                     } else {
+                        self.estimate_aggreed = 0;
                         $('#is_customer_agreed').val('0');
                     }
 
@@ -1982,37 +1984,17 @@ app.component('inwardVehicleEstimateForm', {
         }
         $scope.fetchData();
 
-        $(document).on('click', ".check_agree", function() {
-            if ($("#check_agree").prop('checked')) {
+        self.checkbox = function(id) {
+            if (id == 1) {
                 $('.is_customer_agreed').show();
+                $('#is_customer_agreed').val(1);
                 $('.btn-nxt').hide();
             } else {
                 $('.is_customer_agreed').hide();
+                $('#is_customer_agreed').val(0);
                 $('.btn-nxt').show();
             }
-        });
-
-        //APPEND LINK ON LOAD
-        $(document).ready(function() {
-            if ($("#check_agree").prop('checked')) {
-                $('#is_customer_agreed').val(1);
-                $("#estimate_next").attr("href", ".#!/inward-vehicle/customer-confirmation/" + $routeParams.job_order_id);
-            } else {
-                $('#is_customer_agreed').val(0);
-                $("#estimate_next").attr("href", ".#!/inward-vehicle/estimation-denied/form/" + $routeParams.job_order_id);
-            }
-        });
-
-        //APPEND LINK AFTER CLICK THE CHECK BOX
-        self.checkbox = function() {
-            if ($("#check_agree").prop('checked')) {
-                $('#is_customer_agreed').val(1);
-                $("#estimate_next").attr("href", ".#!/inward-vehicle/customer-confirmation/" + $routeParams.job_order_id);
-            } else {
-                $('#is_customer_agreed').val(0);
-                $("#estimate_next").attr("href", ".#!/inward-vehicle/estimation-denied/form/" + $routeParams.job_order_id);
-            }
-        }
+        };
 
         //Save Form Data 
         $scope.saveEstimate = function(id) {
@@ -2111,7 +2093,7 @@ app.component('inwardVehicleEstimateForm', {
                 success: function(response) {
                     custom_noty('success', response.message);
                     $(".send_to_customer_approval").button('reset');
-                    $location.path('/inward-vehicle/card-list');
+                    // $location.path('/inward-vehicle/card-list');
                     $scope.$apply();
                 },
                 error: function(textStatus, errorThrown) {
@@ -3342,43 +3324,43 @@ app.component('inwardVehiclePayableLabourPartForm', {
 
         //Save Form Data 
         $scope.savePayableForm = function(id) {
-            var form_id = '#payable_form';
-            var v = jQuery(form_id).validate({
-                ignore: '',
-                submitHandler: function(form) {
-                    let formData = new FormData($(form_id)[0]);
-                    $rootScope.loading = true;
-                    $scope.button_action(id, 1);
-                    $.ajax({
-                            url: base_url + '/api/vehicle-inward/addtional-rot-part/save',
-                            method: "POST",
-                            data: formData,
-                            processData: false,
-                            contentType: false,
-                        })
-                        .done(function(res) {
-                            $scope.button_action(id, 2);
-                            if (!res.success) {
-                                $rootScope.loading = false;
-                                showErrorNoty(res);
-                                return;
-                            }
-                            custom_noty('success', res.message);
-                            if (id == 1) {
-                                $location.path('/inward-vehicle/card-list');
-                                $scope.$apply();
-                            } else {
-                                $location.path('/inward-vehicle/estimate/' + $scope.job_order_id);
-                                $scope.$apply();
-                            }
-                        })
-                        .fail(function(xhr) {
-                            $rootScope.loading = false;
-                            $scope.button_action(id, 2);
-                            custom_noty('error', 'Something went wrong at server');
-                        });
-                }
-            });
+            // var form_id = '#payable_form';
+            // var v = jQuery(form_id).validate({
+            //     ignore: '',
+            //     submitHandler: function(form) {
+            //         let formData = new FormData($(form_id)[0]);
+            //         $rootScope.loading = true;
+            //         $scope.button_action(id, 1);
+            //         $.ajax({
+            //                 url: base_url + '/api/vehicle-inward/addtional-rot-part/save',
+            //                 method: "POST",
+            //                 data: formData,
+            //                 processData: false,
+            //                 contentType: false,
+            //             })
+            //             .done(function(res) {
+            //                 $scope.button_action(id, 2);
+            //                 if (!res.success) {
+            //                     $rootScope.loading = false;
+            //                     showErrorNoty(res);
+            //                     return;
+            //                 }
+            //                 custom_noty('success', res.message);
+            if (id == 1) {
+                $location.path('/inward-vehicle/card-list');
+                // $scope.$apply();
+            } else {
+                $location.path('/inward-vehicle/estimate/' + $scope.job_order_id);
+                // $scope.$apply();
+            }
+            //             })
+            //             .fail(function(xhr) {
+            //                 $rootScope.loading = false;
+            //                 $scope.button_action(id, 2);
+            //                 custom_noty('error', 'Something went wrong at server');
+            //             });
+            //     }
+            // });
         }
 
         $scope.button_action = function(id, type) {

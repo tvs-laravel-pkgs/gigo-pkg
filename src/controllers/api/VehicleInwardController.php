@@ -1996,6 +1996,8 @@ class VehicleInwardController extends Controller {
 				$job_order->enable_estimate_status = true;
 			}
 
+			$job_order->inwardProcessChecks()->where('tab_id', 8705)->update(['is_form_filled' => 1]);
+
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
