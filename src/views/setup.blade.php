@@ -647,3 +647,9 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var partModalForm = '{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/partials/part-modal-form.html")}}';
 
 </script>
+
+<script type="text/javascript">
+    // Inward Parts Indent
+    var inward_parts_indent_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-parts-indent/view.html')}}';
+
+</script>

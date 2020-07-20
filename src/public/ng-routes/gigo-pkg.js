@@ -43,7 +43,7 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<lv-main-type-form></lv-main-type-form>',
         title: 'Edit LV Main Type',
     }).
-        
+
     //Repair Order Types
     when('/gigo-pkg/repair-order-type/list', {
         template: '<repair-order-type-list></repair-order-type-list>',
@@ -690,12 +690,12 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'My Job Card List',
     }).
     when('/my-jobcard/table-list/:user_id', {
-            template: '<my-jobcard-table-list></my-jobcard-table-list>',
-            title: 'My Job Table List',
+        template: '<my-jobcard-table-list></my-jobcard-table-list>',
+        title: 'My Job Table List',
     }).
     when('/my-jobcard/timesheet-list/:user_id', {
-            template: '<my-jobcard-timesheet-list></my-jobcard-timesheet-list>',
-            title: 'My Job Time Sheet List',
+        template: '<my-jobcard-timesheet-list></my-jobcard-timesheet-list>',
+        title: 'My Job Time Sheet List',
     }).
     when('/my-jobcard/view/:user_id/:job_card_id', {
         template: '<my-jobcard-view></my-jobcard-view>',
@@ -1127,5 +1127,13 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/warranty-job-order-request/view/:request_id', {
         template: '<warranty-job-order-request-view></warranty-job-order-request-view>',
         title: 'Warranty Job Order Request - View'
+    });
+}]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    when('/inward-parts-indent/view', {
+        template: '<inward-parts-indent-view></inward-parts-indent-view>',
+        title: 'Inward Parts Indent View',
     });
 }]);
