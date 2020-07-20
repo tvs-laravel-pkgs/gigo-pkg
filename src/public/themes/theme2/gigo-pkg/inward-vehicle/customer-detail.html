@@ -102,7 +102,7 @@ Content Wrap -->
                                                         </span>
                                                     </li>
                                                 </ul>
-                                                <button ng-click="showOwnerForm()" class="btn btn-secondary-dark btn-md btn-square">
+                                                <button ng-click="showOwnerForm()" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.is_customer_agreed!=1">
                                                     Edit
                                                 </button>
                                                 <button ng-click="addNewOwner()" class="btn btn-bordered btn-dark btn-md btn-square">

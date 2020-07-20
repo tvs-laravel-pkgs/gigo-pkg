@@ -92,7 +92,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
+                                                                <button ng-if="job_order.is_customer_approved == '0' || job_order.is_customer_approved == 'NULL'" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
                                                                     Add Labour
                                                                 </button>
                                                             </td>
@@ -180,7 +180,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)">
+                                                                <button ng-if="job_order.is_customer_approved == '0' || job_order.is_customer_approved== 'NULL'" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)">
                                                                     Add Part
                                                                 </button>
                                                             </td>

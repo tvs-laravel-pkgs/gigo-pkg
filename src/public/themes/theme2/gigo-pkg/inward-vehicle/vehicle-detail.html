@@ -117,7 +117,7 @@
                                                         </span>
                                                     </li>
                                                 </ul>
-                                                <button class="btn btn-secondary-dark btn-md btn-square" ng-click="showVehicleForm()">Edit</button>
+                                                <button class="btn btn-secondary-dark btn-md btn-square" ng-click="showVehicleForm()" ng-if="job_order.is_customer_agreed!=1">Edit</button>
                                             </div>
                                             <input type="hidden" name="id" value="{{job_order.vehicle.id}}">
                                             <div class="row" ng-show="show_vehicle_form" id="vehicle_edit">

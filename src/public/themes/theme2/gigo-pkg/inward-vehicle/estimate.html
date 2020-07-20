@@ -75,7 +75,7 @@
                                                                             </div>
                                                                         </li>
                                                                     </ul>
-                                                                    <div class="text-center">
+                                                                    <div ng-if="job_order.is_customer_agreed!=1" class="text-center">
                                                                         <button class="btn-link color-secondary-dark font-sm"><a href="#!/inward-vehicle/scheduled-maintenance/form/{{job_order.id}}" class="btn-link color-secondary-dark font-sm">
                                                                                 Edit
                                                                             </a></button>
@@ -124,7 +124,7 @@
                                                                             </div>
                                                                         </li>
                                                                     </ul>
-                                                                    <div class="text-center">
+                                                                    <div ng-if="job_order.is_customer_agreed!=1" class="text-center">
                                                                         <button class="btn-link color-secondary-dark font-sm"><a href="#!/inward-vehicle/payable-labour-part-detail/form/{{job_order.id}}" class="btn-link color-secondary-dark font-sm">
                                                                                 Edit
                                                                             </a>
