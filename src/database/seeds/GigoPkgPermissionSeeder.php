@@ -770,6 +770,30 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'gate-out-vehicle-gate-pass',
 				'display_name' => 'Gate Out',
 			],
+			[
+				'display_order' => 3,
+				'parent' => 'vehicle-gate-passes',
+				'name' => 'gate-out-own-only',
+				'display_name' => 'View Own Only',
+			],
+			[
+				'display_order' => 4,
+				'parent' => 'vehicle-gate-passes',
+				'name' => 'gate-out-own-outlet',
+				'display_name' => 'View Own Outlet',
+			],
+			[
+				'display_order' => 5,
+				'parent' => 'vehicle-gate-passes',
+				'name' => 'gate-out-mapped-outlet',
+				'display_name' => 'View Mapped Outlet',
+			],
+			[
+				'display_order' => 6,
+				'parent' => 'vehicle-gate-passes',
+				'name' => 'gate-out-all',
+				'display_name' => 'View All',
+			],
 
 			//MATERIAl GATE PASS
 			[

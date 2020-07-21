@@ -9,6 +9,7 @@ use App\Vehicle;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use Entrust;
 use Illuminate\Http\Request;
 use Storage;
 use Validator;
@@ -229,8 +230,19 @@ class GateLogController extends Controller {
 					}
 				})
 				->whereIn('gate_logs.status_id', [8123, 8124]) //GATE OUT PENDING, GATE OUT COMPLETED
-				->get()
-			;
+
+				if (!Entrust::can('gate-out-all')) {
+				if (Entrust::can('gate-out-mapped-outlet')) {
+					$vehicle_gate_pass_list->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+				} elseif (Entrust::can('gate-out-own-outlet')) {
+					$vehicle_gate_pass_list->where('job_cards.outlet_id', Auth::user()->employee->outlet_id);
+				} else {
+					$vehicle_gate_pass_list->where('gate_passes.created_by_id', Auth::user()->id);
+				}
+
+		      }
+				$vehicle_gate_pass_list->get();
+			
 
 			$available_gate_passes = count($vehicle_gate_pass_list);
 
