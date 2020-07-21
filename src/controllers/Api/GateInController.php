@@ -3,6 +3,7 @@
 namespace Abs\GigoPkg\Api;
 
 use Abs\GigoPkg\ModelType;
+use Abs\GigoPkg\TradePlateNumber;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Config;
 use App\Employee;
@@ -40,6 +41,10 @@ class GateInController extends Controller {
 					'default_text' => 'Select Reading type',
 				]),
 				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id = NULL, $params),
+				'gatein_entry_type_list' => Config::getDropDownList([
+					'config_type_id' => 402,
+					'default_text' => 'Select Entry type',
+				]),
 			];
 			return response()->json([
 				'success' => true,
@@ -58,6 +63,7 @@ class GateInController extends Controller {
 	}
 
 	public function createGateInEntry(Request $request) {
+		// dd($request->all());
 		DB::beginTransaction();
 		try {
 			//REMOVE WHITE SPACE BETWEEN REGISTRATION NUMBER
@@ -76,24 +82,31 @@ class GateInController extends Controller {
 						],
 					]);
 				} else {
-					$first_two_string = substr($request->registration_number, 0, 2);
-					$next_two_number = substr($request->registration_number, 2, 2);
-					$last_two_number = substr($request->registration_number, -2);
-					$total_numbers = strlen(preg_replace('/[^0-9]/', '', $request->registration_number));
 
-					if (!preg_match('/^[A-Z]+$/', $first_two_string) || !preg_match('/^[0-9]+$/', $next_two_number) || !preg_match('/^[0-9]+$/', $last_two_number) || $total_numbers > 6) {
-						$error = "Please enter valid registration number!";
+					$registration_number = explode('-', $request->registration_number);
+
+					$valid_reg_number = 1;
+					if (!preg_match('/^[A-Z]+$/', $registration_number[0]) || !preg_match('/^[0-9]+$/', $registration_number[1])) {
+						$valid_reg_number = 0;
 					}
-					//issue : Vijay : wrong logic
-					// if (!preg_match('/^[A-Z]+$/', $first_two_string) || !preg_match('/^[0-9]+$/', $next_two_number) || !preg_match('/^[0-9]+$/', $last_two_number)) {
-					// 	$error = "Please enter valid registration number!";
-					// }
-					if ($error) {
+
+					// dd(strlen($registration_number[3]));
+					if (count($registration_number) > 3) {
+						if (!preg_match('/^[A-Z]+$/', $registration_number[2]) || strlen($registration_number[3]) != 4 || !preg_match('/^[0-9]+$/', $registration_number[3])) {
+							$valid_reg_number = 0;
+						}
+					} else {
+						if (!preg_match('/^[0-9]+$/', $registration_number[2]) || strlen($registration_number[2]) != 4) {
+							$valid_reg_number = 0;
+						}
+					}
+
+					if ($valid_reg_number == 0) {
 						return response()->json([
 							'success' => false,
 							'error' => 'Validation Error',
 							'errors' => [
-								$error,
+								"Please enter valid registration number!",
 							],
 						]);
 					}
@@ -127,7 +140,7 @@ class GateInController extends Controller {
 				],
 				'registration_number' => [
 					'required_if:is_registered,==,1',
-					'max:10',
+					'max:13',
 				],
 				'km_reading_type_id' => [
 					'required',
@@ -177,28 +190,28 @@ class GateInController extends Controller {
 				]);
 			}
 
-			//VEHICLE GATE ENTRY DETAILS
-			// UNREGISTRED VEHICLE DIFFERENT FLOW WAITING FOR REQUIREMENT
-			if (!$request->is_registered == 1) {
-				return response()->json([
-					'success' => true,
-					'message' => 'Unregistred Vehile Not allow!!',
+			$trade_plate_number = NULL;
+			// UNREGISTRED VEHICLE
+			if ($request->is_registered == 0) {
+				$trade_plate_number = TradePlateNumber::firstOrNew([
+					'company_id' => Auth::user()->company_id,
+					'outlet_id' => Auth::user()->employee->outlet_id,
+					'trade_plate_number' => $request->plate_number,
 				]);
+
+				if (!$trade_plate_number->exists) {
+					$trade_plate_number->created_by_id = Auth::user()->id;
+					$trade_plate_number->created_at = Carbon::now();
+				} else {
+					$trade_plate_number->updated_by_id = Auth::user()->id;
+					$trade_plate_number->updated_at = Carbon::now();
+				}
+
+				$trade_plate_number->save();
 			}
 
-			//ONLY FOR REGISTRED VEHICLE
-			$vehicle = Vehicle::firstOrNew([
-				'company_id' => Auth::user()->company_id,
-				'registration_number' => $request->registration_number,
-			]);
-			//NEW
-			if (!$vehicle->exists) {
-				$vehicle_form_filled = 0;
-				$customer_form_filled = 0;
-				$vehicle->status_id = 8140; //NEW
-				$vehicle->company_id = Auth::user()->company_id;
-				$vehicle->created_by_id = Auth::user()->id;
-			} else {
+			if ($request->search_type == 1 && $request->vehicle_id) {
+				$vehicle = Vehicle::find($request->vehicle_id);
 				$vehicle_form_filled = 1;
 				if ($vehicle->currentOwner) {
 					$customer_form_filled = 1;
@@ -208,36 +221,74 @@ class GateInController extends Controller {
 					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
 				}
 				$vehicle->updated_by_id = Auth::user()->id;
-			}
-			$vehicle->save();
-			$request->vehicle_id = $vehicle->id;
-			//VEHICLE DETAIL VALIDATION
-			$validator1 = Validator::make($request->all(), [
-				'chassis_number' => [
-					'required',
-					'min:10',
-					'max:64',
-					'string',
-					'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-				],
-				// 'vin_number' => [
-				// 	'required',
-				// 	'min:17',
-				// 	'max:32',
-				// 	'string',
-				// 	'unique:vehicles,vin_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-				// ],
-			]);
+				$vehicle->save();
 
-			if ($validator1->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator1->errors()->all(),
+			} else {
+				//VEHICLE DETAIL VALIDATION
+				$validator1 = Validator::make($request->all(), [
+					'chassis_number' => [
+						'required_if:gatein_entry_type_id,==,1',
+						// 'min:10',
+						'max:64',
+						// 'string',
+						// 'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+					],
+					'engine_number' => [
+						'required_if:gatein_entry_type_id,==,2',
+						// 'min:10',
+						'max:64',
+						// 'string',
+						// 'unique:vehicles,engine_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+					],
 				]);
+
+				if ($validator1->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator1->errors()->all(),
+					]);
+				}
+
+				if ($request->chassis_number) {
+					$vehicle = Vehicle::firstOrNew([
+						'company_id' => Auth::user()->company_id,
+						'registration_number' => $request->registration_number,
+						'chassis_number' => $request->chassis_number,
+					]);
+				} else {
+					$vehicle = Vehicle::firstOrNew([
+						'company_id' => Auth::user()->company_id,
+						'registration_number' => $request->registration_number,
+						'engine_number' => $request->engine_number,
+					]);
+				}
+
+				//NEW
+				if (!$vehicle->exists) {
+					$vehicle_form_filled = 0;
+					$customer_form_filled = 0;
+					$vehicle->status_id = 8140; //NEW
+					$vehicle->company_id = Auth::user()->company_id;
+					$vehicle->created_by_id = Auth::user()->id;
+				} else {
+					$vehicle_form_filled = 1;
+					if ($vehicle->currentOwner) {
+						$customer_form_filled = 1;
+						$vehicle->status_id = 8142; //COMPLETED
+					} else {
+						$customer_form_filled = 0;
+						$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
+					}
+					$vehicle->updated_by_id = Auth::user()->id;
+				}
+
+				$vehicle->fill($request->all());
+				$vehicle->save();
+
+				$request->vehicle_id = $vehicle->id;
+
 			}
-			$vehicle->fill($request->all());
-			$vehicle->save();
 
 			//CHECK VEHICLE PREVIOUS JOBCARD STATUS
 			$previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
@@ -258,6 +309,7 @@ class GateInController extends Controller {
 			$job_order->number = rand();
 			$job_order->fill($request->all());
 			$job_order->vehicle_id = $vehicle->id;
+			$job_order->trade_plate_number_id = $trade_plate_number ? $trade_plate_number->id : NULL;
 			$job_order->outlet_id = Auth::user()->employee->outlet_id;
 			$job_order->status_id = 8460; //Ready for Inward
 			$job_order->save();
@@ -448,7 +500,7 @@ class GateInController extends Controller {
 			DB::commit();
 
 			$gate_in_data['number'] = $gate_log->number;
-			$gate_in_data['registration_number'] = $vehicle->registration_number;
+			$gate_in_data['registration_number'] = $vehicle->registration_number ? $vehicle->registration_number : '-';
 
 			//Send SMS to Driver
 			if ($request->driver_mobile_number) {
@@ -520,19 +572,19 @@ class GateInController extends Controller {
 			}
 		}
 
-		/*if ($request->date_range) {
-				$date_range = explode(' to ', $request->date_range);
-				$start_date = date('Y-m-d', strtotime($date_range[0]));
-				$start_date = $start_date . ' 00:00:00';
+		if ($request->date_range) {
+			$date_range = explode(' to ', $request->date_range);
+			$start_date = date('Y-m-d', strtotime($date_range[0]));
+			$start_date = $start_date . ' 00:00:00';
 
-				$end_date = date('Y-m-d', strtotime($date_range[1]));
-				$end_date = $end_date . ' 23:59:59';
-			} else {
-				$start_date = date('Y-m-01 00:00:00');
-				$end_date = date('Y-m-t 23:59:59');
-		*/
+			$end_date = date('Y-m-d', strtotime($date_range[1]));
+			$end_date = $end_date . ' 23:59:59';
+		} else {
+			$start_date = date('Y-m-01 00:00:00');
+			$end_date = date('Y-m-t 23:59:59');
+		}
 
-		$date = explode('to', $request->date_range);
+		// $date = explode('to', $request->date_range);
 
 		$gate_pass_lists = GateLog::select([
 			'gate_logs.id as gate_log_id',
@@ -564,7 +616,7 @@ class GateInController extends Controller {
 					$query->where('job_orders.outlet_id', $request->outlet_id);
 				}
 			})
-		/*->where(function ($query) use ($start_date) {
+			->where(function ($query) use ($start_date) {
 				if (!empty($start_date)) {
 					$query->where('gate_logs.created_at', '>=', $start_date);
 				}
@@ -574,13 +626,13 @@ class GateInController extends Controller {
 				if (!empty($end_date)) {
 					$query->where('gate_logs.created_at', '<=', $end_date);
 				}
-			});*/
-			->where(function ($query) use ($request, $date) {
-				if (!empty($request->get('date_range'))) {
-					$query->whereDate('gate_logs.created_at', '>=', date('Y-m-d', strtotime($date[0])))
-						->whereDate('gate_logs.created_at', '<=', date('Y-m-d', strtotime($date[1])));
-				}
 			});
+		// ->where(function ($query) use ($request, $date) {
+		// 	if (!empty($request->get('date_range'))) {
+		// 		$query->whereDate('gate_logs.created_at', '>=', date('Y-m-d', strtotime($date[0])))
+		// 			->whereDate('gate_logs.created_at', '<=', date('Y-m-d', strtotime($date[1])));
+		// 	}
+		// });
 
 		if (!Entrust::can('all')) {
 			if (Entrust::can('mapped-outlet')) {
@@ -630,7 +682,25 @@ class GateInController extends Controller {
 		$this->data['outlet_list'] = collect(Outlet::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']);
 
 		return response()->json($this->data);
+	}
 
+	public function getVehicleSearchList(Request $request) {
+		// dd($request->all());
+		$key = $request->key;
+		$list = Vehicle::select(
+			'engine_number',
+			'chassis_number',
+			'registration_number',
+			'id'
+		)
+			->where(function ($q) use ($key) {
+				$q->where('engine_number', 'like', $key . '%')
+					->orWhere('chassis_number', 'like', '%' . $key . '%')
+					->orWhere('registration_number', 'like', '%' . $key . '%')
+				;
+			})
+			->get();
+		return response()->json($list);
 	}
 
 }

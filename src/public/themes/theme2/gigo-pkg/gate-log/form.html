@@ -40,7 +40,7 @@
                                                         <div class="col-md-12">
                                                             <div class="form-page">
                                                                 <div class="row">
-                                                                    <div class="col-md-12">
+                                                                    <div class="col-md-7">
                                                                         <h6 class="mb-20"><b>
                                                                                 Photos
                                                                             </b></h6>
@@ -61,8 +61,43 @@
                                                                             </ul>
                                                                         </div><!-- Field -->
                                                                     </div><!-- Column -->
+                                                                    <div class="col-md-5">
+                                                                        <h6 class="mb-20"><b>
+                                                                            </b></h6>
+                                                                        <div class="input-text">
+                                                                            <div class="form-group">
+                                                                                <label>Search Type <sup class="mandatory">*</sup></label>
+                                                                                <div class="common-radio-button type-4">
+                                                                                    <input type="radio" id="search_type_existing" name="search_type" ng-model="$ctrl.search_type" ng-value="1" ng-click="SearchType(1)">
+                                                                                    <label for="search_type_existing">Existing</label>
+                                                                                    <input type="radio" id="search_type_new" name="search_type" ng-model="$ctrl.search_type" ng-value="0" ng-click="SearchType(2)">
+                                                                                    <label for="search_type_new">New</label>
+                                                                                </div>
+                                                                            </div><!-- Feild -->
+                                                                        </div><!-- Field -->
+                                                                    </div><!-- Column -->
                                                                 </div><!-- Row -->
                                                                 <div class="row">
+                                                                    <div class="col-md-4 col-lg-3" ng-show="$ctrl.search_type == 1">
+                                                                        <div class="form-group">
+                                                                            <label>
+                                                                                Vehicle
+                                                                            </label>
+                                                                            <md-autocomplete md-items="option in $ctrl.searchVehicle(option.vehicle_search)" md-selected-item="vehicle.name" md-selected-item-change="getSelectedVehicle(index,vehicle.name)" md-search-text="option.vehicle_search" md-item-text="option.chassis_number" md-min-length="4" md-input-minlength="4" md-input-maxlength="13" placeholder="Search by Reg,Chassis,Engine No" class="customer_group_id">
+                                                                                <md-item-template>
+                                                                                    <span>
+                                                                                        {{option.registration_number}} /
+                                                                                        {{option.chassis_number}} /
+                                                                                        {{option.engine_number}}
+                                                                                    </span>
+                                                                                </md-item-template>
+                                                                                <md-not-found>
+                                                                                    No Registration Number Found "{{$ctrl.vehicle_search}}" were found.
+                                                                                </md-not-found>
+                                                                            </md-autocomplete>
+                                                                            <input type="hidden" id="vehicle_id" name="vehicle_id" value="{{vehicle.name.id}}">
+                                                                        </div><!-- Feild -->
+                                                                    </div><!-- Column -->
                                                                     <div class="col-md-4 col-lg-3">
                                                                         <div class="form-group">
                                                                             <label>Registration Type <sup class="mandatory">*</sup></label>
@@ -74,15 +109,15 @@
                                                                             </div>
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.is_registered == 1">
+                                                                    <div class="col-md-4 col-lg-3" ng-show="$ctrl.is_registered == 1">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 Vehicle Registration Number
                                                                                 <sup class="mandatory">*</sup></label>
-                                                                            <input type="text" class="form-control" minlength="12" maxlength="10" placeholder="Enter Vehicle Registration Number" value="" autocomplete="off" name="registration_number" oninput="this.value = this.value.toUpperCase()" />
+                                                                            <input type="text" class="form-control" minlength="12" maxlength="13" id="registration_number" placeholder="Enter Vehicle Registration Number" value="" autocomplete="off" name="registration_number" oninput="this.value = this.value.toUpperCase()" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.is_registered == 0">
+                                                                    <div class="col-md-4 col-lg-3" ng-show="$ctrl.is_registered == 0">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 Trade Plate Number
@@ -93,21 +128,50 @@
                                                                     <div class="col-md-4 col-lg-3">
                                                                         <div class="form-group">
                                                                             <label>
+                                                                                Chassis / Engine Number
+                                                                                <sup class="mandatory">
+                                                                                    *
+                                                                                </sup>
+                                                                            </label>
+                                                                            <md-select ng-model="$ctrl.gatein_entry_type_id" placeholder="Chassis / Engine Number" data-md-container-class="selectdemoSelectHeader">
+                                                                                <md-select-header class="demo-select-header">
+                                                                                    <input ng-model="searchEntryType" type="search" placeholder="Chassis / Engine Number" class="demo-header-searchbox md-text">
+                                                                                </md-select-header>
+                                                                                <md-optgroup>
+                                                                                    <md-option ng-value="1"> Chassis Number </md-option>
+                                                                                    <md-option ng-value="2"> Engine Number </md-option>
+                                                                                </md-optgroup>
+                                                                            </md-select>
+                                                                            <input type="hidden" name="gatein_entry_type_id" value="{{$ctrl.gatein_entry_type_id}}" class="required">
+                                                                        </div><!-- Feild -->
+                                                                    </div><!-- Column -->
+                                                                    <div class="col-md-4 col-lg-3" ng-show="$ctrl.gatein_entry_type_id == 1">
+                                                                        <div class="form-group">
+                                                                            <label>
                                                                                 Chassis Number
                                                                                 <sup class="mandatory">*</sup>
                                                                             </label>
-                                                                            <input type="text" class="form-control" minlength="10" maxlength="64" placeholder="Enter Chassis Number" autocomplete="off" name="chassis_number" />
+                                                                            <input type="text" class="form-control" minlength="10" maxlength="64" placeholder="Enter Chassis Number" autocomplete="off" id="chassis_number" name="chassis_number" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <!--                                 <div class="col-md-4 col-lg-3">
-                                    <div class="form-group">
-                                        <label>
-                                            VIN Number
-                                            <sup class="mandatory">*</sup>
-                                        </label>
-                                        <input type="text" class="form-control" minlength="17" maxlength="17" placeholder="Enter VIN No" autocomplete="off" name="vin_number" />
-                                    </div>
-                                </div> -->
+                                                                    <div class="col-md-4 col-lg-3" ng-show="$ctrl.gatein_entry_type_id == 2">
+                                                                        <div class="form-group">
+                                                                            <label>
+                                                                                Engine Number
+                                                                                <sup class="mandatory">*</sup>
+                                                                            </label>
+                                                                            <input type="text" class="form-control" minlength="10" maxlength="64" placeholder="Enter Engine Number" autocomplete="off" id="engine_number" name="engine_number" />
+                                                                        </div><!-- Feild -->
+                                                                    </div><!-- Column -->
+                                                                    <!--<div class="col-md-4 col-lg-3">
+                                                                        <div class="form-group">
+                                                                            <label>
+                                                                                VIN Number
+                                                                                <sup class="mandatory">*</sup>
+                                                                            </label>
+                                                                            <input type="text" class="form-control" minlength="17" maxlength="17" placeholder="Enter VIN No" autocomplete="off" name="vin_number" />
+                                                                        </div>
+                                                                    </div> -->
                                                                     <div class="col-md-4 col-lg-3">
                                                                         <div class="form-group">
                                                                             <label>
@@ -262,12 +326,12 @@
                 <p class="info data">Vehicle successfully gated In</p>
                 <p class="info">Gate In No :
                     <span id="number">
-                        <!-- {{$ctrl.gate_log.number}} -->
+                        {{gate_log.number}}
                     </span>
                 </p>
                 <p class="info">Reg No :
                     <span id="registration_number">
-                        <!-- {{$ctrl.gate_log.registration_number}} -->
+                        {{gate_log.registration_number}}
                     </span>
                 </p>
                 <div class="mt-30 mb-30">

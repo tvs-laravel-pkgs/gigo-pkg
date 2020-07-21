@@ -213,6 +213,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('gate-log/get-list', 'Api\GateInController@getGateLogList')->name('getGateLogList');
 	Route::get('/gate-log/get-filter-data', 'Api\GateInController@getGateLogFilter')->name('getGateLogFilter');
 	Route::post('/gate-log/delete', 'Api\GateInController@deleteGateLog')->name('deleteGateLog');
+	Route::post('/gatelog/vehicle/search', 'Api\GateInController@getVehicleSearchList')->name('getVehicleSearchList');
 
 	//Gate Log
 	// Route::get('/gate-log/get-list', 'GateLogController@getGateLogList')->name('getGateLogList');

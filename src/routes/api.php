@@ -160,6 +160,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//SAVE GATE IN ENTRY
 		Route::get('gate-in-entry/get-form-data', 'GateInController@getFormData');
 		Route::post('gate-in-entry/create', 'GateInController@createGateInEntry');
+		Route::post('gatelog/vehicle/search', 'GateInController@getVehicleSearchList');
 
 		//VEHICLE INWARD
 		Route::post('vehicle-inward/get', 'VehicleInwardController@getGateInList');
