@@ -1204,13 +1204,15 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $scope.calculatePartTotal();
         }
         $scope.showLabourForm = function(labour_index, labour = null) {
-            $scope.repair_order_id = labour.id;
+            $scope.schedule_maintainance_ro = [];
+            $scope.repair_order_id = '';
             if (labour_index === false) {
                 // $scope.labour_details = {};
             } else {
                 // console.log(labour);
                 // return false;
                 if (labour.split_order_type_id != null) {
+                    $scope.repair_order_id = labour.id;
                     if (labour.split_order_type_id == undefined) {
                         $split_id = labour.pivot.split_order_type_id;
                     } else {
