@@ -83,7 +83,7 @@
                                                                             <label>
                                                                                 Vehicle
                                                                             </label>
-                                                                            <md-autocomplete md-items="option in $ctrl.searchVehicle(option.vehicle_search)" md-selected-item="vehicle.name" md-selected-item-change="getSelectedVehicle(index,vehicle.name)" md-search-text="option.vehicle_search" md-item-text="option.chassis_number" md-min-length="4" md-input-minlength="4" md-input-maxlength="13" placeholder="Search by Reg,Chassis,Engine No" class="customer_group_id">
+                                                                            <md-autocomplete md-items="option in $ctrl.searchVehicle(option.vehicle_search)" md-selected-item="vehicle.name" md-selected-item-change="getSelectedVehicle(index,vehicle.name)" md-search-text="option.vehicle_search" md-item-text="$ctrl.getVehicle(option)" md-min-length="4" md-input-minlength="4" md-input-maxlength="17" placeholder="Search by Reg,Chassis,Engine No" class="customer_group_id">
                                                                                 <md-item-template>
                                                                                     <span>
                                                                                         {{option.registration_number}} /
@@ -135,7 +135,7 @@
                                                                             </label>
                                                                             <md-select ng-model="$ctrl.gatein_entry_type_id" placeholder="Chassis / Engine Number" data-md-container-class="selectdemoSelectHeader">
                                                                                 <md-select-header class="demo-select-header">
-                                                                                    <input ng-model="searchEntryType" type="search" placeholder="Chassis / Engine Number" class="demo-header-searchbox md-text">
+                                                                                    <input ng-model="searchEntryType" type="search" placeholder="Select Chassis / Engine Number" class="demo-header-searchbox md-text">
                                                                                 </md-select-header>
                                                                                 <md-optgroup>
                                                                                     <md-option ng-value="1"> Chassis Number </md-option>
@@ -151,7 +151,7 @@
                                                                                 Chassis Number
                                                                                 <sup class="mandatory">*</sup>
                                                                             </label>
-                                                                            <input type="text" class="form-control" minlength="10" maxlength="64" placeholder="Enter Chassis Number" autocomplete="off" id="chassis_number" name="chassis_number" />
+                                                                            <input type="text" class="form-control" minlength="10" maxlength="17" placeholder="Enter Chassis Number" autocomplete="off" id="chassis_number" name="chassis_number" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
                                                                     <div class="col-md-4 col-lg-3" ng-show="$ctrl.gatein_entry_type_id == 2">

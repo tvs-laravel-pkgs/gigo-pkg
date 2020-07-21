@@ -264,8 +264,8 @@ app.component('gateLogForm', {
 
         setTimeout(function() {
             $('input[type=search]').addClass('vehicleSearchBox');
-            $("#input-3").attr("maxlength", 13);
-            $('#input-3').css('text-transform', 'uppercase');
+            $(".vehicleSearchBox").attr("maxlength", 17);
+            $('.vehicleSearchBox').css('text-transform', 'uppercase');
         }, 1000);
 
         //GET VEHICLE LIST
@@ -291,13 +291,30 @@ app.component('gateLogForm', {
             }
         }
 
-        $scope.getSelectedVehicle = function(index, vehicle_detail) {
-            console.log(vehicle_detail);
-            if (vehicle_detail) {
-                $('#chassis_number').val(vehicle_detail.chassis_number);
-                $('#engine_number').val(vehicle_detail.engine_number);
-                $('#registration_number').val(vehicle_detail.registration_number);
+        self.getVehicle = function(item) {
+            if (item) {
+                var registration_number = item.registration_number;
+                var engine_number = item.engine_number;
+                var chassis_number = item.chassis_number;
+
+                $('#chassis_number').val(chassis_number);
+                $('#engine_number').val(engine_number);
+                $('#registration_number').val(registration_number);
+
+                if (registration_number) {
+                    return item.registration_number;
+                } else if (engine_number) {
+                    return engine_number;
+                } else if (chassis_number) {
+                    return chassis_number;
+                }
             } else {
+                return "No Found!";
+            }
+        }
+
+        $scope.getSelectedVehicle = function(index, vehicle_detail) {
+            if (!vehicle_detail) {
                 $('#chassis_number').val('');
                 $('#engine_number').val('');
                 $('#registration_number').val('');
@@ -404,7 +421,7 @@ app.component('gateLogForm', {
                         return false;
                     },
                     minlength: 10,
-                    maxlength: 64,
+                    maxlength: 17,
                 },
                 'engine_number': {
                     required: function(element) {
