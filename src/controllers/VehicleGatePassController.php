@@ -6,6 +6,7 @@ use App\GatePass;
 use App\Http\Controllers\Controller;
 use Auth;
 use DB;
+use Entrust;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
@@ -88,9 +89,20 @@ class VehicleGatePassController extends Controller {
 					$query->where('gate_passes.number', 'LIKE', '%' . $request->number . '%');
 				}
 			})
-			->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
+			//->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
 			->where('gate_passes.type_id', 8280) // Vehicle Gate Pass
 			->groupBy('gate_passes.id');
+
+			if (!Entrust::can('gate-out-all')) {
+			if (Entrust::can('gate-out-mapped-outlet')) {
+				$vehicle_gate_passes->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+			} elseif (Entrust::can('gate-out-own-outlet')) {
+				$vehicle_gate_passes->where('job_cards.outlet_id', Auth::user()->employee->outlet_id);
+			} else {
+				$vehicle_gate_passes->where('gate_passes.created_by_id', Auth::user()->id);
+			}
+
+		}
 
 		return Datatables::of($vehicle_gate_passes)
 			->rawColumns(['status', 'action'])
