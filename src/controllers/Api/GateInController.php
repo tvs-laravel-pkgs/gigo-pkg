@@ -41,10 +41,6 @@ class GateInController extends Controller {
 					'default_text' => 'Select Reading type',
 				]),
 				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id = NULL, $params),
-				'gatein_entry_type_list' => Config::getDropDownList([
-					'config_type_id' => 402,
-					'default_text' => 'Select Entry type',
-				]),
 			];
 			return response()->json([
 				'success' => true,
