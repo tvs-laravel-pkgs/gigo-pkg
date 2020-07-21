@@ -349,6 +349,28 @@ app.component('gateLogForm', {
             }
         }
 
+        $(document).on('keyup', ".registration_number", function() {
+            if ($(this).val().length == 2) {
+                $('.registration_number').val($(this).val() + '-');
+            }
+            if ($(this).val().length == 5) {
+                $('.registration_number').val($(this).val() + '-');
+            }
+            if ($(this).val().length == 8) {
+                var regis_num = $(this).val().substr(7, 1);
+                if ($.isNumeric(regis_num)) {
+                    //Check Previous Character Number or String
+                    var previous_char = $(this).val().substr(6, 1);
+                    if (!$.isNumeric(previous_char)) {
+                        var regis_number = $(this).val().slice(0, -1);
+                        $('.registration_number').val(regis_number + '-' + regis_num);
+                    }
+                } else {
+                    $('.registration_number').val($(this).val() + '-');
+                }
+            }
+        });
+
         //Save Form Data             
         var form_id = '#gate_in_vehicle_form';
         var v = jQuery(form_id).validate({
