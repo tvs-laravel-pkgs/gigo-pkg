@@ -303,8 +303,9 @@ class VehicleInwardController extends Controller {
 					$labour_details[$key]['qty'] = $value->qty;
 					$labour_details[$key]['amount'] = $value->amount;
 					$labour_details[$key]['is_free_service'] = $value->is_free_service;
+					$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 					if (in_array($value->split_order_type_id, $customer_paid_type_id)) {
-						if ($value->is_free_service != 1) {
+						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 							$labour_amount += $value->amount;
 							if ($value->repairOrder->taxCode) {
 								$tax_amount = 0;
@@ -349,8 +350,9 @@ class VehicleInwardController extends Controller {
 					$part_details[$key]['qty'] = $value->qty;
 					$part_details[$key]['amount'] = $value->amount;
 					$part_details[$key]['is_free_service'] = $value->is_free_service;
+					$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 					if (in_array($value->split_order_type_id, $customer_paid_type_id)) {
-						if ($value->is_free_service != 1) {
+						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 							$part_amount += $value->amount;
 							if ($value->part->taxCode) {
 								$tax_amount = 0;
@@ -403,7 +405,7 @@ class VehicleInwardController extends Controller {
 					$value->repair_order = $value->repairOrder;
 					$value->repair_order_type = $value->repairOrder->repairOrderType;
 					if ((in_array($value->split_order_type_id, $customer_paid_type_id)) && (empty($value->removal_reason_id))) {
-						if ($value->is_free_service != 1) {
+						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 							if ($value->repairOrder->taxCode) {
 								$tax_amount = 0;
 								$total_amount = 0;
@@ -440,7 +442,7 @@ class VehicleInwardController extends Controller {
 				foreach ($payable_maintenance['part_details']->jobOrderParts as $key => $value) {
 					$value->part = $value->part;
 					if ((in_array($value->split_order_type_id, $customer_paid_type_id)) && (empty($value->removal_reason_id))) {
-						if ($value->is_free_service != 1) {
+						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 							if ($value->part->taxCode) {
 								$tax_amount = 0;
 								$total_amount = 0;

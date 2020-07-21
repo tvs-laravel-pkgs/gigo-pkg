@@ -1191,7 +1191,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in schedule_maintenance.labour_details" id="tr_{{index}}">
+                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in schedule_maintenance.labour_details" id="tr_{{index}}" ng-class="labour_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_detail.removal_reason_id != '10021'">
                                                             <td>
                                                                 {{labour_detail.name}}
                                                             </td>
@@ -1247,7 +1247,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in schedule_maintenance.part_details" id="tp_{{index}}">
+                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in schedule_maintenance.part_details" id="tp_{{index}}" ng-class="part_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_detail.removal_reason_id != '10021'">
                                                             <td>
                                                                 {{part_detail.name}}
                                                             </td>
@@ -1306,7 +1306,7 @@
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -1480,7 +1480,7 @@
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
