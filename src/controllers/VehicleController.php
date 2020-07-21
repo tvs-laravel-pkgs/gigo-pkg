@@ -4,8 +4,8 @@ namespace Abs\GigoPkg;
 use Abs\GigoPkg\ModelType;
 use Abs\VehiclePkg\Vehicle;
 use Abs\VehiclePkg\VehicleMake;
-use App\JobOrder;
 use App\Http\Controllers\Controller;
+use App\JobOrder;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -158,10 +158,10 @@ class VehicleController extends Controller {
 				//'registration_number.unique' => 'Registration Number is already taken',
 				'registration_number.min' => 'Registration Number is Minimum 10 Charachers',
 				'registration_number.max' => 'Registration Number is Maximum 10 Charachers',
-				'vin_number.unique' => 'Vin Number is already taken',
-				'vin_number.min' => 'Vin Number is Minimum 10 Charachers',
-				'vin_number.max' => 'Vin Number is Maximum 32 Charachers',
-				'vin_number.required' => 'Vin Number is Required',
+				// 'vin_number.unique' => 'Vin Number is already taken',
+				// 'vin_number.min' => 'Vin Number is Minimum 10 Charachers',
+				// 'vin_number.max' => 'Vin Number is Maximum 32 Charachers',
+				// 'vin_number.required' => 'Vin Number is Required',
 
 				'sold_date.required' => 'Name is Required',
 
@@ -185,12 +185,12 @@ class VehicleController extends Controller {
 					'max:10', /*
 					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,*/
 				],
-				'vin_number' => [
-					'nullable',
-					'min:10',
-					'max:32',
-					'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
+				// 'vin_number' => [
+				// 	'nullable',
+				// 	'min:10',
+				// 	'max:32',
+				// 	'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				// ],
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
@@ -294,28 +294,28 @@ class VehicleController extends Controller {
 			'lastJobOrder',
 			'lastJobOrder.jobCard',
 			'status'])
-		->select([
-					'vehicles.*',
-					DB::raw('DATE_FORMAT(vehicles.created_at,"%d/%m/%Y") as date'),
-					DB::raw('DATE_FORMAT(vehicles.created_at,"%h:%i %p") as time'),
-				])
-		 ->find($request->id);
+			->select([
+				'vehicles.*',
+				DB::raw('DATE_FORMAT(vehicles.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(vehicles.created_at,"%h:%i %p") as time'),
+			])
+			->find($request->id);
 
-		 $this->data['job_order'] = JobOrder::company()->with([
-		 	    'gateLog',
-		 	    'jobCard',
-		 	    'jobCard.status',
-		        'quoteType',
-		        'type',
-				'serviceType',
-				'kmReadingType',
-				'status'])
-		 ->select([
-					'job_orders.*',
-					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-				])
-		 ->where('vehicle_id',$request->id)->get();
+		$this->data['job_order'] = JobOrder::company()->with([
+			'gateLog',
+			'jobCard',
+			'jobCard.status',
+			'quoteType',
+			'type',
+			'serviceType',
+			'kmReadingType',
+			'status'])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->where('vehicle_id', $request->id)->get();
 
 		$this->data['action'] = 'View';
 		return response()->json($this->data);

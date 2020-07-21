@@ -251,10 +251,20 @@
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
-                                                        VIN Number
+                                                        Engine Number
                                                     </span>
                                                     <span class="view-col-value">
-                                                        {{job_order.vehicle.vin_number}}
+                                                        {{job_order.vehicle.engine_number}}
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Chassis / VIN Number
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_order.vehicle.chassis_number}}
+                                                        </b>
                                                     </span>
                                                 </li>
                                                 <li class="view-col-3">
@@ -276,24 +286,6 @@
                                                     </span>
                                                     <span class="view-col-value">
                                                         {{job_order.vehicle.sold_date}}
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        Engine Number
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        {{job_order.vehicle.engine_number}}
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3">
-                                                    <span class="view-col-label">
-                                                        Chassis Number
-                                                    </span>
-                                                    <span class="view-data-list-value">
-                                                        <b>
-                                                            {{job_order.vehicle.chassis_number}}
-                                                        </b>
                                                     </span>
                                                 </li>
                                             </ul>

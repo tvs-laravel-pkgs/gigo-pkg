@@ -71,10 +71,20 @@
                                                     </li>
                                                     <li class="view-col-3">
                                                         <span class="view-col-label">
-                                                            VIN Number
+                                                            Engine Number
                                                         </span>
                                                         <span class="view-col-value">
-                                                            {{job_order.vehicle.vin_number}}
+                                                            {{job_order.vehicle.engine_number}}
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label">
+                                                            Chassis / VIN Number
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.vehicle.chassis_number}}
+                                                            </b>
                                                         </span>
                                                     </li>
                                                     <li class="view-col-3">
@@ -96,24 +106,6 @@
                                                         </span>
                                                         <span class="view-col-value">
                                                             {{job_order.vehicle.sold_date}}
-                                                        </span>
-                                                    </li>
-                                                    <li class="view-col-3">
-                                                        <span class="view-col-label">
-                                                            Engine Number
-                                                        </span>
-                                                        <span class="view-col-value">
-                                                            {{job_order.vehicle.engine_number}}
-                                                        </span>
-                                                    </li>
-                                                    <li class="view-col-3">
-                                                        <span class="view-col-label">
-                                                            Chassis Number
-                                                        </span>
-                                                        <span class="view-data-list-value">
-                                                            <b>
-                                                                {{job_order.vehicle.chassis_number}}
-                                                            </b>
                                                         </span>
                                                     </li>
                                                 </ul>
@@ -138,7 +130,7 @@
                                                             Registration Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" minlength="8" maxlength="10" placeholder="Enter Registration No" autocomplete="off" ng-model="job_order.vehicle.registration_number" name="registration_number" />
+                                                        <input type="text" class="form-control registration_number" minlength="8" maxlength="13" placeholder="Enter Registration No" autocomplete="off" ng-model="job_order.vehicle.registration_number" name="registration_number" oninput="this.value = this.value.toUpperCase()" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3" ng-if="job_order.vehicle.is_registered == 0">
@@ -171,10 +163,19 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>
-                                                            VIN Number
+                                                            Engine Number
                                                             <sup class="mandatory">*</sup>
                                                         </label>
-                                                        <input type="text" class="form-control" minlength="17" maxlength="17" placeholder="Enter VIN No" autocomplete="off" ng-model="job_order.vehicle.vin_number" name="vin_number" />
+                                                        <input type="text" class="form-control" minlength="7" placeholder="Enter Engine No" autocomplete="off" ng-model="job_order.vehicle.engine_number" name="engine_number" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Chassis / VIN Number
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control" minlength="10" maxlength="17" placeholder="Enter Chasis No" autocomplete="off" ng-model="job_order.vehicle.chassis_number" name="chassis_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">
@@ -202,24 +203,6 @@
                                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                             </div>
                                                         </div><!-- Input Group -->
-                                                    </div><!-- Feild -->
-                                                </div><!-- Column -->
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>
-                                                            Engine Number
-                                                            <sup class="mandatory">*</sup>
-                                                        </label>
-                                                        <input type="text" class="form-control" minlength="7" placeholder="Enter Engine No" autocomplete="off" ng-model="job_order.vehicle.engine_number" name="engine_number" />
-                                                    </div><!-- Feild -->
-                                                </div><!-- Column -->
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <label>
-                                                            Chassis Number
-                                                            <sup class="mandatory">*</sup>
-                                                        </label>
-                                                        <input type="text" class="form-control" minlength="10" placeholder="Enter Chasis No" autocomplete="off" ng-model="job_order.vehicle.chassis_number" name="chassis_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->

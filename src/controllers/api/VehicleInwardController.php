@@ -1270,7 +1270,7 @@ class VehicleInwardController extends Controller {
 					'exists:repair_orders,id',
 					'unique:job_order_repair_orders,repair_order_id,' . $request->job_order_repair_order_id . ',id,job_order_id,' . $request->job_order_id,
 				],
-				'split_order_id' => [
+				'split_order_type_id' => [
 					'required',
 					'integer',
 					'exists:split_order_types,id',
@@ -1313,9 +1313,13 @@ class VehicleInwardController extends Controller {
 			$job_order_repair_order->job_order_id = $request->job_order_id;
 			$job_order_repair_order->repair_order_id = $request->rot_id;
 			$job_order_repair_order->qty = $repair_order->hours;
-			$job_order_repair_order->split_order_type_id = $request->split_order_id;
+			$job_order_repair_order->split_order_type_id = $request->split_order_type_id;
 			$job_order_repair_order->amount = $repair_order->amount;
-			$job_order_repair_order->is_recommended_by_oem = 0;
+			if ($request->type == 'scheduled') {
+				$job_order_repair_order->is_recommended_by_oem = 1;
+			} else {
+				$job_order_repair_order->is_recommended_by_oem = 0;
+			}
 			$job_order_repair_order->status_id = 8180; //Customer Approval Pending
 			$job_order_repair_order->save();
 
@@ -1945,6 +1949,7 @@ class VehicleInwardController extends Controller {
 			if ($job_order->jobOrderRepairOrders) {
 				foreach ($job_order->jobOrderRepairOrders as $key => $value) {
 					$labour_details[$key]['id'] = $value->id;
+					$labour_details[$key]['labour_id'] = $value->repair_order_id;
 					$labour_details[$key]['code'] = $value->repairOrder->code;
 					$labour_details[$key]['name'] = $value->repairOrder->name;
 					$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
@@ -1953,6 +1958,7 @@ class VehicleInwardController extends Controller {
 					$labour_details[$key]['is_free_service'] = $value->is_free_service;
 					$labour_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
 					$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
+					$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 					if (in_array($value->split_order_type_id, $customer_paid_type)) {
 						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 							$labour_amount += $value->amount;
@@ -1967,6 +1973,7 @@ class VehicleInwardController extends Controller {
 			if ($job_order->jobOrderParts) {
 				foreach ($job_order->jobOrderParts as $key => $value) {
 					$part_details[$key]['id'] = $value->id;
+					$part_details[$key]['part_id'] = $value->part_id;
 					$part_details[$key]['code'] = $value->part->code;
 					$part_details[$key]['name'] = $value->part->name;
 					$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
@@ -1976,6 +1983,7 @@ class VehicleInwardController extends Controller {
 					$part_details[$key]['is_free_service'] = $value->is_free_service;
 					$part_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
 					$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
+					$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 					if (in_array($value->split_order_type_id, $customer_paid_type)) {
 						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 							$parts_rate += $value->amount;

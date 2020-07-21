@@ -1012,6 +1012,49 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $('.part_detail_id').val($part_id);
         }
 
+        $scope.saveLabour = function() {
+            var form_id = '#labour_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'rot_id': {
+                        required: true,
+                    },
+                    'split_order_type_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.save_labour').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/add-repair-order/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.save_labour').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.save_labour').button('reset');
+                            custom_noty('success', res.message);
+                            $('#labour_form_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $scope.fetchData();
+                        })
+                        .fail(function(xhr) {
+                            $('.save_labour').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
         $scope.deletePartsConfirm = function() {
             $id = $('.delete_parts_details').val();
             $part_id = $('.part_detail_id').val();
@@ -1161,6 +1204,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $scope.calculatePartTotal();
         }
         $scope.showLabourForm = function(labour_index, labour = null) {
+            $scope.repair_order_id = labour.id;
             if (labour_index === false) {
                 // $scope.labour_details = {};
             } else {
@@ -1178,7 +1222,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         });
                 }
                 if (labour.category == undefined) {
-                    RepairOrderSvc.read(labour.id)
+                    RepairOrderSvc.read(labour.labour_id)
                         .then(function(response) {
                             $scope.schedule_maintainance_ro.repair_order = response.data.repair_order;
                         });
@@ -2433,6 +2477,28 @@ app.component('inwardVehicleVehicleDetail', {
         }
         $scope.fetchData();
 
+        $(document).on('keyup', ".registration_number", function() {
+            if ($(this).val().length == 2) {
+                $('.registration_number').val($(this).val() + '-');
+            }
+            if ($(this).val().length == 5) {
+                $('.registration_number').val($(this).val() + '-');
+            }
+            if ($(this).val().length == 8) {
+                var regis_num = $(this).val().substr(7, 1);
+                if ($.isNumeric(regis_num)) {
+                    //Check Previous Character Number or String
+                    var previous_char = $(this).val().substr(6, 1);
+                    if (!$.isNumeric(previous_char)) {
+                        var regis_number = $(this).val().slice(0, -1);
+                        $('.registration_number').val(regis_number + '-' + regis_num);
+                    }
+                } else {
+                    $('.registration_number').val($(this).val() + '-');
+                }
+            }
+        });
+
         //GET VEHICLE MODEL LIST
         self.searchVehicleModel = function(query) {
             if (query) {
@@ -2465,7 +2531,7 @@ app.component('inwardVehicleVehicleDetail', {
                     'registration_number': {
                         required: true,
                         minlength: 8,
-                        maxlength: 10,
+                        maxlength: 13,
                     },
                     'plate_number': {
                         // required: function(element) {
@@ -2488,11 +2554,11 @@ app.component('inwardVehicleVehicleDetail', {
                     'model_id': {
                         required: true,
                     },
-                    'vin_number': {
-                        required: true,
-                        minlength: 17,
-                        maxlength: 17,
-                    },
+                    // 'vin_number': {
+                    //     required: true,
+                    //     minlength: 17,
+                    //     maxlength: 17,
+                    // },
                     'engine_number': {
                         required: true,
                         minlength: 7,
@@ -2501,14 +2567,14 @@ app.component('inwardVehicleVehicleDetail', {
                     'chassis_number': {
                         required: true,
                         minlength: 10,
-                        maxlength: 64,
+                        maxlength: 17,
                     },
                 },
                 messages: {
-                    'vin_number': {
-                        minlength: 'Minimum 17 Numbers',
-                        maxlength: 'Maximum 32 Numbers',
-                    },
+                    // 'vin_number': {
+                    //     minlength: 'Minimum 17 Numbers',
+                    //     maxlength: 'Maximum 32 Numbers',
+                    // },
                     'engine_number': {
                         minlength: 'Minimum 7 Numbers',
                         maxlength: 'Maximum 64 Numbers',
@@ -2519,7 +2585,7 @@ app.component('inwardVehicleVehicleDetail', {
                     }
                 },
                 invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check all tabs');
+                    custom_noty('error', 'You have errors, Please check fields');
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
