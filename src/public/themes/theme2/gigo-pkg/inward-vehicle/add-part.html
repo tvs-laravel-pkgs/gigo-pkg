@@ -61,7 +61,7 @@
                                                 </md-option>
                                             </md-optgroup>
                                         </md-select>
-                                        <input type="hidden" name="split_order_id" class="required" value="{{split_order_type_id}}">
+                                        <input type="hidden" name="split_order_type_id" class="required" value="{{split_order_type_id}}">
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-12">
@@ -80,7 +80,7 @@
                                                         UOM
                                                     </th>
                                                     <th class="text-right">
-                                                        Rate
+                                                        MRP
                                                     </th>
                                                     <th class="text-right">
                                                         Quantity
@@ -102,7 +102,7 @@
                                                         {{job_order_part.uom.name ? job_order_part.uom.name : ''}}
                                                     </td>
                                                     <td class="text-right">
-                                                        {{job_order_part.rate | number: 2}}
+                                                        {{job_order_part.mrp | number: 2}}
                                                     </td>
                                                     <td class="text-right">
                                                         {{job_order_part.qty}}

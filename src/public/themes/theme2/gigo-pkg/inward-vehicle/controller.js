@@ -3783,7 +3783,7 @@ app.component('inwardVehiclePayableAddPartForm', {
             } else {
                 $scope.job_order_part.qty = 0;
             }
-            $scope.job_order_part.amount = parseFloat($scope.job_order_part.qty * parseFloat($scope.job_order_part.rate)).toFixed(2);
+            $scope.job_order_part.amount = parseFloat($scope.job_order_part.qty * parseFloat($scope.job_order_part.mrp)).toFixed(2);
         }
 
         //Save Form Data 
@@ -3798,6 +3798,9 @@ app.component('inwardVehiclePayableAddPartForm', {
                     'qty': {
                         required: true,
                         number: true,
+                    },
+                    'split_order_type_id': {
+                        required: true,
                     },
                 },
                 submitHandler: function(form) {
@@ -3980,6 +3983,9 @@ app.component('inwardVehiclePayableAddLabourForm', {
                         required: true,
                     },
                     'rot_id': {
+                        required: true,
+                    },
+                    'split_order_type_id': {
                         required: true,
                     },
                 },
