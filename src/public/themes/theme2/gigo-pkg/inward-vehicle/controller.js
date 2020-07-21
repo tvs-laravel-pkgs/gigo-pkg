@@ -1055,6 +1055,53 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             });
         }
 
+        $scope.savePart = function() {
+            var form_id = '#part_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'part_id': {
+                        required: true,
+                    },
+                    'qty': {
+                        required: true,
+                        number: true,
+                    },
+                    'split_order_type_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.save_part').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/add-part/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.save_part').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.save_part').button('reset');
+                            custom_noty('success', res.message);
+                            $('#part_form_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $scope.fetchData();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
         $scope.deletePartsConfirm = function() {
             $id = $('.delete_parts_details').val();
             $part_id = $('.part_detail_id').val();
@@ -1238,10 +1285,13 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         }
         $scope.showPartForm = function(part_index, part = null) {
             // console.log(part.qty);
+            $scope.schedule_maintainance_part = [];
+            $scope.job_order_part_id = '';
             if (part_index === false) {
                 // $scope.part_details = {};
             } else {
                 if (part.split_order_type_id != null) {
+                    $scope.job_order_part_id = part.id;
                     if (part.split_order_type_id == undefined) {
                         $split_id = part.pivot.split_order_type_id;
                     } else {
@@ -1253,7 +1303,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         });
                 }
                 if (part.uom == undefined) {
-                    PartSvc.read(part.id)
+                    PartSvc.read(part.part_id)
                         .then(function(response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;

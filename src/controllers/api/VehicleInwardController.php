@@ -1179,7 +1179,7 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:parts,id',
 				],
-				'split_order_id' => [
+				'split_order_type_id' => [
 					'required',
 					'integer',
 					'exists:split_order_types,id',
@@ -1224,12 +1224,15 @@ class VehicleInwardController extends Controller {
 			}
 			$job_order_part->job_order_id = $request->job_order_id;
 			$job_order_part->part_id = $request->part_id;
-			$job_order_part->split_order_type_id = NULL;
 			$job_order_part->qty = $request->qty;
-			$job_order_part->rate = $part->rate;
-			$job_order_part->is_oem_recommended = 0;
-			$job_order_part->split_order_type_id = $request->split_order_id;
-			$job_order_part->amount = $request->qty * $part->rate;
+			$job_order_part->rate = $part->mrp;
+			if ($request->type == 'scheduled') {
+				$job_order_part->is_oem_recommended = 1;
+			} else {
+				$job_order_part->is_oem_recommended = 0;
+			}
+			$job_order_part->split_order_type_id = $request->split_order_type_id;
+			$job_order_part->amount = $request->qty * $part->mrp;
 			$job_order_part->status_id = 8200; //Customer Approval Pending
 			$job_order_part->save();
 
