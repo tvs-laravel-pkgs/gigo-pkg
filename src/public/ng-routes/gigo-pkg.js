@@ -856,6 +856,10 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<job-card-returnable-item-form></job-card-returnable-item-form>',
         title: 'Edit Returnable Item',
     }).
+    when('/job-card/returnable-part/add/:job_card_id', {
+        template: '<job-card-returnable-part-form></job-card-returnable-part-form>',
+        title: 'Add Returnable Part',
+    }).
 
     when('/job-card/gatein-detail/:job_card_id', {
         template: '<job-card-gatein-detail-form></job-card-gatein-detail-form>',

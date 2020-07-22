@@ -92,7 +92,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <button ng-if="job_order.is_customer_approved == '0' || job_order.is_customer_approved == 'NULL'" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
+                                                                <button ng-if="job_order.is_customer_approved != '1'" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
                                                                     Add Labour
                                                                 </button>
                                                             </td>
@@ -180,7 +180,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td>
-                                                                <button ng-if="job_order.is_customer_approved == '0' || job_order.is_customer_approved== 'NULL'" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)">
+                                                                <button ng-if="job_order.is_customer_approved != '1'" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)">
                                                                     Add Part
                                                                 </button>
                                                             </td>
@@ -287,19 +287,18 @@
         </div>
     </div>
 </div><!-- Modal -->
-<div class="modal fade filter" id="labour_form_modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
-                    <i class="icon ion-md-close"></i>
-                </button>
-                <h5 class="modal-title">
-                    {{modal_action}} Labour
-                </h5>
-            </div>
-            <div class="modal-body">
-                <form id="labour-form">
+<div class="modal fixed fade" id="labour_form_modal">
+    <div class="modal-dialog" role="document">
+        <form id="labour_form">
+            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <input type="hidden" name="job_order_repair_order_id" value="{{repair_order_id}}">
+            <input type="hidden" name="type" value="scheduled">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h4 class="modal-title" id="myModalLabel">{{modal_action}} Labour</h4>
+                </div>
+                <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -317,7 +316,7 @@
                                         No records matching "{{repairOrderSearchKey}}" were found.
                                     </md-not-found>
                                 </md-autocomplete>
-                                <input type="hidden" name="repair_order_id" value="{{schedule_maintainance_ro.repair_order.id}}">
+                                <input type="hidden" class="required" name="rot_id" value="{{schedule_maintainance_ro.repair_order.id}}">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
@@ -326,7 +325,7 @@
                                     Split Order Type
                                     <span class="mandatory">*</span>
                                 </label>
-                                <md-select ng-model="schedule_maintainance_ro.split_order_type" placeholder="Select service" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                <md-select ng-model="schedule_maintainance_ro.split_order_type" placeholder="Select Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                     <md-select-header class="demo-select-header">
                                         <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                     </md-select-header>
@@ -336,95 +335,57 @@
                                         </md-option>
                                     </md-optgroup>
                                 </md-select>
-                                <input type="hidden" name="split_order_type_id" value="{{schedule_maintainance_ro.split_order_type.id}}">
+                                <input type="hidden" class="required" name="split_order_type_id" value="{{schedule_maintainance_ro.split_order_type.id}}">
                             </div><!-- Field -->
                         </div><!-- Column -->
                     </div>
-                    <div class="row" ng-if="schedule_maintainance_ro.repair_order">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    ROT Description
-                                </label>
-                                <label>
-                                    {{schedule_maintainance_ro.repair_order.name}}
-                                </label>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    Category
-                                </label>
-                                <label>
-                                    {{schedule_maintainance_ro.repair_order.category.name}}
-                                </label>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    Skill Level
-                                </label>
-                                <label>
-                                    {{schedule_maintainance_ro.repair_order.skill_level.short_name}}
-                                </label>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    Hours
-                                </label>
-                                <label>
-                                    {{schedule_maintainance_ro.repair_order.hours}}
-                                </label>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>
-                                    <b>
-                                        Amount
-                                    </b>
-                                </label>
-                                <label>
-                                    <b>
-                                        {{schedule_maintainance_ro.repair_order.amount | currency}}
-                                    </b>
-                                </label>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 text-right mb-15">
-                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
-                                Cancel
-                            </button>
-                            <button type="submit" class="btn btn-bordered btn-red approve_btn">
-                                Submit
-                            </button>
-                        </div><!-- Column -->
-                    </div><!-- Row -->
-                </form>
-            </div>
-        </div><!-- Modal Content -->
+                    <div class="modal-block-details" ng-if="schedule_maintainance_ro.repair_order">
+                        <ul class="modla-view-data">
+                            <li class="modal-view-data-list">
+                                <span class="modal-view-data-list-label"> ROT Description</span>
+                                <span class="modal-view-data-list-value">{{schedule_maintainance_ro.repair_order.name}}</span>
+                            </li>
+                            <li class="modal-view-data-list">
+                                <span class="modal-view-data-list-label">Category</span>
+                                <span class="modal-view-data-list-value">{{schedule_maintainance_ro.repair_order.category.name}}</span>
+                            </li>
+                            <li class="modal-view-data-list">
+                                <span class="modal-view-data-list-label">Skill Level</span>
+                                <span class="modal-view-data-list-value">{{schedule_maintainance_ro.repair_order.skill_level ? schedule_maintainance_ro.repair_order.skill_level.short_name : '-'}}</span>
+                            </li>
+                            <li class="modal-view-data-list">
+                                <span class="modal-view-data-list-label">Hours</span>
+                                <span class="modal-view-data-list-value">{{schedule_maintainance_ro.repair_order.hours}}</span>
+                            </li>
+                            <li class="modal-view-data-list">
+                                <span class="modal-view-data-list-label">Amount</span>
+                                <span class="modal-view-data-list-value">{{schedule_maintainance_ro.repair_order.amount | currency}}</span>
+                            </li>
+                        </ul>
+                    </div><!-- Modal Block Details -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                        Cancel
+                    </button>
+                    <button type="submit" ng-click="saveLabour()" class="btn btn-bordered save_labour">Submit</button>
+                </div><!-- Modal Footer -->
+            </div><!-- Modal-content -->
+        </form>
     </div><!-- Modal Dialog -->
-</div><!-- Modal -->
-<div class="modal fade filter" id="part_form_modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
-                    <i class="icon ion-md-close"></i>
-                </button>
-                <h5 class="modal-title">
-                    {{modal_action}} Part
-                </h5>
-            </div>
-            <div class="modal-body">
-                <form id="part-form">
+</div>
+<div class="modal fixed fade" id="part_form_modal">
+    <div class="modal-dialog" role="document">
+        <form id="part_form">
+            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <input type="hidden" name="job_order_part_id" value="{{job_order_part_id}}">
+            <input type="hidden" name="type" value="scheduled">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h4 class="modal-title" id="myModalLabel">{{modal_action}} Part</h4>
+                </div>
+                <div class="modal-body">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -443,6 +404,7 @@
                                     </md-not-found>
                                 </md-autocomplete>
                                 <input type="hidden" name="part_id" value="{{schedule_maintainance_part.part.id}}">
+                                <input type="hidden" name="mrp" value="{{schedule_maintainance_part.part.mrp}}">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-4">
@@ -464,94 +426,48 @@
                                 <input type="hidden" name="split_order_type_id" value="{{schedule_maintainance_part.split_order_type.id}}">
                             </div><!-- Field -->
                         </div><!-- Column -->
-                        <div class="col-md-4" ng-if="schedule_maintainance_part.part">
-                            <div class="form-group">
-                                <label>
-                                    Part Description
-                                </label>
-                                <label>
-                                    {{schedule_maintainance_part.part.name}}
-                                </label>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                    </div>
-                    <div class="row" ng-if="schedule_maintainance_part.part">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    MRP
-                                </label>
-                                <label>
-                                    {{schedule_maintainance_part.part.mrp | currency}}
-                                </label>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>
                                     Quantity
                                 </label>
                                 <div class="input-group">
-                                    <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="quantity" ng-model="schedule_maintainance_part.part.qty" maxlength="12">
-                                    <!-- <span class="input-group-addon">
-                                    {{wjor_part.part.uom.name}}
-                                </span> -->
+                                    <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="qty" ng-model="schedule_maintainance_part.part.qty" maxlength="12">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row" ng-if="schedule_maintainance_part.part">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    UOM
-                                </label>
-                                <label>
-                                    {{schedule_maintainance_part.part.uom.code}}
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    <b>
-                                        Amount
-                                    </b>
-                                </label>
-                                <label>
-                                    <b>
-                                        {{schedule_maintainance_part.part.total_amount | currency}}
-                                    </b>
-                                </label>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 text-right mb-15">
-                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
-                                Cancel
-                            </button>
-                            <button type="submit" class="btn btn-bordered btn-red approve_btn">
-                                Submit
-                            </button>
-                        </div><!-- Column -->
-                    </div><!-- Row -->
-                </form>
-            </div>
-        </div><!-- Modal Content -->
+                    <div class="modal-block-details" ng-if="schedule_maintainance_part.part">
+                        <ul class="modla-view-data">
+                            <li class="modal-view-data-list">
+                                <span class="modal-view-data-list-label"> Part Description</span>
+                                <span class="modal-view-data-list-value">{{schedule_maintainance_part.part.name}}</span>
+                            </li>
+                            <li class="modal-view-data-list">
+                                <span class="modal-view-data-list-label">MRP</span>
+                                <span class="modal-view-data-list-value">{{schedule_maintainance_part.part.mrp | currency}}</span>
+                            </li>
+                            <li class="modal-view-data-list">
+                                <span class="modal-view-data-list-label">UOM</span>
+                                <span class="modal-view-data-list-value">{{schedule_maintainance_part.part.uom ? schedule_maintainance_part.part.uom.code : '-'}}</span>
+                            </li>
+                            <li class="modal-view-data-list">
+                                <span class="modal-view-data-list-label">Amount</span>
+                                <span class="modal-view-data-list-value">{{schedule_maintainance_part.part.total_amount | currency}}</span>
+                            </li>
+                        </ul>
+                    </div><!-- Modal Block Details -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                        Cancel
+                    </button>
+                    <button type="submit" ng-click="savePart()" class="btn btn-bordered save_part">Submit</button>
+                </div><!-- Modal Footer -->
+            </div><!-- Modal-content -->
+        </form>
     </div><!-- Modal Dialog -->
-</div><!-- Modal -->
-<style type="text/css">
-.strikethrough {
-    text-decoration: line-through;
-}
-
-.my-disable {
-    pointer-events: none;
-    opacity: 0.5;
-    /*cursor: not-allowed;*/
-}
-</style>
+</div>
 <div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm finance-view-modal" role="document">
         <form id="labour_parts_remove">

@@ -81,20 +81,23 @@ class GateInController extends Controller {
 
 					$registration_number = explode('-', $request->registration_number);
 
-					$valid_reg_number = 1;
-					if (!preg_match('/^[A-Z]+$/', $registration_number[0]) || !preg_match('/^[0-9]+$/', $registration_number[1])) {
-						$valid_reg_number = 0;
-					}
-
-					// dd(strlen($registration_number[3]));
-					if (count($registration_number) > 3) {
-						if (!preg_match('/^[A-Z]+$/', $registration_number[2]) || strlen($registration_number[3]) != 4 || !preg_match('/^[0-9]+$/', $registration_number[3])) {
+					if (count($registration_number) > 2) {
+						$valid_reg_number = 1;
+						if (!preg_match('/^[A-Z]+$/', $registration_number[0]) || !preg_match('/^[0-9]+$/', $registration_number[1])) {
 							$valid_reg_number = 0;
+						}
+
+						if (count($registration_number) > 3) {
+							if (!preg_match('/^[A-Z]+$/', $registration_number[2]) || strlen($registration_number[3]) != 4 || !preg_match('/^[0-9]+$/', $registration_number[3])) {
+								$valid_reg_number = 0;
+							}
+						} else {
+							if (!preg_match('/^[0-9]+$/', $registration_number[2]) || strlen($registration_number[2]) != 4) {
+								$valid_reg_number = 0;
+							}
 						}
 					} else {
-						if (!preg_match('/^[0-9]+$/', $registration_number[2]) || strlen($registration_number[2]) != 4) {
-							$valid_reg_number = 0;
-						}
+						$valid_reg_number = 0;
 					}
 
 					if ($valid_reg_number == 0) {
@@ -218,14 +221,13 @@ class GateInController extends Controller {
 				}
 				$vehicle->updated_by_id = Auth::user()->id;
 				$vehicle->save();
-
 			} else {
 				//VEHICLE DETAIL VALIDATION
 				$validator1 = Validator::make($request->all(), [
 					'chassis_number' => [
 						'required_if:gatein_entry_type_id,==,1',
 						// 'min:10',
-						'max:64',
+						'max:17',
 						// 'string',
 						// 'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
 					],

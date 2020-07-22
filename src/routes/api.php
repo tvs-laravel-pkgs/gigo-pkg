@@ -328,6 +328,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		Route::post('job-card/returnable-item/save', 'JobCardController@ReturnableItemSave');
 
+		//JobCard Returnable Parts Save
+		Route::post('job-card/returnable-parts/get-form-data', 'JobCardController@getReturnablePartsFormdata');
+		Route::post('job-card/returnable-part/save', 'JobCardController@ReturnablePartSave');
+
 		//Job Card View
 		Route::post('jobcard/road-test-observation/get', 'JobCardController@getRoadTestObservation');
 		Route::post('jobcard/expert-diagnosis/get', 'JobCardController@getExpertDiagnosis');

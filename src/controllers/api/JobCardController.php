@@ -2514,6 +2514,75 @@ class JobCardController extends Controller {
 		}
 	}
 
+	public function getReturnablePartsFormdata(Request $request) {
+		$job_card = JobCard::with([
+			'jobOrder',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status',
+			//'jobOrder.jobOrderParts.part',
+		])
+			->find($request->id);
+
+		$joborder_parts =JobOrderPart::select('job_order_parts.id as part_id','parts.id','parts.code','parts.name','job_card_returnable_items.part_id as select_id','job_card_returnable_items.qty')->leftjoin('parts','parts.id','job_order_parts.part_id')->leftjoin('job_card_returnable_items','job_card_returnable_items.part_id','job_order_parts.id')->where('job_order_parts.job_order_id',$job_card->job_order_id)->get();	
+
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => ['Job Card Not Found!'],
+			]);
+		}
+		
+		return response()->json([
+			'success' => true,
+			'job_card' => $job_card,
+			'joborder_parts' => $joborder_parts,
+		]);
+	}
+
+	public function ReturnablePartSave(Request $request) {
+
+		//dd($request->all());
+		try {
+			DB::beginTransaction();
+			if(isset($request->quantity))
+			{
+			foreach ($request->quantity as $key => $parts) {
+				$delete_part = JobCardReturnableItem::where('part_id',$request->part_id[$key])->forceDelete();
+					$returnable_part = new JobCardReturnableItem;
+					$returnable_part->created_by_id = Auth::user()->id;
+					$returnable_part->created_at = Carbon::now();
+					$returnable_part->job_card_id = $request->job_card_id;
+					$returnable_part->part_id = $request->part_id[$key];
+					$returnable_part->item_name = $request->part_name[$key];
+					$returnable_part->qty = $parts;
+					$returnable_part->save();
+				}}
+				else{
+					return response()->json(['success' => false, 'errors' => ['Exception Error' => 'Check Check Box']]);
+				}
+			DB::commit();
+			if (!($request->id)) {
+				return response()->json([
+					'success' => true,
+					'message' => 'Returnable Parts Saved Successfully',
+				]);
+			} else {
+				return response()->json([
+					'success' => true,
+					'message' => 'Returnable Parts Saved Successfully',
+				]);
+			}
+		} catch (Exceprion $e) {
+			DB::rollBack();
+			return response()->json([
+				'success' => false,
+				'error' => $e->getMessage(),
+			]);
+		}
+	}
+
 	public function viewJobCard($job_card_id) {
 		try {
 			$job_card = JobCard::find($job_card_id);

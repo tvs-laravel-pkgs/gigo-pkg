@@ -99,7 +99,7 @@
                                                         </tr>
                                                         <tr class="ptb-9">
                                                             <td>
-                                                                <a ng-if="job_order.is_customer_approved == '0' || job_order.is_customer_approved == 'NULL'" href=".#!/inward-vehicle/payable-labour-part/add-labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                                <a nng-if="job_order.is_customer_approved != '1'" href=".#!/inward-vehicle/payable-labour-part/add-labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
                                                                     Add Labour
                                                                 </a>
                                                             </td>
@@ -180,7 +180,7 @@
                                                         </tr>
                                                         <tr class="ptb-9">
                                                             <td>
-                                                                <a ng-if="job_order.is_customer_approved == '0' || job_order.is_customer_approved == 'NULL'" href=".#!/inward-vehicle/payable-labour-part/add-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                                <a ng-if="job_order.is_customer_approved != '1'" href=".#!/inward-vehicle/payable-labour-part/add-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
                                                                     Add Parts
                                                                 </a>
                                                             </td>

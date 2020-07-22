@@ -1,0 +1,91 @@
+<!-- Content Wrap -->
+<div class="content-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href=".#!/job-card/returnable-item/{{job_card.id}}" type="button" class="btn-back btn-img">
+                        <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
+                    </a>
+                </div>
+                <div class="page-header-content title-block">
+                    <h1 class="title">
+                        Add Returnable Parts
+                    </h1>
+                    <p class="subtitle">
+                        Jobcard / Returnable Parts
+                    </p>
+                </div>
+            </div>
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form-top type-2">
+            <div class="page-tab-form-top-left">
+                <div class="page-tab-form-top-left-info pad-lf-rt">
+                    <span class="page-tab-form-top-left-info-content">
+                        JC No: {{job_card.job_card_number ? job_card.job_card_number : ''}}
+                        | {{job_card.job_order.vehicle.registration_number ? job_card.job_order.vehicle.registration_number : ''}}
+                        | {{job_card.job_order.vehicle.model ? job_card.job_order.vehicle.model.model_name : ''}}
+                        | {{job_card.job_order.driver_name}}
+                        | {{job_card.created_at}}
+                    </span>
+                </div>
+            </div><!-- Page Tab Form Top Left -->
+            <div class="page-tab-form-top-right">
+                <div class="page-tab-form-top-right-info">
+                    Status : {{job_card.status.name ? job_card.status.name : ''}}
+                </div>
+            </div><!-- Page Tab Form Top Right -->
+        </div><!-- Page Tab Form Top -->
+        <div class="container">
+            <form id="returnable_parts" enctype="multipart/form-data">
+                <input type="hidden" name="job_card_id" value="{{job_card.id}}">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="page-form pb-60 mt-30">
+                            <div class="row">
+                            <h6 class="mcollect-receipt-invoice-title mb-0">Parts Details</h6>
+                            <div class="table-responsive">
+                            <table class="table table-type-2 mcollect-receipt-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Parts Code</th>
+                                        <th>Parts Name</th>
+                                        <th>Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="(index,parts) in joborder_parts">
+                                        <td><div class="checkbox radius-five">
+                                        <input type="checkbox" id="check{{index}}" ng-click="checkCheckbox(index)" ng-checked="parts.select_id != NULL">
+                                        </div></td>
+                                        <td>{{parts.code}}</td>
+                                        <td>{{parts.name}}</td>
+                                        <td><input type="text" name="quantity[{{index}}]" value="{{parts.qty}}" id="in_{{index}}" ng-disabled="parts.qty == NULL" ><input type="hidden" name="part_id[{{index}}]" value="{{parts.id}}">
+                                        <input type="hidden" name="part_name[{{index}}]" value="{{parts.name}}"></td>
+                                    </tr>
+                                    
+                                </tbody>
+                            </table>
+                        </div><!-- Table Responsive -->
+                            </div><!-- Row -->
+                        </div><!-- Page Form -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+                <div class="page-form-footer">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href=".#!/job-card/returnable-item/{{job_card.id}}" class="btn btn-bordered btn-grey btn-min-wdth">Cancel</a>
+                            <button type="submit" class="btn btn-secondary-dark btn-min-wdth submit" ng-click="ReturnablePartSave()">Save</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Page Form Footer -->
+            </form>
+        </div><!-- Container -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>
