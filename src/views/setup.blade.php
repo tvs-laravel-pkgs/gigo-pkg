@@ -651,5 +651,6 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 <script type="text/javascript">
     // Inward Parts Indent
     var inward_parts_indent_view_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-parts-indent/view.html')}}';
+    var inward_parts_indent_issue_part_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-parts-indent/issue_part_form.html')}}';
 
 </script>

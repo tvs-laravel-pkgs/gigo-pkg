@@ -1132,8 +1132,12 @@ app.config(['$routeProvider', function($routeProvider) {
 
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
-    when('/inward-parts-indent/view', {
+    when('/inward-parts-indent/view/:job_order_id', {
         template: '<inward-parts-indent-view></inward-parts-indent-view>',
         title: 'Inward Parts Indent View',
+    }).
+    when('/inward-parts-indent/issue-part/form/:job_order_id', {
+        template: '<inward-parts-indent-issue-part-form></inward-parts-indent-issue-part-form>',
+        title: 'Inward Parts Indent Issue Part',
     });
 }]);

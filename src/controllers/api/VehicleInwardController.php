@@ -21,8 +21,10 @@ use App\JobCard;
 use App\JobOrder;
 use App\JobOrderCampaign;
 use App\JobOrderCampaignChassisNumber;
+use App\JobOrderIssuedPart;
 use App\JobOrderPart;
 use App\JobOrderRepairOrder;
+use App\JobOrderReturnedPart;
 use App\Outlet;
 use App\Part;
 use App\QuoteType;
@@ -36,6 +38,7 @@ use App\VehicleInspectionItemGroup;
 use App\VehicleInventoryItem;
 use App\VehicleModel;
 use App\VehicleOwner;
+use App\Vendor;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -532,6 +535,271 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	public function getInwardPartIndentViewData(Request $r) {
+		try {
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'vehicle.currentOwner.customer',
+				'vehicle.currentOwner.customer.address',
+				'vehicle.currentOwner.customer.address.country',
+				'vehicle.currentOwner.customer.address.state',
+				'vehicle.currentOwner.customer.address.city',
+				'vehicle.currentOwner.ownershipType',
+				'vehicle.lastJobOrder',
+				'vehicle.lastJobOrder.jobCard',
+				'vehicleInventoryItem',
+				'vehicleInspectionItems',
+				'type',
+				'outlet',
+				'customerVoices',
+				'quoteType',
+				'serviceType',
+				'kmReadingType',
+				'status',
+				'gateLog',
+				'gateLog.createdBy',
+				'roadTestDoneBy',
+				'roadTestPreferedBy',
+				'expertDiagnosisReportBy',
+				'estimationType',
+				'driverLicenseAttachment',
+				'insuranceAttachment',
+				'rcBookAttachment',
+				'warrentyPolicyAttachment',
+				'EWPAttachment',
+				'AMCAttachment',
+				'gateLog.driverAttachment',
+				'gateLog.kmAttachment',
+				'gateLog.vehicleAttachment',
+				'gateLog.chassisAttachment',
+				'customerApprovalAttachment',
+				'customerESign',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->where('company_id', Auth::user()->company_id)
+				->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
+				]);
+			}
+
+			$labour_amount = 0;
+			$part_amount = 0;
+
+			$labour_details = array();
+			if ($job_order->jobOrderRepairOrders) {
+				foreach ($job_order->jobOrderRepairOrders as $key => $value) {
+					$labour_details[$key]['id'] = $value->id;
+					$labour_details[$key]['code'] = $value->repairOrder->code;
+					$labour_details[$key]['name'] = $value->repairOrder->name;
+					$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
+					$labour_details[$key]['qty'] = $value->qty;
+					$labour_details[$key]['amount'] = $value->amount;
+					$labour_details[$key]['is_free_service'] = $value->is_free_service;
+					$labour_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
+					$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
+					// if (in_array($value->split_order_type_id, $customer_paid_type)) {
+					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
+						$labour_amount += $value->amount;
+					}
+					// } else {
+					// 	$labour_details[$key]['amount'] = 0;
+					// }
+				}
+			}
+
+			$part_details = array();
+			if ($job_order->jobOrderParts) {
+				foreach ($job_order->jobOrderParts as $key => $value) {
+					$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
+
+					$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
+
+					$part_details[$key]['id'] = $value->part_id;
+					$part_details[$key]['job_order_part_id'] = $value->id;
+					$part_details[$key]['code'] = $value->part->code;
+					$part_details[$key]['name'] = $value->part->name;
+					$part_details[$key]['part_detail'] = $value->part->code . ' | ' . $value->part->name;
+					$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
+					$part_details[$key]['rate'] = $value->rate;
+					$part_details[$key]['qty'] = $value->qty;
+					$part_details[$key]['amount'] = $value->amount;
+					$part_details[$key]['is_free_service'] = $value->is_free_service;
+					if ($value->splitOrderType) {
+						$part_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
+					} else {
+						$part_details[$key]['split_order_type'] = '';
+
+					}
+					$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
+
+					$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
+					$part_details[$key]['issued_qty'] = $issued_qty->issued_qty;
+					$part_details[$key]['returned_qty'] = $returned_qty->returned_qty;
+					$part_details[$key]['pending_qty'] = $value->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
+
+					// if (in_array($value->split_order_type_id, $customer_paid_type)) {
+					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
+						$part_amount += $value->amount;
+					}
+				}
+			}
+
+			$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*')->where('job_order_parts.job_order_id', $r->id)->whereNull('removal_reason_id')->get();
+
+			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')->where('job_order_repair_orders.job_order_id', $r->id)->groupBy('users.id')->get();
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+				'labour_details' => $labour_details,
+				'labour_amount' => $labour_amount,
+				'part_details' => $part_details,
+				'part_amount' => $part_amount,
+				'job_order_parts' => $job_order_parts,
+				'repair_order_mechanics' => $repair_order_mechanics,
+			]);
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+	//SAVE RETURN PART
+	public function saveReturnPart(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_part_id' => [
+					'required',
+					'integer',
+					'exists:job_order_parts,id',
+				],
+				'returned_to_id' => [
+					'required',
+					'integer',
+					'exists:users,id',
+				],
+				'returned_qty' => [
+					'required',
+					'numeric',
+				],
+
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
+
+			$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
+
+			$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
+
+			$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
+			if ($pending_qty < $request->returned_qty) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Returning Quantity should not exceed Pending Quantity',
+				]);
+			}
+
+			DB::beginTransaction();
+			$job_order_returned_part = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->first();
+			if ($job_order_returned_part == null) {
+				$job_order_returned_part = new JobOrderReturnedPart;
+				$job_order_returned_part->created_by_id = Auth::id();
+				$job_order_returned_part->created_at = Carbon::now();
+			} else {
+				$job_order_returned_part->updated_by_id = Auth::id();
+				$job_order_returned_part->updated_at = Carbon::now();
+			}
+			$job_order_returned_part->fill($request->all());
+			$job_order_returned_part->save();
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Return Entry saved Successfully!!',
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+	//ISSUE PART FORM DATA
+	public function getInwardPartIndentIssuePartFormData(Request $request) {
+		// dd($request->all());
+		try {
+
+			$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*')->where('job_order_parts.job_order_id', $request->id)->whereNull('removal_reason_id')->get();
+
+			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')->where('job_order_repair_orders.job_order_id', $request->id)->groupBy('users.id')->get();
+
+			$issue_modes = Config::where('config_type_id', 109)->select('id', 'name')->get();
+
+			return response()->json([
+				'success' => true,
+				'job_order_parts' => $job_order_parts,
+				'repair_order_mechanics' => $repair_order_mechanics,
+				'issue_modes' => $issue_modes,
+			]);
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+
+	public function searchVendor($query) {
+		dd($query);
+		$this->data['vendors'] = $vendors = Vendor::select(
+			'id',
+			'code',
+			'name'
+		)
+			->where('code', 'LIKE', '%' . $query . '%')
+			->orWhere('name', 'LIKE', '%' . $query . '%')
+			->get();
+
+		return response()->json($this->data);
+	}
+	//SAVE ISSUED PART
+	public function saveIssuedPart(Request $request) {
+		dd($request->all());
+	}
 	//VEHICLE INWARD VIEW DATA
 	public function getVehicleInwardViewData(Request $r) {
 		try {
@@ -1179,11 +1447,11 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:parts,id',
 				],
-				'split_order_id' => [
+				/*'split_order_id' => [
 					'required',
 					'integer',
 					'exists:split_order_types,id',
-				],
+				],*/
 				'qty' => [
 					'required',
 					'numeric',
