@@ -3222,14 +3222,12 @@ class VehicleInwardController extends Controller {
 			$job_order = JobOrder::with([
 				'vehicle',
 				'vehicle.model',
-				/*'jobOrderRepairOrders' => function ($q) use ($customer_paid_type_id) {
-					$q->whereIn('split_order_type_id', $customer_paid_type_id)->orWhereNull('split_order_type_id');
-				},*/
-				/*'jobOrderParts' => function ($q) use ($customer_paid_type_id) {
-					$q->whereIn('split_order_type_id', $customer_paid_type_id)->orWhereNull('split_order_type_id');
-				},*/
-				'jobOrderRepairOrders',
-				'jobOrderParts',
+				'jobOrderRepairOrders' => function ($q) use ($customer_paid_type_id) {
+					$q->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id');
+				},
+				'jobOrderParts' => function ($q) use ($customer_paid_type_id) {
+					$q->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id');
+				},
 				'type',
 				'quoteType',
 				'serviceType',
@@ -3408,14 +3406,14 @@ class VehicleInwardController extends Controller {
 			}
 
 			//OEM RECOMENTATION LABOUR AND PARTS AND SUB TOTAL
-			$job_order->oem_recomentation_labour_amount = $oem_recomentaion_labour_amount;
-			$job_order->oem_recomentation_part_amount = $oem_recomentaion_part_amount;
-			$job_order->oem_recomentation_sub_total = $oem_recomentaion_labour_amount + $oem_recomentaion_part_amount;
+			$job_order->oem_recomentation_labour_amount = $oem_recomentaion_labour_amount_include_tax;
+			$job_order->oem_recomentation_part_amount = $oem_recomentaion_part_amount_include_tax;
+			$job_order->oem_recomentation_sub_total = $oem_recomentaion_labour_amount_include_tax + $oem_recomentaion_part_amount_include_tax;
 
 			//ADDITIONAL ROT & PARTS LABOUR AND PARTS AND SUB TOTAL
-			$job_order->additional_rot_parts_labour_amount = $additional_rot_and_parts_labour_amount;
-			$job_order->additional_rot_parts_part_amount = $additional_rot_and_parts_part_amount;
-			$job_order->additional_rot_parts_sub_total = $additional_rot_and_parts_labour_amount + $additional_rot_and_parts_part_amount;
+			$job_order->additional_rot_parts_labour_amount = $additional_rot_and_parts_labour_amount_include_tax;
+			$job_order->additional_rot_parts_part_amount = $additional_rot_and_parts_part_amount_include_tax;
+			$job_order->additional_rot_parts_sub_total = $additional_rot_and_parts_labour_amount_include_tax + $additional_rot_and_parts_part_amount_include_tax;
 
 			//TOTAL ESTIMATE
 			$job_order->total_estimate_labour_amount = $oem_recomentaion_labour_amount_include_tax + $additional_rot_and_parts_labour_amount_include_tax;
