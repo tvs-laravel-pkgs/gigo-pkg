@@ -234,7 +234,7 @@ app.component('vehicleServiceScheduleList', {
 
 app.component('vehicleServiceScheduleForm', {
     templateUrl: vehicle_service_schedule_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, VehicleServiceScheduleSvc, ServiceTypeSvc, ConfigSvc, PartSvc, RepairOrderSvc, SplitOrderTypeSvc) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, VehicleServiceScheduleSvc, ServiceTypeSvc, ConfigSvc, PartSvc, RepairOrderSvc, SplitOrderTypeSvc, $mdSelect) {
         var self = this;
         $("input:text:visible:first").focus();
         self.hasPermission = HelperService.hasPermission;
@@ -244,6 +244,13 @@ app.component('vehicleServiceScheduleForm', {
         }
         $scope.page = 'form';
         self.angular_routes = angular_routes;
+
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function(event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
         /*$http.get(
             laravel_routes['getVehicleServiceScheduleFormData'], {
                 params: {
@@ -297,7 +304,7 @@ app.component('vehicleServiceScheduleForm', {
                             self.switch_value = 'Active';
                         }
                     } else {
-                        self.is_free = "Active";
+                        self.is_free = "Yes";
                         self.switch_value = 'Active';
                         $scope.vehicle_service_schedule = {
                             repair_orders: [],
@@ -435,7 +442,7 @@ app.component('vehicleServiceScheduleForm', {
                         }
                     });
                     // sch_serv_type.is_free = (self.is_free == 'Active') ? 1 : 0;
-                    $scope.service_type_item.is_free = (self.is_free == 'Active') ? 1 : 0;
+                    $scope.service_type_item.is_free = (self.is_free == 'Yes') ? 1 : 0;
                     $scope.service_type_item.repair_orders = [];
                     $scope.service_type_item.parts = [];
                     $scope.vehicle_service_schedule.vehicle_service_schedule_service_types.push($scope.service_type_item);
@@ -452,7 +459,7 @@ app.component('vehicleServiceScheduleForm', {
         });
         $scope.isFreeChange = function() {
             if ($scope.vehicle_service_schedule.vehicle_service_schedule_service_types[$scope.index]) {
-                $scope.vehicle_service_schedule.vehicle_service_schedule_service_types[$scope.index].is_free = (self.is_free == 'Active') ? 1 : 0;
+                $scope.vehicle_service_schedule.vehicle_service_schedule_service_types[$scope.index].is_free = (self.is_free == 'Yes') ? 1 : 0;
                 console.log($scope.vehicle_service_schedule.vehicle_service_schedule_service_types[$scope.index].is_free);
             }
         }
@@ -462,7 +469,7 @@ app.component('vehicleServiceScheduleForm', {
                 sch_serv_type.service_type_id = sch_serv_type.service_type.id;
                 sch_serv_type.km_tolerance_type_id = sch_serv_type.tolerance_km.id;
                 sch_serv_type.period_tolerance_type_id = sch_serv_type.tolerance_period.id;
-                sch_serv_type.is_free = (sch_serv_type.is_free == "Active" || sch_serv_type.is_free == 1) ? 1 : 0;
+                sch_serv_type.is_free = (sch_serv_type.is_free == "Yes" || sch_serv_type.is_free == 1) ? 1 : 0;
                 // console.log(sch_serv_type);
                 angular.forEach(sch_serv_type.parts, function(part) {
                     // console.log(part);
@@ -496,12 +503,12 @@ app.component('vehicleServiceScheduleForm', {
             if (service_type_item != undefined) {
                 // alert(service_type_item.is_free);
                 if (service_type_item.is_free == true) {
-                    self.is_free = "Active";
+                    self.is_free = "Yes";
                 } else {
-                    self.is_free = "Inactive";
+                    self.is_free = "No";
                 }
             } else {
-                self.is_free = "Active";
+                self.is_free = "Yes";
             }
             $scope.index = index;
             self.service_index = index;
@@ -512,6 +519,7 @@ app.component('vehicleServiceScheduleForm', {
         $scope.showPartForm = function(part_index, service_type_item_part = null) {
             /*console.log(self.service_index);
             console.log(part_index);*/
+            $scope.service_type_part = [];
             if ($scope.modal_action == 'Add') {
                 if ($scope.service_type_item == undefined) {
                     custom_noty('error', 'You have errors, Kindly fill the form');
@@ -524,7 +532,7 @@ app.component('vehicleServiceScheduleForm', {
                         $scope.service_type_item.id = $id;
                     }
                 });
-                $scope.service_type_item.is_free = (self.is_free == 'Active') ? 1 : 0;
+                $scope.service_type_item.is_free = (self.is_free == 'Yes') ? 1 : 0;
                 $scope.service_type_item.repair_orders = [];
                 $scope.service_type_item.parts = [];
                 self.service_index = $scope.vehicle_service_schedule.vehicle_service_schedule_service_types.length;
@@ -558,6 +566,7 @@ app.component('vehicleServiceScheduleForm', {
             $('#part_form_modal').modal('show');
         }
         $scope.showLabourForm = function(labour_index, service_type_item_labour = null) {
+            $scope.service_type_ro = [];
             if ($scope.modal_action == 'Add') {
                 if ($scope.service_type_item == undefined) {
                     custom_noty('error', 'You have errors, Kindly fill the form');
@@ -570,7 +579,7 @@ app.component('vehicleServiceScheduleForm', {
                         $scope.service_type_item.id = $id;
                     }
                 });
-                $scope.service_type_item.is_free = (self.is_free == 'Active') ? 1 : 0;
+                $scope.service_type_item.is_free = (self.is_free == 'Yes') ? 1 : 0;
                 $scope.service_type_item.repair_orders = [];
                 $scope.service_type_item.parts = [];
                 self.service_index = $scope.vehicle_service_schedule.vehicle_service_schedule_service_types.length;
@@ -724,6 +733,7 @@ app.component('vehicleServiceScheduleForm', {
                     angular.forEach($scope.vehicle_service_schedule.vehicle_service_schedule_service_types[service_index].parts, function(part, key) {
                         if (part.code == $scope.service_type_part.part.code) {
                             $scope.vehicle_service_schedule.vehicle_service_schedule_service_types[service_index].parts.splice(key, 1);
+                            return false;
                         }
                     });
                     $scope.vehicle_service_schedule.vehicle_service_schedule_service_types[service_index].parts.push($scope.service_type_part.part);
@@ -769,6 +779,7 @@ app.component('vehicleServiceScheduleForm', {
                     angular.forEach($scope.vehicle_service_schedule.vehicle_service_schedule_service_types[service_index].repair_orders, function(labour, key) {
                         if (labour.code == $scope.service_type_ro.repair_order.code) {
                             $scope.vehicle_service_schedule.vehicle_service_schedule_service_types[service_index].repair_orders.splice(key, 1);
+                            return false;
                         }
                     });
                     // console.log($scope.vehicle_service_schedule.vehicle_service_schedule_service_types[service_index]);
@@ -832,7 +843,7 @@ app.component('vehicleServiceScheduleView', {
                             self.switch_value = 'Active';
                         }
                     } else {
-                        self.is_free = "Active";
+                        self.is_free = "Yes";
                         self.switch_value = 'Active';
                         $scope.vehicle_service_schedule = {
                             repair_orders: [],
@@ -924,12 +935,12 @@ app.component('vehicleServiceScheduleView', {
             $scope.service_type_item = service_type_item;
             if (service_type_item != undefined) {
                 if (service_type_item.is_free == true) {
-                    self.is_free = "Active";
+                    self.is_free = "Yes";
                 } else {
-                    self.is_free = "Inactive";
+                    self.is_free = "No";
                 }
             } else {
-                self.is_free = "Active";
+                self.is_free = "Yes";
             }
             $scope.index = index;
             self.service_index = index;
