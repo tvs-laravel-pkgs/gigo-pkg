@@ -243,8 +243,11 @@
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
-                                                            <div class="text-center pt-40">
-                                                                <a class="btn btn-red" ng-if="split_order_type.paid_by_id ==10013 && (job_card.status_id==8224 || job_card.status_id==8225)  " data-toggle="modal" data-target="#confirmation_modal">Create Customer Tax Invoice</a>
+                                                            <div class="text-center pt-40" ng-if="split_order_type.paid_by_id ==10013 && (job_card.status_id==8224 || job_card.status_id==8225)">
+                                                                <!-- <div class="text-center pt-40"> -->
+                                                                <input type="hidden" name="labour_total_amount" id="labour_total_amount" value="{{job_card.labour_total_amount}}">
+                                                                <input type="hidden" name="part_total_amount" id="part_total_amount" value="{{job_card.parts_total_amount}}">
+                                                                <a class="btn btn-red" data-toggle="modal" data-target="#confirmation_modal">Create Customer Tax Invoice</a>
                                                                 <br><br>
                                                             </div>
                                                         </div><!-- Table Responsive -->

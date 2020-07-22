@@ -2536,6 +2536,8 @@ app.component('jobCardBillDetailView', {
                     method: "POST",
                     data: {
                         job_card_id: $routeParams.job_card_id,
+                        labour_total_amount: $("#labour_total_amount").val(),
+                        part_total_amount: $("#part_total_amount").val(),
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
