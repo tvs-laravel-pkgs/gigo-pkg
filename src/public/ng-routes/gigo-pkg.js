@@ -856,6 +856,10 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<job-card-returnable-item-form></job-card-returnable-item-form>',
         title: 'Edit Returnable Item',
     }).
+    when('/job-card/returnable-part/add/:job_card_id', {
+        template: '<job-card-returnable-part-form></job-card-returnable-part-form>',
+        title: 'Add Returnable Part',
+    }).
 
     when('/job-card/gatein-detail/:job_card_id', {
         template: '<job-card-gatein-detail-form></job-card-gatein-detail-form>',
@@ -1132,8 +1136,12 @@ app.config(['$routeProvider', function($routeProvider) {
 
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
-    when('/inward-parts-indent/view', {
+    when('/inward-parts-indent/view/:job_order_id', {
         template: '<inward-parts-indent-view></inward-parts-indent-view>',
         title: 'Inward Parts Indent View',
+    }).
+    when('/inward-parts-indent/issue-part/form/:job_order_id', {
+        template: '<inward-parts-indent-issue-part-form></inward-parts-indent-issue-part-form>',
+        title: 'Inward Parts Indent Issue Part',
     });
 }]);

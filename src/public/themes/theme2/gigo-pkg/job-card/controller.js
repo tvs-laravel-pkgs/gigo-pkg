@@ -852,6 +852,114 @@ app.component('jobCardReturnableItemForm', {
     }
 });
 
+//Part
+app.component('jobCardReturnablePartForm', {
+    templateUrl: job_card_returnable_part_form_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+        // if (!self.hasPermission('add-job-order') || !self.hasPermission('edit-job-order')) {
+        //     window.location = "#!/page-permission-denied";
+        //     return false;
+        // }
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_card_id = $routeParams.job_card_id;
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/job-card/returnable-parts/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_card = res.job_card;
+                    $scope.joborder_parts = res.joborder_parts;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $scope.fetchData();
+
+        $scope.checkCheckbox = function(id)
+        {
+            checkval = $('#check' + id).is(":checked");
+            if(checkval == true){
+            $("#in_"+id).removeAttr("disabled");}
+            else
+            {$("#in_"+id).attr("disabled", "disabled");
+            $("#in_"+id).val(" ");
+             }
+        }
+        
+        //Save Form Data 
+        $scope.ReturnablePartSave = function() {
+            var form_id = '#returnable_parts';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'quantity': {
+                        required: true,
+                        number: true,
+                    },
+                },
+                messages: {
+
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/job-card/returnable-part/save',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/job-card/returnable-item/' + $scope.job_card_id);
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+    }
+});
+
 
 //Material Gate Pass
 app.component('jobCardMaterialGatepassForm', {
