@@ -1,108 +1,50 @@
-<div class="modal fade filter" id="service_form_modal">
-    <div class="modal-dialog" style="width: auto;">
+<!-- Modal -->
+<div class="modal fixed fade" id="service_form_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
-                    <i class="icon ion-md-close"></i>
-                </button>
-                <h5 class="modal-title">
-                    View Service
-                </h5>
-                <!-- {{service_type_item}} -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h4 class="modal-title" id="myModalLabel">View Service Details</h4>
             </div>
             <div class="modal-body">
+                <div class="modal-block-details">
+                    <ul class="modla-view-data">
+                        <li class="modal-view-data-list">
+                            <span class="modal-view-data-list-label">Service</span>
+                            <span class="modal-view-data-list-value">{{service_type_item.service_type.name}}</span>
+                        </li>
+                        <li class="modal-view-data-list">
+                            <span class="modal-view-data-list-label">KM</span>
+                            <span class="modal-view-data-list-value">{{service_type_item.km_reading}}</span>
+                        </li>
+                        <li class="modal-view-data-list">
+                            <span class="modal-view-data-list-label">KM Tolerance</span>
+                            <span class="modal-view-data-list-value">{{service_type_item.km_tolerance}}</span>
+                        </li>
+                        <li class="modal-view-data-list">
+                            <span class="modal-view-data-list-label">KM Tolerance Type</span>
+                            <span class="modal-view-data-list-value">{{service_type_item.tolerance_km.name}}</span>
+                        </li>
+                        <li class="modal-view-data-list">
+                            <span class="modal-view-data-list-label">Period</span>
+                            <span class="modal-view-data-list-value">{{ service_type_item.period }}</span>
+                        </li>
+                        <li class="modal-view-data-list">
+                            <span class="modal-view-data-list-label">Period Tolerance</span>
+                            <span class="modal-view-data-list-value">{{service_type_item.period_tolerance}}</span>
+                        </li>
+                        <li class="modal-view-data-list">
+                            <span class="modal-view-data-list-label">Period Tolerance Type</span>
+                            <span class="modal-view-data-list-value">{{service_type_item.tolerance_period.name}}</span>
+                        </li>
+                        <li class="modal-view-data-list">
+                            <span class="modal-view-data-list-label">Is Free?</span>
+                            <span class="modal-view-data-list-value">{{ $ctrl.is_free }}</span>
+                        </li>
+                    </ul>
+                </div><!-- Modal Block Details -->
                 <div class="row">
-                    <div class="col-md-12">
-                        <ul class="view-row mb-no">
-                            <li class="view-col-3">
-                                <span class="view-col-label">
-                                    Service
-                                </span>
-                                <span class="view-data-list-value">
-                                    <b>
-                                        {{service_type_item.service_type.name}}
-                                    </b>
-                                </span>
-                            </li>
-                            <li class="view-col-3">
-                                <span class="view-col-label">
-                                    Is Free
-                                </span>
-                                <span class="view-data-list-value">
-                                    <b>
-                                        {{ $ctrl.is_free }}
-                                    </b>
-                                </span>
-                            </li>
-                            <li class="view-col-3">
-                                <span class="view-col-label">
-                                    KM
-                                </span>
-                                <span class="view-data-list-value">
-                                    <b>
-                                        {{service_type_item.km_reading}}
-                                    </b>
-                                </span>
-                            </li>
-                            <li class="view-col-3">
-                                <span class="view-col-label">
-                                    KM Tolerance
-                                </span>
-                                <span class="view-data-list-value">
-                                    <b>
-                                        {{service_type_item.km_tolerance}}
-                                    </b>
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div><!-- Row -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <ul class="view-row mb-no">
-                            <li class="view-col-3">
-                                <span class="view-col-label">
-                                    KM Tolerance Type
-                                </span>
-                                <span class="view-data-list-value">
-                                    <b>
-                                        {{service_type_item.tolerance_km.name}}
-                                    </b>
-                                </span>
-                            </li>
-                            <li class="view-col-3">
-                                <span class="view-col-label">
-                                    Period
-                                </span>
-                                <span class="view-data-list-value">
-                                    <b>
-                                        {{ service_type_item.period }}
-                                    </b>
-                                </span>
-                            </li>
-                            <li class="view-col-3">
-                                <span class="view-col-label">
-                                    Period Tolerance
-                                </span>
-                                <span class="view-data-list-value">
-                                    <b>
-                                        {{service_type_item.period_tolerance}}
-                                    </b>
-                                </span>
-                            </li>
-                            <li class="view-col-3">
-                                <span class="view-col-label">
-                                    Period Tolerance Type
-                                </span>
-                                <span class="view-data-list-value">
-                                    <b>
-                                        {{service_type_item.tolerance_period.name}}
-                                    </b>
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div><!-- Row -->
+                </div>
                 <div class="row">
                     <div class="col-md-12">
                         <vehicle-labour-details></vehicle-labour-details>
@@ -113,17 +55,12 @@
                         <vehicle-part-details></vehicle-part-details>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12 text-right mb-15">
-                        <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
-                            Cancel
-                        </button>
-                        <!--  <button type="submit" class="btn btn-bordered btn-red approve_btn" ng-if="page == 'form'">
-                            Submit
-                        </button> -->
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div>
-        </div><!-- Modal Content -->
+            </div><!-- Modal Body -->
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                    Cancel
+                </button>
+            </div><!-- Modal Footer -->
+        </div><!-- Modal-content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->

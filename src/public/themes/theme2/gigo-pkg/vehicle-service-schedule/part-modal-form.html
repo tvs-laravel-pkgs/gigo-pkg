@@ -1,170 +1,104 @@
-<div class="modal fade filter" id="part_form_modal">
-    <div class="modal-dialog">
+<style type="text/css">
+.my-disable {
+    pointer-events: none;
+}
+</style>
+<div class="modal fade filter" id="part_form_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
-                    <i class="icon ion-md-close"></i>
-                </button>
-                <h5 class="modal-title">
-                    {{modal_action}} Part
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">
+                    {{part_modal_action}} Part
                 </h5>
-            </div>
+            </div><!-- Modal Header -->
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>
-                                Part Code
-                                <span class="mandatory">*</span>
-                            </label>
-                            <md-autocomplete md-selected-item="service_type_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
-                                <md-item-template>
-                                    <span>
-                                        {{part.code}}
-                                    </span>
-                                </md-item-template>
-                                <md-not-found>
-                                    No records matching "{{partSearchKey}}" were found.
-                                </md-not-found>
-                            </md-autocomplete>
-                            <input type="hidden" name="part_id" value="{{service_type_part.part.id}}">
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>
-                                Split Order Type
-                                <span class="mandatory">*</span>
-                            </label>
-                            <md-select ng-model="service_type_part.split_order_type" placeholder="Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
-                                <md-select-header class="demo-select-header">
-                                    <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
-                                </md-select-header>
-                                <md-optgroup>
-                                    <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
-                                        {{split_order_type.name}} / {{split_order_type.code}}
-                                    </md-option>
-                                </md-optgroup>
-                            </md-select>
-                            <input type="hidden" name="split_order_type_id" value="{{service_type_part.split_order_type.id}}">
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-4" ng-if="service_type_part.part">
-                        <div class="form-group">
-                            <label>
-                                Part Description
-                            </label>
-                            <label>
-                                {{service_type_part.part.name}}
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <!-- <div class="col-md-4" ng-if="wjor_part.part">
-                        <div class="form-group">
-                            <label>
-                                Purchase Type
-                            </label>
-                            <input type="radio" id="option_stock" name="purchase_type" ng-model="wjor_part.purchase_type" ng-value="8480">
-                            <label for="option_stock">
-                                Stock
-                            </label>
-                            <input type="radio" id="option_local" name="purchase_type" ng-model="wjor_part.purchase_type" ng-value="8481">
-                            <label for="option_local">
-                                Local Purchase
-                            </label>
-                        </div>
-                    </div> -->
-                </div>
-                <div class="row" ng-if="service_type_part.part">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>
-                                MRP
-                            </label>
-                            <label>
-                                {{service_type_part.part.mrp | currency}}
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>
-                                Quantity
-                            </label>
-                            <div class="input-group">
+                <div class="modal-form">
+                    <div class="row">
+                        <div class="col-md-4" ng-class="{'my-disable':part_modal_action == 'Edit'}">
+                            <div class="form-group">
+                                <label>
+                                    Part Code
+                                    <span class="mandatory">*</span>
+                                </label>
+                                <md-autocomplete md-selected-item="service_type_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
+                                    <md-item-template>
+                                        <span>
+                                            {{part.code}}
+                                        </span>
+                                    </md-item-template>
+                                    <md-not-found>
+                                        No records matching "{{partSearchKey}}" were found.
+                                    </md-not-found>
+                                </md-autocomplete>
+                                <input type="hidden" name="part_id" value="{{service_type_part.part.id}}">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    Split Order Type
+                                    <span class="mandatory">*</span>
+                                </label>
+                                <md-select ng-model="service_type_part.split_order_type" placeholder="Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                            {{split_order_type.name}} / {{split_order_type.code}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" name="split_order_type_id" value="{{service_type_part.split_order_type.id}}">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    Quantity
+                                    <span class="mandatory">*</span>
+                                </label>
                                 <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="quantity" ng-model="service_type_part.part.qty" maxlength="12">
-                                <!-- <span class="input-group-addon">
-                                    {{wjor_part.part.uom.name}}
-                                </span> -->
-                            </div>
-                        </div>
-                    </div>
-                    <!-- <div class="col-md-4">
-                        <div class="form-group">
-                            <label>
-                                Rate
-                            </label>
-                            <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="rate" ng-model="wjor_part.rate" maxlength="12" ng-readonly="wjor_part.purchase_type != '8481'">
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>
-                                Net Amount
-                            </label>
-                            <label>
-                                {{wjor_part.net_amount | currency}}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-4" ng-repeat="(tax_key, tax) in wjor_part.taxes" ng-if="wjor_part.part.tax_code && wjor_part.part">
-                        <div class="form-group">
-                            <label>
-                                {{tax.name}} ({{tax.pivot.percentage}}%)
-                            </label>
-                            <label>
-                                {{tax.amount | currency}}
-                            </label>
-                        </div>
-                    </div> -->
-                </div>
-                <div class="row" ng-if="service_type_part.part">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>
-                                UOM
-                            </label>
-                            <label>
-                                {{service_type_part.part.uom.code}}
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label>
-                                <b>
-                                    Amount
-                                </b>
-                            </label>
-                            <label>
-                                <b>
-                                    {{service_type_part.part.total_amount | currency}}
-                                </b>
-                            </label>
-                        </div><!-- Field -->
-                    </div><!-- Column -->
-                </div>
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                    <div class="view-details mb-no" ng-if="service_type_part.part">
+                        <ul class="view-row mb-no pad-tb-none">
+                            <li class="view-col-4">
+                                <span class="view-col-label">Part Description</span>
+                                <span class="view-data-list-value">{{service_type_part.part.name}}</span>
+                            </li>
+                            <li class="view-col-4">
+                                <span class="view-col-label">MRP</span>
+                                <span class="view-data-list-value">{{service_type_part.part.mrp | currency}}</span>
+                            </li>
+                            <li class="view-col-4">
+                                <span class="view-col-label">UOM</span>
+                                <span class="view-data-list-value">{{service_type_part.part.uom.code}}</span>
+                            </li>
+                            <li class="view-col-4">
+                                <span class="view-col-label">Amount</span>
+                                <span class="view-data-list-value">{{service_type_part.part.total_amount | currency}}</span>
+                            </li>
+                        </ul>
+                    </div><!-- View Data -->
+                </div><!-- Modal Form -->
+            </div><!-- Modal Body -->
+            <div class="modal-footer">
                 <div class="row">
-                    <div class="col-md-12 text-right mb-15">
+                    <div class="col-md-6">
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
                         <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
                             Cancel
                         </button>
-                        <button type="submit" class="btn btn-bordered btn-red approve_btn">
+                        <button type="submit" class="btn btn-primary btn-md btn-red approve_btn">
                             Submit
                         </button>
                     </div><!-- Column -->
                 </div><!-- Row -->
-            </div>
+            </div><!-- Modal Footer -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->

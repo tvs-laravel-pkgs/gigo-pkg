@@ -1,18 +1,13 @@
-<div class="modal fade filter" id="service_form_modal">
-    <div class="modal-dialog" style="width: auto;">
+<div class="modal fixed fade" id="service_form_modal">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
-                    <i class="icon ion-md-close"></i>
-                </button>
-                <h5 class="modal-title">
-                    Add/Edit Service
-                </h5>
-                <!-- {{service_type_item}} -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h4 class="modal-title" id="myModalLabel">Add/Edit Service</h4>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="input-text form-group">
                             <label>
                                 Service
@@ -31,21 +26,7 @@
                             <input type="hidden" name="service_type_id" value="{{service_type_item.service_type.id}}">
                         </div><!-- Feild -->
                     </div><!-- Column -->
-                    <div class="col-md-3">
-                        <div class="input-text form-group">
-                            <label>
-                                Is Free
-                                <sup class="mandatory">*</sup>
-                            </label>
-                            <div class="tab-switch">
-                                <md-switch ng-change="isFreeChange()" ng-model="$ctrl.is_free" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
-                                    {{ $ctrl.is_free }}
-                                </md-switch>
-                                <input type="hidden" ng-model="service_type_item.is_free" class="is_free_change" name="is_free" value="{{$ctrl.is_free}}">
-                            </div>
-                        </div><!-- Form Group -->
-                    </div><!-- Column -->
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="input-text form-group">
                             <label>
                                 KM
@@ -54,7 +35,7 @@
                             <input type="text" class="form-control" ng-model="service_type_item.km_reading" name="km_reading" placeholder="Enter KM" />
                         </div><!-- Feild -->
                     </div><!-- Column -->
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="input-text form-group">
                             <label>
                                 KM Tolerance
@@ -63,9 +44,7 @@
                             <input type="text" class="form-control" ng-model="service_type_item.km_tolerance" name="km_tolerance" placeholder="Enter Name" />
                         </div><!-- Feild -->
                     </div><!-- Column -->
-                </div><!-- Row -->
-                <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="input-text form-group">
                             <label>
                                 KM Tolerance Type
@@ -84,7 +63,7 @@
                             <input type="hidden" name="km_tolerance_type_id" value="{{service_type_item.tolerance_km.id}}">
                         </div><!-- Feild -->
                     </div><!-- Column -->
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="input-text form-group">
                             <label>
                                 Period
@@ -93,7 +72,7 @@
                             <input type="text" class="form-control" ng-model="service_type_item.period" name="period" placeholder="Enter Period" />
                         </div><!-- Form Group -->
                     </div><!-- Column -->
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="input-text form-group">
                             <label>
                                 Period Tolerance
@@ -102,7 +81,7 @@
                             <input type="text" class="form-control" ng-model="service_type_item.period_tolerance" name="period_tolerance" placeholder="Enter Period Tolerance" />
                         </div><!-- Feild -->
                     </div><!-- Column -->
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="input-text form-group">
                             <label>
                                 Period Tolerance Type
@@ -121,7 +100,21 @@
                             <input type="hidden" name="period_tolerance_type_id" value="{{service_type_item.tolerance_period.id}}">
                         </div><!-- Feild -->
                     </div><!-- Column -->
-                </div><!-- Row -->
+                    <div class="col-md-4">
+                        <div class="input-text form-group">
+                            <label>
+                                Is Free ?
+                                <sup class="mandatory">*</sup>
+                            </label>
+                            <div class="tab-switch">
+                                <md-switch ng-change="isFreeChange()" ng-model="$ctrl.is_free" aria-label="Switch 3" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
+                                    {{ $ctrl.is_free }}
+                                </md-switch>
+                                <input type="hidden" ng-model="service_type_item.is_free" class="is_free_change" name="is_free" value="{{$ctrl.is_free}}">
+                            </div>
+                        </div><!-- Form Group -->
+                    </div><!-- Column -->
+                </div>
                 <div class="row">
                     <div class="col-md-12">
                         <vehicle-labour-details></vehicle-labour-details>
@@ -132,33 +125,15 @@
                         <vehicle-part-details></vehicle-part-details>
                     </div>
                 </div>
-                <!-- <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>
-                                <b>
-                                    Amount
-                                </b>
-                            </label>
-                            <label>
-                                <b>
-                                    {{part.total_amount | currency}}
-                                </b>
-                            </label>
-                        </div>
-                    </div>
-                </div> -->
-                <div class="row">
-                    <div class="col-md-12 text-right mb-15">
-                        <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
-                            Cancel
-                        </button>
-                        <button type="submit" class="btn btn-bordered btn-red approve_btn">
-                            Submit
-                        </button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div>
-        </div><!-- Modal Content -->
+            </div><!-- Modal Body -->
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn-bordered approve_btn">
+                    Submit
+                </button>
+            </div><!-- Modal Footer -->
+        </div><!-- Modal-content -->
     </div><!-- Modal Dialog -->
-</div><!-- Modal -->
+</div>
