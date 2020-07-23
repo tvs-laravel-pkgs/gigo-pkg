@@ -498,6 +498,44 @@ app.factory('VehicleServiceScheduleSvc', function(RequestSvc) {
     };
 
 });
+app.factory('VendorSvc', function(RequestSvc) {
+
+    var model = 'vendor';
+
+    function index(params) {
+        return RequestSvc.get('/api/' + model + '/index', params);
+    }
+
+    function read(id) {
+        return RequestSvc.get('/api/' + model + '/read/' + id + '/withtrashed');
+    }
+
+    function save(params) {
+        return RequestSvc.post('/api/' + model + '/save', params);
+    }
+
+    function remove(params) {
+        return RequestSvc.get('/api/' + model + '/remove', params);
+    }
+
+    function options(params) {
+        return RequestSvc.get('/api/' + model + '/options', params);
+    }
+
+    function list(params) {
+        return RequestSvc.get('/api/' + model + '/list', params);
+    }
+
+    return {
+        index: index,
+        read: read,
+        save: save,
+        remove: remove,
+        options: options,
+        list: list,
+    };
+
+});
 /*
 
 app.factory('VehicleServiceScheduleServiceTypeSvc', function(RequestSvc) {

@@ -909,7 +909,7 @@ app.component('inwardVehicleDmsCheckListForm', {
 //Schedule Maintenance
 app.component('inwardVehicleScheduledMaintenanceForm', {
     templateUrl: inward_vehicle_schedule_maintenance_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, $mdSelect) {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -925,6 +925,13 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
+
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function(event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
 
         $scope.job_order_id = $routeParams.job_order_id;
         //FETCH DATA
@@ -1481,7 +1488,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         let formData = new FormData($(delete_form_id)[0]);
                         $rootScope.loading = true;
                         $.ajax({
-                                url: base_url + '/api/vehicle-inward/labour-parts-delete/update',
+                                url: base_url + '/api/vehicle-inward/labour-parts/delete',
                                 method: "POST",
                                 data: formData,
                                 processData: false,
@@ -3391,7 +3398,7 @@ app.component('inwardVehicleInventoryDetailForm', {
 //------------------------------------------------------------------------------------------------------------------------
 app.component('inwardVehiclePayableLabourPartForm', {
     templateUrl: inward_vehicle_payable_labour_part_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, $mdSelect) {
         //for md-select search
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -3404,6 +3411,13 @@ app.component('inwardVehiclePayableLabourPartForm', {
         //     return false;
         // }
         self.angular_routes = angular_routes;
+
+         /* Modal Md Select Hide */
+        $('.modal').bind('click', function(event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
@@ -3427,6 +3441,8 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     }
                     $scope.job_order = res.job_order;
                     console.log($scope.job_order);
+                    $scope.part_details = res.part_details;
+                    $scope.labour_details = res.labour_details;
                     $scope.total_amount = res.total_amount;
                     $scope.parts_total_amount = res.parts_total_amount;
                     $scope.labour_total_amount = res.labour_total_amount;
@@ -3479,6 +3495,220 @@ app.component('inwardVehiclePayableLabourPartForm', {
             //             });
             //     }
             // });
+        }
+
+        $scope.saveLabour = function() {
+            var form_id = '#labour_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'rot_id': {
+                        required: true,
+                    },
+                    'split_order_type_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.save_labour').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/add-repair-order/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.save_labour').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.save_labour').button('reset');
+                            custom_noty('success', res.message);
+                            $('#labour_form_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $scope.fetchData();
+                        })
+                        .fail(function(xhr) {
+                            $('.save_labour').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        $scope.savePart = function() {
+            var form_id = '#part_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'part_id': {
+                        required: true,
+                    },
+                    'qty': {
+                        required: true,
+                        number: true,
+                    },
+                    'split_order_type_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.save_part').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/add-part/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.save_part').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.save_part').button('reset');
+                            custom_noty('success', res.message);
+                            $('#part_form_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $scope.fetchData();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        $scope.init = function() {
+            $rootScope.loading = true;
+            let promises = {
+                split_order_type_options: SplitOrderTypeSvc.options(),
+            };
+
+            $scope.options = {};
+            $q.all(promises)
+                .then(function(responses) {
+                    $scope.options.split_order_types = responses.split_order_type_options.data.options;
+                    $rootScope.loading = false;
+
+                });
+        };
+        $scope.init();
+        $scope.searchRepairOrders = function(query) {
+            return new Promise(function(resolve, reject) {
+                RepairOrderSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+        $scope.searchParts = function(query) {
+            return new Promise(function(resolve, reject) {
+                PartSvc.options({ filter: { search: query } })
+                    .then(function(response) {
+                        resolve(response.data.options);
+                    });
+            });
+        }
+        $scope.partSelected = function(part) {
+            $qty = 1;
+            if (!part) {
+                return;
+            } else {
+                if (part.qty) {
+                    $qty = part.qty;
+                }
+            }
+            PartSvc.read(part.id)
+                .then(function(response) {
+                    $scope.schedule_maintainance_part.part.qty = $qty;
+                    $scope.calculatePartAmount();
+                });
+
+        }
+        $scope.calculatePartAmount = function() {
+            if (!$scope.schedule_maintainance_part.part.pivot) {
+                $scope.schedule_maintainance_part.part.pivot = {};
+            }
+            $scope.schedule_maintainance_part.part.pivot.quantity = $scope.schedule_maintainance_part.part.qty;
+            $scope.schedule_maintainance_part.part.total_amount = $scope.schedule_maintainance_part.part.qty * $scope.schedule_maintainance_part.part.mrp;
+            $scope.schedule_maintainance_part.part.pivot.amount = $scope.schedule_maintainance_part.part.total_amount;
+            $scope.calculatePartTotal();
+        }
+        $scope.showLabourForm = function(labour_index, labour = null) {
+            $scope.schedule_maintainance_ro = [];
+            $scope.repair_order_id = '';
+            if (labour_index === false) {
+                // $scope.labour_details = {};
+            } else {
+                // console.log(labour);
+                // return false;
+                if (labour.split_order_type_id != null) {
+                    $scope.repair_order_id = labour.id;
+                    if (labour.split_order_type_id == undefined) {
+                        $split_id = labour.pivot.split_order_type_id;
+                    } else {
+                        $split_id = labour.split_order_type_id;
+                    }
+                    SplitOrderTypeSvc.read($split_id)
+                        .then(function(response) {
+                            $scope.schedule_maintainance_ro.split_order_type = response.data.split_order_type;
+                        });
+                }
+                if (labour.category == undefined) {
+                    RepairOrderSvc.read(labour.labour_id)
+                        .then(function(response) {
+                            $scope.schedule_maintainance_ro.repair_order = response.data.repair_order;
+                        });
+                }
+                $scope.schedule_maintainance_ro.repair_order = labour;
+            }
+
+            $scope.labour_index = labour_index;
+            $scope.labour_modal_action = labour_index === false ? 'Add' : 'Edit';
+            $('#labour_form_modal').modal('show');
+        }
+        $scope.showPartForm = function(part_index, part = null) {
+            // console.log(part.qty);
+            $scope.schedule_maintainance_part = [];
+            $scope.job_order_part_id = '';
+            if (part_index === false) {
+                // $scope.part_details = {};
+            } else {
+                if (part.split_order_type_id != null) {
+                    $scope.job_order_part_id = part.id;
+                    if (part.split_order_type_id == undefined) {
+                        $split_id = part.pivot.split_order_type_id;
+                    } else {
+                        $split_id = part.split_order_type_id;
+                    }
+                    SplitOrderTypeSvc.read($split_id)
+                        .then(function(response) {
+                            $scope.schedule_maintainance_part.split_order_type = response.data.split_order_type;
+                        });
+                }
+                if (part.uom == undefined) {
+                    PartSvc.read(part.part_id)
+                        .then(function(response) {
+                            $scope.schedule_maintainance_part.part = response.data.part;
+                            $scope.schedule_maintainance_part.part.qty = part.qty;
+                            // $scope.calculatePartAmount();
+                        });
+                }
+                $scope.schedule_maintainance_part.part = part;
+            }
+
+            $scope.part_index = part_index;
+            $scope.part_modal_action = part_index === false ? 'Add' : 'Edit';
+            $('#part_form_modal').modal('show');
         }
 
         $scope.button_action = function(id, type) {
@@ -3567,7 +3797,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         $rootScope.loading = true;
                         // $scope.button_action(id, 1);
                         $.ajax({
-                                url: base_url + '/api/vehicle-inward/labour-parts-delete/update',
+                                url: base_url + '/api/vehicle-inward/labour-parts/delete',
                                 method: "POST",
                                 data: formData,
                                 processData: false,

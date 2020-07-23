@@ -171,7 +171,15 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('inward-part-indent/save-return-part', 'VehicleInwardController@saveReturnPart');
 		Route::post('inward-part-indent/get-issue-part-form-data', 'VehicleInwardController@getInwardPartIndentIssuePartFormData');
 		Route::post('inward-part-indent/save-issued-part', 'VehicleInwardController@saveIssuedPart');
-		Route::get('/inward-part-indent/search-vendor/{query}', 'VehicleInwardController@searchVendor');
+
+		Route::group(['prefix' => 'vendor'], function () {
+			$controller = 'Vendor';
+			Route::get('index', $controller . 'Controller@index');
+			Route::get('read/{id}', $controller . 'Controller@read');
+			Route::post('save', $controller . 'Controller@save');
+			Route::post('remove', $controller . 'Controller@remove');
+			Route::get('options', $controller . 'Controller@options');
+		});
 
 		//CUSTOMER DETAIL FORM DATA AND SAVE
 		Route::post('vehicle-inward/view', 'VehicleInwardController@getVehicleInwardViewData');
@@ -252,7 +260,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/initiate-job/save', 'VehicleInwardController@saveInitiateJob');
 
 		//LABOUR PARTS DELETE STATUS UPADET
-		Route::post('vehicle-inward/labour-parts-delete/update', 'VehicleInwardController@deleteLabourPartsStatusUpdate');
+		Route::post('vehicle-inward/labour-parts/delete', 'VehicleInwardController@deleteLabourParts');
 
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/country-id/{country_id}', 'VehicleInwardController@getState');
@@ -327,10 +335,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('job-card/returnable-items/get-form-data', 'JobCardController@getReturnableItemFormdata');
 
 		Route::post('job-card/returnable-item/save', 'JobCardController@ReturnableItemSave');
-
-		//JobCard Returnable Parts Save
-		Route::post('job-card/returnable-parts/get-form-data', 'JobCardController@getReturnablePartsFormdata');
-		Route::post('job-card/returnable-part/save', 'JobCardController@ReturnablePartSave');
 
 		//Job Card View
 		Route::post('jobcard/road-test-observation/get', 'JobCardController@getRoadTestObservation');
