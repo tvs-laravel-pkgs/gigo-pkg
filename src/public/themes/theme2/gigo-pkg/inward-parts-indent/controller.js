@@ -422,6 +422,7 @@ app.component('inwardPartsIndentIssuePartForm', {
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
         $scope.job_order_id = $routeParams.job_order_id;
+        $scope.issue_part = {};
 
         $scope.fetchData = function() {
             $.ajax({
@@ -454,7 +455,7 @@ app.component('inwardPartsIndentIssuePartForm', {
 
         var form = '#issue_part_form';
         var v = jQuery(form).validate({
-            ignore: ':hidden',
+            ignore: '',
             rules: {
                 'job_order_part_id': {
                     required: true,
@@ -471,7 +472,49 @@ app.component('inwardPartsIndentIssuePartForm', {
                 },
                 'remarks': {
                     required: true
-                }
+                },
+                'quantity': {
+                    required: true,
+                    number: true,
+                },
+                'unit_price': {
+                    required: true,
+                    number: true,
+                },
+                'total': {
+                    required: true,
+                },
+                'tax_percentage': {
+                    required: true,
+                    number: true,
+                },
+                'tax_amount': {
+                    required: true,
+                    number: true,
+                },
+                'total_amount': {
+                    required: true,
+                    number: true,
+                },
+                'mrp': {
+                    required: true,
+                    number: true,
+                },
+                'supplier_id': {
+                    required: true,
+                },
+                'po_number': {
+                    required: true,
+                },
+                'po_amount': {
+                    required: true,
+                },
+                'advance_amount_received_details': {
+                    required: true,
+                },
+                'warranty_approved_reasons': {
+                    required: true,
+                },
             },
             messages: {
 
@@ -504,12 +547,7 @@ app.component('inwardPartsIndentIssuePartForm', {
                         $('.submit').button('reset');
                         custom_noty('error', 'Something went wrong at server');
                     });
-
-                /*
-                $('#part_form_modal').modal('hide');
-                $('body').removeClass('modal-open');
-                $('.modal-backdrop').remove();
-                $scope.fetchData();*/
+                $location.path('/inward-parts-indent/view/' + $scope.job_order_id);
             }
         });
         $scope.searchVendor = function(query) {
@@ -519,24 +557,16 @@ app.component('inwardPartsIndentIssuePartForm', {
                         resolve(response.data.options);
                     });
             });
-            /*if (query) {
-                return new Promise(function(resolve, reject) {
-                    VendorSvc.options({ filter: { search: query } })
-                        .then(function(response) {
-                            resolve(response.data.options);
-                        });
-                });
-                return new Promise(function(resolve, reject) {
-                	console.log(resolve);
-                    $http.get(
-                        base_url + '/api/inward-part-indent/search-vendor/' + query
-                    ).then(function(response) {
-                        resolve(response.data.vendors);
-                    });
-                });
-            } else {
-                return [];
-            }*/
+        }
+        $scope.calculateTotal = function() {
+            if ($scope.issue_part.quantity != '' && $scope.issue_part.unit_price != '') {
+                $scope.issue_part.total = parseInt($scope.issue_part.quantity) * parseFloat($scope.issue_part.unit_price);
+            }
+        }
+        $scope.calculateTax = function() {
+            $scope.issue_part.tax_amount = parseFloat($scope.issue_part.total) * (parseFloat($scope.issue_part.tax_percentage) / 100);
+            $scope.issue_part.total_amount = parseFloat($scope.issue_part.total) + parseFloat($scope.issue_part.tax_amount);
+            $scope.issue_part.po_amount = $scope.issue_part.total_amount;
         }
     }
 });
