@@ -324,6 +324,7 @@ class JobCardController extends Controller {
 	public function getBayFormData(Request $r) {
 		try {
 			$job_card = JobCard::with([
+				'bay',
 				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
@@ -2600,7 +2601,7 @@ class JobCardController extends Controller {
 		])
 			->find($request->id);
 
-		$joborder_parts =JobOrderPart::select('job_order_parts.id as part_id','parts.id','parts.code','parts.name','job_card_returnable_items.part_id as select_id','job_card_returnable_items.qty')->leftjoin('parts','parts.id','job_order_parts.part_id')->leftjoin('job_card_returnable_items','job_card_returnable_items.part_id','job_order_parts.id')->where('job_order_parts.job_order_id',$job_card->job_order_id)->get();	
+		$joborder_parts = JobOrderPart::select('job_order_parts.id as part_id', 'parts.id', 'parts.code', 'parts.name', 'job_card_returnable_items.part_id as select_id', 'job_card_returnable_items.qty')->leftjoin('parts', 'parts.id', 'job_order_parts.part_id')->leftjoin('job_card_returnable_items', 'job_card_returnable_items.part_id', 'job_order_parts.id')->where('job_order_parts.job_order_id', $job_card->job_order_id)->get();
 
 		if (!$job_card) {
 			return response()->json([
@@ -2609,7 +2610,7 @@ class JobCardController extends Controller {
 				'errors' => ['Job Card Not Found!'],
 			]);
 		}
-		
+
 		return response()->json([
 			'success' => true,
 			'job_card' => $job_card,
@@ -2622,10 +2623,9 @@ class JobCardController extends Controller {
 		//dd($request->all());
 		try {
 			DB::beginTransaction();
-			if(isset($request->quantity))
-			{
-			foreach ($request->quantity as $key => $parts) {
-				$delete_part = JobCardReturnableItem::where('part_id',$request->part_id[$key])->forceDelete();
+			if (isset($request->quantity)) {
+				foreach ($request->quantity as $key => $parts) {
+					$delete_part = JobCardReturnableItem::where('part_id', $request->part_id[$key])->forceDelete();
 					$returnable_part = new JobCardReturnableItem;
 					$returnable_part->created_by_id = Auth::user()->id;
 					$returnable_part->created_at = Carbon::now();
@@ -2634,10 +2634,9 @@ class JobCardController extends Controller {
 					$returnable_part->item_name = $request->part_name[$key];
 					$returnable_part->qty = $parts;
 					$returnable_part->save();
-				}}
-				else{
-					return response()->json(['success' => false, 'errors' => ['Exception Error' => 'Check Check Box']]);
-				}
+				}} else {
+				return response()->json(['success' => false, 'errors' => ['Exception Error' => 'Check Check Box']]);
+			}
 			DB::commit();
 			if (!($request->id)) {
 				return response()->json([
