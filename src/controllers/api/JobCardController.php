@@ -2635,6 +2635,15 @@ class JobCardController extends Controller {
 					$returnable_part->qty = $parts;
 					$returnable_part->save();
 				}}
+				$count = JobCardReturnableItem::where('job_card_id',$request->job_card_id)->get();
+				if(isset($count))
+				{
+					if(!($request->quantity))
+					{
+					$delete_part = JobCardReturnableItem::where('job_card_id',$request->job_card_id)->forceDelete();
+					}
+
+				}
 				else{
 					return response()->json(['success' => false, 'errors' => ['Exception Error' => 'Check Check Box']]);
 				}
