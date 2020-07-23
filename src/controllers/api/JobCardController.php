@@ -2635,8 +2635,8 @@ class JobCardController extends Controller {
 					$returnable_part->qty = $parts;
 					$returnable_part->save();
 				}}
-				$count = JobCardReturnableItem::where('job_card_id',$request->job_card_id)->get();
-				if(isset($count))
+				$count = JobCardReturnableItem::where('job_card_id',$request->job_card_id)->count();
+				if($count != 0)
 				{
 					if(!($request->quantity))
 					{
