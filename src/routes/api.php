@@ -252,7 +252,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/initiate-job/save', 'VehicleInwardController@saveInitiateJob');
 
 		//LABOUR PARTS DELETE STATUS UPADET
-		Route::post('vehicle-inward/labour-parts-delete/update', 'VehicleInwardController@deleteLabourPartsStatusUpdate');
+		Route::post('vehicle-inward/labour-parts/delete', 'VehicleInwardController@deleteLabourParts');
 
 		//GTE STATE BASED COUNTRY
 		Route::get('get-state/country-id/{country_id}', 'VehicleInwardController@getState');
