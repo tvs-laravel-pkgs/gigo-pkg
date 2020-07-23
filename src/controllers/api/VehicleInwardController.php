@@ -654,6 +654,7 @@ class VehicleInwardController extends Controller {
 					$part_details[$key]['issued_qty'] = $issued_qty->issued_qty;
 					$part_details[$key]['returned_qty'] = $returned_qty->returned_qty;
 					$part_details[$key]['pending_qty'] = $value->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
+					$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
 
 					// if (in_array($value->split_order_type_id, $customer_paid_type)) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
@@ -666,6 +667,33 @@ class VehicleInwardController extends Controller {
 
 			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')->where('job_order_repair_orders.job_order_id', $r->id)->groupBy('users.id')->get();
 
+			$indent_part_logs_issues = JobOrderPart::join('job_order_issued_parts as joip', 'joip.job_order_part_id', 'job_order_parts.id')
+				->join('parts', 'job_order_parts.part_id', 'parts.id')
+				->join('configs', 'joip.issued_mode_id', 'configs.id')
+				->join('users', 'joip.issued_to_id', 'users.id')
+				->select(
+					DB::raw('"Issue" as transaction_type'),
+					'parts.name',
+					'parts.code',
+					'joip.issued_qty as qty',
+					DB::raw('DATE_FORMAT(joip.created_at,"%d/%m/%Y") as date'),
+					'configs.name as issue_mode',
+					'users.name as mechanic'
+				);
+
+			$indent_part_logs = JobOrderPart::join('job_order_returned_parts as jorp', 'jorp.job_order_part_id', 'job_order_parts.id')
+				->join('parts', 'job_order_parts.part_id', 'parts.id')
+				->join('users', 'jorp.returned_to_id', 'users.id')
+				->select(
+					DB::raw('"Return" as transaction_type'),
+					'parts.name',
+					'parts.code',
+					'jorp.returned_qty as qty',
+					DB::raw('DATE_FORMAT(jorp.created_at,"%d/%m/%Y") as date'),
+					DB::raw('"-" as issue_mode'),
+					'users.name as mechanic'
+				)->union($indent_part_logs_issues)->orderBy('date', 'DESC')->get();
+
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
@@ -675,6 +703,7 @@ class VehicleInwardController extends Controller {
 				'part_amount' => $part_amount,
 				'job_order_parts' => $job_order_parts,
 				'repair_order_mechanics' => $repair_order_mechanics,
+				'indent_part_logs' => $indent_part_logs,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -807,7 +836,7 @@ class VehicleInwardController extends Controller {
 					'required',
 					'numeric',
 				],
-				'issue_mode_id' => [
+				'issued_mode_id' => [
 					'required',
 					'exists:configs,id',
 				],
@@ -838,7 +867,7 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 			// dd($request->issue_mode_id);
-			if ($request->issue_mode_id != 8480) {
+			if ($request->issued_mode_id != 8480) {
 				$document_date_year = date('Y');
 				$financial_year = FinancialYear::where('from', $document_date_year)
 					->first();
@@ -1638,6 +1667,26 @@ class VehicleInwardController extends Controller {
 			$job_order_part->amount = $request->qty * $part->mrp;
 			$job_order_part->status_id = 8200; //Customer Approval Pending
 			$job_order_part->save();
+
+			$repair_order_part_array = [];
+			$trim_data = str_replace('[', '', $request->repair_orders);
+			$trim_data = str_replace(']', '', $trim_data);
+			if ($trim_data != '') {
+				$repair_orders = explode(',', $trim_data);
+			} else {
+				$repair_orders = [];
+			}
+
+			if (sizeof($repair_orders) > 0) {
+				foreach ($repair_orders as $key => $value) {
+
+					$repair_order_part_array[$key]['repair_order_id'] = $value;
+					// $job_order_repair_order_part_array[$key]['job_order_part_id'] = $job_order_part->id;
+					$repair_order_part_array[$key]['part_id'] = $request->part_id;
+				}
+				$repair_order_part_obj = Part::find($request->part_id);
+				$repair_order_part_obj->repair_order_parts()->sync($repair_order_part_array);
+			}
 
 			DB::commit();
 

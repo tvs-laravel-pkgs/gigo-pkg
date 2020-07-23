@@ -457,7 +457,7 @@
                                                 </table>
                                             </div><!-- Table Responsive -->
                                             <div class="mb-15"></div><!-- Spacing -->
-                                            <h5 class="color-primary mb-10"><b>Issued Parts Details</b></h5>
+                                            <h5 class="color-primary mb-10"><b>Parts Intent Logs</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="table-responsive">
                                                 <table class="table table-dark-grey">
@@ -466,327 +466,42 @@
                                                             <th>
                                                                 Parts Details
                                                             </th>
-                                                            <!-- <th>
-                                                                Type
-                                                            </th> -->
                                                             <th>
-                                                                Requested Quantity
+                                                                Transcation Type
                                                             </th>
-                                                            <th class="text-right">
-                                                                Issued Quantity
+                                                            <th>
+                                                                Quantity
                                                             </th>
-                                                            <th class="text-right">
-                                                                Received Quantity
+                                                            <th>
+                                                                Issue Mode
+                                                            </th>
+                                                            <th>
+                                                                Mechnanic
+                                                            </th>
+                                                            <th>
+                                                                Date
                                                             </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12">
+                                                        <tr class="ptb-12" ng-repeat="log in indent_part_logs">
                                                             <td>
-                                                                F0831610(L) | HOSE CLIP
+                                                                {{log.name}} / {{log.code}}
                                                             </td>
-                                                            <td class="text-center">
-                                                                10
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <!-- <span class=" my-tooltip" title="20/7/2020, 10, Standard">5</span> -->
-                                                                <!-- <span class="work-tooltip">
-                                                                    5
-                                                                    <div class="hide work_tooltip_hide">
-                                                                        <div class="work-tooltip-wrap">
-                                                                            <table class="table table-view-striped">
-                                                                                <thead>
-                                                                                    <tr>
-                                                                                        <th>Date</th>
-                                                                                        <th>Received user</th>
-                                                                                        <th>Received Qty</th>
-                                                                                    </tr>
-                                                                                </thead>
-                                                                                <tbody>
-                                                                                    <tr>
-                                                                                        <td>20-12-2020</td>
-                                                                                        <td>Parthi / EMP001</td>
-                                                                                        <td>2</td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td>20-12-2020</td>
-                                                                                        <td>Karthi / EMP002</td>
-                                                                                        <td>3</td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </div>
-                                                                    </div>
-                                                                </span> -->
-                                                                <div class="work-tooltip">
-                                                                    5
-                                                                    <div class="hide work_tooltip_hide">
-                                                                        <div class="work-tooltip-wrap">
-                                                                            <div class="row">
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Date</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received user</span>
-                                                                                    <span class="work-tooltip-value">Parthi / EMP001</span>
-                                                                                    <span class="work-tooltip-value">Karthi / EMP002</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received Qty</span>
-                                                                                    <span class="work-tooltip-value">3</span>
-                                                                                    <span class="work-tooltip-value">2</span>
-                                                                                </div>
-                                                                                <!-- <div class="col-md-12">
-                                                                                    <div class="tooltip-separator"></div>
-                                                                                </div>
-                                                                                 -->
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <!-- <span class=" my-tooltip" title="20/7/2020, 10, Standard">5</span> -->
-                                                                <span class="work-tooltip">
-                                                                    5
-                                                                    <div class="hide work_tooltip_hide">
-                                                                        <div class="work-tooltip-wrap">
-                                                                            <div class="row">
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Date</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received user</span>
-                                                                                    <span class="work-tooltip-value">Parthi / EMP001</span>
-                                                                                    <span class="work-tooltip-value">Karthi / EMP002</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received Qty</span>
-                                                                                    <span class="work-tooltip-value">3</span>
-                                                                                    <span class="work-tooltip-value">2</span>
-                                                                                </div>
-                                                                                <!-- <div class="col-md-12">
-                                                                                    <div class="tooltip-separator"></div>
-                                                                                </div>
-                                                                                 -->
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="ptb-12">
                                                             <td>
-                                                                F0831610(L) | HOSE CLIP
+                                                                {{log.transaction_type}}
                                                             </td>
-                                                            <td class="text-center">
-                                                                10
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <!-- <span class=" my-tooltip" title="20/7/2020, 10, Standard">5</span> -->
-                                                                <span class="work-tooltip">
-                                                                    5
-                                                                    <div class="hide work_tooltip_hide">
-                                                                        <div class="work-tooltip-wrap">
-                                                                            <div class="row">
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Date</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received user</span>
-                                                                                    <span class="work-tooltip-value">Sampath / EMP003</span>
-                                                                                    <span class="work-tooltip-value">Mano / EMP004</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received Qty</span>
-                                                                                    <span class="work-tooltip-value">3</span>
-                                                                                    <span class="work-tooltip-value">2</span>
-                                                                                </div>
-                                                                                <!-- <div class="col-md-12">
-                                                                                    <div class="tooltip-separator"></div>
-                                                                                </div>
-                                                                                 -->
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </span>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <!-- <span class=" my-tooltip" title="20/7/2020, 10, Standard">5</span> -->
-                                                                <span class="work-tooltip">
-                                                                    5
-                                                                    <div class="hide work_tooltip_hide">
-                                                                        <div class="work-tooltip-wrap">
-                                                                            <div class="row">
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Date</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received user</span>
-                                                                                    <span class="work-tooltip-value">Sampath / EMP003</span>
-                                                                                    <span class="work-tooltip-value">Mano / EMP004</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received Qty</span>
-                                                                                    <span class="work-tooltip-value">3</span>
-                                                                                    <span class="work-tooltip-value">2</span>
-                                                                                </div>
-                                                                                <!-- <div class="col-md-12">
-                                                                                    <div class="tooltip-separator"></div>
-                                                                                </div>
-                                                                                 -->
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="ptb-12">
                                                             <td>
-                                                                F0831611(L) | AIR HOSE CLIP
+                                                                {{log.qty}}
                                                             </td>
-                                                            <td class="text-center">
-                                                                8
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <!-- <span class=" my-tooltip" title="20/7/2020, 8, Standard">4</span> -->
-                                                                <span class="work-tooltip">
-                                                                    5
-                                                                    <div class="hide work_tooltip_hide">
-                                                                        <div class="work-tooltip-wrap">
-                                                                            <div class="row">
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Date</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received user</span>
-                                                                                    <span class="work-tooltip-value">Saravanan / EMP0055</span>
-                                                                                    <span class="work-tooltip-value">Naveen / EMP0013</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received Qty</span>
-                                                                                    <span class="work-tooltip-value">3</span>
-                                                                                    <span class="work-tooltip-value">2</span>
-                                                                                </div>
-                                                                                <!-- <div class="col-md-12">
-                                                                                    <div class="tooltip-separator"></div>
-                                                                                </div>
-                                                                                 -->
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </span>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <!-- <span class=" my-tooltip" title="20/7/2020, 8, Standard">4</span> -->
-                                                                <span class="work-tooltip">
-                                                                    5
-                                                                    <div class="hide work_tooltip_hide">
-                                                                        <div class="work-tooltip-wrap">
-                                                                            <div class="row">
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Date</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received user</span>
-                                                                                    <span class="work-tooltip-value">Saravanan / EMP0055</span>
-                                                                                    <span class="work-tooltip-value">Naveen / EMP0013</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received Qty</span>
-                                                                                    <span class="work-tooltip-value">3</span>
-                                                                                    <span class="work-tooltip-value">2</span>
-                                                                                </div>
-                                                                                <!-- <div class="col-md-12">
-                                                                                    <div class="tooltip-separator"></div>
-                                                                                </div>
-                                                                                 -->
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr class="ptb-12">
                                                             <td>
-                                                                F083161334 | AIR PIPE
+                                                                {{log.issue_mode}}
                                                             </td>
-                                                            <td class="text-center">
-                                                                8
+                                                            <td>
+                                                                {{log.mechanic}}
                                                             </td>
-                                                            <td class="text-center">
-                                                                <!-- <span class=" my-tooltip" title="20/7/2020, 8, Standard">4</span> -->
-                                                                <span class="work-tooltip">
-                                                                    5
-                                                                    <div class="hide work_tooltip_hide">
-                                                                        <div class="work-tooltip-wrap">
-                                                                            <div class="row">
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Date</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received user</span>
-                                                                                    <span class="work-tooltip-value">Saravanan / EMP0055</span>
-                                                                                    <span class="work-tooltip-value">Naveen / EMP0013</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received Qty</span>
-                                                                                    <span class="work-tooltip-value">3</span>
-                                                                                    <span class="work-tooltip-value">2</span>
-                                                                                </div>
-                                                                                <!-- <div class="col-md-12">
-                                                                                    <div class="tooltip-separator"></div>
-                                                                                </div>
-                                                                                 -->
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </span>
-                                                            </td>
-                                                            <td class="text-center">
-                                                                <!-- <span class=" my-tooltip" title="20/7/2020, 8, Standard">4</span> -->
-                                                                <span class="work-tooltip">
-                                                                    5
-                                                                    <div class="hide work_tooltip_hide">
-                                                                        <div class="work-tooltip-wrap">
-                                                                            <div class="row">
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Date</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                    <span class="work-tooltip-value">20-12-2020</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received user</span>
-                                                                                    <span class="work-tooltip-value">Saravanan / EMP0055</span>
-                                                                                    <span class="work-tooltip-value">Naveen / EMP0013</span>
-                                                                                </div>
-                                                                                <div class="col-md-4">
-                                                                                    <span class="work-tooltip-label">Received Qty</span>
-                                                                                    <span class="work-tooltip-value">3</span>
-                                                                                    <span class="work-tooltip-value">2</span>
-                                                                                </div>
-                                                                                <!-- <div class="col-md-12">
-                                                                                    <div class="tooltip-separator"></div>
-                                                                                </div>
-                                                                                 -->
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </span>
+                                                            <td>
+                                                                {{log.date}}
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -910,6 +625,24 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>
+                                    Repair Orders
+                                </label>
+                                <md-select multiple ng-model="parts_indent.part.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.repair_order)" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-if="repair_order.removal_reason_id == null" ng-value="repair_order" ng-repeat="repair_order in options.repair_orders | filter:searchreturnEmployeeKey">
+                                            {{repair_order.code}} / {{repair_order.name}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
                                     Part Code
                                     <span class="mandatory">*</span>
                                 </label>
@@ -944,6 +677,8 @@
                                 <input type="hidden" name="split_order_id" value="{{parts_indent.split_order_type.id}}">
                             </div><!-- Field -->
                         </div><!-- Column -->
+                    </div>
+                    <div class="row" ng-if="parts_indent.part">
                         <div class="col-md-4" ng-if="parts_indent.part">
                             <div class="form-group">
                                 <label>
@@ -954,8 +689,6 @@
                                 </label>
                             </div><!-- Field -->
                         </div><!-- Column -->
-                    </div>
-                    <div class="row" ng-if="parts_indent.part">
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>

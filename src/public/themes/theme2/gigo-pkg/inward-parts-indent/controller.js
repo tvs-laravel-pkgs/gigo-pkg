@@ -1,6 +1,6 @@
 app.component('inwardPartsIndentView', {
     templateUrl: inward_parts_indent_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc, SplitOrderTypeSvc) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc, SplitOrderTypeSvc, RepairOrderSvc) {
 
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -9,7 +9,7 @@ app.component('inwardPartsIndentView', {
         self.hasPermission = HelperService.hasPermission;
 
         self.angular_routes = angular_routes;
-
+        self.job_order_repair_order_ids = [];
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
 
@@ -21,12 +21,14 @@ app.component('inwardPartsIndentView', {
 
             let promises = {
                 split_order_type_options: SplitOrderTypeSvc.options(),
+                repair_order_options: RepairOrderSvc.options(),
             };
 
             $scope.options = {};
             $q.all(promises)
                 .then(function(responses) {
                     $scope.options.split_order_types = responses.split_order_type_options.data.options;
+                    $scope.options.repair_orders = responses.repair_order_options.data.options;
                     $rootScope.loading = false;
                 });
         };
@@ -99,6 +101,7 @@ app.component('inwardPartsIndentView', {
                     $scope.part_amount = res.part_amount;
                     $scope.job_order_parts = res.job_order_parts;
                     $scope.repair_order_mechanics = res.repair_order_mechanics;
+                    $scope.indent_part_logs = res.indent_part_logs;
 
                     $scope.$apply();
                 })
@@ -148,6 +151,7 @@ app.component('inwardPartsIndentView', {
             if (part == false) {
                 $scope.parts_indent = {};
             } else {
+                $repair_orders = part.repair_order;
                 if (part.split_order_type_id != null) {
                     $split_id = part.split_order_type_id;
                     SplitOrderTypeSvc.read($split_id)
@@ -161,6 +165,7 @@ app.component('inwardPartsIndentView', {
                             $scope.parts_indent.part = response.data.part;
                             $scope.parts_indent.part.qty = part.qty;
                             $scope.parts_indent.part.job_order_part_id = $job_order_part_id;
+                            $scope.parts_indent.repair_order = $repair_orders;
                             // $scope.calculatePartAmount();
                         });
                 }
@@ -287,6 +292,18 @@ app.component('inwardPartsIndentView', {
             }
         });
 
+        $scope.selectingRepairOrder = function(val) {
+            console.log(val);
+            if (val) {
+                list = [];
+                angular.forEach($scope.parts_indent.repair_order, function(value, key) {
+                    list.push(value.id);
+                });
+            } else {
+                list = [];
+            }
+            self.repair_order_ids = list;
+        }
         var return_part_form = "#return-part-form";
         var v = jQuery(return_part_form).validate({
             ignore: '',
