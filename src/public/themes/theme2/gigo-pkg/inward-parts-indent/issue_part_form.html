@@ -1,4 +1,4 @@
-<!-- Content Wrap -->
+Content Wrap -->
 <div class="content-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -30,7 +30,8 @@
                                         <label>
                                             Part<sup class="mandatory">*</sup>
                                         </label>
-                                        <md-select ng-model="job_order_part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="partSelected(job_order_part)">
+                                        <md-select ng-model="job_order_part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <!-- ng-change="partSelected(job_order_part)" -->
                                             <md-select-header class="demo-select-header">
                                                 <input ng-model="searchreturnPartKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                             </md-select-header>
@@ -96,19 +97,19 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Quantity <sup class="mandatory">*</sup></label>
-                                        <input type="text" name="quantity" ng-model="quantity" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                                        <input type="text" ng-change="calculateTotal()" name="quantity" ng-model="issue_part.quantity" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Unit Price <sup class="mandatory">*</sup></label>
-                                        <input type="text" name="unit_price" ng-model="unit_price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Unit Price" autocomplete="off" />
+                                        <input type="text" ng-change="calculateTotal()" name="unit_price" ng-model="issue_part.unit_price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Unit Price" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Total <sup class="mandatory">*</sup></label>
-                                        <input type="text" name="total" ng-model="total" readonly class="form-control" placeholder="Total" autocomplete="off" />
+                                        <input type="text" name="total" ng-model="issue_part.total" readonly class="form-control" placeholder="Total" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                             </div>
@@ -116,25 +117,25 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Tax % <sup class="mandatory">*</sup></label>
-                                        <input type="text" name="tax_percentage" ng-model="tax_percentage" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Tax %" autocomplete="off" />
+                                        <input type="text" ng-change="calculateTax()" name="tax_percentage" ng-model="issue_part.tax_percentage" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Tax %" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Tax amount <sup class="mandatory">*</sup></label>
-                                        <input type="text" name="tax_amount" ng-model="tax_amount" readonly class="form-control" placeholder="Tax amount" autocomplete="off" />
+                                        <input type="text" name="tax_amount" ng-model="issue_part.tax_amount" readonly class="form-control" placeholder="Tax amount" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Total amount <sup class="mandatory">*</sup></label>
-                                        <input type="text" name="total_amount" ng-model="total_amount" readonly class="form-control" placeholder="Total amount" autocomplete="off" />
+                                        <input type="text" name="total_amount" ng-model="issue_part.total_amount" readonly class="form-control" placeholder="Total amount" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>MRP <sup class="mandatory">*</sup></label>
-                                        <input type="text" name="mrp" ng-model="mrp" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="MRP" autocomplete="off" />
+                                        <input type="text" name="mrp" ng-model="issue_part.mrp" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="MRP" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                             </div>
@@ -167,7 +168,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>PO Amount <sup class="mandatory">*</sup></label>
-                                        <input type="text" readonly name="po_amount" ng-model="po_amount" class="form-control" placeholder="PO Amount" autocomplete="off" />
+                                        <input type="text" readonly name="po_amount" ng-model="issue_part.po_amount" class="form-control" placeholder="PO Amount" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
@@ -203,4 +204,4 @@
             </div><!-- Container -->
         </form>
     </div><!-- Page Main Content -->
-</div><!-- Content Wrap -->
+</div><!-- Content Wrap
