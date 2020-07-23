@@ -268,7 +268,7 @@ class VehicleGatePassController extends Controller {
 						$query->where('gate_passes.number', 'LIKE', '%' . $request->number . '%');
 					}
 				})
-				->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
+				//->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
 				->where('gate_passes.type_id', 8280) // Vehicle Gate Pass
 				->groupBy('gate_passes.id')
 			;
