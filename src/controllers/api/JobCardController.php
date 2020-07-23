@@ -2600,7 +2600,7 @@ class JobCardController extends Controller {
 		])
 			->find($request->id);
 
-		$joborder_parts =JobOrderPart::select('job_order_parts.id as part_id','parts.id','parts.code','parts.name','job_card_returnable_items.part_id as select_id','job_card_returnable_items.qty')->leftjoin('parts','parts.id','job_order_parts.part_id')->leftjoin('job_card_returnable_items','job_card_returnable_items.part_id','job_order_parts.id')->where('job_order_parts.job_order_id',$job_card->job_order_id)->get();	
+		$joborder_parts =JobOrderPart::select('job_order_parts.id as part_id','parts.id','parts.code','parts.name','job_card_returnable_items.part_id as select_id','job_card_returnable_items.qty')->leftjoin('parts','parts.id','job_order_parts.part_id')->leftjoin('job_card_returnable_items','job_card_returnable_items.part_id','job_order_parts.part_id')->where('job_order_parts.job_order_id',$job_card->job_order_id)->get();	
 
 		if (!$job_card) {
 			return response()->json([
