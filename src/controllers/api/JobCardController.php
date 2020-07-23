@@ -1275,12 +1275,14 @@ class JobCardController extends Controller {
 			$params['outlet_id'] = $job_card->jobOrder->outlet->id;
 			//LABOUR INVOICE ADD
 			if ($request->labour_total_amount > 0) {
+				$params['invoice_of_id'] = 7425; // LABOUR JOB CARD
 				$params['invoice_amount'] = $request->labour_total_amount;
 				$this->saveInvoice($params);
 			}
 
 			//PART INVOICE ADD
 			if ($request->part_total_amount > 0) {
+				$params['invoice_of_id'] = 7426; // PART JOB CARD
 				$params['invoice_amount'] = $request->part_total_amount;
 				$this->saveInvoice($params);
 			}
@@ -1382,20 +1384,36 @@ class JobCardController extends Controller {
 			],
 		], $error_messages_1);
 
-		$invoice = new Invoice;
-		$invoice->invoice_of_id = 7422; // JOB CARD
-		$invoice->entity_id = $params['job_card_id'];
-		$invoice->customer_id = $params['customer_id'];
-		$invoice->company_id = Auth::user()->company_id;
-		$invoice->invoice_number = $generateNumber['number'];
-		$invoice->invoice_date = Carbon::now();
-		$invoice->outlet_id = $params['outlet_id'];
-		$invoice->sbu_id = 54; //SERVICE ALSERV
-		$invoice->invoice_amount = $params['invoice_amount'];
-		$invoice->payment_status_id = 10031; //PENDING
-		$invoice->created_by_id = Auth::user()->id;
-		$invoice->created_at = Carbon::now();
+		DB::beginTransaction();
+
+		$invoice = Invoice::firstOrNew([
+			'invoice_of_id' => $params['invoice_of_id'],
+			'entity_id' => $params['job_card_id'],
+		]);
+		// dump($params);
+		if ($invoice->exists) {
+			//FIRST
+			$invoice->invoice_amount = $params['invoice_amount'];
+			$invoice->updated_by_id = Auth::user()->id;
+			$invoice->updated_at = Carbon::now();
+		} else {
+			//NEW
+			$invoice->invoice_of_id = $params['invoice_of_id']; // JOB CARD
+			$invoice->entity_id = $params['job_card_id'];
+			$invoice->customer_id = $params['customer_id'];
+			$invoice->company_id = Auth::user()->company_id;
+			$invoice->invoice_number = $generateNumber['number'];
+			$invoice->invoice_date = Carbon::now();
+			$invoice->outlet_id = $params['outlet_id'];
+			$invoice->sbu_id = 54; //SERVICE ALSERV
+			$invoice->invoice_amount = $params['invoice_amount'];
+			$invoice->payment_status_id = 10031; //PENDING
+			$invoice->created_by_id = Auth::user()->id;
+			$invoice->created_at = Carbon::now();
+		}
 		$invoice->save();
+
+		DB::commit();
 
 		return true;
 	}
@@ -2689,7 +2707,7 @@ class JobCardController extends Controller {
 				'status',
 				//JOB ORDER RELATION
 				'jobOrder',
-				'jobOrder.serviceOrederType',
+				'jobOrder.type',
 				'jobOrder.quoteType',
 				'jobOrder.serviceType',
 				'jobOrder.roadTestDoneBy',
@@ -3108,6 +3126,7 @@ class JobCardController extends Controller {
 				'success' => true,
 				'gate_pass' => $gate_pass,
 				'job_card' => $job_card,
+				'attachement_path' => url('app/public/gigo/material_gate_pass/attachments/'),
 			]);
 
 		} catch (Exception $e) {
