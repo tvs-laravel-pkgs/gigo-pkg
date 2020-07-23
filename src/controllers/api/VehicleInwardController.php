@@ -164,14 +164,17 @@ class VehicleInwardController extends Controller {
 			}*/
 			if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
 				if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
-					$vehicle_inward_list_get->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+					$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+					array_push($outlet_ids, Auth::user()->employee->outlet_id);
+					$vehicle_inward_list_get->whereIn('job_orders.outlet_id', $outlet_ids);
 				} elseif (Entrust::can('view-own-outlet-vehicle-inward')) {
-					$vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)->whereNull('job_orders.service_advisor_id')->whereNull('job_orders.floor_supervisor_id');
+					$vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
 				} else {
-					$vehicle_inward_list_get->where('job_orders.service_advisor_id', Auth::user()->id)->whereNull('job_orders.floor_supervisor_id');
-					$vehicle_inward_list_get->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+					$vehicle_inward_list_get->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
+						->whereRaw("IF (`job_orders`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
 				}
 			}
+
 			$vehicle_inward_list_get->groupBy('job_orders.id');
 			$vehicle_inward_list_get->orderBy('job_orders.created_at', 'DESC');
 

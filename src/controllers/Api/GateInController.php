@@ -556,19 +556,8 @@ class GateInController extends Controller {
 		}
 	}
 	public function getGateLogList(Request $request) {
-		$employee_outlet = Employee::with(['employee_outlets'])->find(Auth::user()->id);
-		$emp_outlet = array();
-		foreach ($employee_outlet->employee_outlets as $outlet) {
-			array_push($emp_outlet, [$outlet->id]);
-		}
-		$outlet = array();
-		foreach ($emp_outlet as $key => $value) {
-			if (is_array($value)) {
-				$outlet = array_merge($outlet, array_flatten($value));
-			} else {
-				$outlet[$key] = $value;
-			}
-		}
+		$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+		array_push($outlet_ids, Auth::user()->employee->outlet_id);
 
 		if ($request->date_range) {
 			$date_range = explode(' to ', $request->date_range);
@@ -581,8 +570,6 @@ class GateInController extends Controller {
 			$start_date = date('Y-m-01 00:00:00');
 			$end_date = date('Y-m-t 23:59:59');
 		}
-
-		// $date = explode('to', $request->date_range);
 
 		$gate_pass_lists = GateLog::select([
 			'gate_logs.id as gate_log_id',
@@ -614,33 +601,20 @@ class GateInController extends Controller {
 					$query->where('job_orders.outlet_id', $request->outlet_id);
 				}
 			})
-			->where(function ($query) use ($start_date) {
-				if (!empty($start_date)) {
-					$query->where('gate_logs.created_at', '>=', $start_date);
-				}
-			})
 
-			->where(function ($query) use ($end_date) {
-				if (!empty($end_date)) {
-					$query->where('gate_logs.created_at', '<=', $end_date);
-				}
+			->where(function ($query) use ($start_date, $end_date) {
+				$query->whereDate('gate_logs.created_at', '>=', $start_date)
+					->whereDate('gate_logs.created_at', '<=', $end_date);
 			});
-		// ->where(function ($query) use ($request, $date) {
-		// 	if (!empty($request->get('date_range'))) {
-		// 		$query->whereDate('gate_logs.created_at', '>=', date('Y-m-d', strtotime($date[0])))
-		// 			->whereDate('gate_logs.created_at', '<=', date('Y-m-d', strtotime($date[1])));
-		// 	}
-		// });
 
-		if (!Entrust::can('all')) {
-			if (Entrust::can('mapped-outlet')) {
-				$gate_pass_lists->whereIn('job_orders.outlet_id', $outlet);
-			} elseif (Entrust::can('own-outlet')) {
+		if (!Entrust::can('overall-outlet-gatelog')) {
+			if (Entrust::can('mapped-outlet-gatelog')) {
+				$gate_pass_lists->whereIn('job_orders.outlet_id', $outlet_ids);
+			} elseif (Entrust::can('own-outlet-gatelog')) {
 				$gate_pass_lists->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
 			} else {
 				$gate_pass_lists->where('gate_logs.created_by_id', Auth::user()->id);
 			}
-
 		}
 
 		$gate_pass_lists->orderBy('gate_logs.id', 'DESC');

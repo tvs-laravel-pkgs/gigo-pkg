@@ -3440,7 +3440,6 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         return;
                     }
                     $scope.job_order = res.job_order;
-                    console.log($scope.job_order);
                     $scope.part_details = res.part_details;
                     $scope.labour_details = res.labour_details;
                     $scope.total_amount = res.total_amount;
