@@ -47,7 +47,10 @@
                                                     <thead>
                                                         <tr>
                                                             <th>
-                                                                Labour Details
+                                                                Labour Code
+                                                            </th>
+                                                            <th>
+                                                                Name
                                                             </th>
                                                             <th>
                                                                 Type
@@ -67,8 +70,9 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr class="ptb-12" ng-repeat="(index, labour_details) in labour_details" id="tr_{{index}}" ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_details.removal_reason_id != '10021'">
-                                                            <td>{{labour_details.code ? labour_details.code : ''}} | {{labour_details.name ? labour_details.name : ''}}
+                                                            <td>{{labour_details.code ? labour_details.code : ''}}
                                                             </td>
+                                                            <td>{{labour_details.name ? labour_details.name : ''}}</td>
                                                             <td>
                                                                 {{labour_details.type}}
                                                             </td>
@@ -96,7 +100,7 @@
                                                                     Add Labour
                                                                 </button>
                                                             </td>
-                                                            <td colspan="3" class="text-right">
+                                                            <td colspan="4" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
@@ -119,7 +123,7 @@
                                                     <thead>
                                                         <tr>
                                                             <th>
-                                                                Code
+                                                                Part Code
                                                             </th>
                                                             <th>
                                                                 Name
@@ -163,10 +167,7 @@
                                                             <td class="text-right">
                                                                 {{part_details.qty}}
                                                             </td>
-                                                            <td class="wid-180 white-space text-right" ng-if="part_details.is_free_service == 1">
-                                                                <p class="text-danger">0.00</p>
-                                                            </td>
-                                                            <td class="wid-180 white-space text-right" ng-if="part_details.is_free_service != 1">
+                                                            <td class="wid-180 white-space text-right">
                                                                 {{part_details.amount | number:2}}
                                                             </td>
                                                             <td class="wid-100" ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
@@ -441,13 +442,9 @@
                             </div><!-- Column -->
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>
-                                        Quantity
-                                    </label>
-                                    <div class="input-group">
-                                        <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="qty" ng-model="schedule_maintainance_part.part.qty" maxlength="12">
-                                    </div>
-                                </div>
+                                    <label>Quantity <sup class="mandatory">*</sup></label>
+                                    <input type="text" name="qty" ng-model="schedule_maintainance_part.part.qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" ng-keyup="calculatePartAmount()" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                                </div><!-- Feild -->
                             </div>
                         </div><!-- Row -->
                         <div class="view-details mb-no" ng-if="schedule_maintainance_part.part">
