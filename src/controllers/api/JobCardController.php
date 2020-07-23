@@ -2634,9 +2634,18 @@ class JobCardController extends Controller {
 					$returnable_part->item_name = $request->part_name[$key];
 					$returnable_part->qty = $parts;
 					$returnable_part->save();
-				}} else {
+				}
+			}
+			$count = JobCardReturnableItem::where('job_card_id', $request->job_card_id)->count();
+			if ($count != 0) {
+				if (!($request->quantity)) {
+					$delete_part = JobCardReturnableItem::where('job_card_id', $request->job_card_id)->forceDelete();
+				}
+
+			} else {
 				return response()->json(['success' => false, 'errors' => ['Exception Error' => 'Check Check Box']]);
 			}
+
 			DB::commit();
 			if (!($request->id)) {
 				return response()->json([
