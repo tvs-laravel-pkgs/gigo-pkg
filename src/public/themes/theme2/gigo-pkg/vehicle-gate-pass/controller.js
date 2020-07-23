@@ -453,10 +453,10 @@ app.component('vehicleGatePassView', {
 
         $scope.hasPermission = HelperService.hasPermission;
         self.user = $scope.user = HelperService.getLoggedUser();
-        if (!self.hasPermission('view-vehicle-gate-pass')) {
+        /*if (!self.hasPermission('view-vehicle-gate-pass')) {
             $location.path('/page-permission-denied');
             return;
-        }
+        }*/
 
         $scope.fetchData = function() {
             $.ajax({
