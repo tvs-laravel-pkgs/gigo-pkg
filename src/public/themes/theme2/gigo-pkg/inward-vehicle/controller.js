@@ -2024,7 +2024,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
 //Estimate
 app.component('inwardVehicleEstimateForm', {
     templateUrl: inward_vehicle_estimate_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $window) {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -2194,10 +2194,10 @@ app.component('inwardVehicleEstimateForm', {
                     xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
                 },
                 success: function(response) {
-                    custom_noty('success', response.message);
                     $(".send_to_customer_approval").button('reset');
-                    $location.path('/inward-vehicle/card-list');
-                    $scope.$apply();
+                    custom_noty('success', response.message);
+                    // $location.path('/inward-vehicle/card-list');
+                    location.href = '#!/inward-vehicle/card-list';
                 },
                 error: function(textStatus, errorThrown) {
                     $(".send_to_customer_approval").button('reset');
@@ -3412,7 +3412,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
         // }
         self.angular_routes = angular_routes;
 
-         /* Modal Md Select Hide */
+        /* Modal Md Select Hide */
         $('.modal').bind('click', function(event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
                 $mdSelect.hide();

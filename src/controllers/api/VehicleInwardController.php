@@ -1497,46 +1497,46 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 
 			//Check Service Type changed or not.If changed remove all schedule maintenace
-			// if ($job_order->service_type_id != $request->service_type_id) {
-			JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_oem_recommended', 1)->forceDelete();
-			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_recommended_by_oem', 1)->forceDelete();
-			// }
-			if ($job_order->vehicle && $job_order->vehicle->model && $job_order->vehicle->model->vehicleSegment && $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule && $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types) {
+			if ($job_order->service_type_id != $request->service_type_id) {
+				JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_oem_recommended', 1)->forceDelete();
+				JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_recommended_by_oem', 1)->forceDelete();
+				if ($job_order->vehicle && $job_order->vehicle->model && $job_order->vehicle->model->vehicleSegment && $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule && $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types) {
 
-				foreach ($job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types as $key => $value) {
+					foreach ($job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types as $key => $value) {
 
-					//Save Repair Orders
-					if ($value->service_type_id == $job_order->service_type_id && $value->repair_orders) {
-						foreach ($value->repair_orders as $rkey => $rvalue) {
-							$repair_order = JobOrderRepairOrder::firstOrNew(['job_order_id' => $request->job_order_id, 'repair_order_id' => $rvalue->id]);
+						//Save Repair Orders
+						if ($value->service_type_id == $request->service_type_id && $value->repair_orders) {
+							foreach ($value->repair_orders as $rkey => $rvalue) {
+								$repair_order = JobOrderRepairOrder::firstOrNew(['job_order_id' => $request->job_order_id, 'repair_order_id' => $rvalue->id]);
 
-							$repair_order->is_recommended_by_oem = 1;
-							$repair_order->is_customer_approved = 0;
-							$repair_order->split_order_type_id = $rvalue->pivot->split_order_type_id;
-							$repair_order->qty = $rvalue->hours;
-							$repair_order->amount = $rvalue->amount;
-							$repair_order->is_free_service = $value->is_free;
-							$repair_order->status_id = 8180; //Customer Approval Pending
-							$repair_order->estimate_order_id = 0;
-							$repair_order->save();
+								$repair_order->is_recommended_by_oem = 1;
+								$repair_order->is_customer_approved = 0;
+								$repair_order->split_order_type_id = $rvalue->pivot->split_order_type_id;
+								$repair_order->qty = $rvalue->hours;
+								$repair_order->amount = $rvalue->amount;
+								$repair_order->is_free_service = $value->is_free;
+								$repair_order->status_id = 8180; //Customer Approval Pending
+								$repair_order->estimate_order_id = 0;
+								$repair_order->save();
+							}
 						}
-					}
 
-					//Save Parts
-					if ($value->service_type_id == $job_order->service_type_id && $value->parts) {
-						foreach ($value->parts as $pkey => $pvalue) {
-							$part_order = JobOrderPart::firstOrNew(['job_order_id' => $request->job_order_id, 'part_id' => $pvalue->id]);
+						//Save Parts
+						if ($value->service_type_id == $request->service_type_id && $value->parts) {
+							foreach ($value->parts as $pkey => $pvalue) {
+								$part_order = JobOrderPart::firstOrNew(['job_order_id' => $request->job_order_id, 'part_id' => $pvalue->id]);
 
-							$part_order->qty = $pvalue->pivot->quantity;
-							$part_order->split_order_type_id = $pvalue->pivot->split_order_type_id;
-							$part_order->rate = $pvalue->rate;
-							$part_order->amount = $pvalue->pivot->amount;
-							$part_order->is_free_service = $value->is_free;
-							$part_order->status_id = 8200; //Customer Approval Pending
-							$part_order->is_oem_recommended = 1;
-							$part_order->is_customer_approved = 0;
-							$part_order->estimate_order_id = 0;
-							$part_order->save();
+								$part_order->qty = $pvalue->pivot->quantity;
+								$part_order->split_order_type_id = $pvalue->pivot->split_order_type_id;
+								$part_order->rate = $pvalue->rate;
+								$part_order->amount = $pvalue->pivot->amount;
+								$part_order->is_free_service = $value->is_free;
+								$part_order->status_id = 8200; //Customer Approval Pending
+								$part_order->is_oem_recommended = 1;
+								$part_order->is_customer_approved = 0;
+								$part_order->estimate_order_id = 0;
+								$part_order->save();
+							}
 						}
 					}
 				}
