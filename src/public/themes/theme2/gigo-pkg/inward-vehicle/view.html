@@ -1678,9 +1678,13 @@
                                                             Customer Agreed?
                                                         </span>
                                                         <span class="view-data-list-value" ng-if="job_order.is_customer_agreed == 1">
-                                                            <b>
+                                                            <b ng-if="job_order.is_customer_approved == 1">
                                                                 Yes
-                                                            </b></span>
+                                                            </b>
+                                                            <b ng-if="job_order.is_customer_approved != 1">
+                                                                Waiting for Customer Approval
+                                                            </b>
+                                                        </span>
                                                         <span class="view-data-list-value" ng-if="job_order.is_customer_agreed != 1">
                                                             <b>
                                                                 No
@@ -1688,7 +1692,7 @@
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8469">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
