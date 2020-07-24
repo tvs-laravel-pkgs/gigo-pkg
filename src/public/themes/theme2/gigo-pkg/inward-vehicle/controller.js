@@ -2196,7 +2196,7 @@ app.component('inwardVehicleEstimateForm', {
                 success: function(response) {
                     custom_noty('success', response.message);
                     $(".send_to_customer_approval").button('reset');
-                    // $location.path('/inward-vehicle/card-list');
+                    $location.path('/inward-vehicle/card-list');
                     $scope.$apply();
                 },
                 error: function(textStatus, errorThrown) {
