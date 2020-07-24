@@ -1359,10 +1359,15 @@ class VehicleInwardController extends Controller {
 			//Get Previous Service Types in Vehicle
 			$service_type_ids = JobOrder::where('vehicle_id', $job_order->vehicle_id)
 				->where('id', '!=', $job_order->id)
+				->whereNotNull('service_type_id')
 				->pluck('service_type_id')->toArray();
 
 			$params['service_type_ids'] = $service_type_ids;
 			$params['job_order_id'] = $r->id;
+
+			if ($job_order->vehicle && $job_order->vehicle->model && $job_order->vehicle->model->vehicleSegment && $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule) {
+				$params['vehicle_service_schedule_id'] = $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->id;
+			}
 
 			$extras = [
 				'job_order_type_list' => ServiceOrderType::getDropDownList(),
@@ -1454,9 +1459,9 @@ class VehicleInwardController extends Controller {
 					'exists:quote_types,id',
 				],
 				'service_type_id' => [
-					'required',
-					'integer',
-					'exists:service_types,id',
+					// 'required',
+					// 'integer',
+					// 'exists:service_types,id',
 					'unique:job_orders,service_type_id,' . $request->job_order_id . ',id,vehicle_id,' . $job_order->vehicle_id,
 				],
 				'contact_number' => [

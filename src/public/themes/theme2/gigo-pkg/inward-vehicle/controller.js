@@ -3092,9 +3092,9 @@ app.component('inwardVehicleOrderDetailForm', {
                     'quote_type_id': {
                         required: true,
                     },
-                    'service_type_id': {
-                        required: true,
-                    },
+                    // 'service_type_id': {
+                    //     required: true,
+                    // },
                     'km_reading': {
                         required: true,
                         number: true,
