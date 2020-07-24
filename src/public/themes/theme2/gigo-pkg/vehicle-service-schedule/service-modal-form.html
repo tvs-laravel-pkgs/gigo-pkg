@@ -29,6 +29,20 @@
                     <div class="col-md-4">
                         <div class="input-text form-group">
                             <label>
+                                Is Free ?
+                                <sup class="mandatory">*</sup>
+                            </label>
+                            <div class="tab-switch">
+                                <md-switch ng-change="isFreeChange()" ng-model="$ctrl.is_free" aria-label="Switch 3" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
+                                    {{ $ctrl.is_free }}
+                                </md-switch>
+                                <input type="hidden" ng-model="service_type_item.is_free" class="is_free_change" name="is_free" value="{{$ctrl.is_free}}">
+                            </div>
+                        </div><!-- Form Group -->
+                    </div><!-- Column -->
+                    <div class="col-md-4">
+                        <div class="input-text form-group">
+                            <label>
                                 KM
                                 <sup class="mandatory">*</sup>
                             </label>
@@ -99,20 +113,6 @@
                             </md-select>
                             <input type="hidden" name="period_tolerance_type_id" value="{{service_type_item.tolerance_period.id}}">
                         </div><!-- Feild -->
-                    </div><!-- Column -->
-                    <div class="col-md-4">
-                        <div class="input-text form-group">
-                            <label>
-                                Is Free ?
-                                <sup class="mandatory">*</sup>
-                            </label>
-                            <div class="tab-switch">
-                                <md-switch ng-change="isFreeChange()" ng-model="$ctrl.is_free" aria-label="Switch 3" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
-                                    {{ $ctrl.is_free }}
-                                </md-switch>
-                                <input type="hidden" ng-model="service_type_item.is_free" class="is_free_change" name="is_free" value="{{$ctrl.is_free}}">
-                            </div>
-                        </div><!-- Form Group -->
                     </div><!-- Column -->
                 </div>
                 <div class="row">

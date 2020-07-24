@@ -279,10 +279,6 @@ app.component('gateLogForm', {
                             }
                         )
                         .then(function(response) {
-                            $scope.vehicle_details = response.data;
-                            if ($scope.vehicle_details.length == 0) {
-                                $('#registration_number').val(query);
-                            }
                             resolve(response.data);
                         });
                 });
@@ -318,6 +314,19 @@ app.component('gateLogForm', {
                 $('#chassis_number').val('');
                 $('#engine_number').val('');
                 $('#registration_number').val('');
+                $("#registration_number").prop("readonly", true);
+                self.gatein_entry_type_id = '';
+            } else {
+                if (!vehicle_detail.registration_number) {
+                    $("#registration_number").prop("readonly", false);
+                }
+                if (vehicle_detail.engine_number) {
+                    self.gatein_entry_type_id = 2;
+                }
+                if (vehicle_detail.chassis_number) {
+                    self.gatein_entry_type_id = 1;
+                }
+                $scope.$apply();
             }
         }
 
@@ -504,6 +513,9 @@ app.component('gateLogForm', {
                 } else {
                     error.insertAfter(element)
                 }
+            },
+            invalidHandler: function(event, validator) {
+                custom_noty('error', 'You have errors, Please check all tabs');
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id)[0]);
