@@ -112,8 +112,8 @@ Content Wrap -->
                                                 </div><!-- Panel Collapse -->
                                             </div><!-- Panel -->
 
-                                             <div class="panel panel-default type-4">
-                                                <div class="panel-heading" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-if="split_order_type.total_items > 0">
+                                             <div class="panel panel-default type-4" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-if="split_order_type.total_items > 0">
+                                                <div class="panel-heading">
                                                     <a class="panel-title"  data-toggle="collapse" data-parent="#accordion" data-target="#{{split_order_type.id}}">
                                                         {{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} {{split_order_type.total_items > 1 ? 'items' : 'item'}}
                                                         <span class="arrow"></span>
@@ -123,7 +123,7 @@ Content Wrap -->
                                                         </span>
                                                     </a>
                                                 </div>
-                                                <div class="panel-collapse collapse split_order_panel_{{key}}" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300" ng-repeat="(key,split_order_type) in extras.split_order_types">
+                                                <div class="panel-collapse collapse split_order_panel_{{key}}" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300">
                                                     <div class="panel-body">
                                                         <div class="row">
                                                             <div class="col-md-12">
