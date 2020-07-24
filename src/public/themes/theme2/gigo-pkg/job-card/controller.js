@@ -2767,7 +2767,7 @@ app.component('jobCardSplitOrder', {
                     $scope.part_details = res.part_details;
                     $scope.extras = res.extras;
                     $scope.split_order_types = res.extras.split_order_types;
-                    // $scope.unassigned_total_amount = res.unassigned_total_amount;
+                    $scope.unassigned_total_amount = res.unassigned_total_amount;
                     $scope.unassigned_total_count = res.unassigned_total_count;
 
                     angular.forEach($scope.extras.split_order_types, function(split_order, key) {

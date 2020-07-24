@@ -3507,25 +3507,25 @@ class JobCardController extends Controller {
 				}
 			}
 
-			// $total_amount = $parts_amount + $labour_amount;
+			$total_amount = $parts_amount + $labour_amount;
 
-			// $unassigned_part_amount = 0;
-			// foreach ($part_details as $key => $part) {
-			// 	//	dd($part);
-			// 	if (!$part['split_order_type_id']) {
-			// 		$unassigned_part_count += 1;
-			// 		$unassigned_part_amount += $part['total_amount'];
-			// 	}
-			// }
-			// $unassigned_labour_amount = 0;
-			// foreach ($labour_details as $key => $labour) {
-			// 	if (!$labour['split_order_type_id']) {
-			// 		$unassigned_labour_count += 1;
-			// 		$unassigned_labour_amount += $labour['total_amount'];
-			// 	}
-			// }
+			$unassigned_part_amount = 0;
+			foreach ($part_details as $key => $part) {
+				//	dd($part);
+				if (!$part['split_order_type_id']) {
+					$unassigned_part_count += 1;
+					$unassigned_part_amount += $part['total_amount'];
+				}
+			}
+			$unassigned_labour_amount = 0;
+			foreach ($labour_details as $key => $labour) {
+				if (!$labour['split_order_type_id']) {
+					$unassigned_labour_count += 1;
+					$unassigned_labour_amount += $labour['total_amount'];
+				}
+			}
 			$unassigned_total_count = $unassigned_labour_count + $unassigned_part_count;
-			// $unassigned_total_amount = $unassigned_labour_amount + $unassigned_part_amount;
+			$unassigned_total_amount = $unassigned_labour_amount + $unassigned_part_amount;
 
 			$extras = [
 				'split_order_types' => SplitOrderType::get(),
@@ -3538,10 +3538,10 @@ class JobCardController extends Controller {
 				'extras' => $extras,
 				'part_details' => $part_details,
 				'labour_details' => $labour_details,
-				// 'parts_total_amount' => number_format($parts_amount, 2),
-				// 'labour_total_amount' => number_format($labour_amount, 2),
-				// 'total_amount' => number_format($total_amount, 2),
-				// 'unassigned_total_amount' => number_format($unassigned_total_amount, 2),
+				'parts_total_amount' => number_format($parts_amount, 2),
+				'labour_total_amount' => number_format($labour_amount, 2),
+				'total_amount' => number_format($total_amount, 2),
+				'unassigned_total_amount' => number_format($unassigned_total_amount, 2),
 				'unassigned_total_count' => $unassigned_total_count,
 			]);
 
