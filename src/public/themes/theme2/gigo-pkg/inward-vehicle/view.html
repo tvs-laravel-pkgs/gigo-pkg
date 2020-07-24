@@ -63,70 +63,71 @@
                             <!-- Filters -->
                             <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
                                 <ul class="nav nav-pills cndn-tabs">
-                                    <li class="active">
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-gate-in-details-view')" class="active">
                                         <a class="filter active" data-target="#gatein_details" data-toggle="tab" aria-expanded="true">
                                             Gate In Details
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-view')">
                                         <a class="filter" data-target="#vehicle_details" data-toggle="tab" aria-expanded="true">
                                             Vehicle Details
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-customer-details-view')">
                                         <a data-target="#customer_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Customer Details
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-order-details-view')">
                                         <a data-target="#order_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Order Details
                                         </a>
                                     </li>
-                                    <li><a data-target="#inventory_details" data-toggle="tab" aria-expanded="true" class="filter">
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-inventory-view')">
+                                        <a data-target="#inventory_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Inventory
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-capture-voc-view')">
                                         <a data-target="#voc_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Capture VOC
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-road-test-view')">
                                         <a data-target="#road_test_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Road Test
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-expert-diagnosis-report-view')">
                                         <a data-target="#expert_diagnosis_details" data-toggle="tab" aria-expanded="true" class="filter">Expert Diagnosis Report
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-inspection-report-view')">
                                         <a data-target="#vehicle_inspection_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Vehicle Inspection Report
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-service-package-details-view')">
                                         <a data-target="#dms_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Service Package Details
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-view')">
                                         <a data-target="#maintenance_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Scheduled Maintenance
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-other-labour-parts-view')">
                                         <a data-target="#payable_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Other Labour & Parts
                                         </a>
                                     </li>
-                                    <li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-view')">
                                         <a data-target="#estimate_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Estimate
                                         </a>
                                     </li>
-                                    <li ng-if="job_order.is_customer_agreed != 1 || (job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1)">
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimation-status-view') && (job_order.is_customer_agreed != 1 || (job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1))">
                                         <a data-target="#status_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Estimation Status
                                         </a>
@@ -292,7 +293,7 @@
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square" >
                                                 Edit
                                             </button> -->
-                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/vehicle-detail/{{job_order_id}}/1" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">
+                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/vehicle-detail/{{job_order_id}}/1" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-vehicle-details-edit')">
                                                 Edit
                                             </a>
                                             <!-- <a type="button" class="btn btn-red" ng-click="showVehicleForm()">
@@ -385,7 +386,7 @@
                                                 </li>
                                             </ul>
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square">Edit</button> -->
-                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/customer-detail/{{job_order_id}}/1" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">
+                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/customer-detail/{{job_order_id}}/1" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-customer-details-edit')">
                                                 Edit
                                             </a>
                                             <button class="btn btn-bordered btn-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">
@@ -446,7 +447,7 @@
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
                                                                 Edit
                                                             </a>
                                                         </div><!-- Panel Body -->
@@ -524,7 +525,7 @@
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
                                                                 Edit
                                                             </a>
                                                         </div><!-- Panel Body -->
@@ -638,7 +639,7 @@
                                                                 </table>
                                                             </div>
                                                             <div class="mb-10"></div><!-- Spacing -->
-                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">
+                                                            <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">
                                                                 Edit
                                                             </a>
                                                         </div><!-- Panel Body -->
@@ -700,7 +701,7 @@
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <a href=".#!/inward-vehicle/inventory-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">Edit</a>
+                                                    <a href=".#!/inward-vehicle/inventory-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-inventory-edit')">Edit</a>
                                                 </div>
                                             </div><!-- Row -->
                                         </div><!-- Column -->
@@ -737,7 +738,7 @@
                                                 </li>
                                             </ul>
                                             <hr class="hr-15"><!-- Separater -->
-                                            <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-capture-voc-edit')">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -799,7 +800,7 @@
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-road-test-edit') ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -850,7 +851,7 @@
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-expert-diagnosis-report-edit') ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -900,7 +901,7 @@
                                                 </div><!-- Panel -->
                                             </div><!-- Panel Group -->
                                             <div class="mb-10"></div><!-- Spacing -->
-                                            <a href="#!/inward-vehicle/inspection-detail/form/{{job_order.id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">Edit</a>
+                                            <a href="#!/inward-vehicle/inspection-detail/form/{{job_order.id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-vehicle-inspection-report-edit') ">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -1152,7 +1153,7 @@
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
-                                            <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-service-package-details-edit')">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -1306,7 +1307,7 @@
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471">Edit</a>
+                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471 && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -1480,7 +1481,7 @@
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471">Edit</a>
+                                            <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471 && $ctrl.hasPermission('inward-job-card-tab-other-labour-parts-edit')">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -1545,7 +1546,7 @@
                                                                         </li>
                                                                     </ul>
                                                                     <div class="text-center">
-                                                                        <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463">
+                                                                        <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">
                                                                             Edit
                                                                         </a>
                                                                     </div>
@@ -1594,7 +1595,7 @@
                                                                         </li>
                                                                     </ul>
                                                                     <div class="text-center">
-                                                                        <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">
+                                                                        <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-other-labour-parts-edit') ">
                                                                             Edit
                                                                         </a>
                                                                     </div>
@@ -1692,7 +1693,7 @@
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8469">Edit</a>
+                                            <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8469 && $ctrl.hasPermission('inward-job-card-tab-estimate-edit')">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -1765,7 +1766,7 @@
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/estimation-denied/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">Edit</a>
+                                            <a href=".#!/inward-vehicle/estimation-denied/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-estimation-status-edit')">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">

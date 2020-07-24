@@ -420,6 +420,10 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        if (!self.hasPermission('inward-job-card-tab-expert-diagnosis-report-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -559,6 +563,9 @@ app.component('inwardVehicleInspectionDetailForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        if (!self.hasPermission('inward-job-card-tab-vehicle-inspection-report-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -683,6 +690,10 @@ app.component('inwardVehicleDmsCheckListForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        if (!self.hasPermission('inward-job-card-tab-service-package-details-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
+
         $('.btn-nxt').attr("disabled", "disabled");
         $(".submit").attr("disabled", "disabled");
 
@@ -921,6 +932,9 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        if (!self.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -2034,6 +2048,10 @@ app.component('inwardVehicleEstimateForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        if (!self.hasPermission('inward-job-card-tab-estimate-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -2484,6 +2502,9 @@ app.component('inwardVehicleVehicleDetail', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        if (!self.hasPermission('inward-job-card-tab-vehicle-details-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -2722,6 +2743,10 @@ app.component('inwardVehicleCustomerDetail', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        if (!self.hasPermission('inward-job-card-tab-customer-details-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -3034,6 +3059,10 @@ app.component('inwardVehicleOrderDetailForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        if (!self.hasPermission('inward-job-card-tab-order-details-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -3240,6 +3269,11 @@ app.component('inwardVehicleInventoryDetailForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+
+        if (!self.hasPermission('inward-job-card-tab-inventory-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -3410,6 +3444,10 @@ app.component('inwardVehiclePayableLabourPartForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        if (!self.hasPermission('inward-job-card-tab-other-labour-parts-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
+
         self.angular_routes = angular_routes;
 
         /* Modal Md Select Hide */
@@ -4270,6 +4308,11 @@ app.component('inwardVehicleVocDetailForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+
+        if (!self.hasPermission('inward-job-card-tab-capture-voc-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -4439,6 +4482,11 @@ app.component('inwardVehicleRoadTestDetailForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+
+        if (!self.hasPermission('inward-job-card-tab-road-test-edit')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
@@ -4596,6 +4644,10 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
         //     window.location = "#!/page-permission-denied";
         //     return false;
         // }
+        if (!self.hasPermission('inward-job-card-tab-estimation-status')) {
+            window.location = "#!/inward-vehicle/card-list";
+        }
+
         self.angular_routes = angular_routes;
 
         HelperService.isLoggedIn();
