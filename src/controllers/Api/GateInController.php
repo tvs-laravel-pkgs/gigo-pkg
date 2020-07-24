@@ -210,6 +210,24 @@ class GateInController extends Controller {
 			}
 
 			if ($request->search_type == 1 && $request->vehicle_id) {
+
+				//Check Validation
+				$vehicle_validator = Validator::make($request->all(), [
+					'registration_number' => [
+						'required',
+						'max:13',
+						'unique:vehicles,registration_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+					],
+				]);
+
+				if ($vehicle_validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $vehicle_validator->errors()->all(),
+					]);
+				}
+
 				$vehicle = Vehicle::find($request->vehicle_id);
 				$vehicle_form_filled = 1;
 				if ($vehicle->currentOwner) {
@@ -219,6 +237,7 @@ class GateInController extends Controller {
 					$customer_form_filled = 0;
 					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
 				}
+				$vehicle->registration_number = $request->registration_number;
 				$vehicle->updated_by_id = Auth::user()->id;
 				$vehicle->save();
 			} else {

@@ -14,6 +14,10 @@
                             <span class="modal-view-data-list-value">{{service_type_item.service_type.name}}</span>
                         </li>
                         <li class="modal-view-data-list">
+                            <span class="modal-view-data-list-label">Is Free?</span>
+                            <span class="modal-view-data-list-value">{{ $ctrl.is_free }}</span>
+                        </li>
+                        <li class="modal-view-data-list">
                             <span class="modal-view-data-list-label">KM</span>
                             <span class="modal-view-data-list-value">{{service_type_item.km_reading}}</span>
                         </li>
@@ -36,10 +40,6 @@
                         <li class="modal-view-data-list">
                             <span class="modal-view-data-list-label">Period Tolerance Type</span>
                             <span class="modal-view-data-list-value">{{service_type_item.tolerance_period.name}}</span>
-                        </li>
-                        <li class="modal-view-data-list">
-                            <span class="modal-view-data-list-label">Is Free?</span>
-                            <span class="modal-view-data-list-value">{{ $ctrl.is_free }}</span>
                         </li>
                     </ul>
                 </div><!-- Modal Block Details -->
