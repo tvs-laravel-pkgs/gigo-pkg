@@ -3,67 +3,67 @@
         <!-- Filters -->
         <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
             <ul class="nav nav-pills cndn-tabs">
-                <li ng-class="{active:active_tab == 'vehicle-detail'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-edit')" ng-class="{active:active_tab == 'vehicle-detail'}">
                     <a class="filter" href=".#!/inward-vehicle/vehicle-detail/{{job_order_id}}">
                         Vehicle Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'customer-detail'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-customer-details-edit')" ng-class="{active:active_tab == 'customer-detail'}">
                     <a class="filter" href=".#!/inward-vehicle/customer-detail/{{job_order_id}}">
                         Customer Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'order-detail'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-order-details-edit')" ng-class="{active:active_tab == 'order-detail'}">
                     <a href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" class="filter">
                         Order Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'inventory-detail'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-inventory-edit')" ng-class="{active:active_tab == 'inventory-detail'}">
                     <a href=".#!/inward-vehicle/inventory-detail/form/{{job_order_id}}" class="filter">
                         Inventory
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'voc-detail'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-capture-voc-edit')" ng-class="{active:active_tab == 'voc-detail'}">
                     <a href=".#!/inward-vehicle/voc-detail/form/{{job_order_id}}" class="filter">
                         Capture VOC
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'road-test-detail'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-road-test-edit')" ng-class="{active:active_tab == 'road-test-detail'}">
                     <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}" class="filter">
                         Road Test
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'expert-diagnosis-detail'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-expert-diagnosis-report-edit')" ng-class="{active:active_tab == 'expert-diagnosis-detail'}">
                     <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_order_id}}" class="filter">
                         Expert Diagnosis Report
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'inspection-detail'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-inspection-report-edit')" ng-class="{active:active_tab == 'inspection-detail'}">
                     <a href=".#!/inward-vehicle/inspection-detail/form/{{job_order_id}}" class="filter">
                         Vehicle Inspection Report
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'dms-checklist'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-service-package-details-edit')" ng-class="{active:active_tab == 'dms-checklist'}">
                     <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="filter">
                         Service Package Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'scheduled-maintenance'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')" ng-class="{active:active_tab == 'scheduled-maintenance'}">
                     <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="filter">
                         Scheduled Maintenance
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'payable-labour-part-detail'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-other-labour-parts-edit')" ng-class="{active:active_tab == 'payable-labour-part-detail'}">
                     <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="filter">
                         Other Labour & Parts
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'estimate-details'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-edit')" ng-class="{active:active_tab == 'estimate-details'}">
                     <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="filter">
                         Estimate
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'status-details'}" ng-if="job_order.enable_estimate_status">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimation-status-edit')" ng-class="{active:active_tab == 'status-details'}" ng-if="job_order.enable_estimate_status">
                     <a ng-if="job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1" href=".#!/inward-vehicle/customer-confirmation/{{job_order_id}}" class="filter">
                         Estimation Status
                     </a>
