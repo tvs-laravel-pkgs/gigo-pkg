@@ -20,7 +20,7 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" id="search_job_card" class="form-control" placeholder="Search" ng-model="$ctrl.search_key" ng-keyup=searchJobCard() autofocus/>
+                            <input type="search" id="search_job_card" class="form-control" placeholder="Search" ng-model="$ctrl.search_key" ng-keyup=searchJobCard() autofocus />
                             <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
@@ -136,7 +136,7 @@
                                                 </div>
                                             </div>
                                             <div class="card-box-footer-right">
-                                                 <a href=".#!/job-card/bay-view/{{job_card.job_card_id}}" class="btn btn-square btn-md btn-red">
+                                                <a href=".#!/job-card/bay-view/{{job_card.job_card_id}}" class="btn btn-square btn-md btn-red">
                                                     View
                                                 </a>
                                                 <a ng-show="!job_card.bay_id" href="#!/job-card/assign-bay/{{job_card.job_card_id}}" class="btn btn-square btn-md btn-secondary-dark">Assign Bay</a>
@@ -187,7 +187,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Customer</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
+                                <md-autocomplete md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.name}}
@@ -203,7 +203,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Vehicle Model</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                <md-autocomplete md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.model_name}}

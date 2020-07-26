@@ -84,10 +84,10 @@ class ServiceType extends BaseModel {
 			'service_types.id',
 			'service_types.name',
 		]);
-		if ($params['vehicle_service_schedule_id']) {
+		if (isset($params['vehicle_service_schedule_id'])) {
 			$list->leftjoin('vehicle_service_schedule_service_types', 'service_types.id', 'vehicle_service_schedule_service_types.service_type_id')->where('vehicle_service_schedule_service_types.vehicle_service_schedule_id', $params['vehicle_service_schedule_id']);
 		}
-		if ($params && $params['service_type_ids']) {
+		if ($params && isset($params['service_type_ids'])) {
 			$list = $list->whereNotIn('service_types.id', $params['service_type_ids']);
 		}
 
