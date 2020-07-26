@@ -34,7 +34,7 @@
                                             <h5 class="color-primary mb-10"><b>Service Package Details</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="row">
-                                                <div class="col-md-2">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>
                                                             AMC
@@ -85,7 +85,45 @@
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
-                                                <div class="col-md-2">
+                                                <div class="col-md-4" ng-if="$ctrl.warrany_status">
+                                                    <div class="gatein-img-list">
+                                                        <div class="attach-form-wrap">
+                                                            <p class="color-secondary-dark">
+                                                                <b>
+                                                                    &nbsp;&nbsp;
+                                                                </b>
+                                                            </p>
+                                                            <div class="form-group">
+                                                                <label>AMC Status</label>
+                                                                <div class="common-radio-button type-4">
+                                                                    <input type="radio" id="amc_active" name="amc_status" ng-model="$ctrl.amc_status" ng-checked="job_order.amc_status" ng-value="1">
+                                                                    <label for="amc_active">Active</label>
+                                                                    <input type="radio" id="amc_inactive" name="amc_status" ng-model="$ctrl.amc_status" ng-checked="job_order.amc_status" ng-value="0">
+                                                                    <label for="amc_inactive">Inactive</label>
+                                                                </div>
+                                                            </div><!-- Feild -->
+                                                        </div>
+                                                    </div>
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="$ctrl.amc_status && $ctrl.warrany_status">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Starting KM
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control" maxlength="6" id="starting_km" placeholder="Enter Starting KM" autocomplete="off" ng-model="job_order.starting_km" name="starting_km" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="$ctrl.amc_status && $ctrl.warrany_status">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Ending KM
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control" maxlength="6" placeholder="Enter Ending KM" autocomplete="off" ng-model="job_order.ending_km" name="ending_km" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label>
                                                             Extended Warranty
@@ -136,6 +174,8 @@
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
+                                            </div><!-- Row -->
+                                            <div class="row">
                                                 <div class="col-md-4">
                                                     <div class="gatein-img-list">
                                                         <div class="attach-form-wrap">
@@ -153,9 +193,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div><!-- Row -->
-                                            <div class="row">
-                                                <div class="col-md-12">
+                                                <div class="col-md-8">
                                                     <div class="light-box form-group">
                                                         <h6 class=""><b>TVS Memberships Attachments</b></h6>
                                                         <div class="img-upload-preview">
@@ -191,22 +229,12 @@
                                                         <tr>
                                                             <td>
                                                                 <b>
-                                                                    Date
-                                                                </b>
-                                                            </td>
-                                                            <td>
-                                                                {{campaign.manufacture_date}}
-                                                            </td>
-                                                            <td>
-                                                                <b>
                                                                     Authorization No
                                                                 </b>
                                                             </td>
                                                             <td>
                                                                 {{campaign.authorisation_no}}
                                                             </td>
-                                                        </tr>
-                                                        <tr>
                                                             <td>
                                                                 <b>
                                                                     Complaint Code
@@ -215,6 +243,8 @@
                                                             <td>
                                                                 {{campaign.complaint_type.code}}
                                                             </td>
+                                                        </tr>
+                                                        <tr>
                                                             <td>
                                                                 <b>
                                                                     Fault Code
@@ -222,6 +252,18 @@
                                                             </td>
                                                             <td>
                                                                 {{campaign.fault_type.code}}
+                                                            </td>
+                                                            <td ng-if="campaign.manufacture_date">
+                                                                <b>
+                                                                    Date
+                                                                </b>
+                                                            </td>
+                                                            <td ng-if="campaign.manufacture_date">
+                                                                {{campaign.manufacture_date}}
+                                                            </td>
+                                                            <td ng-if="!campaign.manufacture_date">
+                                                            </td>
+                                                            <td ng-if="!campaign.manufacture_date">
                                                             </td>
                                                         </tr>
                                                         <tr>

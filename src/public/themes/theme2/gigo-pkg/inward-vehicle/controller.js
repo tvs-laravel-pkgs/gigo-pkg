@@ -751,6 +751,12 @@ app.component('inwardVehicleDmsCheckListForm', {
                         self.warrany_status = 0;
                     }
 
+                    if ($scope.job_order.amc_status == 1) {
+                        self.amc_status = 1;
+                    } else {
+                        self.amc_status = 0;
+                    }
+
                     $scope.$apply();
 
                     setTimeout(function() {
@@ -784,6 +790,13 @@ app.component('inwardVehicleDmsCheckListForm', {
             }
             $scope.job_order.a_m_c_attachment.splice(index, 1);
         }
+
+
+        $.validator.addMethod("greaterThan",
+            function(value, element, param) {
+                var $otherElement = $(param);
+                return parseInt(value, 10) > parseInt($otherElement.val(), 10);
+            });
 
         //Save Form Data 
         $scope.saveDms = function(id) {
@@ -832,12 +845,29 @@ app.component('inwardVehicleDmsCheckListForm', {
                     // 'membership_attachment': {
                     //     required: true,
                     // },
+                    'starting_km': {
+                        required: function(element) {
+                            if (self.amc_status == '1') {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
+                    'ending_km': {
+                        required: function(element) {
+                            if (self.amc_status == '1') {
+                                return true;
+                            }
+                            return false;
+                        },
+                        greaterThan: "#starting_km"
+                    },
                 },
                 messages: {
 
                 },
                 invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check all tabs');
+                    custom_noty('error', 'You have errors, Please check all fields');
                 },
                 errorPlacement: function(error, element) {
                     if (element.hasClass("warranty_expiry_attachment")) {

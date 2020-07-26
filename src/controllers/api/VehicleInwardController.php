@@ -1458,12 +1458,12 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:quote_types,id',
 				],
-				'service_type_id' => [
-					// 'required',
-					// 'integer',
-					// 'exists:service_types,id',
-					'unique:job_orders,service_type_id,' . $request->job_order_id . ',id,vehicle_id,' . $job_order->vehicle_id,
-				],
+				// 'service_type_id' => [
+				// 	'required',
+				// 	'integer',
+				// 	'exists:service_types,id',
+				// 	'unique:job_orders,service_type_id,' . $request->job_order_id . ',id,vehicle_id,' . $job_order->vehicle_id,
+				// ],
 				'contact_number' => [
 					'nullable',
 					'min:10',
@@ -2139,6 +2139,12 @@ class VehicleInwardController extends Controller {
 					// 'nullable',
 					'numeric',
 				],
+				'starting_km' => [
+					"required_if:amc_status,==,1",
+				],
+				'ending_km' => [
+					"required_if:amc_status,==,1",
+				],
 			]);
 
 			if ($validator->fails()) {
@@ -2174,6 +2180,16 @@ class VehicleInwardController extends Controller {
 				$attachment = Attachment::where('id', $request->job_order_id)->where('attachment_of_id', 227)->where('attachment_type_id', 257)->forceDelete();
 			} else {
 				$job_order->ewp_expiry_date = $request->ewp_expiry_date;
+			}
+
+			if ($request->amc_status == 1) {
+				$job_order->amc_status = 1;
+				$job_order->starting_km = $request->starting_km;
+				$job_order->ending_km = $request->ending_km;
+			} else {
+				$job_order->amc_status = 0;
+				$job_order->starting_km = NULL;
+				$job_order->ending_km = NULL;
 			}
 
 			$job_order->is_dms_verified = $request->is_verified;
@@ -2427,16 +2443,6 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			if (!$job_order->service_type_id) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Order details not found',
-					],
-				]);
-			}
-
 			$params['job_order_id'] = $r->id;
 			$params['type_id'] = 1;
 
@@ -2604,16 +2610,6 @@ class VehicleInwardController extends Controller {
 					'error' => 'Validation Error',
 					'errors' => [
 						'Job Order Not Found',
-					],
-				]);
-			}
-
-			if (!$job_order->service_type_id) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Order details not found',
 					],
 				]);
 			}
