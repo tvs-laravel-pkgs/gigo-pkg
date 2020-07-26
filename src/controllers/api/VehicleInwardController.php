@@ -4613,6 +4613,16 @@ class VehicleInwardController extends Controller {
 			$job_order->status_id = 8461;
 			$job_order->save();
 
+			if ($job_order->is_road_test_required == 1 && !$job_order->road_test_report) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Kindly Update Road Test Observations',
+					],
+				]);
+			}
+
 			//UPDATE GATE LOG STATUS
 			$job_order->gateLog()->update([
 				'status_id' => 8122, //VEHICLE INWARD COMPLETED
