@@ -2382,6 +2382,8 @@ class VehicleInwardController extends Controller {
 				if (in_array($value->split_order_type_id, $customer_paid_type)) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$labour_amount += $value->amount;
+					} else {
+						$labour_details[$key]['amount'] = 0;
 					}
 				} else {
 					$labour_details[$key]['amount'] = 0;
@@ -2407,6 +2409,8 @@ class VehicleInwardController extends Controller {
 				if (in_array($value->split_order_type_id, $customer_paid_type)) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$part_amount += $value->amount;
+					} else {
+						$part_details[$key]['amount'] = 0;
 					}
 				} else {
 					$part_details[$key]['amount'] = 0;
@@ -2463,9 +2467,9 @@ class VehicleInwardController extends Controller {
 				'job_order' => $result['job_order'],
 				'part_details' => $result['part_details'],
 				'labour_details' => $result['labour_details'],
-				'total_amount' => number_format($result['total_amount'], 2),
-				'labour_amount' => number_format($result['labour_amount'], 2),
-				'parts_rate' => number_format($result['part_amount'], 2),
+				'total_amount' => $result['total_amount'],
+				'labour_amount' => $result['labour_amount'],
+				'parts_rate' => $result['part_amount'],
 			]);
 
 		} catch (\Exception $e) {
@@ -2632,9 +2636,9 @@ class VehicleInwardController extends Controller {
 				'job_order' => $result['job_order'],
 				'part_details' => $result['part_details'],
 				'labour_details' => $result['labour_details'],
-				'total_amount' => number_format($result['total_amount'], 2),
-				'labour_total_amount' => number_format($result['labour_amount'], 2),
-				'parts_total_amount' => number_format($result['part_amount'], 2),
+				'total_amount' => $result['total_amount'],
+				'labour_total_amount' => $result['labour_amount'],
+				'parts_total_amount' => $result['part_amount'],
 			]);
 
 		} catch (\Exception $e) {

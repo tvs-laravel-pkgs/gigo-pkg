@@ -54,7 +54,7 @@
                                                             <th>
                                                                 Labour Code
                                                             </th>
-                                                             <th>
+                                                            <th>
                                                                 Name
                                                             </th>
                                                             <th>
@@ -75,7 +75,7 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr class="ptb-12" ng-repeat="(index, labour_details) in labour_details" id="tr_{{index}}" ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_details.removal_reason_id != '10021'">
-                                                            <td>{{labour_details.code ? labour_details.code : ''}} 
+                                                            <td>{{labour_details.code ? labour_details.code : ''}}
                                                             </td>
                                                             <td>{{labour_details.name ? labour_details.name : ''}}</td>
                                                             <td>
@@ -119,7 +119,7 @@
                                                             <td class="wid-180 white-space  text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{labour_total_amount}}
+                                                                    {{labour_total_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                             <td class="wid-100">
@@ -214,7 +214,7 @@
                                                             <td class="wid-180 white-space text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{parts_total_amount}}
+                                                                    {{parts_total_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                             <td class="wid-100">
@@ -238,7 +238,7 @@
                                                                 <td class="wid-180 text-right">
                                                                     <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                     <b>
-                                                                        {{total_amount}}
+                                                                        {{total_amount | number:2}}
                                                                     </b>
                                                                 </td>
                                                                 <td class="wid-100"></td>
