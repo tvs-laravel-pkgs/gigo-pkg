@@ -3924,6 +3924,36 @@ app.component('inwardVehiclePayableLabourPartForm', {
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
 
+        $scope.sendConfirm = function() {
+            var job_order_id = $scope.job_order.id;
+            if (job_order_id) {
+                $('.send_confirm').button('loading');
+                $.ajax({
+                        url: base_url + '/api/vehicle-inward/stock-incharge/request/parts',
+                        method: "POST",
+                        data: {
+                            id: job_order_id,
+                            type_id: 1,
+                        },
+                    })
+                    .done(function(res) {
+                        $('.send_confirm').button('reset');
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        }
+                        console.log(res);
+                        custom_noty('success', 'URL send to Customer Successfully!!');
+                        $("#confirmation_modal").modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                        $scope.fetchData();
+                    })
+                    .fail(function(xhr) {
+                        $('.send_confirm').button('reset');
+                    });
+            }
+        }
     }
 });
 

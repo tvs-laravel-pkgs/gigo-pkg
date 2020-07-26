@@ -22,7 +22,7 @@
                         OSL
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'split-order'}" ng-if="!$ctrl.view_only_part_indent && (job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226)">
+                <li ng-class="{active:active_tab == 'split-order'}" ng-if="!$ctrl.view_only_part_indent && (job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226) && job_card.job_order.part_intent_status_id == 10073">
                     <a class="filter" href=".#!/job-card/split-order/{{job_card_id}}">
                         Split Order
                     </a>
@@ -32,7 +32,7 @@
                         Returnable Items
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'bill-detail'}" ng-if="!$ctrl.view_only_part_indent && (job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226)">
+                <li ng-class="{active:active_tab == 'bill-detail'}" ng-if="!$ctrl.view_only_part_indent && (job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226) && job_card.job_order.part_intent_status_id == 10073">
                     <a class="filter" href=".#!/job-card/bill-detail/{{job_card_id}}">
                         Bill Details
                     </a>

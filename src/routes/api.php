@@ -239,6 +239,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		Route::post('vehicle-inward/addtional-rot-part/save', 'VehicleInwardController@saveAddtionalRotPart');
 
+		//SEND REQUEST TO STOCK INCHARGE FOR ADD PART
+		Route::post('vehicle-inward/stock-incharge/request/parts', 'VehicleInwardController@sendRequestPartsIntent');
+
 		//ESTIMATE GET FORM DATA AND SAVE
 		Route::post('vehicle-inward/estimate/get-form-data', 'VehicleInwardController@getEstimateFormData');
 		Route::post('vehicle-inward/estimate/save', 'VehicleInwardController@saveEstimate');
@@ -338,7 +341,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//JOB CARD RETURNABLE PARTS SAVE
 		Route::post('job-card/returnable-parts/get-form-data', 'JobCardController@getReturnablePartsFormdata');
-        Route::post('job-card/returnable-part/save', 'JobCardController@ReturnablePartSave');
+		Route::post('job-card/returnable-part/save', 'JobCardController@ReturnablePartSave');
 
 		//Job Card View
 		Route::post('jobcard/road-test-observation/get', 'JobCardController@getRoadTestObservation');

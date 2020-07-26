@@ -546,6 +546,7 @@ class VehicleInwardController extends Controller {
 	public function getInwardPartIndentViewData(Request $r) {
 		try {
 			$job_order = JobOrder::with([
+				'jobCard',
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
@@ -555,35 +556,35 @@ class VehicleInwardController extends Controller {
 				'vehicle.currentOwner.customer.address.state',
 				'vehicle.currentOwner.customer.address.city',
 				'vehicle.currentOwner.ownershipType',
-				'vehicle.lastJobOrder',
-				'vehicle.lastJobOrder.jobCard',
-				'vehicleInventoryItem',
-				'vehicleInspectionItems',
+				// 'vehicle.lastJobOrder',
+				// 'vehicle.lastJobOrder.jobCard',
+				// 'vehicleInventoryItem',
+				// 'vehicleInspectionItems',
 				'type',
 				'outlet',
-				'customerVoices',
-				'quoteType',
-				'serviceType',
-				'kmReadingType',
+				// 'customerVoices',
+				// 'quoteType',
+				// 'serviceType',
+				// 'kmReadingType',
 				'status',
-				'gateLog',
-				'gateLog.createdBy',
-				'roadTestDoneBy',
-				'roadTestPreferedBy',
-				'expertDiagnosisReportBy',
-				'estimationType',
-				'driverLicenseAttachment',
-				'insuranceAttachment',
-				'rcBookAttachment',
-				'warrentyPolicyAttachment',
-				'EWPAttachment',
-				'AMCAttachment',
-				'gateLog.driverAttachment',
-				'gateLog.kmAttachment',
-				'gateLog.vehicleAttachment',
-				'gateLog.chassisAttachment',
-				'customerApprovalAttachment',
-				'customerESign',
+				// 'gateLog',
+				// 'gateLog.createdBy',
+				// 'roadTestDoneBy',
+				// 'roadTestPreferedBy',
+				// 'expertDiagnosisReportBy',
+				// 'estimationType',
+				// 'driverLicenseAttachment',
+				// 'insuranceAttachment',
+				// 'rcBookAttachment',
+				// 'warrentyPolicyAttachment',
+				// 'EWPAttachment',
+				// 'AMCAttachment',
+				// 'gateLog.driverAttachment',
+				// 'gateLog.kmAttachment',
+				// 'gateLog.vehicleAttachment',
+				// 'gateLog.chassisAttachment',
+				// 'customerApprovalAttachment',
+				// 'customerESign',
 			])
 				->select([
 					'job_orders.*',
@@ -660,42 +661,48 @@ class VehicleInwardController extends Controller {
 					$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
 
 					// if (in_array($value->split_order_type_id, $customer_paid_type)) {
-					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
-						$part_amount += $value->amount;
-					}
+					// if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
+					// 	$part_amount += $value->amount;
+					// }
 				}
 			}
 
-			$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*')->where('job_order_parts.job_order_id', $r->id)->whereNull('removal_reason_id')->get();
+			$job_order_parts = array();
+			$repair_order_mechanics = array();
+			$indent_part_logs = array();
 
-			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')->where('job_order_repair_orders.job_order_id', $r->id)->groupBy('users.id')->get();
+			if ($job_order->jobCard) {
+				$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*')->where('job_order_parts.job_order_id', $r->id)->whereNull('removal_reason_id')->get();
 
-			$indent_part_logs_issues = JobOrderPart::join('job_order_issued_parts as joip', 'joip.job_order_part_id', 'job_order_parts.id')
-				->join('parts', 'job_order_parts.part_id', 'parts.id')
-				->join('configs', 'joip.issued_mode_id', 'configs.id')
-				->join('users', 'joip.issued_to_id', 'users.id')
-				->select(
-					DB::raw('"Issue" as transaction_type'),
-					'parts.name',
-					'parts.code',
-					'joip.issued_qty as qty',
-					DB::raw('DATE_FORMAT(joip.created_at,"%d/%m/%Y") as date'),
-					'configs.name as issue_mode',
-					'users.name as mechanic'
-				);
+				$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')->where('job_order_repair_orders.job_order_id', $r->id)->groupBy('users.id')->get();
 
-			$indent_part_logs = JobOrderPart::join('job_order_returned_parts as jorp', 'jorp.job_order_part_id', 'job_order_parts.id')
-				->join('parts', 'job_order_parts.part_id', 'parts.id')
-				->join('users', 'jorp.returned_to_id', 'users.id')
-				->select(
-					DB::raw('"Return" as transaction_type'),
-					'parts.name',
-					'parts.code',
-					'jorp.returned_qty as qty',
-					DB::raw('DATE_FORMAT(jorp.created_at,"%d/%m/%Y") as date'),
-					DB::raw('"-" as issue_mode'),
-					'users.name as mechanic'
-				)->union($indent_part_logs_issues)->orderBy('date', 'DESC')->get();
+				$indent_part_logs_issues = JobOrderPart::join('job_order_issued_parts as joip', 'joip.job_order_part_id', 'job_order_parts.id')
+					->join('parts', 'job_order_parts.part_id', 'parts.id')
+					->join('configs', 'joip.issued_mode_id', 'configs.id')
+					->join('users', 'joip.issued_to_id', 'users.id')
+					->select(
+						DB::raw('"Issue" as transaction_type'),
+						'parts.name',
+						'parts.code',
+						'joip.issued_qty as qty',
+						DB::raw('DATE_FORMAT(joip.created_at,"%d/%m/%Y") as date'),
+						'configs.name as issue_mode',
+						'users.name as mechanic'
+					);
+
+				$indent_part_logs = JobOrderPart::join('job_order_returned_parts as jorp', 'jorp.job_order_part_id', 'job_order_parts.id')
+					->join('parts', 'job_order_parts.part_id', 'parts.id')
+					->join('users', 'jorp.returned_to_id', 'users.id')
+					->select(
+						DB::raw('"Return" as transaction_type'),
+						'parts.name',
+						'parts.code',
+						'jorp.returned_qty as qty',
+						DB::raw('DATE_FORMAT(jorp.created_at,"%d/%m/%Y") as date'),
+						DB::raw('"-" as issue_mode'),
+						'users.name as mechanic'
+					)->union($indent_part_logs_issues)->orderBy('date', 'DESC')->get();
+			}
 
 			return response()->json([
 				'success' => true,
@@ -703,7 +710,7 @@ class VehicleInwardController extends Controller {
 				'labour_details' => $labour_details,
 				'labour_amount' => $labour_amount,
 				'part_details' => $part_details,
-				'part_amount' => $part_amount,
+				// 'part_amount' => $part_amount,
 				'job_order_parts' => $job_order_parts,
 				'repair_order_mechanics' => $repair_order_mechanics,
 				'indent_part_logs' => $indent_part_logs,
@@ -797,7 +804,7 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		try {
 
-			$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*')->where('job_order_parts.job_order_id', $request->id)->whereNull('removal_reason_id')->get();
+			$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*', 'job_order_parts.id as job_order_part_id')->where('job_order_parts.job_order_id', $request->id)->whereNull('removal_reason_id')->get();
 
 			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')->where('job_order_repair_orders.job_order_id', $request->id)->groupBy('users.id')->get();
 
@@ -871,6 +878,23 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 			// dd($request->issue_mode_id);
 			if ($request->issued_mode_id != 8480) {
+
+				$db2 = config('database.connections.pias.database');
+
+				$parts = DB::table($db2 . '.parts as pias_parts')
+					->join('parts', 'parts.code', 'pias_parts.code')
+					->select('parts.code', 'pias_parts.id')
+					->where('parts.id', $request->part_id)
+					->first();
+
+				if (!$parts) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Parts Details cannot be found'],
+					]);
+				}
+
 				$document_date_year = date('Y');
 				$financial_year = FinancialYear::where('from', $document_date_year)
 					->first();
@@ -884,23 +908,26 @@ class VehicleInwardController extends Controller {
 				if (!$generateNumber['success']) {
 					return response()->json(['success' => false, 'errors' => ['No Serial number found']]);
 				}
-
-				$job_card = JobCard::where('job_order_id', $request->job_order_id)->first();
+				// $job_card = JobCard::where('job_order_id', $request->job_order_id)->first();
+				$job_order = JobOrder::with([
+					'jobCard',
+				])->find($request->job_order_id);
 
 				$parts_request = new PartsRequest;
 				$parts_request->request_type_id = 8500;
 				$parts_request->number = $generateNumber['number'];
 				$parts_request->remarks = $request->remarks;
 				$parts_request->advance_amount_received_details = $request->advance_amount_received_details;
-				$parts_request->warranty_approved_reasons = $request->advance_amount_received_details;
+				$parts_request->warranty_approved_reasons = $request->warranty_approved_reasons;
 				$parts_request->created_by_id = Auth::id();
 				$parts_request->created_at = Carbon::now();
 				$parts_request->updated_at = NULL;
 				$parts_request->status_id = 8520;
 
-				if ($job_card) {
-					$parts_request->job_card_id = $job_card->id;
+				if ($job_order && $job_order->jobCard) {
+					$parts_request->job_card_id = $job_order->jobCard->id;
 				}
+				$parts_request->customer_id = $job_order->customer_id;
 				$parts_request->save();
 
 				$local_purchase_count = PartsRequestDetail::where('parts_request_id', $parts_request->id)->where('request_type_id', 8541)->count();
@@ -917,16 +944,16 @@ class VehicleInwardController extends Controller {
 				// $parts_detail = PartsRequestPart::firstOrNew(['parts_request_detail_id' => $parts_request_detail->id, 'part_id' => $request->job_order_part_id]);
 				$parts_detail = new PartsRequestPart;
 				$parts_detail->parts_request_detail_id = $parts_request_detail->id;
-				$parts_detail->part_id = $request->job_order_part_id;
-				$parts_detail->dbm_part_id = $request->job_order_part_id;
-				$parts_detail->mrp = $request->mrp;
+				$parts_detail->part_id = $parts->id;
+				$parts_detail->dbm_part_id = $parts->id;
+				$parts_detail->request_qty = $request->quantity;
 				$parts_detail->unit_price = $request->unit_price;
+				$parts_detail->mrp = $request->mrp;
 				$parts_detail->total_price = $request->total;
 				$parts_detail->tax_percentage = $request->tax_percentage;
 				$parts_detail->tax_amount = $request->tax_amount;
 				$parts_detail->total_amount = $request->total_amount;
 				$parts_detail->status_id = 8520;
-				$parts_detail->request_qty = $request->quantity;
 				$parts_detail->created_by_id = Auth::id();
 				$parts_detail->created_at = Carbon::now();
 				$parts_detail->save();
@@ -939,10 +966,8 @@ class VehicleInwardController extends Controller {
 				$parts_grn->created_by_id = Auth::id();
 				$parts_grn->created_at = Carbon::now();
 				$parts_grn->save();
-
-				// dd($request->all());
-
 			}
+
 			$job_order_isssued_part = new JobOrderIssuedPart;
 			$job_order_isssued_part->created_by_id = Auth::id();
 			$job_order_isssued_part->created_at = Carbon::now();
@@ -1522,6 +1547,7 @@ class VehicleInwardController extends Controller {
 								$repair_order->is_free_service = $value->is_free;
 								$repair_order->status_id = 8180; //Customer Approval Pending
 								$repair_order->estimate_order_id = 0;
+								$repair_order->created_by_id = Auth::user()->id;
 								$repair_order->save();
 							}
 						}
@@ -1540,6 +1566,7 @@ class VehicleInwardController extends Controller {
 								$part_order->is_oem_recommended = 1;
 								$part_order->is_customer_approved = 0;
 								$part_order->estimate_order_id = 0;
+								$part_order->created_by_id = Auth::user()->id;
 								$part_order->save();
 							}
 						}
@@ -1666,6 +1693,7 @@ class VehicleInwardController extends Controller {
 			$job_order_part->part_id = $request->part_id;
 			$job_order_part->qty = $request->qty;
 			$job_order_part->rate = $part->mrp;
+			$job_order_part->is_free_service = 0;
 			if ($request->type == 'scheduled') {
 				$job_order_part->is_oem_recommended = 1;
 			} else {
@@ -1674,6 +1702,7 @@ class VehicleInwardController extends Controller {
 			$job_order_part->split_order_type_id = $request->split_order_type_id;
 			$job_order_part->amount = $request->qty * $part->mrp;
 			$job_order_part->status_id = 8200; //Customer Approval Pending
+			$job_order_part->created_by_id = Auth::user()->id;
 			$job_order_part->save();
 
 			$repair_order_part_array = [];
@@ -1714,6 +1743,51 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	public function sendRequestPartsIntent(Request $request) {
+		// dd($request->all());
+		try {
+			$job_order = JobOrder::find($request->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Order Found!',
+				]);
+			}
+
+			DB::beginTransaction();
+
+			if ($request->type_id == 1) {
+				$job_order->part_intent_status_id = 10070;
+				$job_order->status_id = 8472;
+			} elseif ($request->type_id == 2) {
+				$job_order->part_intent_status_id = 10071;
+				$job_order->status_id = 8463;
+			} elseif ($request->type_id == 3) {
+				$job_order->part_intent_status_id = 10072;
+			} else {
+				$job_order->part_intent_status_id = 10073;
+			}
+
+			$job_order->updated_by_id = Auth::user()->id;
+			$job_order->updated_at = Carbon::now();
+			$job_order->save();
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Request Sent successfully!!',
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
 	public function saveAddtionalLabour(Request $request) {
 		// dd($request->all());
 		try {
@@ -1778,12 +1852,14 @@ class VehicleInwardController extends Controller {
 			$job_order_repair_order->qty = $repair_order->hours;
 			$job_order_repair_order->split_order_type_id = $request->split_order_type_id;
 			$job_order_repair_order->amount = $repair_order->amount;
+			$job_order_repair_order->is_free_service = 0;
 			if ($request->type == 'scheduled') {
 				$job_order_repair_order->is_recommended_by_oem = 1;
 			} else {
 				$job_order_repair_order->is_recommended_by_oem = 0;
 			}
 			$job_order_repair_order->status_id = 8180; //Customer Approval Pending
+			$job_order_part->created_by_id = Auth::user()->id;
 			$job_order_repair_order->save();
 
 			DB::commit();
@@ -2376,7 +2452,7 @@ class VehicleInwardController extends Controller {
 				$labour_details[$key]['qty'] = $value->qty;
 				$labour_details[$key]['amount'] = $value->amount;
 				$labour_details[$key]['is_free_service'] = $value->is_free_service;
-				$labour_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
+				$labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
 				$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				if (in_array($value->split_order_type_id, $customer_paid_type)) {
@@ -2403,7 +2479,7 @@ class VehicleInwardController extends Controller {
 				$part_details[$key]['qty'] = $value->qty;
 				$part_details[$key]['amount'] = $value->amount;
 				$part_details[$key]['is_free_service'] = $value->is_free_service;
-				$part_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
+				$part_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
 				$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				if (in_array($value->split_order_type_id, $customer_paid_type)) {

@@ -41,7 +41,8 @@ Content Wrap -->
                                                 </md-option>
                                             </md-optgroup>
                                         </md-select>
-                                        <input type="hidden" name="job_order_part_id" value="{{job_order_part.id}}">
+                                        <input type="hidden" name="job_order_part_id" value="{{job_order_part.job_order_part_id}}">
+                                        <input type="hidden" name="part_id" value="{{job_order_part.id}}">
                                     </div><!-- Field -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
@@ -176,7 +177,7 @@ Content Wrap -->
                                         <label>
                                             Advance Amount Received Details<sup class="mandatory">*</sup>
                                         </label>
-                                        <textarea ng-model='advance_amount_received_details' name="advance_amount_received_details" class="form-control" placeholder="Request Purpose">{{advance_amount_received_details}}</textarea>
+                                        <textarea ng-model='advance_amount_received_details' name="advance_amount_received_details" class="form-control" placeholder="Advance Amount Received Details">{{advance_amount_received_details}}</textarea>
                                     </div><!-- Field -->
                                 </div><!-- Column -->
                             </div>
@@ -197,7 +198,7 @@ Content Wrap -->
                     <div class="row">
                         <div class="col-md-12">
                             <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn btn-bordered btn-grey">Cancel</a>
-                            <button type="submit" class="btn btn-secondary-dark submit" ng-click="savePartForm()">Submit</button>
+                            <button type="submit" class="btn btn-secondary-dark submit" ng-click="saveIssueForm()">Submit</button>
                         </div>
                     </div>
                 </div><!-- Page Form Footer -->

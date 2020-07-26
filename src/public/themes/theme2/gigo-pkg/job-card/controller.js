@@ -898,17 +898,16 @@ app.component('jobCardReturnablePartForm', {
         }
         $scope.fetchData();
 
-        $scope.checkCheckbox = function(id)
-        {
+        $scope.checkCheckbox = function(id) {
             checkval = $('#check' + id).is(":checked");
-            if(checkval == true){
-            $("#in_"+id).removeAttr("disabled");}
-            else
-            {$("#in_"+id).attr("disabled", "disabled");
-            $("#in_"+id).val(" ");
-             }
+            if (checkval == true) {
+                $("#in_" + id).removeAttr("disabled");
+            } else {
+                $("#in_" + id).attr("disabled", "disabled");
+                $("#in_" + id).val(" ");
+            }
         }
-        
+
         //Save Form Data 
         $scope.ReturnablePartSave = function() {
             var form_id = '#returnable_parts';
@@ -2445,6 +2444,36 @@ app.component('jobCardScheduleForm', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
+
+        $scope.sendPartIndent = function() {
+            $('.send_part_indent').button('loading');
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/stock-incharge/request/parts',
+                    method: "POST",
+                    data: {
+                        id: $scope.job_card.job_order.id,
+                        type_id: 3,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    $('.send_part_indent').button('reset');
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+
+                    custom_noty('success', res.message);
+                    $route.reload();
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $('.job_completed').button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
     }
 });
 
@@ -2598,15 +2627,14 @@ app.component('jobCardBillDetailView', {
                                     $('.split_order_panel_' + key).addClass('active in')
                                     $('.split_order_tab_' + key).addClass('active')
                                 }
-                               
+
                                 angular.forEach($scope.labour_details, function(labour, key1) {
                                     if (split_order.id == labour.split_order_type_id) {
                                         labour_sub_total += parseFloat(labour.total_amount);
                                         // split_order.total_items += 1;
                                     }
 
-                                    if(!labour.split_order_type_id && split_order.paid_by_id == '10013')
-                                    {
+                                    if (!labour.split_order_type_id && split_order.paid_by_id == '10013') {
                                         labour_sub_total += parseFloat(labour.total_amount);
                                     }
                                 });
@@ -2618,8 +2646,7 @@ app.component('jobCardBillDetailView', {
                                         // split_order.total_items += 1;
                                     }
 
-                                    if(!part.split_order_type_id && split_order.paid_by_id == '10013')
-                                    {
+                                    if (!part.split_order_type_id && split_order.paid_by_id == '10013') {
                                         part_sub_total += parseFloat(part.total_amount);
                                     }
                                 });

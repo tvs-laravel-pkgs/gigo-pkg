@@ -1,6 +1,6 @@
 app.component('inwardPartsIndentView', {
     templateUrl: inward_parts_indent_view_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc, SplitOrderTypeSvc, RepairOrderSvc) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, PartSvc, SplitOrderTypeSvc, RepairOrderSvc, $mdSelect) {
 
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -18,7 +18,6 @@ app.component('inwardPartsIndentView', {
         $scope.init = function() {
             $rootScope.loading = true;
 
-
             let promises = {
                 split_order_type_options: SplitOrderTypeSvc.options(),
                 repair_order_options: RepairOrderSvc.options(),
@@ -33,52 +32,16 @@ app.component('inwardPartsIndentView', {
                 });
         };
         $scope.init();
+
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function(event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
+
         //FETCH DATA
         $scope.fetchData = function() {
-            /*$.ajax({
-                    url: base_url + '/api/vehicle-inward/get-view-data',
-                    method: "POST",
-                    data: {
-                        id: $routeParams.job_order_id
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.job_order = res.job_order;
-                    // console.log($scope.job_order);
-                    $scope.schedule_maintenance = res.schedule_maintenance;
-                    $scope.payable_maintenance = res.payable_maintenance;
-                    $scope.total_estimate_labour_amount = res.total_estimate_labour_amount;
-                    $scope.total_estimate_part_amount = res.total_estimate_part_amount;
-                    $scope.total_estimate_amount = res.total_estimate_amount;
-                    $scope.extras = res.extras;
-                    $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
-                    $scope.inventory_list = res.inventory_list;
-
-                    if ($scope.job_order.warranty_expiry_date) {
-                        self.warrany_status = 1;
-                    } else {
-                        self.warrany_status = 0;
-                    }
-
-                    if ($scope.job_order.ewp_expiry_date) {
-                        self.exwarrany_status = 1;
-                    } else {
-                        self.exwarrany_status = 0;
-                    }
-
-                    $scope.$apply();
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });*/
-
             $.ajax({
                     url: base_url + '/api/inward-part-indent/get-view-data',
                     method: "POST",
@@ -98,7 +61,7 @@ app.component('inwardPartsIndentView', {
                     $scope.labour_details = res.labour_details;
                     $scope.labour_amount = res.labour_amount;
                     $scope.part_details = res.part_details;
-                    $scope.part_amount = res.part_amount;
+                    // $scope.part_amount = res.part_amount;
                     $scope.job_order_parts = res.job_order_parts;
                     $scope.repair_order_mechanics = res.repair_order_mechanics;
                     $scope.indent_part_logs = res.indent_part_logs;
@@ -110,6 +73,38 @@ app.component('inwardPartsIndentView', {
                 });
         }
         $scope.fetchData();
+
+        $scope.sendConfirm = function(type_id) {
+            var job_order_id = $scope.job_order.id;
+            if (job_order_id) {
+                $('.send_confirm').button('loading');
+                $.ajax({
+                        url: base_url + '/api/vehicle-inward/stock-incharge/request/parts',
+                        method: "POST",
+                        data: {
+                            id: job_order_id,
+                            type_id: type_id,
+                        },
+                    })
+                    .done(function(res) {
+                        $('.send_confirm').button('reset');
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        }
+                        console.log(res);
+                        custom_noty('success', 'URL send to Customer Successfully!!');
+                        $("#confirmation_modal").modal('hide');
+                        $("#billing_confirmation_modal").modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                        $scope.fetchData();
+                    })
+                    .fail(function(xhr) {
+                        $('.send_confirm').button('reset');
+                    });
+            }
+        }
 
         $('.btn-nxt').on("click", function() {
             $('.cndn-tabs li.active').next().children('a').trigger("click");
@@ -470,103 +465,107 @@ app.component('inwardPartsIndentIssuePartForm', {
         }
         $scope.fetchData();
 
-        var form = '#issue_part_form';
-        var v = jQuery(form).validate({
-            ignore: '',
-            rules: {
-                'job_order_part_id': {
-                    required: true,
+        $scope.saveIssueForm = function() {
+            var form = '#issue_part_form';
+            var v = jQuery(form).validate({
+                ignore: '',
+                rules: {
+                    'job_order_part_id': {
+                        required: true,
+                    },
+                    'issued_qty': {
+                        required: true,
+                        number: true,
+                    },
+                    'issue_mode_id': {
+                        required: true,
+                    },
+                    'issued_to_id': {
+                        required: true
+                    },
+                    'remarks': {
+                        required: true
+                    },
+                    'quantity': {
+                        required: true,
+                        number: true,
+                    },
+                    'unit_price': {
+                        required: true,
+                        number: true,
+                    },
+                    'total': {
+                        required: true,
+                    },
+                    'tax_percentage': {
+                        required: true,
+                        number: true,
+                    },
+                    'tax_amount': {
+                        required: true,
+                        number: true,
+                    },
+                    'total_amount': {
+                        required: true,
+                        number: true,
+                    },
+                    'mrp': {
+                        required: true,
+                        number: true,
+                    },
+                    'supplier_id': {
+                        required: true,
+                    },
+                    'po_number': {
+                        required: true,
+                    },
+                    'po_amount': {
+                        required: true,
+                    },
+                    'advance_amount_received_details': {
+                        required: true,
+                    },
+                    'warranty_approved_reasons': {
+                        required: true,
+                    },
                 },
-                'issued_qty': {
-                    required: true,
-                    number: true,
-                },
-                'issue_mode_id': {
-                    required: true,
-                },
-                'issued_to_id': {
-                    required: true
-                },
-                'remarks': {
-                    required: true
-                },
-                'quantity': {
-                    required: true,
-                    number: true,
-                },
-                'unit_price': {
-                    required: true,
-                    number: true,
-                },
-                'total': {
-                    required: true,
-                },
-                'tax_percentage': {
-                    required: true,
-                    number: true,
-                },
-                'tax_amount': {
-                    required: true,
-                    number: true,
-                },
-                'total_amount': {
-                    required: true,
-                    number: true,
-                },
-                'mrp': {
-                    required: true,
-                    number: true,
-                },
-                'supplier_id': {
-                    required: true,
-                },
-                'po_number': {
-                    required: true,
-                },
-                'po_amount': {
-                    required: true,
-                },
-                'advance_amount_received_details': {
-                    required: true,
-                },
-                'warranty_approved_reasons': {
-                    required: true,
-                },
-            },
-            messages: {
+                messages: {
 
-            },
-            invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Kindly fix');
-            },
-            submitHandler: function(form) {
-                let formData = new FormData($(form)[0]);
-                $('.submit').button('loading');
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Kindly fix');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form)[0]);
+                    $('.submit').button('loading');
 
-                $.ajax({
-                        url: base_url + '/api/inward-part-indent/save-issued-part',
-                        method: "POST",
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
+                    $.ajax({
+                            url: base_url + '/api/inward-part-indent/save-issued-part',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
                             $('.submit').button('reset');
-                            showErrorNoty(res);
-                            return;
-                        }
-                        $('.submit').button('reset');
-                        custom_noty('success', res.message);
-                        $scope.$apply();
-                    })
-                    .fail(function(xhr) {
-                        $('.submit').button('reset');
-                        custom_noty('error', 'Something went wrong at server');
-                    });
-                $location.path('/inward-parts-indent/view/' + $scope.job_order_id);
-            }
-        });
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            $location.path('/inward-parts-indent/view/' + $scope.job_order_id);
+
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
         $scope.searchVendor = function(query) {
             return new Promise(function(resolve, reject) {
                 VendorSvc.options({ filter: { search: query } })
