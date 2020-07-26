@@ -331,6 +331,9 @@ class GateInController extends Controller {
 			$job_order->status_id = 8460; //Ready for Inward
 			$job_order->save();
 			$job_order->number = 'JO-' . $job_order->id;
+			if ($vehicle->currentOwner) {
+				$job_order->customer_id = $vehicle->currentOwner->customer_id;
+			}
 			$job_order->save();
 
 			//NEW GATE IN ENTRY
