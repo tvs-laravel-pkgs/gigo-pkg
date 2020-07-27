@@ -169,6 +169,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/get-view-data', 'VehicleInwardController@getVehicleInwardView');
 		Route::post('inward-part-indent/get-view-data', 'VehicleInwardController@getInwardPartIndentViewData');
 		Route::post('inward-part-indent/save-return-part', 'VehicleInwardController@saveReturnPart');
+		Route::post('vehicle-inward/part-logs/delete', 'VehicleInwardController@deletePartLogs');
+
 		Route::post('inward-part-indent/get-issue-part-form-data', 'VehicleInwardController@getInwardPartIndentIssuePartFormData');
 		Route::post('inward-part-indent/save-issued-part', 'VehicleInwardController@saveIssuedPart');
 

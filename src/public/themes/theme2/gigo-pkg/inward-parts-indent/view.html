@@ -306,7 +306,8 @@
                                 <div class="tab-pane-wrap">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>Scheduled Maintenance ({{job_order.service_type.name}})</b></h5>
+                                            <!-- <h5 class="color-primary mb-10"><b>Scheduled Maintenance ({{job_order.service_type.name}})</b></h5> -->
+                                            <h5 class="color-primary mb-10"><b>Labour Details</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="table-responsive">
                                                 <table class="table table-dark-grey">
@@ -437,7 +438,7 @@
                                                                 <a ng-if="job_order.job_card && job_order.part_intent_status_id != 10073" href=".#!/inward-parts-indent/issue-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
                                                                     Issue Part
                                                                 </a>
-                                                                <button ng-if="job_order.job_card && indent_part_logs.length > 0 job_order.part_intent_status_id != 10073" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showReturnPartForm(false)">
+                                                                <button ng-if="job_order.job_card && indent_part_logs.length > 0 job_order.part_intent_status_id != 10073"type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showReturnPartForm(false)">
                                                                     Return Part
                                                                 </button>
                                                             </td>
@@ -463,7 +464,7 @@
                                                 </div>
                                             </div><!-- Table Responsive -->
                                             <div class="mb-15" ng-if="job_order.job_card"></div><!-- Spacing -->
-                                            <h5 class="color-primary mb-10" ng-if="job_order.job_card"><b>Parts Intent Logs</b></h5>
+                                            <h5 class="color-primary mb-10" ng-if="job_order.job_card"><b>Parts Intend Logs</b></h5>
                                             <hr class="hr-15" ng-if="job_order.job_card"><!-- Separater -->
                                             <div class="table-responsive" ng-if="job_order.job_card">
                                                 <table class="table table-dark-grey">
@@ -487,10 +488,13 @@
                                                             <th>
                                                                 Date
                                                             </th>
+                                                            <th>
+                                                                Action
+                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="log in indent_part_logs">
+                                                        <tr class="ptb-12" ng-repeat="(index,log) in indent_part_logs">
                                                             <td>
                                                                 {{log.name}} / {{log.code}}
                                                             </td>
@@ -508,6 +512,17 @@
                                                             </td>
                                                             <td>
                                                                 {{log.date}}
+                                                            </td>
+                                                            <td>
+                                                                <a ng-if="log.transaction_type == 'Issue'" href=".#!/inward-parts-indent/issue-part/form/{{job_order.id}}/{{log.job_order_part_increment_id}}" class="btn img-btn btn-delete">
+                                                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                                </a>
+                                                                <button ng-if="log.transaction_type == 'Return'" type="button" class="btn img-btn btn-delete" ng-click="showReturnPartForm(index,log)">
+                                                                    <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                                </button>
+                                                                <button type="button" class="btn img-btn btn-delete" ng-click="removeLog(index,log)">
+                                                                    <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                                </button>
                                                             </td>
                                                         </tr>
                                                         <tr ng-if="indent_part_logs.length == 0">
@@ -587,6 +602,7 @@
             <div class="modal-body">
                 <form id="return-part-form">
                     <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                    <input type="hidden" name="job_order_returned_part_id" value="{{$ctrl.job_order_returned_part_id}}">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -603,7 +619,8 @@
                                         </md-option>
                                     </md-optgroup>
                                 </md-select>
-                                <input type="hidden" name="job_order_part_id" value="{{parts_indent.return_part.id}}">
+                                <input type="hidden" name="job_order_part_id" value="{{parts_indent.return_part.job_order_part_id}}">
+                                <input type="hidden" name="part_id" value="{{parts_indent.return_part.id}}">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-4">
@@ -668,24 +685,6 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>
-                                        Repair Orders
-                                    </label>
-                                    <md-select multiple ng-model="parts_indent.part.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.repair_order)" ng-model-options="{trackBy: '$value.id' }">
-                                        <md-select-header class="demo-select-header">
-                                            <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
-                                        </md-select-header>
-                                        <md-optgroup>
-                                            <md-option ng-if="repair_order.removal_reason_id == null" ng-value="repair_order" ng-repeat="repair_order in options.repair_orders | filter:searchreturnEmployeeKey">
-                                                {{repair_order.code}} / {{repair_order.name}}
-                                            </md-option>
-                                        </md-optgroup>
-                                    </md-select>
-                                    <input type="hidden" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
-                                </div><!-- Field -->
-                            </div><!-- Column -->
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label>
                                         Part Code
                                         <span class="mandatory">*</span>
                                     </label>
@@ -700,6 +699,24 @@
                                         </md-not-found>
                                     </md-autocomplete>
                                     <input type="hidden" name="part_id" value="{{parts_indent.part.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4" ng-if="parts_indent.part">
+                                <div class="form-group">
+                                    <label>
+                                        Repair Orders
+                                    </label>
+                                    <md-select multiple ng-model="parts_indent.part.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.repair_order)" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-if="repair_order.removal_reason_id == null" ng-value="repair_order" ng-repeat="repair_order in options.repair_orders | filter:searchreturnEmployeeKey">
+                                                {{repair_order.code}} / {{repair_order.name}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
                             <div class="col-md-4">
@@ -967,3 +984,21 @@
         </form>
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content-->
+<div class="modal fade alert-modal failure" id="delete_log" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
+            </div>
+            <div class="modal-body">
+                <h5>Delete</h5>
+                <p>You can’t retrive the data again, Are you sure you want to delete? </p>
+                <input type="hidden" name="delete_labour_details" class="delete_labour_details" value="">
+                <input type="hidden" name="log_type" id="log_type" value="">
+                <input type="hidden" name="log_id" id="log_id" value="">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>

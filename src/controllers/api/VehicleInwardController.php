@@ -672,7 +672,7 @@ class VehicleInwardController extends Controller {
 			$indent_part_logs = array();
 
 			if ($job_order->jobCard) {
-				$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*')->where('job_order_parts.job_order_id', $r->id)->whereNull('removal_reason_id')->get();
+				$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*', 'job_order_parts.id as job_order_part_id')->where('job_order_parts.job_order_id', $r->id)->whereNull('removal_reason_id')->get();
 
 				$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')->where('job_order_repair_orders.job_order_id', $r->id)->groupBy('users.id')->get();
 
@@ -687,7 +687,11 @@ class VehicleInwardController extends Controller {
 						'joip.issued_qty as qty',
 						DB::raw('DATE_FORMAT(joip.created_at,"%d/%m/%Y") as date'),
 						'configs.name as issue_mode',
-						'users.name as mechanic'
+						'users.name as mechanic',
+						'joip.id as job_order_part_increment_id',
+						'users.id as employee_id',
+						'job_order_parts.id as job_order_part_id',
+						'parts.id as part_id'
 					);
 
 				$indent_part_logs = JobOrderPart::join('job_order_returned_parts as jorp', 'jorp.job_order_part_id', 'job_order_parts.id')
@@ -700,7 +704,11 @@ class VehicleInwardController extends Controller {
 						'jorp.returned_qty as qty',
 						DB::raw('DATE_FORMAT(jorp.created_at,"%d/%m/%Y") as date'),
 						DB::raw('"-" as issue_mode'),
-						'users.name as mechanic'
+						'users.name as mechanic',
+						'jorp.id as job_order_part_increment_id',
+						'users.id as employee_id',
+						'job_order_parts.id as job_order_part_id',
+						'parts.id as part_id'
 					)->union($indent_part_logs_issues)->orderBy('date', 'DESC')->get();
 			}
 
@@ -771,14 +779,15 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 			// $job_order_returned_part = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->first();
-			// if ($job_order_returned_part == null) {
-			$job_order_returned_part = new JobOrderReturnedPart;
-			$job_order_returned_part->created_by_id = Auth::id();
-			$job_order_returned_part->created_at = Carbon::now();
-			/*} else {
+			$job_order_returned_part = JobOrderReturnedPart::find($request->job_order_returned_part_id);
+			if ($job_order_returned_part == null) {
+				$job_order_returned_part = new JobOrderReturnedPart;
+				$job_order_returned_part->created_by_id = Auth::id();
+				$job_order_returned_part->created_at = Carbon::now();
+			} else {
 				$job_order_returned_part->updated_by_id = Auth::id();
 				$job_order_returned_part->updated_at = Carbon::now();
-			}*/
+			}
 			$job_order_returned_part->fill($request->all());
 			$job_order_returned_part->save();
 
@@ -799,6 +808,69 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+
+	// DELETE ISSUE AND RETURN PARTS
+	public function deletePartLogs(Request $request) {
+		// dd($request->all());
+		try {
+			DB::beginTransaction();
+			if ($request->type == 'Return') {
+				$validator = Validator::make($request->all(), [
+					'id' => [
+						'required',
+						'integer',
+						'exists:job_order_returned_parts,id',
+					],
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				$delete_part_log = JobOrderReturnedPart::find($request->id)->forceDelete();
+
+			} else {
+				$validator = Validator::make($request->all(), [
+					'id' => [
+						'required',
+						'integer',
+						'exists:job_order_issued_parts,id',
+					],
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				$delete_part_log = JobOrderIssuedPart::find($request->id)->forceDelete();
+
+			}
+			// dd($delete_part_log);
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Log Deleted Successfully',
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
 	//ISSUE PART FORM DATA
 	public function getInwardPartIndentIssuePartFormData(Request $request) {
 		// dd($request->all());
@@ -809,13 +881,27 @@ class VehicleInwardController extends Controller {
 			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')->where('job_order_repair_orders.job_order_id', $request->id)->groupBy('users.id')->get();
 
 			$issue_modes = Config::where('config_type_id', 109)->select('id', 'name')->get();
+			$issue_data = JobOrderIssuedPart::join('job_order_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')
+				->where('job_order_issued_parts.id', $request->issue_part_id)
+				->select(
+					'job_order_issued_parts.issued_qty',
+					'job_order_issued_parts.issued_to_id',
+					'job_order_issued_parts.issued_mode_id',
+					'job_order_parts.part_id',
+					'job_order_issued_parts.job_order_part_id'
+				)
+				->first();
 
-			return response()->json([
+			$responseArr = array(
 				'success' => true,
 				'job_order_parts' => $job_order_parts,
 				'repair_order_mechanics' => $repair_order_mechanics,
 				'issue_modes' => $issue_modes,
-			]);
+				'issue_data' => $issue_data,
+				'issue_to_user' => ($issue_data) ? $issue_data->issuedTo : null,
+			);
+
+			return response()->json($responseArr);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
@@ -877,7 +963,7 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 			// dd($request->issue_mode_id);
-			if ($request->issued_mode_id != 8480) {
+			if ($request->issued_mode_id != 8480 && $request->job_order_issued_part_id == null) {
 
 				$db2 = config('database.connections.pias.database');
 
@@ -968,9 +1054,15 @@ class VehicleInwardController extends Controller {
 				$parts_grn->save();
 			}
 
-			$job_order_isssued_part = new JobOrderIssuedPart;
-			$job_order_isssued_part->created_by_id = Auth::id();
-			$job_order_isssued_part->created_at = Carbon::now();
+			$job_order_isssued_part = JobOrderIssuedPart::find($request->job_order_issued_part_id);
+			if ($job_order_isssued_part == null) {
+				$job_order_isssued_part = new JobOrderIssuedPart;
+				$job_order_isssued_part->created_by_id = Auth::id();
+				$job_order_isssued_part->created_at = Carbon::now();
+			} else {
+				$job_order_isssued_part->updated_by_id = Auth::id();
+				$job_order_isssued_part->updated_at = Carbon::now();
+			}
 
 			$job_order_isssued_part->fill($request->all());
 			$job_order_isssued_part->save();
