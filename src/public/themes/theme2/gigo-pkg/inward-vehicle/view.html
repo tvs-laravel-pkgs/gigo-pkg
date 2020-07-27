@@ -127,7 +127,7 @@
                                             Estimate
                                         </a>
                                     </li>
-                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimation-status-view') && (job_order.is_customer_agreed != 1 || (job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1))">
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimation-status-view') && (job_order.is_customer_agreed == 0 || (job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1))">
                                         <a data-target="#status_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Estimation Status
                                         </a>
@@ -1715,17 +1715,19 @@
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="photo-sign-wrap">
                                                 <div class="photo-sign-item">
-                                                    <img class="img-responsive img-profile" src="storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_approval_attachment[0].name}}" alt="Customer Photo" />
+                                                    <img class="img-responsive img-profile" ng-if="job_order.customer_approval_attachment.length > 0" src="storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_approval_attachment[0].name}}" alt="Customer Photo" />
                                                     <div class="photo-sign-caption">Customer Photo</div>
                                                 </div>
                                             </div><!-- Photo Sign Wrap -->
                                             <div class="mb-30"></div><!-- Spacing -->
                                             <div class="photo-sign-wrap">
                                                 <div class="photo-sign-item bg-transparent">
-                                                    <img class="img-responsive img-sign" src="storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_e_sign[0].name}}" alt="Customer E Sign" />
+                                                    <img class="img-responsive img-sign" ng-if="job_order.customer_e_sign.length > 0" src="storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_e_sign[0].name}}" alt="Customer E Sign" />
                                                     <div class="photo-sign-caption">Customer E Sign</div>
                                                 </div>
                                             </div><!-- Photo Sign Wrap -->
+                                            <br>
+                                            <a href=".#!/inward-vehicle/customer-confirmation/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && $ctrl.hasPermission('inward-job-card-tab-estimate-edit')">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">

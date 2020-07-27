@@ -1951,7 +1951,7 @@ class VehicleInwardController extends Controller {
 				$job_order_repair_order->is_recommended_by_oem = 0;
 			}
 			$job_order_repair_order->status_id = 8180; //Customer Approval Pending
-			$job_order_part->created_by_id = Auth::user()->id;
+			$job_order_repair_order->created_by_id = Auth::user()->id;
 			$job_order_repair_order->save();
 
 			DB::commit();
