@@ -25,24 +25,23 @@
                         <div class="tab-pane-wrap">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="page-form pb-80 ">
-                                        <div class="tab-header">
-                                            <!-- Filters -->
-                                            <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300" id="tabs">
-                                                <ul class="nav nav-pills editDetails-tabs">
-                                                    <li class="split_order_tabs split_order_tab_{{key}}" ng-repeat="(key,split_order_type) in extras.split_order_types">
-                                                        <a data-target="#{{split_order_type.id}}" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">
-                                                            {{split_order_type.code}} - {{split_order_type.name}}
-                                                            <!--  - {{split_order_type.total_items}} -->
-                                                            <!-- {{split_order_type.total_items > 1 ? 'items' : 'item'}} -->
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div><!-- Filters -->
+                                    <h5 class="title-red border-bottom">
+                                        Bill Detail
+                                    </h5>
+                                    <!-- <div class="page-form pb-80 "> -->
+                                    <div class="panel panel-default type-4 split_order_tab_{{key}}" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-show="split_order_type.total_items > 0" >
+                                        <div class="panel-heading">
+                                            <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#{{split_order_type.id}}">
+                                                {{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} {{split_order_type.total_items > 1 ? 'items' : 'item'}}
+                                                <span class="arrow"></span>
+                                                <span class="title-right">
+                                                    <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
+                                                    <span class="amount_{{key}}"></span>
+                                                </span>
+                                            </a>
                                         </div>
-                                        <div class="tab-content">
-                                            <!-- TAB PANEL -->
-                                            <div class="tab-pane fade panel split_order_panel_{{key}}" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300" ng-repeat="(key,split_order_type) in extras.split_order_types">
+                                        <div class="panel-collapse collapse split_order_panel_{{key}}" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300">
+                                            <div class="panel-body">
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <h5 class="title-red border-bottom">
@@ -253,18 +252,19 @@
                                                         </div><!-- Table Responsive -->
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
-                                            </div><!-- Tabe Pane -->
-                                        </div><!-- Tab Content -->
-                                    </div><!-- Page Form -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                            </div><!-- Panel Body -->
+                                        </div><!-- Panel Collapse -->
+                                    </div><!-- Panel -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Tab Form Wrap -->
+                    </div><!-- Tab Pane -->
                 </div><!-- Tab Form Body -->
-            </div><!-- Tab Form Wrap -->
+            </div><!-- Tab Form Warp  -->
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<!-- Modal -->
 <div class="modal fade alert-modal failure" id="confirmation_modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -279,3 +279,4 @@
         </div>
     </div>
 </div>
+<!-- Modal -->

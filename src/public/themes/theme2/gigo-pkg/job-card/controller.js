@@ -2619,7 +2619,7 @@ app.component('jobCardBillDetailView', {
                     setTimeout(function() {
                         if ($scope.extras.split_order_types) {
                             angular.forEach($scope.extras.split_order_types, function(split_order, key) {
-                                // split_order.total_items = 0;
+                                split_order.total_items = 0;
                                 var labour_sub_total = 0;
                                 var part_sub_total = 0;
                                 var grand_total = 0;
@@ -2631,7 +2631,7 @@ app.component('jobCardBillDetailView', {
                                 angular.forEach($scope.labour_details, function(labour, key1) {
                                     if (split_order.id == labour.split_order_type_id) {
                                         labour_sub_total += parseFloat(labour.total_amount);
-                                        // split_order.total_items += 1;
+                                        split_order.total_items += 1;
                                     }
 
                                     if (!labour.split_order_type_id && split_order.paid_by_id == '10013') {
@@ -2643,7 +2643,7 @@ app.component('jobCardBillDetailView', {
                                 angular.forEach($scope.part_details, function(part, key2) {
                                     if (split_order.id == part.split_order_type_id) {
                                         part_sub_total += parseFloat(part.total_amount);
-                                        // split_order.total_items += 1;
+                                        split_order.total_items += 1;
                                     }
 
                                     if (!part.split_order_type_id && split_order.paid_by_id == '10013') {
@@ -2656,6 +2656,7 @@ app.component('jobCardBillDetailView', {
                                 $('.amount_' + key).html(parseFloat(grand_total).toFixed(2));
                             });
                         }
+                        $scope.$apply();
                     }, 1000);
                     $scope.$apply();
                 })
