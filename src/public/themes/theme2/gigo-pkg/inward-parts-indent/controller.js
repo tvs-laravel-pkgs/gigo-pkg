@@ -136,7 +136,17 @@ app.component('inwardPartsIndentView', {
                 $this.tooltip('show');
             }
         });
-        $scope.showReturnPartForm = function() {
+        $scope.showReturnPartForm = function(index, part) {
+            console.log(index, part);
+            if (part != undefined) {
+                $scope.parts_indent.return_part = {};
+                $scope.parts_indent.employee = {};
+                self.job_order_returned_part_id = part.job_order_part_increment_id;
+                $scope.parts_indent.return_part.id = part.part_id;
+                $scope.parts_indent.return_part.qty = part.qty;
+                $scope.parts_indent.employee.id = part.employee_id;
+                $scope.parts_indent.return_part.job_order_part_id = part.job_order_part_id;
+            }
             $('#return_part_form_modal').modal('show');
         }
 
@@ -351,7 +361,48 @@ app.component('inwardPartsIndentView', {
                 $scope.fetchData();
             }
         });
+        $scope.removeLog = function(index, log) {
+            console.log(log);
+            $('#delete_log').modal('show');
+            $('#log_id').val(log.job_order_part_increment_id);
+            $('#log_type').val(log.transaction_type);
+
+        }
+        $scope.deleteConfirm = function() {
+            $id = $('#log_id').val();
+            $type = $('#log_type').val();
+
+            let formData = new FormData();
+            formData.append('id', $id);
+            formData.append('type', $type);
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/part-logs/delete',
+                    method: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        $rootScope.loading = false;
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $('#delete_log').modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    $scope.fetchData();
+                    custom_noty('success', res.message);
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    $scope.button_action(id, 2);
+                    custom_noty('error', 'Something went wrong at server');
+                });
+
+        }
         $scope.removePart = function(index, id, type) {
+            console.log(id);
             if (id == undefined) {
                 $scope.part_details.splice(index, 1);
                 $scope.calculatePartTotal();
@@ -392,7 +443,8 @@ app.component('inwardPartsIndentView', {
                         let formData = new FormData($(delete_form_id)[0]);
                         $rootScope.loading = true;
                         $.ajax({
-                                url: base_url + '/api/vehicle-inward/labour-parts-delete/update',
+                                url: base_url + '/api/vehicle-inward/labour-parts/delete',
+                                // url: base_url + '/api/vehicle-inward/labour-parts-delete/update',
                                 method: "POST",
                                 data: formData,
                                 processData: false,
@@ -420,6 +472,25 @@ app.component('inwardPartsIndentView', {
 
             }
         }
+        $scope.button_action = function(id, type) {
+            if (type == 1) {
+                if (id == 1) {
+                    $('.submit').button('loading');
+                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-prev').bind('click', false);
+                } else {
+                    $('.btn-nxt').button('loading');
+                    $('.submit').attr("disabled", "disabled");
+                    $('.btn-prev').bind('click', false);
+                }
+            } else {
+                $('.submit').button('reset');
+                $('.btn-nxt').button('reset');
+                $('.btn-prev').unbind('click', false);
+                $(".btn-nxt").removeAttr("disabled");
+                $(".submit").removeAttr("disabled");
+            }
+        }
     }
 });
 //------------------------------------------------------------------------------------------------------------------------
@@ -434,14 +505,15 @@ app.component('inwardPartsIndentIssuePartForm', {
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();
         $scope.job_order_id = $routeParams.job_order_id;
+        self.job_order_issued_part_id = $routeParams.id;
         $scope.issue_part = {};
-
         $scope.fetchData = function() {
             $.ajax({
                     url: base_url + '/api/inward-part-indent/get-issue-part-form-data',
                     method: "POST",
                     data: {
-                        id: $routeParams.job_order_id
+                        id: $routeParams.job_order_id,
+                        issue_part_id: $routeParams.id
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -456,6 +528,13 @@ app.component('inwardPartsIndentIssuePartForm', {
                     $scope.job_order_parts = res.job_order_parts;
                     $scope.repair_order_mechanics = res.repair_order_mechanics;
                     $scope.issue_modes = res.issue_modes
+                    $scope.issued_part = res.issue_data;
+                    PartSvc.read($scope.issued_part.part_id)
+                        .then(function(response) {
+                            $scope.return_part = response.data.part;
+                            $scope.return_part.job_order_part_id = res.issue_data.job_order_part_id;
+                        });
+                    $scope.issued_to = res.issue_to_user;
 
                     $scope.$apply();
                 })
