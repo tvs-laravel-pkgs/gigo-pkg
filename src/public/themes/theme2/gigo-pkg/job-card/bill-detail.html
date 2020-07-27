@@ -99,7 +99,7 @@
                                                                             </b>
                                                                         </td>
                                                                         <td>
-                                                                            {{job_card.job_order.type.name}}
+                                                                            {{job_card.job_order.type ? job_card.job_order.type.name : '--'}}
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -117,7 +117,7 @@
                                                                             </b>
                                                                         </td>
                                                                         <td>
-                                                                            {{job_card.job_order.service_type.name}}
+                                                                            {{job_card.job_order.service_type ? job_card.job_order.service_type.name : '--'}}
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -127,7 +127,7 @@
                                                                             </b>
                                                                         </td>
                                                                         <td>
-                                                                            {{job_card.job_order.vehicle.vin_number}}
+                                                                            {{job_card.job_order.vehicle.vin_number ? job_card.job_order.vehicle.vin_number : '--'}}
                                                                         </td>
                                                                         <td>
                                                                             <b>
