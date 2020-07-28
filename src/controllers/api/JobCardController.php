@@ -3671,7 +3671,88 @@ class JobCardController extends Controller {
 							$labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
 							$labour_details[$key]['qty'] = $labour->qty;
 							$labour_details[$key]['amount'] = $labour->amount;
-							// $labour_details[$key]['is_free_service'] = $labour->is_free_service;
+							$labour_details[$key]['is_free_service'] = $labour->is_free_service;
+							$labour_details[$key]['split_order_type_id'] = $labour->split_order_type_id;
+							$tax_amount = 0;
+							$labour_details[$key]['tax_code'] = $labour->repairOrder->taxCode;
+							$tax_values = array();
+							if ($labour->repairOrder->taxCode) {
+								foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+									$percentage_value = 0;
+									if ($value->type_id == $tax_type) {
+										$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+									}
+									$tax_values[$tax_key]['tax_value'] = $percentage_value;
+									$tax_amount += $percentage_value;
+								}
+							} else {
+								for ($i = 0; $i < count($taxes); $i++) {
+									$tax_values[$i]['tax_value'] = 0.00;
+								}
+							}
+							$labour_details[$key]['tax_values'] = $tax_values;
+
+							$total_amount = $tax_amount + $labour->amount;
+							$total_amount = number_format((float) $total_amount, 2, '.', '');
+
+							$labour_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
+							$labour_details[$key]['total_amount'] = $total_amount;
+
+							$labour_total_amount += $total_amount;
+						} elseif ($labour->is_free_service == 1 && $labour->removal_reason_id == null) {
+							$labour_sub_total = 0;
+							$total_amount = 0;
+							$labour_details[$key]['id'] = $labour->id;
+							$labour_details[$key]['repair_order_id'] = $labour->repairOrder->id;
+							$labour_details[$key]['name'] = $labour->repairOrder->code . ' | ' . $labour->repairOrder->name;
+							$labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
+							$labour_details[$key]['qty'] = $labour->qty;
+							$labour_details[$key]['amount'] = $labour->amount;
+							$labour_details[$key]['is_free_service'] = $labour->is_free_service;
+							$labour_details[$key]['split_order_type_id'] = $labour->split_order_type_id;
+							$tax_amount = 0;
+							$labour_details[$key]['tax_code'] = $labour->repairOrder->taxCode;
+							$tax_values = array();
+							if ($labour->repairOrder->taxCode) {
+								foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+									$percentage_value = 0;
+									if ($value->type_id == $tax_type) {
+										$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+									}
+
+									$percentage_value = 0.00;
+
+									$tax_values[$tax_key]['tax_value'] = $percentage_value;
+									$tax_amount += $percentage_value;
+								}
+							} else {
+								for ($i = 0; $i < count($taxes); $i++) {
+									$tax_values[$i]['tax_value'] = 0.00;
+								}
+							}
+							$labour_details[$key]['tax_values'] = $tax_values;
+
+							$total_amount = $tax_amount + $labour->amount;
+							$total_amount = number_format((float) $total_amount, 2, '.', '');
+
+							$labour_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
+							$labour_details[$key]['total_amount'] = 0.00;
+
+							$labour_total_amount += $total_amount;
+						}
+					} else {
+						if ($labour->removal_reason_id == null) {
+							$labour_sub_total = 0;
+							$total_amount = 0;
+							$labour_details[$key]['id'] = $labour->id;
+							$labour_details[$key]['repair_order_id'] = $labour->repairOrder->id;
+							$labour_details[$key]['name'] = $labour->repairOrder->code . ' | ' . $labour->repairOrder->name;
+							$labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
+							$labour_details[$key]['qty'] = $labour->qty;
+							$labour_details[$key]['amount'] = $labour->amount;
+							$labour_details[$key]['is_free_service'] = $labour->is_free_service;
 							$labour_details[$key]['split_order_type_id'] = $labour->split_order_type_id;
 							$tax_amount = 0;
 							$labour_details[$key]['tax_code'] = $labour->repairOrder->taxCode;
@@ -3705,6 +3786,7 @@ class JobCardController extends Controller {
 				}
 				$job_card['labour_total_amount'] = $labour_total_amount;
 			}
+			// dd($labour_details);
 
 			$part_details = array();
 			if ($job_card->jobOrder->jobOrderParts) {
@@ -3721,7 +3803,91 @@ class JobCardController extends Controller {
 							$part_details[$key]['qty'] = $parts->qty;
 							$part_details[$key]['rate'] = $parts->rate;
 							$part_details[$key]['amount'] = $parts->amount;
-							// $part_details[$key]['is_free_service'] = $parts->is_free_service;
+							$part_details[$key]['is_free_service'] = $parts->is_free_service;
+							$part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
+							$tax_amount = 0;
+							$part_details[$key]['tax_code'] = $parts->part->taxCode;
+							$tax_values = array();
+							if ($parts->part->taxCode) {
+								foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+									$percentage_value = 0;
+									if ($value->type_id == $tax_type) {
+										$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+									}
+									$tax_values[$tax_key]['tax_value'] = $percentage_value;
+									$tax_amount += $percentage_value;
+								}
+							} else {
+								for ($i = 0; $i < count($taxes); $i++) {
+									$tax_values[$i]['tax_value'] = 0.00;
+								}
+							}
+
+							$part_details[$key]['tax_values'] = $tax_values;
+
+							$total_amount = $tax_amount + $parts->amount;
+							$total_amount = number_format((float) $total_amount, 2, '.', '');
+
+							$part_details[$key]['total_amount'] = $total_amount;
+							$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
+
+							$parts_total_amount += $total_amount;
+						} elseif ($labour->is_free_service != 1 && $labour->removal_reason_id == null) {
+							$part_sub_total = 0;
+							$total_amount = 0;
+							$part_details[$key]['id'] = $parts->id;
+							$part_details[$key]['part_id'] = $parts->part->id;
+							$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
+							$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
+							$part_details[$key]['qty'] = $parts->qty;
+							$part_details[$key]['rate'] = $parts->rate;
+							$part_details[$key]['amount'] = $parts->amount;
+							$part_details[$key]['is_free_service'] = $parts->is_free_service;
+							$part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
+							$tax_amount = 0;
+							$part_details[$key]['tax_code'] = $parts->part->taxCode;
+							$tax_values = array();
+							if ($parts->part->taxCode) {
+								foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+									$percentage_value = 0;
+									if ($value->type_id == $tax_type) {
+										$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+									}
+									$percentage_value = 0.00;
+
+									$tax_values[$tax_key]['tax_value'] = $percentage_value;
+									$tax_amount += $percentage_value;
+								}
+							} else {
+								for ($i = 0; $i < count($taxes); $i++) {
+									$tax_values[$i]['tax_value'] = 0.00;
+								}
+							}
+
+							$part_details[$key]['tax_values'] = $tax_values;
+
+							$total_amount = $tax_amount + $parts->amount;
+							$total_amount = number_format((float) $total_amount, 2, '.', '');
+
+							$part_details[$key]['total_amount'] = 0.00;
+							$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
+
+							$parts_total_amount += $total_amount;
+						}
+					} else {
+						if ($parts->removal_reason_id == null) {
+							$part_sub_total = 0;
+							$total_amount = 0;
+							$part_details[$key]['id'] = $parts->id;
+							$part_details[$key]['part_id'] = $parts->part->id;
+							$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
+							$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
+							$part_details[$key]['qty'] = $parts->qty;
+							$part_details[$key]['rate'] = $parts->rate;
+							$part_details[$key]['amount'] = $parts->amount;
+							$part_details[$key]['is_free_service'] = $parts->is_free_service;
 							$part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
 							$tax_amount = 0;
 							$part_details[$key]['tax_code'] = $parts->part->taxCode;

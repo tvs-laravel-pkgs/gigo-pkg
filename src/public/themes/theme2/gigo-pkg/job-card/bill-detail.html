@@ -162,6 +162,7 @@
                                                                                 <thead>
                                                                                     <tr>
                                                                                         <th>Labour Details</th>
+                                                                                        <!-- <th>Free Service</th> -->
                                                                                         <th>HSN / SAC Code</th>
                                                                                         <th>Quantity</th>
                                                                                         <th>Labour Value</th>
@@ -174,6 +175,7 @@
                                                                                 <tbody>
                                                                                     <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(labour_key,labour) in labour_details">
                                                                                         <td>{{labour.name}}</td>
+                                                                                        <!-- <td>{{labour.is_free_service}}</td> -->
                                                                                         <td>{{labour.tax_code.code}}</td>
                                                                                         <td>{{labour.qty}}</td>
                                                                                         <td class="text-right">{{labour.amount}}</td>
@@ -183,7 +185,7 @@
                                                                                         <td class="text-right">{{labour.total_amount}}</td>
                                                                                     </tr>
                                                                                 </tbody>
-                                                                                <tfoot>
+                                                                                <tfoot class="subtotal_tfoot_labour_{{key}}">
                                                                                     <tr class="labour_sub_total">
                                                                                         <td colspan="8">
                                                                                             Sub Total
@@ -193,11 +195,17 @@
                                                                                         </td>
                                                                                     </tr>
                                                                                 </tfoot>
+                                                                                <!-- <tfoot class="nodata_tfoot_labour_{{key}}">
+                                                                                    <tr>
+                                                                                        <td>No Data Found</td>
+                                                                                    </tr>
+                                                                                </tfoot> -->
                                                                             </table>
                                                                             <table class="table table-form jc-view-bill-table mb-0">
                                                                                 <thead>
                                                                                     <tr>
                                                                                         <th>Parts Details</th>
+                                                                                        <!-- <th>Free Service</th> -->
                                                                                         <th>HSN / SAC Code</th>
                                                                                         <th>Quantity</th>
                                                                                         <th>MRP</th>
@@ -212,6 +220,7 @@
                                                                                     <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(part_key,part) in part_details">
                                                                                         <td>{{part.name}}</td>
                                                                                         <td>{{part.tax_code.code}}</td>
+                                                                                        <!-- <td>{{part.is_free_service}}</td> -->
                                                                                         <td>{{part.qty}}</td>
                                                                                         <td class="text-right">{{part.rate}}</td>
                                                                                         <td class="text-right">{{part.amount}}</td>
@@ -221,7 +230,7 @@
                                                                                         <td class="text-right">{{part.total_amount}}</td>
                                                                                     </tr>
                                                                                 </tbody>
-                                                                                <tfoot>
+                                                                                <tfoot class="subtotal_tfoot_part_{{key}}">
                                                                                     <tr class="part_sub_total">
                                                                                         <td colspan="9">
                                                                                             Sub Total
@@ -231,6 +240,11 @@
                                                                                         </td>
                                                                                     </tr>
                                                                                 </tfoot>
+                                                                                <!-- <tfoot class="nodata_tfoot_part_{{key}}">
+                                                                                    <tr>
+                                                                                        <td>No Data Found</td>
+                                                                                    </tr>
+                                                                                </tfoot> -->
                                                                             </table>
                                                                             <span class="bill-total">
                                                                                 <span class="info">
