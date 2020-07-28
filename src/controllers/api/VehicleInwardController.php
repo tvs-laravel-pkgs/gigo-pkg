@@ -1859,6 +1859,7 @@ class VehicleInwardController extends Controller {
 				$job_order->part_intent_status_id = 10072;
 			} else {
 				$job_order->part_intent_status_id = 10073;
+				$job_order->part_intent_confirmed_date = Carbon::now();
 			}
 
 			$job_order->updated_by_id = Auth::user()->id;
@@ -2547,7 +2548,7 @@ class VehicleInwardController extends Controller {
 				$labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
 				$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
-				if (in_array($value->split_order_type_id, $customer_paid_type)) {
+				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$labour_amount += $value->amount;
 					} else {
@@ -2574,7 +2575,7 @@ class VehicleInwardController extends Controller {
 				$part_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
 				$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
-				if (in_array($value->split_order_type_id, $customer_paid_type)) {
+				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$part_amount += $value->amount;
 					} else {
