@@ -1721,6 +1721,7 @@ app.component('jobCardPayableLabourPartsForm', {
                         showErrorNoty(res);
                         return;
                     }
+                    console.log(res);
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
                     $scope.total_amount = res.total_amount;
@@ -2647,7 +2648,7 @@ app.component('jobCardBillDetailView', {
                                     $(".subtotal_tfoot_labour_" + key).hide();
                                     $(".nodata_tfoot_labour_" + key).show();
                                 }
-                                // console.log(labour_length);
+                                $('#labour_total_amount_' + key).val(parseFloat(labour_sub_total).toFixed(2));
                                 $('.labour_sub_total_' + key).html(parseFloat(labour_sub_total).toFixed(2));
 
                                 var part_length = 0;
@@ -2669,7 +2670,7 @@ app.component('jobCardBillDetailView', {
                                     $(".subtotal_tfoot_part_" + key).hide();
                                     $(".nodata_tfoot_part_" + key).show();
                                 }
-                                // console.log(part_length);
+                                $('#part_total_amount_' + key).val(parseFloat(part_sub_total).toFixed(2));
                                 $('.part_sub_total_' + key).html(parseFloat(part_sub_total).toFixed(2));
 
                                 grand_total = labour_sub_total + part_sub_total;
@@ -2685,15 +2686,21 @@ app.component('jobCardBillDetailView', {
                 });
         }
 
+        $scope.senfForApproval = function(key) {
+            // console.log(key);
+            $("#key_value").val(key);
+        }
+
         $scope.sendCustomerPayment = function() {
+            var key = $("#key_value").val();
             $('.job_completed').button('loading');
             $.ajax({
                     url: base_url + '/api/job-card/customer/approval',
                     method: "POST",
                     data: {
                         job_card_id: $routeParams.job_card_id,
-                        labour_total_amount: $("#labour_total_amount").val(),
-                        part_total_amount: $("#part_total_amount").val(),
+                        labour_total_amount: $("#labour_total_amount_" + key).val(),
+                        part_total_amount: $("#part_total_amount_" + key).val(),
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
