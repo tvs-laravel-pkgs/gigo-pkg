@@ -1850,11 +1850,12 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 
 			if ($request->type_id == 1) {
-				$job_order->part_intent_status_id = 10070;
+				// $job_order->part_intent_status_id = 10070;
 				$job_order->status_id = 8472;
 			} elseif ($request->type_id == 2) {
-				$job_order->part_intent_status_id = 10071;
+				// $job_order->part_intent_status_id = 10071;
 				$job_order->status_id = 8463;
+				$job_order->part_intent_confirmed_date = Carbon::now();
 			} elseif ($request->type_id == 3) {
 				$job_order->part_intent_status_id = 10072;
 			} else {
@@ -3196,19 +3197,15 @@ class VehicleInwardController extends Controller {
 			$customer_voice_list = $job_order->vehicle->model->customerVoices->toArray();
 			$customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
 
-			//GET CUSTOMER VOICE OTHERS ID OF OTH
-			$customer_voice_other_id = $customer_voice_other[0]['id'];
-			$job_order['OTH_ID'] = $customer_voice_other_id;
+			if ($customer_voice_other) {
+				//GET CUSTOMER VOICE OTHERS ID OF OTH
+				$customer_voice_other_id = $customer_voice_other[0]['id'];
+				$job_order['OTH_ID'] = $customer_voice_other_id;
 
-			$customer_voice_list_merge = array_merge($customer_voice_list, $customer_voice_other);
-			$customer_voice_list = collect($customer_voice_list_merge);
+				$customer_voice_list_merge = array_merge($customer_voice_list, $customer_voice_other);
+				$customer_voice_list = collect($customer_voice_list_merge);
+			}
 
-			// $customer_voice_list = CustomerVoice::select(
-			// 	DB::raw('CONCAT(code," / ",name) as code'),
-			// 	'id'
-			// )
-			// 	->where('company_id', Auth::user()->company_id)
-			// 	->get();
 			$extras = [
 				'customer_voice_list' => $customer_voice_list,
 			];
@@ -3806,7 +3803,8 @@ class VehicleInwardController extends Controller {
 					$q->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id');
 				},
 				'jobOrderParts' => function ($q) use ($customer_paid_type_id) {
-					$q->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id');
+					$q->whereNull('removal_reason_id');
+					// $q->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id');
 				},
 				'type',
 				'quoteType',
@@ -3873,7 +3871,6 @@ class VehicleInwardController extends Controller {
 								$tax_amount += $percentage_value;
 							}
 							if ($labour->removal_reason_id == null) {
-
 								$total_amount = $labour->amount + $tax_amount;
 								$oem_recomentaion_labour_amount_include_tax += $total_amount;
 							}
@@ -3927,59 +3924,61 @@ class VehicleInwardController extends Controller {
 
 			if ($job_order->jobOrderParts) {
 				foreach ($job_order->jobOrderParts as $key => $parts) {
-					//SCHEDULED MAINTANENCE
-					if ($parts->is_oem_recommended == 1 && $parts->is_free_service == 0) {
-						if ($parts->part->taxCode) {
-							$tax_amount = 0;
-							$total_amount = 0;
-							foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
-								$percentage_value = 0;
-								if ($value->type_id == $tax_type) {
-									$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
-									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+					if (in_array($parts->split_order_type_id, $customer_paid_type_id) || !$parts->split_order_type_id) {
+						//SCHEDULED MAINTANENCE
+						if ($parts->is_oem_recommended == 1 && $parts->is_free_service == 0) {
+							if ($parts->part->taxCode) {
+								$tax_amount = 0;
+								$total_amount = 0;
+								foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+									$percentage_value = 0;
+									if ($value->type_id == $tax_type) {
+										$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+									}
+									$tax_amount += $percentage_value;
 								}
-								$tax_amount += $percentage_value;
-							}
-							if ($parts->removal_reason_id == null) {
-								$total_amount = $parts->amount + $tax_amount;
-								$oem_recomentaion_part_amount_include_tax += $total_amount;
-							}
-						} else {
-							if ($parts->removal_reason_id == null) {
-								$oem_recomentaion_part_amount_include_tax += $parts->amount;
-							}
-						}
-						if ($parts->removal_reason_id == null) {
-							$oem_recomentaion_part_amount += $parts->amount;
-						}
-					}
-
-					//ADDITIONAL ROT AND PARTS
-					if ($parts->is_oem_recommended == 0) {
-						if ($parts->part->taxCode) {
-							$tax_amount = 0;
-							$total_amount = 0;
-							foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
-								$percentage_value = 0;
-								if ($value->type_id == $tax_type) {
-									$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
-									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								if ($parts->removal_reason_id == null) {
+									$total_amount = $parts->amount + $tax_amount;
+									$oem_recomentaion_part_amount_include_tax += $total_amount;
 								}
-								$tax_amount += $percentage_value;
+							} else {
+								if ($parts->removal_reason_id == null) {
+									$oem_recomentaion_part_amount_include_tax += $parts->amount;
+								}
 							}
 							if ($parts->removal_reason_id == null) {
-
-								$total_amount = $parts->amount + $tax_amount;
-								$additional_rot_and_parts_part_amount_include_tax += $total_amount;
-							}
-						} else {
-							if ($parts->removal_reason_id == null) {
-
-								$additional_rot_and_parts_part_amount_include_tax += $parts->amount;
+								$oem_recomentaion_part_amount += $parts->amount;
 							}
 						}
-						if ($parts->removal_reason_id == null) {
-							$additional_rot_and_parts_part_amount += $parts->amount;
+
+						//ADDITIONAL ROT AND PARTS
+						if ($parts->is_oem_recommended == 0) {
+							if ($parts->part->taxCode) {
+								$tax_amount = 0;
+								$total_amount = 0;
+								foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+									$percentage_value = 0;
+									if ($value->type_id == $tax_type) {
+										$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+									}
+									$tax_amount += $percentage_value;
+								}
+								if ($parts->removal_reason_id == null) {
+
+									$total_amount = $parts->amount + $tax_amount;
+									$additional_rot_and_parts_part_amount_include_tax += $total_amount;
+								}
+							} else {
+								if ($parts->removal_reason_id == null) {
+
+									$additional_rot_and_parts_part_amount_include_tax += $parts->amount;
+								}
+							}
+							if ($parts->removal_reason_id == null) {
+								$additional_rot_and_parts_part_amount += $parts->amount;
+							}
 						}
 					}
 				}

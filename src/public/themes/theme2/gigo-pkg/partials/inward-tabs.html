@@ -58,12 +58,12 @@
                         Other Labour & Parts
                     </a>
                 </li>
-                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-edit') && (!job_order.part_intent_status_id || job_order.part_intent_status_id==10071)" ng-class="{active:active_tab == 'estimate-details'}">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-edit') && (job_order.status_id != 8472)" ng-class="{active:active_tab == 'estimate-details'}">
                     <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="filter">
                         Estimate
                     </a>
                 </li>
-                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimation-status-edit')  && (!job_order.part_intent_status_id || job_order.part_intent_status_id==10071)" ng-class="{active:active_tab == 'status-details'}" ng-if="job_order.enable_estimate_status">
+                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimation-status-edit')  && (job_order.status_id != 8472)" ng-class="{active:active_tab == 'status-details'}" ng-if="job_order.enable_estimate_status">
                     <a ng-if="job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1" href=".#!/inward-vehicle/customer-confirmation/{{job_order_id}}" class="filter">
                         Estimation Status
                     </a>

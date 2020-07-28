@@ -122,7 +122,7 @@
                                             Other Labour & Parts
                                         </a>
                                     </li>
-                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-view')">
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-view') && (job_order.status_id != 8472)">
                                         <a data-target="#estimate_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Estimate
                                         </a>
@@ -1487,7 +1487,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-if="job_order.status_id != 8472">Next</a>
                                                     <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
