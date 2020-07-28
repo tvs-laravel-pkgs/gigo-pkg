@@ -2803,14 +2803,14 @@ app.component('jobCardSplitOrder', {
                         split_order.total_items = 0;
                         angular.forEach($scope.labour_details, function(labour, key1) {
                             if (split_order.id == labour.split_order_type_id) {
-                                split_order.total_amount += parseInt(labour.total_amount);
+                                split_order.total_amount += parseFloat(labour.total_amount);
                                 split_order.total_items += 1;
                             }
                         });
 
                         angular.forEach($scope.part_details, function(part, key2) {
                             if (split_order.id == part.split_order_type_id) {
-                                split_order.total_amount += parseInt(part.total_amount);
+                                split_order.total_amount += parseFloat(part.total_amount);
                                 split_order.total_items += 1;
                             }
                         });
