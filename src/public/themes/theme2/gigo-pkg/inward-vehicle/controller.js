@@ -3947,6 +3947,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         $("#confirmation_modal").modal('hide');
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
+                        window.location = "#!/inward-vehicle/card-list";
                         $scope.fetchData();
                     })
                     .fail(function(xhr) {

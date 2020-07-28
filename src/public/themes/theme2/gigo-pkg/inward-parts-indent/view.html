@@ -432,10 +432,10 @@
                                                         </tr>
                                                         <tr class="ptb-9">
                                                             <td colspan="6">
-                                                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)" ng-if="!job_order.part_intent_confirmed_date && (job_order.job_card.status_id != 8224 || job_order.job_card.status_id != 8225 || job_order.job_card.status_id != 8226)">
+                                                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)" ng-if="!job_order.part_intent_confirmed_date && ( job_order.job_card.status_id != 8224 || job_order.job_card.status_id != 8225 || job_order.job_card.status_id != 8226 || job_order.job_card.status_id != 8227 )">
                                                                     Add Part
                                                                 </button>
-                                                                <a ng-if="job_order.job_card && (job_order.job_card.status_id != 8224 || job_order.job_card.status_id != 8225 || job_order.job_card.status_id != 8226) " href=".#!/inward-parts-indent/issue-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                                <a ng-if="job_order.job_card && (job_order.job_card.status_id != 8224 || job_order.job_card.status_id != 8225 || job_order.job_card.status_id != 8226 || job_order.job_card.status_id != 8227) " href=".#!/inward-parts-indent/issue-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
                                                                     Issue Part
                                                                 </a>
                                                                 <button ng-if="job_order.job_card && indent_part_logs.length > 0 && (job_order.job_card.status_id != 8224 || job_order.job_card.status_id != 8225 || job_order.job_card.status_id != 8226)" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showReturnPartForm(false)">
@@ -457,7 +457,7 @@
                                                     </tbody>
                                                 </table>
                                                 <div class="mb-20"></div><!-- Spacing -->
-                                                <div class="col-md-12" ng-if="job_order.status_id == 8472">
+                                                <div class="col-md-12" ng-if="job_order.status_id == 8472 && part_details.length > 0">
                                                     <div class="text-center pt-40">
                                                         <a class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Ready for Estimate</a>
                                                     </div>
@@ -531,7 +531,7 @@
                                                     </tbody>
                                                 </table>
                                                 <div class="mb-20"></div><!-- Spacing -->
-                                                <div class="col-md-12" ng-if="job_order.part_intent_status_id == 10072">
+                                                <div class="col-md-12" ng-if="job_order.job_card.status_id == 8227">
                                                     <div class="text-center pt-40">
                                                         <a class="btn btn-red part_request" data-toggle="modal" data-target="#billing_confirmation_modal">Ready for Billing</a>
                                                     </div>
@@ -562,13 +562,13 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
+                <h4 class="modal-title" id="myModalLabel">CONFIRMATION?</h4>
             </div>
             <div class="modal-body">
                 <p>Are you sure? do you add all parts in labour details? </p>
                 <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-rose send_confirm" ng-click="sendConfirm(2)">Yes</button>
+                <button class="btn btn-success send_confirm" ng-click="sendConfirm(2)">Yes</button>
             </div>
         </div>
     </div>
@@ -583,7 +583,7 @@
                 <p>Are you sure? do you return all parts excess qty? </p>
                 <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-rose send_confirm" ng-click="sendConfirm(4)">Yes</button>
+                <button class="btn btn-success send_confirm" ng-click="sendConfirm(4)">Yes</button>
             </div>
         </div>
     </div>
