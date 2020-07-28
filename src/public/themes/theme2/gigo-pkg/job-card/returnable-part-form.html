@@ -47,31 +47,34 @@
                     <div class="col-sm-12">
                         <div class="page-form pb-60 mt-30">
                             <div class="row">
-                            <h6 class="mcollect-receipt-invoice-title mb-0">Parts Details</h6>
-                            <div class="table-responsive">
-                            <table class="table table-type-2 mcollect-receipt-table">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>Parts Code</th>
-                                        <th>Parts Name</th>
-                                        <th>Quantity</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="(index,parts) in joborder_parts">
-                                        <td><div class="checkbox radius-five">
-                                        <input type="checkbox" id="check{{index}}" ng-click="checkCheckbox(index)" ng-checked="parts.select_id != NULL">
-                                        </div></td>
-                                        <td>{{parts.code}}</td>
-                                        <td>{{parts.name}}</td>
-                                        <td><input type="text" name="quantity[{{index}}]" value="{{parts.qty}}" id="in_{{index}}" ng-disabled="parts.qty == NULL" ><input type="hidden" name="part_id[{{index}}]" value="{{parts.id}}">
-                                        <input type="hidden" name="part_name[{{index}}]" value="{{parts.name}}"></td>
-                                    </tr>
-                                    
-                                </tbody>
-                            </table>
-                        </div><!-- Table Responsive -->
+                                <div class="col-sm-12">
+                                    <h5 class="color-primary mb-10"><b>Parts Details</b></h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-dark-grey">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Parts Code</th>
+                                                    <th>Parts Name</th>
+                                                    <th>Quantity</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="(index,parts) in joborder_parts">
+                                                    <td>
+                                                        <!-- <div class="checkbox radius-five"> -->
+                                                        <input type="checkbox" id="check{{index}}" ng-click="checkCheckbox(index)" ng-checked="parts.select_id != NULL">
+                                                        <!-- </div> -->
+                                                    </td>
+                                                    <td>{{parts.code}}</td>
+                                                    <td>{{parts.name}}</td>
+                                                    <td><input type="text" name="quantity[{{index}}]" value="{{parts.qty}}" id="in_{{index}}" ng-disabled="parts.qty == NULL"><input type="hidden" name="part_id[{{index}}]" value="{{parts.id}}">
+                                                        <input type="hidden" name="part_name[{{index}}]" value="{{parts.name}}"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div><!-- Table Responsive -->
+                                </div><!-- Column -->
                             </div><!-- Row -->
                         </div><!-- Page Form -->
                     </div><!-- Column -->
