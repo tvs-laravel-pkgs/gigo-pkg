@@ -249,9 +249,9 @@
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
                                             <hr>
-                                            <div class="col-md-12" ng-if="!job_order.part_intent_status_id">
+                                            <div class="col-md-12" ng-if="job_order.status_id != 8472 && !job_order.part_intent_confirmed_date">
                                                 <div class="text-center pt-40">
-                                                    <a class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Send for Stock Incharge</a>
+                                                    <a class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Send Request to Stock Incharge</a>
                                                 </div>
                                             </div>
                                         </div><!-- Column -->
@@ -260,7 +260,7 @@
                                                 <div class="col-md-12">
                                                     <button class="btn btn-red submit" type="submit" ng-click="savePayableForm(1)">Save & Close</button>
                                                     <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order.id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <button class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-click="savePayableForm(2)" ng-if="job_order.part_intent_status_id == 10071">Next</button>
+                                                    <button class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-click="savePayableForm(2)" ng-if="job_order.status_id != 8472">Next</button>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -282,7 +282,7 @@
                 <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>   
             </div>
             <div class="modal-body">
-                <p>Are you sure? do you want to send Stock Incharge for Add Parts Details? </p>
+                <p>Are you sure? do you want to send Stock Incharge for add Parts? </p>
                 <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
                 <button class="btn btn-rose send_confirm" ng-click="sendConfirm()">Yes</button>

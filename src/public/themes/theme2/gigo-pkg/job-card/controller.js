@@ -889,7 +889,7 @@ app.component('jobCardReturnablePartForm', {
                         return;
                     }
                     $scope.job_card = res.job_card;
-                    $scope.joborder_parts = res.joborder_parts;
+                    $scope.job_order_parts = res.job_order_parts;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {

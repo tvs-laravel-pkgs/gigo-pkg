@@ -1,3 +1,16 @@
+<style>
+    /* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>
 <!-- Content Wrap -->
 <div class="content-wrap">
     <!-- Page Header -->
@@ -54,22 +67,22 @@
                                             <thead>
                                                 <tr>
                                                     <th></th>
-                                                    <th>Parts Code</th>
-                                                    <th>Parts Name</th>
+                                                    <th>Part Code</th>
+                                                    <th>Part Name</th>
                                                     <th>Quantity</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr ng-repeat="(index,parts) in joborder_parts">
-                                                    <td>
-                                                        <!-- <div class="checkbox radius-five"> -->
-                                                        <input type="checkbox" id="check{{index}}" ng-click="checkCheckbox(index)" ng-checked="parts.select_id != NULL">
-                                                        <!-- </div> -->
+                                                <tr ng-repeat="(index,parts) in job_order_parts">
+                                                    <td class="table-checkbox">
+                                                        <input type="checkbox" id="check{{index}}" ng-click="checkCheckbox(index)" ng-checked="parts.checked" />
+                                                        <label for="check{{index}}"></label>
                                                     </td>
-                                                    <td>{{parts.code}}</td>
-                                                    <td>{{parts.name}}</td>
-                                                    <td><input type="text" name="quantity[{{index}}]" value="{{parts.qty}}" id="in_{{index}}" ng-disabled="parts.qty == NULL"><input type="hidden" name="part_id[{{index}}]" value="{{parts.id}}">
-                                                        <input type="hidden" name="part_name[{{index}}]" value="{{parts.name}}"></td>
+                                                    <td>{{parts.part.code}}</td>
+                                                    <td>{{parts.part.name}}</td>
+                                                    <td><input type="number" step="0.01" min="1" max="{{parts.qty}}" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="returned_parts[{{index}}][qty]" value="{{parts.returned_qty}}" id="in_{{index}}" ng-disabled="!parts.returned_qty" ng-checked="parts.checked">
+                                                        <input type="hidden" name="returned_parts[{{index}}][part_id]" value="{{parts.part_id}}">
+                                                        <input type="hidden" name="returned_parts[{{index}}][part_name]" value="{{parts.part.name}}"></td>
                                                 </tr>
                                             </tbody>
                                         </table>
