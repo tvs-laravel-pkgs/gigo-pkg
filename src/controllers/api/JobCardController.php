@@ -3551,16 +3551,15 @@ class JobCardController extends Controller {
 
 			$unassigned_part_amount = 0;
 			foreach ($part_details as $key => $part) {
-				//	dd($part);
 				if (!$part['split_order_type_id']) {
-					$unassigned_part_count += 1;
+					// $unassigned_part_count += 1;
 					$unassigned_part_amount += $part['total_amount'];
 				}
 			}
 			$unassigned_labour_amount = 0;
 			foreach ($labour_details as $key => $labour) {
 				if (!$labour['split_order_type_id']) {
-					$unassigned_labour_count += 1;
+					// $unassigned_labour_count += 1;
 					$unassigned_labour_amount += $labour['total_amount'];
 				}
 			}

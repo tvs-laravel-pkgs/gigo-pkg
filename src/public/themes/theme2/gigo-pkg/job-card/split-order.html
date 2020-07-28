@@ -29,9 +29,9 @@ Content Wrap -->
                                         Split Order
                                     </h5>
                                     <div class="panel-group" id="accordion">
-                                        <div class="panel panel-default type-4">
+                                        <div class="panel panel-default type-4" ng-if="unassigned_total_count > 0">
                                             <div class="panel-heading">
-                                                <a class="panel-title in unassigned_tab" data-toggle="collapse" data-parent="#accordion" data-target="#unassigned_items" ng-if="unassigned_total_count > 0">
+                                                <a class="panel-title in unassigned_tab" data-toggle="collapse" data-parent="#accordion" data-target="#unassigned_items">
                                                     Unassigned Items - {{unassigned_total_count}} Items
                                                     <span class="arrow"></span>
                                                     <span class="title-right">
