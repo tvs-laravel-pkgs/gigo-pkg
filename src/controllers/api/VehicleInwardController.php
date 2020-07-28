@@ -1855,7 +1855,7 @@ class VehicleInwardController extends Controller {
 				DB::beginTransaction();
 
 				$job_card->status_id = 8224;
-				$job_card->updated_by_id = Auth::user()->id;
+				$job_card->updated_by = Auth::user()->id;
 				$job_card->updated_at = Carbon::now();
 				$job_card->save();
 

@@ -422,23 +422,23 @@
                                                                 {{part_detail.pending_qty}}
                                                             </td>
                                                             <td ng-class="part_detail.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                                <button type="button" ng-if="!job_order.part_intent_confirmed_date" ng-click="showPartForm(part_detail)" class="btn img-btn btn-delete">
+                                                                <button type="button" ng-if="!job_order.part_intent_confirmed_date &&  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 " ng-click="showPartForm(part_detail)" class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                                 </button>
-                                                                <button type="button" ng-if="!job_order.part_intent_confirmed_date" class="btn img-btn btn-delete" ng-click="removePart(index,part_detail.job_order_part_id,'parts')">
+                                                                <button type="button" ng-if="!job_order.part_intent_confirmed_date &&  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 " class="btn img-btn btn-delete" ng-click="removePart(index,part_detail.job_order_part_id,'parts')">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
                                                             </td>
                                                         </tr>
                                                         <tr class="ptb-9">
                                                             <td colspan="6">
-                                                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)" ng-if="!job_order.part_intent_confirmed_date && ( job_order.job_card.status_id != 8224 || job_order.job_card.status_id != 8225 || job_order.job_card.status_id != 8226 || job_order.job_card.status_id != 8227 )">
+                                                                <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)" ng-if="!job_order.part_intent_confirmed_date &&  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 ">
                                                                     Add Part
                                                                 </button>
-                                                                <a ng-if="job_order.job_card && (job_order.job_card.status_id != 8224 || job_order.job_card.status_id != 8225 || job_order.job_card.status_id != 8226 || job_order.job_card.status_id != 8227) " href=".#!/inward-parts-indent/issue-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                                <a ng-if="job_order.job_card && (job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227) " href=".#!/inward-parts-indent/issue-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
                                                                     Issue Part
                                                                 </a>
-                                                                <button ng-if="job_order.job_card && indent_part_logs.length > 0 && (job_order.job_card.status_id != 8224 || job_order.job_card.status_id != 8225 || job_order.job_card.status_id != 8226)" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showReturnPartForm(false)">
+                                                                <button ng-if="job_order.job_card && indent_part_logs.length > 0 && (job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226)" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showReturnPartForm(false)">
                                                                     Return Part
                                                                 </button>
                                                             </td>
@@ -514,13 +514,13 @@
                                                                 {{log.date}}
                                                             </td>
                                                             <td>
-                                                                <a ng-if="log.transaction_type == 'Issue'" href=".#!/inward-parts-indent/issue-part/form/{{job_order.id}}/{{log.job_order_part_increment_id}}" class="btn img-btn btn-delete">
+                                                                <a ng-if="log.transaction_type == 'Issue' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227" href=".#!/inward-parts-indent/issue-part/form/{{job_order.id}}/{{log.job_order_part_increment_id}}" class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                                 </a>
-                                                                <button ng-if="log.transaction_type == 'Return'" type="button" class="btn img-btn btn-delete" ng-click="showReturnPartForm(index,log)">
+                                                                <button ng-if="log.transaction_type == 'Return' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227" type="button" class="btn img-btn btn-delete" ng-click="showReturnPartForm(index,log)">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                                 </button>
-                                                                <button type="button" class="btn img-btn btn-delete" ng-click="removeLog(index,log)">
+                                                                <button ng-if="job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227" type="button" class="btn img-btn btn-delete" ng-click="removeLog(index,log)">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
                                                             </td>
