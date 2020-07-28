@@ -22,32 +22,32 @@ Content Wrap -->
                 <jobcard-tabs ng-init="active_tab = 'split-order'"></jobcard-tabs>
                 <div class="tab-form-body">
                     <div class="tab-pane fade in active" id="split-order" data-animation="fadeInUp" data-animation-delay="300">
-                            <div class="tab-pane-wrap">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <h5 class="title-red border-bottom">
-                                            Split Order
-                                        </h5>
-                                        <div class="panel-group" id="accordion">
-                                            <div class="panel panel-default type-4">
-                                                <div class="panel-heading">
-                                                    <a class="panel-title in unassigned_tab" data-toggle="collapse" data-parent="#accordion" data-target="#unassigned_items" ng-if="unassigned_total_count > 0">
-                                                        Unassigned Items - {{unassigned_total_count}} Items
-                                                        <span class="arrow"></span>
-                                                        <span class="title-right">
-                                                            <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
-                                                             {{unassigned_total_amount}}
-                                                        </span>
-                                                    </a> 
-                                                </div>
-                                                <div id="unassigned_items" class="panel-collapse collapse in" ng-if="unassigned_total_count > 0">
-                                                    <div class="panel-body">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="table-responsive">
-                                                                    <table id="table1" class="table split-order-table table-form childgrid">
-                                                                        <thead>
-                                                                            <tr>
+                        <div class="tab-pane-wrap">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 class="title-red border-bottom">
+                                        Split Order
+                                    </h5>
+                                    <div class="panel-group" id="accordion">
+                                        <div class="panel panel-default type-4">
+                                            <div class="panel-heading">
+                                                <a class="panel-title in unassigned_tab" data-toggle="collapse" data-parent="#accordion" data-target="#unassigned_items" ng-if="unassigned_total_count > 0">
+                                                    Unassigned Items - {{unassigned_total_count}} Items
+                                                    <span class="arrow"></span>
+                                                    <span class="title-right">
+                                                        <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
+                                                        {{unassigned_total_amount}}
+                                                    </span>
+                                                </a>
+                                            </div>
+                                            <div id="unassigned_items" class="panel-collapse collapse in" ng-if="unassigned_total_count > 0">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive">
+                                                                <table id="table1" class="table split-order-table table-form childgrid">
+                                                                    <thead>
+                                                                        <tr>
                                                                             <th class="action" ng-if="job_card.status_id == 8224">Action</th>
                                                                             <th>Item Type</th>
                                                                             <th>Free Service</th>
@@ -59,8 +59,8 @@ Content Wrap -->
                                                                             <th class="text-right">Total Tax</th>
                                                                             <th class="text-right">Total Amount</th>
                                                                         </tr>
-                                                                        </thead>
-                                                                        <tbody class="connectedSortable">
+                                                                    </thead>
+                                                                    <tbody class="connectedSortable">
                                                                         <tr data-itemid="labour.id" data-split_id="split_order_type.id" ng-if="labour.split_order_type_id == null" ng-repeat="(labour_key,labour) in labour_details">
                                                                             <td class="action width-100" ng-if="job_card.status_id == 8224">
                                                                                 <a href="" ng-click="splitOrderLabourChange(labour.id,0,'',split_order_type.id)">
@@ -104,107 +104,102 @@ Content Wrap -->
                                                                             <td class="text-right">{{part.total_amount}}</td>
                                                                         </tr>
                                                                     </tbody>
-                                                                    </table>
-                                                                </div><!-- Table Responsive -->
-                                                            </div><!-- Column -->
-                                                        </div><!-- Row -->                                                    
-                                                    </div><!-- Panel Body -->
-                                                </div><!-- Panel Collapse -->
-                                            </div><!-- Panel -->
-
-                                             <div class="panel panel-default type-4" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-if="split_order_type.total_items > 0">
-                                                <div class="panel-heading">
-                                                    <a class="panel-title"  data-toggle="collapse" data-parent="#accordion" data-target="#{{split_order_type.id}}">
-                                                        {{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} {{split_order_type.total_items > 1 ? 'items' : 'item'}}
-                                                        <span class="arrow"></span>
-                                                        <span class="title-right">
-                                                            <!-- <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
-                                                             1600.00 -->
-                                                        </span>
-                                                    </a>
-                                                </div>
-                                                <div class="panel-collapse collapse split_order_panel_{{key}}" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300">
-                                                    <div class="panel-body">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="table-responsive">
-                                                                    <div id="table{{key}}" class="bitacoratable">
-                                                                <table id="table{{key}}" class="table split-order-table table-form childgrid">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8224" class="action">Action</th>
-                                                                            <th>Item Type</th>
-                                                                            <th>Free Service</th>
-                                                                            <th>Item</th>
-                                                                            <th>Qty</th>
-                                                                            <th class="text-right">Rate</th>
-                                                                            <th class="text-right">Amount</th>
-                                                                            <th class="text-right" ng-repeat="(tax_key,tax) in extras.taxes">{{tax.name}}</th>
-                                                                            <th class="text-right">Total Tax</th>
-                                                                            <th class="text-right">Total Amount</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody class="connectedSortable">
-                                                                        <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(labour_key,labour) in labour_details">
-                                                                            <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8224">
-                                                                                <a href="" ng-click="splitOrderLabourChange(labour.id,1,key,split_order_type.id)">
-                                                                                    <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
-                                                                                </a>
-                                                                            </td>
-                                                                            <td>Labour</td>
-                                                                            <td ng-if="labour.is_free_service == 1">
-                                                                                <p class="text-danger">Yes</p>
-                                                                            </td>
-                                                                            <td ng-if="labour.is_free_service == 0 || labour.is_free_service == NULL">
-                                                                                <p class="text-success">No</p>
-                                                                            </td>
-                                                                            <td>{{labour.name}}</td>
-                                                                            <td>{{labour.qty}}</td>
-                                                                            <td class="text-right">{{labour.amount}}</td>
-                                                                            <td class="text-right">{{labour.amount}}</td>
-                                                                            <td class="text-right" ng-repeat="(tax_index,tax_value) in labour.tax_values">{{tax_value.tax_value}}</td>
-                                                                            <td class="text-right">{{labour.tax_amount}}</td>
-                                                                            <td class="text-right">{{labour.total_amount}}</td>
-                                                                        </tr>
-                                                                        <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(part_key,part) in part_details">
-                                                                            <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8224">
-                                                                                <a href="" ng-click="splitOrderPartChange(part.id,1,key,split_order_type.id)">
-                                                                                    <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
-                                                                                </a>
-                                                                            </td>
-                                                                            <td>Part</td>
-                                                                            <td ng-if="part.is_free_service == 1">
-                                                                                <p class="text-danger">Yes</p>
-                                                                            </td>
-                                                                            <td ng-if="part.is_free_service == 0 || part.is_free_service == NULL">
-                                                                                <p class="text-success">No</p>
-                                                                            </td>
-                                                                            <td>{{part.name}}</td>
-                                                                            <td>{{part.qty}}</td>
-                                                                            <td class="text-right">{{part.rate}}</td>
-                                                                            <td class="text-right">{{part.amount}}</td>
-                                                                            <td class="text-right" ng-repeat="(tax_index,tax_value) in part.tax_values">{{tax_value.tax_value}}</td>
-                                                                            <td class="text-right">{{part.tax_amount}}</td>
-                                                                            <td class="text-right">{{part.total_amount}}</td>
-                                                                        </tr>
-                                                                    </tbody>
                                                                 </table>
-                                                            </div>
-                                                                </div><!-- Table Responsive -->
-                                                            </div><!-- Column -->
-                                                        </div><!-- Row -->                                                    
-                                                    </div><!-- Panel Body -->
-                                                </div><!-- Panel Collapse -->
-                                            </div><!-- Panel -->
-                                        
-                                            
-                                            
-                                        
-                                        </div><!-- Panel Group -->                                        
-                                    </div><!-- Column -->                                    
-                                </div><!-- Row -->
-                            </div><!-- Tab Pane Wrap -->
-                        </div><!-- Tabe Pane -->
+                                                            </div><!-- Table Responsive -->
+                                                        </div><!-- Column -->
+                                                    </div><!-- Row -->
+                                                </div><!-- Panel Body -->
+                                            </div><!-- Panel Collapse -->
+                                        </div><!-- Panel -->
+                                        <div class="panel panel-default type-4" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-if="split_order_type.total_items > 0">
+                                            <div class="panel-heading">
+                                                <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#{{split_order_type.id}}">
+                                                    {{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} {{split_order_type.total_items > 1 ? 'items' : 'item'}}
+                                                    <span class="arrow"></span>
+                                                    <span class="title-right">
+                                                        <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
+                                                        {{split_order_type.total_amount | number:2}}
+                                                    </span>
+                                                </a>
+                                            </div>
+                                            <div class="panel-collapse collapse split_order_panel_{{key}}" id="{{split_order_type.id}}" data-animation="fadeInUp" data-animation-delay="300">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive">
+                                                                <div id="table{{key}}" class="bitacoratable">
+                                                                    <table id="table{{key}}" class="table split-order-table table-form childgrid">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8224" class="action">Action</th>
+                                                                                <th>Item Type</th>
+                                                                                <th>Free Service</th>
+                                                                                <th>Item</th>
+                                                                                <th>Qty</th>
+                                                                                <th class="text-right">Rate</th>
+                                                                                <th class="text-right">Amount</th>
+                                                                                <th class="text-right" ng-repeat="(tax_key,tax) in extras.taxes">{{tax.name}}</th>
+                                                                                <th class="text-right">Total Tax</th>
+                                                                                <th class="text-right">Total Amount</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody class="connectedSortable">
+                                                                            <tr ng-if="labour.split_order_type_id == split_order_type.id" ng-repeat="(labour_key,labour) in labour_details">
+                                                                                <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8224">
+                                                                                    <a href="" ng-click="splitOrderLabourChange(labour.id,1,key,split_order_type.id)">
+                                                                                        <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
+                                                                                    </a>
+                                                                                </td>
+                                                                                <td>Labour</td>
+                                                                                <td ng-if="labour.is_free_service == 1">
+                                                                                    <p class="text-danger">Yes</p>
+                                                                                </td>
+                                                                                <td ng-if="labour.is_free_service == 0 || labour.is_free_service == NULL">
+                                                                                    <p class="text-success">No</p>
+                                                                                </td>
+                                                                                <td>{{labour.name}}</td>
+                                                                                <td>{{labour.qty}}</td>
+                                                                                <td class="text-right">{{labour.amount}}</td>
+                                                                                <td class="text-right">{{labour.amount}}</td>
+                                                                                <td class="text-right" ng-repeat="(tax_index,tax_value) in labour.tax_values">{{tax_value.tax_value}}</td>
+                                                                                <td class="text-right">{{labour.tax_amount}}</td>
+                                                                                <td class="text-right">{{labour.total_amount}}</td>
+                                                                            </tr>
+                                                                            <tr ng-if="part.split_order_type_id == split_order_type.id" ng-repeat="(part_key,part) in part_details">
+                                                                                <td class="action width-100" ng-if="split_order_type.paid_by_id !=10013 && job_card.status_id == 8224">
+                                                                                    <a href="" ng-click="splitOrderPartChange(part.id,1,key,split_order_type.id)">
+                                                                                        <img class="img-responsive" src="./public/theme/img/table/add-hover.svg" alt="Edit" />
+                                                                                    </a>
+                                                                                </td>
+                                                                                <td>Part</td>
+                                                                                <td ng-if="part.is_free_service == 1">
+                                                                                    <p class="text-danger">Yes</p>
+                                                                                </td>
+                                                                                <td ng-if="part.is_free_service == 0 || part.is_free_service == NULL">
+                                                                                    <p class="text-success">No</p>
+                                                                                </td>
+                                                                                <td>{{part.name}}</td>
+                                                                                <td>{{part.qty}}</td>
+                                                                                <td class="text-right">{{part.rate}}</td>
+                                                                                <td class="text-right">{{part.amount}}</td>
+                                                                                <td class="text-right" ng-repeat="(tax_index,tax_value) in part.tax_values">{{tax_value.tax_value}}</td>
+                                                                                <td class="text-right">{{part.tax_amount}}</td>
+                                                                                <td class="text-right">{{part.total_amount}}</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div><!-- Table Responsive -->
+                                                        </div><!-- Column -->
+                                                    </div><!-- Row -->
+                                                </div><!-- Panel Body -->
+                                            </div><!-- Panel Collapse -->
+                                        </div><!-- Panel -->
+                                    </div><!-- Panel Group -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Tab Pane Wrap -->
+                    </div><!-- Tabe Pane -->
                 </div>
             </div>
         </div><!-- Page Form -->
@@ -245,4 +240,4 @@ Content Wrap -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
-</div><!-- Modal Content 
+</div><!-- Modal Content -->
