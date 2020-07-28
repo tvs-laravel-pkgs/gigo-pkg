@@ -2628,8 +2628,10 @@ app.component('jobCardBillDetailView', {
                                     $('.split_order_tab_' + key).addClass('active')
                                 }
 
+                                var labour_length = 0;
                                 angular.forEach($scope.labour_details, function(labour, key1) {
                                     if (split_order.id == labour.split_order_type_id) {
+                                        labour_length += 1;
                                         labour_sub_total += parseFloat(labour.total_amount);
                                         split_order.total_items += 1;
                                     }
@@ -2638,15 +2640,20 @@ app.component('jobCardBillDetailView', {
                                         labour_sub_total += parseFloat(labour.total_amount);
                                     }
                                 });
-                                // if (labour_sub_total) {
-                                //     $(".subtotal_tfoot_labour_" + key).prop('display', 'none');
-                                // } else {
-                                //     $(".nodata_tfoot_labour_" + key).prop('display', 'block');
-                                // }
+                                if (labour_length > 0) {
+                                    $(".subtotal_tfoot_labour_" + key).show();
+                                    $(".nodata_tfoot_labour_" + key).hide();
+                                } else {
+                                    $(".subtotal_tfoot_labour_" + key).hide();
+                                    $(".nodata_tfoot_labour_" + key).show();
+                                }
+                                // console.log(labour_length);
                                 $('.labour_sub_total_' + key).html(parseFloat(labour_sub_total).toFixed(2));
 
+                                var part_length = 0;
                                 angular.forEach($scope.part_details, function(part, key2) {
                                     if (split_order.id == part.split_order_type_id) {
+                                        part_length += 1;
                                         part_sub_total += parseFloat(part.total_amount);
                                         split_order.total_items += 1;
                                     }
@@ -2655,11 +2662,14 @@ app.component('jobCardBillDetailView', {
                                         part_sub_total += parseFloat(part.total_amount);
                                     }
                                 });
-                                // if (part_sub_total == 0) {
-                                //     $(".subtotal_tfoot_part_" + key).prop('display', 'none');
-                                // } else {
-                                //     $(".nodata_tfoot_part_" + key).prop('display', 'block');
-                                // }
+                                if (part_length > 0) {
+                                    $(".subtotal_tfoot_part_" + key).show();
+                                    $(".nodata_tfoot_part_" + key).hide();
+                                } else {
+                                    $(".subtotal_tfoot_part_" + key).hide();
+                                    $(".nodata_tfoot_part_" + key).show();
+                                }
+                                // console.log(part_length);
                                 $('.part_sub_total_' + key).html(parseFloat(part_sub_total).toFixed(2));
 
                                 grand_total = labour_sub_total + part_sub_total;
