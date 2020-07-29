@@ -4116,16 +4116,6 @@ class VehicleInwardController extends Controller {
 			//CHECK ALL INWARD MANDATORY FORM ARE FILLED
 			$job_order = jobOrder::find($request->job_order_id);
 
-			if ($job_order->is_road_test_required == 1 && !$job_order->road_test_report) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Kindly Update Road Test Observations',
-					],
-				]);
-			}
-
 			$inward_process_check = $job_order->inwardProcessChecks()
 				->where('tab_id', '!=', 8706)
 				->where('is_form_filled', 0)
@@ -4136,6 +4126,16 @@ class VehicleInwardController extends Controller {
 					'message' => 'Validation Error',
 					'errors' => [
 						'Please Save ' . $inward_process_check->name,
+					],
+				]);
+			}
+
+			if ($job_order->is_road_test_required == 1 && !$job_order->road_test_report) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Please Update Road Test Observations',
 					],
 				]);
 			}

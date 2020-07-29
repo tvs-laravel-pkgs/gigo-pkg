@@ -774,11 +774,11 @@ app.component('jobCardReturnableItemForm', {
         }
         $scope.fetchData();
 
-        $scope.getDescription = function(id){
-            if(id){
-                angular.forEach($scope.job_card.job_order.job_order_parts,function(value, key){
-                    console.log(value,key);
-                    if(value.part.id == id){
+        $scope.getDescription = function(id) {
+            if (id) {
+                angular.forEach($scope.job_card.job_order.job_order_parts, function(value, key) {
+                    console.log(value, key);
+                    if (value.part.id == id) {
                         $scope.returnable_item.item_description = value.part.name;
                         $scope.returnable_item.item_name = value.part.code;
                         $scope.returnable_item.qty = value.qty;
@@ -1709,7 +1709,7 @@ app.component('jobCardScheduleMaintenanceForm', {
 //Payable Labour 
 app.component('jobCardPayableLabourPartsForm', {
     templateUrl: job_card_parts_labour_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element,$q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc,) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, ) {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -1917,7 +1917,7 @@ app.component('jobCardPayableLabourPartsForm', {
             $scope.total_amount = parseFloat($scope.parts_rate) + parseFloat($scope.labour_amount);
             $scope.total_amount = $scope.total_amount.toFixed(2);
         }
-        
+
         $scope.showLabourForm = function(labour_index, labour = null) {
             $scope.schedule_maintainance_ro = [];
             $scope.repair_order_id = '';
@@ -3183,21 +3183,17 @@ app.component('jobCardSplitOrder', {
                         split_order.total_items = 0;
                         angular.forEach($scope.labour_details, function(labour, key1) {
                             if (split_order.id == labour.split_order_type_id) {
-                                if (labour.is_free_service != 1) {
+                                if (labour.is_free_service != 1 && split_order.paid_by_id == 10013) {
                                     split_order.total_amount += parseFloat(labour.total_amount);
-                                } else {
-                                    labour.total_amount = 0;
-                                }
+                                } 
                                 split_order.total_items += 1;
                             }
                         });
 
                         angular.forEach($scope.part_details, function(part, key2) {
                             if (split_order.id == part.split_order_type_id) {
-                                if (part.is_free_service != 1) {
+                                if (part.is_free_service != 1 && split_order.paid_by_id == 10013) {
                                     split_order.total_amount += parseFloat(part.total_amount);
-                                } else {
-                                    part.total_amount = 0;
                                 }
                                 split_order.total_items += 1;
                             }

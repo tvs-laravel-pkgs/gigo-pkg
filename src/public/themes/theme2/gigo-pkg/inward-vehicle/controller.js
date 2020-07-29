@@ -871,7 +871,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                 },
                 errorPlacement: function(error, element) {
                     if (element.hasClass("warranty_expiry_attachment")) {
-                        custom_noty('error', 'Warranty Photo is Required')
+                        custom_noty('error', 'AMC Photo is Required')
                     } else if (element.hasClass("ewp_expiry_attachment")) {
                         custom_noty('error', 'Extended Warranty Photo is Required')
                     } else if (element.hasClass("membership_attachment")) {
