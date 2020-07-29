@@ -835,7 +835,7 @@ app.component('jobCardReturnableItemForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/job-card/returnable-item/' + $scope.job_card.id);
+                            $location.path('/job-card/returnable-item/' + $scope.job_card.id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
