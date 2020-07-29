@@ -1824,6 +1824,8 @@ class VehicleInwardController extends Controller {
 					$repair_order_part_array[$key]['part_id'] = $request->part_id;
 				}
 				$repair_order_part_obj = Part::find($request->part_id);
+				$repair_order_part_obj->repair_order_parts()->detach();
+
 				$repair_order_part_obj->repair_order_parts()->sync($repair_order_part_array);
 			}
 
