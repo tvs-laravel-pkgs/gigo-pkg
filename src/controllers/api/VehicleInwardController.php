@@ -1152,6 +1152,7 @@ class VehicleInwardController extends Controller {
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
+				'tradePlate',
 				'status',
 				'gateLog',
 			])
