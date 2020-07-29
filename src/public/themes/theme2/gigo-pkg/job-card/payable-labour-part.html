@@ -1,4 +1,15 @@
 <!-- Content Wrap -->
+<style type="text/css">
+.strikethrough {
+    text-decoration: line-through;
+}
+
+.my-disable {
+    pointer-events: none;
+    opacity: 0.5;
+    /*cursor: not-allowed;*/
+}
+</style>
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -13,8 +24,8 @@
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>Payable Labour & Parts</b></h1>
-                    <p class="subtitle">Job Card / Payable Labour & Parts</p>
+                    <h1 class="title"><b>Other Labour & Parts</b></h1>
+                    <p class="subtitle">Job Card / Other Labour & Parts</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -32,14 +43,17 @@
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 class="color-primary mb-10"><b>Payable Labour & Parts</b></h5>
+                                        <h5 class="color-primary mb-10"><b>Other Labour & Parts</b></h5>
                                         <hr class="hr-15"><!-- Separater -->
                                         <div class="table-responsive">
                                             <table class="table table-dark-grey">
                                                 <thead>
                                                     <tr>
                                                         <th>
-                                                            Labour Details
+                                                            Labour Code
+                                                        </th>
+                                                        <th>
+                                                            Name
                                                         </th>
                                                         <th>
                                                             Type
@@ -48,50 +62,49 @@
                                                             Split Order Type
                                                         </th>
                                                         <th class="text-right">
-                                                            Quantity
+                                                            Hours
                                                         </th>
                                                         <th class="wid-180 white-space text-right">
                                                             Labour Value
                                                         </th>
                                                         <th class="wid-100"></th>
+                                                        <!-- <th class="wid-100"></th> -->
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index,job_order_labour) in job_order.job_order_repair_orders">
+                                                    <tr class="ptb-12" ng-repeat="(index, labour_details) in labour_details" id="tr_{{index}}" ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_details.removal_reason_id != '10021'">
+                                                        <td>{{labour_details.code ? labour_details.code : ''}}
+                                                        </td>
+                                                        <td>{{labour_details.name ? labour_details.name : ''}}</td>
                                                         <td>
-                                                            {{job_order_labour.repair_order.code ? job_order_labour.repair_order.code : ''}} | {{job_order_labour.repair_order.name ? job_order_labour.repair_order.name : ''}}
+                                                            {{labour_details.type}}
                                                         </td>
                                                         <td>
-                                                            {{job_order_labour.repair_order.repair_order_type ? (job_order_labour.repair_order.repair_order_type.name ? job_order_labour.repair_order.repair_order_type.name: '') : ''}}
-                                                        </td>
-                                                        <td>
-                                                            {{job_order_labour.split_order_type.code}}
-                                                            {{job_order_labour.split_order_type ? '|' : ''}}
-                                                            {{job_order_labour.split_order_type.name}}
+                                                            {{labour_details.split_order_type}}
                                                         </td>
                                                         <td class="text-right">
-                                                            {{job_order_labour.qty}}
+                                                            {{labour_details.qty}}
                                                         </td>
                                                         <td class="wid-180 white-space text-right">
-                                                            {{job_order_labour.amount | number:2 }}
-                                                            <input type="hidden" class="job_order_labours" name="labouramount[{{index}}][amount]" value="{{job_order_labour.amount}}">
+                                                            {{labour_details.amount | number:2}}
                                                         </td>
-                                                        <td class="wid-100">
-                                                            <a href="#!/job-card/payable/labour/form/edit/{{job_order.id}}/{{job_order_labour.id}}" ng-if="job_order_labour.status_id == 8180 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)" class="btn img-btn btn-delete">
+                                                        <td class="wid-100" ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
+                                                            <button type="button" ng-click="showLabourForm(index,labour_details)" class="btn img-btn btn-delete">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
-                                                            </a>
-                                                            <button class="btn img-btn btn-delete" ng-if="job_order_labour.status_id == 8180 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)" data-toggle="modal" data-target="#delete_payable_details" ng-click="removePayable(job_order_labour.id,1)">
-                                                                <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                            </button>
+                                                            <button class="btn img-btn btn-delete">
+                                                                <img class="img-responsive radius-50" ng-click="removePayableLabour(index,labour_details.id,'labour')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                         </td>
                                                     </tr>
                                                     <tr class="ptb-9">
                                                         <td>
-                                                            <a ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" href=".#!/job-card/payable/labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                            <!-- <a ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" href=".#!/job-card/payable/labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square"> -->
+                                                            <button ng-if="job_order.is_customer_approved != '1'" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
                                                                 Add Labour
-                                                            </a>
+                                                            </button>
                                                         </td>
-                                                        <td colspan="3" class="text-right">
+                                                        <td colspan="4" class="text-right">
                                                             <b>
                                                                 Total Labour
                                                             </b>
@@ -114,7 +127,10 @@
                                                 <thead>
                                                     <tr>
                                                         <th>
-                                                            Parts Details
+                                                            Part Code
+                                                        </th>
+                                                        <th>
+                                                            Name
                                                         </th>
                                                         <th>
                                                             Type
@@ -132,37 +148,41 @@
                                                             Amount
                                                         </th>
                                                         <th class="wid-100"></th>
+                                                        <!-- <th class="wid-100"></th> -->
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index,job_order_part) in job_order.job_order_parts">
+                                                    <tr class="ptb-12" ng-repeat="(index, part_details) in part_details" id="tp_{{index}}" ng-class="part_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_details.removal_reason_id != '10021'">
                                                         <td>
-                                                            {{job_order_part.part.code ? job_order_part.part.code : ''}} | {{job_order_part.part.name ? job_order_part.part.name : ''}}
+                                                            {{part_details.code}}
                                                         </td>
                                                         <td>
-                                                            {{job_order_part.split_order_type.name ? job_order_part.split_order_type.name : ''}}
+                                                            {{part_details.name}}
                                                         </td>
                                                         <td>
-                                                            {{job_order_part.split_order_type.code}}
-                                                            {{job_order_part.split_order_type ? '|' : ''}}
-                                                            {{job_order_part.split_order_type.name}}
+                                                            {{part_details.type}}
+                                                        </td>
+                                                        <td>
+                                                            {{part_details.split_order_type}}
                                                         </td>
                                                         <td class="text-right">
-                                                            {{job_order_part.rate | number:2}}
+                                                            {{part_details.rate | number:2}}
                                                         </td>
                                                         <td class="text-right">
-                                                            {{job_order_part.qty}}
+                                                            {{part_details.qty}}
                                                         </td>
-                                                        <td class="wid-180 white-space text-right">
-                                                            {{job_order_part.amount | number:2}}
-                                                            <input type="hidden" class="job_order_parts" name="part_amount[{{index}}][amount]" value="{{job_order_part.amount}}">
+                                                        <td class="wid-180 white-space text-right" ng-if="part_details.is_free_service == 1">
+                                                            <p class="text-danger">0.00</p>
                                                         </td>
-                                                        <td class="wid-100">
-                                                            <a href="#!/job-card/payable/part/form/edit/{{job_order.id}}/{{job_order_part.id}}" ng-if="job_order_part.status_id == 8200 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)" class="btn img-btn btn-delete">
+                                                        <td class="wid-180 white-space text-right" ng-if="part_details.is_free_service != 1">
+                                                            {{part_details.amount | number:2}}
+                                                        </td>
+                                                        <td class="wid-100" ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
+                                                            <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
-                                                            </a>
-                                                            <button class="btn img-btn btn-delete" ng-if="job_order_part.status_id == 8200 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)" data-toggle="modal" data-target="#delete_payable_details" ng-click="removePayable(job_order_part.id,2)">
-                                                                <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                            </button>
+                                                            <button class="btn img-btn btn-delete">
+                                                                <img class="img-responsive radius-50" ng-click="removePayablePart(index,part_details.id,'parts')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -172,7 +192,7 @@
                                                                 Add Parts
                                                             </a>
                                                         </td>
-                                                        <td colspan="4" class="text-right">
+                                                        <td colspan="5" class="text-right">
                                                             <b>
                                                                 Total Parts
                                                             </b>
@@ -203,7 +223,7 @@
                                                             <td class="wid-180 text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{total_amount}}
+                                                                    {{total_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                             <td class="wid-100">
@@ -243,7 +263,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>   
+                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
             </div>
             <div class="modal-body">
                 <p>Are you sure? do you want to send for customer Approval? </p>
@@ -254,25 +274,257 @@
         </div>
     </div>
 </div>
-
 <!-- Modal -->
-<div class="modal fade alert-modal failure" id="delete_payable_details" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <form id="payable_form">
+<div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm finance-view-modal" role="document">
+        <form id="labour_parts_remove">
+            <input type="hidden" name="labour_parts_id" id="labour_parts_id" value="">
+            <input type="hidden" name="payable_type" id="payable_type" value="">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h4 class="modal-title">Delete Request</h4>
                 </div>
                 <div class="modal-body">
-                    <h5>Delete</h5>
-                    <p>You can’t retrive the data again, Are you sure you want to delete? </p>
-                    <input type="hidden" name="payable_type" class="payable_type" value="">
-                    <input type="hidden" name="payable_id" class="payable_id" value="">
-                    <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                    <button type="submit" class="btn btn-rose delete_confirm" ng-click="deleteConfirm()">Yes</button>
-                </div>
-            </div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>
+                                                Delete Reason
+                                                <sup class="mandatory">*</sup></label>
+                                            <div class="common-radio-button type-4">
+                                                <input type="radio" id="worngly_entered" name="removal_reason_id" ng-model="delete_reason" ng-value="10021" value="10021" ng-checked="delete_reason">
+                                                <label for="worngly_entered">
+                                                    Wrongly Entered
+                                                </label>
+                                                <input type="radio" ng-model="delete_reason" id="customer_delete" name="removal_reason_id" ng-value="10022" value="10022">
+                                                <label for="customer_delete">
+                                                    Customer Delete
+                                                </label>
+                                            </div>
+                                            <div id="errorDeleteReasonRequired"></div>
+                                        </div><!-- Feild -->
+                                    </div><!-- Column -->
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-12" ng-if="delete_reason == '10022'">
+                                <div class="form-group">
+                                    <label>Remarks <sup class="mandatory">*</sup></label>
+                                    <textarea class="form-control" rows="5" id="removal_reason" name="removal_reason"></textarea>
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Container -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">
+                        Cancel
+                    </button>
+                    <button class="btn btn-red submit" ng-click="saveLabourPartDeleteForm()">Submit</button>
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
         </form>
-    </div>
-</div>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<div class="modal fade filter" id="labour_form_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="labour_form">
+            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <input type="hidden" name="job_order_repair_order_id" value="{{repair_order_id}}">
+            <input type="hidden" name="type" value="payable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h5 class="modal-title" id="myModalLabel">
+                        {{modal_action}} Labour
+                    </h5>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        ROT Code
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <md-autocomplete md-selected-item="schedule_maintainance_ro.repair_order" md-search-text="repairOrderSearchKey" md-items="repair_order in searchRepairOrders(repairOrderSearchKey)" md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. ABS100" md-selected-item-change="repairOrderSelected(schedule_maintainance_ro.repair_order)" md-input-id="repairOrderAutoCompleteId">
+                                        <md-item-template>
+                                            <span>
+                                                {{repair_order.code}}
+                                            </span>
+                                        </md-item-template>
+                                        <md-not-found>
+                                            No records matching "{{repairOrderSearchKey}}" were found.
+                                        </md-not-found>
+                                    </md-autocomplete>
+                                    <input type="hidden" class="required" name="rot_id" value="{{schedule_maintainance_ro.repair_order.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Split Order Type
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <md-select ng-model="schedule_maintainance_ro.split_order_type" placeholder="Select Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                                {{split_order_type.name}} / {{split_order_type.code}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" class="required" name="split_order_type_id" value="{{schedule_maintainance_ro.split_order_type.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                        <div class="view-details mb-no" ng-if="schedule_maintainance_ro.repair_order">
+                            <ul class="view-row mb-no pad-tb-none">
+                                <li class="view-col-4">
+                                    <span class="view-col-label">ROT Description</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.name}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Category</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.category.name}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Skill Level</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.skill_level.short_name}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Hours</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.hours}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Amount</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.amount | currency}}</span>
+                                </li>
+                            </ul>
+                        </div><!-- View Data -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" ng-click="saveLabour()" class="btn btn-bordered save_labour">Submit</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<div class="modal fade filter" id="part_form_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="part_form">
+            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <input type="hidden" name="job_order_part_id" value="{{job_order_part_id}}">
+            <input type="hidden" name="type" value="payable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h5 class="modal-title" id="myModalLabel">
+                        {{modal_action}} Part
+                    </h5>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Part Code
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <md-autocomplete md-selected-item="schedule_maintainance_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
+                                        <md-item-template>
+                                            <span>
+                                                {{part.code}}
+                                            </span>
+                                        </md-item-template>
+                                        <md-not-found>
+                                            No records matching "{{partSearchKey}}" were found.
+                                        </md-not-found>
+                                    </md-autocomplete>
+                                    <input type="hidden" name="part_id" value="{{schedule_maintainance_part.part.id}}">
+                                    <input type="hidden" name="mrp" value="{{schedule_maintainance_part.part.mrp}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Split Order Type
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <md-select ng-model="schedule_maintainance_part.split_order_type" placeholder="Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                                {{split_order_type.name}} / {{split_order_type.code}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="split_order_type_id" value="{{schedule_maintainance_part.split_order_type.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quantity <sup class="mandatory">*</sup></label>
+                                    <input type="text" name="qty" ng-model="schedule_maintainance_part.part.qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" ng-keyup="calculatePartAmount()" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                                </div><!-- Feild -->
+                            </div>
+                        </div><!-- Row -->
+                        <div class="view-details mb-no" ng-if="schedule_maintainance_part.part">
+                            <ul class="view-row mb-no pad-tb-none">
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Part Description</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_part.part.name}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">MRP</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_part.part.mrp | currency}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">UOM</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_part.part.uom.code}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Amount</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_part.part.total_amount | currency}}</span>
+                                </li>
+                            </ul>
+                        </div><!-- View Data -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" ng-click="savePart()" class="btn btn-bordered save_part">Submit</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
 <!-- Modal -->
+<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
