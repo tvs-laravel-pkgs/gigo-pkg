@@ -22,7 +22,7 @@
                     <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
                         <ul class="nav nav-pills editDetails-tabs">
                             <li class="active"><a class="btn-pills" data-target="#basic-information" role="tab" data-toggle="tab" aria-expanded="true">Vehicle Information</a></li>
-                            <li><a data-target="#invenory" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">Inventory</a></li>
+                            <li><a data-target="#inventory" role="tab" data-toggle="tab" aria-expanded="true" class="btn-pills">Inventory</a></li>
                         </ul>
                     </div><!-- Filters -->
                 </div><!-- Tab Page Wrap Header -->
@@ -40,10 +40,8 @@
                                                         <div class="col-md-12">
                                                             <div class="form-page">
                                                                 <div class="row">
-                                                                    <div class="col-md-7">
-                                                                        <h6 class="mb-20"><b>
-                                                                                Photos
-                                                                            </b></h6>
+                                                                    <div class="col-md-8 col-lg-6">
+                                                                        <h6 class="mb-20"><b>Photos</b></h6>
                                                                         <div class="input-text">
                                                                             <ul class="gatein-img-list">
                                                                                 <li class="gatein-img-list-item vehicle-img">
@@ -61,10 +59,8 @@
                                                                             </ul>
                                                                         </div><!-- Field -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-5">
-                                                                        <h6 class="mb-20"><b>
-                                                                            </b></h6>
-                                                                        <div class="input-text">
+                                                                    <div class="col-md-4 col-lg-6">
+                                                                        <div class="search-type-padd-top">
                                                                             <div class="form-group">
                                                                                 <label>Search Type <sup class="mandatory">*</sup></label>
                                                                                 <div class="common-radio-button type-4">
@@ -74,8 +70,8 @@
                                                                                     <label for="search_type_new">New</label>
                                                                                 </div>
                                                                             </div><!-- Feild -->
-                                                                        </div><!-- Field -->
-                                                                    </div><!-- Column -->
+                                                                        </div>
+                                                                    </div>
                                                                 </div><!-- Row -->
                                                                 <div class="row">
                                                                     <div class="col-md-4 col-lg-3" ng-show="$ctrl.search_type == 1">
@@ -245,60 +241,63 @@
                                                         </div><!-- Column -->
                                                     </div><!-- Row -->
                                                 </div><!-- Tabe Pane -->
-                                                <div class="tab-pane fade" id="invenory" data-animation="fadeInUp" data-animation-delay="300">
+                                                <div class="tab-pane fade" id="inventory" data-animation="fadeInUp" data-animation-delay="300">
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            <div class="col-md-12">
-                                                                <h5 class="color-primary mb-10"><b>Inventory Details</b></h5>
-                                                                <hr class="hr-15"><!-- Separater -->
-                                                                <div class="checklist-form-wrap">
-                                                                    <ul class="checklist-form-ul">
-                                                                        <li ng-repeat="(index,inventory) in extras.inventory_type_list" ng-if="inventory.field_type_id==11">
-                                                                            <div class="checklist-form-item-wrap">
-                                                                                <div class="checklist-form-item">
-                                                                                    <input type="checkbox" id="checkbox_{{inventory.id}}" ng-model="chkselct[inventory.id]" name="vehicle_inventory_items[{{index}}][inventory_item_id]" value="{{inventory.id}}" ng-checked="inventory.checked" ng-click="showDiv(inventory.id)" class="inventory_items" />
-                                                                                    <label for="checkbox_{{inventory.id}}">{{inventory.name}}</label>
-                                                                                    <input ng-show="inventory.checked" id="remarks_div_{{inventory.id}}" type="text" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" class="checklist-form-item-control remarks" placeholder="Enter Remarks if any" autocomplete="off" />
-                                                                                    <input type="hidden" id="is_available_{{inventory.id}}" name="vehicle_inventory_items[{{index}}][is_available]" value="{{inventory.is_available == 1 ? '1' : '0' }}" />
+                                                            <div class="form-page">
+                                                                <div class="row">
+                                                                    <h5 class="color-primary mb-10"><b>Inventory Details</b></h5>
+                                                                    <hr class="hr-15"><!-- Separater -->
+                                                                    <div class="checklist-form-wrap">
+                                                                        <ul class="checklist-form-ul">
+                                                                            <li ng-repeat="(index,inventory) in extras.inventory_type_list" ng-if="inventory.field_type_id==11">
+                                                                                <div class="checklist-form-item-wrap">
+                                                                                    <div class="checklist-form-item">
+                                                                                        <input type="checkbox" id="checkbox_{{inventory.id}}" ng-model="chkselct[inventory.id]" name="vehicle_inventory_items[{{index}}][inventory_item_id]" value="{{inventory.id}}" ng-checked="inventory.checked" ng-click="showDiv(inventory.id)" class="inventory_items" />
+                                                                                        <label for="checkbox_{{inventory.id}}">{{inventory.name}}</label>
+                                                                                        <input ng-show="inventory.checked" id="remarks_div_{{inventory.id}}" type="text" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" class="checklist-form-item-control remarks" placeholder="Enter Remarks if any" autocomplete="off" />
+                                                                                        <input type="hidden" id="is_available_{{inventory.id}}" name="vehicle_inventory_items[{{index}}][is_available]" value="{{inventory.is_available == 1 ? '1' : '0' }}" />
+                                                                                    </div>
                                                                                 </div>
-                                                                            </div>
-                                                                        </li>
-                                                                    </ul>
+                                                                            </li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="mb-30"></div><!-- Space -->
+                                                                    <div class="row" ng-repeat="(index,inventory) in extras.inventory_type_list" ng-if="inventory.field_type_id==12">
+                                                                        <div class="col-md-6">
+                                                                            <div class="form-group">
+                                                                                <label>{{inventory.name}}</label>
+                                                                                <div class="slider-container">
+                                                                                    <input type="hidden" name="vehicle_inventory_items[{{index}}][inventory_item_id]" value="{{inventory.id}}" />
+                                                                                    <input type="hidden" name="vehicle_inventory_items[{{index}}][is_available]" value="1" />
+                                                                                    <input type="range" min="0" max="100" id="slide_val_{{index}}" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').value = this.value" />
+                                                                                    <!-- <input type="range" min="0" max="100" id="slide_val" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').innerHTML = this.value" /> -->
+                                                                                    <!-- <label id="range_val">{{inventory.remarks}}</label> -->
+                                                                                    <input type="hidden" id="range_val">
+                                                                                    <div class="slider-lower-fill"></div>
+                                                                                    <div class="slider-upper-fill"></div>
+                                                                                    <div class="grid">
+                                                                                        <span class="first grid-item">E</span>
+                                                                                        <span class="middle grid-item"></span>
+                                                                                        <span class="middle grid-item">1/2</span>
+                                                                                        <span class="middle grid-item"></span>
+                                                                                        <span class="last grid-item">F</span>
+                                                                                    </div>
+                                                                                </div><!-- Slider -->
+                                                                            </div><!-- Feild -->
+                                                                        </div><!-- Column -->
+                                                                    </div><!-- Row -->
+                                                                    <div class="mb-30"></div><!-- Space -->
                                                                 </div>
-                                                                <div class="mb-30"></div><!-- Space -->
-                                                                <div class="row" ng-repeat="(index,inventory) in extras.inventory_type_list" ng-if="inventory.field_type_id==12">
-                                                                    <div class="col-md-6">
-                                                                        <div class="form-group">
-                                                                            <label>{{inventory.name}}</label>
-                                                                            <div class="slider-container">
-                                                                                <input type="hidden" name="vehicle_inventory_items[{{index}}][inventory_item_id]" value="{{inventory.id}}" />
-                                                                                <input type="hidden" name="vehicle_inventory_items[{{index}}][is_available]" value="1" />
-                                                                                <input type="range" min="0" max="100" id="slide_val_{{index}}" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').value = this.value" />
-                                                                                <!-- <input type="range" min="0" max="100" id="slide_val" class="slider" name="vehicle_inventory_items[{{index}}][remarks]" value="{{inventory.remarks}}" oninput="document.getElementById('range_val').innerHTML = this.value" /> -->
-                                                                                <!-- <label id="range_val">{{inventory.remarks}}</label> -->
-                                                                                <input type="hidden" id="range_val">
-                                                                                <div class="slider-lower-fill"></div>
-                                                                                <div class="slider-upper-fill"></div>
-                                                                                <div class="grid">
-                                                                                    <span class="first grid-item">E</span>
-                                                                                    <span class="middle grid-item"></span>
-                                                                                    <span class="middle grid-item">1/2</span>
-                                                                                    <span class="middle grid-item"></span>
-                                                                                    <span class="last grid-item">F</span>
-                                                                                </div>
-                                                                            </div><!-- Slider -->
-                                                                        </div><!-- Feild -->
-                                                                    </div><!-- Column -->
-                                                                </div><!-- Row -->
-                                                                <div class="mb-30"></div><!-- Space -->
-                                                            </div><!-- Column -->
+                                                            </div><!-- Form Page -->
                                                             <div class="tab-pane-footer">
                                                                 <div class="row">
                                                                     <div class="col-md-12">
                                                                         <button type="button" class="btn btn-primary btn-prev">Previous</button>
-                                                                        <button type="submit" id="submit" class="btn btn-bordered save">Submit</button>
-                                                                    </div><!-- Column -->
-                                                                </div><!-- Row -->
+                                                                        <button type="submit" id="submit" class="btn btn-primary save">Submit
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
                                                             </div><!-- Tab Footer -->
                                                         </div><!-- Column -->
                                                     </div><!-- Row -->
@@ -316,7 +315,6 @@
     </div><!-- Row -->
 </div><!-- Content Wrap -->
 <script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
-<!-- Submit Alert Modal -->
 <div class="modal modal-success alert-modal fade" id="confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
