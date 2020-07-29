@@ -306,7 +306,8 @@ app.component('inwardPartsIndentView', {
             console.log(val);
             if (val) {
                 list = [];
-                angular.forEach($scope.parts_indent.repair_order, function(value, key) {
+                angular.forEach($scope.parts_indent.part.repair_order_parts, function(value, key) {
+                // angular.forEach($scope.parts_indent.repair_order, function(value, key) {
                     list.push(value.id);
                 });
             } else {

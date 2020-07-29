@@ -632,38 +632,41 @@ class VehicleInwardController extends Controller {
 			$part_details = array();
 			if ($job_order->jobOrderParts) {
 				foreach ($job_order->jobOrderParts as $key => $value) {
-					$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
+					if ($value->removal_reason_id != 10021) {
 
-					$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
+						$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
 
-					$part_details[$key]['id'] = $value->part_id;
-					$part_details[$key]['job_order_part_id'] = $value->id;
-					$part_details[$key]['code'] = $value->part->code;
-					$part_details[$key]['name'] = $value->part->name;
-					$part_details[$key]['part_detail'] = $value->part->code . ' | ' . $value->part->name;
-					$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
-					$part_details[$key]['rate'] = $value->rate;
-					$part_details[$key]['qty'] = $value->qty;
-					$part_details[$key]['amount'] = $value->amount;
-					$part_details[$key]['is_free_service'] = $value->is_free_service;
-					if ($value->splitOrderType) {
-						$part_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
-					} else {
-						$part_details[$key]['split_order_type'] = '';
+						$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
 
+						$part_details[$key]['id'] = $value->part_id;
+						$part_details[$key]['job_order_part_id'] = $value->id;
+						$part_details[$key]['code'] = $value->part->code;
+						$part_details[$key]['name'] = $value->part->name;
+						$part_details[$key]['part_detail'] = $value->part->code . ' | ' . $value->part->name;
+						$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
+						$part_details[$key]['rate'] = $value->rate;
+						$part_details[$key]['qty'] = $value->qty;
+						$part_details[$key]['amount'] = $value->amount;
+						$part_details[$key]['is_free_service'] = $value->is_free_service;
+						if ($value->splitOrderType) {
+							$part_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
+						} else {
+							$part_details[$key]['split_order_type'] = '';
+
+						}
+						$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
+
+						$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
+						$part_details[$key]['issued_qty'] = $issued_qty->issued_qty;
+						$part_details[$key]['returned_qty'] = $returned_qty->returned_qty;
+						$part_details[$key]['pending_qty'] = $value->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
+						$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
+
+						// if (in_array($value->split_order_type_id, $customer_paid_type)) {
+						// if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
+						// 	$part_amount += $value->amount;
+						// }
 					}
-					$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
-
-					$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
-					$part_details[$key]['issued_qty'] = $issued_qty->issued_qty;
-					$part_details[$key]['returned_qty'] = $returned_qty->returned_qty;
-					$part_details[$key]['pending_qty'] = $value->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
-					$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
-
-					// if (in_array($value->split_order_type_id, $customer_paid_type)) {
-					// if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
-					// 	$part_amount += $value->amount;
-					// }
 				}
 			}
 

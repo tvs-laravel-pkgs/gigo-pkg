@@ -700,7 +700,7 @@
                                     <label>
                                         Repair Orders
                                     </label>
-                                    <md-select multiple ng-model="parts_indent.part.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.repair_order)" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select multiple ng-model="parts_indent.part.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.part.repair_order_parts)" ng-model-options="{trackBy: '$value.id' }">
                                         <md-select-header class="demo-select-header">
                                             <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                         </md-select-header>
@@ -710,7 +710,7 @@
                                             </md-option>
                                         </md-optgroup>
                                     </md-select>
-                                    <input type="hidden" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
+                                    <input type="hidden" class="hidden_repair_order_ids" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
                             <div class="col-md-4">
@@ -797,7 +797,8 @@
                                 <label>
                                     Repair Orders
                                 </label>
-                                <md-select multiple ng-model="parts_indent.part.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.repair_order)" ng-model-options="{trackBy: '$value.id' }">
+                                <md-select multiple ng-model="parts_indent.part.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.part.repair_order_parts)" ng-model-options="{trackBy: '$value.id' }">
+                                    <!-- parts_indent.repair_order -->
                                     <md-select-header class="demo-select-header">
                                         <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                     </md-select-header>
