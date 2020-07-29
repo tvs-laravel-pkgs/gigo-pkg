@@ -763,6 +763,7 @@ app.component('jobCardReturnableItemForm', {
                         return;
                     }
                     $scope.job_card = res.job_card;
+                    console.log($scope.job_card);
                     $scope.returnable_item = res.returnable_item;
                     console.log($scope.returnable_item);
                     $scope.$apply();
@@ -772,6 +773,19 @@ app.component('jobCardReturnableItemForm', {
                 });
         }
         $scope.fetchData();
+
+        $scope.getDescription = function(id){
+            if(id){
+                angular.forEach($scope.job_card.job_order.job_order_parts,function(value, key){
+                    console.log(value,key);
+                    if(value.part.id == id){
+                        $scope.returnable_item.item_description = value.part.name;
+                        $scope.returnable_item.item_name = value.part.code;
+                        $scope.returnable_item.qty = value.qty;
+                    }
+                });
+            }
+        }
 
         self.attachment_removal_id = [];
         $scope.remove_attachment = function(attachment_id, index) {

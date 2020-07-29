@@ -2647,10 +2647,13 @@ class JobCardController extends Controller {
 	}
 
 	public function getReturnableItemFormdata(Request $request) {
+		// dd($request->all());
 		$job_card = JobCard::with([
 			'jobOrder',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
+			'jobOrder.jobOrderParts',
+			'jobOrder.jobOrderParts.part',
 			'status',
 		])
 			->find($request->id);
@@ -2735,6 +2738,23 @@ class JobCardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
+
+			//START FOR CHECK QUANTITY VALIDATION
+			$job_card = JobCard::find($request->job_card_id);
+
+			$job_order_part = JobOrderPart::where([
+				'job_order_id' => $job_card->job_order_id,
+				'part_id' => $request->job_card_returnable_items[0]['id'],
+			])->first();
+
+			if ($request->job_card_returnable_items[0]['qty'] > $job_order_part->qty) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'message' => 'Quantity Not More then ' . $job_order_part->qty . '.For this item!',
+				]);
+			}
+			//END FOR CHECK QUANTITY VALIDATION
 
 			$job_card_returnable_items_count = count($request->job_card_returnable_items);
 			$job_card_returnable_unique_items_count = count(array_unique(array_column($request->job_card_returnable_items, 'item_serial_no')));
