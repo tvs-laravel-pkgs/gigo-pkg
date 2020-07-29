@@ -37,6 +37,16 @@ Content Wrap -->
                                                 <ul class="view-row mb-no">
                                                     <li class="view-col-3">
                                                         <span class="view-col-label">
+                                                            Code
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_order.vehicle.current_owner.customer.code}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                    <li class="view-col-3">
+                                                        <span class="view-col-label">
                                                             Name
                                                         </span>
                                                         <span class="view-data-list-value">
@@ -112,6 +122,15 @@ Content Wrap -->
                                             <div class="row" ng-show="show_customer_form">
                                                 <input type="hidden" name="id" value="{{job_order.vehicle.current_owner.customer.id}}">
                                                 <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Code
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <input type="text" class="form-control required" placeholder="Enter Code" autocomplete="off" ng-model="job_order.vehicle.current_owner.customer.code" name="code" />
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <label>

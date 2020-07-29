@@ -2851,6 +2851,11 @@ app.component('inwardVehicleCustomerDetail', {
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
+                    'code': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 255,
+                    },
                     'name': {
                         required: true,
                         minlength: 3,

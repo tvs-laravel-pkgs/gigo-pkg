@@ -1317,6 +1317,12 @@ class VehicleInwardController extends Controller {
 					'exists:configs,id',
 					'unique:vehicle_owners,ownership_id,' . $request->id . ',customer_id,vehicle_id,' . $vehicle->id,
 				],
+				'code' => [
+					'required',
+					'min:3',
+					'max:255',
+					'unique:customers,code,' . $request->id,
+				],
 				'name' => [
 					'required',
 					'min:3',
