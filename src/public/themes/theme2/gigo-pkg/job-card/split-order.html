@@ -116,9 +116,13 @@
                                                 <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#{{split_order_type.id}}">
                                                     {{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} {{split_order_type.total_items > 1 ? 'items' : 'item'}}
                                                     <span class="arrow"></span>
-                                                    <span class="title-right">
+                                                    <span class="title-right" ng-if="split_order_type.paid_by_id == 10013">
                                                         <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
-                                                        {{split_order_type.total_amount | number:2}}
+                                                        {{split_order_type.customer_total_amount | number:2}}
+                                                    </span>
+                                                    <span class="title-right" ng-if="split_order_type.paid_by_id != 10013">
+                                                        <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
+                                                        {{split_order_type.other_total_amount | number:2}}
                                                     </span>
                                                 </a>
                                             </div>
