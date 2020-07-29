@@ -307,7 +307,7 @@ app.component('inwardPartsIndentView', {
             if (val) {
                 list = [];
                 angular.forEach($scope.parts_indent.part.repair_order_parts, function(value, key) {
-                // angular.forEach($scope.parts_indent.repair_order, function(value, key) {
+                    // angular.forEach($scope.parts_indent.repair_order, function(value, key) {
                     list.push(value.id);
                 });
             } else {
@@ -353,6 +353,9 @@ app.component('inwardPartsIndentView', {
                         }
                         $('.submit').button('reset');
                         custom_noty('success', res.message);
+                        $('#return_part_form_modal').modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
                         // $location.path('/inward-parts-indent/view/' + $scope.job_order_id);
                         $scope.$apply();
                     })
@@ -360,10 +363,6 @@ app.component('inwardPartsIndentView', {
                         $('.submit').button('reset');
                         custom_noty('error', 'Something went wrong at server');
                     });
-
-                $('#return_part_form_modal').modal('hide');
-                $('body').removeClass('modal-open');
-                $('.modal-backdrop').remove();
                 $scope.fetchData();
             }
         });

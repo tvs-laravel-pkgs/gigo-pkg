@@ -146,7 +146,7 @@
                                 </span>
                                 <span class="three-box-value">
                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee">
-                                    {{$ctrl.job_order.total_estimate_labour_amount || number}}
+                                    {{$ctrl.job_order.total_estimate_labour_amount | number:2}}
                                 </span>
                             </div>
                         </li>
@@ -157,7 +157,7 @@
                                 </span>
                                 <span class="three-box-value">
                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee">
-                                    {{$ctrl.job_order.total_estimate_parts_amount || number}}
+                                    {{$ctrl.job_order.total_estimate_parts_amount | number:2}}
                                 </span>
                             </div>
                         </li>
@@ -168,7 +168,7 @@
                                 </span>
                                 <span class="three-box-value">
                                     <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-red.svg" alt="Rupee">
-                                    {{$ctrl.job_order.total_estimate_amount || number}}
+                                    {{$ctrl.job_order.total_estimate_amount | number:2}}
                                 </span>
                             </div>
                         </li>
