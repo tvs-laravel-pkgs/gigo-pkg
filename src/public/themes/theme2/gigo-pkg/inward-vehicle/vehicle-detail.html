@@ -59,6 +59,16 @@
                                                             </b>
                                                         </span>
                                                     </li>
+                                                    <li class="view-col-3" ng-if="job_order.vehicle.is_registered == 0">
+                                                        <span class="view-col-label">
+                                                            Trade Plate Number
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_order.trade_plate.trade_plate_number}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
                                                     <li class="view-col-3">
                                                         <span class="view-col-label">
                                                             Vehicle Model
@@ -138,7 +148,7 @@
                                                         <label>
                                                             Trade Plate Number
                                                         </label>
-                                                        <input type="text" class="form-control" minlength="10" maxlength="10" placeholder="Enter Trade Plate No" autocomplete="off" ng-model="job_order.vehicle.registration_number" name="plate_number" />
+                                                        <input type="text" class="form-control" minlength="10" maxlength="10" placeholder="Enter Trade Plate No" autocomplete="off" ng-model="job_order.trade_plate.trade_plate_number" name="plate_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
                                                 <div class="col-md-3">

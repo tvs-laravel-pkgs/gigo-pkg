@@ -3947,7 +3947,8 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         $("#confirmation_modal").modal('hide');
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
-                        $scope.fetchData();
+                        window.location = "#!/inward-vehicle/card-list";
+                        // $scope.fetchData();
                     })
                     .fail(function(xhr) {
                         $('.send_confirm').button('reset');
@@ -4421,7 +4422,6 @@ app.component('inwardVehicleVocDetailForm', {
 
         // $('.voc_remark_details_0').hide();
         $scope.onSelectedVoc = function(id, index) {
-            console.log('run ' + id, $scope.job_order.OTH_ID, index);
             if ($scope.job_order.OTH_ID == id) {
                 console.log('in');
                 $('.customer_voice_remark_' + index).prop('disabled', false);

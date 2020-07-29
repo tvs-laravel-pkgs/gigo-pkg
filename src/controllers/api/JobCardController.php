@@ -1202,7 +1202,7 @@ class JobCardController extends Controller {
 			}
 
 			$job_card = JobCard::find($request->id);
-			$job_card->status_id = 8224; //Ready for Billing
+			$job_card->status_id = 8227; //Waiting for Parts Confirmation
 			$job_card->updated_by = Auth::user()->id;
 			$job_card->updated_at = Carbon::now();
 			$job_card->save();
@@ -1268,6 +1268,28 @@ class JobCardController extends Controller {
 				]);
 			}
 
+			// dd($params);
+			if (date('m') > 3) {
+				$year = date('Y') + 1;
+			} else {
+				$year = date('Y');
+			}
+			//GET FINANCIAL YEAR ID
+			$financial_year = FinancialYear::where('from', $year)
+				->where('company_id', Auth::user()->company_id)
+				->first();
+			if (!$financial_year) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Fiancial Year Not Found',
+					],
+				]);
+			}
+			//GET BRANCH/OUTLET
+			$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+
 			DB::beginTransaction();
 
 			$params['job_card_id'] = $request->job_card_id;
@@ -1277,6 +1299,32 @@ class JobCardController extends Controller {
 			if ($request->labour_total_amount > 0) {
 				$params['invoice_of_id'] = 7425; // LABOUR JOB CARD
 				$params['invoice_amount'] = $request->labour_total_amount;
+
+				//GENERATE GATE IN VEHICLE NUMBER
+				$generateNumber = SerialNumberGroup::generateNumber(101, $financial_year->id, $branch->state_id, $branch->id);
+				if (!$generateNumber['success']) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'No Invoice Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+						],
+					]);
+				}
+
+				$error_messages_1 = [
+					'number.required' => 'Serial number is required',
+					'number.unique' => 'Serial number is already taken',
+				];
+				$validator_1 = Validator::make($generateNumber, [
+					'number' => [
+						'required',
+						'unique:invoices,invoice_number,' . $params['job_card_id'] . ',entity_id,company_id,' . Auth::user()->company_id,
+					],
+				], $error_messages_1);
+
+				$params['invoice_number'] = $generateNumber['number'];
+
 				$this->saveInvoice($params);
 			}
 
@@ -1284,6 +1332,32 @@ class JobCardController extends Controller {
 			if ($request->part_total_amount > 0) {
 				$params['invoice_of_id'] = 7426; // PART JOB CARD
 				$params['invoice_amount'] = $request->part_total_amount;
+
+				//GENERATE GATE IN VEHICLE NUMBER
+				$generateNumber = SerialNumberGroup::generateNumber(101, $financial_year->id, $branch->state_id, $branch->id);
+				if (!$generateNumber['success']) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'No Invoice Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+						],
+					]);
+				}
+
+				$error_messages_1 = [
+					'number.required' => 'Serial number is required',
+					'number.unique' => 'Serial number is already taken',
+				];
+				$validator_1 = Validator::make($generateNumber, [
+					'number' => [
+						'required',
+						'unique:invoices,invoice_number,' . $params['job_card_id'] . ',entity_id,company_id,' . Auth::user()->company_id,
+					],
+				], $error_messages_1);
+
+				$params['invoice_number'] = $generateNumber['number'];
+
 				$this->saveInvoice($params);
 			}
 
@@ -1339,50 +1413,6 @@ class JobCardController extends Controller {
 	}
 
 	public function saveInvoice($params) {
-		// dd($params);
-		if (date('m') > 3) {
-			$year = date('Y') + 1;
-		} else {
-			$year = date('Y');
-		}
-		//GET FINANCIAL YEAR ID
-		$financial_year = FinancialYear::where('from', $year)
-			->where('company_id', Auth::user()->company_id)
-			->first();
-		if (!$financial_year) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Validation Error',
-				'errors' => [
-					'Fiancial Year Not Found',
-				],
-			]);
-		}
-		//GET BRANCH/OUTLET
-		$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
-
-		//GENERATE GATE IN VEHICLE NUMBER
-		$generateNumber = SerialNumberGroup::generateNumber(101, $financial_year->id, $branch->state_id, $branch->id);
-		if (!$generateNumber['success']) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Validation Error',
-				'errors' => [
-					'No Invoice Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
-				],
-			]);
-		}
-
-		$error_messages_1 = [
-			'number.required' => 'Serial number is required',
-			'number.unique' => 'Serial number is already taken',
-		];
-		$validator_1 = Validator::make($generateNumber, [
-			'number' => [
-				'required',
-				'unique:invoices,invoice_number,' . $params['job_card_id'] . ',entity_id,company_id,' . Auth::user()->company_id,
-			],
-		], $error_messages_1);
 
 		DB::beginTransaction();
 
@@ -1402,7 +1432,7 @@ class JobCardController extends Controller {
 			$invoice->entity_id = $params['job_card_id'];
 			$invoice->customer_id = $params['customer_id'];
 			$invoice->company_id = Auth::user()->company_id;
-			$invoice->invoice_number = $generateNumber['number'];
+			$invoice->invoice_number = $params['invoice_number'];
 			$invoice->invoice_date = Carbon::now();
 			$invoice->outlet_id = $params['outlet_id'];
 			$invoice->sbu_id = 54; //SERVICE ALSERV
@@ -3688,16 +3718,15 @@ class JobCardController extends Controller {
 
 			$unassigned_part_amount = 0;
 			foreach ($part_details as $key => $part) {
-				//	dd($part);
 				if (!$part['split_order_type_id']) {
-					$unassigned_part_count += 1;
+					// $unassigned_part_count += 1;
 					$unassigned_part_amount += $part['total_amount'];
 				}
 			}
 			$unassigned_labour_amount = 0;
 			foreach ($labour_details as $key => $labour) {
 				if (!$labour['split_order_type_id']) {
-					$unassigned_labour_count += 1;
+					// $unassigned_labour_count += 1;
 					$unassigned_labour_amount += $labour['total_amount'];
 				}
 			}

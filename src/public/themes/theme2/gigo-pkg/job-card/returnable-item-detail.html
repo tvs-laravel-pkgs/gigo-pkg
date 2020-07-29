@@ -31,13 +31,11 @@
                                             Returnable Items
                                         </h5>
                                         <ul class="flex-row type-3 pt-10" ng-if="returnable_items.length > 0">
-                                            <li class="flex-col-8">
+                                            <li class="flex-col-4" ng-repeat="(key, returnable_item) in returnable_items">
                                                 <div class="border-box type-2">
-                                                    <div class="top-title" ng-repeat="(key, returnable_item) in returnable_items">{{returnable_item.item_name ? returnable_item.item_name : '' }} <span class="right-text">Qty :{{returnable_item.qty}}</span>
-                                                        <div class="mb-20"></div>
-                                                    </div>
-                                                    <!-- <div class="mb-20"></div> -->
-                                                    <!-- <table class="table-info">
+                                                    <div class="top-title">{{returnable_item.item_name ? returnable_item.item_name : '' }}<span class="right-text">Qty : {{returnable_item.qty}}</span></div>
+                                                    <div class="mb-20"></div>
+                                                    <table class="table-info">
                                                         <tbody>
                                                             <tr>
                                                                 <td>Make</td>
@@ -64,18 +62,18 @@
                                                                 <img class="img-responsive wid-60" src="storage/app/public/gigo/returnable_items/{{attach.name}}" alt="Image" />
                                                             </div>
                                                         </div>
-                                                    </div> -->
+                                                    </div>
                                                     <!-- <a ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" href="#!/job-card/returnable-item/edit/{{job_card.id}}/{{returnable_item.id}}" class="btn btn-md type2 btn-secondary-dark btn-square mt-15">Edit</a> -->
                                                 </div><!-- Border Box -->
                                             </li>
                                         </ul><!-- Flex Row -->
                                         <hr ng-if="returnable_items.length > 0">
-                                        <!-- <a href="#!/job-card/returnable-item/add/{{job_card.id}}" ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226">
+                                        <a href="#!/job-card/returnable-item/add/{{job_card.id}}" ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226">
                                             <button class="btn btn-md type2 btn-green btn-square">Add {{returnable_items.length > 0 ? 'Another' : ''}} Item</button>
-                                        </a> -->
-                                        <a href="#!/job-card/returnable-part/add/{{job_card.id}}" ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226">
-                                            <button class="btn btn-md type2 btn-green btn-square">Add {{returnable_items.length > 0 ? '/ Edit' : ''}} Returnable Items</button>
                                         </a>
+                                        <!-- <a href="#!/job-card/returnable-part/add/{{job_card.id}}" ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226">
+                                            <button class="btn btn-md type2 btn-green btn-square">Add {{returnable_items.length > 0 ? '/ Edit' : ''}} Returnable Items</button>
+                                        </a> -->
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">

@@ -75,14 +75,19 @@ app.component('inwardPartsIndentView', {
         $scope.fetchData();
 
         $scope.sendConfirm = function(type_id) {
-            var job_order_id = $scope.job_order.id;
-            if (job_order_id) {
+            if (type_id == 4) {
+                var id = $scope.job_order.job_card.id;
+            } else {
+                var id = $scope.job_order.id;
+            }
+
+            if (id) {
                 $('.send_confirm').button('loading');
                 $.ajax({
                         url: base_url + '/api/vehicle-inward/stock-incharge/request/parts',
                         method: "POST",
                         data: {
-                            id: job_order_id,
+                            id: id,
                             type_id: type_id,
                         },
                     })
@@ -301,7 +306,8 @@ app.component('inwardPartsIndentView', {
             console.log(val);
             if (val) {
                 list = [];
-                angular.forEach($scope.parts_indent.repair_order, function(value, key) {
+                angular.forEach($scope.parts_indent.part.repair_order_parts, function(value, key) {
+                // angular.forEach($scope.parts_indent.repair_order, function(value, key) {
                     list.push(value.id);
                 });
             } else {

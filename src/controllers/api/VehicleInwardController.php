@@ -632,38 +632,41 @@ class VehicleInwardController extends Controller {
 			$part_details = array();
 			if ($job_order->jobOrderParts) {
 				foreach ($job_order->jobOrderParts as $key => $value) {
-					$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
+					if ($value->removal_reason_id != 10021) {
 
-					$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
+						$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
 
-					$part_details[$key]['id'] = $value->part_id;
-					$part_details[$key]['job_order_part_id'] = $value->id;
-					$part_details[$key]['code'] = $value->part->code;
-					$part_details[$key]['name'] = $value->part->name;
-					$part_details[$key]['part_detail'] = $value->part->code . ' | ' . $value->part->name;
-					$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
-					$part_details[$key]['rate'] = $value->rate;
-					$part_details[$key]['qty'] = $value->qty;
-					$part_details[$key]['amount'] = $value->amount;
-					$part_details[$key]['is_free_service'] = $value->is_free_service;
-					if ($value->splitOrderType) {
-						$part_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
-					} else {
-						$part_details[$key]['split_order_type'] = '';
+						$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
 
+						$part_details[$key]['id'] = $value->part_id;
+						$part_details[$key]['job_order_part_id'] = $value->id;
+						$part_details[$key]['code'] = $value->part->code;
+						$part_details[$key]['name'] = $value->part->name;
+						$part_details[$key]['part_detail'] = $value->part->code . ' | ' . $value->part->name;
+						$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
+						$part_details[$key]['rate'] = $value->rate;
+						$part_details[$key]['qty'] = $value->qty;
+						$part_details[$key]['amount'] = $value->amount;
+						$part_details[$key]['is_free_service'] = $value->is_free_service;
+						if ($value->splitOrderType) {
+							$part_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
+						} else {
+							$part_details[$key]['split_order_type'] = '';
+
+						}
+						$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
+
+						$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
+						$part_details[$key]['issued_qty'] = $issued_qty->issued_qty;
+						$part_details[$key]['returned_qty'] = $returned_qty->returned_qty;
+						$part_details[$key]['pending_qty'] = $value->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
+						$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
+
+						// if (in_array($value->split_order_type_id, $customer_paid_type)) {
+						// if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
+						// 	$part_amount += $value->amount;
+						// }
 					}
-					$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
-
-					$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
-					$part_details[$key]['issued_qty'] = $issued_qty->issued_qty;
-					$part_details[$key]['returned_qty'] = $returned_qty->returned_qty;
-					$part_details[$key]['pending_qty'] = $value->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
-					$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
-
-					// if (in_array($value->split_order_type_id, $customer_paid_type)) {
-					// if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
-					// 	$part_amount += $value->amount;
-					// }
 				}
 			}
 
@@ -1152,6 +1155,7 @@ class VehicleInwardController extends Controller {
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
+				'tradePlate',
 				'status',
 				'gateLog',
 			])
@@ -1838,36 +1842,63 @@ class VehicleInwardController extends Controller {
 	public function sendRequestPartsIntent(Request $request) {
 		// dd($request->all());
 		try {
-			$job_order = JobOrder::find($request->id);
 
-			if (!$job_order) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Job Order Found!',
-				]);
-			}
+			if ($request->type_id == 4) {
+				$job_card = JobCard::find($request->id);
 
-			DB::beginTransaction();
+				if (!$job_card) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Job Card Not Found!',
+						],
+					]);
+				}
 
-			if ($request->type_id == 1) {
-				// $job_order->part_intent_status_id = 10070;
-				$job_order->status_id = 8472;
-			} elseif ($request->type_id == 2) {
-				// $job_order->part_intent_status_id = 10071;
-				$job_order->status_id = 8463;
-				$job_order->part_intent_confirmed_date = Carbon::now();
-			} elseif ($request->type_id == 3) {
-				$job_order->part_intent_status_id = 10072;
+				DB::beginTransaction();
+
+				$job_card->status_id = 8224;
+				$job_card->updated_by = Auth::user()->id;
+				$job_card->updated_at = Carbon::now();
+				$job_card->save();
+
+				DB::commit();
+
 			} else {
-				$job_order->part_intent_status_id = 10073;
-				$job_order->part_intent_confirmed_date = Carbon::now();
+				$job_order = JobOrder::find($request->id);
+
+				if (!$job_order) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Job Order Not Found!',
+						],
+					]);
+				}
+
+				DB::beginTransaction();
+
+				if ($request->type_id == 1) {
+					// $job_order->part_intent_status_id = 10070;
+					$job_order->status_id = 8472;
+				} elseif ($request->type_id == 2) {
+					// $job_order->part_intent_status_id = 10071;
+					$job_order->status_id = 8463;
+					$job_order->part_intent_confirmed_date = Carbon::now();
+				} else {
+					// $job_order->part_intent_status_id = 10073;
+					$job_order->part_intent_confirmed_date = Carbon::now();
+				}
+
+				$job_order->updated_by_id = Auth::user()->id;
+				$job_order->updated_at = Carbon::now();
+				$job_order->save();
+
+				DB::commit();
+
 			}
-
-			$job_order->updated_by_id = Auth::user()->id;
-			$job_order->updated_at = Carbon::now();
-			$job_order->save();
-
-			DB::commit();
 
 			return response()->json([
 				'success' => true,
@@ -4075,6 +4106,17 @@ class VehicleInwardController extends Controller {
 
 			//CHECK ALL INWARD MANDATORY FORM ARE FILLED
 			$job_order = jobOrder::find($request->job_order_id);
+
+			if ($job_order->is_road_test_required == 1 && !$job_order->road_test_report) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Kindly Update Road Test Observations',
+					],
+				]);
+			}
+
 			$inward_process_check = $job_order->inwardProcessChecks()
 				->where('tab_id', '!=', 8706)
 				->where('is_form_filled', 0)
@@ -4779,17 +4821,8 @@ class VehicleInwardController extends Controller {
 			])
 				->find($request->job_order_id);
 			$job_order->status_id = 8461;
+			$job_order->part_intent_confirmed_date = NULL;
 			$job_order->save();
-
-			if ($job_order->is_road_test_required == 1 && !$job_order->road_test_report) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Kindly Update Road Test Observations',
-					],
-				]);
-			}
 
 			//UPDATE GATE LOG STATUS
 			$job_order->gateLog()->update([

@@ -74,12 +74,15 @@ class CustomerVoiceController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('edit-customer-voice')) {
-					$output .= '<a href="#!/gigo-pkg/customer-voice/edit/' . $customer_voice->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"  alt="Edit"></a>';
+				if ($customer_voice->code != 'OTH') {
+					if (Entrust::can('edit-customer-voice')) {
+						$output .= '<a href="#!/gigo-pkg/customer-voice/edit/' . $customer_voice->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"  alt="Edit"></a>';
+					}
+					if (Entrust::can('delete-customer-voice')) {
+						$output .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_customer_voice" onclick="angular.element(this).scope().deleteCustomerVoice(' . $customer_voice->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '" alt="Delete"></a>';
+					}
 				}
-				if (Entrust::can('delete-customer-voice')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#delete_customer_voice" onclick="angular.element(this).scope().deleteCustomerVoice(' . $customer_voice->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '" alt="Delete"></a>';
-				}
+
 				return $output;
 			})
 			->make(true);

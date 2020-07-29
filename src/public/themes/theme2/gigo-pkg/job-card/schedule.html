@@ -78,8 +78,6 @@
                                         <div class="col-md-12">
                                             <div class="text-center pt-40">
                                                 <a class="btn btn-red job_completed" ng-if="job_card.status_id == 8223" ng-click="saveJobStatus()">Mark Job as Completed</a>
-                                                <a class="btn btn-red send_part_indent" ng-if="job_card.status_id == 8223 && job_card.job_order.part_intent_status_id == 10071" ng-click="sendPartIndent()">Send Part Indent</a>
-                                                <a class="btn btn-red send_part_indent" disabled ng-if="job_card.status_id == 8223 && job_card.job_order.part_intent_status_id == 10072">Waiting for Returned Parts Status</a>
                                             </div>
                                         </div>
                                     </div><!-- Column -->

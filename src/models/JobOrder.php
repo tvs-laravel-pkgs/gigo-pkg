@@ -164,6 +164,10 @@ class JobOrder extends BaseModel {
 		return $this->belongsTo('App\Vehicle', 'vehicle_id');
 	}
 
+	public function tradePlate() {
+		return $this->belongsTo('App\TradePlateNumber', 'trade_plate_number_id');
+	}
+
 	public function status() {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
