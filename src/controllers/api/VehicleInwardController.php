@@ -677,12 +677,18 @@ class VehicleInwardController extends Controller {
 			if ($job_order->jobCard) {
 				$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*', 'job_order_parts.id as job_order_part_id')->where('job_order_parts.job_order_id', $r->id)->whereNull('removal_reason_id')->get();
 
-				$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')->where('job_order_repair_orders.job_order_id', $r->id)->groupBy('users.id')->get();
+				$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
+					->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')
+					->select('users.*')
+					->whereNull('job_order_repair_orders.removal_reason_id')
+					->where('job_order_repair_orders.job_order_id', $r->id)->groupBy('users.id')->get();
 
 				$indent_part_logs_issues = JobOrderPart::join('job_order_issued_parts as joip', 'joip.job_order_part_id', 'job_order_parts.id')
 					->join('parts', 'job_order_parts.part_id', 'parts.id')
 					->join('configs', 'joip.issued_mode_id', 'configs.id')
 					->join('users', 'joip.issued_to_id', 'users.id')
+					->where('job_order_id', $r->id)
+				// ->whereNotIn('job_order_parts.removal_reason_id', [10021])
 					->select(
 						DB::raw('"Issue" as transaction_type'),
 						'parts.name',
@@ -700,6 +706,8 @@ class VehicleInwardController extends Controller {
 				$indent_part_logs = JobOrderPart::join('job_order_returned_parts as jorp', 'jorp.job_order_part_id', 'job_order_parts.id')
 					->join('parts', 'job_order_parts.part_id', 'parts.id')
 					->join('users', 'jorp.returned_to_id', 'users.id')
+					->where('job_order_id', $r->id)
+					->whereNotIn('job_order_parts.removal_reason_id', [10021])
 					->select(
 						DB::raw('"Return" as transaction_type'),
 						'parts.name',
@@ -881,7 +889,10 @@ class VehicleInwardController extends Controller {
 
 			$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*', 'job_order_parts.id as job_order_part_id')->where('job_order_parts.job_order_id', $request->id)->whereNull('removal_reason_id')->get();
 
-			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')->where('job_order_repair_orders.job_order_id', $request->id)->groupBy('users.id')->get();
+			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
+				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')
+				->whereNull('job_order_repair_orders.removal_reason_id')
+				->where('job_order_repair_orders.job_order_id', $request->id)->groupBy('users.id')->get();
 
 			$issue_modes = Config::where('config_type_id', 109)->select('id', 'name')->get();
 			$issue_data = JobOrderIssuedPart::join('job_order_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')
