@@ -835,7 +835,7 @@ app.component('jobCardReturnableItemForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/job-card/returnable-item/' + $scope.job_card.id);
+                            $location.path('/job-card/returnable-item/' + $scope.job_card.id);
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -1067,7 +1067,11 @@ app.component('jobCardMaterialOutwardForm', {
                     }
                     $scope.gate_pass = res.gate_pass;
                     $scope.job_card = res.job_card;
-                    self.vendor = $scope.gate_pass.gate_pass_detail.vendor;
+                    if ($routeParams.gatepass_id) {
+                        self.vendor = $scope.gate_pass.gate_pass_detail.vendor;
+                    } else {
+                        self.vendor = [];
+                    }
                     if (!$scope.gate_pass.gate_pass_detail.vendor_type_id) {
                         $scope.gate_pass.gate_pass_detail.vendor_type_id = 121;
                     }
