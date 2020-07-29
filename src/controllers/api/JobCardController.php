@@ -2693,6 +2693,11 @@ class JobCardController extends Controller {
 					'integer',
 					'exists:job_cards,id',
 				],
+				'job_card_returnable_items.*.id' => [
+					'required',
+					'integer',
+					'exists:parts,id',
+				],
 				'job_card_returnable_items.*.item_name' => [
 					'required',
 					'string',
@@ -2716,7 +2721,6 @@ class JobCardController extends Controller {
 				'job_card_returnable_items.*.item_serial_no' => [
 					'nullable',
 					'string',
-					// 'unique:job_card_returnable_items,item_serial_no,' . $request->id . ',id,job_card_id,' .  $request->job_card_id,
 				],
 				'job_card_returnable_items.*.qty' => [
 					'required',
@@ -2778,6 +2782,7 @@ class JobCardController extends Controller {
 					$returnable_item = JobCardReturnableItem::firstOrNew([
 						'item_name' => $job_card_returnable_item['item_name'],
 						'item_serial_no' => $job_card_returnable_item['item_serial_no'],
+						'part_id' => $job_card_returnable_item['id'],
 						'job_card_id' => $request->job_card_id,
 					]);
 					$returnable_item->fill($job_card_returnable_item);
