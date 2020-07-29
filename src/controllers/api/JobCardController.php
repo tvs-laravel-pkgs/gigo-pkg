@@ -1087,12 +1087,16 @@ class JobCardController extends Controller {
 					'exists:configs,id',
 				],
 				'observation' => [
-					'required',
+					'required_if:status_id,8187',
 					'string',
 				],
 				'action_taken' => [
-					'required',
-					'string',
+					'required_if:status_id,8187',
+					// 'string',
+				],
+				'remarks' => [
+					'required_if:status_id,8186',
+					// 'string',
 				],
 			]);
 
