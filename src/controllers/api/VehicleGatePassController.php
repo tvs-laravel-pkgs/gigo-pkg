@@ -2,6 +2,7 @@
 
 namespace Abs\GigoPkg\Api;
 
+use App\Bay;
 use App\GateLog;
 use App\GatePass;
 use App\Http\Controllers\Controller;
@@ -268,7 +269,7 @@ class VehicleGatePassController extends Controller {
 						$query->where('gate_passes.number', 'LIKE', '%' . $request->number . '%');
 					}
 				})
-				//->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
+			//->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
 				->where('gate_passes.type_id', 8280) // Vehicle Gate Pass
 				->groupBy('gate_passes.id')
 			;
@@ -411,6 +412,14 @@ class VehicleGatePassController extends Controller {
 						'updated_at' => Carbon::now(),
 					]);
 			}
+
+			Bay::where('job_order_id', $gate_log->job_order_id)
+				->update([
+					'status_id' => 8240, //Free
+					'job_order_id' => NULL, //Free
+					'updated_by_id' => Auth::user()->id,
+					'updated_at' => Carbon::now(),
+				]);
 
 			DB::commit();
 
