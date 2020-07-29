@@ -119,23 +119,29 @@
                                             <div class="form-group">
                                                 <label>Status</label>
                                                 <div class="common-radio-button type-4">
-                                                    <input type="radio" id="layer_yes" name="status_id" checked value="8187" />
+                                                    <input type="radio" id="layer_yes" ng-model="$ctrl.action" name="status_id" checked value="8187" ng-value="8187" />
                                                     <label for="layer_yes">Completed</label>
-                                                    <input type="radio" id="layer_no" name="status_id" value="8186" />
+                                                    <input type="radio" id="layer_no" ng-model="$ctrl.action" name="status_id" value="8186" ng-value="8186" />
                                                     <label for="layer_no">Re-Schedule</label>
                                                 </div>
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
-                                        <div class="col-md-12">
+                                        <div class="col-md-12" ng-if="$ctrl.action == 8187">
                                             <div class="form-group">
                                                 <label>Observations <sup class="mandatory">*</sup></label>
                                                 <textarea class="form-control" rows="4" placeholder="Enter Observations" name="observation">{{labour_review_data.job_order.job_order_repair_orders[0].observation}}</textarea>
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
-                                        <div class="col-md-12">
+                                        <div class="col-md-12" ng-if="$ctrl.action == 8187">
                                             <div class="form-group">
                                                 <label>Action Taken <sup class="mandatory">*</sup></label>
                                                 <textarea class="form-control" rows="4" placeholder="Enter Actions Taken" name="action_taken">{{labour_review_data.job_order.job_order_repair_orders[0].action_taken}}</textarea>
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-12" ng-if="$ctrl.action == 8186">
+                                            <div class="form-group">
+                                                <label>Remarks<sup class="mandatory">*</sup></label>
+                                                <textarea class="form-control" rows="4" placeholder="Enter Remarks" name="remarks">{{labour_review_data.job_order.job_order_repair_orders[0].remarks}}</textarea>
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                     </div><!-- Row -->

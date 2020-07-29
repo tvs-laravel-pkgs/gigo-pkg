@@ -406,7 +406,8 @@ class JobCardController extends Controller {
 
 //Myjob card table list
 	public function getMyJobCardtableList(Request $request) {
-		$user_id = Auth::user()->id;
+		// $user_id = Auth::user()->id;
+		$user_id = $request->user_id;
 		$user_details = User::with([
 			'employee',
 			'employee.outlet',

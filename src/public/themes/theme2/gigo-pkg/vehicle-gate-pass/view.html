@@ -49,7 +49,7 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td><b>Gate In Date & Time</b></td>
-                                                                    <td>{{$ctrl.vehicle_gate_pass.gate_in_date_time}}</td>
+                                                                    <td>{{$ctrl.vehicle_gate_pass.gate_in_date}}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td><b>Job Card No</b></td>
@@ -60,6 +60,10 @@
                                                                     <td>{{$ctrl.vehicle_gate_pass.gate_pass ? $ctrl.vehicle_gate_pass.gate_pass.number : '--'}}</td>
                                                                 </tr>
                                                                 <tr>
+                                                                    <td><b>Gate Out Date & Time</b></td>
+                                                                    <td>{{$ctrl.vehicle_gate_pass.gate_out_date}}</td>
+                                                                </tr>
+                                                                <tr>
                                                                     <td><b>Status</b></td>
                                                                     <td>{{$ctrl.vehicle_gate_pass.status.name}}</td>
                                                                 </tr>
@@ -68,10 +72,28 @@
                                                     </div><!-- Column -->
                                                     <div class="col-md-6">
                                                         <div class="multi-img">
-                                                            <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.vehicle_attachment.name}}" alt="Images" />
-                                                            <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.km_attachment.name}}" alt="Images" />
-                                                            <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.driver_attachment.name}}" alt="Images" />
-                                                            <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.chassis_attachment.name}}" alt="Images" />
+                                                            <table class="table-info">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="text-center">Vehicle Image</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">KM Image</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">Driver Image</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">Chassis Image</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.vehicle_attachment.name}}" alt="Images" /></td>
+                                                                        <td></td>
+                                                                        <td><img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.km_attachment.name}}" alt="Images" /></td>
+                                                                        <td>&nbsp;&nbsp;</td>
+                                                                        <td> <img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.driver_attachment.name}}" alt="Images" /></td>
+                                                                        <td></td>
+                                                                        <td><img class="img-responsive" src="{{$ctrl.vehicle_gate_pass.gate_in_attachment_path}}/{{$ctrl.vehicle_gate_pass.chassis_attachment.name}}" alt="Images" /></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
                                                         </div>
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
@@ -119,7 +141,7 @@
                                             </ul><!-- Flex Row -->
                                         </div><!-- Column -->
                                     </div><!-- Row -->
-                                    <div class="row">
+                                    <div class="row" ng-if="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340">
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label>Remarks</label>
@@ -145,7 +167,7 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Submit Alert Modal -->
-<div class="modal modal-success alert-modal fade" id="confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal modal-success alert-modal fade" id="confirm_notification" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-body text-center">

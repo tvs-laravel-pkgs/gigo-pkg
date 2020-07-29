@@ -2867,6 +2867,7 @@ app.component('jobCardLabourReview', {
                     console.log(res);
                     $scope.labour_review_data = res.labour_review_data;
                     $scope.job_order_repair_order = res.job_order_repair_order;
+                    self.action = 8187;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -2889,6 +2890,9 @@ app.component('jobCardLabourReview', {
                         required: true,
                     },
                     'action_taken': {
+                        required: true,
+                    },
+                    'remarks': {
                         required: true,
                     },
                 },

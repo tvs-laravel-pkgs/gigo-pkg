@@ -37,6 +37,10 @@ class GateLog extends Model {
 		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
 	}
 
+	public function getGateOutDateAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
+	}
+
 	//issue : naming
 	// public function vehicleDetail() {
 	// 	return $this->belongsTo('App\Vehicle', 'vehicle_id');
