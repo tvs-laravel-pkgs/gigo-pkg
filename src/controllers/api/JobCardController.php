@@ -24,8 +24,8 @@ use App\Config;
 use App\Customer;
 use App\Employee;
 use App\FinancialYear;
+use App\GigoInvoice;
 use App\Http\Controllers\Controller;
-use App\Invoice;
 use App\JobOrderPart;
 use App\Outlet;
 use App\SplitOrderType;
@@ -1321,7 +1321,7 @@ class JobCardController extends Controller {
 
 				$params['invoice_number'] = $generateNumber['number'];
 
-				$this->saveInvoice($params);
+				$this->saveGigoInvoice($params);
 			}
 
 			//PART INVOICE ADD
@@ -1354,7 +1354,7 @@ class JobCardController extends Controller {
 
 				$params['invoice_number'] = $generateNumber['number'];
 
-				$this->saveInvoice($params);
+				$this->saveGigoInvoice($params);
 			}
 
 			$customer_mobile = $job_card->jobOrder->customer->mobile_no;
@@ -1408,15 +1408,16 @@ class JobCardController extends Controller {
 		}
 	}
 
-	public function saveInvoice($params) {
+	public function saveGigoInvoice($params) {
 
 		DB::beginTransaction();
 
-		$invoice = Invoice::firstOrNew([
+		$invoice = GigoInvoice::firstOrNew([
 			'invoice_of_id' => $params['invoice_of_id'],
 			'entity_id' => $params['job_card_id'],
 		]);
 		// dump($params);
+		// dd(1);
 		if ($invoice->exists) {
 			//FIRST
 			$invoice->invoice_amount = $params['invoice_amount'];
@@ -1424,16 +1425,16 @@ class JobCardController extends Controller {
 			$invoice->updated_at = Carbon::now();
 		} else {
 			//NEW
-			$invoice->invoice_of_id = $params['invoice_of_id']; // JOB CARD
-			$invoice->entity_id = $params['job_card_id'];
-			$invoice->customer_id = $params['customer_id'];
 			$invoice->company_id = Auth::user()->company_id;
 			$invoice->invoice_number = $params['invoice_number'];
-			$invoice->invoice_date = Carbon::now();
+			$invoice->invoice_date = date('Y-m-d');
+			$invoice->customer_id = $params['customer_id'];
+			$invoice->invoice_of_id = $params['invoice_of_id']; // JOB CARD
+			$invoice->entity_id = $params['job_card_id'];
 			$invoice->outlet_id = $params['outlet_id'];
 			$invoice->sbu_id = 54; //SERVICE ALSERV
 			$invoice->invoice_amount = $params['invoice_amount'];
-			$invoice->payment_status_id = 10031; //PENDING
+			$invoice->status_id = 10031; //PENDING
 			$invoice->created_by_id = Auth::user()->id;
 			$invoice->created_at = Carbon::now();
 		}
@@ -4035,6 +4036,8 @@ class JobCardController extends Controller {
 							$total_amount = $tax_amount + $parts->amount;
 							$total_amount = number_format((float) $total_amount, 2, '.', '');
 
+							$part_details[$key]['tax_values'] = $tax_values;
+
 							$part_details[$key]['total_amount'] = $total_amount;
 							$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
 						} else {
@@ -4047,6 +4050,7 @@ class JobCardController extends Controller {
 							$part_details[$key]['total_amount'] = $total_amount;
 							$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
 						}
+						$parts_total_amount += $total_amount;
 
 					} else {
 						$part_sub_total = 0;
