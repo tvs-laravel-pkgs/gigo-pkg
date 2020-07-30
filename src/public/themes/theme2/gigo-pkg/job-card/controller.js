@@ -3230,7 +3230,7 @@ app.component('jobCardSplitOrder', {
                                 if (part.is_free_service != 1 && split_order.paid_by_id == 10013) {
                                     split_order.customer_total_amount += parseFloat(part.total_amount);
                                 } else {
-                                    split_order.other_total_amount += parseFloat(labour.total_amount);
+                                    split_order.other_total_amount += parseFloat(part.total_amount);
                                 }
                                 split_order.total_items += 1;
                             }
