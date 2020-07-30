@@ -745,7 +745,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                         self.exwarrany_status = 0;
                     }
 
-                    if ($scope.job_order.warranty_expiry_date) {
+                    if ($scope.job_order.amc_status == 1 || $scope.job_order.amc_status == 0) {
                         self.warrany_status = 1;
                     } else {
                         self.warrany_status = 0;
@@ -804,14 +804,6 @@ app.component('inwardVehicleDmsCheckListForm', {
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    'warranty_expiry_date': {
-                        required: function(element) {
-                            if (self.warrany_status == '1') {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
                     'ewp_expiry_date': {
                         required: function(element) {
                             if (self.exwarrany_status == '1') {
@@ -820,12 +812,9 @@ app.component('inwardVehicleDmsCheckListForm', {
                             return false;
                         },
                     },
-                    // 'ewp_expiry_date': {
-                    //     required: true,
-                    // },
                     'warranty_expiry_attachment': {
                         required: function(element) {
-                            if (self.warrany_status == '1' && !$scope.job_order.warrenty_policy_attachment) {
+                            if (self.amc_status == '1' && !$scope.job_order.warrenty_policy_attachment) {
                                 return true;
                             }
                             return false;
@@ -845,6 +834,22 @@ app.component('inwardVehicleDmsCheckListForm', {
                     // 'membership_attachment': {
                     //     required: true,
                     // },
+                    'amc_starting_date': {
+                        required: function(element) {
+                            if (self.amc_status == '1') {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
+                    'amc_ending_date': {
+                        required: function(element) {
+                            if (self.amc_status == '1') {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
                     'starting_km': {
                         required: function(element) {
                             if (self.amc_status == '1') {
@@ -4895,10 +4900,16 @@ app.component('inwardVehicleView', {
                     $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.inventory_list = res.inventory_list;
 
-                    if ($scope.job_order.warranty_expiry_date) {
+                    if ($scope.job_order.amc_status == 1 || $scope.job_order.amc_status == 0) {
                         self.warrany_status = 1;
                     } else {
                         self.warrany_status = 0;
+                    }
+
+                    if ($scope.job_order.amc_status == 1) {
+                        self.amc_status = 1;
+                    } else {
+                        self.amc_status = 0;
                     }
 
                     if ($scope.job_order.ewp_expiry_date) {

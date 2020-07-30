@@ -934,9 +934,6 @@
                                             <div class="row">
                                                 <div class="col-md-4" ng-if="$ctrl.warrany_status == 1">
                                                     <div class="gatein-img-list">
-                                                        <div class="gatein-img-list-item attach-photo-view">
-                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.warrenty_policy_attachment.name}}" alt="Warranty">
-                                                        </div>
                                                         <div class="attach-form-wrap">
                                                             <p class="color-secondary-dark">
                                                                 <b>
@@ -945,10 +942,7 @@
                                                             </p>
                                                             <div class="mb-20"></div><!-- Spacing -->
                                                             <p class="font-md mb-no">
-                                                                Eligible Upto
-                                                            </p>
-                                                            <p class="font-sm">
-                                                                {{job_order.warranty_expiry_date}}
+                                                                Available
                                                             </p>
                                                         </div>
                                                     </div>
@@ -964,6 +958,53 @@
                                                             <div class="mb-20"></div><!-- Spacing -->
                                                             <p class="font-md mb-no">
                                                                 Not Available
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4" ng-if="$ctrl.amc_status == 0 && $ctrl.warrany_status == 1">
+                                                    <div class="gatein-img-list">
+                                                        <div class="attach-form-wrap">
+                                                            <p class="color-secondary-dark">
+                                                                <b>
+                                                                    AMC Status
+                                                                </b>
+                                                            </p>
+                                                            <div class="mb-20"></div><!-- Spacing -->
+                                                            <p class="font-md mb-no">
+                                                                Inactive
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4" ng-if="$ctrl.amc_status == 1 && $ctrl.warrany_status == 1">
+                                                    <div class="gatein-img-list">
+                                                        <div class="attach-form-wrap">
+                                                            <p class="color-secondary-dark">
+                                                                <b>
+                                                                    AMC Starting & Ending KM
+                                                                </b>
+                                                            </p>
+                                                            <div class="mb-20"></div><!-- Spacing -->
+                                                            <p class="font-md mb-no">
+                                                                {{job_order.starting_km}} to {{job_order.ending_km}}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4" ng-if="$ctrl.amc_status == 1">
+                                                    <div class="gatein-img-list">
+                                                        <div class="gatein-img-list-item attach-photo-view">
+                                                            <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.warrenty_policy_attachment.name}}" alt="Warranty">
+                                                        </div>
+                                                        <div class="attach-form-wrap">
+                                                            <p class="color-secondary-dark">
+                                                                <b>
+                                                                    AMC Starting & Ending Date
+                                                                </b>
+                                                            </p>
+                                                            <p class="font-md">
+                                                                {{job_order.amc_starting_date}} to {{job_order.amc_ending_date}}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -1180,7 +1221,7 @@
                             <div class="tab-pane fade" id="maintenance_details" data-animation="fadeInUp" data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-md-12" ng-if="job_order.service_type_id">
                                             <h5 class="color-primary mb-10"><b>Scheduled Maintenance ({{job_order.service_type.name}})</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="table-responsive">
@@ -1319,6 +1360,9 @@
                                             <div class="mb-20"></div><!-- Spacing -->
                                             <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471 && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">Edit</a>
                                         </div><!-- Column -->
+                                        <div class="col-md-12" ng-if="!job_order.service_type_id">
+                                            <h5 class="color-primary mb-10"><b>Scheduled Maintenance Not Available</b></h5>
+                                        </div>
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">

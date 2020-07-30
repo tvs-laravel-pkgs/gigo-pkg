@@ -2398,7 +2398,7 @@ class VehicleInwardController extends Controller {
 	//DMS CHECKLIST SAVE
 	public function saveDmsCheckList(Request $request) {
 		// dd($request->all());
-		$request['warranty_expiry_date'] = date('d-m-Y', strtotime($request->warranty_expiry_date));
+		// $request['warranty_expiry_date'] = date('d-m-Y', strtotime($request->warranty_expiry_date));
 		$request['ewp_expiry_date'] = date('d-m-Y', strtotime($request->ewp_expiry_date));
 		try {
 			$validator = Validator::make($request->all(), [
@@ -2407,8 +2407,16 @@ class VehicleInwardController extends Controller {
 					'integer',
 					'exists:job_orders,id',
 				],
-				'warranty_expiry_date' => [
-					"required_if:warrany_status,==,1",
+				// 'warranty_expiry_date' => [
+				// 	"required_if:warrany_status,==,1",
+				// 	'date_format:"d-m-Y',
+				// ],
+				'amc_starting_date' => [
+					"required_if:amc_status,==,1",
+					'date_format:"d-m-Y',
+				],
+				'amc_ending_date' => [
+					"required_if:amc_status,==,1",
 					'date_format:"d-m-Y',
 				],
 				'warranty_expiry_attachment' => [
@@ -2460,12 +2468,12 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			if ($request->warrany_status == 0) {
-				$job_order->warranty_expiry_date = NULL;
-				$attachment = Attachment::where('id', $request->job_order_id)->where('attachment_of_id', 227)->where('attachment_type_id', 256)->forceDelete();
-			} else {
-				$job_order->warranty_expiry_date = $request->warranty_expiry_date;
-			}
+			// if ($request->warrany_status == 0) {
+			// 	// $job_order->warranty_expiry_date = NULL;
+
+			// } else {
+			// 	$job_order->warranty_expiry_date = $request->warranty_expiry_date;
+			// }
 
 			if ($request->exwarrany_status == 0) {
 				$job_order->ewp_expiry_date = NULL;
@@ -2474,14 +2482,35 @@ class VehicleInwardController extends Controller {
 				$job_order->ewp_expiry_date = $request->ewp_expiry_date;
 			}
 
-			if ($request->amc_status == 1) {
+			if ($request->amc_status == 1 && $request->warrany_status == 1) {
+				if (strtotime($request->amc_starting_date) > strtotime($request->amc_ending_date)) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'AMC Ending Date should be greater than AMC Starting Date',
+						],
+					]);
+				}
+
 				$job_order->amc_status = 1;
 				$job_order->starting_km = $request->starting_km;
 				$job_order->ending_km = $request->ending_km;
+				$job_order->amc_starting_date = date('Y-m-d', strtotime($request->amc_starting_date));
+				$job_order->amc_ending_date = date('Y-m-d', strtotime($request->amc_ending_date));
 			} else {
-				$job_order->amc_status = 0;
+
+				if ($request->warrany_status == 1) {
+					$job_order->amc_status = 0;
+				} else {
+					$job_order->amc_status = NULL;
+				}
+				$job_order->amc_starting_date = NULL;
+				$job_order->amc_ending_date = NULL;
 				$job_order->starting_km = NULL;
 				$job_order->ending_km = NULL;
+
+				$attachment = Attachment::where('id', $request->job_order_id)->where('attachment_of_id', 227)->where('attachment_type_id', 256)->forceDelete();
 			}
 
 			$job_order->is_dms_verified = $request->is_verified;
@@ -3978,7 +4007,7 @@ class VehicleInwardController extends Controller {
 
 			$oem_recomentaion_labour_amount_include_tax = 0;
 			$additional_rot_and_parts_labour_amount_include_tax = 0;
-			$total_labour_hours = 0;
+			$total_labour_hours = JobOrderRepairOrder::where('job_order_id', $r->id)->sum('qty');
 
 			if ($job_order->jobOrderRepairOrders) {
 				foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
@@ -4005,10 +4034,8 @@ class VehicleInwardController extends Controller {
 								$oem_recomentaion_labour_amount_include_tax += $labour->amount;
 							}
 						}
-						if ($labour->removal_reason_id == null) {
-							$total_labour_hours += $labour->qty;
-							$oem_recomentaion_labour_amount += $labour->amount;
-						}
+						// $total_labour_hours += $labour->qty;
+						$oem_recomentaion_labour_amount += $labour->amount;
 					}
 					//ADDITIONAL ROT AND PARTS
 					if ($labour->is_recommended_by_oem == 0) {
@@ -4034,10 +4061,8 @@ class VehicleInwardController extends Controller {
 								$additional_rot_and_parts_labour_amount_include_tax += $labour->amount;
 							}
 						}
-						if ($labour->removal_reason_id == null) {
-							$total_labour_hours += $labour->qty;
-							$additional_rot_and_parts_labour_amount += $labour->amount;
-						}
+						// $total_labour_hours += $labour->qty;
+						$additional_rot_and_parts_labour_amount += $labour->amount;
 					}
 				}
 			}
@@ -4139,8 +4164,9 @@ class VehicleInwardController extends Controller {
 				$job_order->enable_estimate_status = true;
 			}
 
-			$job_order->total_labour_hours = $total_labour_hours;
-			$estimation_date = date("Y-m-d H:i:s", strtotime('+' . $total_labour_hours . ' hours', strtotime($job_order->created_at)));
+			$job_order->total_labour_hours = round($total_labour_hours);
+
+			$estimation_date = date("Y-m-d H:i:s", strtotime('+' . $job_order->total_labour_hours . ' hours', strtotime($job_order->created_at)));
 			// dd($job_order->created_at, $estimation_date);
 			$job_order->est_date = date("d-m-Y", strtotime($estimation_date));
 			$job_order->est_time = date("h:i a", strtotime($estimation_date));
