@@ -3896,6 +3896,7 @@ class JobCardController extends Controller {
 			if ($job_card->jobOrder->jobOrderRepairOrders) {
 				$labour_total_amount = 0;
 				foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $labour) {
+					$tax_values = array();
 					if (in_array($labour->split_order_type_id, $customer_paid_type_id)) {
 						$labour_sub_total = 0;
 						$total_amount = 0;
@@ -4047,6 +4048,8 @@ class JobCardController extends Controller {
 							$part_details[$key]['total_amount'] = $total_amount;
 							$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
 						}
+
+						$part_details[$key]['tax_values'] = $tax_values;
 
 					} else {
 						$part_sub_total = 0;
