@@ -3935,7 +3935,7 @@ class VehicleInwardController extends Controller {
 
 			$oem_recomentaion_labour_amount_include_tax = 0;
 			$additional_rot_and_parts_labour_amount_include_tax = 0;
-			$total_labour_hours = 0;
+			$total_labour_hours = JobOrderRepairOrder::where('job_order_id', $r->id)->sum('qty');
 
 			if ($job_order->jobOrderRepairOrders) {
 				foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
@@ -3962,10 +3962,8 @@ class VehicleInwardController extends Controller {
 								$oem_recomentaion_labour_amount_include_tax += $labour->amount;
 							}
 						}
-						if ($labour->removal_reason_id == null) {
-							$total_labour_hours += $labour->qty;
-							$oem_recomentaion_labour_amount += $labour->amount;
-						}
+						// $total_labour_hours += $labour->qty;
+						$oem_recomentaion_labour_amount += $labour->amount;
 					}
 					//ADDITIONAL ROT AND PARTS
 					if ($labour->is_recommended_by_oem == 0) {
@@ -3991,10 +3989,8 @@ class VehicleInwardController extends Controller {
 								$additional_rot_and_parts_labour_amount_include_tax += $labour->amount;
 							}
 						}
-						if ($labour->removal_reason_id == null) {
-							$total_labour_hours += $labour->qty;
-							$additional_rot_and_parts_labour_amount += $labour->amount;
-						}
+						// $total_labour_hours += $labour->qty;
+						$additional_rot_and_parts_labour_amount += $labour->amount;
 					}
 				}
 			}
@@ -4096,8 +4092,9 @@ class VehicleInwardController extends Controller {
 				$job_order->enable_estimate_status = true;
 			}
 
-			$job_order->total_labour_hours = $total_labour_hours;
-			$estimation_date = date("Y-m-d H:i:s", strtotime('+' . $total_labour_hours . ' hours', strtotime($job_order->created_at)));
+			$job_order->total_labour_hours = round($total_labour_hours);
+
+			$estimation_date = date("Y-m-d H:i:s", strtotime('+' . $job_order->total_labour_hours . ' hours', strtotime($job_order->created_at)));
 			// dd($job_order->created_at, $estimation_date);
 			$job_order->est_date = date("d-m-Y", strtotime($estimation_date));
 			$job_order->est_time = date("h:i a", strtotime($estimation_date));

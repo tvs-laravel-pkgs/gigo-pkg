@@ -1221,7 +1221,7 @@
                             <div class="tab-pane fade" id="maintenance_details" data-animation="fadeInUp" data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
-                                        <div class="col-md-12">
+                                        <div class="col-md-12" ng-if="job_order.service_type_id">
                                             <h5 class="color-primary mb-10"><b>Scheduled Maintenance ({{job_order.service_type.name}})</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
                                             <div class="table-responsive">
@@ -1360,6 +1360,9 @@
                                             <div class="mb-20"></div><!-- Spacing -->
                                             <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471 && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">Edit</a>
                                         </div><!-- Column -->
+                                        <div class="col-md-12" ng-if="!job_order.service_type_id">
+                                            <h5 class="color-primary mb-10"><b>Scheduled Maintenance Not Available</b></h5>
+                                        </div>
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
