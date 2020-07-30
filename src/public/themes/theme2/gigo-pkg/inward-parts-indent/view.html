@@ -28,7 +28,6 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 </style>
-
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -499,7 +498,7 @@ input[type=number] {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,log) in indent_part_logs">
+                                                        <tr class="ptb-12" ng-if="log.removal_reason_id!=10021" ng-repeat="(index,log) in indent_part_logs">
                                                             <td>
                                                                 {{log.name}} / {{log.code}}
                                                             </td>

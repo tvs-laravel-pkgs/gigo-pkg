@@ -31,8 +31,7 @@ Content Wrap -->
                                         <label>
                                             Part<sup class="mandatory">*</sup>
                                         </label>
-                                        <md-select ng-model="return_part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
-                                            <!-- ng-change="partSelected(job_order_part)" -->
+                                        <md-select ng-model="return_part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="issuedPartSelected(return_part)">
                                             <md-select-header class="demo-select-header">
                                                 <input ng-model="searchreturnPartKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                             </md-select-header>
@@ -48,8 +47,16 @@ Content Wrap -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
                                     <div class="form-group">
+                                        <label>
+                                            Available Quantity <sup class="mandatory">*</sup>
+                                        </label>
+                                        <input type="text" class="form-control" readonly id="available_qty" name="available_qty" value="{{available_quantity}}" ng-model="available_quantity" placeholder="Available Quantity">
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
+                                <div class="col-md-3">
+                                    <div class="form-group">
                                         <label>Issue Quantity <sup class="mandatory">*</sup></label>
-                                        <input type="text" name="issued_qty" ng-model="issued_part.issued_qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Issue Quantity" autocomplete="off" />
+                                        <input type="text" name="issued_qty" ng-model="issued_part.issued_qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Issue Quantity" autocomplete="off" ng-change="checkAvailability()" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
                                 <div class="col-md-3">
@@ -68,6 +75,8 @@ Content Wrap -->
                                         <input type="hidden" name="issued_mode_id" class="required" value="{{issued_part.issued_mode_id}}">
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
+                            </div><!-- Row -->
+                            <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>
@@ -86,9 +95,7 @@ Content Wrap -->
                                         <input type="hidden" name="issued_to_id" value="{{issued_part.issued_to.id}}">
                                     </div><!-- Field -->
                                 </div><!-- Column -->
-                            </div><!-- Row -->
-                            <div class="row" ng-if='issued_part.issued_mode_id == 8481'>
-                                <div class="col-md-3">
+                                <div class="col-md-3" ng-if='issued_part.issued_mode_id == 8481'>
                                     <div class="form-group">
                                         <label>
                                             Request Purpose<sup class="mandatory">*</sup>
@@ -96,26 +103,26 @@ Content Wrap -->
                                         <textarea ng-model='remarks' name="remarks" class="form-control" placeholder="Request Purpose">{{remarks}}</textarea>
                                     </div><!-- Field -->
                                 </div><!-- Column -->
-                                <div class="col-md-3">
+                                <div class="col-md-3" ng-if='issued_part.issued_mode_id == 8481'>
                                     <div class="form-group">
                                         <label>Quantity <sup class="mandatory">*</sup></label>
                                         <input type="text" ng-change="calculateTotal()" name="quantity" ng-model="issue_part.quantity" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
-                                <div class="col-md-3">
+                                <div class="col-md-3" ng-if='issued_part.issued_mode_id == 8481'>
                                     <div class="form-group">
                                         <label>Unit Price <sup class="mandatory">*</sup></label>
                                         <input type="text" ng-change="calculateTotal()" name="unit_price" ng-model="issue_part.unit_price" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Unit Price" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
+                            </div>
+                            <div class="row" ng-if='issued_part.issued_mode_id == 8481'>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Total <sup class="mandatory">*</sup></label>
                                         <input type="text" name="total" ng-model="issue_part.total" readonly class="form-control" placeholder="Total" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
-                            </div>
-                            <div class="row" ng-if='issued_part.issued_mode_id == 8481'>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>Tax % <sup class="mandatory">*</sup></label>
@@ -134,14 +141,14 @@ Content Wrap -->
                                         <input type="text" name="total_amount" ng-model="issue_part.total_amount" readonly class="form-control" placeholder="Total amount" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
+                            </div>
+                            <div class="row" ng-if='issued_part.issued_mode_id == 8481'>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>MRP <sup class="mandatory">*</sup></label>
                                         <input type="text" name="mrp" ng-model="issue_part.mrp" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="MRP" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
-                            </div>
-                            <div class="row" ng-if='issued_part.issued_mode_id == 8481'>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>
@@ -173,6 +180,8 @@ Content Wrap -->
                                         <input type="text" readonly name="po_amount" ng-model="issue_part.po_amount" class="form-control" placeholder="PO Amount" autocomplete="off" />
                                     </div><!-- Feild -->
                                 </div><!-- Column -->
+                            </div>
+                            <div class="row" ng-if='issued_part.issued_mode_id == 8481'>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>
@@ -181,8 +190,6 @@ Content Wrap -->
                                         <textarea ng-model='advance_amount_received_details' name="advance_amount_received_details" class="form-control" placeholder="Advance Amount Received Details">{{advance_amount_received_details}}</textarea>
                                     </div><!-- Field -->
                                 </div><!-- Column -->
-                            </div>
-                            <div class="row" ng-if='issued_part.issued_mode_id == 8481'>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label>

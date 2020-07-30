@@ -534,13 +534,14 @@ app.component('inwardPartsIndentIssuePartForm', {
                     $scope.repair_order_mechanics = res.repair_order_mechanics;
                     $scope.issue_modes = res.issue_modes
                     $scope.issued_part = res.issue_data;
-                    PartSvc.read($scope.issued_part.part_id)
-                        .then(function(response) {
-                            $scope.return_part = response.data.part;
-                            $scope.return_part.job_order_part_id = res.issue_data.job_order_part_id;
-                        });
-                    $scope.issued_to = res.issue_to_user;
-
+                    if ($scope.issued_part) {
+                        PartSvc.read($scope.issued_part.part_id)
+                            .then(function(response) {
+                                $scope.return_part = response.data.part;
+                                $scope.return_part.job_order_part_id = res.issue_data.job_order_part_id;
+                            });
+                        $scope.issued_to = res.issue_to_user;
+                    }
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -667,6 +668,43 @@ app.component('inwardPartsIndentIssuePartForm', {
             $scope.issue_part.tax_amount = parseFloat($scope.issue_part.total) * (parseFloat($scope.issue_part.tax_percentage) / 100);
             $scope.issue_part.total_amount = parseFloat($scope.issue_part.total) + parseFloat($scope.issue_part.tax_amount);
             $scope.issue_part.po_amount = $scope.issue_part.total_amount;
+        }
+        $scope.checkAvailability = function() {
+            // console.log($scope.available_quantity, $scope.issued_part.issued_qty);
+            if ($scope.available_quantity == undefined) {
+                custom_noty('error', 'Please Select Part');
+                return false;
+            } else {
+                if (parseFloat($scope.available_quantity) < parseFloat($scope.issued_part.issued_qty)) {
+                    custom_noty('error', 'Issued quantity should not exceed available quantity');
+                    return false;
+                }
+            }
+        }
+        $scope.issuedPartSelected = function(part) {
+            if (part) {
+                $.ajax({
+                        url: base_url + '/api/inward-part-indent/get-part-detail-pias',
+                        method: "POST",
+                        data: {
+                            code: part.code
+                        },
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                    })
+                    .done(function(res) {
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        }
+                        $scope.available_quantity = res.available_quantity;
+                        $scope.$apply();
+                    })
+                    .fail(function(xhr) {
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
         }
     }
 });

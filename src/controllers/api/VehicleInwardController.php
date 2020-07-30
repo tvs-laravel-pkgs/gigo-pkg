@@ -700,14 +700,15 @@ class VehicleInwardController extends Controller {
 						'joip.id as job_order_part_increment_id',
 						'users.id as employee_id',
 						'job_order_parts.id as job_order_part_id',
-						'parts.id as part_id'
+						'parts.id as part_id',
+						'job_order_parts.removal_reason_id'
 					);
 
 				$indent_part_logs = JobOrderPart::join('job_order_returned_parts as jorp', 'jorp.job_order_part_id', 'job_order_parts.id')
 					->join('parts', 'job_order_parts.part_id', 'parts.id')
 					->join('users', 'jorp.returned_to_id', 'users.id')
 					->where('job_order_id', $r->id)
-					->whereNotIn('job_order_parts.removal_reason_id', [10021])
+				// ->whereNotIn('job_order_parts.removal_reason_id', [10021])
 					->select(
 						DB::raw('"Return" as transaction_type'),
 						'parts.name',
@@ -719,7 +720,9 @@ class VehicleInwardController extends Controller {
 						'jorp.id as job_order_part_increment_id',
 						'users.id as employee_id',
 						'job_order_parts.id as job_order_part_id',
-						'parts.id as part_id'
+						'parts.id as part_id',
+						'job_order_parts.removal_reason_id'
+
 					)->union($indent_part_logs_issues)->orderBy('date', 'DESC')->get();
 			}
 
@@ -926,7 +929,68 @@ class VehicleInwardController extends Controller {
 			]);
 		}
 	}
+	public function getPartDetailPias(Request $request) {
+		try {
+			$available_qty = 0;
+			$part_code = $request->code;
+			$user_outlet_code = Auth::user()->outlet->code;
+			$company_id = Auth::user()->company_id;
+			$db2 = config('database.connections.pias.database');
+			$error = '';
 
+			$part = DB::table($db2 . '.parts as pias_parts')
+				->join('parts', 'parts.code', 'pias_parts.code')
+				->select('parts.code', 'pias_parts.id')
+				->where('parts.code', $part_code)
+				->first();
+			$outlet = DB::table($db2 . '.outlets as pias_outlets')
+				->join('outlets', 'outlets.code', 'pias_outlets.code')
+				->select('outlets.code', 'pias_outlets.id')
+				->where(['outlets.code' => $user_outlet_code, 'outlets.company_id' => $company_id])
+				->first();
+
+			// dd($part, $outlet);
+
+			if (!$part) {
+				$error = 'Part';
+			}
+			if (!$outlet) {
+				$error = 'Outlet';
+			}
+			if ($error != '') {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [$error . ' Details cannot be found'],
+				]);
+			}
+
+			$stock_details = DB::table($db2 . '.stock_details')
+				->select('stock_details.outlet_id', 'stock_details.part_id', 'stock_details.available_quantity')
+				->where(['stock_details.outlet_id' => $outlet->id, 'stock_details.part_id' => $part->id])
+				->first();
+			// dd($stock_details);
+			if ($stock_details) {
+				$available_qty = $stock_details->available_quantity;
+			}
+
+			$responseArr = array(
+				'success' => true,
+				'available_quantity' => $available_qty,
+			);
+
+			return response()->json($responseArr);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
 	//SAVE ISSUED PART
 	public function saveIssuedPart(Request $request) {
 		// dd($request->all());
@@ -958,6 +1022,14 @@ class VehicleInwardController extends Controller {
 					'success' => false,
 					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			$pias_available_qty = $request->available_qty;
+			if (intval($request->issued_qty) > intval($pias_available_qty)) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Issue Quantity should not exceed Available Quantity',
 				]);
 			}
 

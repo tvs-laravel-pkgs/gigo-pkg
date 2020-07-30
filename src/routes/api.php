@@ -173,6 +173,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		Route::post('inward-part-indent/get-issue-part-form-data', 'VehicleInwardController@getInwardPartIndentIssuePartFormData');
 		Route::post('inward-part-indent/save-issued-part', 'VehicleInwardController@saveIssuedPart');
+		Route::post('inward-part-indent/get-part-detail-pias', 'VehicleInwardController@getPartDetailPias');
 
 		Route::group(['prefix' => 'vendor'], function () {
 			$controller = 'Vendor';
