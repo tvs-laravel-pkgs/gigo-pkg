@@ -86,6 +86,14 @@ class JobOrder extends BaseModel {
 		return empty($value) ? '' : round($value);
 	}
 
+	public function getAmcStartingDateAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
+	public function getAmcEndingDateAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
 	public function getEstDeliveryDateAttribute() {
 		return empty($this->attributes['estimated_delivery_date']) ? date('d-m-Y') : date('d-m-Y', strtotime($this->attributes['estimated_delivery_date']));
 	}

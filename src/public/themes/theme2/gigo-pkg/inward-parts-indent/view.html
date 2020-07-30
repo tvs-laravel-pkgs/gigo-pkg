@@ -15,7 +15,20 @@
     display: inline-block;
     cursor: pointer;
 }
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
 </style>
+
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -147,7 +160,7 @@
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
-                                                        Chassis / VIN  Number
+                                                        Chassis / VIN Number
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
@@ -155,7 +168,6 @@
                                                         </b>
                                                     </span>
                                                 </li>
-                                                
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
                                                         Is Sold ?
@@ -177,7 +189,6 @@
                                                         {{job_order.vehicle.sold_date}}
                                                     </span>
                                                 </li>
-                                                
                                             </ul>
                                             <!-- <button class="btn btn-secondary-dark btn-md btn-square" >
                                                 Edit
@@ -637,23 +648,17 @@
                         </div><!-- Column -->
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>
-                                    Quantity
-                                </label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" name="returned_qty" ng-model="parts_indent.return_part.qty" maxlength="12">
-                                </div>
-                            </div>
-                        </div>
+                                <label>Quantity <sup class="mandatory">*</sup></label>
+                                <input type="number" name="returned_qty" ng-model="parts_indent.return_part.qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                            </div><!-- Feild -->
+                        </div><!-- Column -->
                     </div>
                     <div class="row">
                         <div class="col-md-12 text-right mb-15">
                             <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
                                 Cancel
                             </button>
-                            <button type="submit" class="submit btn btn-bordered btn-red approve_btn">
-                                Submit
-                            </button>
+                            <button type="submit" class="btn btn-bordered submit approve_btn">Submit</button>
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </form>
