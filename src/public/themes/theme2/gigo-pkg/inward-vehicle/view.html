@@ -376,7 +376,8 @@
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
-                                                        PAN No
+                                                        PAN
+                                                        <!-- No -->
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
@@ -733,6 +734,7 @@
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>Voice of Customer</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
+                                            <span ng-if="job_order.customer_voices.length == 0">No Data Found</span>
                                             <ul class="checklist-form-ul" ng-repeat="(key, customer_voice) in job_order.customer_voices">
                                                 <li>
                                                     <div class="checklist-form-item-wrap">

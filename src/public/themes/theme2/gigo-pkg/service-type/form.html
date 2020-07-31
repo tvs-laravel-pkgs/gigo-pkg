@@ -87,6 +87,15 @@ Content Wrap -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
+                                                    Display Order
+                                                    <sup class="mandatory"></sup>
+                                                </label>
+                                                <input type="text" class="form-control" ng-model="$ctrl.service_type.display_order" name="display_order" placeholder="Enter Display Order" />
+                                            </div><!-- Feild -->
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
                                                     Active Status
                                                     <sup class="mandatory">*</sup>
                                                 </label>
@@ -137,7 +146,7 @@ Content Wrap -->
                                                             <td class="labour_value{{index}}">{{repair_order.name.amount}}</td>
                                                             <td>
                                                                 <div class="tab-switch">
-                                                                    <md-switch ng-model="repair_order.switch_value" aria-label="Switch {{index}}" ng-true-value="'No'" ng-false-value="'Yes'"class="md-warn type-2">
+                                                                    <md-switch ng-model="repair_order.switch_value" aria-label="Switch {{index}}" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
                                                                         {{ repair_order.switch_value }}
                                                                     </md-switch>
                                                                     <input type="hidden" name="labours[{{index}}][status]" value="{{repair_order.switch_value}}">
@@ -201,7 +210,7 @@ Content Wrap -->
                                                             <td><input type="text" class="form-control required" readonly id="part_amount{{index}}" name="parts[{{index}}][amount]" value="{{part.name.amount}}" /></td>
                                                             <td>
                                                                 <div class="tab-switch">
-                                                                    <md-switch ng-model="part.switch_value" aria-label="Switch {{index}}" ng-true-value="'No'" ng-false-value="'Yes'"class="md-warn type-2">
+                                                                    <md-switch ng-model="part.switch_value" aria-label="Switch {{index}}" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2">
                                                                         {{ part.switch_value }}
                                                                     </md-switch>
                                                                     <input type="hidden" name="parts[{{index}}][status]" value="{{part.switch_value}}">

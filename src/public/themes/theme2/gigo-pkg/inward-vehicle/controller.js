@@ -2819,6 +2819,13 @@ app.component('inwardVehicleCustomerDetail', {
                         $scope.show_customer_form = false;
                         self.country = $scope.job_order.vehicle.current_owner.customer.address.country;
                     }
+                    $scope.extras = res.extras;
+
+                    if ($scope.job_order.vehicle && $scope.job_order.vehicle.current_owner) {
+                        $scope.ownership_type_id = $scope.job_order.vehicle.current_owner.ownership_type.id;
+                    } else {
+                        $scope.ownership_type_id = 8160;
+                    }
                     if ($scope.type_id == 1) {
                         $scope.show_customer_detail = false;
                         $scope.show_customer_form = true;
@@ -2826,15 +2833,8 @@ app.component('inwardVehicleCustomerDetail', {
                     if ($scope.type_id == 2) {
                         $scope.show_customer_detail = false;
                         $scope.show_customer_form = true;
-                        $scope.job_order.vehicle.current_owner = '';
+                        $scope.job_order.vehicle.current_owner = {};
                         self.country = $scope.job_order.country;
-                    }
-                    $scope.extras = res.extras;
-
-                    if ($scope.job_order.vehicle && $scope.job_order.vehicle.current_owner) {
-                        $scope.ownership_type_id = $scope.job_order.vehicle.current_owner.ownership_type.id;
-                    } else {
-                        $scope.ownership_type_id = 8160;
                     }
 
                     $scope.$apply();

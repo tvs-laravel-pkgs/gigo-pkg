@@ -148,7 +148,7 @@ app.component('inwardPartsIndentView', {
                 $scope.parts_indent.employee = {};
                 self.job_order_returned_part_id = part.job_order_part_increment_id;
                 $scope.parts_indent.return_part.id = part.part_id;
-                $scope.parts_indent.return_part.qty = part.qty;
+                $scope.parts_indent.return_part.qty = parseInt(part.qty);
                 $scope.parts_indent.employee.id = part.employee_id;
                 $scope.parts_indent.return_part.job_order_part_id = part.job_order_part_id;
             }

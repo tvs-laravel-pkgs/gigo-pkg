@@ -246,8 +246,17 @@ app.component('vehicleServiceScheduleForm', {
         self.angular_routes = angular_routes;
 
         /* Modal Md Select Hide */
+        /*
         $('.modal').bind('click', function(event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
+        */
+        $(document).click(function(event) {
+            var $target = $(event.target);
+            if (!$target.closest('.md-select-menu-container').length &&
+                $('.md-select-menu-container').is(":visible")) {
                 $mdSelect.hide();
             }
         });
@@ -494,8 +503,14 @@ app.component('vehicleServiceScheduleForm', {
 
         }
         $scope.removeService = function(index) {
-            $scope.vehicle_service_schedule.vehicle_service_schedule_service_types.splice(index, 1);
+            $("#service_delete_index").val(index);
+            $("#delete_service").modal('show');
+            // $scope.vehicle_service_schedule.vehicle_service_schedule_service_types.splice(index, 1);
             // $scope.calculatePartTotal();
+        }
+        $scope.deleteConfirm = function() {
+            var index = $("#service_delete_index").val();
+            $scope.vehicle_service_schedule.vehicle_service_schedule_service_types.splice(index, 1);
         }
         $scope.showServiceForm = function(service_type_item, index) {
             // console.log(service_type_item);

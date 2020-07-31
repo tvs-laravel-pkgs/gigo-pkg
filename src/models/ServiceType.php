@@ -15,7 +15,7 @@ class ServiceType extends BaseModel {
 	protected $table = 'service_types';
 	public $timestamps = true;
 	protected $fillable =
-		["company_id", "code", "name"]
+		["company_id", "code", "name", "display_order"]
 	;
 	public static $AUTO_GENERATE_CODE = true;
 
@@ -91,7 +91,7 @@ class ServiceType extends BaseModel {
 			$list = $list->whereNotIn('service_types.id', $params['service_type_ids']);
 		}
 
-		$list = $list->where('company_id', Auth::user()->company_id)->orderBy('service_types.name', 'ASC')->get();
+		$list = $list->where('company_id', Auth::user()->company_id)->orderBy('service_types.display_order', 'ASC')->get();
 
 		if ($add_default) {
 			$list->prepend(['id' => '', 'name' => $default_text]);

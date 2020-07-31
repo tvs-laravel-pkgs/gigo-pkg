@@ -39,6 +39,7 @@ class ServiceTypeController extends Controller {
 				'service_types.code',
 				DB::raw('IF(service_types.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
+			->orderBy('service_types.id')
 			->where('service_types.company_id', Auth::user()->company_id)
 			->where(function ($query) use ($request) {
 				if (!empty($request->short_name)) {
@@ -176,6 +177,7 @@ class ServiceTypeController extends Controller {
 			}
 			$service_type->fill($request->all());
 			$service_type->company_id = Auth::user()->company_id;
+			$service_type->display_order = ($request->display_order) ? $request->display_order : 99;
 			if ($request->status == 'Inactive') {
 				$service_type->deleted_at = Carbon::now();
 				$service_type->deleted_by_id = Auth::user()->id;

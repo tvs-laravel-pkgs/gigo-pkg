@@ -5100,12 +5100,12 @@ class VehicleInwardController extends Controller {
 			if ($request->payable_type == 'labour') {
 				return response()->json([
 					'success' => true,
-					'message' => 'Labour Details Successfully',
+					'message' => 'Labour Deleted Successfully',
 				]);
 			} else {
 				return response()->json([
 					'success' => true,
-					'message' => 'Parts Details Successfully',
+					'message' => 'Part Deleted Successfully',
 				]);
 			}
 
