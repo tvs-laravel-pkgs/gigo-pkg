@@ -251,8 +251,9 @@
                                             <hr>
                                             <div class="col-md-12" ng-if="job_order.status_id != 8472 && !job_order.part_intent_confirmed_date">
                                                 <div class="text-center pt-40">
-                                                    <a class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Send Request to Stock Incharge</a>
+                                                    <a class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Send to Module Store to Add Parts</a>
                                                 </div>
+                                                <div class="mb-20"></div><!-- Spacing -->
                                             </div>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
@@ -279,7 +280,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>   
+                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
             </div>
             <div class="modal-body">
                 <p>Are you sure? Do you want to send Stock Incharge to add Parts? </p>
@@ -290,7 +291,6 @@
         </div>
     </div>
 </div>
-
 <!-- Modal -->
 <div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm finance-view-modal" role="document">

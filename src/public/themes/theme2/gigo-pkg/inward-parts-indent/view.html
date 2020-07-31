@@ -426,10 +426,10 @@ input[type=number] {
                                                                 {{part_detail.pending_qty}}
                                                             </td>
                                                             <td ng-class="part_detail.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                                <button type="button" ng-if="!job_order.part_intent_confirmed_date &&  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 " ng-click="showPartForm(part_detail)" class="btn img-btn btn-delete">
+                                                                <button type="button" ng-if="!job_order.part_intent_confirmed_date && ( job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 ) && part_detail.is_fixed_schedule == 0" ng-click="showPartForm(part_detail)" class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                                 </button>
-                                                                <button type="button" ng-if="!job_order.part_intent_confirmed_date &&  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 " class="btn img-btn btn-delete" ng-click="removePart(index,part_detail.job_order_part_id,'parts')">
+                                                                <button type="button" ng-if="!job_order.part_intent_confirmed_date && (  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 ) &&  part_detail.is_fixed_schedule == 0" class="btn img-btn btn-delete" ng-click="removePart(index,part_detail.job_order_part_id,'parts')">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
                                                             </td>
@@ -569,7 +569,7 @@ input[type=number] {
                 <h4 class="modal-title" id="myModalLabel">CONFIRMATION?</h4>
             </div>
             <div class="modal-body">
-                <p>Are you sure? do you add all parts in labour details? </p>
+                <p>Are you sure? Do you added all parts related labour works?</p>
                 <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
                 <button class="btn btn-success send_confirm" ng-click="sendConfirm(2)">Yes</button>

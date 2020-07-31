@@ -63,7 +63,7 @@
                                                                                 </span>
                                                                             </div>
                                                                         </li>
-                                                                        <li class="wid-100">
+                                                                        <!-- <li class="wid-100">
                                                                             <div class="three-box-content bg-grey text-center">
                                                                                 <span class="three-box-label">
                                                                                     TOTAL
@@ -73,7 +73,30 @@
                                                                                     {{job_order.oem_recomentation_sub_total | number:2}}
                                                                                 </span>
                                                                             </div>
+                                                                        </li> -->
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content bg-grey text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Total Tax
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    {{job_order.oem_recomentation_tax_total | number:2}}
+                                                                                </span>
+                                                                            </div>
                                                                         </li>
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content bg-grey text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Total
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    {{job_order.oem_recomentation_sub_total | number:2}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+
                                                                     </ul>
                                                                     <div ng-if="job_order.is_customer_agreed!=1" class="text-center">
                                                                         <button class="btn-link color-secondary-dark font-sm"><a href="#!/inward-vehicle/scheduled-maintenance/form/{{job_order.id}}" class="btn-link color-secondary-dark font-sm">
@@ -112,7 +135,30 @@
                                                                                 </span>
                                                                             </div>
                                                                         </li>
-                                                                        <li class="wid-100">
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content bg-grey text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Total Tax
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    {{job_order.additional_rot_parts_tax_total | number:2}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content bg-grey text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Total
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    {{job_order.additional_rot_parts_sub_total | number:2}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+
+                                                                        <!-- <li class="wid-100">
                                                                             <div class="three-box-content bg-grey text-center">
                                                                                 <span class="three-box-label">
                                                                                     TOTAL
@@ -122,7 +168,7 @@
                                                                                     {{job_order.additional_rot_parts_sub_total | number:2}}
                                                                                 </span>
                                                                             </div>
-                                                                        </li>
+                                                                        </li> -->
                                                                     </ul>
                                                                     <div ng-if="job_order.is_customer_agreed!=1" class="text-center">
                                                                         <button class="btn-link color-secondary-dark font-sm"><a href="#!/inward-vehicle/payable-labour-part-detail/form/{{job_order.id}}" class="btn-link color-secondary-dark font-sm">
@@ -162,7 +208,29 @@
                                                                                 </span>
                                                                             </div>
                                                                         </li>
-                                                                        <li class="wid-100">
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content bg-red text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Total Tax
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-white.svg" alt="Rupee" />
+                                                                                    {{job_order.total_tax_amount | number:2}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content bg-red text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Total
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-white.svg" alt="Rupee" />
+                                                                                    {{job_order.total_estimate_amount | number:2}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <!-- <li class="wid-100">
                                                                             <div class="three-box-content bg-red text-center">
                                                                                 <span class="three-box-label">
                                                                                     TOTAL
@@ -172,7 +240,7 @@
                                                                                     {{job_order.total_estimate_amount | number:2}}
                                                                                 </span>
                                                                             </div>
-                                                                        </li>
+                                                                        </li> -->
                                                                     </ul>
                                                                     <div class="text-center">
                                                                         <button class="btn-link font-sm">
@@ -225,7 +293,7 @@
                                                             <label for="check_agree">Customer Agreed?</label>
                                                         </div> -->
                                                         <label>
-                                                            Customer Agreed?
+                                                            Customer / Driver Agreed?
                                                         </label>
                                                         <div class="common-radio-button type-4">
                                                             <input type="radio" id="sold" name="is_customer_agreed" ng-model="$ctrl.estimate_aggreed" ng-value="1" ng-click="$ctrl.checkbox(1)">
@@ -284,4 +352,4 @@
             </form>
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
-</div><!-- Modal -->
+</div><!-- Modal ->

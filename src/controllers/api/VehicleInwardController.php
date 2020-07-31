@@ -648,6 +648,7 @@ class VehicleInwardController extends Controller {
 						$part_details[$key]['qty'] = $value->qty;
 						$part_details[$key]['amount'] = $value->amount;
 						$part_details[$key]['is_free_service'] = $value->is_free_service;
+						$part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
 						if ($value->splitOrderType) {
 							$part_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
 						} else {
@@ -1725,6 +1726,7 @@ class VehicleInwardController extends Controller {
 								$repair_order = JobOrderRepairOrder::firstOrNew(['job_order_id' => $request->job_order_id, 'repair_order_id' => $rvalue->id]);
 
 								$repair_order->is_recommended_by_oem = 1;
+								$repair_order->is_fixed_schedule = 1;
 								$repair_order->is_customer_approved = 0;
 								$repair_order->split_order_type_id = $rvalue->pivot->split_order_type_id;
 								$repair_order->qty = $rvalue->hours;
@@ -1749,6 +1751,7 @@ class VehicleInwardController extends Controller {
 								$part_order->is_free_service = $value->is_free;
 								$part_order->status_id = 8200; //Customer Approval Pending
 								$part_order->is_oem_recommended = 1;
+								$part_order->is_fixed_schedule = 1;
 								$part_order->is_customer_approved = 0;
 								$part_order->estimate_order_id = 0;
 								$part_order->created_by_id = Auth::user()->id;
@@ -2701,6 +2704,7 @@ class VehicleInwardController extends Controller {
 				$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$labour_details[$key]['repair_order'] = $value->repairOrder;
+				$labour_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$labour_amount += $value->amount;
@@ -2729,7 +2733,7 @@ class VehicleInwardController extends Controller {
 				$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$part_details[$key]['part'] = $value->part;
-
+				$part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$part_amount += $value->amount;
@@ -3954,7 +3958,7 @@ class VehicleInwardController extends Controller {
 				'vehicle',
 				'vehicle.model',
 				'jobOrderRepairOrders' => function ($q) use ($customer_paid_type_id) {
-					$q->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id');
+					$q->whereNull('removal_reason_id');
 				},
 				'jobOrderParts' => function ($q) use ($customer_paid_type_id) {
 					$q->whereNull('removal_reason_id');
@@ -4009,74 +4013,70 @@ class VehicleInwardController extends Controller {
 			$additional_rot_and_parts_labour_amount_include_tax = 0;
 			$total_labour_hours = JobOrderRepairOrder::where('job_order_id', $r->id)->sum('qty');
 
+			$total_schedule_labour_tax = 0;
+			$total_schedule_labour_amount = 0;
+			$total_payable_labour_tax = 0;
+			$total_payable_labour_amount = 0;
+
+			//Repair Orders
 			if ($job_order->jobOrderRepairOrders) {
 				foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
-					//SCHEDULED MAINTANENCE
-					if ($labour->is_recommended_by_oem == 1 && $labour->is_free_service == 0) {
-						if ($labour->repairOrder->taxCode) {
-							$tax_amount = 0;
-							$total_amount = 0;
-							foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
-								$percentage_value = 0;
-								if ($value->type_id == $tax_type) {
-									$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
-									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+					if (in_array($labour->split_order_type_id, $customer_paid_type_id) || !$labour->split_order_type_id) {
+						//SCHEDULE MAINTANENCE
+						if ($labour->is_recommended_by_oem == 1 && $labour->is_free_service != 1) {
+							if ($labour->repairOrder->taxCode) {
+								$tax_amount = 0;
+								$total_amount = 0;
+								foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+									$percentage_value = 0;
+									if ($value->type_id == $tax_type) {
+										$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+									}
+									$tax_amount += $percentage_value;
 								}
-								$tax_amount += $percentage_value;
-							}
-							if ($labour->removal_reason_id == null) {
-								$total_amount = $labour->amount + $tax_amount;
-								$oem_recomentaion_labour_amount_include_tax += $total_amount;
-							}
-						} else {
-							if ($labour->removal_reason_id == null) {
-
-								$oem_recomentaion_labour_amount_include_tax += $labour->amount;
+								$total_schedule_labour_tax += $tax_amount;
+								$total_amount = $tax_amount + $labour->amount;
+								$total_schedule_labour_amount += $total_amount;
+							} else {
+								$total_schedule_labour_amount += $labour->amount;
 							}
 						}
-						// $total_labour_hours += $labour->qty;
-						$oem_recomentaion_labour_amount += $labour->amount;
-					}
-					//ADDITIONAL ROT AND PARTS
-					if ($labour->is_recommended_by_oem == 0) {
-						if ($labour->repairOrder->taxCode) {
-							$tax_amount = 0;
-							$total_amount = 0;
-							foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
-								$percentage_value = 0;
-								if ($value->type_id == $tax_type) {
-									$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
-									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+						//PAYABLE
+						if ($labour->is_recommended_by_oem == 0 && $labour->is_free_service != 1) {
+							if ($labour->repairOrder->taxCode) {
+								$tax_amount = 0;
+								$total_amount = 0;
+								foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+									$percentage_value = 0;
+									if ($value->type_id == $tax_type) {
+										$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+									}
+									$tax_amount += $percentage_value;
 								}
-								$tax_amount += $percentage_value;
-							}
-							if ($labour->removal_reason_id == null) {
-
-								$total_amount = $labour->amount + $tax_amount;
-								$additional_rot_and_parts_labour_amount_include_tax += $total_amount;
-							}
-						} else {
-							if ($labour->removal_reason_id == null) {
-
-								$additional_rot_and_parts_labour_amount_include_tax += $labour->amount;
+								$total_payable_labour_tax += $tax_amount;
+								$total_amount = $tax_amount + $labour->amount;
+								$total_payable_labour_amount += $total_amount;
+							} else {
+								$total_payable_labour_amount += $labour->amount;
 							}
 						}
-						// $total_labour_hours += $labour->qty;
-						$additional_rot_and_parts_labour_amount += $labour->amount;
 					}
 				}
 			}
 
-			$oem_recomentaion_part_amount = 0;
-			$additional_rot_and_parts_part_amount = 0;
-			$oem_recomentaion_part_amount_include_tax = 0;
-			$additional_rot_and_parts_part_amount_include_tax = 0;
+			$total_schedule_part_amount = 0;
+			$total_schedule_part_tax = 0;
+			$total_payable_part_tax = 0;
+			$total_payable_part_amount = 0;
 
+			//Parts
 			if ($job_order->jobOrderParts) {
 				foreach ($job_order->jobOrderParts as $key => $parts) {
 					if (in_array($parts->split_order_type_id, $customer_paid_type_id) || !$parts->split_order_type_id) {
-						//SCHEDULED MAINTANENCE
-						if ($parts->is_oem_recommended == 1 && $parts->is_free_service == 0) {
+						//SCHEDULE MAINTANENCE
+						if ($parts->is_recommended_by_oem == 1 && $parts->is_free_service != 1) {
 							if ($parts->part->taxCode) {
 								$tax_amount = 0;
 								$total_amount = 0;
@@ -4088,22 +4088,14 @@ class VehicleInwardController extends Controller {
 									}
 									$tax_amount += $percentage_value;
 								}
-								if ($parts->removal_reason_id == null) {
-									$total_amount = $parts->amount + $tax_amount;
-									$oem_recomentaion_part_amount_include_tax += $total_amount;
-								}
+								$total_schedule_part_tax += $tax_amount;
+								$total_amount = $tax_amount + $parts->amount;
+								$total_schedule_part_amount += $total_amount;
 							} else {
-								if ($parts->removal_reason_id == null) {
-									$oem_recomentaion_part_amount_include_tax += $parts->amount;
-								}
-							}
-							if ($parts->removal_reason_id == null) {
-								$oem_recomentaion_part_amount += $parts->amount;
+								$total_schedule_part_amount += $parts->amount;
 							}
 						}
-
-						//ADDITIONAL ROT AND PARTS
-						if ($parts->is_oem_recommended == 0) {
+						if ($parts->is_recommended_by_oem == 0 && $parts->is_free_service != 1) {
 							if ($parts->part->taxCode) {
 								$tax_amount = 0;
 								$total_amount = 0;
@@ -4115,39 +4107,43 @@ class VehicleInwardController extends Controller {
 									}
 									$tax_amount += $percentage_value;
 								}
-								if ($parts->removal_reason_id == null) {
-
-									$total_amount = $parts->amount + $tax_amount;
-									$additional_rot_and_parts_part_amount_include_tax += $total_amount;
-								}
+								$total_payable_part_tax += $tax_amount;
+								$total_amount = $tax_amount + $parts->amount;
+								$total_payable_part_amount += $total_amount;
 							} else {
-								if ($parts->removal_reason_id == null) {
-
-									$additional_rot_and_parts_part_amount_include_tax += $parts->amount;
-								}
-							}
-							if ($parts->removal_reason_id == null) {
-								$additional_rot_and_parts_part_amount += $parts->amount;
+								$total_payable_part_amount += $parts->amount;
 							}
 						}
 					}
 				}
 			}
 
+			$schedule_tax_total = $total_schedule_labour_tax + $total_schedule_part_tax;
+
+			$payable_tax_total = $total_payable_labour_tax + $total_payable_part_tax;
+
+			$total_amount = $total_schedule_labour_amount + $total_schedule_part_amount + $total_payable_labour_amount + $total_payable_part_amount;
+			$total_tax_amount = $schedule_tax_total + $payable_tax_total;
+
 			//OEM RECOMENTATION LABOUR AND PARTS AND SUB TOTAL
-			$job_order->oem_recomentation_labour_amount = $oem_recomentaion_labour_amount_include_tax;
-			$job_order->oem_recomentation_part_amount = $oem_recomentaion_part_amount_include_tax;
-			$job_order->oem_recomentation_sub_total = $oem_recomentaion_labour_amount_include_tax + $oem_recomentaion_part_amount_include_tax;
+			$job_order->oem_recomentation_labour_amount = $total_schedule_labour_amount;
+			$job_order->oem_recomentation_part_amount = $total_schedule_part_amount;
+			$job_order->oem_recomentation_tax_total = $schedule_tax_total;
+			$job_order->oem_recomentation_sub_total = $total_schedule_labour_amount + $total_schedule_part_amount;
 
 			//ADDITIONAL ROT & PARTS LABOUR AND PARTS AND SUB TOTAL
-			$job_order->additional_rot_parts_labour_amount = $additional_rot_and_parts_labour_amount_include_tax;
-			$job_order->additional_rot_parts_part_amount = $additional_rot_and_parts_part_amount_include_tax;
-			$job_order->additional_rot_parts_sub_total = $additional_rot_and_parts_labour_amount_include_tax + $additional_rot_and_parts_part_amount_include_tax;
+			$job_order->additional_rot_parts_labour_amount = $total_payable_labour_amount;
+			$job_order->additional_rot_parts_part_amount = $total_payable_part_amount;
+			$job_order->additional_rot_parts_tax_total = $payable_tax_total;
+			$job_order->additional_rot_parts_sub_total = $total_payable_labour_amount + $total_payable_part_amount;
 
 			//TOTAL ESTIMATE
-			$job_order->total_estimate_labour_amount = $oem_recomentaion_labour_amount_include_tax + $additional_rot_and_parts_labour_amount_include_tax;
-			$job_order->total_estimate_parts_amount = $oem_recomentaion_part_amount_include_tax + $additional_rot_and_parts_part_amount_include_tax;
-			$job_order->total_estimate_amount = round((($oem_recomentaion_labour_amount_include_tax + $additional_rot_and_parts_labour_amount_include_tax) + ($oem_recomentaion_part_amount_include_tax + $additional_rot_and_parts_part_amount_include_tax)));
+			$job_order->total_estimate_labour_amount = $total_schedule_labour_amount + $total_payable_labour_amount;
+
+			$job_order->total_estimate_parts_amount = $total_schedule_part_amount + $total_payable_part_amount;
+
+			$job_order->total_tax_amount = $total_tax_amount;
+			$job_order->total_estimate_amount = round($total_amount);
 
 			if (empty($job_order->estimated_amount)) {
 				$job_order->min_estimated_amount = $job_order->total_estimate_amount;
