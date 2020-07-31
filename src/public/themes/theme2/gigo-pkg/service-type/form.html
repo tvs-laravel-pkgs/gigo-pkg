@@ -90,7 +90,7 @@ Content Wrap -->
                                                     Display Order
                                                     <sup class="mandatory"></sup>
                                                 </label>
-                                                <input type="text" class="form-control" ng-model="$ctrl.service_type.display_order" name="display_order" placeholder="Enter Display Order" />
+                                                <input type="text" class="form-control" ng-model="$ctrl.service_type.display_order" name="display_order" placeholder="Enter Display Order" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
                                             </div><!-- Feild -->
                                         </div>
                                         <div class="col-md-3">
