@@ -97,8 +97,7 @@ app.component('inwardPartsIndentView', {
                             showErrorNoty(res);
                             return;
                         }
-                        console.log(res);
-                        custom_noty('success', 'URL send to Customer Successfully!!');
+                        custom_noty('success', res.message);
                         $("#confirmation_modal").modal('hide');
                         $("#billing_confirmation_modal").modal('hide');
                         $('body').removeClass('modal-open');

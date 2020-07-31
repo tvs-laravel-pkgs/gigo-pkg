@@ -95,10 +95,10 @@
                                                                 {{labour_details.amount | number:2}}
                                                             </td>
                                                             <td class="wid-100" ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                                <button type="button" ng-click="showLabourForm(index,labour_details)" class="btn img-btn btn-delete">
+                                                                <button type="button" ng-click="showLabourForm(index,labour_details)" ng-if="labour_details.is_fixed_schedule == 0" class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                                 </button>
-                                                                <button class="btn img-btn btn-delete">
+                                                                <button class="btn img-btn btn-delete" ng-if="labour_details.is_fixed_schedule == 0">
                                                                     <img class="img-responsive radius-50" ng-click="removeScheduledLabour(index,labour_details.id,'labour')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
                                                             </td>
@@ -189,10 +189,10 @@
                                                                 {{part_details.amount | number:2}}
                                                             </td>
                                                             <td class="wid-100" ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                                <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete">
+                                                                <button type="button" ng-if="part_details.is_fixed_schedule == 0" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete">
                                                                     <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                                 </button>
-                                                                <button class="btn img-btn btn-delete">
+                                                                <button class="btn img-btn btn-delete" ng-if="part_details.is_fixed_schedule == 0">
                                                                     <img class="img-responsive radius-50" ng-click="removeScheduledPart(index,part_details.id,'parts')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                                 </button>
                                                             </td>
