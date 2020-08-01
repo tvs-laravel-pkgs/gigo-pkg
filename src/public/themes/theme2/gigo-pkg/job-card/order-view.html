@@ -1,0 +1,327 @@
+Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/job-card/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Orders</b></h1>
+                    <p class="subtitle">Job Card / Orders</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <jobcard-header></jobcard-header>
+            <div class="tab-form-wrap type-2">
+                <jobcard-tabs ng-init="active_tab = 'order-view'"></jobcard-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="bay" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="title-red border-bottom">
+                                            Bay
+                                        </h5>
+                                        <div class="separate-content-wrap">
+                                            <div class="separate-body-wrap">
+                                                <div class="panel-group" id="accordion">
+                                                    <div class="panel panel-default type-2">
+                                                        <div class="panel-heading">
+                                                            <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
+                                                                Labour & Parts Details
+                                                                <span class="arrow"></span>
+                                                            </a>
+                                                        </div>
+                                                        <div id="collapse1" class="panel-collapse collapse in">
+                                                            <div class="panel-body pad-10">
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-primary-stripped">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Labour Details</th>
+                                                                                <!-- <th>HSN Code</th> -->
+                                                                                <th>Hours</th>
+                                                                                <th class="text-right white-space-unset">Amount</th>
+                                                                                <th class="text-right white-space-unset" ng-repeat="(key,tax) in extras.taxes">{{tax.name}}</th>
+                                                                                <th class="text-right white-space-unset">Total</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr ng-repeat="(key,labour_detail) in extras.labour_details">
+                                                                                <td>{{labour_detail.name}}</td>
+                                                                                <td class="white-space-unset">{{labour_detail.qty}}</td>
+                                                                                <td class="text-right white-space-unset">{{labour_detail.amount}}</td>
+                                                                                <td class="text-right white-space-unset" ng-repeat="(key,tax) in labour_detail.tax_values">{{tax.tax_value}}</td>
+                                                                                <td class="text-right white-space-unset">
+                                                                                    {{labour_detail.total_amount}}
+                                                                                </td>
+                                                                                <!-- <td class="text-right white-space-unset">{{$labour_detail['total_amount']}}</td> -->
+                                                                            </tr>
+                                                                            <tr ng-if="extras.labour_details.length == 0">
+                                                                                <td colspan="{{extras.tax_count + 4}}" class="text-center">No Labour work found!</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div><!-- Table Responsive -->
+                                                                <div class="mb-10"></div><!-- Space -->
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-primary-stripped">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Parts Details</th>
+                                                                                <!-- <th>SAC Code</th> -->
+                                                                                <th>Quantity</th>
+                                                                                <th class="text-right white-space-unset">Rate</th>
+                                                                                <th class="text-right white-space-unset">Amount</th>
+                                                                                <th class="text-right white-space-unset" ng-repeat="(key,tax) in extras.taxes">{{tax.name}}</th>
+                                                                                <th class="text-right white-space-unset">Total</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr ng-repeat="(key,part_detail) in extras.part_details">
+                                                                                <td>{{part_detail.name}}</td>
+                                                                                <td class="white-space-unset">{{part_detail.qty}}</td>
+                                                                                <td class="text-right white-space-unset">{{part_detail.rate}}</td>
+                                                                                <td class="text-right white-space-unset">{{part_detail.amount}}</td>
+                                                                                <td class="text-right white-space-unset" ng-repeat="(key,tax) in part_detail.tax_values">{{tax.tax_value}}</td>
+                                                                                <td class="text-right white-space-unset">
+                                                                                    {{part_detail.total_amount}}
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr ng-if="extras.part_details.length == 0">
+                                                                                <td colspan="{{extras.tax_count + 5}}" class="text-center">No Parts found!</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div><!-- Table Responsive -->
+                                                                <div class="dark-footer-wrap">
+                                                                    <div class="dark-footer-left-content">
+                                                                        <div class="dark-footer-left-content-wrap">
+                                                                            <span class="dark-footer-label">Labour Total : </span>
+                                                                            <span class="dark-footer-value">
+                                                                                <img class="img-responsive img-web" src="
+                                                                                ./public/theme/img/content/rupee-white.svg" alt="" />
+                                                                                <img class="img-responsive img-mobile" src="
+                                                                                ./public/theme/img/content/rupee-dark.svg" alt="" />
+                                                                                {{extras.labour_total_amount}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="dark-footer-left-content">
+                                                                        <div class="dark-footer-left-content-wrap">
+                                                                            <span class="dark-footer-label">Parts Total : </span>
+                                                                            <span class="dark-footer-value">
+                                                                                <img class="img-responsive img-web" src="
+                                                                                ./public/theme/img/content/rupee-white.svg" alt="" />
+                                                                                <img class="img-responsive img-mobile" src="
+                                                                                ./public/theme/img/content/rupee-dark.svg" alt="" />
+                                                                                {{extras.parts_total_amount}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="dark-footer-right-content">
+                                                                        <div class="dark-footer-right-content-wrap">
+                                                                            <span class="dark-footer-label">Grand Total : </span>
+                                                                            <span class="dark-footer-value">
+                                                                                <img class="img-responsive img-web" src="
+                                                                                ./public/theme/img/content/rupee-white.svg" alt="" />
+                                                                                {{extras.total_amount}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div><!-- Dark Footer Wrap -->
+                                                            </div><!-- Panel Body -->
+                                                        </div><!-- Panel Collapse -->
+                                                    </div><!-- Panel -->
+                                                    <div class="mb-15"></div><!-- Spacing -->
+                                                    <div class="panel panel-default type-2">
+                                                        <div class="panel-heading">
+                                                            <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                                                                Additional Info
+                                                                <span class="arrow"></span>
+                                                            </a>
+                                                        </div>
+                                                        <div id="collapse2" class="panel-collapse collapse">
+                                                            <div class="panel-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-primary-stripped table-primary-bordered mobile-whitespace-unset">
+                                                                                <thead class="pad-md">
+                                                                                    <tr>
+                                                                                        <th colspan="2">Gate In No : {{job_card.job_order.gate_log.number}}</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Gate In Date & Time</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.gate_log.gate_in_date}}</span>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Vehicle Model</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.vehicle.model.model_name}}</span>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Engine Number</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.vehicle.engine_number}}</span>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Chassis / VIN Number</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.vehicle.chassis_number}}</span>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">{{job_card.job_order.km_reading ? 'KM Reading' : 'HR Reading' }}</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.km_reading ? job_card.job_order.km_reading : job_card.job_order.hr_reading}}</span>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Membership Type</span>
+                                                                                            <span class="table-primary-stripped-value">-</span>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Customer Name</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.vehicle.current_owner ? job_card.job_order.vehicle.current_owner.customer.name : ''}}</span>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Mobile Number</span>
+                                                                                            <span class="table-primary-stripped-value">
+                                                                                                {{job_card.job_order.vehicle.current_owner ? job_card.job_order.vehicle.current_owner.customer.mobile_no : ''}}
+                                                                                            </span>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Driver Name</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.driver_name}}</span>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Driver Mobile Number</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.driver_mobile_number}}</span>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Service Contact Number</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.contact_number}}</span>
+                                                                                        </td>
+                                                                                        <td></td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div><!-- Table Responsive -->
+                                                                    </div><!-- Column -->
+                                                                    <div class="col-md-6">
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-primary-stripped mobile-whitespace-unset">
+                                                                                <thead class="pad-md">
+                                                                                    <tr>
+                                                                                        <th colspan="2">Order Details</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Job Order Type</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.type ? job_card.job_order.type.name : ''}}</span>
+                                                                                        </td>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-label">Quote Type</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.quote_type ? job_card.job_order.quote_type.name : ''}}</span>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td colspan="2">
+                                                                                            <span class="table-primary-stripped-label">Service Type</span>
+                                                                                            <span class="table-primary-stripped-value">{{job_card.job_order.service_type ? job_card.job_order.service_type.name : ''}}</span>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div><!-- Table Responsive -->
+                                                                        <div class="mb-15"></div><!-- Spacing -->
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-primary-stripped whitespace-unset">
+                                                                                <thead class="pad-md">
+                                                                                    <tr>
+                                                                                        <th colspan="2">Voice of Customer</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td colspan="2">
+                                                                                            <div class="table-primary-stripped-info color-grey">
+                                                                                                <span class="table-primary-stripped-label" ng-repeat="(keys,customer_voices) in job_card.job_order.customer_voices">{{customer_voices.name}}</span>
+                                                                                            </div>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <span class="table-primary-stripped-value">Road Test Done by</span>
+                                                                                            <span class="table-primary-stripped-label">{{job_card.job_order.road_test_done_by ? job_card.job_order.road_test_done_by.name : '-'}}
+                                                                                            </span>
+                                                                                        </td>
+                                                                                        <td ng-if="job_card.job_order.road_test_done_by">
+                                                                                            <span class="table-primary-stripped-value">
+                                                                                                {{job_card.job_order.road_test_done_by.name}}
+                                                                                            </span>
+                                                                                            <span class="table-primary-stripped-label" ng-if="job_card.job_order.road_test_done_by_id == 8101">
+                                                                                                {{job_card.job_order.road_test_prefered_by.name}}
+                                                                                            </span>
+                                                                                            <span class="table-primary-stripped-label" ng-if="job_card.job_order.road_test_done_by_id != 8101">
+                                                                                                {{job_card.job_order.driver_name}}
+                                                                                            </span>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div><!-- Table Responsive -->
+                                                                        <div class="mb-15"></div><!-- Spacing -->
+                                                                        <div class="table-responsive">
+                                                                            <table class="table table-primary-stripped whitespace-unset">
+                                                                                <thead class="pad-md">
+                                                                                    <tr>
+                                                                                        <th>Observations</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <div class="table-primary-stripped-info color-grey">
+                                                                                                {{job_card.job_order.road_test_report}}</div>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div><!-- Table Responsive -->
+                                                                    </div><!-- Column -->
+                                                                </div><!-- Row -->
+                                                            </div><!-- Panel Body -->
+                                                        </div><!-- Panel Collapse -->
+                                                    </div><!-- Panel -->
+                                                </div><!-- Panel Group -->
+                                            </div><!-- Body Wrap -->
+                                        </div><!-- Content Wrap -->
+                                    </div><!-- Column -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap

@@ -838,6 +838,11 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Job Card Bay View',
     }).
 
+    when('/job-card/order-view/:job_card_id', {
+        template: '<job-card-order-view></job-card-order-view>',
+        title: 'Job Card View',
+    }).
+
     when('/job-card/split-order/:job_card_id', {
         template: '<job-card-split-order></job-card-split-order>',
         title: 'Job Card Split Order',

@@ -1259,7 +1259,12 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	        title: 'Job Card Bay View',
 	    }).
 
-	     when('/job-card/split-order/:job_card_id', {
+	    when('/job-card/order-view/:job_card_id', {
+	        template: '<job-card-order-view></job-card-order-view>',
+	        title: 'Job Card View',
+	    }).
+
+	    when('/job-card/split-order/:job_card_id', {
 	        template: '<job-card-split-order></job-card-split-order>',
 	        title: 'Job Card Split Order',
 	    }).
@@ -1407,7 +1412,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_bil_detail_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/bill-detail.html')}}";
     var job_card_bil_detail_update_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/bill-detail-update.html')}}";
     var job_card_bay_view_template_url  = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/bay-view.html')}}";
-
+    var job_card_order_view_template_url  = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/order-view.html')}}";
     var job_card_split_order_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/split-order.html')}}";
 
 

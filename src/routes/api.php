@@ -285,6 +285,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 
 		//GET BAY DATA
 		Route::post('job-card/bay-view/get', 'JobCardController@getBayViewData');
+		Route::post('job-card/order-view/get', 'JobCardController@getOrderViewData');
 
 		//MY JOB CARD
 		Route::post('myjobcard/list', 'MyJobCardController@getMyJobCardList');

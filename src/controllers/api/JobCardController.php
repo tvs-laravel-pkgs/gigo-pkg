@@ -491,6 +491,171 @@ class JobCardController extends Controller {
 		}
 	}
 
+	public function getOrderViewData(Request $r) {
+		//dd($r->all());
+		try {
+
+			$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+
+			$job_card = JobCard::with([
+				'status',
+				'jobOrder',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.currentOwner.customer',
+				'jobOrder.vehicle.currentOwner.customer.primaryAddress',
+				'jobOrder.vehicle.model',
+				'jobOrder.jobOrderRepairOrders' => function ($q) use ($customer_paid_type_id) {
+					$q->whereNull('removal_reason_id');
+				},
+				'jobOrder.jobOrderRepairOrders.repairOrder',
+				'jobOrder.jobOrderRepairOrders.repairOrder.taxCode',
+				'jobOrder.jobOrderRepairOrders.repairOrder.taxCode.taxes',
+				'jobOrder.jobOrderParts' => function ($q) use ($customer_paid_type_id) {
+					$q->whereNull('removal_reason_id');
+					// $q->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id');
+				},
+				'jobOrder.jobOrderParts.part',
+				'jobOrder.jobOrderParts.part.taxCode',
+				'jobOrder.jobOrderParts.part.taxCode.taxes',
+				'jobOrder.type',
+				'jobOrder.quoteType',
+				'jobOrder.serviceType',
+				'jobOrder.status',
+				'jobOrder.gateLog',
+				'jobOrder.customerVoices',
+				'jobOrder.roadTestDoneBy',
+				'jobOrder.roadTestPreferedBy',
+				'jobOrder.roadTestPreferedBy.employee',
+				'outlet',
+			])
+				->find($r->id);
+
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Card Not Found!'],
+				]);
+			}
+
+			$parts_amount = 0;
+			$labour_amount = 0;
+			$total_amount = 0;
+
+			//Check which tax applicable for customer
+			if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
+
+			//Count Tax Type
+			$taxes = Tax::get();
+
+			$labour_details = array();
+			if ($job_card->jobOrder->jobOrderRepairOrders) {
+				foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $labour) {
+					if ($labour->is_free_service != 1 && (in_array($labour->split_order_type_id, $customer_paid_type_id) || !$labour->split_order_type_id)) {
+						$total_amount = 0;
+						$labour_details[$key]['name'] = $labour->repairOrder->name;
+						$labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
+						$labour_details[$key]['qty'] = $labour->qty;
+						$labour_details[$key]['amount'] = $labour->amount;
+						$labour_details[$key]['is_free_service'] = $labour->is_free_service;
+						$labour_details[$key]['estimate_order_id'] = $labour->estimate_order_id;
+						$tax_amount = 0;
+						$tax_values = array();
+						if ($labour->repairOrder->taxCode) {
+							foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_values[$tax_key]['tax_value'] = $percentage_value;
+								$tax_amount += $percentage_value;
+							}
+						} else {
+							for ($i = 0; $i < count($taxes); $i++) {
+								$tax_values[$i]['tax_value'] = 0.00;
+							}
+						}
+
+						$total_amount = $tax_amount + $labour->amount;
+						$total_amount = number_format((float) $total_amount, 2, '.', '');
+						$labour_amount += $total_amount;
+						$labour_details[$key]['tax_values'] = $tax_values;
+						$labour_details[$key]['total_amount'] = $total_amount;
+					}
+				}
+			}
+
+			$part_details = array();
+			if ($job_card->jobOrder->jobOrderParts) {
+				foreach ($job_card->jobOrder->jobOrderParts as $key => $parts) {
+					if ($parts->is_free_service != 1 && (in_array($parts->split_order_type_id, $customer_paid_type_id) || !$parts->split_order_type_id)) {
+						$total_amount = 0;
+						$part_details[$key]['name'] = $parts->part->name;
+						$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
+						$part_details[$key]['qty'] = $parts->qty;
+						$part_details[$key]['rate'] = $parts->rate;
+						$part_details[$key]['amount'] = $parts->amount;
+						$part_details[$key]['is_free_service'] = $parts->is_free_service;
+						$part_details[$key]['estimate_order_id'] = $parts->estimate_order_id;
+						$tax_amount = 0;
+						$tax_values = array();
+						if ($parts->part->taxCode) {
+							foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_values[$tax_key]['tax_value'] = $percentage_value;
+								$tax_amount += $percentage_value;
+							}
+						} else {
+							for ($i = 0; $i < count($taxes); $i++) {
+								$tax_values[$i]['tax_value'] = 0.00;
+							}
+						}
+
+						$total_amount = $tax_amount + $parts->amount;
+						$total_amount = number_format((float) $total_amount, 2, '.', '');
+						$parts_amount += $total_amount;
+						$part_details[$key]['tax_values'] = $tax_values;
+						$part_details[$key]['total_amount'] = $total_amount;
+					}
+				}
+			}
+
+			$total_amount = $parts_amount + $labour_amount;
+			$total_amount = round($total_amount);
+
+			$extras = [
+				'taxes' => $taxes,
+				'part_details' => $part_details,
+				'labour_details' => $labour_details,
+				'tax_count' => count($taxes),
+				'parts_total_amount' => number_format($parts_amount, 2),
+				'labour_total_amount' => number_format($labour_amount, 2),
+				'total_amount' => number_format($total_amount, 2),
+			];
+
+			return response()->json([
+				'success' => true,
+				'job_card' => $job_card,
+				'extras' => $extras,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
 	//SCHEDULE
 	public function LabourAssignmentFormData(Request $r) {
 		// dd($r->all());
