@@ -4307,6 +4307,7 @@ class VehicleInwardController extends Controller {
 				->update([
 					'otp_no' => mt_rand(111111, 999999),
 					'status_id' => 8469, //Waiting for Customer Approval
+					'is_customer_approved' => 0,
 					'updated_by_id' => Auth::user()->id,
 					'updated_at' => Carbon::now(),
 				]);
@@ -4471,6 +4472,7 @@ class VehicleInwardController extends Controller {
 
 			$job_order->otp_no = mt_rand(111111, 999999);
 			$job_order->status_id = 8469; //Waiting for Customer Approval
+			$job_order->is_customer_approved = 0;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
