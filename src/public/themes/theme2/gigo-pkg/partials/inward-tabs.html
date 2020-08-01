@@ -55,7 +55,7 @@
                 </li>
                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-other-labour-parts-edit')" ng-class="{active:active_tab == 'payable-labour-part-detail'}">
                     <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="filter">
-                        Other Labour & Parts
+                        Additional Labour & Parts
                     </a>
                 </li>
                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-edit') && (job_order.status_id != 8472)" ng-class="{active:active_tab == 'estimate-details'}">
