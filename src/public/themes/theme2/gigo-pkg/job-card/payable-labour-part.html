@@ -89,10 +89,10 @@
                                                             {{labour_details.amount | number:2}}
                                                         </td>
                                                         <td class="wid-100" ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                            <button type="button" ng-click="showLabourForm(index,labour_details)" class="btn img-btn btn-delete">
+                                                            <button type="button" ng-click="showLabourForm(index,labour_details)" class="btn img-btn btn-delete" ng-if="labour_details.status_id == 8180">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </button>
-                                                            <button class="btn img-btn btn-delete">
+                                                            <button class="btn img-btn btn-delete" ng-if="labour_details.status_id == 8180">
                                                                 <img class="img-responsive radius-50" ng-click="removePayableLabour(index,labour_details.id,'labour')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                         </td>
@@ -100,7 +100,7 @@
                                                     <tr class="ptb-9">
                                                         <td>
                                                             <!-- <a ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" href=".#!/job-card/payable/labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square"> -->
-                                                            <button ng-if="job_order.is_customer_approved != '1'" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
+                                                            <button ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showLabourForm(false)">
                                                                 Add Labour
                                                             </button>
                                                         </td>
@@ -112,7 +112,7 @@
                                                         <td class="wid-180 white-space  text-right">
                                                             <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                             <b>
-                                                                {{labour_total_amount}}
+                                                                {{labour_total_amount | number:2}}
                                                             </b>
                                                         </td>
                                                         <td class="wid-100">
@@ -178,19 +178,19 @@
                                                             {{part_details.amount | number:2}}
                                                         </td>
                                                         <td class="wid-100" ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                            <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete">
+                                                            <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete" ng-if="part_details.status_id == 8200">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </button>
-                                                            <button class="btn img-btn btn-delete">
+                                                            <button class="btn img-btn btn-delete" ng-if="part_details.status_id == 8200">
                                                                 <img class="img-responsive radius-50" ng-click="removePayablePart(index,part_details.id,'parts')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                         </td>
                                                     </tr>
                                                     <tr class="ptb-9">
                                                         <td>
-                                                            <a ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" href=".#!/job-card/payable/part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
-                                                                Add Parts
-                                                            </a>
+                                                            <button ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)">
+                                                                Add Part
+                                                            </button>
                                                         </td>
                                                         <td colspan="5" class="text-right">
                                                             <b>
@@ -200,7 +200,7 @@
                                                         <td class="wid-180 white-space text-right">
                                                             <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                             <b>
-                                                                {{parts_total_amount}}
+                                                                {{parts_total_amount | number:2}}
                                                             </b>
                                                         </td>
                                                         <td class="wid-100">
@@ -298,11 +298,11 @@
                                             <div class="common-radio-button type-4">
                                                 <input type="radio" id="worngly_entered" name="removal_reason_id" ng-model="delete_reason" ng-value="10021" value="10021" ng-checked="delete_reason">
                                                 <label for="worngly_entered">
-                                                    Wrongly Entered
+                                                    Added By Mistake
                                                 </label>
                                                 <input type="radio" ng-model="delete_reason" id="customer_delete" name="removal_reason_id" ng-value="10022" value="10022">
                                                 <label for="customer_delete">
-                                                    Customer Delete
+                                                    Customer Denied
                                                 </label>
                                             </div>
                                             <div id="errorDeleteReasonRequired"></div>

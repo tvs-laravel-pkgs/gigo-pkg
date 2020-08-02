@@ -2308,7 +2308,11 @@ class JobCardController extends Controller {
 
 	public function getPayableLabourPart(Request $request) {
 
-		$job_card = JobCard::find($request->id);
+		$job_card = JobCard::with(['jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'status'])->find($request->id);
 
 		if (!$job_card) {
 			return response()->json([
@@ -2390,8 +2394,8 @@ class JobCardController extends Controller {
 		// $total_amount = $parts_total_amount + $labour_total_amount;
 
 		//Check Newly added Part or Labour
-		$labour_count = JobOrderRepairOrder::where('job_order_id', $job_card->job_order_id)->where('status_id', 8180)->count();
-		$part_count = JobOrderPart::where('job_order_id', $job_card->job_order_id)->where('status_id', 8200)->count();
+		$labour_count = JobOrderRepairOrder::where('job_order_id', $job_card->job_order_id)->whereNull('removal_reason_id')->where('status_id', 8180)->count();
+		$part_count = JobOrderPart::where('job_order_id', $job_card->job_order_id)->whereNull('removal_reason_id')->where('status_id', 8200)->count();
 
 		$send_approval_status = 0;
 		if ($labour_count > 0 || $part_count > 0) {
@@ -2472,6 +2476,7 @@ class JobCardController extends Controller {
 				$labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
 				$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
+				$labour_details[$key]['status_id'] = $value->status_id;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$labour_amount += $value->amount;
@@ -2499,6 +2504,7 @@ class JobCardController extends Controller {
 				$part_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
 				$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
+				$part_details[$key]['status_id'] = $value->status_id;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$part_amount += $value->amount;
