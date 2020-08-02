@@ -84,7 +84,14 @@
                                             </div>
                                         </div>
                                         <div class="card-box-body" ng-if="my_job_order.status_id == 8260 ||  my_job_order.status_id == 8264">
-                                            <span class="card-box-content-wrap" ng-class="{'my-disable':other_work_status == 1}" ng-click="StartWork(8261,key)">
+                                            <!-- <span class="card-box-content-wrap" ng-click="StartWork(8261,key)">
+                                                <div class="card-box-content bg-dark">
+                                                    <span class="info">
+                                                        Start
+                                                    </span>
+                                                </div>
+                                            </span> -->
+                                            <span class="card-box-content-wrap" ng-class="{'my-disable':other_work_status == 1}" ng-click="ConfirmStart(my_job_order.repair_code,my_job_order.repair_name,8261,key)">
                                                 <div class="card-box-content bg-dark">
                                                     <span class="info">
                                                         Start
@@ -190,6 +197,23 @@
         </div><!-- Container -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<div class="modal fade alert-modal failure" id="start_work" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Confirmation?</h4>
+            </div>
+            <div class="modal-body">
+                <h5 id="repair_code"></h5>
+                <p>Do you Start this work? </p>
+                <input type="hidden" id="work_id">
+                <input type="hidden" id="key">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
+                <button class="btn btn-rose work_start" aria-label="Close" ng-click="StartWork()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Modal -->
 <div class="modal alert-modal jc-confirm-modal fade" id="finish_work" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">

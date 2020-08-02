@@ -69,11 +69,10 @@ app.component('myJobcardCardList', {
         });
         $scope.listRedirect = function(type) {
             if (type == 'table') {
-                window.location = "#!/my-jobcard/table-list"+"/"+$routeParams.user_id;
                 return false;
             } else {
                 //alert();
-                window.location = "#!/my-jobcard/card-list"+"/"+$routeParams.user_id;
+                window.location = "#!/my-jobcard/card-list" + "/" + $routeParams.user_id;
                 return false;
             }
         }
@@ -94,10 +93,10 @@ app.component('myJobcardTableList', {
         $('li').removeClass('active');
         $('.job_cards').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-       /* if (!self.hasPermission('job-cards')) {
-            window.location = "#!/page-permission-denied";
-            return false;
-        }*/
+        /* if (!self.hasPermission('job-cards')) {
+             window.location = "#!/page-permission-denied";
+             return false;
+         }*/
 
         self.user = $scope.user = HelperService.getLoggedUser();
         self.search_key = '';
@@ -146,12 +145,12 @@ app.component('myJobcardTableList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'created_at',  name: 'job_cards.created_at'},
-                { data: 'jc_number', name: 'job_cards.job_card_number' ,searchable: true},
-                { data: 'registration_number', name: 'vehicles.registration_number' ,searchable: true },
-                { data: 'customer_name', name: 'customers.name' ,searchable: true },
-                { data: 'no_of_ROTs' ,searchable: false},  
-                { data: 'status', name: 'configs.name' ,searchable: false },
+                { data: 'created_at', name: 'job_cards.created_at' },
+                { data: 'jc_number', name: 'job_cards.job_card_number', searchable: true },
+                { data: 'registration_number', name: 'vehicles.registration_number', searchable: true },
+                { data: 'customer_name', name: 'customers.name', searchable: true },
+                { data: 'no_of_ROTs', searchable: false },
+                { data: 'status', name: 'configs.name', searchable: false },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -177,7 +176,7 @@ app.component('myJobcardTableList', {
         $("#search_my_job_card").keyup(function() {
             dataTables.fnFilter(this.value);
         });
-       
+
         // FOR FILTER
         $http.get(
             laravel_routes['getJobCardFilter']
@@ -233,11 +232,11 @@ app.component('myJobcardTableList', {
 
         $scope.listRedirect = function(type) {
             if (type == 'table') {
-                window.location = "#!/my-jobcard/table-list"+"/"+$routeParams.user_id;
+                window.location = "#!/my-jobcard/table-list" + "/" + $routeParams.user_id;
                 return false;
             } else {
                 //alert();
-                window.location = "#!/my-jobcard/card-list"+"/"+$routeParams.user_id;
+                window.location = "#!/my-jobcard/card-list" + "/" + $routeParams.user_id;
                 return false;
             }
         }
@@ -276,10 +275,10 @@ app.component('myJobcardTimesheetList', {
         $('li').removeClass('active');
         $('.job_cards').addClass('active').trigger('click');
         self.hasPermission = HelperService.hasPermission;
-       /* if (!self.hasPermission('job-cards')) {
-            window.location = "#!/page-permission-denied";
-            return false;
-        }*/
+        /* if (!self.hasPermission('job-cards')) {
+             window.location = "#!/page-permission-denied";
+             return false;
+         }*/
 
         self.user = $scope.user = HelperService.getLoggedUser();
         self.search_key = '';
@@ -325,11 +324,11 @@ app.component('myJobcardTimesheetList', {
             },
 
             columns: [
-                { data: 'created_at'},
-                { data: 'jc_number', name: 'job_cards.job_card_number' ,searchable: true},
-                { data: 'outlet', name: 'outlets.code' ,searchable: true },
-                { data: 'start_time'},
-                { data: 'end_time'},
+                { data: 'created_at' },
+                { data: 'jc_number', name: 'job_cards.job_card_number', searchable: true },
+                { data: 'outlet', name: 'outlets.code', searchable: true },
+                { data: 'start_time' },
+                { data: 'end_time' },
                 { data: 'duration' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -356,7 +355,7 @@ app.component('myJobcardTimesheetList', {
             dataTables.fnFilter(this.value);
         });
 
-        
+
 
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -404,7 +403,7 @@ app.component('myJobcardTimesheetList', {
             self.date = this.value;
         });
 
-          // FOR FILTER
+        // FOR FILTER
         $http.get(
             laravel_routes['getMyJobCarduserDetails']
         ).then(function(response) {
@@ -495,37 +494,87 @@ app.component('myJobcardView', {
 
         $scope.fetchData();
 
-        $scope.StartWork = function($id, $key) {
-            job_repair_order_id = $("#repair_repair_order_id" + $key).val();
-            status_id = $id;
-            $.ajax({
-                    url: base_url + '/api/save-my-job-card',
-                    method: "POST",
-                    data: {
-                        job_repair_order_id: job_repair_order_id,
-                        machanic_id: self.user_id,
-                        status_id: status_id,
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                }).done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-
-                    custom_noty('success', 'Work has been started');
-                    setTimeout(function() {
-                        // location.reload();
-                        $scope.fetchData();
-                    }, 1000);
-
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });
+        $scope.ConfirmStart = function(repair_code, repair_name, id, key) {
+            $('#repair_code').html(repair_code + ' - ' + repair_name);
+            $("#start_work").modal('show');
+            $('#work_id').val(id);
+            $('#key').val(key);
         }
+
+        $scope.StartWork = function() {
+            var key = $('#key').val();
+            var work_id = $('#work_id').val();
+            job_repair_order_id = $("#repair_repair_order_id" + key).val();
+            status_id = work_id;
+
+            if (status_id && work_id) {
+                $('.work_start').button('loading');
+                $.ajax({
+                        url: base_url + '/api/save-my-job-card',
+                        method: "POST",
+                        data: {
+                            job_repair_order_id: job_repair_order_id,
+                            machanic_id: self.user_id,
+                            status_id: status_id,
+                        },
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                        },
+                    }).done(function(res) {
+                        $('.work_start').button('reset');
+                        if (!res.success) {
+                            showErrorNoty(res);
+                            return;
+                        }
+
+                        $("#start_work").modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+
+                        custom_noty('success', 'Work has been started');
+                        setTimeout(function() {
+                            // location.reload();
+                            $scope.fetchData();
+                        }, 1000);
+
+                    })
+                    .fail(function(xhr) {
+                        custom_noty('error', 'Something went wrong at server');
+                    });
+            }
+
+        }
+        // $scope.StartWork = function($id, $key) {
+        //     job_repair_order_id = $("#repair_repair_order_id" + $key).val();
+        //     status_id = $id;
+        //     $.ajax({
+        //             url: base_url + '/api/save-my-job-card',
+        //             method: "POST",
+        //             data: {
+        //                 job_repair_order_id: job_repair_order_id,
+        //                 machanic_id: self.user_id,
+        //                 status_id: status_id,
+        //             },
+        //             beforeSend: function(xhr) {
+        //                 xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+        //             },
+        //         }).done(function(res) {
+        //             if (!res.success) {
+        //                 showErrorNoty(res);
+        //                 return;
+        //             }
+
+        //             custom_noty('success', 'Work has been started');
+        //             setTimeout(function() {
+        //                 // location.reload();
+        //                 $scope.fetchData();
+        //             }, 1000);
+
+        //         })
+        //         .fail(function(xhr) {
+        //             custom_noty('error', 'Something went wrong at server');
+        //         });
+        // }
 
         $scope.FinishWork = function($id, $key) {
             job_repair_order_id = $("#repair_repair_order_id" + $key).val();
