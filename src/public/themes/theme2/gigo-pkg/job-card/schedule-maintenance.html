@@ -39,13 +39,16 @@
                                                 <thead>
                                                     <tr>
                                                         <th>
-                                                            Labour Details
+                                                            Labour Code
+                                                        </th>
+                                                        <th>
+                                                            Name
                                                         </th>
                                                         <th>
                                                             Type
                                                         </th>
                                                         <th class="text-right">
-                                                            Quantity
+                                                            Hours
                                                         </th>
                                                         <th class="wid-180 white-space text-right">
                                                             Labour Value
@@ -55,7 +58,10 @@
                                                 <tbody>
                                                     <tr class="ptb-12" ng-repeat="(index,labour_detail) in schedule_maintenance.labour_details" id="tr_{{index}}">
                                                         <td>
-                                                            {{labour_detail.repair_order.code}} | {{labour_detail.repair_order.name}}
+                                                            {{labour_detail.repair_order.code}}
+                                                        </td>
+                                                        <td>
+                                                            {{labour_detail.repair_order.name}}
                                                         </td>
                                                         <td>
                                                             {{labour_detail.repair_order.repair_order_type.name}}
@@ -68,7 +74,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td colspan="3" class="text-right">
+                                                        <td colspan="4" class="text-right">
                                                             <b>
                                                                 Total Labour
                                                             </b>
@@ -76,7 +82,7 @@
                                                         <td class="wid-180 white-space  text-right">
                                                             <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                             <b>
-                                                                {{schedule_maintenance.labour_amount}}
+                                                                {{schedule_maintenance.labour_amount | number:2}}
                                                             </b>
                                                         </td>
                                                     </tr>
@@ -89,10 +95,10 @@
                                                 <thead>
                                                     <tr>
                                                         <th>
-                                                            Parts Details
+                                                            Part Code
                                                         </th>
                                                         <th>
-                                                            Type
+                                                            Name
                                                         </th>
                                                         <th class="text-right">
                                                             Rate
@@ -108,7 +114,7 @@
                                                 <tbody>
                                                     <tr class="ptb-12" ng-repeat="(index,part_detail) in schedule_maintenance.part_details" id="tp_{{index}}">
                                                         <td>
-                                                            {{part_detail.part.code}} | {{part_detail.part.name}}
+                                                            {{part_detail.part.code}}
                                                         </td>
                                                         <td>
                                                             {{part_detail.part.name}}
@@ -132,7 +138,7 @@
                                                         <td class="wid-180 white-space text-right">
                                                             <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                             <b>
-                                                                {{schedule_maintenance.part_amount}}
+                                                                {{schedule_maintenance.part_amount | number:2}}
                                                             </b>
                                                         </td>
                                                     </tr>
@@ -153,7 +159,7 @@
                                                             <td class="wid-180 text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{schedule_maintenance.total_amount}}
+                                                                    {{schedule_maintenance.total_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>

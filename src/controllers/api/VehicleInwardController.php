@@ -5011,6 +5011,7 @@ class VehicleInwardController extends Controller {
 			$job_card->outlet_id = $job_order->outlet_id;
 			$job_card->company_id = Auth::user()->company_id;
 			$job_card->created_by = Auth::user()->id;
+			$job_card->created_at = Carbon::now();
 			$job_card->save();
 
 			DB::commit();

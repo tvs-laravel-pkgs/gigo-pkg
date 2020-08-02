@@ -82,6 +82,7 @@ input[type=number] {
                                                     <td>{{parts.part.name}}</td>
                                                     <td><input type="number" step="0.01" min="1" max="{{parts.qty}}" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="returned_parts[{{index}}][qty]" value="{{parts.returned_qty}}" id="in_{{index}}" ng-disabled="!parts.returned_qty" ng-checked="parts.checked">
                                                         <input type="hidden" name="returned_parts[{{index}}][part_id]" value="{{parts.part_id}}">
+                                                        <input type="hidden" name="returned_parts[{{index}}][part_code]" value="{{parts.part.code}}"></td>
                                                         <input type="hidden" name="returned_parts[{{index}}][part_name]" value="{{parts.part.name}}"></td>
                                                 </tr>
                                             </tbody>

@@ -666,7 +666,9 @@ class JobCardController extends Controller {
 				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
-				'jobOrder.jobOrderRepairOrders',
+				'jobOrder.jobOrderRepairOrders' => function ($q) {
+					$q->whereNull('removal_reason_id');
+				},
 				'jobOrder.jobOrderRepairOrders.status',
 				'jobOrder.jobOrderRepairOrders.repairOrder',
 				'jobOrder.jobOrderRepairOrders.repairOrderMechanics',
@@ -2329,73 +2331,11 @@ class JobCardController extends Controller {
 
 		$result = $this->getLabourPartsData($params);
 
-		// $job_card = JobCard::with(['jobOrder',
-		// 	'jobOrder.type',
-		// 	'jobOrder.vehicle',
-		// 	'jobOrder.vehicle.model',
-		// 	'status'])->find($request->id);
-		// if (!$job_card) {
-		// 	return response()->json([
-		// 		'success' => false,
-		// 		'error' => 'Validation Error',
-		// 		'errors' => ['Job Card Not Found!'],
-		// 	]);
-		// }
-
-		// $job_order = JobOrder::with([
-		// 	'vehicle',
-		// 	'vehicle.model',
-		// 	'vehicle.status',
-		// 	'status',
-		// 	'gateLog',
-		// 	'jobOrderRepairOrders' => function ($query) {
-		// 		$query->where('is_recommended_by_oem', 0);
-		// 	},
-		// 	'jobOrderRepairOrders.splitOrderType',
-		// 	'jobOrderRepairOrders.repairOrder',
-		// 	'jobOrderRepairOrders.repairOrder.repairOrderType',
-		// 	'jobOrderParts' => function ($query) {
-		// 		$query->where('is_oem_recommended', 0);
-		// 	},
-		// 	'jobOrderParts.splitOrderType',
-		// 	'jobOrderParts.part',
-		// ])
-		// 	->select([
-		// 		'job_orders.*',
-		// 		DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-		// 		DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-		// 	])
-		// 	->where('company_id', Auth::user()->company_id)
-		// 	->find($job_card->job_order_id);
-
-		// if (!$job_order) {
-		// 	return response()->json([
-		// 		'success' => false,
-		// 		'error' => 'Validation error',
-		// 		'errors' => ['Job Order Not found!'],
-		// 	]);
-		// }
-
-		// $parts_total_amount = 0;
-		// $labour_total_amount = 0;
-		// $total_amount = 0;
-		// if ($job_order->jobOrderRepairOrders) {
-		// 	foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
-		// 		$labour_total_amount += $labour->amount;
-
-		// 	}
-		// }
-		// if ($job_order->jobOrderParts) {
-		// 	foreach ($job_order->jobOrderParts as $key => $part) {
-		// 		$parts_total_amount += $part->amount;
-
-		// 	}
-		// }
-		// $total_amount = $parts_total_amount + $labour_total_amount;
+		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
 		//Check Newly added Part or Labour
-		$labour_count = JobOrderRepairOrder::where('job_order_id', $job_card->job_order_id)->whereNull('removal_reason_id')->where('status_id', 8180)->count();
-		$part_count = JobOrderPart::where('job_order_id', $job_card->job_order_id)->whereNull('removal_reason_id')->where('status_id', 8200)->count();
+		$labour_count = JobOrderRepairOrder::where('job_order_id', $job_card->job_order_id)->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id')->where('status_id', 8180)->count();
+		$part_count = JobOrderPart::where('job_order_id', $job_card->job_order_id)->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id')->where('status_id', 8200)->count();
 
 		$send_approval_status = 0;
 		if ($labour_count > 0 || $part_count > 0) {
@@ -3049,7 +2989,8 @@ class JobCardController extends Controller {
 						$returnable_part = new JobCardReturnableItem;
 						$returnable_part->job_card_id = $request->job_card_id;
 						$returnable_part->part_id = $parts['part_id'];
-						$returnable_part->item_name = $parts['part_name'];
+						$returnable_part->item_name = $parts['part_code'];
+						$returnable_part->item_description = $parts['part_name'];
 						$returnable_part->qty = $parts['qty'];
 						$returnable_part->created_by_id = Auth::user()->id;
 						$returnable_part->created_at = Carbon::now();
