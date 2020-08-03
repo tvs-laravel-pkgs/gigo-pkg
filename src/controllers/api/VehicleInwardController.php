@@ -2959,12 +2959,15 @@ class VehicleInwardController extends Controller {
 				$job_order->enable_estimate_status = true;
 			}
 
+			$total_labour_count = JobOrderRepairOrder::where('job_order_id', $r->id)->whereNull('removal_reason_id')->count();
+
 			return response()->json([
 				'success' => true,
 				'job_order' => $result['job_order'],
 				'part_details' => $result['part_details'],
 				'labour_details' => $result['labour_details'],
 				'total_amount' => $result['total_amount'],
+				'total_labour_count' => $total_labour_count,
 				'labour_total_amount' => $result['labour_amount'],
 				'parts_total_amount' => $result['part_amount'],
 			]);

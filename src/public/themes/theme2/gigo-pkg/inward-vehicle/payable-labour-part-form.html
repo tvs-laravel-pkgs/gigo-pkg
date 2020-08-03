@@ -249,7 +249,7 @@
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
                                             <hr>
-                                            <div class="col-md-12" ng-if="job_order.status_id != 8472 && !job_order.part_intent_confirmed_date">
+                                            <div class="col-md-12" ng-if="job_order.status_id != 8472 && !job_order.part_intent_confirmed_date && total_labour_count > 0">
                                                 <div class="text-center pt-40">
                                                     <a class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Send to Module Store to Add Parts</a>
                                                 </div>
