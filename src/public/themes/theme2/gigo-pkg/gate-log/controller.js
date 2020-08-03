@@ -55,7 +55,7 @@ app.component('gateLogList', {
             },
 
             columns: [
-                { data: 'action', class: 'action', name: 'action', searchable: false },
+                // { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'number', name: 'gate_logs.number', searchable: true },
                 { data: 'gate_in_date', name: 'gate_logs.gate_in_date' },
                 { data: 'registration_number', name: 'vehicles.registration_number', searchable: true },
@@ -237,8 +237,8 @@ app.component('gateLogForm', {
 
                     setTimeout(function() {
                         $('#registration_number').prop('readonly', true);
-                        $('#chassis_number').prop('readonly', true);
-                        $('#engine_number').prop('readonly', true);
+                        $('.chassis_number').prop('readonly', true);
+                        $('.engine_number').prop('readonly', true);
                     }, 1000);
                 })
                 .fail(function(xhr) {
@@ -293,8 +293,8 @@ app.component('gateLogForm', {
                 var engine_number = item.engine_number;
                 var chassis_number = item.chassis_number;
 
-                $('#chassis_number').val(chassis_number);
-                $('#engine_number').val(engine_number);
+                $('.chassis_number').val(chassis_number);
+                $('.engine_number').val(engine_number);
                 $('#registration_number').val(registration_number);
 
                 if (registration_number) {
@@ -311,20 +311,19 @@ app.component('gateLogForm', {
 
         $scope.getSelectedVehicle = function(index, vehicle_detail) {
             if (!vehicle_detail) {
-                $('#chassis_number').val('');
-                $('#engine_number').val('');
+                $('.chassis_number').val('');
+                $('.engine_number').val('');
                 $('#registration_number').val('');
                 $("#registration_number").prop("readonly", true);
-                self.gatein_entry_type_id = '';
             } else {
                 if (!vehicle_detail.registration_number) {
                     $("#registration_number").prop("readonly", false);
                 }
-                if (vehicle_detail.engine_number) {
-                    self.gatein_entry_type_id = 2;
+                if (!vehicle_detail.engine_number) {
+                    $(".engine_number").prop("readonly", false);
                 }
-                if (vehicle_detail.chassis_number) {
-                    self.gatein_entry_type_id = 1;
+                if (!vehicle_detail.chassis_number) {
+                    $(".chassis_number").prop("readonly", false);
                 }
                 $scope.$apply();
             }
@@ -332,16 +331,18 @@ app.component('gateLogForm', {
 
         $scope.SearchType = function(id) {
             if (id == 1) {
-                $('#registration_number').prop('readonly', true);
-                $('#chassis_number').prop('readonly', true);
-                $('#engine_number').prop('readonly', true);
+                setTimeout(function() {
+                    $('#registration_number').prop('readonly', true);
+                    $('.chassis_number').prop('readonly', true);
+                    $('.engine_number').prop('readonly', true);
+                }, 300);
             } else {
                 $("#registration_number").prop("readonly", false);
                 $("#registration_number").val('');
-                $("#chassis_number").prop("readonly", false);
-                $("#chassis_number").val('');
-                $("#engine_number").prop("readonly", false);
-                $("#engine_number").val('');
+                $(".chassis_number").prop("readonly", false);
+                $(".chassis_number").val('');
+                $(".engine_number").prop("readonly", false);
+                $(".engine_number").val('');
                 $("#vehicle_id").val('');
                 $('.vehicleSearchBox').val('');
             }
