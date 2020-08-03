@@ -572,48 +572,16 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-	public function getInwardPartIndentViewData(Request $r) {
+	public function getPartIndentVehicleDetail(Request $r) {
+		// dd($r->all());
 		try {
 			$job_order = JobOrder::with([
-				'jobCard',
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
-				'vehicle.currentOwner.customer',
-				'vehicle.currentOwner.customer.address',
-				'vehicle.currentOwner.customer.address.country',
-				'vehicle.currentOwner.customer.address.state',
-				'vehicle.currentOwner.customer.address.city',
-				'vehicle.currentOwner.ownershipType',
-				// 'vehicle.lastJobOrder',
-				// 'vehicle.lastJobOrder.jobCard',
-				// 'vehicleInventoryItem',
-				// 'vehicleInspectionItems',
-				'type',
-				'outlet',
-				// 'customerVoices',
-				// 'quoteType',
-				// 'serviceType',
-				// 'kmReadingType',
+				'tradePlate',
 				'status',
-				// 'gateLog',
-				// 'gateLog.createdBy',
-				// 'roadTestDoneBy',
-				// 'roadTestPreferedBy',
-				// 'expertDiagnosisReportBy',
-				// 'estimationType',
-				// 'driverLicenseAttachment',
-				// 'insuranceAttachment',
-				// 'rcBookAttachment',
-				// 'warrentyPolicyAttachment',
-				// 'EWPAttachment',
-				// 'AMCAttachment',
-				// 'gateLog.driverAttachment',
-				// 'gateLog.kmAttachment',
-				// 'gateLog.vehicleAttachment',
-				// 'gateLog.chassisAttachment',
-				// 'customerApprovalAttachment',
-				// 'customerESign',
+				'gateLog',
 			])
 				->select([
 					'job_orders.*',
@@ -633,6 +601,56 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+	public function getRepairOrders(Request $r) {
+		// dd($r->all());
+		try {
+
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'serviceType',
+				'jobOrderRepairOrders',
+				'jobOrderRepairOrders.repairOrder',
+				'jobOrderRepairOrders.repairOrder.repairOrderType',
+				'jobOrderRepairOrders.splitOrderType',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->where('company_id', Auth::user()->company_id)
+				->where('id', $r->id)->first();
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
+				]);
+			}
+
+			$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+
 			$labour_amount = 0;
 			$part_amount = 0;
 
@@ -640,23 +658,83 @@ class VehicleInwardController extends Controller {
 			if ($job_order->jobOrderRepairOrders) {
 				foreach ($job_order->jobOrderRepairOrders as $key => $value) {
 					$labour_details[$key]['id'] = $value->id;
+					$labour_details[$key]['labour_id'] = $value->repair_order_id;
 					$labour_details[$key]['code'] = $value->repairOrder->code;
 					$labour_details[$key]['name'] = $value->repairOrder->name;
 					$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
 					$labour_details[$key]['qty'] = $value->qty;
 					$labour_details[$key]['amount'] = $value->amount;
 					$labour_details[$key]['is_free_service'] = $value->is_free_service;
-					$labour_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
+					$labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
 					$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
-					// if (in_array($value->split_order_type_id, $customer_paid_type)) {
-					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
-						$labour_amount += $value->amount;
+					$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
+					$labour_details[$key]['repair_order'] = $value->repairOrder;
+					$labour_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+					if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
+						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
+							$labour_amount += $value->amount;
+						} else {
+							$labour_details[$key]['amount'] = 0;
+						}
+					} else {
+						$labour_details[$key]['amount'] = 0;
 					}
-					// } else {
-					// 	$labour_details[$key]['amount'] = 0;
-					// }
 				}
 			}
+
+			$job_order->labour_details = $labour_details;
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+	public function getInwardPartIndentViewData(Request $r) {
+		try {
+			$job_order = JobOrder::with([
+				'jobCard',
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'vehicle.currentOwner.customer',
+				'vehicle.currentOwner.customer.address',
+				'vehicle.currentOwner.customer.address.country',
+				'vehicle.currentOwner.customer.address.state',
+				'vehicle.currentOwner.customer.address.city',
+				'vehicle.currentOwner.ownershipType',
+				'type',
+				'outlet',
+				'status',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->where('company_id', Auth::user()->company_id)
+				->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
+				]);
+			}
+
+			$part_amount = 0;
 
 			$part_details = array();
 			if ($job_order->jobOrderParts) {
@@ -759,8 +837,6 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
-				'labour_details' => $labour_details,
-				'labour_amount' => $labour_amount,
 				'part_details' => $part_details,
 				// 'part_amount' => $part_amount,
 				'job_order_parts' => $job_order_parts,

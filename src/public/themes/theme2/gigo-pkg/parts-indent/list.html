@@ -34,10 +34,13 @@
                         <thead>
                             <tr>
                                 <th class="action width-100">Action</th>
-                                <th>Job Card No</th>
-                                <th>Date & Time</th>
+                                <th>Job Order No</th>
+                                <th>Job Order Date</th>
+                                <!-- <th>Job Card No</th> -->
+                                <!-- <th>Job Card Date</th> -->
                                 <th>Requested Qty.</th>
                                 <th>Issued Qty.</th>
+                                <th>Service Advisor</th>
                                 <th>Floor Supervisor</th>
                                 <th>Customer</th>
                                 <th>State</th>
@@ -47,7 +50,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
                         </tbody>
                     </table>
                 </div><!-- Column -->
@@ -66,15 +68,15 @@
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 ng-hide">
                             <div class="form-group">
                                 <label>
-                                   Job Card No
+                                    Job Card No
                                 </label>
                                 <input type="text" class="form-control" id="job_card_no" name="job_card_no" placeholder="Enter Job Card No" autocomplete="off" ng-model="$ctrl.job_card_no">
                             </div><!-- Field -->
                         </div><!-- Column -->
-                        <div class="col-md-6">
+                        <div class="col-md-6 ng-hide">
                             <div class="form-group">
                                 <label>Job Card Date</label>
                                 <div class="input-group date" data-provide="datepicker">
@@ -87,8 +89,27 @@
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
+                                <label>
+                                    Job Order No
+                                </label>
+                                <input type="text" class="form-control" id="job_order_no" name="job_order_no" placeholder="Enter Job Card No" autocomplete="off" ng-model="$ctrl.job_order_no">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Job Order Date</label>
+                                <div class="input-group date" data-provide="datepicker">
+                                    <input type="text" class="form-control" placeholder="Select Job Order Date" ng-model="$ctrl.job_order_date" id="job_order_date" />
+                                    <div class="input-group-addon">
+                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                    </div>
+                                </div><!-- Input Group -->
+                            </div><!-- Feild -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
                                 <label>Customer</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
+                                <md-autocomplete md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.name}}
@@ -104,7 +125,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Outlet</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchOutlet($ctrl.outletSearchText)" md-selected-item="$ctrl.outlet" md-selected-item-change="selectedOutlet($ctrl.outlet.id)" md-search-text="$ctrl.outletSearchText" md-item-text="option.name" md-min-length="3" placeholder="Outlet Name" md-autofocus>
+                                <md-autocomplete md-items="option in $ctrl.searchOutlet($ctrl.outletSearchText)" md-selected-item="$ctrl.outlet" md-selected-item-change="selectedOutlet($ctrl.outlet.id)" md-search-text="$ctrl.outletSearchText" md-item-text="option.name" md-min-length="3" placeholder="Outlet Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.name}}

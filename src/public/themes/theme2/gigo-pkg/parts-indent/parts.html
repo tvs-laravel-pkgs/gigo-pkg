@@ -1,0 +1,678 @@
+<style type="text/css">
+.strikethrough {
+    text-decoration: line-through;
+}
+
+.my-disable {
+    pointer-events: none;
+    opacity: 0.5;
+    /*cursor: not-allowed;*/
+}
+
+.work-tooltip {
+    font-size: 15px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+</style>
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/part-indent/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Part Indent</b></h1>
+                    <p class="subtitle">Part Indent / Parts</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <part-indent-header></part-indent-header>
+            <div class="tab-form-wrap type-2 side-tab-open">
+                <part-indent-tabs ng-init="active_tab = 'parts'"></part-indent-tabs>
+                <div class="tab-form-body side-tab-open">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="parts_tab" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Requested Parts Details</b></h5>
+                                        <hr class="hr-15"><!-- Separater -->
+                                        <div class="table-responsive">
+                                            <table class="table table-dark-grey">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            Parts Details
+                                                        </th>
+                                                        <th>
+                                                            Requested Quantity
+                                                        </th>
+                                                        <th>
+                                                            Issued Quantity
+                                                        </th>
+                                                        <th>
+                                                            Returned Quantity
+                                                        </th>
+                                                        <th>
+                                                            Pending Quantity
+                                                        </th>
+                                                        <th>
+                                                            Action
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="ptb-12" ng-repeat="(index,part_detail) in part_details" id="tp_{{index}}" ng-class="part_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_detail.removal_reason_id != '10021'">
+                                                        <td>
+                                                            {{part_detail.part_detail}}
+                                                        </td>
+                                                        <td>
+                                                            {{part_detail.qty}}
+                                                        </td>
+                                                        <td>
+                                                            {{part_detail.issued_qty}}
+                                                        </td>
+                                                        <td>
+                                                            {{part_detail.returned_qty}}
+                                                        </td>
+                                                        <td>
+                                                            {{part_detail.pending_qty}}
+                                                        </td>
+                                                        <td ng-class="part_detail.removal_reason_id == 10022 ? 'my-disable' : ''">
+                                                            <button type="button" ng-if="!job_order.part_intent_confirmed_date && ( job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 ) && part_detail.is_fixed_schedule == 0" ng-click="showPartForm(part_detail)" class="btn img-btn btn-delete">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                            </button>
+                                                            <button type="button" ng-if="!job_order.part_intent_confirmed_date && (  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 ) &&  part_detail.is_fixed_schedule == 0" class="btn img-btn btn-delete" ng-click="removePart(index,part_detail.job_order_part_id,'parts')">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="ptb-9">
+                                                        <td colspan="6">
+                                                            <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)" ng-if="!job_order.part_intent_confirmed_date &&  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 ">
+                                                                Add Part
+                                                            </button>
+                                                            <a ng-if="job_order.job_card && (job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227) " href=".#!/part-indent/issue-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
+                                                                Issue Part
+                                                            </a>
+                                                            <button ng-if="job_order.job_card && indent_part_logs.length > 0 && (job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226)" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showReturnPartForm(false)">
+                                                                Return Part
+                                                            </button>
+                                                        </td>
+                                                        <!-- <td colspan="4" class="text-right">
+                                                                <b>
+                                                                    Total Parts
+                                                                </b>
+                                                            </td>
+                                                            <td class="wid-100 white-space text-right">
+                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
+                                                                <b>
+                                                                    {{part_amount | number:2}}
+                                                                </b>
+                                                            </td> -->
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="mb-20"></div><!-- Spacing -->
+                                            <div class="col-md-12" ng-if="job_order.status_id == 8472">
+                                                <div class="text-center pt-40">
+                                                    <a class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Ready for Estimate</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Table Responsive -->
+                                        <div class="mb-15" ng-if="job_order.job_card"></div><!-- Spacing -->
+                                        <h5 class="color-primary mb-10" ng-if="job_order.job_card"><b>Parts Indent Logs</b></h5>
+                                        <hr class="hr-15" ng-if="job_order.job_card"><!-- Separater -->
+                                        <div class="table-responsive" ng-if="job_order.job_card">
+                                            <table class="table table-dark-grey">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            Parts Details
+                                                        </th>
+                                                        <th>
+                                                            Transcation Type
+                                                        </th>
+                                                        <th>
+                                                            Quantity
+                                                        </th>
+                                                        <th>
+                                                            Issue Mode
+                                                        </th>
+                                                        <th>
+                                                            Mechnanic
+                                                        </th>
+                                                        <th>
+                                                            Date
+                                                        </th>
+                                                        <th>
+                                                            Action
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="ptb-12" ng-if="log.removal_reason_id!=10021" ng-repeat="(index,log) in indent_part_logs">
+                                                        <td>
+                                                            {{log.name}} / {{log.code}}
+                                                        </td>
+                                                        <td>
+                                                            {{log.transaction_type}}
+                                                        </td>
+                                                        <td>
+                                                            {{log.qty}}
+                                                        </td>
+                                                        <td>
+                                                            {{log.issue_mode}}
+                                                        </td>
+                                                        <td>
+                                                            {{log.mechanic}}
+                                                        </td>
+                                                        <td>
+                                                            {{log.date}}
+                                                        </td>
+                                                        <td>
+                                                            <a ng-if="log.transaction_type == 'Issue' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227" href=".#!/inward-parts-indent/issue-part/form/{{job_order.id}}/{{log.job_order_part_increment_id}}" class="btn img-btn btn-delete">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                            </a>
+                                                            <button ng-if="log.transaction_type == 'Return' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227" type="button" class="btn img-btn btn-delete" ng-click="showReturnPartForm(index,log)">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                            </button>
+                                                            <button ng-if="job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227" type="button" class="btn img-btn btn-delete" ng-click="removeLog(index,log)">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr ng-if="indent_part_logs.length == 0">
+                                                        <td colspan="7" class="text-center">No Logs Found</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="mb-20"></div><!-- Spacing -->
+                                            <div class="col-md-12" ng-if="job_order.job_card.status_id == 8227">
+                                                <div class="text-center pt-40">
+                                                    <a class="btn btn-red part_request" data-toggle="modal" data-target="#billing_confirmation_modal">Ready for Billing</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Table Responsive -->
+                                        <div class="mb-20"></div><!-- Spacing -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-prev" href=".#!/part-indent/repair-order/view/{{job_order.id}}">
+                                                    Previous
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal fade alert-modal failure" id="confirmation_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">CONFIRMATION?</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure? Do you added all parts related labour works?</p>
+                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
+                <button class="btn btn-success send_confirm" ng-click="sendConfirm(2)">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade alert-modal failure" id="billing_confirmation_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure? do you return all parts excess qty? </p>
+                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
+                <button class="btn btn-success send_confirm" ng-click="sendConfirm(4)">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade filter" id="return_part_form_modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                    <i class="icon ion-md-close"></i>
+                </button>
+                <h5 class="modal-title">
+                    Return Part
+                </h5>
+            </div>
+            <div class="modal-body">
+                <form id="return-part-form">
+                    <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                    <input type="hidden" name="job_order_returned_part_id" value="{{$ctrl.job_order_returned_part_id}}">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    Part
+                                </label>
+                                <md-select ng-model="parts_indent.return_part" placeholder="Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchreturnPartKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="return_part" ng-repeat="return_part in job_order_parts | filter:searchreturnPartKey">
+                                            {{return_part.name}} / {{return_part.code}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" name="job_order_part_id" value="{{parts_indent.return_part.job_order_part_id}}">
+                                <input type="hidden" name="part_id" value="{{parts_indent.return_part.id}}">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    Employee
+                                </label>
+                                <md-select ng-model="parts_indent.employee" placeholder="Employee" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="employee" ng-repeat="employee in repair_order_mechanics | filter:searchreturnEmployeeKey">
+                                            {{employee.name}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" name="returned_to_id" value="{{parts_indent.employee.id}}">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Quantity <sup class="mandatory">*</sup></label>
+                                <input type="number" name="returned_qty" ng-model="parts_indent.return_part.qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                            </div><!-- Feild -->
+                        </div><!-- Column -->
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-right mb-15">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-bordered submit approve_btn">Submit</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </form>
+            </div>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<div class="modal fade filter" id="part_form_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="part-form">
+            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <input type="hidden" name="job_order_part_id" value="{{parts_indent.part.job_order_part_id}}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h5 class="modal-title" id="myModalLabel">
+                        {{modal_action}} Part
+                    </h5>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Part Code
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <md-autocomplete md-selected-item="parts_indent.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
+                                        <md-item-template>
+                                            <span>
+                                                {{part.code}}
+                                            </span>
+                                        </md-item-template>
+                                        <md-not-found>
+                                            No records matching "{{partSearchKey}}" were found.
+                                        </md-not-found>
+                                    </md-autocomplete>
+                                    <input type="hidden" name="part_id" value="{{parts_indent.part.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4" ng-if="parts_indent.part">
+                                <div class="form-group">
+                                    <label>
+                                        Repair Orders
+                                    </label>
+                                    <md-select multiple ng-model="parts_indent.part.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.part.repair_order_parts)" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-if="repair_order.removal_reason_id == null" ng-value="repair_order" ng-repeat="repair_order in options.repair_orders | filter:searchreturnEmployeeKey">
+                                                {{repair_order.code}} / {{repair_order.name}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" class="hidden_repair_order_ids" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Split Order Type
+                                    </label>
+                                    <md-select ng-model="parts_indent.split_order_type" placeholder="Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                                {{split_order_type.name}} / {{split_order_type.code}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="split_order_type_id" value="{{parts_indent.split_order_type.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quantity <sup class="mandatory">*</sup></label>
+                                    <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="qty" ng-model="parts_indent.part.qty" maxlength="12">
+                                </div><!-- Feild -->
+                            </div>
+                        </div><!-- Row -->
+                        <div class="view-details mb-no" ng-if="parts_indent.part">
+                            <ul class="view-row mb-no pad-tb-none">
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Part Description</span>
+                                    <span class="view-data-list-value">{{parts_indent.part.name}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">MRP</span>
+                                    <span class="view-data-list-value">{{parts_indent.part.mrp | currency}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">UOM</span>
+                                    <span class="view-data-list-value">{{parts_indent.part.uom.code}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Amount</span>
+                                    <span class="view-data-list-value">{{parts_indent.part.total_amount | currency}}</span>
+                                </li>
+                            </ul>
+                        </div><!-- View Data -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-bordered save_part">Submit</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<div class="modal fade filter" id="part_form_modal1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple reject_close" data-dismiss="modal" aria-label="Close">
+                    <i class="icon ion-md-close"></i>
+                </button>
+                <h5 class="modal-title">
+                    {{modal_action}} Part
+                </h5>
+            </div>
+            <div class="modal-body">
+                <form id="part-form">
+                    <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                    <input type="hidden" name="job_order_part_id" value="{{parts_indent.part.job_order_part_id}}">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    Repair Orders
+                                </label>
+                                <md-select multiple ng-model="parts_indent.part.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.part.repair_order_parts)" ng-model-options="{trackBy: '$value.id' }">
+                                    <!-- parts_indent.repair_order -->
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-if="repair_order.removal_reason_id == null" ng-value="repair_order" ng-repeat="repair_order in options.repair_orders | filter:searchreturnEmployeeKey">
+                                            {{repair_order.code}} / {{repair_order.name}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    Part Code
+                                    <span class="mandatory">*</span>
+                                </label>
+                                <md-autocomplete md-selected-item="parts_indent.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
+                                    <md-item-template>
+                                        <span>
+                                            {{part.code}}
+                                        </span>
+                                    </md-item-template>
+                                    <md-not-found>
+                                        No records matching "{{partSearchKey}}" were found.
+                                    </md-not-found>
+                                </md-autocomplete>
+                                <input type="hidden" name="part_id" value="{{parts_indent.part.id}}">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    Split Order Type
+                                </label>
+                                <md-select ng-model="parts_indent.split_order_type" placeholder="Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                            {{split_order_type.name}} / {{split_order_type.code}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" name="split_order_type_id" value="{{parts_indent.split_order_type.id}}">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                    </div>
+                    <div class="row" ng-if="parts_indent.part">
+                        <div class="col-md-4" ng-if="parts_indent.part">
+                            <div class="form-group">
+                                <label>
+                                    Part Description
+                                </label>
+                                <label>
+                                    {{parts_indent.part.name}}
+                                </label>
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    MRP
+                                </label>
+                                <label>
+                                    {{parts_indent.part.mrp | currency}}
+                                </label>
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    Quantity
+                                </label>
+                                <div class="input-group">
+                                    <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="qty" ng-model="parts_indent.part.qty" maxlength="12">
+                                    <!-- <span class="input-group-addon">
+                                    {{wjor_part.part.uom.name}}
+                                </span> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-if="parts_indent.part">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    UOM
+                                </label>
+                                <label>
+                                    {{parts_indent.part.uom.code}}
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    <b>
+                                        Amount
+                                    </b>
+                                </label>
+                                <label>
+                                    <b>
+                                        {{parts_indent.part.total_amount | currency}}
+                                    </b>
+                                </label>
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-right mb-15">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" class="submit btn btn-bordered btn-red approve_btn">
+                                Submit
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </form>
+            </div>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm finance-view-modal" role="document">
+        <form id="labour_parts_remove">
+            <input type="hidden" name="labour_parts_id" id="labour_parts_id" value="">
+            <input type="hidden" name="payable_type" id="payable_type" value="">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h4 class="modal-title">Delete Request</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>
+                                                Delete Reason
+                                                <sup class="mandatory">*</sup></label>
+                                            <div class="common-radio-button type-4">
+                                                <input type="radio" id="worngly_entered" name="removal_reason_id" ng-model="delete_reason" ng-value="10021" value="10021" ng-checked="delete_reason">
+                                                <label for="worngly_entered">
+                                                    Added By Mistake
+                                                </label>
+                                                <input type="radio" ng-model="delete_reason" id="customer_delete" name="removal_reason_id" ng-value="10022" value="10022">
+                                                <label for="customer_delete">
+                                                    Customer Denied
+                                                </label>
+                                            </div>
+                                            <div id="errorDeleteReasonRequired"></div>
+                                        </div><!-- Feild -->
+                                    </div><!-- Column -->
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-12" ng-if="delete_reason == '10022'">
+                                <div class="form-group">
+                                    <label>Remarks <sup class="mandatory">*</sup></label>
+                                    <textarea class="form-control" rows="5" id="removal_reason" name="removal_reason"></textarea>
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Container -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">
+                        Cancel
+                    </button>
+                    <button class="btn btn-red submit" ng-click="saveLabourPartDeleteForm()">Submit</button>
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content-->
+<div class="modal fade alert-modal failure" id="delete_log" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
+            </div>
+            <div class="modal-body">
+                <h5>Delete</h5>
+                <p>You can’t retrive the data again, Are you sure you want to delete? </p>
+                <input type="hidden" name="delete_labour_details" class="delete_labour_details" value="">
+                <input type="hidden" name="log_type" id="log_type" value="">
+                <input type="hidden" name="log_id" id="log_id" value="">
+                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
+                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>

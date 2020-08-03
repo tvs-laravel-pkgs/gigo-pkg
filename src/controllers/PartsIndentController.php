@@ -40,12 +40,16 @@ class PartsIndentController extends Controller {
 	}
 
 	public function getPartsindentList(Request $request) {
+		// dd($request->all());
 
-		$job_cards = JobCard::select([
-			'job_cards.id',
+		$job_cards = JobOrder::select([
+			'job_orders.id',
+			'job_orders.number as job_order_number',
 			'job_cards.job_card_number',
 			'users.name as floor_supervisor',
-			DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y, %h:%i %p") as date_time'),
+			'service_adv.name as service_advisor',
+			DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y, %h:%i %p") as job_order_date_time'),
+			DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y, %h:%i %p") as job_card_date_time'),
 			DB::raw('COALESCE(SUM(job_order_issued_parts.issued_qty), "0.00") as issued_qty'),
 			DB::raw('COALESCE(SUM(job_order_parts.qty), "0.00") as requested_qty'),
 			'job_orders.vehicle_id',
@@ -56,18 +60,15 @@ class PartsIndentController extends Controller {
 			'job_order_parts.status_id',
 			'configs.name as status',
 		])
-			->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')
-			->join('job_order_parts', 'job_order_parts.job_order_id', 'job_orders.id')
-			->leftJoin('configs', 'configs.id', 'job_order_parts.status_id')
+			->join('users as service_adv', 'service_adv.id', 'job_orders.service_advisor_id')
+			->leftJoin('job_cards', 'job_orders.id', 'job_cards.job_order_id')
+			->leftJoin('job_order_parts', 'job_order_parts.job_order_id', 'job_orders.id')
 			->leftJoin('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')
 			->leftJoin('users', 'users.id', 'job_cards.floor_supervisor_id')
-			->leftJoin('vehicle_owners', function ($join) {
-				$join->on('vehicle_owners.vehicle_id', 'job_orders.vehicle_id')
-					->whereRaw('vehicle_owners.from_date = (select MAX(vehicle_owners1.from_date) from vehicle_owners as vehicle_owners1 where vehicle_owners1.vehicle_id = job_orders.vehicle_id)');
-			})
-			->leftJoin('customers', 'customers.id', 'vehicle_owners.customer_id')
-			->leftJoin('outlets', 'outlets.id', 'job_cards.outlet_id')
+			->leftJoin('customers', 'customers.id', 'job_orders.customer_id')
+			->leftJoin('outlets', 'outlets.id', 'job_orders.outlet_id')
 			->leftJoin('states', 'states.id', 'outlets.state_id')
+			->leftJoin('configs', 'configs.id', 'job_order_parts.status_id')
 			->leftJoin('regions', 'regions.id', 'outlets.region_id')
 			->where(function ($query) use ($request) {
 				if (!empty($request->job_card_no)) {
@@ -80,13 +81,24 @@ class PartsIndentController extends Controller {
 				}
 			})
 			->where(function ($query) use ($request) {
+				if (!empty($request->job_order_no)) {
+					$query->where('job_orders.number', 'LIKE', '%' . $request->job_order_no . '%');
+				}
+			})
+			->where(function ($query) use ($request) {
+				if (!empty($request->job_order_date)) {
+					$query->whereDate('job_orders.created_at', date('Y-m-d', strtotime($request->job_order_date)));
+				}
+			})
+
+			->where(function ($query) use ($request) {
 				if (!empty($request->customer_id)) {
 					$query->where('vehicle_owners.customer_id', $request->customer_id);
 				}
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->outlet_id)) {
-					$query->where('outlets.id', $request->outlet_id);
+					$query->where('job_orders.outlet_id', $request->outlet_id);
 				}
 			})
 			->where(function ($query) use ($request) {
@@ -94,18 +106,21 @@ class PartsIndentController extends Controller {
 					$query->where('job_order_parts.status_id', $request->status_id);
 				}
 			})
-			->where('job_cards.company_id', Auth::user()->company_id);
+			->where('job_orders.company_id', Auth::user()->company_id)
+		// ->get()
+		;
 
 		if (!Entrust::can('view-overall-outlets-part-indent')) {
 			if (Entrust::can('view-mapped-outlet-part-indent')) {
-				$job_cards->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+				$job_cards->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 			} else {
-				$job_cards->where('job_cards.outlet_id', Auth::user()->employee->outlet_id);
+				$job_cards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
 			}
 		}
 
-		$job_cards->groupBy('job_cards.id');
-
+		// $job_cards->groupBy('job_orders.id')->get();
+		// dd($job_cards);
+		//
 		return Datatables::of($job_cards)
 			->editColumn('status', function ($job_cards) {
 				if ($job_cards->status_id == 8200 || $job_cards->status_id == 8201) {
@@ -122,7 +137,7 @@ class PartsIndentController extends Controller {
 				$view_img = asset("/public/theme/img/table/view.svg");
 				$output = '';
 				if (Entrust::can('view-parts-indent')) {
-					$output .= '<a href="#!/job-card/part-indent/' . $job_cards->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_hover_img . '" onmouseout=this.src="' . $view_img . '"></a>';
+					$output .= '<a href="#!/part-indent/vehicle/view/' . $job_cards->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_hover_img . '" onmouseout=this.src="' . $view_img . '"></a>';
 				}
 				return $output;
 			})
