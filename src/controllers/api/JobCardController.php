@@ -1304,7 +1304,7 @@ class JobCardController extends Controller {
 			}
 
 			if ($request->status_id == 8187) {
-				$total_count = JobOrderRepairOrder::where('job_order_id', $job_order_repair_order->job_order_id)->where('status_id', '!=', 8187)->count();
+				$total_count = JobOrderRepairOrder::where('job_order_id', $job_order_repair_order->job_order_id)->whereNull('removal_reason_id')->where('status_id', '!=', 8187)->count();
 				if ($total_count == 0) {
 					$job_card = JobCard::where('id', $request->job_card_id)
 						->update([
@@ -2195,36 +2195,10 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$part_list = collect(JobOrderPart::select(
-			'job_order_parts.id',
-			'parts.code as name'
-		)
-				->join('parts', 'parts.id', 'job_order_parts.part_id')
-				->where('job_order_id', $job_card->job_order_id)
-				->groupBy('job_order_parts.id')
-				->get())->prepend(['id' => '', 'name' => 'Select Part No']);
-
-		$mechanic_list = collect(JobOrderRepairOrder::select(
-			'users.id',
-			'users.name'
-		)
-				->join('repair_order_mechanics', 'repair_order_mechanics.job_order_repair_order_id', 'job_order_repair_orders.id')
-				->join('users', 'users.id', 'repair_order_mechanics.mechanic_id')
-				->where('job_order_repair_orders.job_order_id', $job_card->job_order_id)
-				->groupBy('users.id')
-				->get())->prepend(['id' => '', 'name' => 'Select Issued To']);
-
-		$issued_mode_list = Config::getDropDownList(['config_type_id' => 109, 'add_default' => true, 'default_text' => 'Select Issue Mode']);
-
-		$extras = [
-			'part_list' => $part_list,
-			'mechanic_list' => $mechanic_list,
-			'issued_mode_list' => $issued_mode_list,
-		];
-
 		$issued_parts = JobOrderIssuedPart::select(
 			'job_order_issued_parts.id as issued_id',
 			'parts.code',
+			'parts.name',
 			'job_order_parts.id',
 			'job_order_parts.qty',
 			'job_order_issued_parts.issued_qty',
@@ -2245,7 +2219,6 @@ class JobCardController extends Controller {
 		return response()->json([
 			'success' => true,
 			'issued_parts' => $issued_parts,
-			'extras' => $extras,
 			'job_card' => $job_card,
 		]);
 

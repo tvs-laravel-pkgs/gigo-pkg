@@ -57,8 +57,9 @@ class PartsIndentController extends Controller {
 			DB::raw('COALESCE(customers.name, "-") as customer_name'),
 			'states.name as state_name',
 			'regions.name as region_name',
-			'job_order_parts.status_id',
-			'configs.name as status',
+			'job_orders.status_id as job_order_status',
+			'job_cards.status_id as job_card_status',
+			// 'configs.name as status',
 		])
 			->join('users as service_adv', 'service_adv.id', 'job_orders.service_advisor_id')
 			->leftJoin('job_cards', 'job_orders.id', 'job_cards.job_order_id')
@@ -68,7 +69,7 @@ class PartsIndentController extends Controller {
 			->leftJoin('customers', 'customers.id', 'job_orders.customer_id')
 			->leftJoin('outlets', 'outlets.id', 'job_orders.outlet_id')
 			->leftJoin('states', 'states.id', 'outlets.state_id')
-			->leftJoin('configs', 'configs.id', 'job_order_parts.status_id')
+		// ->leftJoin('configs', 'configs.id', 'job_order_parts.status_id')
 			->leftJoin('regions', 'regions.id', 'outlets.region_id')
 			->where(function ($query) use ($request) {
 				if (!empty($request->job_card_no)) {
@@ -123,14 +124,29 @@ class PartsIndentController extends Controller {
 		//
 		return Datatables::of($job_cards)
 			->editColumn('status', function ($job_cards) {
-				if ($job_cards->status_id == 8200 || $job_cards->status_id == 8201) {
-					$status = 'blue';
-				} elseif ($job_cards->status_id == 8202) {
-					$status = 'green';
+				if ($job_cards->job_card_number) {
+					if ($job_cards->job_card_status == 8227) {
+						$status = '<span class="text-green">Waiting for Parts Confirmation</span>';
+					} elseif ($job_cards->job_card_status == 8224 || $job_cards->job_card_status == 8224 || $job_cards->job_card_status == 8226) {
+						$status = '<span class="text-green">JobCard Completed</span>';
+					} else {
+						$status = '<span class="text-blue">JobCard Inprogress</span>';
+					}
 				} else {
-					$status = 'red';
+					if ($job_cards->job_order_status == 8472) {
+						$status = '<span class="text-green">Waiting for Parts Estimation</span>';
+					} else {
+						$status = '<span class="text-blue">Vehicle Inward Inprogress</span>';
+					}
 				}
-				return '<span class="text-' . $status . '">' . $job_cards->status . '</span>';
+				// if ($job_cards->status_id == 8200 || $job_cards->status_id == 8201) {
+				// 	$status = 'blue';
+				// } elseif ($job_cards->status_id == 8202) {
+				// 	$status = 'green';
+				// } else {
+				// 	$status = 'red';
+				// }
+				return $status;
 			})
 			->addColumn('action', function ($job_cards) {
 				$view_hover_img = asset("public/theme/img/table/view-hover.svg");
