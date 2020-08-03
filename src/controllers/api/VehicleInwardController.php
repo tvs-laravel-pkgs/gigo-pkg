@@ -1036,6 +1036,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 	public function getPartDetailPias(Request $request) {
+		// dd($request->all());
 		try {
 			$available_qty = 0;
 			$part_code = $request->code;
@@ -1055,8 +1056,6 @@ class VehicleInwardController extends Controller {
 				->where(['outlets.code' => $user_outlet_code, 'outlets.company_id' => $company_id])
 				->first();
 
-			// dd($part, $outlet);
-
 			if (!$part) {
 				$error = 'Part';
 			}
@@ -1075,14 +1074,25 @@ class VehicleInwardController extends Controller {
 				->select('stock_details.outlet_id', 'stock_details.part_id', 'stock_details.available_quantity')
 				->where(['stock_details.outlet_id' => $outlet->id, 'stock_details.part_id' => $part->id])
 				->first();
-			// dd($stock_details);
+
 			if ($stock_details) {
 				$available_qty = $stock_details->available_quantity;
 			}
 
+			//Mentioned Parts Total Request Quantity
+			$total_request_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->pluck('job_order_parts.qty')->first();
+
+			//Mentioned Parts Total Issued Quantity
+			$total_issued_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->join('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->sum('job_order_issued_parts.issued_qty');
+
+			$total_balance_qty = $total_request_qty - $total_issued_qty;
+
 			$responseArr = array(
 				'success' => true,
 				'available_quantity' => $available_qty,
+				'total_request_qty' => $total_request_qty,
+				'total_issued_qty' => $total_issued_qty,
+				'total_balance_qty' => $total_balance_qty,
 			);
 
 			return response()->json($responseArr);
@@ -1131,26 +1141,29 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$pias_available_qty = $request->available_qty;
-			if (intval($request->issued_qty) > intval($pias_available_qty)) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Issue Quantity should not exceed Available Quantity',
-				]);
-			}
-
 			$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
 
 			$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
 
 			$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
 
-			$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
-			if ($pending_qty < $request->issued_qty) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Returning Quantity should not exceed Pending Quantity',
-				]);
+			if ($request->issued_mode_id == 8480) {
+				$pias_available_qty = $request->available_qty;
+				// if (intval($request->issued_qty) > intval($pias_available_qty)) {
+				// 	return response()->json([
+				// 		'success' => false,
+				// 		'message' => 'Issue Quantity should not exceed Available Quantity',
+				// 	]);
+				// }
+
+				$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
+				if ($pending_qty < $request->issued_qty) {
+					return response()->json([
+						'success' => false,
+						'message' => 'Returning Quantity should not exceed Pending Quantity',
+					]);
+				}
+
 			}
 
 			DB::beginTransaction();
@@ -1244,20 +1257,21 @@ class VehicleInwardController extends Controller {
 				$parts_grn->created_by_id = Auth::id();
 				$parts_grn->created_at = Carbon::now();
 				$parts_grn->save();
-			}
-
-			$job_order_isssued_part = JobOrderIssuedPart::find($request->job_order_issued_part_id);
-			if ($job_order_isssued_part == null) {
-				$job_order_isssued_part = new JobOrderIssuedPart;
-				$job_order_isssued_part->created_by_id = Auth::id();
-				$job_order_isssued_part->created_at = Carbon::now();
 			} else {
-				$job_order_isssued_part->updated_by_id = Auth::id();
-				$job_order_isssued_part->updated_at = Carbon::now();
+				$job_order_isssued_part = JobOrderIssuedPart::find($request->job_order_issued_part_id);
+				if ($job_order_isssued_part == null) {
+					$job_order_isssued_part = new JobOrderIssuedPart;
+					$job_order_isssued_part->created_by_id = Auth::id();
+					$job_order_isssued_part->created_at = Carbon::now();
+				} else {
+					$job_order_isssued_part->updated_by_id = Auth::id();
+					$job_order_isssued_part->updated_at = Carbon::now();
+				}
+
+				$job_order_isssued_part->fill($request->all());
+				$job_order_isssued_part->save();
 			}
 
-			$job_order_isssued_part->fill($request->all());
-			$job_order_isssued_part->save();
 			DB::commit();
 
 			return response()->json([

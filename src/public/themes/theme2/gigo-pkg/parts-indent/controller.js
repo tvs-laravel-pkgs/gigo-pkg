@@ -915,9 +915,11 @@ app.component('partsIndentIssuePartForm', {
                         PartSvc.read($scope.issued_part.part_id)
                             .then(function(response) {
                                 $scope.return_part = response.data.part;
+                                $scope.issuedPartSelected($scope.return_part);
                                 $scope.return_part.job_order_part_id = res.issue_data.job_order_part_id;
                             });
                         $scope.issued_to = res.issue_to_user;
+                        $scope.issued_part.issued_qty = parseFloat($scope.issued_part.issued_qty);
                     }
                     $scope.$apply();
                 })
@@ -1064,7 +1066,8 @@ app.component('partsIndentIssuePartForm', {
                         url: base_url + '/api/inward-part-indent/get-part-detail-pias',
                         method: "POST",
                         data: {
-                            code: part.code
+                            code: part.code,
+                            job_order_id: $routeParams.job_order_id,
                         },
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -1076,6 +1079,9 @@ app.component('partsIndentIssuePartForm', {
                             return;
                         }
                         $scope.available_quantity = res.available_quantity;
+                        $scope.total_request_qty = res.total_request_qty;
+                        $scope.total_issued_qty = res.total_issued_qty;
+                        $scope.total_balance_qty = res.total_balance_qty;
                         $scope.$apply();
                     })
                     .fail(function(xhr) {
