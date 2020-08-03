@@ -5,6 +5,7 @@ use Abs\GigoPkg\JobCard;
 use Abs\GigoPkg\JobOrder;
 use Abs\TaxPkg\Tax;
 use App\Http\Controllers\Controller;
+use App\SplitOrderType;
 use DB;
 use PDF;
 
@@ -2970,6 +2971,7 @@ class PDFController extends Controller {
 
 	public function JobCardBillDetailPDF($id, $split_order_type_id) {
 		// dd($id, $split_order_type_id);
+		$split_order = SplitOrderType::find($split_order_type_id);
 		$this->data['job_card'] = $job_card = JobCard::with([
 			'jobOrder',
 			'jobOrder.outlet',
@@ -2978,14 +2980,14 @@ class PDFController extends Controller {
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'jobOrder.jobOrderRepairOrders' => function ($query) use ($split_order_type_id) {
-				$query->where('job_order_repair_orders.split_order_type_id', $split_order_type_id);
+				$query->where('job_order_repair_orders.split_order_type_id', $split_order_type_id)->whereNull('removal_reason_id');
 			},
 			'jobOrder.jobOrderRepairOrders.repairOrder',
 			'jobOrder.jobOrderRepairOrders.repairOrder.repairOrderType',
 			'jobOrder.jobOrderRepairOrders.repairOrder.taxCode',
 			'jobOrder.jobOrderRepairOrders.repairOrder.taxCode.taxes',
 			'jobOrder.jobOrderParts' => function ($query) use ($split_order_type_id) {
-				$query->where('job_order_parts.split_order_type_id', $split_order_type_id);
+				$query->where('job_order_parts.split_order_type_id', $split_order_type_id)->whereNull('removal_reason_id');
 			},
 			'jobOrder.jobOrderParts.part',
 			'jobOrder.jobOrderParts.part.taxCode',
@@ -3023,6 +3025,8 @@ class PDFController extends Controller {
 		for ($i = 0; $i < count($taxes); $i++) {
 			$seperate_tax[$i] = 0.00;
 		}
+
+		$tax_percentage = 0;
 
 		$labour_details = array();
 		if ($job_card->jobOrder->jobOrderRepairOrders) {
@@ -3145,7 +3149,6 @@ class PDFController extends Controller {
 					}
 				} else {
 					if ($labour->removal_reason_id == null) {
-
 						$total_amount = 0;
 						$labour_details[$key]['sno'] = $i;
 						$labour_details[$key]['code'] = $labour->repairOrder->code;
@@ -3385,7 +3388,15 @@ class PDFController extends Controller {
 		$total_amount = $parts_amount + $labour_amount;
 		$this->data['taxes'] = $taxes;
 		$this->data['total_amount'] = number_format($total_amount, 2);
-		$this->data['round_total_amount'] = round($total_amount);
+
+		//FOR ROUND OFF
+		if ($total_amount <= round($total_amount)) {
+			$round_off = round($total_amount) - $total_amount;
+		} else {
+			$round_off = round($total_amount) - $total_amount;
+		}
+
+		$this->data['round_total_amount'] = number_format($round_off, 2);
 
 		$this->data['labour_details'] = $labour_details;
 		$this->data['total_labour_qty'] = $total_labour_qty;
@@ -3405,7 +3416,9 @@ class PDFController extends Controller {
 
 		$pdf = PDF::loadView('pdf-gigo/bill-detail-split-order-pdf', $this->data);
 
-		return $pdf->stream('bill-detail-split-order-pdf');
+		$file_name = $split_order->name . '- Bill-Detail.pdf';
+		$file_name = str_replace(' ', '', $file_name);
+		return $pdf->stream($file_name);
 	}
 
 	public function LabourBillDeatilPDF($id) {

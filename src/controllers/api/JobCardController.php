@@ -3941,14 +3941,14 @@ class JobCardController extends Controller {
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
 				'jobOrder.jobOrderRepairOrders' => function ($q) {
-					$q->whereNull('removal_reason_id');
+					$q->whereNull('removal_reason_id')->whereNotNull('split_order_type_id');
 				},
 				'jobOrder.jobOrderRepairOrders.repairOrder',
 				'jobOrder.jobOrderRepairOrders.repairOrder.repairOrderType',
 				'jobOrder.jobOrderRepairOrders.repairOrder.taxCode',
 				'jobOrder.jobOrderRepairOrders.repairOrder.taxCode.taxes',
 				'jobOrder.jobOrderParts' => function ($q) {
-					$q->whereNull('removal_reason_id');
+					$q->whereNull('removal_reason_id')->whereNotNull('split_order_type_id');
 				},
 				'jobOrder.jobOrderParts.part',
 				'jobOrder.jobOrderParts.part.taxCode',
