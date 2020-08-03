@@ -69,6 +69,7 @@ app.component('myJobcardCardList', {
         });
         $scope.listRedirect = function(type) {
             if (type == 'table') {
+                window.location = "#!/my-jobcard/table-list" + "/" + $routeParams.user_id;
                 return false;
             } else {
                 //alert();
@@ -501,81 +502,60 @@ app.component('myJobcardView', {
             $('#key').val(key);
         }
 
-        $scope.StartWork = function() {
+        $scope.StartWorkConfirm = function() {
             var key = $('#key').val();
             var work_id = $('#work_id').val();
             job_repair_order_id = $("#repair_repair_order_id" + key).val();
             status_id = work_id;
 
-            if (status_id && work_id) {
-                $('.work_start').button('loading');
-                $.ajax({
-                        url: base_url + '/api/save-my-job-card',
-                        method: "POST",
-                        data: {
-                            job_repair_order_id: job_repair_order_id,
-                            machanic_id: self.user_id,
-                            status_id: status_id,
-                        },
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                    }).done(function(res) {
-                        $('.work_start').button('reset');
-                        if (!res.success) {
-                            showErrorNoty(res);
-                            return;
-                        }
-
-                        $("#start_work").modal('hide');
-                        $('body').removeClass('modal-open');
-                        $('.modal-backdrop').remove();
-
-                        custom_noty('success', 'Work has been started');
-                        setTimeout(function() {
-                            // location.reload();
-                            $scope.fetchData();
-                        }, 1000);
-
-                    })
-                    .fail(function(xhr) {
-                        custom_noty('error', 'Something went wrong at server');
-                    });
+            if (status_id && job_repair_order_id) {
+                $scope.startWorkFunction(job_repair_order_id, status_id);
             }
 
         }
-        // $scope.StartWork = function($id, $key) {
-        //     job_repair_order_id = $("#repair_repair_order_id" + $key).val();
-        //     status_id = $id;
-        //     $.ajax({
-        //             url: base_url + '/api/save-my-job-card',
-        //             method: "POST",
-        //             data: {
-        //                 job_repair_order_id: job_repair_order_id,
-        //                 machanic_id: self.user_id,
-        //                 status_id: status_id,
-        //             },
-        //             beforeSend: function(xhr) {
-        //                 xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-        //             },
-        //         }).done(function(res) {
-        //             if (!res.success) {
-        //                 showErrorNoty(res);
-        //                 return;
-        //             }
+        $scope.StartWork = function($id, $key) {
+            job_repair_order_id = $("#repair_repair_order_id" + $key).val();
+            status_id = $id;
+            if (job_repair_order_id && status_id) {
+                $scope.startWorkFunction(job_repair_order_id, status_id);
+            }
+        }
 
-        //             custom_noty('success', 'Work has been started');
-        //             setTimeout(function() {
-        //                 // location.reload();
-        //                 $scope.fetchData();
-        //             }, 1000);
+        $scope.startWorkFunction = function(job_repair_order_id, status_id) {
+            $('.work_start').button('loading');
+            $.ajax({
+                    url: base_url + '/api/save-my-job-card',
+                    method: "POST",
+                    data: {
+                        job_repair_order_id: job_repair_order_id,
+                        machanic_id: self.user_id,
+                        status_id: status_id,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                }).done(function(res) {
+                    $('.work_start').button('reset');
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
 
-        //         })
-        //         .fail(function(xhr) {
-        //             custom_noty('error', 'Something went wrong at server');
-        //         });
-        // }
+                    $("#start_work").modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+                    custom_noty('success', 'Work has been started');
+                    setTimeout(function() {
+                        // location.reload();
+                        $scope.fetchData();
+                    }, 1000);
 
+                })
+                .fail(function(xhr) {
+                    $('.work_start').button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
         $scope.FinishWork = function($id, $key) {
             job_repair_order_id = $("#repair_repair_order_id" + $key).val();
             $scope.job_repair_order_id = job_repair_order_id;
