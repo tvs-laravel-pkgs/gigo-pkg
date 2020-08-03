@@ -4897,6 +4897,7 @@ app.component('inwardVehicleView', {
                     $scope.total_estimate_labour_amount = res.total_estimate_labour_amount;
                     $scope.total_estimate_part_amount = res.total_estimate_part_amount;
                     $scope.total_estimate_amount = res.total_estimate_amount;
+                    $scope.total_tax_amount = res.total_tax_amount;
                     $scope.extras = res.extras;
                     $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
                     $scope.inventory_list = res.inventory_list;
