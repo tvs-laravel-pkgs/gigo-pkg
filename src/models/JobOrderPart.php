@@ -5,6 +5,7 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
+use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -32,6 +33,13 @@ class JobOrderPart extends Model {
 	}
 	public function status() {
 		return $this->belongsTo('App\Config', 'status_id');
+	}
+	public function jobOrderIssuedParts() {
+		return $this->hasMany('Abs\GigoPkg\JobOrderIssuedPart', 'job_order_part_id')->select(
+			'job_order_issued_parts.*',
+			DB::raw('SUM(issued_qty) as issued_qty')
+		)
+			->groupBy('job_order_part_id');
 	}
 	public static function createFromObject($record_data) {
 
