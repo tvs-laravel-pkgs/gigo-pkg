@@ -767,7 +767,7 @@ class VehicleInwardController extends Controller {
 						$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 						$part_details[$key]['issued_qty'] = $issued_qty->issued_qty;
 						$part_details[$key]['returned_qty'] = $returned_qty->returned_qty;
-						$part_details[$key]['pending_qty'] = $value->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
+						$part_details[$key]['pending_qty'] = $value->qty - ($issued_qty->issued_qty - $returned_qty->returned_qty);
 						$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
 
 						// if (in_array($value->split_order_type_id, $customer_paid_type)) {
@@ -883,20 +883,6 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
-
-			$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
-
-			$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
-
-			$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
-			if ($pending_qty < $request->returned_qty) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Returning Quantity should not exceed Pending Quantity',
-				]);
-			}
-
 			DB::beginTransaction();
 			// $job_order_returned_part = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->first();
 			$job_order_returned_part = JobOrderReturnedPart::find($request->job_order_returned_part_id);
@@ -910,6 +896,19 @@ class VehicleInwardController extends Controller {
 			}
 			$job_order_returned_part->fill($request->all());
 			$job_order_returned_part->save();
+
+			$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->sum('issued_qty');
+
+			$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->sum('returned_qty');
+
+			$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
+
+			if ($returned_qty > $issued_qty) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Returning Quantity should not exceed Issued Quantity',
+				]);
+			}
 
 			DB::commit();
 
@@ -1149,12 +1148,12 @@ class VehicleInwardController extends Controller {
 
 			if ($request->issued_mode_id == 8480) {
 				$pias_available_qty = $request->available_qty;
-				// if (intval($request->issued_qty) > intval($pias_available_qty)) {
-				// 	return response()->json([
-				// 		'success' => false,
-				// 		'message' => 'Issue Quantity should not exceed Available Quantity',
-				// 	]);
-				// }
+				if (intval($request->issued_qty) > intval($pias_available_qty)) {
+					return response()->json([
+						'success' => false,
+						'message' => 'Issue Quantity should not exceed Available Quantity',
+					]);
+				}
 
 				$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
 				if ($pending_qty < $request->issued_qty) {
