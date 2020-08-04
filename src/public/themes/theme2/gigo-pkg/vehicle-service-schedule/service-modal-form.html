@@ -46,7 +46,7 @@
                                 KM
                                 <sup class="mandatory">*</sup>
                             </label>
-                            <input oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" type="text" class="form-control" ng-model="service_type_item.km_reading" name="km_reading" placeholder="Enter KM" />
+                            <input oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" type="text" class="form-control" ng-model="service_type_item.km_reading" name="km_reading" placeholder="Enter KM" ng-blur="kmChange()" />
                         </div><!-- Feild -->
                     </div><!-- Column -->
                     <div class="col-md-4">
