@@ -8,12 +8,12 @@
                         Job Order 
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'bay'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'bay'}">
                     <a class="filter" href=".#!/job-card/bay-view/{{job_card_id}}">
                         Bay
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'schedules'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'schedules'}">
                     <a class="filter" href=".#!/job-card/schedule/{{job_card_id}}">
                         Schedules</a>
                 </li>
@@ -22,22 +22,22 @@
                         Part Indent
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'material-gatepass'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'material-gatepass'}">
                     <a class="filter" href=".#!/job-card/material-gatepass/{{job_card_id}}">
                         OSL
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'split-order'}" ng-if="!$ctrl.view_only_part_indent && (job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226)">
+                <li ng-class="{active:active_tab == 'split-order'}" ng-if="job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226">
                     <a class="filter" href=".#!/job-card/split-order/{{job_card_id}}">
                         Split Order
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'returnable-items'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'returnable-items'}">
                     <a class="filter" href=".#!/job-card/returnable-item/{{job_card_id}}">
                         Returnable Items
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'bill-detail'}" ng-if="!$ctrl.view_only_part_indent && (job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226)">
+                <li ng-class="{active:active_tab == 'bill-detail'}" ng-if="job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226">
                     <a class="filter" href=".#!/job-card/bill-detail/{{job_card_id}}">
                         Bill Details
                     </a>
@@ -52,62 +52,62 @@
                         Estimate
                     </a>
                 </li> -->
-                <li ng-class="{active:active_tab == 'labour-parts'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'labour-parts'}">
                     <a class="filter" href=".#!/job-card/payable-labour-parts/{{job_card_id}}">
-                        Other Labour & Parts
+                        Additional Labour & Parts
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'schedule-maintendance'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'schedule-maintendance'}">
                     <a class="filter" href=".#!/job-card/schedule-maintenance/{{job_card_id}}">
                         Scheduled Maintendance
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'dms-checklist'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'dms-checklist'}">
                     <a class="filter" href=".#!/job-card/dms-checklist/{{job_card_id}}">
                         DMS Check list
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'vehicle-inspection'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'vehicle-inspection'}">
                     <a class="filter" href=".#!/job-card/vehicle-inspection/{{job_card_id}}">
                         Vehicle Inspection Report
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'expert-diagnosis'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'expert-diagnosis'}">
                     <a class="filter" href=".#!/job-card/expert-diagnosis/{{job_card_id}}">
                         Expert Diagnosis Report
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'road-test'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'road-test'}" >
                     <a class="filter" href=".#!/job-card/road-test-observation/{{job_card_id}}">
                         Read Test
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'capture-voc'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'capture-voc'}" >
                     <a class="filter" href=".#!/job-card/capture-voc/{{job_card_id}}">
                         Capture VOC
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'inventory'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'inventory'}">
                     <a class="filter" href=".#!/job-card/inventory/{{job_card_id}}">
                         Inventory
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'order-detail'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'order-detail'}">
                     <a class="filter" href=".#!/job-card/order-detail/{{job_card_id}}">
                         Order Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'customer-detail'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'customer-detail'}">
                     <a class="filter" href=".#!/job-card/customer-detail/{{job_card_id}}">
                         Customer Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'vehicle-detail'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'vehicle-detail'}">
                     <a class="filter" href=".#!/job-card/vehicle-detail/{{job_card_id}}">
                         Vehicle Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'gatein-detail'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'gatein-detail'}" >
                     <a class="filter" href=".#!/job-card/gatein-detail/{{job_card_id}}">
                         Gate In Details
                     </a>

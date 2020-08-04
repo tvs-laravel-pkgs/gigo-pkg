@@ -8,7 +8,7 @@
                     <a href="#!/part-indent/list" type="button" class="btn-back btn-img" ng-if="$ctrl.view_only_part_indent">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
                     </a>
-                    <a href="#!/job-card/card-list" type="button" class="btn-back btn-img" ng-if="!$ctrl.view_only_part_indent">
+                    <a href="#!/job-card/table-list" type="button" class="btn-back btn-img" ng-if="!$ctrl.view_only_part_indent">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
                     </a>
                 </div><!-- Page Header Content -->
@@ -32,110 +32,6 @@
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 class="title-red" ng-if="$ctrl.add_part_indent && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)">
-                                            Issue Part
-                                        </h5>
-                                        <div class="row" ng-if="$ctrl.add_part_indent && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)">
-                                            <div class="col-md-12">
-                                                <div class="parts-border">
-                                                    <div class="row">
-                                                        <div class="col-lg-8">
-                                                            <div class="padd-20">
-                                                                <div class="row">
-                                                                    <form id="part_add" autocomplete="off">
-                                                                        <input type="hidden" name="bal_qty" id="bal_qty" value="{{add_part.balance_qty}}" />
-                                                                        <div class="col-md-12">
-                                                                            <div class="row">
-                                                                                <div class="col-md-4">
-                                                                                    <div class="input-text form-group">
-                                                                                        <label>Part No <sup class="mandatory">*</sup></label>
-                                                                                        <md-select ng-model="$ctrl.part_code_selected" md-on-close="clearSearchType()" ng-change="onSelectedpartcode($ctrl.part_code_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Part No">
-                                                                                            <md-select-header class="demo-select-header">
-                                                                                                <input ng-model="searchType" type="search" placeholder="Search Part No" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                                                            </md-select-header>
-                                                                                            <md-optgroup>
-                                                                                                <md-option ng-value="j.id" ng-repeat="j in $ctrl.extras.part_list | filter:searchType">{{j.name}}</md-option>
-                                                                                            </md-optgroup>
-                                                                                        </md-select>
-                                                                                        <input type="hidden" class="form-control required" name="job_order_part_id" id="job_order_part_id" value="{{$ctrl.part_code_selected}}">
-                                                                                    </div><!-- Form Group -->
-                                                                                </div><!-- Column -->
-                                                                            </div><!-- Row -->
-                                                                        </div><!-- Column -->
-                                                                        <div class="col-md-4">
-                                                                            <div class="input-text form-group">
-                                                                                <label>Issuing Quantity <sup class="mandatory">*</sup></label>
-                                                                                <input name="issued_qty" class="form-control required" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" id="issued_qty" placeholder="Enter Issuing Quantity" autocomplete="off" /> </div><!-- Form Group -->
-                                                                        </div><!-- Column -->
-                                                                        <div class="col-md-4">
-                                                                            <div class="input-text form-group">
-                                                                                <label>Issue Mode <sup class="mandatory">*</sup></label>
-                                                                                <md-select ng-model="$ctrl.issue_mode_selected" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Issue Mode">
-                                                                                    <md-select-header class="demo-select-header">
-                                                                                        <input ng-model="searchType" type="search" placeholder="Search Issue Mode" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                                                    </md-select-header>
-                                                                                    <md-optgroup>
-                                                                                        <md-option ng-value="j.id" ng-repeat="j in $ctrl.extras.issued_mode_list | filter:searchType">{{j.name}}</md-option>
-                                                                                    </md-optgroup>
-                                                                                </md-select>
-                                                                                <input type="hidden" class="form-control required" id="issued_mode_id" name="issued_mode_id" value="{{$ctrl.issue_mode_selected}}" />
-                                                                            </div><!-- Form Group -->
-                                                                        </div><!-- Column -->
-                                                                        <div class="col-md-4">
-                                                                            <div class="input-text form-group">
-                                                                                <label>Issued To <sup class="mandatory">*</sup></label>
-                                                                                <md-select ng-model="$ctrl.machanic_id_selected" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Issued To">
-                                                                                    <md-select-header class="demo-select-header">
-                                                                                        <input ng-model="searchType" type="search" placeholder="Search Issued To" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                                                                    </md-select-header>
-                                                                                    <md-optgroup>
-                                                                                        <md-option ng-value="j.id" ng-repeat="j in $ctrl.extras.mechanic_list | filter:searchType">{{j.name}}</md-option>
-                                                                                    </md-optgroup>
-                                                                                </md-select>
-                                                                                <input type="hidden" class="form-control required" name="issued_to_id" id="machanic_id" value="{{$ctrl.machanic_id_selected}}">
-                                                                            </div><!-- Form Group -->
-                                                                        </div><!-- Column -->
-                                                                        <div class="col-md-12">
-                                                                            <button type="submit" class="btn btn-red btn-square btn-sm submit" ng-click="submitPart()">Submit</button>
-                                                                        </div>
-                                                                    </form>
-                                                                </div><!-- Row -->
-                                                            </div>
-                                                        </div><!-- Column -->
-                                                        <div class="col-lg-4">
-                                                            <div class="dark-wrap">
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div class="text-wrap mb-20">
-                                                                            <span class="text-label">Description</span>
-                                                                            <span class="text-value">{{add_part.name}}</span>
-                                                                        </div>
-                                                                    </div><!-- Column -->
-                                                                    <div class="col-md-6">
-                                                                        <div class="text-wrap mb-20">
-                                                                            <span class="text-label">Req. Qty.</span>
-                                                                            <span class="text-value">{{add_part.req_qty}}</span>
-                                                                        </div>
-                                                                    </div><!-- Column -->
-                                                                    <div class="col-md-6">
-                                                                        <div class="text-wrap mb-20">
-                                                                            <span class="text-label">Issued. Qty.</span>
-                                                                            <span class="text-value">{{add_part.issue_qty}}</span>
-                                                                        </div>
-                                                                    </div><!-- Column -->
-                                                                    <div class="col-md-12">
-                                                                        <div class="text-wrap">
-                                                                            <span class="text-label">Balance. Qty.</span>
-                                                                            <span class="text-value">{{add_part.balance_qty_nos}}</span>
-                                                                        </div>
-                                                                    </div><!-- Column -->
-                                                                </div><!-- Row -->
-                                                            </div><!-- Dark Wrap -->
-                                                        </div><!-- Column -->
-                                                    </div><!-- Row -->
-                                                </div>
-                                            </div><!-- Column -->
-                                        </div><!-- Row -->
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <h5 class="title-red"><b>Issued Part</b></h5>
@@ -143,9 +39,10 @@
                                                     <table class="table white-space-unset table-border-2">
                                                         <thead>
                                                             <tr>
-                                                                <th class="action width-100" ng-if="$ctrl.edit_part_indent">Action</th>
+                                                                <!-- <th class="action width-100" ng-if="$ctrl.edit_part_indent">Action</th> -->
                                                                 <th>Date</th>
-                                                                <th>Part No</th>
+                                                                <th>Part Code</th>
+                                                                <th>Part Name</th>
                                                                 <th>Requested Qty</th>
                                                                 <th>Issued Qty</th>
                                                                 <th>Issued Mode</th>
@@ -154,16 +51,17 @@
                                                         </thead>
                                                         <tbody>
                                                             <tr ng-repeat="(index, issued_part) in $ctrl.issued_parts">
-                                                                <td class="action width-100" ng-if="$ctrl.edit_part_indent">
-                                                                    <a href="#!/parts-indent/edit/{{$ctrl.job_card_id}}/{{issued_part.issued_id}}" ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)" class="">
+                                                                <!-- <td class="action width-100" ng-if="$ctrl.edit_part_indent">
+                                                                    <a href="#!/parts-indent/edit/{{$ctrl.job_card_id}}/{{issued_part.issued_id}}" ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" class="">
                                                                         <img class="img-responsive" src="./public/theme/img/table/cndn/edit.svg" alt="Edit" />
                                                                     </a>
-                                                                    <a href="javascript:;" data-toggle="modal" data-target="#delete_parts_issued" ng-click="$ctrl.removeIssuedParts(issued_part.issued_id)" ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)" class="">
+                                                                    <a href="javascript:;" data-toggle="modal" data-target="#delete_parts_issued" ng-click="$ctrl.removeIssuedParts(issued_part.issued_id)" ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226" class="">
                                                                         <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
                                                                     </a>
-                                                                </td>
+                                                                </td> -->
                                                                 <td>{{issued_part.date}}</td>
                                                                 <td>{{issued_part.code}}</td>
+                                                                <td>{{issued_part.name}}</td>
                                                                 <td>{{issued_part.qty}} nos</td>
                                                                 <td>{{issued_part.issued_qty}} nos</td>
                                                                 <td>{{issued_part.config_name}}</td>

@@ -19,12 +19,12 @@
                     <a href="#!/part-indent/list" type="button" class="btn-back btn-img" ng-if="$ctrl.view_only_part_indent">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
                     </a>
-                    <a href="#!/job-card/card-list" type="button" class="btn-back btn-img" ng-if="!$ctrl.view_only_part_indent">
+                    <a href="#!/job-card/table-list" type="button" class="btn-back btn-img" ng-if="!$ctrl.view_only_part_indent">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>Other Labour & Parts</b></h1>
+                    <h1 class="title"><b>Additional Labour & Parts</b></h1>
                     <p class="subtitle">Job Card / Other Labour & Parts</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
@@ -43,7 +43,7 @@
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 class="color-primary mb-10"><b>Other Labour & Parts</b></h5>
+                                        <h5 class="color-primary mb-10"><b>Additional Labour & Parts</b></h5>
                                         <hr class="hr-15"><!-- Separater -->
                                         <div class="table-responsive">
                                             <table class="table table-dark-grey">
@@ -89,10 +89,10 @@
                                                             {{labour_details.amount | number:2}}
                                                         </td>
                                                         <td class="wid-100" ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                            <button type="button" ng-click="showLabourForm(index,labour_details)" class="btn img-btn btn-delete" ng-if="labour_details.status_id == 8180">
+                                                            <button type="button" ng-click="showLabourForm(index,labour_details)" class="btn img-btn btn-delete" ng-if="labour_details.status_id == 8180 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </button>
-                                                            <button class="btn img-btn btn-delete" ng-if="labour_details.status_id == 8180">
+                                                            <button class="btn img-btn btn-delete" ng-if="labour_details.status_id == 8180 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)">
                                                                 <img class="img-responsive radius-50" ng-click="removePayableLabour(index,labour_details.id,'labour')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                         </td>
@@ -178,10 +178,10 @@
                                                             {{part_details.amount | number:2}}
                                                         </td>
                                                         <td class="wid-100" ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                            <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete" ng-if="part_details.status_id == 8200">
+                                                            <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete" ng-if="part_details.status_id == 8200 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </button>
-                                                            <button class="btn img-btn btn-delete" ng-if="part_details.status_id == 8200">
+                                                            <button class="btn img-btn btn-delete" ng-if="part_details.status_id == 8200 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226)">
                                                                 <img class="img-responsive radius-50" ng-click="removePayablePart(index,part_details.id,'parts')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                         </td>

@@ -5,7 +5,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/inward-vehicle/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/inward-vehicle/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Inward Vehicle</b></h1>
@@ -97,7 +97,7 @@
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3">
+                                                    <li class="view-col-3" ng-if="!job_order.vehicle.registration_number">
                                                         <span class="view-col-label">
                                                             Is Sold ?
                                                         </span>
@@ -110,7 +110,7 @@
                                                             </b>
                                                         </span>
                                                     </li>
-                                                    <li class="view-col-3" ng-if="job_order.vehicle.is_sold == 1">
+                                                    <li class="view-col-3" ng-if="job_order.vehicle.is_sold == 1 && !job_order.vehicle.registration_number">
                                                         <span class="view-col-label">
                                                             Sold Date
                                                         </span>
@@ -188,7 +188,7 @@
                                                         <input type="text" class="form-control" minlength="10" maxlength="17" placeholder="Enter Chasis No" autocomplete="off" ng-model="job_order.vehicle.chassis_number" name="chassis_number" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3">
+                                                <div class="col-md-3" ng-if="!job_order.vehicle.registration_number">
                                                     <div class="form-group">
                                                         <label>Is Sold ? <sup class="mandatory">*</sup></label>
                                                         <div class="common-radio-button type-4">
@@ -199,7 +199,7 @@
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="$ctrl.is_sold">
+                                                <div class="col-md-3" ng-if="$ctrl.is_sold && !job_order.vehicle.registration_number">
                                                     <div class="form-group">
                                                         <label>
                                                             Sold Date

@@ -1,0 +1,125 @@
+<!-- Content Wrap -->
+<style type="text/css">
+.strikethrough {
+    text-decoration: line-through;
+}
+
+.my-disable {
+    pointer-events: none;
+    opacity: 0.5;
+    /*cursor: not-allowed;*/
+}
+</style>
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/inward-vehicle/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Repair Orders</b></h1>
+                    <p class="subtitle">Inward Vehicle / Repair Orders</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <part-indent-header></part-indent-header>
+            <div class="tab-form-wrap type-2 side-tab-open">
+                <part-indent-tabs ng-init="active_tab = 'repair-orders'"></part-indent-tabs>
+                <div class="tab-form-body side-tab-open">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="maintenance_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12" ng-if="job_order.service_type_id">
+                                        <h5 class="color-primary mb-10"><b>Repair Orders</b></h5>
+                                        <hr class="hr-15"><!-- Separater -->
+                                        <div class="table-responsive">
+                                            <table class="table table-dark-grey">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            Labour Code
+                                                        </th>
+                                                        <th>
+                                                            Name
+                                                        </th>
+                                                        <th>
+                                                            Type
+                                                        </th>
+                                                        <th>
+                                                            Split Order Type
+                                                        </th>
+                                                        <th>
+                                                            Is Free Service
+                                                        </th>
+                                                        <th class="text-right">
+                                                            Hours
+                                                        </th>
+                                                        <th class="wid-180 white-space text-right">
+                                                            Labour Value
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="ptb-12" ng-repeat="(index, labour_details) in job_order.labour_details" id="tr_{{index}}" ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_details.removal_reason_id != '10021'">
+                                                        <td>{{labour_details.code ? labour_details.code : ''}}
+                                                        </td>
+                                                        <td>{{labour_details.name ? labour_details.name : ''}}</td>
+                                                        <td>
+                                                            {{labour_details.type}}
+                                                        </td>
+                                                        <td>
+                                                            {{labour_details.split_order_type}}
+                                                        </td>
+                                                        <td ng-if="labour_details.is_free_service == 1">
+                                                            <p class="text-success">Yes</p>
+                                                        </td>
+                                                        <td ng-if="labour_details.is_free_service != 1">
+                                                            No
+                                                        </td>
+                                                        <td class="text-right">
+                                                            {{labour_details.qty}}
+                                                        </td>
+                                                        <td class="wid-180 white-space text-right">
+                                                            {{labour_details.amount | number:2}}
+                                                        </td>
+                                                    </tr>
+                                                    <tr ng-if="job_order.labour_details.length == 0">
+                                                        <td class="text-center" colspan="7">
+                                                            No Labour Found!
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="mb-20"></div><!-- Spacing -->
+                                        </div><!-- Table Responsive -->
+                                        <div class="mb-20"></div><!-- Spacing -->
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a href=".#!/part-indent/customer/view/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
+                                                    Previous
+                                                </a>
+                                                <a href=".#!/part-indent/parts/view/{{job_order_id}}" class="btn btn-secondary-dark btn-nxt">
+                                                    Next
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->

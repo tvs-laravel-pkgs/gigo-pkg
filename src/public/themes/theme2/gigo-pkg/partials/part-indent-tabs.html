@@ -1,0 +1,29 @@
+<div class="tab-form-header side-tab-open">
+    <div class="tab-header">
+        <!-- Filters -->
+        <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
+            <ul class="nav nav-pills cndn-tabs">
+                <li ng-class="{active:active_tab == 'vehicle'}">
+                    <a class="filter" href=".#!/part-indent/vehicle/view/{{job_order_id}}">
+                        Vehicle Details
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'customer-detail'}">
+                    <a class="filter" href=".#!/part-indent/customer/view/{{job_order_id}}">
+                        Customer Details
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'repair-orders'}">
+                    <a class="filter" href=".#!/part-indent/repair-orders/view/{{job_order_id}}">
+                        Repair Orders
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'parts'}">
+                    <a class="filter" href=".#!/part-indent/parts/view/{{job_order_id}}">
+                        Parts
+                    </a>
+                </li>
+            </ul>
+        </div><!-- Filters -->
+    </div><!-- Tab Header -->
+</div><!-- Tab Form Header -->

@@ -300,188 +300,216 @@ class VehicleInwardController extends Controller {
 				'repairOrder',
 				'repairOrder.repairOrderType',
 			])
-				->where('job_order_repair_orders.is_recommended_by_oem', 1)
-				->where('job_order_repair_orders.job_order_id', $r->id)->get();
+			// ->where('job_order_repair_orders.is_recommended_by_oem', 1)
+				->where('job_order_repair_orders.job_order_id', $r->id)
+				->get();
 
-			$labour_details = array();
+			$total_schedule_labour_tax = 0;
+			$total_schedule_labour_amount = 0;
+			$total_schedule_without_tax_labour_amount = 0;
+			$total_payable_labour_tax = 0;
+			$total_payable_labour_amount = 0;
+			$total_payable_without_tax_labour_amount = 0;
+
+			$schedule_labour_details = array();
+			$additional_labour_details = array();
 			if ($repair_order_details) {
 				foreach ($repair_order_details as $key => $value) {
-					$labour_details[$key]['id'] = $value->repair_order_id;
-					$labour_details[$key]['name'] = $value->repairOrder->code . ' | ' . $value->repairOrder->name;
-					$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
-					$labour_details[$key]['qty'] = $value->qty;
-					$labour_details[$key]['amount'] = $value->amount;
-					$labour_details[$key]['is_free_service'] = $value->is_free_service;
-					$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
-					if (in_array($value->split_order_type_id, $customer_paid_type_id)) {
-						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
-							$labour_amount += $value->amount;
+					if ($value->is_recommended_by_oem == 1) {
+						$schedule_labour_details[$key]['code'] = $value->repairOrder->code;
+						$schedule_labour_details[$key]['name'] = $value->repairOrder->name;
+						$schedule_labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
+						$schedule_labour_details[$key]['qty'] = $value->qty;
+						$schedule_labour_details[$key]['amount'] = $value->amount;
+						$schedule_labour_details[$key]['is_free_service'] = $value->is_free_service;
+						$schedule_labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
+						$schedule_labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
+						$schedule_labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
+						$schedule_labour_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+						$total_amount = 0;
+						if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
+							$tax_values = array();
 							if ($value->repairOrder->taxCode) {
 								$tax_amount = 0;
-								$total_amount = 0;
-								foreach ($value->repairOrder->taxCode->taxes as $tax_key => $tax_value) {
+								foreach ($value->repairOrder->taxCode->taxes as $tax_key => $tax) {
 									$percentage_value = 0;
-									if ($tax_value->type_id == $tax_type) {
-										$percentage_value = ($value->amount * $tax_value->pivot->percentage) / 100;
+									if ($tax->type_id == $tax_type) {
+										$percentage_value = ($value->amount * $tax->pivot->percentage) / 100;
 										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
 									}
 									$tax_amount += $percentage_value;
 								}
-								$total_amount = $value->amount + $tax_amount;
-								$oem_recomentaion_labour_amount_include_tax += $total_amount;
+								$total_schedule_labour_tax += $tax_amount;
+								$total_amount = $tax_amount + $value->amount;
+								$total_schedule_labour_amount += $total_amount;
 							} else {
-								$oem_recomentaion_labour_amount_include_tax += $value->amount;
+								$total_schedule_labour_amount += $value->amount;
 							}
+							$total_schedule_without_tax_labour_amount += $value->amount;
+						} else {
+							$schedule_labour_details[$key]['amount'] = '0.00';
 						}
 					} else {
-						$labour_details[$key]['amount'] = 0;
+						$additional_labour_details[$key]['code'] = $value->repairOrder->code;
+						$additional_labour_details[$key]['name'] = $value->repairOrder->name;
+						$additional_labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
+						$additional_labour_details[$key]['qty'] = $value->qty;
+						$additional_labour_details[$key]['amount'] = $value->amount;
+						$additional_labour_details[$key]['is_free_service'] = $value->is_free_service;
+						$additional_labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
+						$additional_labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
+						$additional_labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
+						$additional_labour_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+						$total_amount = 0;
+						if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
+							$tax_values = array();
+							if ($value->repairOrder->taxCode) {
+								$tax_amount = 0;
+								foreach ($value->repairOrder->taxCode->taxes as $tax_key => $tax) {
+									$percentage_value = 0;
+									if ($tax->type_id == $tax_type) {
+										$percentage_value = ($value->amount * $tax->pivot->percentage) / 100;
+										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+									}
+									$tax_amount += $percentage_value;
+								}
+								$total_payable_labour_tax += $tax_amount;
+								$total_amount = $tax_amount + $value->amount;
+								$total_payable_labour_amount += $total_amount;
+							} else {
+								$total_payable_labour_amount += $value->amount;
+							}
+							$total_payable_without_tax_labour_amount += $value->amount;
+						} else {
+							$additional_labour_details[$key]['amount'] = '0.00';
+						}
 					}
 				}
 			}
 
-			$schedule_maintenance['labour_details'] = $labour_details;
-			$schedule_maintenance['labour_amount'] = $labour_amount;
+			$schedule_maintenance['labour_details'] = $schedule_labour_details;
+			$schedule_maintenance['labour_amount'] = $total_schedule_labour_amount;
+			$schedule_maintenance['without_tax_labour_amount'] = $total_schedule_without_tax_labour_amount;
+
+			$payable_maintenance['labour_details'] = $additional_labour_details;
+			$payable_maintenance['labour_amount'] = $total_payable_labour_amount;
+			$payable_maintenance['without_tax_labour_amount'] = $total_payable_without_tax_labour_amount;
 
 			$parts_details = JobOrderPart::with([
 				'part',
 				'part.taxCode',
 			])
-				->where('job_order_parts.is_oem_recommended', 1)
-				->where('job_order_parts.job_order_id', $r->id)->get();
+			// ->where('job_order_parts.is_oem_recommended', 1)
+				->where('job_order_parts.job_order_id', $r->id)
+				->get();
 
-			$part_details = array();
+			$schedule_part_details = array();
+			$additional_part_details = array();
+
+			$total_schedule_part_amount = 0;
+			$total_schedule_without_tax_part_amount = 0;
+			$total_schedule_part_tax = 0;
+			$total_payable_part_tax = 0;
+			$total_payable_part_amount = 0;
+			$total_payable_without_tax_part_amount = 0;
+
 			if ($parts_details) {
 				foreach ($parts_details as $key => $value) {
-					$part_details[$key]['id'] = $value->part_id;
-					$part_details[$key]['name'] = $value->part->code . ' | ' . $value->part->name;
-					$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
-					$part_details[$key]['rate'] = $value->rate;
-					$part_details[$key]['qty'] = $value->qty;
-					$part_details[$key]['amount'] = $value->amount;
-					$part_details[$key]['is_free_service'] = $value->is_free_service;
-					$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
-					if (in_array($value->split_order_type_id, $customer_paid_type_id)) {
-						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
-							$part_amount += $value->amount;
+					if ($value->is_oem_recommended == 1) {
+						$schedule_part_details[$key]['code'] = $value->part->code;
+						$schedule_part_details[$key]['name'] = $value->part->name;
+						$schedule_part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
+						$schedule_part_details[$key]['rate'] = $value->rate;
+						$schedule_part_details[$key]['qty'] = $value->qty;
+						$schedule_part_details[$key]['amount'] = $value->amount;
+						$schedule_part_details[$key]['is_free_service'] = $value->is_free_service;
+						$schedule_part_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
+						$schedule_part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
+						$schedule_part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
+						$schedule_part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+						$total_amount = 0;
+						if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
 							if ($value->part->taxCode) {
 								$tax_amount = 0;
-								$total_amount = 0;
-								foreach ($value->part->taxCode->taxes as $tax_key => $tax_value) {
+								foreach ($value->part->taxCode->taxes as $tax_key => $tax) {
 									$percentage_value = 0;
-									if ($tax_value->type_id == $tax_type) {
-										$percentage_value = ($value->amount * $tax_value->pivot->percentage) / 100;
+									if ($tax->type_id == $tax_type) {
+										$percentage_value = ($value->amount * $tax->pivot->percentage) / 100;
 										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
 									}
 									$tax_amount += $percentage_value;
 								}
-								$total_amount = $value->amount + $tax_amount;
-								$oem_recomentaion_part_amount_include_tax += $total_amount;
+								$total_schedule_part_tax += $tax_amount;
+								$total_amount = $tax_amount + $value->amount;
+								$total_schedule_part_amount += $total_amount;
 							} else {
-								$oem_recomentaion_part_amount_include_tax += $value->amount;
+								$total_schedule_part_amount += $value->amount;
 							}
+							$total_schedule_without_tax_part_amount += $value->amount;
+						} else {
+							$schedule_part_details[$key]['amount'] = '0.00';
 						}
 					} else {
-						$part_details[$key]['amount'] = 0;
-					}
-				}
-			}
-
-			$schedule_maintenance['part_details'] = $part_details;
-			$schedule_maintenance['part_amount'] = $part_amount;
-
-			$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
-
-			//PAYABLE LABOUR AND PART
-			$payable_part_amount = 0;
-			$payable_labour_amount = 0;
-			$additional_rot_and_parts_labour_amount_include_tax = 0;
-			$additional_rot_and_parts_part_amount_include_tax = 0;
-
-			// $payable_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 0)->get();
-			$payable_maintenance['labour_details'] = $job_order->with([
-				'jobOrderRepairOrders' => function ($query) {
-					$query->where('is_recommended_by_oem', 0);
-				},
-				'jobOrderRepairOrders.splitOrderType',
-				'jobOrderRepairOrders.splitOrderType.paidBy',
-				'jobOrderRepairOrders.repairOrder',
-				'jobOrderRepairOrders.repairOrder.repairOrderType',
-			])
-				->find($r->id);
-
-			if (!empty($payable_maintenance['labour_details']->jobOrderRepairOrders)) {
-				foreach ($payable_maintenance['labour_details']->jobOrderRepairOrders as $key => $value) {
-					$value->repair_order = $value->repairOrder;
-					$value->repair_order_type = $value->repairOrder->repairOrderType;
-					if ((in_array($value->split_order_type_id, $customer_paid_type_id)) && (empty($value->removal_reason_id))) {
-						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
-							if ($value->repairOrder->taxCode) {
-								$tax_amount = 0;
-								$total_amount = 0;
-								foreach ($value->repairOrder->taxCode->taxes as $tax_key => $tax_value) {
-									$percentage_value = 0;
-									if ($tax_value->type_id == $tax_type) {
-										$percentage_value = ($value->amount * $tax_value->pivot->percentage) / 100;
-										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
-									}
-									$tax_amount += $percentage_value;
-								}
-								$total_amount = $value->amount + $tax_amount;
-								$additional_rot_and_parts_labour_amount_include_tax += $total_amount;
-							} else {
-								$additional_rot_and_parts_labour_amount_include_tax += $value->amount;
-							}
-							$payable_labour_amount += $value->amount;
-						}
-					}
-				}
-			}
-			$payable_maintenance['labour_amount'] = $payable_labour_amount;
-
-			// $payable_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 0)->get();
-			$payable_maintenance['part_details'] = $job_order->with([
-				'jobOrderParts' => function ($query) {
-					$query->where('is_oem_recommended', 0);
-				},
-				'jobOrderParts.splitOrderType',
-				'jobOrderParts.part',
-			])
-				->find($r->id);
-			if (!empty($payable_maintenance['part_details']->jobOrderParts)) {
-				foreach ($payable_maintenance['part_details']->jobOrderParts as $key => $value) {
-					$value->part = $value->part;
-					if ((in_array($value->split_order_type_id, $customer_paid_type_id)) && (empty($value->removal_reason_id))) {
-						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
+						$additional_part_details[$key]['code'] = $value->part->code;
+						$additional_part_details[$key]['name'] = $value->part->name;
+						$additional_part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
+						$additional_part_details[$key]['rate'] = $value->rate;
+						$additional_part_details[$key]['qty'] = $value->qty;
+						$additional_part_details[$key]['amount'] = $value->amount;
+						$additional_part_details[$key]['is_free_service'] = $value->is_free_service;
+						$additional_part_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
+						$additional_part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
+						$additional_part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
+						$additional_part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+						$total_amount = 0;
+						if ($value->is_free_service != 1 && (in_array($value->split_order_type_id, $customer_paid_type_id) || !$value->split_order_type_id) && !$value->removal_reason_id) {
 							if ($value->part->taxCode) {
 								$tax_amount = 0;
-								$total_amount = 0;
-								foreach ($value->part->taxCode->taxes as $tax_key => $tax_value) {
+								foreach ($value->part->taxCode->taxes as $tax_key => $tax) {
 									$percentage_value = 0;
-									if ($tax_value->type_id == $tax_type) {
-										$percentage_value = ($value->amount * $tax_value->pivot->percentage) / 100;
+									if ($tax->type_id == $tax_type) {
+										$percentage_value = ($value->amount * $tax->pivot->percentage) / 100;
 										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
 									}
 									$tax_amount += $percentage_value;
 								}
-								$total_amount = $value->amount + $tax_amount;
-								$additional_rot_and_parts_part_amount_include_tax += $total_amount;
+								$total_payable_part_tax += $tax_amount;
+								$total_amount = $tax_amount + $value->amount;
+								$total_payable_part_amount += $total_amount;
 							} else {
-								$additional_rot_and_parts_part_amount_include_tax += $value->amount;
+								$total_payable_part_amount += $value->amount;
 							}
-							$payable_part_amount += $value->amount;
+							$total_payable_without_tax_part_amount += $value->amount;
+						} else {
+							$additional_part_details[$key]['amount'] = '0.00';
 						}
 					}
+
 				}
 			}
-			$payable_maintenance['part_amount'] = $payable_part_amount;
+
+			$schedule_maintenance['part_details'] = $schedule_part_details;
+			$schedule_maintenance['part_amount'] = $total_schedule_part_amount;
+			$schedule_maintenance['without_tax_part_amount'] = $total_schedule_without_tax_part_amount;
+
+			$payable_maintenance['part_details'] = $additional_part_details;
+			$payable_maintenance['part_amount'] = $total_payable_part_amount;
+			$payable_maintenance['without_tax_part_amount'] = $total_payable_without_tax_part_amount;
+
+			//TOTAL
+			$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
+			$schedule_maintenance['tax_amount'] = $total_schedule_labour_tax + $total_schedule_part_tax;
+			$schedule_maintenance['without_tax_total_amount'] = $total_schedule_without_tax_part_amount + $total_schedule_without_tax_labour_amount;
 
 			$payable_maintenance['total_amount'] = $payable_maintenance['labour_amount'] + $payable_maintenance['part_amount'];
-			// dd($payable_maintenance['labour_details']);
+			$payable_maintenance['tax_amount'] = $total_payable_labour_tax + $total_payable_part_tax;
+			$payable_maintenance['without_tax_total_amount'] = $total_payable_without_tax_labour_amount + $total_payable_without_tax_part_amount;
 
 			//TOTAL ESTIMATE
-			$total_estimate_labour_amount['labour_amount'] = $oem_recomentaion_labour_amount_include_tax + $additional_rot_and_parts_labour_amount_include_tax;
-			$total_estimate_part_amount['part_amount'] = $oem_recomentaion_part_amount_include_tax + $additional_rot_and_parts_part_amount_include_tax;
+			$total_estimate_labour_amount['labour_amount'] = $total_schedule_labour_amount + $total_payable_labour_amount;
+			$total_estimate_part_amount['part_amount'] = $total_schedule_part_amount + $total_payable_part_amount;
 			$total_estimate_amount = $total_estimate_labour_amount['labour_amount'] + $total_estimate_part_amount['part_amount'];
+			$total_tax_amount = $schedule_maintenance['tax_amount'] + $payable_maintenance['tax_amount'];
 
 			//VEHICLE INSPECTION ITEM
 			$vehicle_inspection_item_groups = array();
@@ -526,7 +554,8 @@ class VehicleInwardController extends Controller {
 				'payable_maintenance' => $payable_maintenance,
 				'total_estimate_labour_amount' => $total_estimate_labour_amount,
 				'total_estimate_part_amount' => $total_estimate_part_amount,
-				'total_estimate_amount' => $total_estimate_amount,
+				'total_estimate_amount' => round($total_estimate_amount),
+				'total_tax_amount' => round($total_tax_amount),
 				'vehicle_inspection_item_groups' => $vehicle_inspection_item_groups,
 				'inventory_list' => VehicleInventoryItem::getInventoryList($r->id, $inventory_params),
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
@@ -543,48 +572,16 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
-	public function getInwardPartIndentViewData(Request $r) {
+	public function getPartIndentVehicleDetail(Request $r) {
+		// dd($r->all());
 		try {
 			$job_order = JobOrder::with([
-				'jobCard',
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
-				'vehicle.currentOwner.customer',
-				'vehicle.currentOwner.customer.address',
-				'vehicle.currentOwner.customer.address.country',
-				'vehicle.currentOwner.customer.address.state',
-				'vehicle.currentOwner.customer.address.city',
-				'vehicle.currentOwner.ownershipType',
-				// 'vehicle.lastJobOrder',
-				// 'vehicle.lastJobOrder.jobCard',
-				// 'vehicleInventoryItem',
-				// 'vehicleInspectionItems',
-				'type',
-				'outlet',
-				// 'customerVoices',
-				// 'quoteType',
-				// 'serviceType',
-				// 'kmReadingType',
+				'tradePlate',
 				'status',
-				// 'gateLog',
-				// 'gateLog.createdBy',
-				// 'roadTestDoneBy',
-				// 'roadTestPreferedBy',
-				// 'expertDiagnosisReportBy',
-				// 'estimationType',
-				// 'driverLicenseAttachment',
-				// 'insuranceAttachment',
-				// 'rcBookAttachment',
-				// 'warrentyPolicyAttachment',
-				// 'EWPAttachment',
-				// 'AMCAttachment',
-				// 'gateLog.driverAttachment',
-				// 'gateLog.kmAttachment',
-				// 'gateLog.vehicleAttachment',
-				// 'gateLog.chassisAttachment',
-				// 'customerApprovalAttachment',
-				// 'customerESign',
+				'gateLog',
 			])
 				->select([
 					'job_orders.*',
@@ -604,6 +601,56 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+	public function getRepairOrders(Request $r) {
+		// dd($r->all());
+		try {
+
+			$job_order = JobOrder::with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'status',
+				'serviceType',
+				'jobOrderRepairOrders',
+				'jobOrderRepairOrders.repairOrder',
+				'jobOrderRepairOrders.repairOrder.repairOrderType',
+				'jobOrderRepairOrders.splitOrderType',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->where('company_id', Auth::user()->company_id)
+				->where('id', $r->id)->first();
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
+				]);
+			}
+
+			$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+
 			$labour_amount = 0;
 			$part_amount = 0;
 
@@ -611,23 +658,83 @@ class VehicleInwardController extends Controller {
 			if ($job_order->jobOrderRepairOrders) {
 				foreach ($job_order->jobOrderRepairOrders as $key => $value) {
 					$labour_details[$key]['id'] = $value->id;
+					$labour_details[$key]['labour_id'] = $value->repair_order_id;
 					$labour_details[$key]['code'] = $value->repairOrder->code;
 					$labour_details[$key]['name'] = $value->repairOrder->name;
 					$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
 					$labour_details[$key]['qty'] = $value->qty;
 					$labour_details[$key]['amount'] = $value->amount;
 					$labour_details[$key]['is_free_service'] = $value->is_free_service;
-					$labour_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
+					$labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
 					$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
-					// if (in_array($value->split_order_type_id, $customer_paid_type)) {
-					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
-						$labour_amount += $value->amount;
+					$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
+					$labour_details[$key]['repair_order'] = $value->repairOrder;
+					$labour_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+					if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
+						if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
+							$labour_amount += $value->amount;
+						} else {
+							$labour_details[$key]['amount'] = 0;
+						}
+					} else {
+						$labour_details[$key]['amount'] = 0;
 					}
-					// } else {
-					// 	$labour_details[$key]['amount'] = 0;
-					// }
 				}
 			}
+
+			$job_order->labour_details = $labour_details;
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+	public function getInwardPartIndentViewData(Request $r) {
+		try {
+			$job_order = JobOrder::with([
+				'jobCard',
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'vehicle.currentOwner.customer',
+				'vehicle.currentOwner.customer.address',
+				'vehicle.currentOwner.customer.address.country',
+				'vehicle.currentOwner.customer.address.state',
+				'vehicle.currentOwner.customer.address.city',
+				'vehicle.currentOwner.ownershipType',
+				'type',
+				'outlet',
+				'status',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->where('company_id', Auth::user()->company_id)
+				->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
+				]);
+			}
+
+			$part_amount = 0;
 
 			$part_details = array();
 			if ($job_order->jobOrderParts) {
@@ -660,7 +767,7 @@ class VehicleInwardController extends Controller {
 						$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 						$part_details[$key]['issued_qty'] = $issued_qty->issued_qty;
 						$part_details[$key]['returned_qty'] = $returned_qty->returned_qty;
-						$part_details[$key]['pending_qty'] = $value->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
+						$part_details[$key]['pending_qty'] = $value->qty - ($issued_qty->issued_qty - $returned_qty->returned_qty);
 						$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
 
 						// if (in_array($value->split_order_type_id, $customer_paid_type)) {
@@ -730,8 +837,6 @@ class VehicleInwardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
-				'labour_details' => $labour_details,
-				'labour_amount' => $labour_amount,
 				'part_details' => $part_details,
 				// 'part_amount' => $part_amount,
 				'job_order_parts' => $job_order_parts,
@@ -778,20 +883,6 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
-
-			$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
-
-			$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
-
-			$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
-			if ($pending_qty < $request->returned_qty) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Returning Quantity should not exceed Pending Quantity',
-				]);
-			}
-
 			DB::beginTransaction();
 			// $job_order_returned_part = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->first();
 			$job_order_returned_part = JobOrderReturnedPart::find($request->job_order_returned_part_id);
@@ -805,6 +896,19 @@ class VehicleInwardController extends Controller {
 			}
 			$job_order_returned_part->fill($request->all());
 			$job_order_returned_part->save();
+
+			$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->sum('issued_qty');
+
+			$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->sum('returned_qty');
+
+			$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
+
+			if ($returned_qty > $issued_qty) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Returning Quantity should not exceed Issued Quantity',
+				]);
+			}
 
 			DB::commit();
 
@@ -931,6 +1035,7 @@ class VehicleInwardController extends Controller {
 		}
 	}
 	public function getPartDetailPias(Request $request) {
+		// dd($request->all());
 		try {
 			$available_qty = 0;
 			$part_code = $request->code;
@@ -950,8 +1055,6 @@ class VehicleInwardController extends Controller {
 				->where(['outlets.code' => $user_outlet_code, 'outlets.company_id' => $company_id])
 				->first();
 
-			// dd($part, $outlet);
-
 			if (!$part) {
 				$error = 'Part';
 			}
@@ -970,14 +1073,25 @@ class VehicleInwardController extends Controller {
 				->select('stock_details.outlet_id', 'stock_details.part_id', 'stock_details.available_quantity')
 				->where(['stock_details.outlet_id' => $outlet->id, 'stock_details.part_id' => $part->id])
 				->first();
-			// dd($stock_details);
+
 			if ($stock_details) {
 				$available_qty = $stock_details->available_quantity;
 			}
 
+			//Mentioned Parts Total Request Quantity
+			$total_request_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->pluck('job_order_parts.qty')->first();
+
+			//Mentioned Parts Total Issued Quantity
+			$total_issued_qty = JobOrderPart::join('parts', 'parts.id', 'job_order_parts.part_id')->join('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')->where('job_order_parts.job_order_id', $request->job_order_id)->where('parts.code', $request->code)->sum('job_order_issued_parts.issued_qty');
+
+			$total_balance_qty = $total_request_qty - $total_issued_qty;
+
 			$responseArr = array(
 				'success' => true,
 				'available_quantity' => $available_qty,
+				'total_request_qty' => $total_request_qty,
+				'total_issued_qty' => $total_issued_qty,
+				'total_balance_qty' => $total_balance_qty,
 			);
 
 			return response()->json($responseArr);
@@ -1026,26 +1140,29 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$pias_available_qty = $request->available_qty;
-			if (intval($request->issued_qty) > intval($pias_available_qty)) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Issue Quantity should not exceed Available Quantity',
-				]);
-			}
-
 			$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
 
 			$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
 
 			$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
 
-			$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
-			if ($pending_qty < $request->issued_qty) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Returning Quantity should not exceed Pending Quantity',
-				]);
+			if ($request->issued_mode_id == 8480) {
+				$pias_available_qty = $request->available_qty;
+				if (intval($request->issued_qty) > intval($pias_available_qty)) {
+					return response()->json([
+						'success' => false,
+						'message' => 'Issue Quantity should not exceed Available Quantity',
+					]);
+				}
+
+				$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
+				if ($pending_qty < $request->issued_qty) {
+					return response()->json([
+						'success' => false,
+						'message' => 'Returning Quantity should not exceed Pending Quantity',
+					]);
+				}
+
 			}
 
 			DB::beginTransaction();
@@ -1139,20 +1256,21 @@ class VehicleInwardController extends Controller {
 				$parts_grn->created_by_id = Auth::id();
 				$parts_grn->created_at = Carbon::now();
 				$parts_grn->save();
-			}
-
-			$job_order_isssued_part = JobOrderIssuedPart::find($request->job_order_issued_part_id);
-			if ($job_order_isssued_part == null) {
-				$job_order_isssued_part = new JobOrderIssuedPart;
-				$job_order_isssued_part->created_by_id = Auth::id();
-				$job_order_isssued_part->created_at = Carbon::now();
 			} else {
-				$job_order_isssued_part->updated_by_id = Auth::id();
-				$job_order_isssued_part->updated_at = Carbon::now();
+				$job_order_isssued_part = JobOrderIssuedPart::find($request->job_order_issued_part_id);
+				if ($job_order_isssued_part == null) {
+					$job_order_isssued_part = new JobOrderIssuedPart;
+					$job_order_isssued_part->created_by_id = Auth::id();
+					$job_order_isssued_part->created_at = Carbon::now();
+				} else {
+					$job_order_isssued_part->updated_by_id = Auth::id();
+					$job_order_isssued_part->updated_at = Carbon::now();
+				}
+
+				$job_order_isssued_part->fill($request->all());
+				$job_order_isssued_part->save();
 			}
 
-			$job_order_isssued_part->fill($request->all());
-			$job_order_isssued_part->save();
 			DB::commit();
 
 			return response()->json([
@@ -4079,7 +4197,7 @@ class VehicleInwardController extends Controller {
 				foreach ($job_order->jobOrderParts as $key => $parts) {
 					if (in_array($parts->split_order_type_id, $customer_paid_type_id) || !$parts->split_order_type_id) {
 						//SCHEDULE MAINTANENCE
-						if ($parts->is_recommended_by_oem == 1 && $parts->is_free_service != 1) {
+						if ($parts->is_oem_recommended == 1 && $parts->is_free_service != 1) {
 							if ($parts->part->taxCode) {
 								$tax_amount = 0;
 								$total_amount = 0;
@@ -4098,7 +4216,7 @@ class VehicleInwardController extends Controller {
 								$total_schedule_part_amount += $parts->amount;
 							}
 						}
-						if ($parts->is_recommended_by_oem == 0 && $parts->is_free_service != 1) {
+						if ($parts->is_oem_recommended == 0 && $parts->is_free_service != 1) {
 							if ($parts->part->taxCode) {
 								$tax_amount = 0;
 								$total_amount = 0;

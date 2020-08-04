@@ -10,7 +10,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/inward-vehicle/card-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/inward-vehicle/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Inward Vehicle</b></h1>
@@ -1231,13 +1231,22 @@
                                                     <thead>
                                                         <tr>
                                                             <th>
-                                                                Labour Details
+                                                                Labour Code
+                                                            </th>
+                                                            <th>
+                                                                Name
                                                             </th>
                                                             <th>
                                                                 Type
                                                             </th>
+                                                            <th>
+                                                                Split Order Type
+                                                            </th>
+                                                            <th>
+                                                                Is Free Service
+                                                            </th>
                                                             <th class="text-right">
-                                                                Quantity
+                                                                Hours
                                                             </th>
                                                             <th class="wid-180 white-space text-right">
                                                                 Labour Value
@@ -1245,25 +1254,31 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in schedule_maintenance.labour_details" id="tr_{{index}}" ng-class="labour_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_detail.removal_reason_id != '10021'">
+                                                        <tr class="ptb-12" ng-repeat="(index, labour_details) in schedule_maintenance.labour_details" id="tr_{{index}}" ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_details.removal_reason_id != '10021'">
+                                                            <td>{{labour_details.code ? labour_details.code : ''}}
+                                                            </td>
+                                                            <td>{{labour_details.name ? labour_details.name : ''}}</td>
                                                             <td>
-                                                                {{labour_detail.name}}
+                                                                {{labour_details.type}}
                                                             </td>
                                                             <td>
-                                                                {{labour_detail.type}}
+                                                                {{labour_details.split_order_type}}
+                                                            </td>
+                                                            <td ng-if="labour_details.is_free_service == 1">
+                                                                <p class="text-success">Yes</p>
+                                                            </td>
+                                                            <td ng-if="labour_details.is_free_service != 1">
+                                                                No
                                                             </td>
                                                             <td class="text-right">
-                                                                {{labour_detail.qty}}
+                                                                {{labour_details.qty}}
                                                             </td>
-                                                            <td class="wid-180 white-space text-right" ng-if="labour_detail.is_free_service == 1">
-                                                                <p class="text-danger">0.00</p>
-                                                            </td>
-                                                            <td class="wid-180 white-space text-right" ng-if="labour_detail.is_free_service != 1">
-                                                                {{labour_detail.amount | number:2}}
+                                                            <td class="wid-180 white-space text-right">
+                                                                {{labour_details.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td colspan="3" class="text-right">
+                                                            <td colspan="6" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
@@ -1271,7 +1286,7 @@
                                                             <td class="wid-180 white-space  text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{schedule_maintenance.labour_amount | number:2}}
+                                                                    {{schedule_maintenance.without_tax_labour_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1284,10 +1299,19 @@
                                                     <thead>
                                                         <tr>
                                                             <th>
-                                                                Parts Details
+                                                                Part Code
+                                                            </th>
+                                                            <th>
+                                                                Name
                                                             </th>
                                                             <th>
                                                                 Type
+                                                            </th>
+                                                            <th>
+                                                                Split Order Type
+                                                            </th>
+                                                            <th>
+                                                                Is Free Service
                                                             </th>
                                                             <th class="text-right">
                                                                 Rate
@@ -1301,28 +1325,37 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in schedule_maintenance.part_details" id="tp_{{index}}" ng-class="part_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_detail.removal_reason_id != '10021'">
+                                                        <tr class="ptb-12" ng-repeat="(index, part_details) in schedule_maintenance.part_details" id="tp_{{index}}" ng-class="part_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_details.removal_reason_id != '10021'">
                                                             <td>
-                                                                {{part_detail.name}}
+                                                                {{part_details.code}}
                                                             </td>
                                                             <td>
-                                                                {{part_detail.type}}
+                                                                {{part_details.name}}
+                                                            </td>
+                                                            <td>
+                                                                {{part_details.type}}
+                                                            </td>
+                                                            <td>
+                                                                {{part_details.split_order_type}}
+                                                            </td>
+                                                            <td ng-if="part_details.is_free_service == 1">
+                                                                <p class="text-success">Yes</p>
+                                                            </td>
+                                                            <td ng-if="part_details.is_free_service != 1">
+                                                                No
                                                             </td>
                                                             <td class="text-right">
-                                                                {{part_detail.rate | number:2}}
+                                                                {{part_details.rate | number:2}}
                                                             </td>
                                                             <td class="text-right">
-                                                                {{part_detail.qty}}
+                                                                {{part_details.qty}}
                                                             </td>
-                                                            <td class="wid-180 white-space text-right" ng-if="part_detail.is_free_service == 1">
-                                                                <p class="text-danger">0.00</p>
-                                                            </td>
-                                                            <td class="wid-180 white-space text-right" ng-if="part_detail.is_free_service != 1">
-                                                                {{part_detail.amount | number:2}}
+                                                            <td class="wid-180 white-space text-right">
+                                                                {{part_details.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td colspan="4" class="text-right">
+                                                            <td colspan="7" class="text-right">
                                                                 <b>
                                                                     Total Parts
                                                                 </b>
@@ -1330,7 +1363,7 @@
                                                             <td class="wid-180 white-space text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{schedule_maintenance.part_amount | number:2}}
+                                                                    {{schedule_maintenance.without_tax_part_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1351,7 +1384,7 @@
                                                                 <td class="wid-180 text-right">
                                                                     <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                     <b>
-                                                                        {{schedule_maintenance.total_amount | number:2}}
+                                                                        {{schedule_maintenance.without_tax_total_amount | number:2}}
                                                                     </b>
                                                                 </td>
                                                             </tr>
@@ -1388,7 +1421,10 @@
                                                     <thead>
                                                         <tr>
                                                             <th>
-                                                                Labour Details
+                                                                Labour Code
+                                                            </th>
+                                                            <th>
+                                                                Name
                                                             </th>
                                                             <th>
                                                                 Type
@@ -1397,41 +1433,33 @@
                                                                 Split Order Type
                                                             </th>
                                                             <th class="text-right">
-                                                                Quantity
+                                                                Hours
                                                             </th>
-                                                            <th class="wid-100 white-space text-right">
+                                                            <th class="wid-180 white-space text-right">
                                                                 Labour Value
                                                             </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in payable_maintenance.labour_details.job_order_repair_orders" id="tr_{{index}}" ng-class="labour_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_detail.removal_reason_id != '10021'">
+                                                        <tr class="ptb-12" ng-repeat="(index,labour_detail) in payable_maintenance.labour_details" id="tr_{{index}}" ng-class="labour_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_detail.removal_reason_id != '10021'">
+                                                            <td>{{labour_detail.code ? labour_detail.code : ''}}
+                                                            </td>
+                                                            <td>{{labour_detail.name ? labour_detail.name : ''}}</td>
                                                             <td>
-                                                                {{labour_detail.repair_order.code}} | {{labour_detail.repair_order.name}}
+                                                                {{labour_detail.type}}
                                                             </td>
                                                             <td>
-                                                                {{labour_detail.repair_order.repair_order_type.name}}
-                                                            </td>
-                                                            <td>
-                                                                {{labour_detail.split_order_type.code}}
-                                                                {{labour_detail.split_order_type ? '|' : ''}}
-                                                                {{labour_detail.split_order_type.name}}
+                                                                {{labour_detail.split_order_type}}
                                                             </td>
                                                             <td class="text-right">
-                                                                {{labour_detail.repair_order.hours}}
+                                                                {{labour_detail.qty}}
                                                             </td>
-                                                            <td class="wid-100 white-space text-right">
-                                                                <!-- {{labour_detail.amount | number:2}} -->
-                                                                {{(labour_detail.split_order_type.paid_by_id =='10013' || labour_detail.split_order_type.paid_by_id == NULL) ? (labour_detail.amount | number:2) : '0.00' }}
+                                                            <td class="wid-180 white-space text-right">
+                                                                {{labour_detail.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr class="ptb-9">
-                                                            <td>
-                                                                <a href=".#!/inward-vehicle/payable-labour-part/add-labour/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">
-                                                                    Add Labour
-                                                                </a>
-                                                            </td>
-                                                            <td colspan="3" class="text-right">
+                                                            <td colspan="5" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
@@ -1439,7 +1467,7 @@
                                                             <td class="wid-100 white-space  text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{payable_maintenance.labour_amount | number:2}}
+                                                                    {{payable_maintenance.without_tax_labour_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1452,11 +1480,14 @@
                                                     <thead>
                                                         <tr>
                                                             <th>
-                                                                Parts Details
+                                                                Part Code
                                                             </th>
-                                                            <!-- <th>
+                                                            <th>
+                                                                Name
+                                                            </th>
+                                                            <th>
                                                                 Type
-                                                            </th> -->
+                                                            </th>
                                                             <th>
                                                                 Split Order Type
                                                             </th>
@@ -1466,21 +1497,24 @@
                                                             <th class="text-right">
                                                                 Quantity
                                                             </th>
-                                                            <th class="wid-100 white-space text-right">
+                                                            <th class="wid-180 white-space text-right">
                                                                 Amount
                                                             </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in payable_maintenance.part_details.job_order_parts" id="tp_{{index}}" ng-class="part_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_detail.removal_reason_id != '10021'">
+                                                        <tr class="ptb-12" ng-repeat="(index,part_detail) in payable_maintenance.part_details" id="tp_{{index}}" ng-class="part_detail.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_detail.removal_reason_id != '10021'">
                                                             <td>
-                                                                {{part_detail.part.code}} | {{part_detail.part.name}}
+                                                                {{part_detail.code}}
                                                             </td>
                                                             <td>
-                                                                <!-- {{part_detail.part.name}} -->
-                                                                {{part_detail.split_order_type.code}}
-                                                                {{part_detail.split_order_type ? '|' : ''}}
-                                                                {{part_detail.split_order_type.name}}
+                                                                {{part_detail.name}}
+                                                            </td>
+                                                            <td>
+                                                                {{part_detail.type}}
+                                                            </td>
+                                                            <td>
+                                                                {{part_detail.split_order_type}}
                                                             </td>
                                                             <td class="text-right">
                                                                 {{part_detail.rate | number:2}}
@@ -1488,18 +1522,12 @@
                                                             <td class="text-right">
                                                                 {{part_detail.qty}}
                                                             </td>
-                                                            <td class="wid-100 white-space text-right">
-                                                                <!-- {{part_detail.amount | number:2}} -->
-                                                                {{(part_detail.split_order_type.paid_by_id =='10013' || part_detail.split_order_type.paid_by_id == NULL) ? (part_detail.amount | number:2) : '0.00' }}
+                                                            <td class="wid-180 white-space text-right">
+                                                                {{part_detail.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr class="ptb-9">
-                                                            <td>
-                                                                <a href=".#!/inward-vehicle/payable-labour-part/add-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 ">
-                                                                    Add Parts
-                                                                </a>
-                                                            </td>
-                                                            <td colspan="3" class="text-right">
+                                                            <td colspan="6" class="text-right">
                                                                 <b>
                                                                     Total Parts
                                                                 </b>
@@ -1507,7 +1535,7 @@
                                                             <td class="wid-100 white-space text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{payable_maintenance.part_amount | number:2}}
+                                                                    {{payable_maintenance.without_tax_part_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>
@@ -1528,7 +1556,7 @@
                                                                 <td class="wid-100 text-right">
                                                                     <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                     <b>
-                                                                        {{payable_maintenance.total_amount | number:2}}
+                                                                        {{payable_maintenance.without_tax_total_amount | number:2}}
                                                                     </b>
                                                                 </td>
                                                             </tr>
@@ -1543,7 +1571,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-if="job_order.status_id != 8472">Next</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-show="job_order.status_id != 8472">Next</a>
                                                     <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
@@ -1589,7 +1617,18 @@
                                                                                 </span>
                                                                             </div>
                                                                         </li>
-                                                                        <li class="wid-100">
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content bg-grey text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Total Tax
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    {{schedule_maintenance.tax_amount | number:2}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="wid-50">
                                                                             <div class="three-box-content bg-grey text-center">
                                                                                 <span class="three-box-label">
                                                                                     TOTAL
@@ -1638,7 +1677,18 @@
                                                                                 </span>
                                                                             </div>
                                                                         </li>
-                                                                        <li class="wid-100">
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content bg-grey text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Tax
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
+                                                                                    {{payable_maintenance.tax_amount | number:2}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="wid-50">
                                                                             <div class="three-box-content bg-grey text-center">
                                                                                 <span class="three-box-label">
                                                                                     TOTAL
@@ -1687,7 +1737,18 @@
                                                                                 </span>
                                                                             </div>
                                                                         </li>
-                                                                        <li class="wid-100">
+                                                                        <li class="wid-50">
+                                                                            <div class="three-box-content bg-red text-center">
+                                                                                <span class="three-box-label">
+                                                                                    Tax
+                                                                                </span>
+                                                                                <span class="three-box-value">
+                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-white.svg" alt="Rupee" />
+                                                                                    {{total_tax_amount | number:2}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                        <li class="wid-50">
                                                                             <div class="three-box-content bg-red text-center">
                                                                                 <span class="three-box-label">
                                                                                     TOTAL
@@ -1755,7 +1816,7 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt" ng-show="job_order.is_customer_agreed == 0 || (job_order.is_customer_agreed == 1 && job_order.is_customer_approved == 1)">Next</a>
                                                     <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
@@ -1830,8 +1891,6 @@
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                    <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->

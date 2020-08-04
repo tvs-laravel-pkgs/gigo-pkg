@@ -9,7 +9,7 @@
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Part Indent</b></h1>
-                    <p class="subtitle">Part Indent / Vehicle Detail</p>
+                    <p class="subtitle">Part Indent / Customer Detail</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -19,7 +19,7 @@
         <div class="page-tab-form pb-70">
             <part-indent-header></part-indent-header>
             <div class="tab-form-wrap type-2 side-tab-open">
-                <part-indent-tabs ng-init="active_tab = 'vehicle'"></part-indent-tabs>
+                <part-indent-tabs ng-init="active_tab = 'customer-detail'"></part-indent-tabs>
                 <div class="tab-form-body side-tab-open">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
@@ -29,100 +29,98 @@
                                     <div class="col-md-12">
                                         <h5 class="color-primary mb-10">
                                             <b>
-                                                Vehicle Details
+                                                Customer Details
                                             </b>
                                         </h5>
-                                        <div id="customer-detail">
+                                        <div id="customer-detail" ng-if="show_customer_detail">
                                             <ul class="view-row mb-no">
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
-                                                        Registration Type
+                                                        Code
                                                     </span>
                                                     <span class="view-data-list-value">
-                                                        <b ng-if="job_order.vehicle.is_registered == 1">
-                                                            Registered Vehicle
-                                                        </b>
-                                                        <b ng-if="job_order.vehicle.is_registered != 1">
-                                                            Un-Registered Vehicle
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3" ng-if="job_order.vehicle.is_registered == 1">
-                                                    <span class="view-col-label">
-                                                        Registration No
-                                                    </span>
-                                                    <span class="view-col-value">
                                                         <b>
-                                                            {{job_order.vehicle.registration_number}}
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3" ng-if="job_order.vehicle.is_registered == 0">
-                                                    <span class="view-col-label">
-                                                        Trade Plate Number
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        <b>
-                                                            {{job_order.trade_plate.trade_plate_number}}
+                                                            {{job_order.vehicle.current_owner.customer.code}}
                                                         </b>
                                                     </span>
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
-                                                        Vehicle Model
+                                                        Name
                                                     </span>
-                                                    <span class="view-col-value">
+                                                    <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.vehicle.model.model_name}}
+                                                            {{job_order.vehicle.current_owner.customer.name}}
                                                         </b>
                                                     </span>
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
-                                                        Engine Number
+                                                        Mobile No
                                                     </span>
                                                     <span class="view-col-value">
-                                                        {{job_order.vehicle.engine_number}}
+                                                        <b>
+                                                            {{job_order.vehicle.current_owner.customer.mobile_no}}
+                                                        </b>
                                                     </span>
                                                 </li>
                                                 <li class="view-col-3">
                                                     <span class="view-col-label">
-                                                        Chassis / VIN Number
+                                                        Email
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_order.vehicle.current_owner.customer.email}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3 ptb-2">
+                                                    <span class="view-col-label">
+                                                        Address
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_order.vehicle.current_owner.customer.address.address_line1}},{{job_order.vehicle.current_owner.customer.address.address_line2}},{{job_order.vehicle.current_owner.customer.address.city.name}},{{job_order.vehicle.current_owner.customer.address.state.name}},{{job_order.vehicle.current_owner.customer.address.pincode}},{{job_order.vehicle.current_owner.customer.address.country.name}}.
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        GST No
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_order.vehicle.current_owner.customer.gst_number}}
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        PAN
+                                                        <!-- No -->
                                                     </span>
                                                     <span class="view-data-list-value">
                                                         <b>
-                                                            {{job_order.vehicle.chassis_number}}
+                                                            {{job_order.vehicle.current_owner.customer.pan_number}}
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-3" ng-if="!job_order.vehicle.registration_number">
+                                                <li class="view-col-3">
                                                     <span class="view-col-label">
-                                                        Is Sold ?
+                                                        Ownership
                                                     </span>
                                                     <span class="view-data-list-value">
-                                                        <b ng-if="job_order.vehicle.is_sold == 1">
-                                                            Yes
+                                                        <b>
+                                                            {{job_order.vehicle.current_owner.ownership_type.name}}
                                                         </b>
-                                                        <b ng-if="job_order.vehicle.is_sold != 1">
-                                                            No
-                                                        </b>
-                                                    </span>
-                                                </li>
-                                                <li class="view-col-3" ng-if="job_order.vehicle.is_sold == 1 && !job_order.vehicle.registration_number">
-                                                    <span class="view-col-label">
-                                                        Sold Date
-                                                    </span>
-                                                    <span class="view-col-value">
-                                                        {{job_order.vehicle.sold_date}}
                                                     </span>
                                                 </li>
                                             </ul>
                                         </div> <!-- customer-detail -->
                                     </div><!-- Column -->
-                                    <div class="tab-pane-footer">
+                                    <div class="tab-pane-footer" ng-if="show_customer_detail">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/part-indent/customer/view/{{job_order.id}}">
+                                                <a type="button" class="btn btn-secondary-dark" href=".#!/part-indent/vehicle/view/{{job_order.id}}">
+                                                    Previous
+                                                </a>
+                                                <a type="button" class="btn btn-secondary-dark btn-min-wdth btn-nxt" href=".#!/part-indent/repair-order/view/{{job_order.id}}">
                                                     Next
                                                 </a>
                                             </div>

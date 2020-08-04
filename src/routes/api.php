@@ -166,6 +166,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/get', 'VehicleInwardController@getGateInList');
 
 		//VEHICLE INWARD VIEW DATA
+		Route::post('part-indent/get-vehicle-detail', 'VehicleInwardController@getPartIndentVehicleDetail');
+		Route::post('part-indent/get-repair-orders', 'VehicleInwardController@getRepairOrders');
 		Route::post('vehicle-inward/get-view-data', 'VehicleInwardController@getVehicleInwardView');
 		Route::post('inward-part-indent/get-view-data', 'VehicleInwardController@getInwardPartIndentViewData');
 		Route::post('inward-part-indent/save-return-part', 'VehicleInwardController@saveReturnPart');

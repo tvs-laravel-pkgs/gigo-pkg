@@ -171,20 +171,6 @@
 	        title: 'View Vehicle',
 	    }).
 
-	    //Parts Indent
-	    when('/gigo-pkg/parts-indent/list', {
-	        template: '<parts-indent-list></parts-indent-list>',
-	        title: 'Parts Indent',
-	    }).
-	    when('/gigo-pkg/parts-indent/view/:id', {
-	        template: '<parts-indent-view></parts-indent-view>',
-	        title: 'View Parts Indent',
-	    }).
-	    when('/gigo-pkg/parts-indent/edit-parts/:job_card_id/:part_id', {
-	        template: '<parts-indent-edit-parts></parts-indent-edit-parts>',
-	        title: 'Edit Parts Indent',
-	    }).
-
 	    //Complaint Group
 	     when('/gigo-pkg/complaint-group/list', {
 	        template: '<complaint-group-list></complaint-group-list>',
@@ -331,6 +317,10 @@
      //Parts Indent
      var parts_indent_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/list.html')}}";
      var parts_indent_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/view.html')}}";
+     var parts_indent_customer_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/customer.html')}}";
+     var parts_indent_repair_order_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/repair-order.html')}}";
+     var parts_indent_parts_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/parts.html')}}";
+     var parts_indent_issue_part_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/issue-part.html')}}";
      var parts_indent_edit_parts_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/edit-parts.html')}}";
 
 </script>
@@ -1037,6 +1027,10 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_order_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/job-order-header.html')}}';
     var inward_tabs_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/inward-tabs.html')}}';
     var inward_view_tabs_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/inward-view-tabs.html')}}';
+
+    //PART INDENT PARTIALS
+    var part_indent_header_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/part-indent-header.html')}}';
+    var part_indent_tabs_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/part-indent-tabs.html')}}';
 
 </script>
 <script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/inward-vehicle/controller.js')}}"></script>

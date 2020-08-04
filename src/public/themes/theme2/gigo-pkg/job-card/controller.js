@@ -662,7 +662,7 @@ app.component('jobCardBayForm', {
                                 return;
                             }
                             custom_noty('success', res.message);
-                            $location.path('/job-card/card-list');
+                            $location.path('/job-card/table-list');
                             $scope.$apply();
                             $('.submit').button('reset');
                         })
@@ -3261,8 +3261,12 @@ app.component('jobCardSplitOrder', {
                         split_order.total_items = 0;
                         angular.forEach($scope.labour_details, function(labour, key1) {
                             if (split_order.id == labour.split_order_type_id) {
-                                if (labour.is_free_service != 1 && split_order.paid_by_id == 10013) {
-                                    split_order.customer_total_amount += parseFloat(labour.total_amount);
+                                if (split_order.paid_by_id == 10013) {
+                                    if (labour.is_free_service != 1) {
+                                        split_order.customer_total_amount += parseFloat(labour.total_amount);
+                                    } else {
+                                        labour.total_amount = '0.00';
+                                    }
                                 } else {
                                     split_order.other_total_amount += parseFloat(labour.total_amount);
                                 }
@@ -3272,8 +3276,12 @@ app.component('jobCardSplitOrder', {
 
                         angular.forEach($scope.part_details, function(part, key2) {
                             if (split_order.id == part.split_order_type_id) {
-                                if (part.is_free_service != 1 && split_order.paid_by_id == 10013) {
-                                    split_order.customer_total_amount += parseFloat(part.total_amount);
+                                if (split_order.paid_by_id == 10013) {
+                                    if (part.is_free_service != 1) {
+                                        split_order.customer_total_amount += parseFloat(part.total_amount);
+                                    } else {
+                                        part.total_amount = '0.00';
+                                    }
                                 } else {
                                     split_order.other_total_amount += parseFloat(part.total_amount);
                                 }

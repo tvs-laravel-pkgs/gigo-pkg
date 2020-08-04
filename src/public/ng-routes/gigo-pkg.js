@@ -173,13 +173,25 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<parts-indent-list></parts-indent-list>',
         title: 'Parts Indent',
     }).
-    when('/gigo-pkg/parts-indent/view/:id', {
-        template: '<parts-indent-view></parts-indent-view>',
-        title: 'View Parts Indent',
+    when('/part-indent/vehicle/view/:job_order_id', {
+        template: '<parts-indent-vehicle-view></parts-indent-vehicle-view>',
+        title: 'View Vehicle',
     }).
-    when('/parts-indent/edit/:job_card_id/:job_order_issued_part_id', {
-        template: '<parts-indent-edit-parts></parts-indent-edit-parts>',
-        title: 'Edit Parts Indent',
+    when('/part-indent/customer/view/:job_order_id', {
+        template: '<parts-indent-customer-view></parts-indent-customer-view>',
+        title: 'View Customer',
+    }).
+    when('/part-indent/repair-order/view/:job_order_id', {
+        template: '<parts-indent-repair-order-view></parts-indent-repair-order-view>',
+        title: 'View Repair Order',
+    }).
+     when('/part-indent/parts/view/:job_order_id', {
+        template: '<parts-indent-parts-view></parts-indent-parts-view>',
+        title: 'View Parts',
+    }).
+    when('/part-indent/issue-part/form/:job_order_id/:id?', {
+        template: '<parts-indent-issue-part-form></parts-indent-issue-part-form>',
+        title: 'Issue Part',
     }).
 
     //Complaint Group
@@ -1136,17 +1148,5 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/warranty-job-order-request/view/:request_id', {
         template: '<warranty-job-order-request-view></warranty-job-order-request-view>',
         title: 'Warranty Job Order Request - View'
-    });
-}]);
-
-app.config(['$routeProvider', function($routeProvider) {
-    $routeProvider.
-    when('/inward-parts-indent/view/:job_order_id', {
-        template: '<inward-parts-indent-view></inward-parts-indent-view>',
-        title: 'Inward Parts Indent View',
-    }).
-    when('/inward-parts-indent/issue-part/form/:job_order_id/:id?', {
-        template: '<inward-parts-indent-issue-part-form></inward-parts-indent-issue-part-form>',
-        title: 'Inward Parts Indent Issue Part',
     });
 }]);
