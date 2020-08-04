@@ -5073,7 +5073,7 @@ class VehicleInwardController extends Controller {
 						// 'mimes:jpeg,jpg,png',
 					],
 					'customer_e_sign' => [
-						'required',
+						'required_if:customer_photo_exist,0',
 						// 	// 'mimes:jpeg,jpg,png',
 					],
 				]);
