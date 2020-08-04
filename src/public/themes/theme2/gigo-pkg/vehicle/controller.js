@@ -106,7 +106,7 @@ app.component('vehicleList', {
                 if (response.data.success) {
                     custom_noty('success', 'Vehicle Deleted Successfully');
                     $('#vehicles_list').DataTable().ajax.reload(function(json) {});
-                    $location.path('/gigo-pkg/vehicle/list');
+                    $location.path('/vehicle/list');
                 }
             });
         }
@@ -316,7 +316,7 @@ app.component('vehicleForm', {
                     .done(function(res) {
                         if (res.success == true) {
                             custom_noty('success', res.message);
-                            $location.path('/gigo-pkg/vehicle/list');
+                            $location.path('/vehicle/list');
                             $scope.$apply();
                         } else {
                             if (!res.success == true) {
@@ -324,7 +324,7 @@ app.component('vehicleForm', {
                                 showErrorNoty(res);
                             } else {
                                 $('.submit').button('reset');
-                                $location.path('/gigo-pkg/vehicle/list');
+                                $location.path('/vehicle/list');
                                 $scope.$apply();
                             }
                         }

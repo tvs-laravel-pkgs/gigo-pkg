@@ -151,19 +151,19 @@ app.config(['$routeProvider', function($routeProvider) {
     }).
 
     //Vehicle Master
-    when('/gigo-pkg/vehicle/list', {
+    when('/vehicle/list', {
         template: '<vehicle-list></vehicle-list>',
         title: 'Vehicles',
     }).
-    when('/gigo-pkg/vehicle/add', {
+    when('/vehicle/add', {
         template: '<vehicle-form></vehicle-form>',
         title: 'Add Vehicle',
     }).
-    when('/gigo-pkg/vehicle/edit/:id', {
+    when('/vehicle/edit/:id', {
         template: '<vehicle-form></vehicle-form>',
         title: 'Edit Vehicle',
     }).
-    when('/gigo-pkg/vehicle/view/:id', {
+    when('/vehicle/view/:id', {
         template: '<vehicle-data-view></vehicle-data-view>',
         title: 'View Vehicle',
     }).

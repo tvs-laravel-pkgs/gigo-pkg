@@ -3482,7 +3482,7 @@ class JobCardController extends Controller {
 				'success' => true,
 				'gate_pass' => $gate_pass,
 				'job_card' => $job_card,
-				'attachement_path' => url('app/public/gigo/material_gate_pass/attachments/'),
+				'attachement_path' => 'storage/app/public/gigo/material_gate_pass/attachments/',
 			]);
 
 		} catch (Exception $e) {

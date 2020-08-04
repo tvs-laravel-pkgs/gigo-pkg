@@ -104,7 +104,7 @@ class VehicleController extends Controller {
 					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#vehicle-delete-modal" onclick="angular.element(this).scope().deleteVehicle(' . $vehicle->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
 				if (Entrust::can('view-vehicle')) {
-					$output .= '<a href="#!/gigo-pkg/vehicle/view/' . $vehicle->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_hover_img . '" onmouseout=this.src="' . $view_img . '"></a>';
+					$output .= '<a href="#!/vehicle/view/' . $vehicle->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_hover_img . '" onmouseout=this.src="' . $view_img . '"></a>';
 				}
 				return $output;
 			})
@@ -280,7 +280,8 @@ class VehicleController extends Controller {
 			->where('vehicles.company_id', Auth::user()->company_id)
 			->where('vehicles.id',$request->id)
 			->first();*/
-		$this->data['vehicles_details'] = Vehicle::company()->with(['model',
+		$this->data['vehicles_details'] = Vehicle::with([
+			'model',
 			'vehicleOwners',
 			'currentOwner',
 			'currentOwner.customer',
@@ -299,9 +300,10 @@ class VehicleController extends Controller {
 				DB::raw('DATE_FORMAT(vehicles.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(vehicles.created_at,"%h:%i %p") as time'),
 			])
+			->where('vehicles.company_id', Auth::user()->company_id)
 			->find($request->id);
 
-		$this->data['job_order'] = JobOrder::company()->with([
+		$this->data['job_order'] = JobOrder::with([
 			'gateLog',
 			'jobCard',
 			'jobCard.status',
@@ -315,6 +317,7 @@ class VehicleController extends Controller {
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 			])
+			->where('job_orders.company_id', Auth::user()->company_id)
 			->where('vehicle_id', $request->id)->get();
 
 		$this->data['action'] = 'View';

@@ -5,16 +5,15 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/gigo-pkg/vehicle/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                    <a href="#!/vehicle/list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
                     <h1 class="title"><b>Vehicle View</b></h1>
-                    <p class="subtitle">Vehicle Master / View</p>
+                    <p class="subtitle"><a href="#!/vehicle/list">Vehicle Master</a> / View</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
-
     <!-- Page Main Content -->
     <div class="page-main-content form-content type2">
         <div class="page-tab-form pb-70">
@@ -30,10 +29,10 @@
                         </a>
                     </div>
                     <div class="page-tab-form-top-left-info">
-                        <span class="page-tab-form-top-left-info-content"><b>{{$ctrl.vehicles_details.registration_number}}</b>  |  {{$ctrl.vehicles_details.model.model_name}}  |  {{$ctrl.vehicles_details.current_owner.customer.code}} | {{$ctrl.vehicles_details.date}}, {{$ctrl.vehicles_details.time}}</span>
-                        <a class="page-tab-form-top-left-info-link" data-toggle="modal" data-target="#search_vehicle_modal">
+                        <span class="page-tab-form-top-left-info-content"><b>{{$ctrl.vehicles_details.registration_number}}</b> | {{$ctrl.vehicles_details.model.model_name}} | {{$ctrl.vehicles_details.current_owner.customer.code}} | {{$ctrl.vehicles_details.date}}, {{$ctrl.vehicles_details.time}}</span>
+                        <!-- <a class="page-tab-form-top-left-info-link" data-toggle="modal" data-target="#search_vehicle_modal">
                             <img class="img-responsive" src="./public/theme/img/content/edit.svg" alt="Edit" />
-                        </a>
+                        </a> -->
                     </div>
                 </div><!-- Page Tab Form Top Left -->
                 <div class="page-tab-form-top-right">
@@ -43,14 +42,14 @@
             <div class="tab-form-wrap type-2">
                 <div class="tab-form-header">
                     <div class="tab-header">
-                            <!-- Filters -->
+                        <!-- Filters -->
                         <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
                             <ul class="nav nav-pills cndn-tabs">
                                 <li class="active"><a class="filter active" data-target="#vehicle_details" data-toggle="tab" aria-expanded="true">Vehicle Details</a></li>
                                 <li><a data-target="#customer_details" data-toggle="tab" aria-expanded="true" class="filter">Customer Details</a></li>
                                 <li><a data-target="#job_cards" data-toggle="tab" aria-expanded="true" class="filter">Job Cards</a></li>
                             </ul>
-                        </div><!-- Filters -->  
+                        </div><!-- Filters -->
                     </div><!-- Tab Header -->
                 </div><!-- Tab Form Header -->
                 <div class="tab-form-body">
@@ -63,31 +62,87 @@
                                         <h5 class="color-primary mb-10"><b>Vehicle Details</b></h5>
                                         <ul class="view-row mb-no">
                                             <li class="view-col-3">
-                                                <span class="view-col-label">Registration Type</span>
+                                                <span class="view-col-label">
+                                                    Registration Type
+                                                </span>
                                                 <span class="view-data-list-value">
-                                                    <b ng-if="$ctrl.vehicles_details.is_registered == 1">Registered</b>
-                                                    <b ng-if="$ctrl.vehicles_details.is_registered != 1">Not Registered</b></span>
+                                                    <b ng-if="$ctrl.vehicles_details.is_registered == 1">
+                                                        Registered Vehicle
+                                                    </b>
+                                                    <b ng-if="$ctrl.vehicles_details.is_registered != 1">
+                                                        Un-Registered Vehicle
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3" ng-if="$ctrl.vehicles_details.is_registered == 1">
+                                                <span class="view-col-label">
+                                                    Registration No
+                                                </span>
+                                                <span class="view-col-value">
+                                                    <b>
+                                                        {{$ctrl.vehicles_details.registration_number}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3" ng-if="$ctrl.vehicles_details.is_registered == 0">
+                                                <span class="view-col-label">
+                                                    Trade Plate Number
+                                                </span>
+                                                <span class="view-col-value">
+                                                    <b>
+                                                        {{$ctrl.vehicles_details.trade_plate.trade_plate_number}}
+                                                    </b>
+                                                </span>
                                             </li>
                                             <li class="view-col-3">
-                                                <span class="view-col-label">Registration No</span>
-                                                <span class="view-col-value"><b>{{$ctrl.vehicles_details.registration_number}}</b></span>
+                                                <span class="view-col-label">
+                                                    Vehicle Model
+                                                </span>
+                                                <span class="view-col-value">
+                                                    <b>
+                                                        {{$ctrl.vehicles_details.model.model_name}}
+                                                    </b>
+                                                </span>
                                             </li>
                                             <li class="view-col-3">
-                                                <span class="view-col-label">Vehicle Model</span>
-                                                <span class="view-col-value"><b>{{$ctrl.vehicles_details.model.model_name}}</b></span>
+                                                <span class="view-col-label">
+                                                    Engine Number
+                                                </span>
+                                                <span class="view-col-value">
+                                                    {{$ctrl.vehicles_details.engine_number}}
+                                                </span>
                                             </li>
                                             <li class="view-col-3">
-                                                <span class="view-col-label">VIN Number</span>
-                                                <span class="view-col-value">{{$ctrl.vehicles_details.vin_number}}</span>
+                                                <span class="view-col-label">
+                                                    Chassis / VIN Number
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{$ctrl.vehicles_details.chassis_number}}
+                                                    </b>
+                                                </span>
                                             </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">Engine Number</span>
-                                                <span class="view-col-value">{{$ctrl.vehicles_details.engine_number}}</span>
-                                            </li> 
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">Chasis Number</span>
-                                                <span class="view-data-list-value"><b>{{$ctrl.vehicles_details.chassis_number}}</b></span>
-                                            </li>                          
+                                            <li class="view-col-3" ng-if="!$ctrl.vehicles_details.registration_number">
+                                                <span class="view-col-label">
+                                                    Is Sold ?
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b ng-if="$ctrl.vehicles_details.is_sold == 1">
+                                                        Yes
+                                                    </b>
+                                                    <b ng-if="$ctrl.vehicles_details.is_sold != 1">
+                                                        No
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3" ng-if="$ctrl.vehicles_details.is_sold == 1 && !$ctrl.vehicles_details.registration_number">
+                                                <span class="view-col-label">
+                                                    Sold Date
+                                                </span>
+                                                <span class="view-col-value">
+                                                    {{$ctrl.vehicles_details.sold_date}}
+                                                </span>
+                                            </li>
                                         </ul>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
@@ -100,7 +155,6 @@
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-
                         <div class="tab-pane fade" id="customer_details" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
@@ -108,37 +162,84 @@
                                         <h5 class="color-primary mb-10"><b>Customer Details</b></h5>
                                         <ul class="view-row mb-no">
                                             <li class="view-col-3">
-                                                <span class="view-col-label">Name</span>
-                                                <span class="view-data-list-value"><b>{{$ctrl.vehicles_details.current_owner.customer.name}}</b></span>
+                                                <span class="view-col-label">
+                                                    Code
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{$ctrl.vehicles_details.current_owner.customer.code}}
+                                                    </b>
+                                                </span>
                                             </li>
                                             <li class="view-col-3">
-                                                <span class="view-col-label">Mobile No</span>
-                                                <span class="view-col-value"><b>{{$ctrl.vehicles_details.current_owner.customer.mobile_no}}</b></span>
+                                                <span class="view-col-label">
+                                                    Name
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{$ctrl.vehicles_details.current_owner.customer.name}}
+                                                    </b>
+                                                </span>
                                             </li>
                                             <li class="view-col-3">
-                                                <span class="view-col-label">Email</span>
-                                                <span class="view-col-value"><b>{{$ctrl.vehicles_details.current_owner.customer.email}}</b></span>
+                                                <span class="view-col-label">
+                                                    Mobile No
+                                                </span>
+                                                <span class="view-col-value">
+                                                    <b>
+                                                        {{$ctrl.vehicles_details.current_owner.customer.mobile_no}}
+                                                    </b>
+                                                </span>
+                                            </li>
+                                            <li class="view-col-3">
+                                                <span class="view-col-label">
+                                                    Email
+                                                </span>
+                                                <span class="view-col-value">
+                                                    <b>
+                                                        {{$ctrl.vehicles_details.current_owner.customer.email}}
+                                                    </b>
+                                                </span>
                                             </li>
                                             <li class="view-col-3 ptb-2">
-                                                <span class="view-col-label">Address</span>
-                                                <span class="view-col-value">{{$ctrl.vehicles_details.current_owner.customer.address.address_line1}},{{$ctrl.vehicles_details.current_owner.customer.address.address_line2}},
-                                                {{$ctrl.vehicles_details.current_owner.customer.city.name}}</span>
+                                                <span class="view-col-label">
+                                                    Address
+                                                </span>
+                                                <span class="view-col-value">
+                                                    {{$ctrl.vehicles_details.current_owner.customer.address.address_line1}},{{$ctrl.vehicles_details.current_owner.customer.address.address_line2}},{{$ctrl.vehicles_details.current_owner.customer.address.city.name}},{{$ctrl.vehicles_details.current_owner.customer.address.state.name}},{{$ctrl.vehicles_details.current_owner.customer.address.pincode}},{{$ctrl.vehicles_details.current_owner.customer.address.country.name}}.
+                                                </span>
                                             </li>
                                             <li class="view-col-3">
-                                                <span class="view-col-label">GST No</span>
-                                                <span class="view-col-value">{{$ctrl.vehicles_details.current_owner.customer.gst_number}}</span>
-                                            </li> 
+                                                <span class="view-col-label">
+                                                    GST No
+                                                </span>
+                                                <span class="view-col-value">
+                                                    {{$ctrl.vehicles_details.current_owner.customer.gst_number}}
+                                                </span>
+                                            </li>
                                             <li class="view-col-3">
-                                                <span class="view-col-label">PAN No</span>
-                                                <span class="view-data-list-value"><b>{{$ctrl.vehicles_details.current_owner.customer.pan_number}}</b></span>
-                                            </li>  
+                                                <span class="view-col-label">
+                                                    PAN
+                                                    <!-- No -->
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{$ctrl.vehicles_details.current_owner.customer.pan_number}}
+                                                    </b>
+                                                </span>
+                                            </li>
                                             <li class="view-col-3">
-                                                <span class="view-col-label">Ownership</span>
-                                                <span class="view-data-list-value"><b>{{$ctrl.vehicles_details.current_owner.ownership_type.name}}</b></span>
-                                            </li>                        
+                                                <span class="view-col-label">
+                                                    Ownership
+                                                </span>
+                                                <span class="view-data-list-value">
+                                                    <b>
+                                                        {{$ctrl.vehicles_details.current_owner.ownership_type.name}}
+                                                    </b>
+                                                </span>
+                                            </li>
                                         </ul>
                                         <a href="#!/inward-vehicle/customer-detail/{{$ctrl.vehicles_details.last_job_order.id}}/2"><button class="btn btn-secondary-dark btn-square">Add New Owner</button></a>
-                                        
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
@@ -151,12 +252,11 @@
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-
                         <div class="tab-pane fade" id="job_cards" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 class="color-primary mb-10"><b>Order Details</b></h5>
+                                        <h5 class="color-primary mb-10"><b>Job Cards</b></h5>
                                         <hr class="hr-15"><!-- Separater -->
                                         <ul class="card-list">
                                             <li class="wid-4" ng-repeat="(index, job_order) in $ctrl.job_order" ng-if="job_order.job_card.id != NULL">
@@ -215,7 +315,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="card-box-footer-right">
-                                                            <a href="#!/gigo-pkg/job-card/material-gatepass/{{job_order.job_card.id}}" class="btn btn-square btn-md btn-red">View</a>
+                                                            <a href="#!/job-card/schedule-maintenance/{{job_order.job_card.id}}" class="btn btn-square btn-md btn-red">View</a>
                                                         </div>
                                                     </div><!-- Card Box Footer -->
                                                 </div><!-- Card Box -->
@@ -232,13 +332,12 @@
                                 </div><!-- Row -->
                             </div><!-- Tab Pane Wrap -->
                         </div><!-- Tabe Pane -->
-                    </div><!-- Tab Content -->   
+                    </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
             </div><!-- Tab Form Wrap -->
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-
 <!-- Modal -->
 <div class="modal modal-center fade" id="search_vehicle_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-xs" role="document">
