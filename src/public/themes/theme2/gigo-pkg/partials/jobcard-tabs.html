@@ -3,9 +3,19 @@
         <!-- Filters -->
         <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
             <ul class="nav nav-pills cndn-tabs">
-                <li ng-class="{active:active_tab == 'order-view'}" ng-if="!$ctrl.view_only_part_indent">
+                <!-- <li ng-class="{active:active_tab == 'order-view'}" ng-if="!$ctrl.view_only_part_indent">
                     <a class="filter" href=".#!/job-card/order-view/{{job_card_id}}">
                         Job Order 
+                    </a>
+                </li> -->
+                <li ng-class="{active:active_tab == 'schedule-maintendance'}">
+                    <a class="filter" href=".#!/job-card/schedule-maintenance/{{job_card_id}}">
+                        Scheduled Maintendance
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'labour-parts'}">
+                    <a class="filter" href=".#!/job-card/payable-labour-parts/{{job_card_id}}">
+                        Additional Labour & Parts
                     </a>
                 </li>
                 <li ng-class="{active:active_tab == 'bay'}">
@@ -52,16 +62,6 @@
                         Estimate
                     </a>
                 </li> -->
-                <li ng-class="{active:active_tab == 'labour-parts'}">
-                    <a class="filter" href=".#!/job-card/payable-labour-parts/{{job_card_id}}">
-                        Additional Labour & Parts
-                    </a>
-                </li>
-                <li ng-class="{active:active_tab == 'schedule-maintendance'}">
-                    <a class="filter" href=".#!/job-card/schedule-maintenance/{{job_card_id}}">
-                        Scheduled Maintendance
-                    </a>
-                </li>
                 <li ng-class="{active:active_tab == 'dms-checklist'}">
                     <a class="filter" href=".#!/job-card/dms-checklist/{{job_card_id}}">
                         DMS Check list
@@ -77,12 +77,12 @@
                         Expert Diagnosis Report
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'road-test'}" >
+                <li ng-class="{active:active_tab == 'road-test'}">
                     <a class="filter" href=".#!/job-card/road-test-observation/{{job_card_id}}">
                         Read Test
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'capture-voc'}" >
+                <li ng-class="{active:active_tab == 'capture-voc'}">
                     <a class="filter" href=".#!/job-card/capture-voc/{{job_card_id}}">
                         Capture VOC
                     </a>
@@ -107,7 +107,7 @@
                         Vehicle Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'gatein-detail'}" >
+                <li ng-class="{active:active_tab == 'gatein-detail'}">
                     <a class="filter" href=".#!/job-card/gatein-detail/{{job_card_id}}">
                         Gate In Details
                     </a>

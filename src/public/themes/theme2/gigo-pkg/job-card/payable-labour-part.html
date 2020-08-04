@@ -263,13 +263,13 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">ARE YOU SURE?</h4>
+                <h4 class="modal-title" id="myModalLabel">Confirmation?</h4>
             </div>
             <div class="modal-body">
-                <p>Are you sure? do you want to send for customer Approval? </p>
+                <p>Are you sure?Do you want to send this estimate for customer Approval? </p>
                 <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-rose send_confirm" ng-click="sendConfirm()">Yes</button>
+                <button class="btn btn-rose" data-dismiss="modal" aria-label="Close">No</button>
+                <button class="btn btn-success send_confirm" ng-click="sendConfirm()">Yes</button>
             </div>
         </div>
     </div>
