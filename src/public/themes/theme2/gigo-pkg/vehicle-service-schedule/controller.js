@@ -242,6 +242,7 @@ app.component('vehicleServiceScheduleForm', {
             window.location = "#!/page-permission-denied";
             return false;
         }
+        self.latest_km = 0;
         $scope.page = 'form';
         self.angular_routes = angular_routes;
 
@@ -479,6 +480,7 @@ app.component('vehicleServiceScheduleForm', {
                 sch_serv_type.km_tolerance_type_id = sch_serv_type.tolerance_km.id;
                 sch_serv_type.period_tolerance_type_id = sch_serv_type.tolerance_period.id;
                 sch_serv_type.is_free = (sch_serv_type.is_free == "Yes" || sch_serv_type.is_free == 1) ? 1 : 0;
+                self.latest_km = sch_serv_type.km_reading;
                 // console.log(sch_serv_type);
                 angular.forEach(sch_serv_type.parts, function(part) {
                     // console.log(part);
@@ -511,6 +513,57 @@ app.component('vehicleServiceScheduleForm', {
         $scope.deleteConfirm = function() {
             var index = $("#service_delete_index").val();
             $scope.vehicle_service_schedule.vehicle_service_schedule_service_types.splice(index, 1);
+        }
+        $scope.kmChange = function() {
+            $hasError = false;
+            if ($scope.modal_action == "Add") {
+                $latest_km = self.latest_km;
+                console.log($scope.service_type_item.km_reading, self.latest_km);
+                if ($scope.service_type_item.km_reading < self.latest_km) {
+                    custom_noty('error', 'KM reading should not be lesser than previous service.');
+                    $("input[name=km_reading]").focus();
+                    $hasError = true;
+                    $(".submit").attr('disabled', true);
+                    return false;
+                } else {
+                    self.latest_km = $scope.service_type_item.km_reading;
+                }
+            } else {
+                $km_reading = parseInt($scope.service_type_item.km_reading);
+                $service = $scope.vehicle_service_schedule.vehicle_service_schedule_service_types;
+
+                // console.log($scope.index, $service[$scope.index], $service[$scope.index - 1], $service[$scope.index + 1]);
+                if ($service[$scope.index - 1] != undefined && $service[$scope.index + 1] != undefined) { //mid item
+                    if (($km_reading < $service[$scope.index - 1].km_reading) || ($km_reading > $service[$scope.index + 1].km_reading)) {
+                        custom_noty('error', 'KM reading should not be in between previous and next services.');
+                        $("input[name=km_reading]").focus();
+                        $hasError = true;
+                        $(".submit").attr('disabled', true);
+                        return false;
+                    }
+                } else if ($service[$scope.index - 1] != undefined && $service[$scope.index + 1] == undefined) { //next item missed
+                    if ($km_reading < $service[$scope.index - 1].km_reading) {
+                        custom_noty('error', 'KM reading should not be lesser than previous service.');
+                        $("input[name=km_reading]").focus();
+                        $hasError = true;
+                        $(".submit").attr('disabled', true);
+                        return false;
+                    } else {
+                        self.latest_km = $scope.service_type_item.km_reading;
+                    }
+                } else if ($service[$scope.index - 1] == undefined && $service[$scope.index + 1] != undefined) { //prev item missed
+                    if ($km_reading > $service[$scope.index + 1].km_reading) {
+                        custom_noty('error', 'KM reading should not be greater than next service.');
+                        $("input[name=km_reading]").focus();
+                        $hasError = true;
+                        $(".submit").attr('disabled', true);
+                        return false;
+                    }
+                }
+            }
+            if ($hasError == false) {
+                $(".submit").attr('disabled', false);
+            }
         }
         $scope.showServiceForm = function(service_type_item, index) {
             // console.log(service_type_item);
