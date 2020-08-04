@@ -310,7 +310,7 @@ class GateInController extends Controller {
 			//CHECK VEHICLE PREVIOUS JOBCARD STATUS
 			$previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
 			if ($previous_job_order) {
-				if ($previous_job_order->status_id != 8468) {
+				if ($previous_job_order->status_id != 8470) {
 					return response()->json([
 						'success' => false,
 						'error' => 'Validation Error',
