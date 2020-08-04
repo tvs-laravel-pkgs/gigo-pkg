@@ -212,13 +212,14 @@
                                                     <div class="light-box form-group">
                                                         <h6 class=""><b>TVS Memberships Attachments</b></h6>
                                                         <div class="img-upload-preview">
-                                                            <input type="file" class="image_uploadify" accept="image/*,application/pdf" name="membership_attachments[]" multiple />
+                                                            <input type="file" class="image_uploadify" accept="image/*" name="membership_attachments[]" multiple />
+                                                            <!-- ,application/pdf -->
                                                             <div class="imageuploadify">
                                                                 <div class="imageuploadify-images-list">
                                                                     <div class="imageuploadify-container" style="margin-left: 4px; margin-right: 4px;" ng-repeat="(key,a_m_c_attachment) in job_order.a_m_c_attachment">
                                                                         <button type="button" class="btn btn-danger glyphicon glyphicon-remove" ng-click="remove_attachment(a_m_c_attachment.id,key)">
                                                                         </button>
-                                                                        <img src="./storage/app/public/gigo/job_order/attachments/{{a_m_c_attachment.name}}">
+                                                                        <img title="{{a_m_c_attachment.name}}" src="./storage/app/public/gigo/job_order/attachments/{{a_m_c_attachment.name}}">
                                                                     </div>
                                                                 </div>
                                                             </div>

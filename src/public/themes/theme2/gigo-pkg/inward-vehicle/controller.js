@@ -421,7 +421,7 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
         //     return false;
         // }
         if (!self.hasPermission('inward-job-card-tab-expert-diagnosis-report-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
 
         self.angular_routes = angular_routes;
@@ -504,7 +504,7 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/inspection-detail/form/' + $scope.job_order.id);
@@ -564,7 +564,7 @@ app.component('inwardVehicleInspectionDetailForm', {
         //     return false;
         // }
         if (!self.hasPermission('inward-job-card-tab-vehicle-inspection-report-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
         self.angular_routes = angular_routes;
 
@@ -631,7 +631,7 @@ app.component('inwardVehicleInspectionDetailForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/dms-checklist/form/' + $scope.job_order.id);
@@ -691,7 +691,7 @@ app.component('inwardVehicleDmsCheckListForm', {
         //     return false;
         // }
         if (!self.hasPermission('inward-job-card-tab-service-package-details-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
 
         $('.btn-nxt').attr("disabled", "disabled");
@@ -906,7 +906,7 @@ app.component('inwardVehicleDmsCheckListForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/scheduled-maintenance/form/' + $scope.job_order_id);
@@ -968,7 +968,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         //     return false;
         // }
         if (!self.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
         self.angular_routes = angular_routes;
 
@@ -1212,7 +1212,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         //Save Form Data 
         $scope.saveSchedule = function(id) {
             if (id == 1) {
-                $location.path('/inward-vehicle/table-list');
+                $location.path('/inward-vehicle/card-list');
                 $scope.$apply();
             } else {
                 $location.path('/inward-vehicle/payable-labour-part-detail/form/' + $scope.job_order.id);
@@ -1731,7 +1731,7 @@ app.component('inwardVehicleUpdatejcForm', {
                                 $scope.send_customer_approval();
                             } else {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                             }
                             $scope.$apply();
                         })
@@ -1758,7 +1758,7 @@ app.component('inwardVehicleUpdatejcForm', {
                 success: function(response) {
                     custom_noty('success', response.message);
                     $(".send_to_customer_approval").button('reset');
-                    $location.path('/inward-vehicle/table-list');
+                    $location.path('/inward-vehicle/card-list');
                     $scope.$apply();
                 },
                 error: function(textStatus, errorThrown) {
@@ -1817,7 +1817,7 @@ app.component('inwardVehicleUpdatejcForm', {
                         $('#otp').modal('hide');
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
-                        $location.path('/inward-vehicle/table-list');
+                        $location.path('/inward-vehicle/card-list');
                         $scope.$apply();
                     })
                     .fail(function(xhr) {
@@ -2014,7 +2014,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                             $("#inward_notification").modal('show');
                             // self.repair_order_and_parts_detils
                             // custom_noty('success', res.message);
-                            // $location.path('/inward-vehicle/table-list');
+                            // $location.path('/inward-vehicle/card-list');
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -2055,7 +2055,7 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                             $('body').removeClass('modal-open');
                             $('.modal-backdrop').remove();
                             custom_noty('success', res.message);
-                            $location.path('/inward-vehicle/table-list');
+                            $location.path('/inward-vehicle/card-list');
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
@@ -2084,7 +2084,7 @@ app.component('inwardVehicleEstimateForm', {
         //     return false;
         // }
         if (!self.hasPermission('inward-job-card-tab-estimate-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
 
         self.angular_routes = angular_routes;
@@ -2195,7 +2195,7 @@ app.component('inwardVehicleEstimateForm', {
                             }
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 if ($('#is_customer_agreed').val() == 1) {
@@ -2250,7 +2250,7 @@ app.component('inwardVehicleEstimateForm', {
                     $(".send_to_customer_approval").button('reset');
                     custom_noty('success', response.message);
                     // $location.path('/inward-vehicle/card-list');
-                    location.href = '#!/inward-vehicle/table-list';
+                    location.href = '#!/inward-vehicle/card-list';
                 },
                 error: function(textStatus, errorThrown) {
                     $(".send_to_customer_approval").button('reset');
@@ -2538,7 +2538,7 @@ app.component('inwardVehicleVehicleDetail', {
         //     return false;
         // }
         if (!self.hasPermission('inward-job-card-tab-vehicle-details-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
         self.angular_routes = angular_routes;
 
@@ -2721,7 +2721,7 @@ app.component('inwardVehicleVehicleDetail', {
                             }
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                             } else {
                                 $location.path('/inward-vehicle/customer-detail/' + $scope.job_order.id);
                             }
@@ -2779,7 +2779,7 @@ app.component('inwardVehicleCustomerDetail', {
         //     return false;
         // }
         if (!self.hasPermission('inward-job-card-tab-customer-details-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
 
         self.angular_routes = angular_routes;
@@ -2954,7 +2954,7 @@ app.component('inwardVehicleCustomerDetail', {
                             }
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
@@ -3100,7 +3100,7 @@ app.component('inwardVehicleOrderDetailForm', {
         //     return false;
         // }
         if (!self.hasPermission('inward-job-card-tab-order-details-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
 
         self.angular_routes = angular_routes;
@@ -3246,7 +3246,7 @@ app.component('inwardVehicleOrderDetailForm', {
                             }
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
@@ -3311,7 +3311,7 @@ app.component('inwardVehicleInventoryDetailForm', {
         // }
 
         if (!self.hasPermission('inward-job-card-tab-inventory-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
 
         self.angular_routes = angular_routes;
@@ -3421,7 +3421,7 @@ app.component('inwardVehicleInventoryDetailForm', {
                             }
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
@@ -3485,7 +3485,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
         //     return false;
         // }
         if (!self.hasPermission('inward-job-card-tab-other-labour-parts-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
 
         self.angular_routes = angular_routes;
@@ -3523,7 +3523,6 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $scope.total_amount = res.total_amount;
                     $scope.parts_total_amount = res.parts_total_amount;
                     $scope.labour_total_amount = res.labour_total_amount;
-                    $scope.total_labour_count = res.total_labour_count;
                     $scope.extras = res.extras;
                     $scope.$apply();
                 })
@@ -3559,7 +3558,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
             //                 }
             //                 custom_noty('success', res.message);
             if (id == 1) {
-                $location.path('/inward-vehicle/table-list');
+                $location.path('/inward-vehicle/card-list');
                 // $scope.$apply();
             } else {
                 $location.path('/inward-vehicle/estimate/' + $scope.job_order_id);
@@ -3958,7 +3957,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         $("#confirmation_modal").modal('hide');
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
-                        window.location = "#!/inward-vehicle/table-list";
+                        window.location = "#!/inward-vehicle/card-list";
                         // $scope.fetchData();
                     })
                     .fail(function(xhr) {
@@ -4382,7 +4381,7 @@ app.component('inwardVehicleVocDetailForm', {
         // }
 
         if (!self.hasPermission('inward-job-card-tab-capture-voc-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
 
         self.angular_routes = angular_routes;
@@ -4480,7 +4479,7 @@ app.component('inwardVehicleVocDetailForm', {
                             }
                             if (id == 1) {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
@@ -4555,7 +4554,7 @@ app.component('inwardVehicleRoadTestDetailForm', {
         // }
 
         if (!self.hasPermission('inward-job-card-tab-road-test-edit')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
 
         self.angular_routes = angular_routes;
@@ -4662,7 +4661,7 @@ app.component('inwardVehicleRoadTestDetailForm', {
 
                             custom_noty('success', res.message);
                             if (id == 1) {
-                                $location.path('/inward-vehicle/table-list');
+                                $location.path('/inward-vehicle/card-list');
                                 $scope.$apply();
                             } else {
                                 $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order_id);
@@ -4716,7 +4715,7 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
         //     return false;
         // }
         if (!self.hasPermission('inward-job-card-tab-estimation-status')) {
-            window.location = "#!/inward-vehicle/table-list";
+            window.location = "#!/inward-vehicle/card-list";
         }
 
         self.angular_routes = angular_routes;
@@ -4829,7 +4828,7 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
         }
 
         $scope.redirectPage = function() {
-            window.location = base_url + '#!/inward-vehicle/table-list';
+            window.location = base_url + '#!/inward-vehicle/card-list';
         }
         $scope.button_action = function(id, type) {
             if (type == 1) {
