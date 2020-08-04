@@ -4395,7 +4395,7 @@ class VehicleInwardController extends Controller {
 			if (!$otp_validate) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Order Approve Behalf of Customer OTP is worng. Please try again.',
+					'error' => 'Job Order Approve Behalf of Customer OTP is wrong. Please try again.',
 				]);
 			}
 
