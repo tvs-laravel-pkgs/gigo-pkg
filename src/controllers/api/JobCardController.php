@@ -28,6 +28,7 @@ use App\GigoInvoice;
 use App\Http\Controllers\Controller;
 use App\JobOrderEstimate;
 use App\JobOrderPart;
+use App\JobOrderReturnedPart;
 use App\Outlet;
 use App\SplitOrderType;
 use App\VehicleInspectionItem;
@@ -3777,6 +3778,7 @@ class JobCardController extends Controller {
 
 			$unassigned_labour_count = 0;
 			$unassigned_part_count = 0;
+			$unassigned_labour_amount = 0;
 
 			$labour_details = array();
 			if ($job_card->jobOrder->jobOrderRepairOrders) {
@@ -3818,71 +3820,87 @@ class JobCardController extends Controller {
 
 					if ($labour->split_order_type_id == null) {
 						$unassigned_labour_count++;
+						$unassigned_labour_amount += $total_amount;
 					}
 				}
 			}
 
+			$unassigned_part_amount = 0;
 			$part_details = array();
 			if ($job_card->jobOrder->jobOrderParts) {
 				foreach ($job_card->jobOrder->jobOrderParts as $key => $parts) {
-					$total_amount = 0;
-					$part_details[$key]['id'] = $parts->id;
-					$part_details[$key]['part_id'] = $parts->part->id;
-					$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
-					$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
-					$part_details[$key]['qty'] = $parts->qty;
-					$part_details[$key]['rate'] = $parts->rate;
-					$part_details[$key]['amount'] = $parts->amount;
-					$part_details[$key]['is_free_service'] = $parts->is_free_service;
-					$part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
-					$tax_amount = 0;
-					$tax_values = array();
-					if ($parts->part->taxCode) {
-						foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
-							$percentage_value = 0;
-							if ($value->type_id == $tax_type) {
-								$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
-								$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+					//Check Parts Issued or Not
+					$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $parts->id)->sum('issued_qty');
+
+					//Check Parts Retunred or Not
+					$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $parts->id)->sum('returned_qty');
+
+					$total_qty = $issued_qty - $returned_qty;
+
+					if ($total_qty > 0) {
+						$total_amount = 0;
+						$billing_parts_amount = 0;
+						$billing_parts_amount = $total_qty * $parts->rate;
+						$part_details[$key]['id'] = $parts->id;
+						$part_details[$key]['part_id'] = $parts->part->id;
+						$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
+						$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
+						// $part_details[$key]['qty'] = $parts->qty;
+						$part_details[$key]['qty'] = $total_qty;
+						$part_details[$key]['rate'] = $parts->rate;
+						$part_details[$key]['amount'] = number_format((float) $billing_parts_amount, 2, '.', '');
+						$part_details[$key]['is_free_service'] = $parts->is_free_service;
+						$part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
+						$tax_amount = 0;
+						$tax_values = array();
+						if ($parts->part->taxCode) {
+							foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									$percentage_value = ($billing_parts_amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_values[$tax_key]['tax_value'] = $percentage_value;
+								$tax_amount += $percentage_value;
 							}
-							$tax_values[$tax_key]['tax_value'] = $percentage_value;
-							$tax_amount += $percentage_value;
+						} else {
+							for ($i = 0; $i < count($taxes); $i++) {
+								$tax_values[$i]['tax_value'] = 0.00;
+							}
 						}
-					} else {
-						for ($i = 0; $i < count($taxes); $i++) {
-							$tax_values[$i]['tax_value'] = 0.00;
+
+						$part_details[$key]['tax_values'] = $tax_values;
+
+						$total_amount = $tax_amount + $billing_parts_amount;
+						$total_amount = number_format((float) $total_amount, 2, '.', '');
+
+						$part_details[$key]['total_amount'] = $total_amount;
+						$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
+
+						if ($parts->split_order_type_id == null) {
+							$unassigned_part_count++;
+							$unassigned_part_amount += $total_amount;
 						}
-					}
-
-					$part_details[$key]['tax_values'] = $tax_values;
-
-					$total_amount = $tax_amount + $parts->amount;
-					$total_amount = number_format((float) $total_amount, 2, '.', '');
-
-					$part_details[$key]['total_amount'] = $total_amount;
-					$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
-
-					if ($parts->split_order_type_id == null) {
-						$unassigned_part_count++;
 					}
 				}
 			}
 
+			// dd($part_details);
 			$total_amount = $parts_amount + $labour_amount;
 
-			$unassigned_part_amount = 0;
-			foreach ($part_details as $key => $part) {
-				if (!$part['split_order_type_id']) {
-					// $unassigned_part_count += 1;
-					$unassigned_part_amount += $part['total_amount'];
-				}
-			}
-			$unassigned_labour_amount = 0;
-			foreach ($labour_details as $key => $labour) {
-				if (!$labour['split_order_type_id']) {
-					// $unassigned_labour_count += 1;
-					$unassigned_labour_amount += $labour['total_amount'];
-				}
-			}
+			// foreach ($part_details as $key => $part) {
+			// 	if (!$part['split_order_type_id']) {
+			// 		// $unassigned_part_count += 1;
+			// 		$unassigned_part_amount += $part['total_amount'];
+			// 	}
+			// }
+			// $unassigned_labour_amount = 0;
+			// foreach ($labour_details as $key => $labour) {
+			// 	if (!$labour['split_order_type_id']) {
+			// 		// $unassigned_labour_count += 1;
+			// 		$unassigned_labour_amount += $labour['total_amount'];
+			// 	}
+			// }
 			$unassigned_total_count = $unassigned_labour_count + $unassigned_part_count;
 			$unassigned_total_amount = $unassigned_labour_amount + $unassigned_part_amount;
 
@@ -4128,29 +4146,95 @@ class JobCardController extends Controller {
 			if ($job_card->jobOrder->jobOrderParts) {
 				$parts_total_amount = 0;
 				foreach ($job_card->jobOrder->jobOrderParts as $key => $parts) {
-					if (in_array($parts->split_order_type_id, $customer_paid_type_id)) {
-						$part_sub_total = 0;
-						$total_amount = 0;
-						$part_details[$key]['id'] = $parts->id;
-						$part_details[$key]['part_id'] = $parts->part->id;
-						$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
-						$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
-						$part_details[$key]['qty'] = $parts->qty;
-						$part_details[$key]['rate'] = $parts->rate;
-						$part_details[$key]['amount'] = $parts->amount;
-						$part_details[$key]['is_free_service'] = $parts->is_free_service;
-						$part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
-						$tax_amount = 0;
-						$part_details[$key]['tax_code'] = $parts->part->taxCode;
+					//Check Parts Issued or Not
+					$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $parts->id)->sum('issued_qty');
 
-						$tax_values = array();
+					//Check Parts Retunred or Not
+					$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $parts->id)->sum('returned_qty');
 
-						if ($parts->is_free_service != 1) {
+					$total_qty = $issued_qty - $returned_qty;
+
+					if ($total_qty > 0) {
+						$billing_parts_amount = 0;
+						$billing_parts_amount = $total_qty * $parts->rate;
+						if (in_array($parts->split_order_type_id, $customer_paid_type_id)) {
+							$part_sub_total = 0;
+							$total_amount = 0;
+							$part_details[$key]['id'] = $parts->id;
+							$part_details[$key]['part_id'] = $parts->part->id;
+							$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
+							$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
+							// $part_details[$key]['qty'] = $parts->qty;
+							$part_details[$key]['qty'] = $total_qty;
+							$part_details[$key]['rate'] = $parts->rate;
+							// $part_details[$key]['amount'] = $parts->amount;
+							$part_details[$key]['amount'] = number_format((float) $billing_parts_amount, 2, '.', '');
+							$part_details[$key]['is_free_service'] = $parts->is_free_service;
+							$part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
+							$tax_amount = 0;
+							$part_details[$key]['tax_code'] = $parts->part->taxCode;
+
+							$tax_values = array();
+
+							if ($parts->is_free_service != 1) {
+								if ($parts->part->taxCode) {
+									foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+										$percentage_value = 0;
+										if ($value->type_id == $tax_type) {
+											$percentage_value = ($billing_parts_amount * $value->pivot->percentage) / 100;
+											$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+										}
+										$tax_values[$tax_key]['tax_value'] = $percentage_value;
+										$tax_amount += $percentage_value;
+									}
+								} else {
+									for ($i = 0; $i < count($taxes); $i++) {
+										$tax_values[$i]['tax_value'] = 0.00;
+									}
+								}
+								$total_amount = $tax_amount + $billing_parts_amount;
+								$total_amount = number_format((float) $total_amount, 2, '.', '');
+
+								$part_details[$key]['tax_values'] = $tax_values;
+
+								$part_details[$key]['total_amount'] = $total_amount;
+								$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
+							} else {
+								$part_details[$key]['amount'] = 0;
+
+								for ($i = 0; $i < count($taxes); $i++) {
+									$tax_values[$i]['tax_value'] = 0.00;
+								}
+								$total_amount = 0;
+								$part_details[$key]['total_amount'] = $total_amount;
+								$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
+							}
+							$parts_total_amount += $total_amount;
+
+							$part_details[$key]['tax_values'] = $tax_values;
+
+						} else {
+							$part_sub_total = 0;
+							$total_amount = 0;
+							$part_details[$key]['id'] = $parts->id;
+							$part_details[$key]['part_id'] = $parts->part->id;
+							$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
+							$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
+							// $part_details[$key]['qty'] = $parts->qty;
+							$part_details[$key]['qty'] = $total_qty;
+							$part_details[$key]['rate'] = $parts->rate;
+							// $part_details[$key]['amount'] = $parts->amount;
+							$part_details[$key]['amount'] = number_format((float) $billing_parts_amount, 2, '.', '');
+							$part_details[$key]['is_free_service'] = $parts->is_free_service;
+							$part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
+							$tax_amount = 0;
+							$part_details[$key]['tax_code'] = $parts->part->taxCode;
+							$tax_values = array();
 							if ($parts->part->taxCode) {
 								foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
 									$percentage_value = 0;
 									if ($value->type_id == $tax_type) {
-										$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+										$percentage_value = ($billing_parts_amount * $value->pivot->percentage) / 100;
 										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
 									}
 									$tax_values[$tax_key]['tax_value'] = $percentage_value;
@@ -4161,68 +4245,19 @@ class JobCardController extends Controller {
 									$tax_values[$i]['tax_value'] = 0.00;
 								}
 							}
-							$total_amount = $tax_amount + $parts->amount;
-							$total_amount = number_format((float) $total_amount, 2, '.', '');
 
 							$part_details[$key]['tax_values'] = $tax_values;
 
+							$total_amount = $tax_amount + $billing_parts_amount;
+							$total_amount = number_format((float) $total_amount, 2, '.', '');
+
 							$part_details[$key]['total_amount'] = $total_amount;
 							$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
-						} else {
-							$part_details[$key]['amount'] = 0;
 
-							for ($i = 0; $i < count($taxes); $i++) {
-								$tax_values[$i]['tax_value'] = 0.00;
-							}
-							$total_amount = 0;
-							$part_details[$key]['total_amount'] = $total_amount;
-							$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
+							$parts_total_amount += $total_amount;
 						}
-						$parts_total_amount += $total_amount;
-
-						$part_details[$key]['tax_values'] = $tax_values;
-
-					} else {
-						$part_sub_total = 0;
-						$total_amount = 0;
-						$part_details[$key]['id'] = $parts->id;
-						$part_details[$key]['part_id'] = $parts->part->id;
-						$part_details[$key]['name'] = $parts->part->code . ' | ' . $parts->part->name;
-						$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
-						$part_details[$key]['qty'] = $parts->qty;
-						$part_details[$key]['rate'] = $parts->rate;
-						$part_details[$key]['amount'] = $parts->amount;
-						$part_details[$key]['is_free_service'] = $parts->is_free_service;
-						$part_details[$key]['split_order_type_id'] = $parts->split_order_type_id;
-						$tax_amount = 0;
-						$part_details[$key]['tax_code'] = $parts->part->taxCode;
-						$tax_values = array();
-						if ($parts->part->taxCode) {
-							foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
-								$percentage_value = 0;
-								if ($value->type_id == $tax_type) {
-									$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
-									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
-								}
-								$tax_values[$tax_key]['tax_value'] = $percentage_value;
-								$tax_amount += $percentage_value;
-							}
-						} else {
-							for ($i = 0; $i < count($taxes); $i++) {
-								$tax_values[$i]['tax_value'] = 0.00;
-							}
-						}
-
-						$part_details[$key]['tax_values'] = $tax_values;
-
-						$total_amount = $tax_amount + $parts->amount;
-						$total_amount = number_format((float) $total_amount, 2, '.', '');
-
-						$part_details[$key]['total_amount'] = $total_amount;
-						$part_details[$key]['tax_amount'] = number_format((float) $tax_amount, 2, '.', '');
-
-						$parts_total_amount += $total_amount;
 					}
+
 				}
 				$job_card['parts_total_amount'] = $parts_total_amount;
 			}
