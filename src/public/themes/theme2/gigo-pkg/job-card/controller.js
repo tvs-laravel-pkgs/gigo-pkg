@@ -1524,6 +1524,23 @@ app.component('jobCardDmsChecklistForm', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_card = res.job_card;
+                    if ($scope.job_card.job_order.amc_status == 1 || $scope.job_card.job_order.amc_status == 0) {
+                        self.warrany_status = 1;
+                    } else {
+                        self.warrany_status = 0;
+                    }
+
+                    if ($scope.job_card.job_order.amc_status == 1) {
+                        self.amc_status = 1;
+                    } else {
+                        self.amc_status = 0;
+                    }
+
+                    if ($scope.job_card.job_order.ewp_expiry_date) {
+                        self.exwarrany_status = 1;
+                    } else {
+                        self.exwarrany_status = 0;
+                    }
                     $scope.$apply();
                 })
                 .fail(function(xhr) {

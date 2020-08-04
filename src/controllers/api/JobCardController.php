@@ -2262,6 +2262,7 @@ class JobCardController extends Controller {
 	public function getScheduleMaintenance(Request $request) {
 		$job_card = JobCard::with(['jobOrder',
 			'jobOrder.type',
+			'jobOrder.serviceType',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'status'])->find($request->id);

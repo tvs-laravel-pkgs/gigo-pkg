@@ -28,35 +28,38 @@
                 <div class="tab-form-body side-tab-open">
                     <div class="tab-content">
                         <!-- TAB PANEL -->
-                           <div class="tab-pane fade in active" id="voc_details" data-animation="fadeInUp" data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>Voice of Customer</b></h5>
-                                            <hr class="hr-15"><!-- Separater -->
-                                            <ul class="checklist-form-ul" ng-repeat="(key, customer_voice) in job_card.job_order.customer_voices">
-                                                <li>
-                                                    <div class="checklist-form-item-wrap">
-                                                        <div class="checklist-form-content">
-                                                            <div class="checklist-form-content-title">
-                                                                {{customer_voice.name}}
-                                                            </div>
+                        <div class="tab-pane fade in active" id="voc_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="color-primary mb-10"><b>Voice of Customer</b></h5>
+                                        <hr class="hr-15"><!-- Separater -->
+                                        <ul class="checklist-form-ul" ng-repeat="(key, customer_voice) in job_card.job_order.customer_voices">
+                                            <li>
+                                                <div class="checklist-form-item-wrap">
+                                                    <div class="checklist-form-content">
+                                                        <div class="checklist-form-content-title">
+                                                            {{customer_voice.name}}
+                                                        </div>
+                                                        <div class="checklist-form-content-subtitle" ng-if="customer_voice.pivot.details">
+                                                            {{customer_voice.pivot.details}}
                                                         </div>
                                                     </div>
-                                                </li>
-                                            </ul>
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <a href=".#!/job-card/road-test-observation/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <a href=".#!/job-card/inventory/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
                                                 </div>
+                                            </li>
+                                        </ul>
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a href=".#!/job-card/road-test-observation/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a href=".#!/job-card/inventory/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
                                             </div>
-                                        </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
                     </div><!-- Tab Content -->
                 </div><!-- Tab Form Body -->
             </div><!-- Tab Form Wrap -->

@@ -13,8 +13,8 @@
                     </a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>DMS Check list</b></h1>
-                    <p class="subtitle">Job Card / DMS Check list</p>
+                    <h1 class="title"><b>Service Package Details</b></h1>
+                    <p class="subtitle">Job Card / Service Package Details</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -32,10 +32,70 @@
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <h5 class="color-primary mb-10"><b>DMS Check list</b></h5>
+                                        <h5 class="color-primary mb-10"><b>Service Package Details</b></h5>
                                         <hr class="hr-15"><!-- Separater -->
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4" ng-if="$ctrl.warrany_status == 1">
+                                                <div class="gatein-img-list">
+                                                    <div class="attach-form-wrap">
+                                                        <p class="color-secondary-dark">
+                                                            <b>
+                                                                AMC
+                                                            </b>
+                                                        </p>
+                                                        <div class="mb-20"></div><!-- Spacing -->
+                                                        <p class="font-md mb-no">
+                                                            Available
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4" ng-if="$ctrl.warrany_status == 0">
+                                                <div class="gatein-img-list">
+                                                    <div class="attach-form-wrap">
+                                                        <p class="color-secondary-dark">
+                                                            <b>
+                                                                AMC
+                                                            </b>
+                                                        </p>
+                                                        <div class="mb-20"></div><!-- Spacing -->
+                                                        <p class="font-md mb-no">
+                                                            Not Available
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4" ng-if="$ctrl.amc_status == 0 && $ctrl.warrany_status == 1">
+                                                <div class="gatein-img-list">
+                                                    <div class="attach-form-wrap">
+                                                        <p class="color-secondary-dark">
+                                                            <b>
+                                                                AMC Status
+                                                            </b>
+                                                        </p>
+                                                        <div class="mb-20"></div><!-- Spacing -->
+                                                        <p class="font-md mb-no">
+                                                            Inactive
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4" ng-if="$ctrl.amc_status == 1 && $ctrl.warrany_status == 1">
+                                                <div class="gatein-img-list">
+                                                    <div class="attach-form-wrap">
+                                                        <p class="color-secondary-dark">
+                                                            <b>
+                                                                AMC Starting & Ending KM
+                                                            </b>
+                                                        </p>
+                                                        <div class="mb-20"></div><!-- Spacing -->
+                                                        <p class="font-md mb-no">
+                                                            {{job_card.job_order.starting_km}} to {{job_card.job_order.ending_km}}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4" ng-if="$ctrl.amc_status == 1">
                                                 <div class="gatein-img-list">
                                                     <div class="gatein-img-list-item attach-photo-view">
                                                         <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.warrenty_policy_attachment.name}}" alt="Warranty">
@@ -43,20 +103,16 @@
                                                     <div class="attach-form-wrap">
                                                         <p class="color-secondary-dark">
                                                             <b>
-                                                                Warranty
+                                                                AMC Starting & Ending Date
                                                             </b>
                                                         </p>
-                                                        <div class="mb-20"></div><!-- Spacing -->
-                                                        <p class="font-md mb-no">
-                                                            Eligible Upto
-                                                        </p>
-                                                        <p class="font-sm">
-                                                            {{job_card.job_order.warranty_expiry_date}}
+                                                        <p class="font-md">
+                                                            {{job_card.job_order.amc_starting_date}} to {{job_card.job_order.amc_ending_date}}
                                                         </p>
                                                     </div>
                                                 </div>
-                                            </div><!-- Column -->
-                                            <div class="col-md-4">
+                                            </div>
+                                            <div class="col-md-4" ng-if="$ctrl.exwarrany_status == 1">
                                                 <div class="gatein-img-list">
                                                     <div class="gatein-img-list-item attach-photo-view">
                                                         <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.e_w_p_attachment.name}}" alt="EWP">
@@ -77,11 +133,23 @@
                                                     </div>
                                                 </div>
                                             </div><!-- Column -->
+                                            <div class="col-md-4" ng-if="$ctrl.exwarrany_status == 0">
+                                                <div class="gatein-img-list">
+                                                    <div class="attach-form-wrap">
+                                                        <p class="color-secondary-dark">
+                                                            <b>
+                                                                Extended Warranty (EWP)
+                                                            </b>
+                                                        </p>
+                                                        <div class="mb-20"></div><!-- Spacing -->
+                                                        <p class="font-md mb-no">
+                                                            Not Available
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4">
                                                 <div class="gatein-img-list">
-                                                    <div class="gatein-img-list-item attach-photo-view">
-                                                        <img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_card.job_order.a_m_c_attachment.name}}" alt="Memberships">
-                                                    </div>
                                                     <div class="attach-form-wrap">
                                                         <p class="color-secondary-dark">
                                                             <b>
@@ -89,11 +157,18 @@
                                                             </b>
                                                         </p>
                                                         <p class="font-md">
-                                                            <!-- TVSCARE-GOLD Eligible Upto 20/03/2022 -->
+                                                            TVSCARE-GOLD Eligible Upto 20/03/2022
                                                         </p>
                                                         <p class="font-md">
-                                                            <!-- TVSONE-GOLD Eligible Upto 20/03/2022 -->
+                                                            TVSONE-GOLD Eligible Upto 20/03/2022
                                                         </p>
+                                                    </div>
+                                                </div>
+                                            </div><!-- Column -->
+                                            <div class="col-md-4" ng-if="job_card.job_order.a_m_c_attachment.length > 0">
+                                                <div class="gatein-img-list">
+                                                    <div class="gatein-img-list-item attach-photo-view" ng-repeat="(key,a_m_c_attachment) in job_card.job_order.a_m_c_attachment">
+                                                        <img title="{{a_m_c_attachment.name}}" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{a_m_c_attachment.name}}" alt="Memberships">
                                                     </div>
                                                 </div>
                                             </div><!-- Column -->
@@ -204,7 +279,7 @@
                                                                     {{job_card.job_order.is_campaign_carried == 1 ? "Yes" : "No"}}
                                                                 </b></span>
                                                         </li>
-                                                        <li class="view-col-8" ng-show="!job_order.is_campaign_carried">
+                                                        <li class="view-col-8" ng-show="!job_card.job_order.is_campaign_carried">
                                                             <span class="view-col-label">
                                                                 Remarks
                                                             </span>
