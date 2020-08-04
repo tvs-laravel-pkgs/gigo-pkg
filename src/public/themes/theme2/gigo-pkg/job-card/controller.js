@@ -1432,7 +1432,7 @@ app.component('jobCardPdf', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/job-card/bay-view/get',
+                    url: base_url + '/api/job-card/pdf/get',
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id
@@ -1448,6 +1448,11 @@ app.component('jobCardPdf', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_card = res.job_card;
+                    angular.forEach($scope.job_card.gate_passes, function(value, key) {
+                        console.log(value.gate_pass_detail.vendor.name);
+                        $(".inward").append('<a target="_blank" href="' + base_url + '/gigo-pkg/pdf/work-order-inward/' + $routeParams.job_card_id + '/' + value.id + '" class="btn btn-secondary-dark btn-square btn-block">' + value.gate_pass_detail.vendor.name + ' - PDF </a>');
+                        $(".outward").append('<a target="_blank" href="' + base_url + '/gigo-pkg/pdf/work-order-outward/' + $routeParams.job_card_id + '/' + value.id + '" class="btn btn-secondary-dark btn-square btn-block">' + value.gate_pass_detail.vendor.name + ' - PDF </a>');
+                    });
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1463,14 +1468,16 @@ app.component('jobCardPdf', {
         $scope.revised_estimate_url = base_url + '/gigo-pkg/pdf/revised-estimate/' + $routeParams.job_card_id;
         $scope.job_card_pdf_url = base_url + '/gigo-pkg/pdf/job-card/' + $routeParams.job_card_id;
         $scope.job_card_spare_requisition_pdf_url = base_url + '/gigo-pkg/pdf/job-card-spare-requisition/' + $routeParams.job_card_id;
-        $scope.work_order_outward_pdf_url = base_url + '/gigo-pkg/pdf/work-order-outward/' + $routeParams.job_card_id;
-        $scope.work_order_inward_pdf_url = base_url + '/gigo-pkg/pdf/work-order-inward/' + $routeParams.job_card_id;
+        // $scope.work_order_outward_pdf_url = base_url + '/gigo-pkg/pdf/work-order-outward/' + $routeParams.job_card_id;
+        // $scope.work_order_inward_pdf_url = base_url + '/gigo-pkg/pdf/work-order-inward/' + $routeParams.job_card_id;
         $scope.warrenty_pick_list_pdf_url = base_url + '/gigo-pkg/pdf/warrenty-pick-list/' + $routeParams.job_card_id;
         $scope.vehicle_inward_pdf_url = base_url + '/gigo-pkg/pdf/vehicle-inward/' + $routeParams.job_card_id;
         $scope.vehicle_inspection_pdf_url = base_url + '/gigo-pkg/pdf/vehicle-inspection/' + $routeParams.job_card_id;
         $scope.tax_invoice_pdf_url = base_url + '/gigo-pkg/pdf/tax-invoice/' + $routeParams.job_card_id;
         $scope.service_proforma_pdf_url = base_url + '/gigo-pkg/pdf/service-proforma/' + $routeParams.job_card_id;
         $scope.service_proforma_cumulative_pdf_url = base_url + '/gigo-pkg/pdf/service-proforma-cumulative/' + $routeParams.job_card_id;
+        $scope.labour_pdf_url = base_url + '/gigo-pkg/pdf/job-card/labour/bill-detail/' + $routeParams.job_card_id;
+        $scope.parts_pdf_url = base_url + '/gigo-pkg/pdf/job-card/part/bill-detail/' + $routeParams.job_card_id;
 
         HelperService.isLoggedIn();
         self.user = $scope.user = HelperService.getLoggedUser();

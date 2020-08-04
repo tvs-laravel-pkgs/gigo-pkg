@@ -5,10 +5,10 @@ Content Wrap -->
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/part-indent/list" type="button" class="btn-back btn-img" ng-if="$ctrl.view_only_part_indent">
+                    <a target="_blank" href="#!/part-indent/list" type="button" class="btn-back btn-img" ng-if="$ctrl.view_only_part_indent">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
                     </a>
-                    <a href="#!/job-card/card-list" type="button" class="btn-back btn-img" ng-if="!$ctrl.view_only_part_indent">
+                    <a target="_blank" href="#!/job-card/card-list" type="button" class="btn-back btn-img" ng-if="!$ctrl.view_only_part_indent">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" />
                     </a>
                 </div><!-- Page Header Content -->
@@ -40,7 +40,7 @@ Content Wrap -->
                                                             Covering Letter
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a class="btn btn-secondary-dark btn-square btn-block" href="{{covering_letter_url}}">PDF</a>
+                                                            <a target="_blank" class="btn btn-secondary-dark btn-square btn-block" href="{{covering_letter_url}}">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -50,7 +50,7 @@ Content Wrap -->
                                                             Gatepass
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{gatepass_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{gatepass_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -60,7 +60,7 @@ Content Wrap -->
                                                             Estimate
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -70,7 +70,7 @@ Content Wrap -->
                                                             Insurance Estimate
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{insurance_estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{insurance_estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -81,7 +81,7 @@ Content Wrap -->
                                                             Revised Estimate
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{revised_estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{revised_estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -91,7 +91,7 @@ Content Wrap -->
                                                             Job Card
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{job_card_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{job_card_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -101,7 +101,7 @@ Content Wrap -->
                                                             Job Card Spares Requisition
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{job_card_spare_requisition_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{job_card_spare_requisition_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -111,8 +111,8 @@ Content Wrap -->
                                                         <div class="checklist-item-value">
                                                             Work Order Outward
                                                         </div>
-                                                        <div class="checklist-item-value-sm">
-                                                            <a href="{{work_order_outward_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        <div class="checklist-item-value-sm outward">
+                                                            <!-- <a target="_blank" href="{{work_order_outward_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a> -->
                                                         </div>
                                                     </div>
                                                 </li>
@@ -121,8 +121,8 @@ Content Wrap -->
                                                         <div class="checklist-item-value">
                                                             Work Order Inward
                                                         </div>
-                                                        <div class="checklist-item-value-sm">
-                                                            <a href="{{work_order_inward_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        <div class="checklist-item-value-sm inward">
+                                                            <!-- <a target="_blank" href="{{work_order_inward_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a> -->
                                                         </div>
                                                     </div>
                                                 </li>
@@ -133,7 +133,7 @@ Content Wrap -->
                                                             Warrenty Pick List PDF
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{warrenty_pick_list_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{warrenty_pick_list_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -143,7 +143,7 @@ Content Wrap -->
                                                             Vehicle Inward
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{vehicle_inward_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{vehicle_inward_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -153,7 +153,7 @@ Content Wrap -->
                                                             Vehicle Inspection
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{vehicle_inspection_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{vehicle_inspection_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li> -->
@@ -164,7 +164,7 @@ Content Wrap -->
                                                             Tax Invoice
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{tax_invoice_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{tax_invoice_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -175,7 +175,7 @@ Content Wrap -->
                                                             Service Proforma
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{service_proforma_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{service_proforma_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -186,7 +186,27 @@ Content Wrap -->
                                                             Service Proforma Cumulative
                                                         </div>
                                                         <div class="checklist-item-value-sm">
-                                                            <a href="{{service_proforma_cumulative_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <a target="_blank" href="{{service_proforma_cumulative_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="checklist-item-wrap pad-big">
+                                                        <div class="checklist-item-value">
+                                                            Labour
+                                                        </div>
+                                                        <div class="checklist-item-value-sm">
+                                                            <a target="_blank" href="{{labour_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="checklist-item-wrap pad-big">
+                                                        <div class="checklist-item-value">
+                                                            Parts
+                                                        </div>
+                                                        <div class="checklist-item-value-sm">
+                                                            <a target="_blank" href="{{parts_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -198,7 +218,7 @@ Content Wrap -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <a href=".#!/job-card/gatein-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a target="_blank" href=".#!/job-card/gatein-detail/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
                                             </div>
                                         </div>
                                     </div><!-- Tab Footer -->

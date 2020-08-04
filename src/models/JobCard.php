@@ -89,6 +89,10 @@ class JobCard extends BaseModel {
 		return $this->hasMany('Abs\GigoPkg\JobCardReturnableItem');
 	}
 
+	public function gigoInvoices() {
+		return $this->hasMany('Abs\GigoPkg\GigoInvoice', 'entity_id', 'id');
+	}
+
 	public function attachment() {
 		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 228)->where('attachment_type_id', 255);
 	}

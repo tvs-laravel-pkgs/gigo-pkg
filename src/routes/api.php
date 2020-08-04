@@ -399,5 +399,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-gate-pass/view', 'VehicleGatePassController@viewVehicleGatePass');
 		Route::post('gate-out-vehicle/save', 'VehicleGatePassController@saveVehicleGateOutEntry');
 
+		//PDF
+		Route::post('job-card/pdf/get', 'JobCardController@getPdf');
+
 	});
 });

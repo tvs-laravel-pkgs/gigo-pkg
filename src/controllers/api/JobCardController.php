@@ -491,6 +491,40 @@ class JobCardController extends Controller {
 		}
 	}
 
+	//BAY VIEW
+	public function getPdf(Request $r) {
+		// dd($r->all());
+		try {
+			$job_card = JobCard::with([
+				'gatePasses',
+				'gatePasses.gatePassDetail',
+				'gatePasses.gatePassDetail.vendor',
+				'gatePasses.gatePassDetail.vendorType',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+				'status',
+			])->find($r->id);
+
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Card Not Found!'],
+				]);
+			}
+			return response()->json([
+				'success' => true,
+				'job_card' => $job_card,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
 	public function getOrderViewData(Request $r) {
 		//dd($r->all());
 		try {

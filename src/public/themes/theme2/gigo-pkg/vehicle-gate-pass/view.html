@@ -148,30 +148,59 @@
                                             </ul><!-- Flex Row -->
                                         </div><!-- Column -->
                                     </div><!-- Row -->
-                                    <div class="row" ng-if="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label>Remarks</label>
-                                                <textarea class="form-control" ng-model="$ctrl.vehicle_gate_pass.gate_out_remarks" rows="4" placeholder="Enter Remarks" name="remarks"></textarea>
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                    </div><!-- Row -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="checklist-form-wrap">
+                                                <ul class="checklist-form-ul">
+                                                    <li>
+                                                        <div class="checklist-item-wrap pad-big">
+                                                            <div class="checklist-item-value">
+                                                                Covering Letter
+                                                            </div>
+                                                            <div class="checklist-item-value-sm">
+                                                                <a target="_blank" class="btn btn-secondary-dark btn-square btn-block" href="{{covering_letter_url}}">PDF</a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="checklist-item-wrap pad-big">
+                                                            <div class="checklist-item-value">
+                                                                Gatepass
+                                                            </div>
+                                                            <div class="checklist-item-value-sm">
+                                                                <a target="_blank" href="{{gatepass_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-if="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>Remarks</label>
+                                        <textarea class="form-control" ng-model="$ctrl.vehicle_gate_pass.gate_out_remarks" rows="4" placeholder="Enter Remarks" name="remarks"></textarea>
+                                    </div><!-- Feild -->
                                 </div><!-- Column -->
                             </div><!-- Row -->
-                        </div><!-- Page Form -->
-                    </div><!-- Column -->
-                </div><!-- Row -->
-                <div class="page-form-footer">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <a href="#!/vehicle-gate-pass/table-list" class="btn btn-bordered btn-grey my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">Cancel</a>
-                            <button type="submit" class="btn btn-secondary-dark submit" ng-show="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340">Confirm Gate Out</button>
-                        </div>
-                    </div>
-                </div><!-- Page Form Footer -->
-            </form>
-        </div><!-- Container -->
-    </div><!-- Page Main Content -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Page Form -->
+        </div><!-- Column -->
+    </div><!-- Row -->
+    <div class="page-form-footer">
+        <div class="row">
+            <div class="col-md-12">
+                <a href="#!/vehicle-gate-pass/table-list" class="btn btn-bordered btn-grey my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">Cancel</a>
+                <button type="submit" class="btn btn-secondary-dark submit" ng-show="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8340">Confirm Gate Out</button>
+            </div>
+        </div>
+    </div><!-- Page Form Footer -->
+    </form>
+</div><!-- Container -->
+</div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Submit Alert Modal -->
 <div class="modal modal-success alert-modal fade" id="confirm_notification" data-keyboard="false" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

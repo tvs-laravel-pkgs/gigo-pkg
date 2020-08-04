@@ -1,6 +1,6 @@
 app.component('vehicleGatePassCardList', {
     templateUrl: vehicle_gate_pass_card_list_template_url,
-    controller: function($http, $location, HelperService, $scope, $rootScope, $route, $element,$mdSelect) {
+    controller: function($http, $location, HelperService, $scope, $rootScope, $route, $element, $mdSelect) {
         $rootScope.loading = true;
         $('#search_vehicle_gate_pass').focus();
         var self = this;
@@ -52,12 +52,12 @@ app.component('vehicleGatePassCardList', {
                     },
                 })
                 .done(function(res) {
-                        if (!res.success) {
-                            showErrorNoty(res);
-                            return;
-                        }
-                        $scope.vehicle_gate_passes = res.vehicle_gate_passes;
-                        $scope.$apply();
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.vehicle_gate_passes = res.vehicle_gate_passes;
+                    $scope.$apply();
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -185,14 +185,14 @@ app.component('vehicleGatePassCardList', {
             }, 1000);
             $('#vehicle-gate-pass-filter-modal').modal('hide');
         }
-    
+
         //GATE OUT VEHICLE
         $scope.vehicleGateOut = function(id) {
             $.ajax({
                 url: base_url + '/api/gate-out-vehicle/save',
                 type: "POST",
-                data: { 
-                    'gate_log_id': id 
+                data: {
+                    'gate_log_id': id
                 },
                 dataType: "json",
                 beforeSend: function(xhr) {
@@ -227,14 +227,14 @@ app.component('vehicleGatePassCardList', {
 
 app.component('vehicleGatePassTableList', {
     templateUrl: vehicle_gate_pass_table_list_template_url,
-    controller: function($http, $location, HelperService, $scope, $rootScope, $route, $element,$mdSelect) {
+    controller: function($http, $location, HelperService, $scope, $rootScope, $route, $element, $mdSelect) {
         $rootScope.loading = true;
         var self = this;
         HelperService.isLoggedIn()
         $('#search_vehicle_gate_pass').focus();
         $('li').removeClass('active');
         $('.vehicle_gate_passes').addClass('active').trigger('click');
-        
+
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('vehicle-gate-passes')) {
             window.location = "#!/page-permission-denied";
@@ -412,8 +412,8 @@ app.component('vehicleGatePassTableList', {
             $.ajax({
                 url: base_url + '/api/gate-out-vehicle/save',
                 type: "POST",
-                data: { 
-                    'gate_log_id': id 
+                data: {
+                    'gate_log_id': id
                 },
                 dataType: "json",
                 beforeSend: function(xhr) {
@@ -471,12 +471,14 @@ app.component('vehicleGatePassView', {
                     },
                 })
                 .done(function(res) {
-                        if (!res.success) {
-                            showErrorNoty(res);
-                            return;
-                        }
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
                     self.vehicle_gate_pass = res.view_vehicle_gate_pass;
-                        $scope.$apply();
+                    $scope.gatepass_url = base_url + '/gigo-pkg/pdf/gatepass/' + self.vehicle_gate_pass.job_order.job_card.id;
+                    $scope.covering_letter_url = base_url + '/gigo-pkg/pdf/covering-letter/' + self.vehicle_gate_pass.job_order.job_card.id;
+                    $scope.$apply();
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -529,6 +531,6 @@ app.component('vehicleGatePassView', {
             $('.modal-backdrop').remove();
             $route.reload();
         }
-        
+
     }
 });
