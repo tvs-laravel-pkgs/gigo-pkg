@@ -2,6 +2,7 @@
 
 namespace Abs\GigoPkg\Api;
 
+use Abs\GigoPkg\JobOrderEstimate;
 use Abs\GigoPkg\RepairOrder;
 use Abs\GigoPkg\ServiceOrderType;
 use Abs\GigoPkg\ShortUrl;
@@ -1836,6 +1837,54 @@ class VehicleInwardController extends Controller {
 				JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_recommended_by_oem', 1)->forceDelete();
 				if ($job_order->vehicle && $job_order->vehicle->model && $job_order->vehicle->model->vehicleSegment && $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule && $job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types) {
 
+					$estimate_id = JobOrderEstimate::where('job_order_id', $job_order->id)->where('status_id', 10071)->first();
+					if ($estimate_id) {
+						$estimate_order_id = $estimate_id->id;
+					} else {
+						if (date('m') > 3) {
+							$year = date('Y') + 1;
+						} else {
+							$year = date('Y');
+						}
+						//GET FINANCIAL YEAR ID
+						$financial_year = FinancialYear::where('from', $year)
+							->where('company_id', Auth::user()->company_id)
+							->first();
+						if (!$financial_year) {
+							return response()->json([
+								'success' => false,
+								'error' => 'Validation Error',
+								'errors' => [
+									'Fiancial Year Not Found',
+								],
+							]);
+						}
+						//GET BRANCH/OUTLET
+						$branch = Outlet::where('id', $job_order->outlet_id)->first();
+
+						//GENERATE GATE IN VEHICLE NUMBER
+						$generateNumber = SerialNumberGroup::generateNumber(104, $financial_year->id, $branch->state_id, $branch->id);
+						if (!$generateNumber['success']) {
+							return response()->json([
+								'success' => false,
+								'error' => 'Validation Error',
+								'errors' => [
+									'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+								],
+							]);
+						}
+
+						$estimate = new JobOrderEstimate;
+						$estimate->job_order_id = $job_order->id;
+						$estimate->number = $generateNumber['number'];
+						$estimate->status_id = 10071;
+						$estimate->created_by_id = Auth::user()->id;
+						$estimate->created_at = Carbon::now();
+						$estimate->save();
+
+						$estimate_order_id = $estimate->id;
+					}
+
 					foreach ($job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types as $key => $value) {
 
 						//Save Repair Orders
@@ -1851,7 +1900,7 @@ class VehicleInwardController extends Controller {
 								$repair_order->amount = $rvalue->amount;
 								$repair_order->is_free_service = $value->is_free;
 								$repair_order->status_id = 8180; //Customer Approval Pending
-								$repair_order->estimate_order_id = 0;
+								$repair_order->estimate_order_id = $estimate_order_id;
 								$repair_order->created_by_id = Auth::user()->id;
 								$repair_order->save();
 							}
@@ -1871,7 +1920,7 @@ class VehicleInwardController extends Controller {
 								$part_order->is_oem_recommended = 1;
 								$part_order->is_fixed_schedule = 1;
 								$part_order->is_customer_approved = 0;
-								$part_order->estimate_order_id = 0;
+								$part_order->estimate_order_id = $estimate_order_id;
 								$part_order->created_by_id = Auth::user()->id;
 								$part_order->save();
 							}
@@ -1973,16 +2022,64 @@ class VehicleInwardController extends Controller {
 			}
 
 			//Estimate Order ID
-			$job_repair_order = JobOrderPart::where('job_order_id', $request->job_order_id)->where('status_id', 8200)->first();
-			if ($job_repair_order) {
-				$estimate_order_id = $job_repair_order->estimate_order_id;
+			$job_order = JobOrder::find($request->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
+				]);
+			}
+
+			$estimate_id = JobOrderEstimate::where('job_order_id', $job_order->id)->where('status_id', 10071)->first();
+			if ($estimate_id) {
+				$estimate_order_id = $estimate_id->id;
 			} else {
-				$job_repair_order = JobOrderPart::where('job_order_id', $request->job_order_id)->orderBy('estimate_order_id', 'DESC')->first();
-				if ($job_repair_order) {
-					$estimate_order_id = ($job_repair_order->estimate_order_id) + 1;
+				if (date('m') > 3) {
+					$year = date('Y') + 1;
 				} else {
-					$estimate_order_id = 0;
+					$year = date('Y');
 				}
+				//GET FINANCIAL YEAR ID
+				$financial_year = FinancialYear::where('from', $year)
+					->where('company_id', Auth::user()->company_id)
+					->first();
+				if (!$financial_year) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Fiancial Year Not Found',
+						],
+					]);
+				}
+				//GET BRANCH/OUTLET
+				$branch = Outlet::where('id', $job_order->outlet_id)->first();
+
+				//GENERATE GATE IN VEHICLE NUMBER
+				$generateNumber = SerialNumberGroup::generateNumber(104, $financial_year->id, $branch->state_id, $branch->id);
+				if (!$generateNumber['success']) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+						],
+					]);
+				}
+
+				$estimate = new JobOrderEstimate;
+				$estimate->job_order_id = $job_order->id;
+				$estimate->number = $generateNumber['number'];
+				$estimate->status_id = 10071;
+				$estimate->created_by_id = Auth::user()->id;
+				$estimate->created_at = Carbon::now();
+				$estimate->save();
+
+				$estimate_order_id = $estimate->id;
 			}
 
 			DB::beginTransaction();
@@ -2160,16 +2257,64 @@ class VehicleInwardController extends Controller {
 			}
 
 			//Estimate Order ID
-			$job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('status_id', 8180)->first();
-			if ($job_repair_order) {
-				$estimate_order_id = $job_repair_order->estimate_order_id;
+			$job_order = JobOrder::find($request->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found!',
+					],
+				]);
+			}
+
+			$estimate_id = JobOrderEstimate::where('job_order_id', $job_order->id)->where('status_id', 10071)->first();
+			if ($estimate_id) {
+				$estimate_order_id = $estimate_id->id;
 			} else {
-				$job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->orderBy('estimate_order_id', 'DESC')->first();
-				if ($job_repair_order) {
-					$estimate_order_id = ($job_repair_order->estimate_order_id) + 1;
+				if (date('m') > 3) {
+					$year = date('Y') + 1;
 				} else {
-					$estimate_order_id = 0;
+					$year = date('Y');
 				}
+				//GET FINANCIAL YEAR ID
+				$financial_year = FinancialYear::where('from', $year)
+					->where('company_id', Auth::user()->company_id)
+					->first();
+				if (!$financial_year) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Fiancial Year Not Found',
+						],
+					]);
+				}
+				//GET BRANCH/OUTLET
+				$branch = Outlet::where('id', $job_order->outlet_id)->first();
+
+				//GENERATE GATE IN VEHICLE NUMBER
+				$generateNumber = SerialNumberGroup::generateNumber(104, $financial_year->id, $branch->state_id, $branch->id);
+				if (!$generateNumber['success']) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+						],
+					]);
+				}
+
+				$estimate = new JobOrderEstimate;
+				$estimate->job_order_id = $job_order->id;
+				$estimate->number = $generateNumber['number'];
+				$estimate->status_id = 10071;
+				$estimate->created_by_id = Auth::user()->id;
+				$estimate->created_at = Carbon::now();
+				$estimate->save();
+
+				$estimate_order_id = $estimate->id;
 			}
 
 			$repair_order = RepairOrder::find($request->rot_id);
@@ -3577,16 +3722,52 @@ class VehicleInwardController extends Controller {
 				$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->first();
 
 				//Estimate Order ID
-				$job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('status_id', 8180)->first();
-				if ($job_repair_order) {
-					$estimate_order_id = $job_repair_order->estimate_order_id;
+				$estimate_id = JobOrderEstimate::where('job_order_id', $job_order->id)->where('status_id', 10071)->first();
+				if ($estimate_id) {
+					$estimate_order_id = $estimate_id->id;
 				} else {
-					$job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->orderBy('estimate_order_id', 'DESC')->first();
-					if ($job_repair_order) {
-						$estimate_order_id = ($job_repair_order->estimate_order_id) + 1;
+					if (date('m') > 3) {
+						$year = date('Y') + 1;
 					} else {
-						$estimate_order_id = 0;
+						$year = date('Y');
 					}
+					//GET FINANCIAL YEAR ID
+					$financial_year = FinancialYear::where('from', $year)
+						->where('company_id', Auth::user()->company_id)
+						->first();
+					if (!$financial_year) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => [
+								'Fiancial Year Not Found',
+							],
+						]);
+					}
+					//GET BRANCH/OUTLET
+					$branch = Outlet::where('id', $job_order->outlet_id)->first();
+
+					//GENERATE GATE IN VEHICLE NUMBER
+					$generateNumber = SerialNumberGroup::generateNumber(104, $financial_year->id, $branch->state_id, $branch->id);
+					if (!$generateNumber['success']) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => [
+								'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+							],
+						]);
+					}
+
+					$estimate = new JobOrderEstimate;
+					$estimate->job_order_id = $job_order->id;
+					$estimate->number = $generateNumber['number'];
+					$estimate->status_id = 10071;
+					$estimate->created_by_id = Auth::user()->id;
+					$estimate->created_at = Carbon::now();
+					$estimate->save();
+
+					$estimate_order_id = $estimate->id;
 				}
 
 				foreach ($request->customer_voices as $key => $voice) {
@@ -4529,6 +4710,8 @@ class VehicleInwardController extends Controller {
 
 			//UPDATE JOB ORDER PARTS STATUS
 			JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_customer_approved', 0)->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
+			JobOrderEstimate::where('job_order_id', $request->job_order_id)->where('status_id', 10071)->update(['status_id' => 10072, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			DB::commit();
 
