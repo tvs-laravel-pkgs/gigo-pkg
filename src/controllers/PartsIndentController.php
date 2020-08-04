@@ -49,7 +49,7 @@ class PartsIndentController extends Controller {
 			'users.name as floor_supervisor',
 			'service_adv.name as service_advisor',
 			DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y, %h:%i %p") as job_order_date_time'),
-			DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y, %h:%i %p") as job_card_date_time'),
+			// DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y, %h:%i %p") as job_card_date_time'),
 			DB::raw('COALESCE(SUM(job_order_issued_parts.issued_qty), "0.00") as issued_qty'),
 			DB::raw('COALESCE(SUM(job_order_parts.qty), "0.00") as requested_qty'),
 			'job_orders.vehicle_id',
@@ -60,8 +60,7 @@ class PartsIndentController extends Controller {
 			'job_orders.status_id as job_order_status',
 			'job_cards.status_id as job_card_status',
 			// 'configs.name as status',
-		])
-			->join('users as service_adv', 'service_adv.id', 'job_orders.service_advisor_id')
+		])->leftJoin('users as service_adv', 'service_adv.id', 'job_orders.service_advisor_id')
 			->leftJoin('job_cards', 'job_orders.id', 'job_cards.job_order_id')
 			->leftJoin('job_order_parts', 'job_order_parts.job_order_id', 'job_orders.id')
 			->leftJoin('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')
@@ -107,7 +106,6 @@ class PartsIndentController extends Controller {
 					$query->where('job_order_parts.status_id', $request->status_id);
 				}
 			})
-			->where('job_orders.company_id', Auth::user()->company_id)
 		// ->get()
 		;
 
@@ -119,9 +117,8 @@ class PartsIndentController extends Controller {
 			}
 		}
 
-		// $job_cards->groupBy('job_orders.id')->get();
-		// dd($job_cards);
-		//
+		$job_cards->groupBy('job_orders.id')->orderBy('job_orders.id', 'DESC');
+
 		return Datatables::of($job_cards)
 			->editColumn('status', function ($job_cards) {
 				if ($job_cards->job_card_number) {

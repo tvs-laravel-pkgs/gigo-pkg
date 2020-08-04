@@ -67,6 +67,10 @@
                                                                     <td><b>Status</b></td>
                                                                     <td>{{$ctrl.vehicle_gate_pass.status.name}}</td>
                                                                 </tr>
+                                                                <tr ng-if="$ctrl.vehicle_gate_pass.gate_pass.status_id == 8341">
+                                                                    <td><b>Remarks</b></td>
+                                                                    <td>{{$ctrl.vehicle_gate_pass.gate_out_remarks}}</td>
+                                                                </tr>
                                                             </tbody>
                                                         </table>
                                                     </div><!-- Column -->
@@ -137,6 +141,9 @@
                                                             </div>
                                                         </div>
                                                     </div><!-- Border Box -->
+                                                </li>
+                                                <li class="flex-col-4" ng-if="$ctrl.vehicle_gate_pass.job_order.job_card.job_card_returnable_items.length == 0">
+                                                    No Items Returned
                                                 </li>
                                             </ul><!-- Flex Row -->
                                         </div><!-- Column -->

@@ -1363,7 +1363,7 @@ class JobCardController extends Controller {
 			DB::beginTransaction();
 
 			//Check All material items returned or not
-			$material = GatePass::where('job_card_id', $request->id)->where('status_id', 8301)->count();
+			$material = GatePass::where('job_card_id', $request->id)->whereIn('status_id', [8300, 8301])->count();
 			if ($material > 0) {
 				return response()->json([
 					'success' => false,

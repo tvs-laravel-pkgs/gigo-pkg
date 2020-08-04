@@ -2115,6 +2115,7 @@ class PDFController extends Controller {
 			$seperate_tax[$i] = 0.00;
 		}
 
+		$tax_percentage = 0;
 		$labour_details = array();
 		if ($job_card->jobOrder->jobOrderRepairOrders) {
 			$i = 1;
@@ -2135,7 +2136,7 @@ class PDFController extends Controller {
 						$labour_details[$key]['rate'] = $labour->repairOrder->amount;
 						$labour_details[$key]['is_free_service'] = $labour->is_free_service;
 						$tax_amount = 0;
-						$tax_percentage = 0;
+						// $tax_percentage = 0;
 
 						$labour_total_cgst = 0;
 						$labour_total_sgst = 0;

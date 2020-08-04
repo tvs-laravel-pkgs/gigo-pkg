@@ -89,11 +89,11 @@ class VehicleGatePassController extends Controller {
 					$query->where('gate_passes.number', 'LIKE', '%' . $request->number . '%');
 				}
 			})
-			//->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
+		//->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
 			->where('gate_passes.type_id', 8280) // Vehicle Gate Pass
 			->groupBy('gate_passes.id');
 
-			if (!Entrust::can('gate-out-all')) {
+		if (!Entrust::can('gate-out-all')) {
 			if (Entrust::can('gate-out-mapped-outlet')) {
 				$vehicle_gate_passes->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 			} elseif (Entrust::can('gate-out-own-outlet')) {
@@ -116,9 +116,9 @@ class VehicleGatePassController extends Controller {
 				$output = '';
 				$output .= '<a href="#!/vehicle-gate-pass/view/' . $vehicle_gate_pass->gate_log_id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				//Gate Out Pending
-				if ($vehicle_gate_pass->status_id == 8340) {
-					$output .= '<button class="btn btn-secondary-dark btn-sm" onclick="angular.element(this).scope().vehicleGateOut(' . $vehicle_gate_pass->gate_log_id . ' )" title="Gate Out">Confirm Gate Out</button>';
-				}
+				// if ($vehicle_gate_pass->status_id == 8340) {
+				// 	$output .= '<button class="btn btn-secondary-dark btn-sm" onclick="angular.element(this).scope().vehicleGateOut(' . $vehicle_gate_pass->gate_log_id . ' )" title="Gate Out">Confirm Gate Out</button>';
+				// }
 				return $output;
 			})
 			->make(true);
