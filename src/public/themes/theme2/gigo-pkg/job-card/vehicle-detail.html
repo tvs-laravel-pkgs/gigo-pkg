@@ -35,77 +35,77 @@
                                         <h5 class="color-primary mb-10"><b>Vehicle Details</b></h5>
                                         <ul class="view-row mb-no">
                                             <li class="view-col-3">
-                                                <span class="view-col-label">
-                                                    Registration Type
-                                                </span>
-                                                <span class="view-data-list-value">
-                                                    <b ng-if="job_card.job_order.vehicle.is_registered == 1">
-                                                        Registered Vehicle
-                                                    </b>
-                                                    <b ng-if="job_card.job_order.vehicle.is_registered != 1">
-                                                        Un-Registered Vehicle
-                                                    </b>
-                                                </span>
-                                            </li>
-                                            <li class="view-col-3" ng-if="job_card.job_order.vehicle.is_registered == 1">
-                                                <span class="view-col-label">
-                                                    Registration No
-                                                </span>
-                                                <span class="view-col-value">
-                                                    <b>
-                                                        {{job_card.job_order.vehicle.registration_number}}
-                                                    </b>
-                                                </span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">
-                                                    Vehicle Model
-                                                </span>
-                                                <span class="view-col-value">
-                                                    <b>
-                                                        {{job_card.job_order.vehicle.model.model_name}}
-                                                    </b>
-                                                </span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">
-                                                    VIN Number
-                                                </span>
-                                                <span class="view-col-value">
-                                                    {{job_card.job_order.vehicle.vin_number}}
-                                                </span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">
-                                                    Is Sold ?
-                                                </span>
-                                                <span class="view-data-list-value">
-                                                    <b ng-if="job_card.job_order.vehicle.is_sold == 1">
-                                                        Yes
-                                                    </b>
-                                                    <b ng-if="job_card.job_order.vehicle.is_sold != 1">
-                                                        No
-                                                    </b>
-                                                </span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">
-                                                    Engine Number
-                                                </span>
-                                                <span class="view-col-value">
-                                                    {{job_card.job_order.vehicle.engine_number}}
-                                                </span>
-                                            </li>
-                                            <li class="view-col-3">
-                                                <span class="view-col-label">
-                                                    Chassis Number
-                                                </span>
-                                                <span class="view-data-list-value">
-                                                    <b>
-                                                        {{job_card.job_order.vehicle.chassis_number}}
-                                                    </b>
-                                                </span>
-                                            </li>
+                                                    <span class="view-col-label">
+                                                        Registration Type
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b ng-if="job_card.job_order.vehicle.is_registered == 1">
+                                                            Registered Vehicle
+                                                        </b>
+                                                        <b ng-if="job_card.job_order.vehicle.is_registered != 1">
+                                                            Un-Registered Vehicle
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3" ng-if="job_card.job_order.vehicle.is_registered == 1">
+                                                    <span class="view-col-label">
+                                                        Registration No
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_card.job_order.vehicle.registration_number}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Vehicle Model
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_card.job_order.vehicle.model.model_name}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Engine Number
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_card.job_order.vehicle.engine_number}}
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Chassis / VIN Number
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b>
+                                                            {{job_card.job_order.vehicle.chassis_number}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3">
+                                                    <span class="view-col-label">
+                                                        Is Sold ?
+                                                    </span>
+                                                    <span class="view-data-list-value">
+                                                        <b ng-if="job_card.job_order.vehicle.is_sold == 1">
+                                                            Yes
+                                                        </b>
+                                                        <b ng-if="job_card.job_order.vehicle.is_sold != 1">
+                                                            No
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3" ng-if="job_card.job_order.vehicle.is_sold == 1">
+                                                    <span class="view-col-label">
+                                                        Sold Date
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        {{job_card.job_order.vehicle.sold_date}}
+                                                    </span>
+                                                </li>
                                         </ul>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
