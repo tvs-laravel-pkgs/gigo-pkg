@@ -29,7 +29,7 @@
                                         Bill Detail
                                     </h5>
                                     <!-- <div class="page-form pb-80 "> -->
-                                    <div class="panel panel-default type-4 split_order_tab_{{key}}" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-show="split_order_type.total_items > 0">
+                                    <div class="panel panel-default type-3 split_order_tab_{{key}}" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-show="split_order_type.total_items > 0">
                                         <div class="panel-heading">
                                             <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#{{split_order_type.id}}">
                                                 {{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} {{split_order_type.total_items > 1 ? 'items' : 'item'}}
@@ -249,8 +249,8 @@
                                                                             </table>
                                                                             <span class="bill-total">
                                                                                 <span class="info">
-                                                                                    Grand Total - <img class="img-responsive rupee-icon" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" />
-                                                                                    {{split_order_type.grand_total | number:2}}
+                                                                                    Grand Total
+                                                                                    <span class="amount"> <img class="img-responsive rupee-icon img-inline" src="./public/theme/img/content/rupee-blue.svg" alt="Rupee" /> {{split_order_type.grand_total | number:2}}</span>
                                                                                 </span>
                                                                             </span>
                                                                         </td>
