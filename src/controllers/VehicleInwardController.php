@@ -109,20 +109,21 @@ class VehicleInwardController extends Controller {
 
 		if (!Entrust::can('view-overall-outlets-vehicle-inward')) {
 			if (Entrust::can('view-mapped-outlet-vehicle-inward')) {
-				$vehicle_inwards->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+				$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+				array_push($outlet_ids, Auth::user()->employee->outlet_id);
+				$vehicle_inwards->whereIn('job_orders.outlet_id', $outlet_ids);
+			} else if (Entrust::can('view-own-outlet-vehicle-inward')) {
+				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+			} else {
+				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
+					->whereRaw("IF (`job_orders`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
 			}
-			else if (Entrust::can('view-own-outlet-vehicle-inward')) {
-				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)->whereNull('job_orders.service_advisor_id')->whereNull('job_orders.floor_supervisor_id');
-			}
-			else
-			{
-				$vehicle_inwards->where('job_orders.service_advisor_id' ,Auth::user()->id )->whereNull('job_orders.floor_supervisor_id');
-			}
-			 /*else {
+			/*else {
 				$vehicle_inwards->where('job_orders.outlet_id', Auth::user()->employee->outlet_id)
 					->whereRaw("IF (`job_orders`.`status_id` = '8460', `job_orders`.`service_advisor_id` IS  NULL, `job_orders`.`service_advisor_id` = '" . $request->service_advisor_id . "')");
 			}*/
 		}
+
 		$vehicle_inwards->groupBy('job_orders.id');
 		$vehicle_inwards->orderBy('job_orders.created_at', 'DESC');
 
@@ -133,7 +134,7 @@ class VehicleInwardController extends Controller {
 				$query->whereRaw($sql, ["%{$keyword}%"]);
 			})
 			->editColumn('status', function ($vehicle_inward) {
-				$status = $vehicle_inward->status_id == '8460' ? 'blue' : 'green';
+				$status = $vehicle_inward->status_id == '8460' || $vehicle_inward->status_id == '8469' || $vehicle_inward->status_id == '8471' || $vehicle_inward->status_id == '8472' ? 'blue' : 'green';
 				return '<span class="text-' . $status . '">' . $vehicle_inward->status . '</span>';
 			})
 			->addColumn('action', function ($vehicle_inward) {
