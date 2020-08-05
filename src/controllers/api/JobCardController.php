@@ -2396,6 +2396,7 @@ class JobCardController extends Controller {
 	}
 
 	public function getScheduleMaintenance(Request $request) {
+
 		$job_card = JobCard::with(['jobOrder',
 			'jobOrder.type',
 			'jobOrder.serviceType',
@@ -2410,46 +2411,28 @@ class JobCardController extends Controller {
 			]);
 		}
 
-		$job_order = JobOrder::with([
-			'vehicle',
-			'vehicle.model',
-			'vehicle.status'])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])->find($job_card->job_order_id);
+		$params['job_order_id'] = $job_card->job_order_id;
+		$params['type_id'] = 1;
 
-		$schedule_maintenance_part_amount = 0;
-		$schedule_maintenance_labour_amount = 0;
-		$schedule_maintenance['labour_details'] = $job_order->jobOrderRepairOrders()->where('is_recommended_by_oem', 1)->get();
-		if (!empty($schedule_maintenance['labour_details'])) {
-			foreach ($schedule_maintenance['labour_details'] as $key => $value) {
-				$schedule_maintenance_labour_amount += $value->amount;
-				$value->repair_order = $value->repairOrder;
-				$value->repair_order_type = $value->repairOrder->repairOrderType;
-			}
-		}
-		$schedule_maintenance['labour_amount'] = $schedule_maintenance_labour_amount;
-
-		$schedule_maintenance['part_details'] = $job_order->jobOrderParts()->where('is_oem_recommended', 1)->get();
-		if (!empty($schedule_maintenance['part_details'])) {
-			foreach ($schedule_maintenance['part_details'] as $key => $value) {
-				$schedule_maintenance_part_amount += $value->amount;
-				$value->part = $value->part;
-			}
-		}
-		$schedule_maintenance['part_amount'] = $schedule_maintenance_part_amount;
-
-		$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
-		// dd($schedule_maintenance['labour_details']);
+		$result = $this->getLabourPartsData($params);
 
 		return response()->json([
 			'success' => true,
-			'job_order' => $job_order,
-			'schedule_maintenance' => $schedule_maintenance,
+			'job_order' => $result['job_order'],
+			'part_details' => $result['part_details'],
+			'labour_details' => $result['labour_details'],
+			'total_amount' => $result['total_amount'],
+			'labour_total_amount' => $result['labour_amount'],
+			'parts_total_amount' => $result['part_amount'],
 			'job_card' => $job_card,
 		]);
+
+		// return response()->json([
+		// 	'success' => true,
+		// 	'job_order' => $job_order,
+		// 	'schedule_maintenance' => $schedule_maintenance,
+		// 	'job_card' => $job_card,
+		// ]);
 
 	}
 

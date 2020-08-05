@@ -51,13 +51,13 @@
                             <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
                                 <ul class="nav nav-pills cndn-tabs">
                                     <li class="active">
-                                        <a class="filter active" data-target="#inward_details" data-toggle="tab" aria-expanded="true">
-                                            Inward Details
+                                        <a class="filter active" data-target="#jobcard_details" data-toggle="tab" aria-expanded="true">
+                                            Update JobCard
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="filter" data-target="#jobcard_details" data-toggle="tab" aria-expanded="true">
-                                            Update JobCard
+                                        <a class="filter" data-target="#inward_details" data-toggle="tab" aria-expanded="true">
+                                            Inward Details
                                         </a>
                                     </li>
                                 </ul>
@@ -66,8 +66,80 @@
                     </div><!-- Tab Form Header -->
                     <div class="tab-form-body side-tab-open">
                         <div class="tab-content">
+                            <div class="tab-pane fade in active" id="jobcard_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>JobCard Details</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="col-sm-12">
+                                                <div class="page-form mt-15">
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>GIGO Job Card Number <sup class="mandatory">*</sup></label>
+                                                                <input ng-model="job_order.job_card.local_job_card_number" type="text" class="form-control required" autocomplete="off" value="{{job_order.job_card.job_card_number}}" readonly />
+                                                            </div><!-- Feild -->
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>AL Job Card Number <sup class="mandatory">*</sup></label>
+                                                                <input ng-model="job_order.job_card.job_card_number" type="text" class="form-control required" placeholder="Enter Job Card Number" autocomplete="off" value="{{job_order.job_card.job_card_number}}" maxlength="191" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="job_card_number" />
+                                                                <div class="job_card_error"></div>
+                                                            </div><!-- Feild -->
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>Job Card Date <sup class="mandatory">*</sup></label>
+                                                                <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
+                                                                    <input ng-model="job_order.job_card.date" type="text" class="form-control required" placeholder="Select Job Card Date" name="job_card_date" value="job_order.job_card.date" />
+                                                                    <div class="input-group-addon">
+                                                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                                    </div>
+                                                                </div><!-- Input Group -->
+                                                            </div><!-- Feild -->
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-12">
+                                                            <div class="input-text form-group">
+                                                                <label>Job Card Photo <sup class="mandatory">*</sup></label>
+                                                                <div class="avatar-upload type-4">
+                                                                    <div class="avatar-edit" ng-class="{'in': job_order.job_card.attachment != NULL}">
+                                                                        <input type="file" class="profile-img-upload" name="job_card_photo" id="image_Upload_5" accept=".png, .jpg, .jpeg" />
+                                                                        <label for="image_Upload_5">
+                                                                            <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="avatar-preview in" ng-if="job_order.job_card.attachment != NULL">
+                                                                        <div class="avatar-img" id="imagePreview" style="background-image:url('./{{job_order.attachment_path}}/{{job_order.job_card.attachment.name}}')">
+                                                                        </div>
+                                                                        <input type="hidden" name="saved_attachment" value="1">
+                                                                    </div>
+                                                                    <div class="avatar-preview" ng-if="job_order.job_card.attachment == NULL">
+                                                                        <div class="avatar-img" id="imagePreview" style="">
+                                                                        </div>
+                                                                        <input type="hidden" name="saved_attachment" value="0">
+                                                                    </div><!-- Avatar Preview -->
+                                                                </div><!-- Avatar Upload -->
+                                                                <div class="attachment_error"></div>
+                                                            </div>
+                                                        </div><!-- Column -->
+                                                    </div><!-- Row -->
+                                                </div><!-- Page Form -->
+                                            </div><!-- Column -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <button class="btn btn-red btn-min-wdth save_close" ng-click="saveJobCard(1)">Save & Close</button>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
                             <!-- TAB PANEL -->
-                            <div class="tab-pane fade in active" id="inward_details" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane fade" id="inward_details" data-animation="fadeInUp" data-animation-delay="300">
                                 <div class="tab-pane-wrap">
                                     <div class="row">
                                         <div class="col-md-12">
@@ -362,79 +434,7 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
-                                                </div>
-                                            </div>
-                                        </div><!-- Tab Footer -->
-                                    </div><!-- Row -->
-                                </div><!-- Tab Pane Wrap -->
-                            </div><!-- Tabe Pane -->
-                            <div class="tab-pane fade" id="jobcard_details" data-animation="fadeInUp" data-animation-delay="300">
-                                <div class="tab-pane-wrap">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <h5 class="color-primary mb-10"><b>JobCard Details</b></h5>
-                                            <hr class="hr-15"><!-- Separater -->
-                                            <div class="col-sm-12">
-                                                <div class="page-form mt-15">
-                                                    <div class="row">
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>GIGO Job Card Number <sup class="mandatory">*</sup></label>
-                                                                <input ng-model="job_order.job_card.local_job_card_number" type="text" class="form-control required" autocomplete="off" value="{{job_order.job_card.job_card_number}}" readonly />
-                                                            </div><!-- Feild -->
-                                                        </div><!-- Column -->
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>AL Job Card Number <sup class="mandatory">*</sup></label>
-                                                                <input ng-model="job_order.job_card.job_card_number" type="text" class="form-control required" placeholder="Enter Job Card Number" autocomplete="off" value="{{job_order.job_card.job_card_number}}" maxlength="191" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="job_card_number" />
-                                                                <div class="job_card_error"></div>
-                                                            </div><!-- Feild -->
-                                                        </div><!-- Column -->
-                                                        <div class="col-md-3">
-                                                            <div class="form-group">
-                                                                <label>Job Card Date <sup class="mandatory">*</sup></label>
-                                                                <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                                                    <input ng-model="job_order.job_card.date" type="text" class="form-control required" placeholder="Select Job Card Date" name="job_card_date" value="job_order.job_card.date" />
-                                                                    <div class="input-group-addon">
-                                                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
-                                                                    </div>
-                                                                </div><!-- Input Group -->
-                                                            </div><!-- Feild -->
-                                                        </div><!-- Column -->
-                                                        <div class="col-md-12">
-                                                            <div class="input-text form-group">
-                                                                <label>Job Card Photo <sup class="mandatory">*</sup></label>
-                                                                <div class="avatar-upload type-4">
-                                                                    <div class="avatar-edit" ng-class="{'in': job_order.job_card.attachment != NULL}">
-                                                                        <input type="file" class="profile-img-upload" name="job_card_photo" id="image_Upload_5" accept=".png, .jpg, .jpeg" />
-                                                                        <label for="image_Upload_5">
-                                                                            <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
-                                                                        </label>
-                                                                    </div>
-                                                                    <div class="avatar-preview in" ng-if="job_order.job_card.attachment != NULL">
-                                                                        <div class="avatar-img" id="imagePreview" style="background-image:url('./{{job_order.attachment_path}}/{{job_order.job_card.attachment.name}}')">
-                                                                        </div>
-                                                                        <input type="hidden" name="saved_attachment" value="1">
-                                                                    </div>
-                                                                    <div class="avatar-preview" ng-if="job_order.job_card.attachment == NULL">
-                                                                        <div class="avatar-img" id="imagePreview" style="">
-                                                                        </div>
-                                                                        <input type="hidden" name="saved_attachment" value="0">
-                                                                    </div><!-- Avatar Preview -->
-                                                                </div><!-- Avatar Upload -->
-                                                                <div class="attachment_error"></div>
-                                                            </div>
-                                                        </div><!-- Column -->
-                                                    </div><!-- Row -->
-                                                </div><!-- Page Form -->
-                                            </div><!-- Column -->
-                                        </div><!-- Column -->
-                                        <div class="tab-pane-footer">
-                                            <div class="row">
-                                                <div class="col-md-12">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
-                                                    <button class="btn btn-red btn-min-wdth save_close" ng-click="saveJobCard(1)">Save & Close</button>
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
