@@ -13,4 +13,8 @@ class JobOrderEstimate extends Model {
 	protected $fillable =
 		["job_order_id", "number", "status_id"]
 	;
+
+	public function getCreatedAtAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
 }

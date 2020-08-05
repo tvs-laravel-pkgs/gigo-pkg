@@ -1448,11 +1448,11 @@ app.component('jobCardPdf', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_card = res.job_card;
-                    angular.forEach($scope.job_card.gate_passes, function(value, key) {
-                        console.log(value.gate_pass_detail.vendor.name);
-                        $(".inward").append('<a target="_blank" href="' + base_url + '/gigo-pkg/pdf/work-order-inward/' + $routeParams.job_card_id + '/' + value.id + '" class="btn btn-secondary-dark btn-square btn-block">' + value.gate_pass_detail.vendor.name + ' - PDF </a>');
-                        $(".outward").append('<a target="_blank" href="' + base_url + '/gigo-pkg/pdf/work-order-outward/' + $routeParams.job_card_id + '/' + value.id + '" class="btn btn-secondary-dark btn-square btn-block">' + value.gate_pass_detail.vendor.name + ' - PDF </a>');
-                    });
+                    // angular.forEach($scope.job_card.gate_passes, function(value, key) {
+                    //     console.log(value.gate_pass_detail.vendor.name);
+                    //     $(".inward").append('<a target="_blank" href="' + base_url + '/gigo-pkg/pdf/work-order-inward/' + $routeParams.job_card_id + '/' + value.id + '" class="btn btn-secondary-dark btn-square btn-block">' + value.gate_pass_detail.vendor.name + ' - PDF </a>');
+                    //     $(".outward").append('<a target="_blank" href="' + base_url + '/gigo-pkg/pdf/work-order-outward/' + $routeParams.job_card_id + '/' + value.id + '" class="btn btn-secondary-dark btn-square btn-block">' + value.gate_pass_detail.vendor.name + ' - PDF </a>');
+                    // });
                     $scope.$apply();
                 })
                 .fail(function(xhr) {

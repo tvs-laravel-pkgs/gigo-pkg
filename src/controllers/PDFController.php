@@ -118,7 +118,7 @@ class PDFController extends Controller {
 	}
 
 	public function estimate($id) {
-		$estimate_order = JobOrderEstimate::select('job_order_estimates.id')->join('job_orders', 'job_order_estimates.job_order_id', 'job_orders.id')->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')->where('job_cards.id', $id)->orderBy('job_order_estimates.id', 'ASC')->first();
+		$estimate_order = JobOrderEstimate::select('job_order_estimates.id', 'job_order_estimates.created_at')->join('job_orders', 'job_order_estimates.job_order_id', 'job_orders.id')->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')->where('job_cards.id', $id)->orderBy('job_order_estimates.id', 'ASC')->first();
 
 		$this->data['estimate'] = $job_card = JobCard::with([
 			'gatePasses',
@@ -325,6 +325,7 @@ class PDFController extends Controller {
 
 		$total_amount = $parts_amount + $labour_amount;
 		$this->data['taxes'] = $taxes;
+		$this->data['estimate_date'] = $estimate_order->created_at;
 		$this->data['part_details'] = $part_details;
 		$this->data['labour_details'] = $labour_details;
 		$this->data['total_labour_qty'] = $total_labour_qty;
@@ -926,7 +927,8 @@ class PDFController extends Controller {
 				$part_details[$key]['code'] = $parts->part->code;
 				$part_details[$key]['description'] = $parts->part->name ? $parts->part->name : '-';
 				$part_details[$key]['customer_voice'] = "-";
-				$part_details[$key]['job_type'] = "-";
+				// $part_details[$key]['job_type'] = "-";
+				$part_details[$key]['job_type'] = $parts->splitOrderType ? $parts->splitOrderType->code : '-';
 				$part_details[$key]['qty'] = $parts->qty;
 				$total_parts_qty += $parts->qty;
 				$i++;
