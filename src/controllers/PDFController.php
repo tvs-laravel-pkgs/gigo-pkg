@@ -842,11 +842,17 @@ class PDFController extends Controller {
 			'jobOrder.vehicle.currentOwner.customer.address.state',
 			'jobOrder.vehicle.currentOwner.customer.address.city',
 			'jobOrder.serviceType',
+			'jobOrder.jobOrderRepairOrders' => function ($query) {
+				$query->whereNull('removal_reason_id');
+			},
 			'jobOrder.jobOrderRepairOrders.repairOrder',
 			'jobOrder.jobOrderRepairOrders.repairOrder.repairOrderType',
 			'jobOrder.floorAdviser',
 			'jobOrder.serviceAdviser',
 			'jobOrder.roadTestPreferedBy.employee',
+			'jobOrder.jobOrderParts' => function ($query) {
+				$query->whereNull('removal_reason_id');
+			},
 			'jobOrder.jobOrderParts.part',
 			'jobOrder.jobOrderParts.part.taxCode',
 			'jobOrder.jobOrderParts.part.taxCode.taxes'])
@@ -882,11 +888,11 @@ class PDFController extends Controller {
 				$labour_details[$key]['sno'] = $i;
 				$labour_details[$key]['code'] = $labour->repairOrder->code;
 				$labour_details[$key]['description'] = $labour->repairOrder->name ? $labour->repairOrder->name : '-';
-				if ($job_card->jobOrder->customerVoices[$key]->repair_order_id == $labour->repair_order_id) {
-					$labour_details[$key]['customer_voice'] = $job_card->jobOrder->customerVoices[$key]->name;
-				} else {
-					$labour_details[$key]['customer_voice'] = "-";
-				}
+				// if ($job_card->jobOrder->customerVoices[$key]->repair_order_id == $labour->repair_order_id) {
+				// 	$labour_details[$key]['customer_voice'] = $job_card->jobOrder->customerVoices[$key]->name;
+				// } else {
+				$labour_details[$key]['customer_voice'] = "-";
+				// }
 
 				$labour_details[$key]['job_type'] = $labour->repairOrder->code;
 				$labour_details[$key]['qty'] = $labour->qty;
@@ -894,7 +900,6 @@ class PDFController extends Controller {
 				$i++;
 			}
 		}
-
 		$part_details = array();
 		if ($job_card->jobOrder->jobOrderParts) {
 			$i = 1;
