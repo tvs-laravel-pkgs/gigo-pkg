@@ -4789,6 +4789,13 @@ class VehicleInwardController extends Controller {
 
 			$msg = sendSMSNotification($customer_mobile, $message);
 
+			//Update JobOrder Estimate
+			$job_order_estimate = JobOrderEstimate::where('job_order_id', $job_order->id)->orderBy('id', 'DESC')->first();
+			$job_order_estimate->status_id = 10071;
+			$job_order_estimate->updated_by_id = Auth::user()->id;
+			$job_order_estimate->updated_at = Carbon::now();
+			$job_order_estimate->save();
+
 			DB::commit();
 
 			return response()->json([
