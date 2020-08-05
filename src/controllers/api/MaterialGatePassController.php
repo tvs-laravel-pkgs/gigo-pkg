@@ -94,20 +94,15 @@ class MaterialGatePassController extends Controller {
 				->orderBy('gate_passes.id', 'DESC')
 				->groupBy('gate_passes.id')
 			;
-			if (!Entrust::can('view-all-outlet-material-gate-pass')) 
-            {
-	            if(Entrust::can('view-mapped-outlet-material-gate-pass'))
-				{
-				   $material_gate_passes_list->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+			if (!Entrust::can('view-all-outlet-material-gate-pass')) {
+				if (Entrust::can('view-mapped-outlet-material-gate-pass')) {
+					$material_gate_passes_list->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+				} else if (Entrust::can('view-own-outlet-material-gate-pass')) {
+					$material_gate_passes_list->where('job_cards.outlet_id', Auth::user()->employee->outlet_id);
+				} else {
+					$material_gate_passes_list->where('gate_passes.created_by_id', Auth::user()->id);
 				}
-				else if(Entrust::can('view-own-outlet-material-gate-pass'))
-				{
-				   $material_gate_passes_list->where('job_cards.outlet_id', Auth::user()->employee->outlet_id);
-				}
-				else{
-				    $material_gate_passes_list->where('gate_passes.created_by_id', Auth::user()->id);
-				}
-			
+
 			}
 			$total_records = $material_gate_passes_list->get()->count();
 

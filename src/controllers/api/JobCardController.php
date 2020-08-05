@@ -3695,6 +3695,7 @@ class JobCardController extends Controller {
 			$gate_pass->status_id = 8300; //Gate Out Pending
 			$gate_pass->company_id = Auth::user()->company_id;
 			$gate_pass->fill($request->all());
+			$gate_pass->created_by_id = Auth::user()->id;
 			$gate_pass->save();
 
 			if (!$request->gate_pass_id) {
