@@ -891,10 +891,25 @@ class PDFController extends Controller {
 				// if ($job_card->jobOrder->customerVoices[$key]->repair_order_id == $labour->repair_order_id) {
 				// 	$labour_details[$key]['customer_voice'] = $job_card->jobOrder->customerVoices[$key]->name;
 				// } else {
-				$labour_details[$key]['customer_voice'] = "-";
+				$customer_voices = CustomerVoice::join('repair_orders', 'repair_orders.id', 'customer_voices.repair_order_id')
+					->join('job_order_repair_orders as joro', 'joro.repair_order_id', 'repair_orders.id')
+					->join('job_order_customer_voice', 'job_order_customer_voice.customer_voice_id', 'customer_voices.id')
+					->whereNull('joro.removal_reason_id')
+					->where('job_order_customer_voice.job_order_id', $job_card->jobOrder->id)
+					->where('customer_voices.repair_order_id', $labour->repair_order_id)
+					->select('customer_voices.code')
+					->get()->pluck('code')->toArray();
+				if ($customer_voices) {
+					$customer_voices = implode(', ', $customer_voices);
+				} else {
+					$customer_voices = "-";
+				}
+				$labour_details[$key]['customer_voice'] = $customer_voices;
 				// }
 
-				$labour_details[$key]['job_type'] = $labour->repairOrder->code;
+				// $labour_details[$key]['job_type'] = $labour->repairOrder->code;
+				$labour_details[$key]['job_type'] = $labour->splitOrderType ? $labour->splitOrderType->code : '-';
+
 				$labour_details[$key]['qty'] = $labour->qty;
 				$total_labour_qty += $labour->qty;
 				$i++;
