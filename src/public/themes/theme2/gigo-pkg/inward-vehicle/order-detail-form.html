@@ -338,11 +338,12 @@
                                                                             </sup>
                                                                         </label>
                                                                         <div class="input-group date" data-date-start-view="2" data-provide="datepicker">
-                                                                            <input type="text" class="form-control" placeholder="Select Licence Expiry Date" ng-model="job_order.driver_license_expiry_date" name="driver_license_expiry_date" />
+                                                                            <input type="text" class="form-control" placeholder="Select Licence Expiry Date" ng-model="job_order.driver_license_expiry_date" name="driver_license_expiry_date" ng-change="checkLicenseExpiryDate(job_order.driver_license_expiry_date)"/>
                                                                             <div class="input-group-addon">
                                                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                                             </div>
                                                                         </div><!-- Input Group -->
+                                                                        <span id="driver_license_expiry_date_error"></span>
                                                                     </div><!-- Feild -->
                                                                 </div><!-- Column -->
                                                                 <div class="col-md-3">
@@ -354,11 +355,12 @@
                                                                             </sup>
                                                                         </label>
                                                                         <div class="input-group date" data-date-start-view="2" data-provide="datepicker">
-                                                                            <input type="text" class="form-control" placeholder="Select Insurance Expiry Date" ng-model="job_order.insurance_expiry_date" name="insurance_expiry_date" />
+                                                                            <input type="text" class="form-control" placeholder="Select Insurance Expiry Date" ng-model="job_order.insurance_expiry_date" ng-change="checkInsuranceExpiryDate(job_order.insurance_expiry_date)" name="insurance_expiry_date" />
                                                                             <div class="input-group-addon">
                                                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                                             </div>
                                                                         </div><!-- Input Group -->
+                                                                        <span id="insurance_expiry_date_error"></span>
                                                                     </div><!-- Feild -->
                                                                 </div><!-- Column -->
                                                             </div><!-- Row -->

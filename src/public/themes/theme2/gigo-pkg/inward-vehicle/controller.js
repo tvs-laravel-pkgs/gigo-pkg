@@ -3083,6 +3083,8 @@ app.component('inwardVehicleOrderDetailForm', {
                     }
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
+                    $scope.checkLicenseExpiryDate($scope.job_order.driver_license_expiry_date);
+                    $scope.checkInsuranceExpiryDate($scope.job_order.insurance_expiry_date);
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -3096,6 +3098,39 @@ app.component('inwardVehicleOrderDetailForm', {
         setTimeout(function() {
             profileImgUpload();
         }, 1000);
+
+        $scope.checkLicenseExpiryDate = function(date) {
+            //CURRENT DATE
+            $scope.currentdate = new Date();
+            var month = $scope.currentdate.getMonth() + 1;
+            var day = $scope.currentdate.getDate();
+            $scope.currentdate = (day < 10 ? '0' : '') + day + '-' +
+                (month < 10 ? '0' : '') + month + '-' +
+                $scope.currentdate.getFullYear();
+            if (Date.parse($scope.currentdate) > Date.parse(date)) {
+                console.log($scope.currentdate,date);
+                console.log('DL');
+                $('#driver_license_expiry_date_error').html('<label class="error">Driving License Date Expired!</label>');
+            }else{
+                $('#driver_license_expiry_date_error').html('');
+            }
+        }
+        $scope.checkInsuranceExpiryDate = function(date) {
+            //CURRENT DATE
+            $scope.currentdate = new Date();
+            var month = $scope.currentdate.getMonth() + 1;
+            var day = $scope.currentdate.getDate();
+            $scope.currentdate = (day < 10 ? '0' : '') + day + '-' +
+                (month < 10 ? '0' : '') + month + '-' +
+                $scope.currentdate.getFullYear();
+            if (Date.parse($scope.currentdate) > Date.parse(date)) {
+                console.log($scope.currentdate,date);
+                console.log('I');
+                $('#insurance_expiry_date_error').html('<label class="error">Insurance Date Expired!</label>');
+            }else{
+                $('#insurance_expiry_date_error').html('');
+            }
+        }
 
         //Save Form Data 
         $scope.saveOrderDetailForm = function(id) {
