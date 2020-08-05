@@ -124,7 +124,7 @@ class PartsIndentController extends Controller {
 				if ($job_cards->job_card_number) {
 					if ($job_cards->job_card_status == 8227) {
 						$status = '<span class="text-green">Waiting for Parts Confirmation</span>';
-					} elseif ($job_cards->job_card_status == 8224 || $job_cards->job_card_status == 8224 || $job_cards->job_card_status == 8226) {
+					} elseif ($job_cards->job_card_status == 8224 || $job_cards->job_card_status == 8225 || $job_cards->job_card_status == 8226) {
 						$status = '<span class="text-green">JobCard Completed</span>';
 					} else {
 						$status = '<span class="text-blue">JobCard Inprogress</span>';

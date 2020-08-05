@@ -583,6 +583,7 @@ class VehicleInwardController extends Controller {
 				'tradePlate',
 				'status',
 				'gateLog',
+				'jobCard',
 			])
 				->select([
 					'job_orders.*',
@@ -622,6 +623,7 @@ class VehicleInwardController extends Controller {
 		try {
 
 			$job_order = JobOrder::with([
+				'jobCard',
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
@@ -1186,9 +1188,13 @@ class VehicleInwardController extends Controller {
 					]);
 				}
 
-				$document_date_year = date('Y');
-				$financial_year = FinancialYear::where('from', $document_date_year)
-					->first();
+				if (date('m') > 3) {
+					$year = date('Y') + 1;
+				} else {
+					$year = date('Y');
+				}
+
+				$financial_year = FinancialYear::where('from', $year)->first();
 				if (!$financial_year) {
 					return response()->json(['success' => false, 'errors' => ['No Serial number found!!!']]);
 				}
@@ -1429,6 +1435,7 @@ class VehicleInwardController extends Controller {
 				'vehicle.currentOwner.customer.address.city',
 				'vehicle.currentOwner.ownershipType',
 				'status',
+				'jobCard',
 			])
 				->select([
 					'job_orders.*',

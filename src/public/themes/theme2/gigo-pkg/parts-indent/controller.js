@@ -224,6 +224,22 @@ app.component('partsIndentVehicleView', {
                     }
                     $scope.job_order = res.job_order;
 
+                    if (res.job_order.job_card) {
+                        if (res.job_order.job_card.status_id == '8227') {
+                            $scope.status = "Waiting for Parts Confirmation";
+                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226') {
+                            $scope.status = "JobCard Completed";
+                        } else {
+                            $scope.status = "JobCard Inprogress";
+                        }
+                    } else {
+                        if (res.job_order.status_id == '8472') {
+                            $scope.status = "Waiting for Parts Estimation";
+                        } else {
+                            $scope.status = "Vehicle Inward Inprogress";
+                        }
+                    }
+
                     if ($scope.job_order.vehicle.status_id == 8140) {
                         $scope.show_vehicle_detail = false;
                         $scope.show_vehicle_form = true;
@@ -289,6 +305,21 @@ app.component('partsIndentCustomerView', {
                         return;
                     }
                     $scope.job_order = res.job_order;
+                    if (res.job_order.job_card) {
+                        if (res.job_order.job_card.status_id == '8227') {
+                            $scope.status = "Waiting for Parts Confirmation";
+                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226') {
+                            $scope.status = "JobCard Completed";
+                        } else {
+                            $scope.status = "JobCard Inprogress";
+                        }
+                    } else {
+                        if (res.job_order.status_id == '8472') {
+                            $scope.status = "Waiting for Parts Estimation";
+                        } else {
+                            $scope.status = "Vehicle Inward Inprogress";
+                        }
+                    }
 
                     if (!$scope.job_order.vehicle.current_owner) {
                         $scope.show_customer_detail = false;
@@ -365,6 +396,21 @@ app.component('partsIndentRepairOrderView', {
                         return;
                     }
                     $scope.job_order = res.job_order;
+                    if (res.job_order.job_card) {
+                        if (res.job_order.job_card.status_id == '8227') {
+                            $scope.status = "Waiting for Parts Confirmation";
+                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226') {
+                            $scope.status = "JobCard Completed";
+                        } else {
+                            $scope.status = "JobCard Inprogress";
+                        }
+                    } else {
+                        if (res.job_order.status_id == '8472') {
+                            $scope.status = "Waiting for Parts Estimation";
+                        } else {
+                            $scope.status = "Vehicle Inward Inprogress";
+                        }
+                    }
 
                     console.log(res);
                     $scope.$apply();
@@ -445,6 +491,22 @@ app.component('partsIndentPartsView', {
                     $scope.job_order_parts = res.job_order_parts;
                     $scope.repair_order_mechanics = res.repair_order_mechanics;
                     $scope.indent_part_logs = res.indent_part_logs;
+
+                    if (res.job_order.job_card) {
+                        if (res.job_order.job_card.status_id == '8227') {
+                            $scope.status = "Waiting for Parts Confirmation";
+                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226') {
+                            $scope.status = "JobCard Completed";
+                        } else {
+                            $scope.status = "JobCard Inprogress";
+                        }
+                    } else {
+                        if (res.job_order.status_id == '8472') {
+                            $scope.status = "Waiting for Parts Estimation";
+                        } else {
+                            $scope.status = "Vehicle Inward Inprogress";
+                        }
+                    }
 
                     $scope.$apply();
                 })

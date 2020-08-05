@@ -34,16 +34,16 @@
                                     <div class="col-md-12">
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <h5 class="title-red"><b>Issued Part</b></h5>
+                                                <h5 class="title-red"><b>Issued Parts</b></h5>
                                                 <div class="table-responsive">
-                                                    <table class="table white-space-unset table-border-2">
+                                                    <table class="table table-dark-grey">
                                                         <thead>
                                                             <tr>
                                                                 <!-- <th class="action width-100" ng-if="$ctrl.edit_part_indent">Action</th> -->
-                                                                <th>Date</th>
                                                                 <th>Part Code</th>
                                                                 <th>Part Name</th>
                                                                 <th>Requested Qty</th>
+                                                                <th>Issued Date</th>
                                                                 <th>Issued Qty</th>
                                                                 <th>Issued Mode</th>
                                                                 <th>Issued To</th>
@@ -59,11 +59,11 @@
                                                                         <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
                                                                     </a>
                                                                 </td> -->
-                                                                <td>{{issued_part.date}}</td>
                                                                 <td>{{issued_part.code}}</td>
                                                                 <td>{{issued_part.name}}</td>
-                                                                <td>{{issued_part.qty}} nos</td>
-                                                                <td>{{issued_part.issued_qty}} nos</td>
+                                                                <td>{{issued_part.qty}}</td>
+                                                                <td>{{issued_part.date}}</td>
+                                                                <td>{{issued_part.issued_qty}}</td>
                                                                 <td>{{issued_part.config_name}}</td>
                                                                 <td>{{issued_part.issued_to}}</td>
                                                             </tr>
