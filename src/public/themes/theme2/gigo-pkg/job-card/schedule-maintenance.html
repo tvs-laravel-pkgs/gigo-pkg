@@ -1,4 +1,15 @@
 <!-- Content Wrap -->
+<style type="text/css">
+.strikethrough {
+    text-decoration: line-through;
+}
+
+.my-disable {
+    pointer-events: none;
+    opacity: 0.5;
+    /*cursor: not-allowed;*/
+}
+</style>
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -62,7 +73,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index, labour_details) in schedule_maintenance.labour_details" id="tr_{{index}}" ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_details.removal_reason_id != '10021'">
+                                                    <tr class="ptb-12" ng-repeat="(index, labour_details) in labour_details" id="tr_{{index}}" ng-class="labour_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="labour_details.removal_reason_id != '10021'">
                                                         <td>{{labour_details.code ? labour_details.code : ''}}
                                                         </td>
                                                         <td>{{labour_details.name ? labour_details.name : ''}}</td>
@@ -94,7 +105,7 @@
                                                         <td class="wid-180 white-space  text-right">
                                                             <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                             <b>
-                                                                {{(schedule_maintenance.without_tax_labour_amount ? schedule_maintenance.without_tax_labour_amount : '0')| number:2}}
+                                                                {{labour_total_amount | number:2}}
                                                             </b>
                                                         </td>
                                                     </tr>
@@ -133,7 +144,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr class="ptb-12" ng-repeat="(index, part_details) in schedule_maintenance.part_details" id="tp_{{index}}" ng-class="part_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_details.removal_reason_id != '10021'">
+                                                    <tr class="ptb-12" ng-repeat="(index, part_details) in part_details" id="tp_{{index}}" ng-class="part_details.removal_reason_id == 10022 ? 'strikethrough' : ''" ng-if="part_details.removal_reason_id != '10021'">
                                                         <td>
                                                             {{part_details.code}}
                                                         </td>
@@ -171,7 +182,7 @@
                                                         <td class="wid-180 white-space text-right">
                                                             <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                             <b>
-                                                                {{(schedule_maintenance.without_tax_part_amount ? schedule_maintenance.without_tax_part_amount : '0') | number:2}}
+                                                                {{parts_total_amount | number:2}}
                                                             </b>
                                                         </td>
                                                     </tr>
@@ -192,7 +203,7 @@
                                                             <td class="wid-180 text-right">
                                                                 <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" />
                                                                 <b>
-                                                                    {{(schedule_maintenance.without_tax_total_amount ? schedule_maintenance.without_tax_total_amount : '0') | number:2}}
+                                                                    {{total_amount | number:2}}
                                                                 </b>
                                                             </td>
                                                         </tr>
