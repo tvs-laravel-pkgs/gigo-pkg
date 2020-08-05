@@ -202,13 +202,8 @@ class JobCardController extends Controller {
 				'gateLog.status',
 				'vehicle',
 				'vehicle.model',
-				'vehicle.status',
 				'vehicle.currentOwner.customer',
-				'vehicle.currentOwner.customer.address',
-				'vehicle.currentOwner.customer.address.country',
-				'vehicle.currentOwner.customer.address.state',
-				'vehicle.currentOwner.customer.address.city',
-				'vehicle.currentOwner.ownershipType',
+				'vehicle.currentOwner.customer.primaryAddress',
 				'jobCard',
 				'jobCard.attachment',
 				'jobOrderRepairOrders' => function ($q) {
@@ -3619,7 +3614,7 @@ class JobCardController extends Controller {
 				'success' => true,
 				'gate_pass' => $gate_pass,
 				'job_card' => $job_card,
-				'attachement_path' => 'storage/app/public/gigo/material_gate_pass/attachments/',
+				'attachement_path' => url('storage/app/public/gigo/material_gate_pass/attachments/'),
 			]);
 
 		} catch (Exception $e) {
