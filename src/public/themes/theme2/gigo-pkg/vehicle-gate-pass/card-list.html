@@ -1,5 +1,5 @@
 <div class="content-wrap cndn-wrap">
- <div class="page-header">
+    <div class="page-header">
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
@@ -49,61 +49,61 @@
             </div><!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
-        <div class="card-tab-content">
-            <div class="page-card-content">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <ul class="card-list">
-                                <li ng-repeat="(index,vehicle_gate_pass) in vehicle_gate_passes">
-                                    <div class="card-box">
-                                        <div class="card-box-body">
-                                            <p class="card-top-info">Created on :  {{vehicle_gate_pass.date_and_time}} </p>
-                                            <div class="box-list">
-                                                <div class="box-left">
-                                                    <div class="box-color green">
-                                                        <div class="box-color-title">{{vehicle_gate_pass.registration_number}}</div>
-                                                        <div class="box-color-subtitle">{{vehicle_gate_pass.model_name}}</div>
-                                                    </div>
-                                                </div><!-- Box Left -->
-                                                <div class="box-right">
-                                                    <div class="box-info">
-                                                        <div class="box-info-head">V Gate Pass No</div>
-                                                        <div class="box-info-body">
-                                                            <div class="box-info-body-title">{{vehicle_gate_pass.gate_pass_no}}</div>
-                                                        </div>
-                                                    </div><!-- Box Info -->
-                                                </div><!-- Box Right -->
-                                            </div><!-- Box List -->
-                                            <div class="card-box-content mb-8">
-                                                <img class="img-responsive" src="./public/theme/img/content/jc_profile.svg" alt="Image" />
-                                                <span class="card-box-content-value"><b>{{vehicle_gate_pass.driver_name}}  |  {{vehicle_gate_pass.driver_mobile_number}}</b></span>
-                                            </div>
-                                            <div class="card-box-content">
-                                                <img class="img-responsive" src="./public/theme/img/content/jc_setup.svg" alt="Image" />
-                                                <span class="card-box-content-value">JC No : {{vehicle_gate_pass.job_card_number}}</span>
-                                            </div>
-                                        </div><!-- Card Box Body -->
-                                        <div class="card-box-footer">
-                                            <div class="card-box-footer-left">
-                                                <div class="card-box-footer-info">
-                                                    <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
-                                                    <span class="card-box-footer-value">{{vehicle_gate_pass.status}}</span>
+    <div class="card-tab-content">
+        <div class="page-card-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <ul class="card-list">
+                            <li ng-repeat="(index,vehicle_gate_pass) in vehicle_gate_passes">
+                                <div class="card-box">
+                                    <div class="card-box-body">
+                                        <p class="card-top-info">Created on : {{vehicle_gate_pass.date_and_time}} </p>
+                                        <div class="box-list">
+                                            <div class="box-left">
+                                                <div class="box-color green">
+                                                    <div class="box-color-title">{{vehicle_gate_pass.registration_number}}</div>
+                                                    <div class="box-color-subtitle">{{vehicle_gate_pass.model_name}}</div>
                                                 </div>
+                                            </div><!-- Box Left -->
+                                            <div class="box-right">
+                                                <div class="box-info">
+                                                    <div class="box-info-head">V Gate Pass No</div>
+                                                    <div class="box-info-body">
+                                                        <div class="box-info-body-title" style="font-size:11px;">{{vehicle_gate_pass.gate_pass_no}}</div>
+                                                    </div>
+                                                </div><!-- Box Info -->
+                                            </div><!-- Box Right -->
+                                        </div><!-- Box List -->
+                                        <div class="card-box-content mb-8">
+                                            <img class="img-responsive" src="./public/theme/img/content/jc_profile.svg" alt="Image" />
+                                            <span class="card-box-content-value"><b>{{vehicle_gate_pass.driver_name}} | {{vehicle_gate_pass.driver_mobile_number}}</b></span>
+                                        </div>
+                                        <div class="card-box-content">
+                                            <img class="img-responsive" src="./public/theme/img/content/jc_setup.svg" alt="Image" />
+                                            <span class="card-box-content-value">JC No : {{vehicle_gate_pass.job_card_number}}</span>
+                                        </div>
+                                    </div><!-- Card Box Body -->
+                                    <div class="card-box-footer">
+                                        <div class="card-box-footer-left">
+                                            <div class="card-box-footer-info">
+                                                <img class="img-responsive" src="./public/theme/img/content/icon-exclamatory.svg" alt="Icon" />
+                                                <span class="card-box-footer-value">{{vehicle_gate_pass.status}}</span>
                                             </div>
-                                            <div class="card-box-footer-right">
-                                                <a href="#!/vehicle-gate-pass/view/{{vehicle_gate_pass.gate_log_id}}" class="btn btn-square btn-md btn-red">View</a>
-                                                <!-- <button class="btn btn-square btn-md btn-secondary-dark" ng-show="vehicle_gate_pass.status_id == 8340" ng-click=vehicleGateOut(vehicle_gate_pass.gate_log_id)>Gate Out</button> -->
-                                            </div>
-                                        </div><!-- Card Box Footer -->
-                                    </div><!-- Card Box -->
-                                </li>
-                            </ul><!-- Card List -->
-                        </div><!-- Column -->
-                    </div><!-- Row -->
-                </div><!-- Container -->
-            </div><!-- Page Card Content -->
-        </div><!-- Card Tab Content -->
+                                        </div>
+                                        <div class="card-box-footer-right">
+                                            <a href="#!/vehicle-gate-pass/view/{{vehicle_gate_pass.gate_log_id}}" class="btn btn-square btn-md btn-red">View</a>
+                                            <!-- <button class="btn btn-square btn-md btn-secondary-dark" ng-show="vehicle_gate_pass.status_id == 8340" ng-click=vehicleGateOut(vehicle_gate_pass.gate_log_id)>Gate Out</button> -->
+                                        </div>
+                                    </div><!-- Card Box Footer -->
+                                </div><!-- Card Box -->
+                            </li>
+                        </ul><!-- Card List -->
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Container -->
+        </div><!-- Page Card Content -->
+    </div><!-- Card Tab Content -->
 </div><!-- Content Wrap -->
 <!-- Modal -->
 <div class="modal fade filter" id="vehicle-gate-pass-filter-modal" role="dialog" aria-labelledby="myModalLabel">
