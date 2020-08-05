@@ -5,14 +5,14 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/material-gate-pass/card-list" type="button" class="btn-back btn-img">
+                    <a href="#!/material-gate-pass/table-list" type="button" class="btn-back btn-img">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
                     </a>
                 </div>
                 <div class="page-header-content title-block">
                     <h1 class="title">Material Gate {{$ctrl.type}}</h1>
                     <p class="subtitle">
-                        <a href="#!/material-gate-pass/card-list">Material gate pass</a> / Gate {{$ctrl.type}}
+                        <a href="#!/material-gate-pass/table-list">Material gate pass</a> / Gate {{$ctrl.type}}
                     </p>
                 </div>
             </div>
@@ -207,7 +207,7 @@
                 <div class="page-form-footer">
                     <div class="row">
                         <div class="col-md-12">
-                            <a href="#!/material-gate-pass/card-list" class="btn btn-bordered btn-grey">Cancel</a>
+                            <a href="#!/material-gate-pass/table-list" class="btn btn-bordered btn-grey">Cancel</a>
                             <button class="btn btn-secondary-dark submit" ng-show="$ctrl.material_gate_pass.status_id==8301" type="submit">Confirm Gate In</button>
                             <button class="btn btn-secondary-dark submit" ng-show="$ctrl.material_gate_pass.status_id==8300" type="submit">Confirm Gate Out</button>
                         </div>

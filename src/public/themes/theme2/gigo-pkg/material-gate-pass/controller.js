@@ -748,7 +748,7 @@ app.component('materialGatePassView', {
         $scope.refresh = function() {
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
-            $location.path('/material-gate-pass/card-list');
+            $location.path('/material-gate-pass/table-list');
         }
 
     }
