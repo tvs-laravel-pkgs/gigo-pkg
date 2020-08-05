@@ -1,5 +1,10 @@
 <!-- Content Wrap -->
-<div class="content-wrap">
+<style type="text/css">
+.strikethrough {
+    text-decoration: line-through;
+}
+</style>
+<div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
         <div class="page-header-inner">
@@ -17,117 +22,429 @@
                         <a href="#!/inward-vehicle/card-list">Inward Vehicle</a> / Job card / Update
                     </p>
                 </div>
-            </div>
+            </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
     <!-- Page Main Content -->
-    <div class="page-main-content pb-80 mob-pb-140 type2">
-        <div class="page-tab-form-top type-2">
-            <div class="page-tab-form-top-left">
-                <div class="page-tab-form-top-left-info pad-lf-rt">
-                    <span class="page-tab-form-top-left-info-content">
-                        <b>Gate In No: {{job_order.gate_log.number}} | {{job_order.vehicle.registration_number}} |</b> {{job_order.vehicle.model.model_name}} | {{job_order.job_card.created_at ? job_order.job_card.created_at : '-'}}
-                    </span>
-                </div>
-            </div><!-- Page Tab Form Top Left -->
-            <div class="page-tab-form-top-right">
-                <div class="page-tab-form-top-right-info">
-                    Status : {{job_order.status.name}}
-                </div>
-            </div><!-- Page Tab Form Top Right -->
-        </div><!-- Page Tab Form Top -->
+    <div class="page-main-content form-content type2">
         <form id="update_jc_form" autocomplete="off">
             <input type="hidden" name="job_order_id" value="{{job_order_id}}">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="page-form mt-15">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>GIGO Job Card Number <sup class="mandatory">*</sup></label>
-                                        <input ng-model="job_order.job_card.local_job_card_number" type="text" class="form-control required"  autocomplete="off" value="{{job_order.job_card.job_card_number}}"  readonly />
-                                    </div><!-- Feild -->
-                                </div><!-- Column -->
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>AL Job Card Number <sup class="mandatory">*</sup></label>
-                                        <input ng-model="job_order.job_card.job_card_number" type="text" class="form-control required" placeholder="Enter Job Card Number" autocomplete="off" value="{{job_order.job_card.job_card_number}}" maxlength="191" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="job_card_number" />
-                                        <div class="job_card_error"></div>
-                                    </div><!-- Feild -->
-                                </div><!-- Column -->
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Job Card Date <sup class="mandatory">*</sup></label>
-                                        <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                            <input ng-model="job_order.job_card.date" type="text" class="form-control required" placeholder="Select Job Card Date" name="job_card_date" value="job_order.job_card.date" />
-                                            <div class="input-group-addon">
-                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
-                                            </div>
-                                        </div><!-- Input Group -->
-                                    </div><!-- Feild -->
-                                </div><!-- Column -->
-                                <div class="col-md-12">
-                                    <div class="input-text form-group">
-                                        <label>Job Card Photo <sup class="mandatory">*</sup></label>
-                                        <div class="avatar-upload type-4">
-                                            <div class="avatar-edit" ng-class="{'in': job_order.job_card.attachment != NULL}">
-                                                <input type="file" class="profile-img-upload" name="job_card_photo" id="image_Upload_5" accept=".png, .jpg, .jpeg" />
-                                                <label for="image_Upload_5">
-                                                    <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
-                                                </label>
-                                            </div>
-                                            <div class="avatar-preview in" ng-if="job_order.job_card.attachment != NULL">
-                                                <div class="avatar-img" id="imagePreview" style="background-image:url('./{{job_order.attachment_path}}/{{job_order.job_card.attachment.name}}')">
+            <div class="page-tab-form pb-70">
+                <div class="page-tab-form-top type-2">
+                    <div class="page-tab-form-top-left">
+                        <div class="page-tab-form-top-left-info pad-lf-rt">
+                            <span class="page-tab-form-top-left-info-content">
+                                <b>Gate In No: {{job_order.gate_log.number}} | {{job_order.vehicle.registration_number}} |</b> {{job_order.vehicle.model.model_name}} | {{job_order.job_card.created_at ? job_order.job_card.created_at : '-'}}
+                            </span>
+                        </div>
+                    </div><!-- Page Tab Form Top Left -->
+                    <div class="page-tab-form-top-right">
+                        <div class="page-tab-form-top-right-info">
+                            Status : {{job_order.status.name}}
+                        </div>
+                    </div><!-- Page Tab Form Top Right -->
+                </div><!-- Page Tab Form Top -->
+                <div class="tab-form-wrap type-2 side-tab-open">
+                    <div class="tab-form-header side-tab-open">
+                        <div class="tab-header">
+                            <!-- Filters -->
+                            <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
+                                <ul class="nav nav-pills cndn-tabs">
+                                    <li class="active">
+                                        <a class="filter active" data-target="#inward_details" data-toggle="tab" aria-expanded="true">
+                                            Inward Details
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="filter" data-target="#jobcard_details" data-toggle="tab" aria-expanded="true">
+                                            Update JobCard
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div><!-- Filters -->
+                        </div><!-- Tab Header -->
+                    </div><!-- Tab Form Header -->
+                    <div class="tab-form-body side-tab-open">
+                        <div class="tab-content">
+                            <!-- TAB PANEL -->
+                            <div class="tab-pane fade in active" id="inward_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Inward Details</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="separate-content-wrap">
+                                                <div class="separate-body-wrap">
+                                                    <div class="panel-group" id="accordion">
+                                                        <div class="panel panel-default type-2">
+                                                            <div class="panel-heading">
+                                                                <a class="panel-title in" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
+                                                                    Labour & Parts Details
+                                                                    <span class="arrow"></span>
+                                                                </a>
+                                                            </div>
+                                                            <div id="collapse1" class="panel-collapse collapse in">
+                                                                <div class="panel-body pad-10">
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-primary-stripped">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Labour Details</th>
+                                                                                    <!-- <th>HSN Code</th> -->
+                                                                                    <th>Hours</th>
+                                                                                    <th class="text-right white-space-unset">Amount</th>
+                                                                                    <th class="text-right white-space-unset" ng-repeat="(key,tax) in taxes">{{tax.name}}</th>
+                                                                                    <th class="text-right white-space-unset">Total</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr ng-repeat="(key,labour_detail) in job_order.labour_details">
+                                                                                    <td>{{labour_detail.name}}</td>
+                                                                                    <td class="white-space-unset">{{labour_detail.qty}}</td>
+                                                                                    <td class="text-right white-space-unset">{{labour_detail.amount}}</td>
+                                                                                    <td class="text-right white-space-unset" ng-repeat="(key,tax) in labour_detail.tax_values">{{tax.tax_value}}</td>
+                                                                                    <td class="text-right white-space-unset">
+                                                                                        {{labour_detail.total_amount}}
+                                                                                    </td>
+                                                                                    <!-- <td class="text-right white-space-unset">{{$labour_detail['total_amount']}}</td> -->
+                                                                                </tr>
+                                                                                <tr ng-if="job_order.labour_details.length == 0">
+                                                                                    <td colspan="{{tax_count + 4}}" class="text-center">No Labour work found!</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div><!-- Table Responsive -->
+                                                                    <div class="mb-10"></div><!-- Space -->
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-primary-stripped">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Parts Details</th>
+                                                                                    <!-- <th>SAC Code</th> -->
+                                                                                    <th>Quantity</th>
+                                                                                    <th class="text-right white-space-unset">Rate</th>
+                                                                                    <th class="text-right white-space-unset">Amount</th>
+                                                                                    <th class="text-right white-space-unset" ng-repeat="(key,tax) in taxes">{{tax.name}}</th>
+                                                                                    <th class="text-right white-space-unset">Total</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr ng-repeat="(key,part_detail) in job_order.part_details">
+                                                                                    <td>{{part_detail.name}}</td>
+                                                                                    <td class="white-space-unset">{{part_detail.qty}}</td>
+                                                                                    <td class="text-right white-space-unset">{{part_detail.rate}}</td>
+                                                                                    <td class="text-right white-space-unset">{{part_detail.amount}}</td>
+                                                                                    <td class="text-right white-space-unset" ng-repeat="(key,tax) in part_detail.tax_values">{{tax.tax_value}}</td>
+                                                                                    <td class="text-right white-space-unset">
+                                                                                        {{part_detail.total_amount}}
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr ng-if="job_order.part_details.length == 0">
+                                                                                    <td colspan="{{tax_count + 5}}" class="text-center">No Parts found!</td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div><!-- Table Responsive -->
+                                                                    <div class="dark-footer-wrap">
+                                                                        <div class="dark-footer-left-content">
+                                                                            <div class="dark-footer-left-content-wrap">
+                                                                                <span class="dark-footer-label">Labour Total : </span>
+                                                                                <span class="dark-footer-value">
+                                                                                    <img class="img-responsive img-web" src="
+                                                                                ./public/theme/img/content/rupee-white.svg" alt="" />
+                                                                                    <img class="img-responsive img-mobile" src="
+                                                                                ./public/theme/img/content/rupee-dark.svg" alt="" />
+                                                                                    {{job_order.labour_total_amount}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="dark-footer-left-content">
+                                                                            <div class="dark-footer-left-content-wrap">
+                                                                                <span class="dark-footer-label">Parts Total : </span>
+                                                                                <span class="dark-footer-value">
+                                                                                    <img class="img-responsive img-web" src="
+                                                                                ./public/theme/img/content/rupee-white.svg" alt="" />
+                                                                                    <img class="img-responsive img-mobile" src="
+                                                                                ./public/theme/img/content/rupee-dark.svg" alt="" />
+                                                                                    {{job_order.parts_total_amount}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="dark-footer-right-content">
+                                                                            <div class="dark-footer-right-content-wrap">
+                                                                                <span class="dark-footer-label">Grand Total : </span>
+                                                                                <span class="dark-footer-value">
+                                                                                    <img class="img-responsive img-web" src="
+                                                                                ./public/theme/img/content/rupee-white.svg" alt="" />
+                                                                                    {{job_order.total_amount}}
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div><!-- Dark Footer Wrap -->
+                                                                </div><!-- Panel Body -->
+                                                            </div><!-- Panel Collapse -->
+                                                        </div><!-- Panel -->
+                                                        <div class="mb-15"></div><!-- Spacing -->
+                                                        <div class="panel panel-default type-2">
+                                                            <div class="panel-heading">
+                                                                <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                                                                    Additional Info
+                                                                    <span class="arrow"></span>
+                                                                </a>
+                                                            </div>
+                                                            <div id="collapse2" class="panel-collapse collapse">
+                                                                <div class="panel-body">
+                                                                    <div class="row">
+                                                                        <div class="col-md-6">
+                                                                            <div class="table-responsive">
+                                                                                <table class="table table-primary-stripped table-primary-bordered mobile-whitespace-unset">
+                                                                                    <thead class="pad-md">
+                                                                                        <tr>
+                                                                                            <th colspan="2">Gate In No : {{job_order.gate_log.number}}</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Gate In Date & Time</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.gate_log.gate_in_date}}</span>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Vehicle Model</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.vehicle.model.model_name}}</span>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Engine Number</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.vehicle.engine_number}}</span>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Chassis / VIN Number</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.vehicle.chassis_number}}</span>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">{{job_order.km_reading ? 'KM Reading' : 'HR Reading' }}</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.km_reading ? job_order.km_reading : job_order.hr_reading}}</span>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Membership Type</span>
+                                                                                                <span class="table-primary-stripped-value">-</span>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Customer Name</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.vehicle.current_owner ? job_order.vehicle.current_owner.customer.name : ''}}</span>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Mobile Number</span>
+                                                                                                <span class="table-primary-stripped-value">
+                                                                                                    {{job_order.vehicle.current_owner ? job_order.vehicle.current_owner.customer.mobile_no : ''}}
+                                                                                                </span>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Driver Name</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.driver_name}}</span>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Driver Mobile Number</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.driver_mobile_number}}</span>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Service Contact Number</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.contact_number}}</span>
+                                                                                            </td>
+                                                                                            <td></td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div><!-- Table Responsive -->
+                                                                        </div><!-- Column -->
+                                                                        <div class="col-md-6">
+                                                                            <div class="table-responsive">
+                                                                                <table class="table table-primary-stripped mobile-whitespace-unset">
+                                                                                    <thead class="pad-md">
+                                                                                        <tr>
+                                                                                            <th colspan="2">Order Details</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Job Order Type</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.type ? job_order.type.name : ''}}</span>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-label">Quote Type</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.quote_type ? job_order.quote_type.name : ''}}</span>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td colspan="2">
+                                                                                                <span class="table-primary-stripped-label">Service Type</span>
+                                                                                                <span class="table-primary-stripped-value">{{job_order.service_type ? job_order.service_type.name : ''}}</span>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div><!-- Table Responsive -->
+                                                                            <div class="mb-15"></div><!-- Spacing -->
+                                                                            <div class="table-responsive">
+                                                                                <table class="table table-primary-stripped whitespace-unset">
+                                                                                    <thead class="pad-md">
+                                                                                        <tr>
+                                                                                            <th colspan="2">Voice of Customer</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <td colspan="2">
+                                                                                                <div class="table-primary-stripped-info color-grey">
+                                                                                                    <span class="table-primary-stripped-label" ng-repeat="(keys,customer_voices) in job_order.customer_voices">{{customer_voices.name}}</span>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <span class="table-primary-stripped-value">Road Test Done by</span>
+                                                                                                <span class="table-primary-stripped-label">{{job_order.road_test_done_by ? job_order.road_test_done_by.name : '-'}}
+                                                                                                </span>
+                                                                                            </td>
+                                                                                            <td ng-if="job_order.road_test_done_by">
+                                                                                                <span class="table-primary-stripped-value">
+                                                                                                    {{job_order.road_test_done_by.name}}
+                                                                                                </span>
+                                                                                                <span class="table-primary-stripped-label" ng-if="job_order.road_test_done_by_id == 8101">
+                                                                                                    {{job_order.road_test_prefered_by.name}}
+                                                                                                </span>
+                                                                                                <span class="table-primary-stripped-label" ng-if="job_order.road_test_done_by_id != 8101">
+                                                                                                    {{job_order.driver_name}}
+                                                                                                </span>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div><!-- Table Responsive -->
+                                                                            <div class="mb-15"></div><!-- Spacing -->
+                                                                            <div class="table-responsive">
+                                                                                <table class="table table-primary-stripped whitespace-unset">
+                                                                                    <thead class="pad-md">
+                                                                                        <tr>
+                                                                                            <th>Observations</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <div class="table-primary-stripped-info color-grey">
+                                                                                                    {{job_order.road_test_report}}</div>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div><!-- Table Responsive -->
+                                                                        </div><!-- Column -->
+                                                                    </div><!-- Row -->
+                                                                </div><!-- Panel Body -->
+                                                            </div><!-- Panel Collapse -->
+                                                        </div><!-- Panel -->
+                                                    </div><!-- Panel Group -->
+                                                </div><!-- Body Wrap -->
+                                            </div><!-- Content Wrap -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
                                                 </div>
-                                                <input type="hidden" name="saved_attachment" value="1">
                                             </div>
-                                            <div class="avatar-preview" ng-if="job_order.job_card.attachment == NULL">
-                                                <div class="avatar-img" id="imagePreview" style="">
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="jobcard_details" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Vehicle Details</b></h5>
+                                            <div class="col-sm-12">
+                                                <div class="page-form mt-15">
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>GIGO Job Card Number <sup class="mandatory">*</sup></label>
+                                                                <input ng-model="job_order.job_card.local_job_card_number" type="text" class="form-control required" autocomplete="off" value="{{job_order.job_card.job_card_number}}" readonly />
+                                                            </div><!-- Feild -->
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>AL Job Card Number <sup class="mandatory">*</sup></label>
+                                                                <input ng-model="job_order.job_card.job_card_number" type="text" class="form-control required" placeholder="Enter Job Card Number" autocomplete="off" value="{{job_order.job_card.job_card_number}}" maxlength="191" onkeypress="return event.charCode >= 48 && event.charCode <= 57" name="job_card_number" />
+                                                                <div class="job_card_error"></div>
+                                                            </div><!-- Feild -->
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>Job Card Date <sup class="mandatory">*</sup></label>
+                                                                <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
+                                                                    <input ng-model="job_order.job_card.date" type="text" class="form-control required" placeholder="Select Job Card Date" name="job_card_date" value="job_order.job_card.date" />
+                                                                    <div class="input-group-addon">
+                                                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                                    </div>
+                                                                </div><!-- Input Group -->
+                                                            </div><!-- Feild -->
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-12">
+                                                            <div class="input-text form-group">
+                                                                <label>Job Card Photo <sup class="mandatory">*</sup></label>
+                                                                <div class="avatar-upload type-4">
+                                                                    <div class="avatar-edit" ng-class="{'in': job_order.job_card.attachment != NULL}">
+                                                                        <input type="file" class="profile-img-upload" name="job_card_photo" id="image_Upload_5" accept=".png, .jpg, .jpeg" />
+                                                                        <label for="image_Upload_5">
+                                                                            <img class="img-responsive" src="./public/theme/img/content/edit.png" alt="Edit Image" />
+                                                                        </label>
+                                                                    </div>
+                                                                    <div class="avatar-preview in" ng-if="job_order.job_card.attachment != NULL">
+                                                                        <div class="avatar-img" id="imagePreview" style="background-image:url('./{{job_order.attachment_path}}/{{job_order.job_card.attachment.name}}')">
+                                                                        </div>
+                                                                        <input type="hidden" name="saved_attachment" value="1">
+                                                                    </div>
+                                                                    <div class="avatar-preview" ng-if="job_order.job_card.attachment == NULL">
+                                                                        <div class="avatar-img" id="imagePreview" style="">
+                                                                        </div>
+                                                                        <input type="hidden" name="saved_attachment" value="0">
+                                                                    </div><!-- Avatar Preview -->
+                                                                </div><!-- Avatar Upload -->
+                                                                <div class="attachment_error"></div>
+                                                            </div>
+                                                        </div><!-- Column -->
+                                                    </div><!-- Row -->
+                                                </div><!-- Page Form -->
+                                            </div><!-- Column -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <button class="btn btn-red btn-min-wdth save_close" ng-click="saveJobCard(1)">Save & Close</button>
                                                 </div>
-                                                <input type="hidden" name="saved_attachment" value="0">
-                                            </div><!-- Avatar Preview -->
-                                        </div><!-- Avatar Upload -->
-                                        <div class="attachment_error"></div>
-                                    </div>
-                                </div><!-- Column -->
-                            </div><!-- Row -->
-                        </div><!-- Page Form -->
-                    </div><!-- Column -->
-                </div><!-- Row -->
-                <div class="page-form-footer">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button class="btn btn-red btn-min-wdth save_close" ng-click="saveJobCard(1)">Save & Close</button>
-                            <!-- <button class="btn btn-bordered btn-grey btn-min-wdth approval_behalf" ng-click="saveJobCard(2)">Approve on behalf of Customer</button>
-                            <button class="btn btn-secondary-dark btn-min-wdth send_to_customer_approval" ng-click="saveJobCard(3)">Send to Customer for Approval</button> -->
-                        </div><!-- Column -->
-                    </div><!-- Row -->
-                </div><!-- Page Form Footer -->
-            </div><!-- Container -->
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                        </div><!-- Tab Content -->
+                    </div><!-- Tab Form Body -->
+                </div><!-- Tab Form Wrap -->
+            </div><!-- Page Form -->
         </form>
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<div class="modal modal-otp alert-modal fade" id="otp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form id="approve_behalf_customer_confirm">
-                <div class="modal-header">
-                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                </div><!-- Modal Header -->
-                <div class="modal-body">
-                    <h6 class="title">ENTER OTP</h6>
-                    <p class="info">Received in Customer Mobile +91<span class="customer_mobile_no"></span></p>
-                    <div class="form-group">
-                        <input type="text" autofocus name="otp_no" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
-                        <input type="hidden" name="job_order_id" id="job_order_id" value="{{job_order.id}}" />
-                        <input type="hidden" name="verify_otp" id="id" value="1" />
-                    </div><!-- Feild -->
-                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm">SUBMIT</button>
-                    <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
-                </div><!-- Modal Body -->
-            </form>
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div><!-- Modal -->
 <script src="./public/theme/js/imageuploadify-updatejc.min.js"></script>

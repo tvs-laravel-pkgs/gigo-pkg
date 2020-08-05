@@ -1612,6 +1612,8 @@ app.component('inwardVehicleUpdatejcForm', {
                         return;
                     }
                     $scope.job_order = res.job_order;
+                    $scope.taxes = res.taxes;
+                    $scope.tax_count = res.tax_count;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1620,58 +1622,18 @@ app.component('inwardVehicleUpdatejcForm', {
         }
         $scope.fetchData();
 
-        //SEND OTP TO CUSTOMER
-        $scope.approveBehalfCustomer = function() {
-            $(".approval_behalf").button('loading');
-            $.ajax({
-                url: base_url + '/api/vehicle-inward/send/customer/otp',
-                type: "POST",
-                data: {
-                    id: $routeParams.job_order_id,
-                },
-                dataType: "json",
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                },
-                success: function(response) {
-                    $(".approval_behalf").button('loading');
-                    console.log(response);
-                    $('#otp').modal('show');
-                    $('#otp_no').val('');
-                    $('#otp').on('shown.bs.modal', function() {
-                        $(this).find('[autofocus]').focus();
-                    });
-                    $('.customer_mobile_no').html(response.customer_detail.mobile_no);
-                    $(".approval_behalf").button('reset');
-                },
-                error: function(textStatus, errorThrown) {
-                    $(".approval_behalf").button('reset');
-                    custom_noty('error', 'Something went wrong at server');
-                }
-            });
-        }
-
-        //RESEND OTP
-        $scope.ResendOtp = function() {
-            $.ajax({
-                url: base_url + '/api/vehicle-inward/send/customer/otp',
-                type: "POST",
-                data: {
-                    id: $routeParams.job_order_id,
-                },
-                dataType: "json",
-                beforeSend: function(xhr) {
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                },
-                success: function(response) {
-                    console.log(response);
-                    custom_noty('success', response.message);
-                },
-                error: function(textStatus, errorThrown) {
-                    custom_noty('error', 'Something went wrong at server');
-                }
-            });
-        }
+        $('.btn-nxt').on("click", function() {
+            $('.cndn-tabs li.active').next().children('a').trigger("click");
+            tabPaneFooter();
+        });
+        $('.btn-prev').on("click", function() {
+            $('.cndn-tabs li.active').prev().children('a').trigger("click");
+            tabPaneFooter();
+        });
+        $('.btn-pills').on("click", function() {
+            tabPaneFooter();
+        });
+        $scope.btnNxt = function() {}
 
         //Save Form Data 
         $scope.saveJobCard = function(id) {
@@ -1718,19 +1680,15 @@ app.component('inwardVehicleUpdatejcForm', {
                             contentType: false,
                         })
                         .done(function(res) {
+                            $('.save_close').button('reset');
                             if (!res.success) {
-                                $('.save_close').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }
-                            if (id == 2) {
-                                $scope.approveBehalfCustomer();
-                            } else if (id == 3) {
-                                $scope.send_customer_approval();
-                            } else {
-                                custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/table-list');
-                            }
+
+                            custom_noty('success', res.message);
+                            $location.path('/inward-vehicle/table-list');
+
                             $scope.$apply();
                         })
                         .fail(function(xhr) {

@@ -202,8 +202,33 @@ class JobCardController extends Controller {
 				'gateLog.status',
 				'vehicle',
 				'vehicle.model',
+				'vehicle.currentOwner.customer',
+				'vehicle.currentOwner.customer.primaryAddress',
 				'jobCard',
 				'jobCard.attachment',
+				'jobOrderRepairOrders' => function ($q) {
+					$q->whereNull('removal_reason_id');
+				},
+				'jobOrderRepairOrders.repairOrder',
+				'jobOrderRepairOrders.repairOrder.taxCode',
+				'jobOrderRepairOrders.repairOrder.taxCode.taxes',
+				'jobOrderParts' => function ($q) {
+					$q->whereNull('removal_reason_id');
+					// $q->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id');
+				},
+				'jobOrderParts.part',
+				'jobOrderParts.part.taxCode',
+				'jobOrderParts.part.taxCode.taxes',
+				'outlet',
+				'type',
+				'quoteType',
+				'serviceType',
+				'status',
+				'gateLog',
+				'customerVoices',
+				'roadTestDoneBy',
+				'roadTestPreferedBy',
+				'roadTestPreferedBy.employee',
 			])
 				->find($r->id);
 			if (!$job_order) {
@@ -214,11 +239,113 @@ class JobCardController extends Controller {
 				]);
 			}
 
+			//Check which tax applicable for customer
+			if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
+
+			//Count Tax Type
+			$taxes = Tax::get();
+			$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+			$parts_amount = 0;
+			$labour_amount = 0;
+			$total_amount = 0;
+
+			$labour_details = array();
+			if ($job_order->jobOrderRepairOrders) {
+				foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
+					if ($labour->is_free_service != 1 && (in_array($labour->split_order_type_id, $customer_paid_type_id) || !$labour->split_order_type_id)) {
+						$total_amount = 0;
+						$labour_details[$key]['name'] = $labour->repairOrder->name;
+						$labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
+						$labour_details[$key]['qty'] = $labour->qty;
+						$labour_details[$key]['amount'] = $labour->amount;
+						$labour_details[$key]['is_free_service'] = $labour->is_free_service;
+						$labour_details[$key]['estimate_order_id'] = $labour->estimate_order_id;
+						$tax_amount = 0;
+						$tax_values = array();
+						if ($labour->repairOrder->taxCode) {
+							foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_values[$tax_key]['tax_value'] = $percentage_value;
+								$tax_amount += $percentage_value;
+							}
+						} else {
+							for ($i = 0; $i < count($taxes); $i++) {
+								$tax_values[$i]['tax_value'] = 0.00;
+							}
+						}
+
+						$total_amount = $tax_amount + $labour->amount;
+						$total_amount = number_format((float) $total_amount, 2, '.', '');
+						$labour_amount += $total_amount;
+						$labour_details[$key]['tax_values'] = $tax_values;
+						$labour_details[$key]['total_amount'] = $total_amount;
+					}
+				}
+			}
+
+			$part_details = array();
+			if ($job_order->jobOrderParts) {
+				foreach ($job_order->jobOrderParts as $key => $parts) {
+					if ($parts->is_free_service != 1 && (in_array($parts->split_order_type_id, $customer_paid_type_id) || !$parts->split_order_type_id)) {
+						$total_amount = 0;
+						$part_details[$key]['name'] = $parts->part->name;
+						$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
+						$part_details[$key]['qty'] = $parts->qty;
+						$part_details[$key]['rate'] = $parts->rate;
+						$part_details[$key]['amount'] = $parts->amount;
+						$part_details[$key]['is_free_service'] = $parts->is_free_service;
+						$part_details[$key]['estimate_order_id'] = $parts->estimate_order_id;
+						$tax_amount = 0;
+						$tax_values = array();
+						if ($parts->part->taxCode) {
+							foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_values[$tax_key]['tax_value'] = $percentage_value;
+								$tax_amount += $percentage_value;
+							}
+						} else {
+							for ($i = 0; $i < count($taxes); $i++) {
+								$tax_values[$i]['tax_value'] = 0.00;
+							}
+						}
+
+						$total_amount = $tax_amount + $parts->amount;
+						$total_amount = number_format((float) $total_amount, 2, '.', '');
+						$parts_amount += $total_amount;
+						$part_details[$key]['tax_values'] = $tax_values;
+						$part_details[$key]['total_amount'] = $total_amount;
+					}
+				}
+			}
+
+			$total_amount = $parts_amount + $labour_amount;
+			$total_amount = round($total_amount);
+
 			$job_order->attachment_path = 'storage/app/public/gigo/job_card/attachments';
+
+			$job_order->labour_details = $labour_details;
+			$job_order->part_details = $part_details;
+			$job_order->parts_total_amount = number_format($parts_amount, 2);
+			$job_order->labour_total_amount = number_format($labour_amount, 2);
+			$job_order->total_amount = number_format($total_amount, 2);
 
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
+				'taxes' => $taxes,
+				'tax_count' => count($taxes),
 			]);
 		} catch (Exception $e) {
 			return response()->json([
@@ -945,12 +1072,15 @@ class JobCardController extends Controller {
 				->leftjoin('outlets as deputed_outlet', 'deputed_outlet.id', 'employees.deputed_outlet_id')
 				->where('employees.is_mechanic', 1)
 				->where('users.user_type_id', 1) //EMPLOYEE
-			// ->where('employees.skill_level_id', $repair_order->skill_level_id)
 				->where('employees.outlet_id', $job_card->outlet_id)
 				->orWhere('employees.deputed_outlet_id', $job_card->outlet_id)
-				->orderBy('users.name', 'asc')
-				->get()
-			;
+				->orderBy('users.name', 'asc');
+
+			if ($repair_order->skill_level_id) {
+				$employee_details = $employee_details->where('employees.skill_level_id', $repair_order->skill_level_id);
+			}
+
+			$employee_details = $employee_details->get();
 
 			return response()->json([
 				'success' => true,
