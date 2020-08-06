@@ -29,6 +29,25 @@ class JobCard extends BaseModel {
 		"status_id",
 	];
 
+	//APPEND - INBETWEEN REGISTRATION NUMBER
+	public function getRegistrationNumberAttribute($value) {
+		$value = str_replace('-', '', $value);
+		$registration_number = str_split($value);
+		$registration_number_new = '';
+
+		$registration_number_new .= $registration_number[0] . $registration_number[1] . '-' . $registration_number[2] . $registration_number[3] . '-';
+
+		if (preg_match('/^[A-Z]+$/', $registration_number[4]) && preg_match('/^[A-Z]+$/', $registration_number[5])) {
+			$registration_number_new .= $registration_number[4] . $registration_number[5] . '-' . $registration_number[6] . $registration_number[7] . $registration_number[8] . $registration_number[9];
+		} elseif (preg_match('/^[A-Z]+$/', $registration_number[4]) && preg_match('/^[0-9]+$/', $registration_number[5])) {
+			$registration_number_new .= $registration_number[4] . '-' . $registration_number[5] . $registration_number[6] . $registration_number[7] . $registration_number[8];
+		} else {
+			$registration_number_new .= $registration_number[4] . $registration_number[5] . $registration_number[6] . $registration_number[7];
+		}
+
+		return $this->attributes['registration_number'] = $registration_number_new;
+	}
+
 	public function getDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}

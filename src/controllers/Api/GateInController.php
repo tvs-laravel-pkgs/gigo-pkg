@@ -111,6 +111,8 @@ class GateInController extends Controller {
 					}
 				}
 			}
+			//REMOVE - INBETWEEN REGISTRATION NUMBER
+			$request['registration_number'] = str_replace('-', '', $request->registration_number);
 
 			$validator = Validator::make($request->all(), [
 				'vehicle_photo' => [
