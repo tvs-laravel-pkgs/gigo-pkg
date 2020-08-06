@@ -559,7 +559,7 @@
                                                                         </span>
                                                                         <span class="view-data-list-value">
                                                                             <b>
-                                                                                {{job_order.vehicle.last_job_order.job_card.number}}
+                                                                                {{job_order.vehicle.last_job_order.job_card.job_card_number}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -569,7 +569,7 @@
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
-                                                                                {{job_order.vehicle.last_job_order.created_at}}
+                                                                                {{job_order.vehicle.last_job_order.job_card.created_at}}
                                                                             </b>
                                                                         </span>
                                                                     </li>
@@ -589,7 +589,11 @@
                                                                     </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
-                                                            <a href=".#!/job-card/view/{{job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a>
+                                                            <!-- <a href=".#!/job-card/view/{{job_order.vehicle.last_job_order.job_card.id}}" class="btn btn-secondary-dark btn-md btn-square">View</a> -->
+                                                            <a href=".#!/job-card/bay-view/{{job_order.vehicle.last_job_order.job_card.id}}" target="_blank" class="btn btn-secondary-dark btn-md btn-square">View</a>
+                                                            <a href=".#!/vehicle/view/{{job_order.vehicle.id}}" class="btn btn-secondary-dark btn-md btn-square">
+                                                                View History
+                                                            </a>
                                                         </div><!-- Panel Body -->
                                                         <div class="panel-body" ng-if="!job_order.vehicle.last_job_order || !job_order.vehicle.last_job_order.job_card">
                                                             No Previous Job Card Details Found
