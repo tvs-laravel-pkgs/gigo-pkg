@@ -3065,6 +3065,20 @@ app.component('inwardVehicleOrderDetailForm', {
         self.user = $scope.user = HelperService.getLoggedUser();
 
         $scope.job_order_id = $routeParams.job_order_id;
+
+        //CURRENT DATE
+        var currentdate = new Date();
+        var month = currentdate.getMonth() + 1;
+        var day = currentdate.getDate();
+        currentdate = (day < 10 ? '0' : '') + day + '-' +
+            (month < 10 ? '0' : '') + month + '-' +
+            currentdate.getFullYear();
+
+        var currentdate_split = currentdate.split("-");
+
+        var current_date = '';
+        $scope.current_date = current_date.concat(currentdate_split[2], currentdate_split[1], currentdate_split[0]);
+
         //FETCH DATA
         $scope.fetchData = function() {
             $rootScope.loading = true;
@@ -3100,34 +3114,26 @@ app.component('inwardVehicleOrderDetailForm', {
         }, 1000);
 
         $scope.checkLicenseExpiryDate = function(date) {
-            //CURRENT DATE
-            $scope.currentdate = new Date();
-            var month = $scope.currentdate.getMonth() + 1;
-            var day = $scope.currentdate.getDate();
-            $scope.currentdate = (day < 10 ? '0' : '') + day + '-' +
-                (month < 10 ? '0' : '') + month + '-' +
-                $scope.currentdate.getFullYear();
-            if (Date.parse($scope.currentdate) > Date.parse(date)) {
-                console.log($scope.currentdate,date);
-                console.log('DL');
-                $('#driver_license_expiry_date_error').html('<label class="error">Driving License Date Expired!</label>');
-            }else{
+            var selectdate_split = date.split("-");
+
+            var selected_date = '';
+            selected_date = selected_date.concat(selectdate_split[2], selectdate_split[1], selectdate_split[0]);
+
+            if ($scope.current_date > selected_date) {
+                $('#driver_license_expiry_date_error').html('<label class="error">Driving License Expired!</label>');
+            } else {
                 $('#driver_license_expiry_date_error').html('');
             }
         }
         $scope.checkInsuranceExpiryDate = function(date) {
-            //CURRENT DATE
-            $scope.currentdate = new Date();
-            var month = $scope.currentdate.getMonth() + 1;
-            var day = $scope.currentdate.getDate();
-            $scope.currentdate = (day < 10 ? '0' : '') + day + '-' +
-                (month < 10 ? '0' : '') + month + '-' +
-                $scope.currentdate.getFullYear();
-            if (Date.parse($scope.currentdate) > Date.parse(date)) {
-                console.log($scope.currentdate,date);
-                console.log('I');
-                $('#insurance_expiry_date_error').html('<label class="error">Insurance Date Expired!</label>');
-            }else{
+            var selectdate_split = date.split("-");
+
+            var selected_date = '';
+            selected_date = selected_date.concat(selectdate_split[2], selectdate_split[1], selectdate_split[0]);
+
+            if ($scope.current_date > selected_date) {
+                $('#insurance_expiry_date_error').html('<label class="error">Insurance Expired!</label>');
+            } else {
                 $('#insurance_expiry_date_error').html('');
             }
         }
@@ -3338,27 +3344,6 @@ app.component('inwardVehicleInventoryDetailForm', {
                 });
         }
         $scope.fetchData();
-
-        /*$scope.checkData = function() {
-            console.log('test');
-            $(".inventory_items").each(function() {
-                if ($(this).is(':checked')) {
-                    $(this).closest(".remarks").show();
-                }
-            });
-        }
-        $scope.checkData();
-        $scope.refreshData = function(inventory) {
-            if (inventory.checked) {
-                var dis_id = 'chkselct_' + inventory.id;
-                console.log(dis_id);
-                $('.show_2').css({ 'display': 'block' });
-                // $("#chkselct_" + inventory.id).show();
-                //$(dis_class).display('block');
-                //$scope.chkselct[inventory.id] = true;
-                //$scope.chkselct[inventory.id] = true;
-            }
-        }*/
 
         $scope.showDiv = function(id) {
             if (event.target.checked == true) {
