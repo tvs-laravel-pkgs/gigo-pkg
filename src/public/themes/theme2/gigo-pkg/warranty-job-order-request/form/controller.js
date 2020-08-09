@@ -672,7 +672,7 @@ app.component('warrantyJobOrderRequestForm', {
                     url: base_url + '/api/state/get-drop-down-List',
                     method: "POST",
                     data: {
-                        country_id: self.country.id,
+                        country_id: $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country.id,
                     },
                 })
                 .done(function(res) {

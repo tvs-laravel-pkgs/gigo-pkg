@@ -378,19 +378,20 @@ class WarrantyJobOrderRequest extends BaseModel {
 			if ($input['customer_search_type'] == 'true') {
 				$customer = Customer::find($input['customer_id']);
 			} else {
-				$customer = Customer::where('code', $input['customer_code'])->first();
+				$customer = Customer::firstOrNew([
+					'company_id' => Auth::user()->company_id,
+					'code' => $input['customer_code']
+				]);
 			}
-			if ($customer == null) {
-				$customer = new Customer;
-			}
-			$customer->company_id = Auth::user()->company_id;
-			$customer->code = $input['customer_code'];
 			$customer->name = $input['customer_name'];
 			$customer->mobile_no = $input['customer_mobile_no'];
 			$customer->email = $input['email'];
+			$customer->gst_number = $input['gst_number'];
+			$customer->pan_number = $input['pan_number'];
 			$customer->address = $input['address_line1'] . ' ' . $input['address_line2'];
 			$customer->zipcode = $input['zipcode'];
 			$customer->city = $input['city_name'];
+			$customer->updated_by_id = Auth::id();
 			$customer->save();
 
 			$customer_id = $customer->id;
@@ -405,21 +406,24 @@ class WarrantyJobOrderRequest extends BaseModel {
 			if ($input['vehicle_search_type'] == 'true') {
 				$vehicle = Vehicle::find($input['vehicle_id']);
 			} else {
-				$vehicle = Vehicle::where('chassis_number', $input['chassis_number'])->first();
+				$vehicle = Vehicle::firstOrNew([
+					'company_id' => Auth::user()->company_id,
+					'engine_number' => $input['engine_number'],
+				]);
 			}
-			if ($vehicle == null) {
-				$vehicle = new Vehicle;
-			}
-			$vehicle->company_id = Auth::user()->company_id;
-			$vehicle->engine_number = $input['engine_number'];
 			$vehicle->chassis_number = $input['chassis_number'];
 			$vehicle->model_id = $input['model_id'];
 			if ($input['vehicle_search_type'] == 'false') {
-				$vehicle->is_registered = $input['is_registered'];
 				$vehicle->registration_number = $input['registration_number'];
+				$vehicle->is_registered = $vehicle->registration_number ? 1 : 0;
 			}
-			$vehicle->is_sold = ($input['is_sold'] == 'true') ? 1 : null;
-			$vehicle->sold_date = ($input['is_sold'] == 'true') ? $sold_date : null;
+			if($sold_date){
+				$vehicle->is_sold = 1;
+				$vehicle->sold_date = $sold_date;
+			}else{
+				$vehicle->is_sold = 0;
+				$vehicle->sold_date = null;
+			}
 			$vehicle->created_by_id = Auth::id();
 			$vehicle->save();
 

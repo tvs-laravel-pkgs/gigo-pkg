@@ -44,36 +44,36 @@ class Complaint extends BaseModel {
 				],
 			],
 		],
-		'Hours' => [
-			'table_column_name' => 'hours',
-			'rules' => [
-				'nullable' => [
-				],
-				//'unsigned_integer' => [
-				//	'size' => '8',
-				//],
-			],
-		],
-		'KMs' => [
-			'table_column_name' => 'kms',
-			'rules' => [
-				'nullable' => [
-				],
-				'unsigned_integer' => [
-					'size' => '8',
-				],
-			],
-		],
-		'Months' => [
-			'table_column_name' => 'months',
-			'rules' => [
-				'nullable' => [
-				],
-				//'unsigned_integer' => [
-				//	'size' => '8',
-				//],
-			],
-		],
+		//'Hours' => [
+		//	'table_column_name' => 'hours',
+		//	'rules' => [
+		//		'nullable' => [
+		//		],
+		//		//'unsigned_integer' => [
+		//		//	'size' => '8',
+		//		//],
+		//	],
+		//],
+		//'KMs' => [
+		//	'table_column_name' => 'kms',
+		//	'rules' => [
+		//		'nullable' => [
+		//		],
+		//		'unsigned_integer' => [
+		//			'size' => '8',
+		//		],
+		//	],
+		//],
+		//'Months' => [
+		//	'table_column_name' => 'months',
+		//	'rules' => [
+		//		'nullable' => [
+		//		],
+		//		//'unsigned_integer' => [
+		//		//	'size' => '8',
+		//		//],
+		//	],
+		//],
 	];
 
 	// Query Scopes --------------------------------------------------------------

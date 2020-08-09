@@ -21,7 +21,7 @@
                                 <md-autocomplete md-selected-item="wjor_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
                                     <md-item-template>
                                         <span>
-                                            {{part.code}}
+                                            {{part.code}} / {{part.name}}
                                         </span>
                                     </md-item-template>
                                     <md-not-found>
@@ -115,6 +115,26 @@
                         </div><!-- Column -->
                         <div class="col-md-12" ng-if="wjor_part.part">
                             <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>
+                                            Handling charges (4%)
+                                        </label>
+                                        <label class="form-control-view">
+                                            {{wjor_part.handling_charges | currency}}
+                                        </label>
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>
+                                            Cushioning charges (4%)
+                                        </label>
+                                        <label class="form-control-view">
+                                            {{wjor_part.cushioning_charges | currency}}
+                                        </label>
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>
