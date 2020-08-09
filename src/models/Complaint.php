@@ -49,9 +49,9 @@ class Complaint extends BaseModel {
 			'rules' => [
 				'nullable' => [
 				],
-				'unsigned_integer' => [
-					'size' => '8',
-				],
+				//'unsigned_integer' => [
+				//	'size' => '8',
+				//],
 			],
 		],
 		'KMs' => [
@@ -69,9 +69,9 @@ class Complaint extends BaseModel {
 			'rules' => [
 				'nullable' => [
 				],
-				'unsigned_integer' => [
-					'size' => '8',
-				],
+				//'unsigned_integer' => [
+				//	'size' => '8',
+				//],
 			],
 		],
 	];

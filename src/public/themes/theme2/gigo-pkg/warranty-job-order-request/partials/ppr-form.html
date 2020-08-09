@@ -72,51 +72,8 @@
                         </div>
                     </div>
                 </li> -->
-                <li class="view-col-3">
-                    <div class="form-group">
-                        <label>
-                            <!-- todo abs : (need to disable future date) -->
-                            Failure date
-                            <sup class="mandatory">
-                                *
-                            </sup>
-                        </label>
-                        <div class="input-group date" data-provide="datepicker">
-                            <input type="text" class="form-control" placeholder="Select Failure Date" ng-model="warranty_job_order_request.failure_date" name="failure_date" readonly />
-                            <div class="input-group-addon">
-                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
-                            </div>
-                        </div><!-- Input Group -->
-                    </div><!-- Feild -->
-                </li>
-                <li class="view-col-3">
-                    <div class="form-group">
-                        <label>
-                            Warranty status
-                            <sup class="mandatory">*</sup>
-                        </label>
-                        <div class="common-radio-button type-4">
-                            <input type="radio" id="warranty_yes" name="has_warranty" ng-model="warranty_job_order_request.has_warranty" ng-value="1">
-                            <label for="warranty_yes">Active</label>
-                            <input type="radio" id="warranty_no" name="has_warranty" ng-model="warranty_job_order_request.has_warranty" ng-value="0">
-                            <label for="warranty_no">Inactive</label>
-                        </div>
-                    </div><!-- Feild -->
-                </li>
-                <li class="view-col-3" ng-if="!warranty_job_order_request.has_warranty">
-                    <div class="form-group">
-                        <label>
-                            AMC status
-                            <sup class="mandatory">*</sup>
-                        </label>
-                        <div class="common-radio-button type-4">
-                            <input type="radio" id="amc_yes" name="has_amc" ng-model="warranty_job_order_request.has_amc" ng-value="1">
-                            <label for="amc_yes">Active</label>
-                            <input type="radio" id="amc_no" name="has_amc" ng-model="warranty_job_order_request.has_amc" ng-value="0">
-                            <label for="amc_no">Inactive</label>
-                        </div>
-                    </div><!-- Feild -->
-                </li>
+
+
                 <!-- Auto Form Fields -->
                 <!-- <li class="view-col-3" ng-if="form_type != 'manual'">
                     <div class="form-group">
@@ -227,6 +184,23 @@
                                 <li class="view-col-3">
                                     <div class="form-group">
                                         <label>
+                                            <!-- todo abs : (need to disable future date) -->
+                                            Failure date
+                                            <sup class="mandatory">
+                                                *
+                                            </sup>
+                                        </label>
+                                        <div class="input-group date" data-provide="datepicker">
+                                            <input type="text" class="form-control" placeholder="Select Failure Date" ng-model="warranty_job_order_request.failure_date" name="failure_date" readonly />
+                                            <div class="input-group-addon">
+                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                            </div>
+                                        </div><!-- Input Group -->
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
                                             Free services done
                                             <sup class="mandatory">*</sup>
                                         </label>
@@ -261,6 +235,50 @@
                                         </md-autocomplete>
                                         <input type="hidden" name="outlet_id" value="{{warranty_job_order_request.job_order.outlet.id}}">
                                     </div>
+                                </li>
+                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.outlet">
+                                    <span class="view-col-label">
+                                        Servicing dealer name
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.job_order.outlet.business.pivot.outlet_name}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.outlet">
+                                    <span class="view-col-label">
+                                        Servicing Dealer Code
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.job_order.outlet.business.pivot.outlet_code}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Warranty status
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <div class="common-radio-button type-4">
+                                            <input type="radio" id="warranty_yes" name="has_warranty" ng-model="warranty_job_order_request.has_warranty" ng-value="1">
+                                            <label for="warranty_yes">Active</label>
+                                            <input type="radio" id="warranty_no" name="has_warranty" ng-model="warranty_job_order_request.has_warranty" ng-value="0">
+                                            <label for="warranty_no">Inactive</label>
+                                        </div>
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            AMC status
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <div class="common-radio-button type-4">
+                                            <input type="radio" id="amc_yes" name="has_amc" ng-model="warranty_job_order_request.has_amc" ng-value="1">
+                                            <label for="amc_yes">Active</label>
+                                            <input type="radio" id="amc_no" name="has_amc" ng-model="warranty_job_order_request.has_amc" ng-value="0">
+                                            <label for="amc_no">Inactive</label>
+                                        </div>
+                                    </div><!-- Feild -->
                                 </li>
                             </ul>
                         </div>
@@ -313,25 +331,17 @@
                                         <input type="hidden" name="vehicle_id" value="{{warranty_job_order_request.job_order.vehicle.id}}">
                                     </div><!-- Feild -->
                                 </li>
-                                <li class="view-col-3" ng-if="form_type == 'manual' && vehicle_search_type==false">
-                                    <div class="form-group">
-                                        <label>Registration Type <sup class="mandatory">*</sup></label>
-                                        <div class="common-radio-button type-4">
-                                            <input type="radio" id="registered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="1">
-                                            <label for="registered">Registered</label>
-                                            <input type="radio" id="unregistered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="0">
-                                            <label for="unregistered">Un Registered</label>
-                                        </div>
-                                    </div><!-- Feild -->
-                                </li>
-                                <li class="view-col-3" ng-if="form_type == 'manual' && vehicle_search_type==false" ng-show="$ctrl.is_registered == 1">
-                                    <div class="form-group">
-                                        <label>
-                                            Vehicle Registration Number
-                                            <sup class="mandatory">*</sup></label>
-                                        <input required type="text" class="form-control registration_number" minlength="12" maxlength="13" id="registration_number" placeholder="Enter Vehicle Registration Number" value="" autocomplete="off" name="registration_number" oninput="this.value = this.value.toUpperCase()" ng-model="warranty_job_order_request.job_order.vehicle.registration_number" />
-                                    </div><!-- Feild -->
-                                </li>
+<!--                                <li class="view-col-3" ng-if="form_type == 'manual'">-->
+<!--                                    <div class="form-group">-->
+<!--                                        <label>Registration Type <sup class="mandatory">*</sup></label>-->
+<!--                                        <div class="common-radio-button type-4">-->
+<!--                                            <input type="radio" id="registered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="1">-->
+<!--                                            <label for="registered">Registered</label>-->
+<!--                                            <input type="radio" id="unregistered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="0">-->
+<!--                                            <label for="unregistered">Un Registered</label>-->
+<!--                                        </div>-->
+<!--                                    </div>&lt;!&ndash; Feild &ndash;&gt;-->
+<!--                                </li>-->
                                 <li class="view-col-3" ng-if="form_type == 'manual'">
                                     <div class="form-group">
                                         <label>
@@ -346,6 +356,14 @@
                                             Chassis Number
                                             <sup class="mandatory">*</sup></label>
                                         <input required type="text" class="form-control chassis_number" minlength="10" maxlength="17" placeholder="Enter Chassis Number" autocomplete="off" id="chassis_number" name="chassis_number" ng-model="warranty_job_order_request.job_order.vehicle.chassis_number" />
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3" ng-if="form_type == 'manual'">
+                                    <div class="form-group">
+                                        <label>
+                                            Vehicle Registration Number
+                                        </label>
+                                        <input required type="text" class="form-control registration_number" minlength="12" maxlength="13" id="registration_number" placeholder="Enter Vehicle Registration Number" value="" autocomplete="off" name="registration_number" oninput="this.value = this.value.toUpperCase()" ng-model="warranty_job_order_request.job_order.vehicle.registration_number" />
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-if="form_type=='manual'">
@@ -618,50 +636,11 @@
                                 <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle">
                                     <div class="form-group">
                                         <label>
-                                            Engine number
-                                            <sup class="mandatory">*</sup>
-                                        </label>
-                                        <input type="text" class="form-control" autocomplete="off" ng-model="warranty_job_order_request.job_order.vehicle.engine_number" name="engine_number" maxlength="32" />
-                                    </div>
-                                </li>
-                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle">
-                                    <div class="form-group">
-                                        <label>
                                             Registration number
                                             <sup class="mandatory">*</sup>
                                         </label>
                                         <input type="text" class="form-control" autocomplete="off" ng-model="warranty_job_order_request.job_order.vehicle.registration_number" name="registration_number" maxlength="10" />
                                     </div>
-                                </li>
-                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle && false">
-                                    <span class="view-col-label">
-                                        Chassis number
-                                    </span>
-                                    <span class="view-data-list-value">
-                                        <b>
-                                            {{warranty_job_order_request.job_order.vehicle.chassis_number}}
-                                        </b>
-                                    </span>
-                                </li>
-                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle && false">
-                                    <span class="view-col-label">
-                                        Engine number
-                                    </span>
-                                    <span class="view-col-value">
-                                        <b>
-                                            {{warranty_job_order_request.job_order.vehicle.engine_number}}
-                                        </b>
-                                    </span>
-                                </li>
-                                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle && false">
-                                    <span class="view-col-label">
-                                        Registration number
-                                    </span>
-                                    <span class="view-col-value">
-                                        <b>
-                                            {{warranty_job_order_request.job_order.vehicle.registration_number}}
-                                        </b>
-                                    </span>
                                 </li>
                                 <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle">
                                     <span class="view-col-label">
@@ -681,25 +660,6 @@
                                         <input type="text" class="form-control" autocomplete="off" ng-model="warranty_job_order_request.unit_serial_number" name="unit_serial_number" maxlength="32" />
                                     </div><!-- Feild -->
                                 </li>
-                                <!-- <li class="view-col-3">
-                                    <div class="form-group">
-                                        <label>
-                                            Free services done
-                                            <sup class="mandatory">*</sup>
-                                        </label>
-                                        <md-select multiple ng-model="warranty_job_order_request.service_types" placeholder="Select compled free services" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
-                                            <md-select-header class="demo-select-header">
-                                                <input ng-model="searchServiceTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
-                                            </md-select-header>
-                                            <md-optgroup>
-                                                <md-option ng-value="service_type" ng-repeat="service_type in options.service_types | filter:searchServiceTypeKey">
-                                                    {{service_type.name}}
-                                                </md-option>
-                                            </md-optgroup>
-                                        </md-select>
-                                        <input type="hidden" name="service_type_ids" value="{{warranty_job_order_request.service_types}}">
-                                    </div>
-                                </li> -->
                                 <li class="view-col-3">
                                     <div class="form-group">
                                         <label>
@@ -738,7 +698,7 @@
                                         <input type="hidden" name="complaint_id" value="{{warranty_job_order_request.complaint.id}}">
                                     </div><!-- Feild -->
                                 </li>
-                                <li class="view-col-3">
+                                <li class="view-col-3" ng-if="warranty_job_order_request.complaint">
                                     <span class="view-col-label">
                                         Complaint description
                                     </span>
@@ -765,7 +725,7 @@
                                         <input type="hidden" name="fault_id" value="{{warranty_job_order_request.fault.id}}">
                                     </div><!-- Feild -->
                                 </li>
-                                <li class="view-col-3">
+                                <li class="view-col-3" ng-if="warranty_job_order_request.fault">
                                     <span class="view-col-label">
                                         Fault description
                                     </span>
@@ -792,47 +752,12 @@
                                         <input type="hidden" name="supplier_id" value="{{warranty_job_order_request.supplier.id}}">
                                     </div><!-- Feild -->
                                 </li>
-                                <li class="view-col-3">
+                                <li class="view-col-3" ng-if="warranty_job_order_request.supplier">
                                     <span class="view-col-label">
                                         Supplier name
                                     </span>
                                     <span class="view-col-value">
                                         {{warranty_job_order_request.supplier.name}}
-                                    </span>
-                                </li>
-                                <!-- <li class="view-col-3" ng-if="form_type == 'manual'">
-                                    <div class="form-group">
-                                        <label>
-                                            Outlet
-                                            <sup class="mandatory">*</sup>
-                                        </label>
-                                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order.outlet" md-search-text="outlet_search_key" md-items="outlet in searchOutlet(outlet_search_key)" md-item-text="outlet.code+' / '+outlet.name" md-min-length="2" md-escape-options="clear" placeholder="Outlet" ng-model-options="{trackBy: '$value.id' }" md-selected-item-change="outletChanged(warranty_job_order_request.job_order.outlet)">
-                                            <md-item-template>
-                                                <span>
-                                                    {{outlet.code}}
-                                                </span>
-                                            </md-item-template>
-                                            <md-not-found>
-                                                No records matching "{{outlet_search_key}}" were found.
-                                            </md-not-found>
-                                        </md-autocomplete>
-                                        <input type="hidden" name="outlet_id" value="{{warranty_job_order_request.job_order.outlet.id}}">
-                                    </div>
-                                </li> -->
-                                <li class="view-col-3">
-                                    <span class="view-col-label">
-                                        Servicing dealer name
-                                    </span>
-                                    <span class="view-col-value">
-                                        {{warranty_job_order_request.job_order.outlet.business.pivot.outlet_name}}
-                                    </span>
-                                </li>
-                                <li class="view-col-3">
-                                    <span class="view-col-label">
-                                        Servicing Dealer Code
-                                    </span>
-                                    <span class="view-col-value">
-                                        {{warranty_job_order_request.job_order.outlet.business.pivot.outlet_code}}
                                     </span>
                                 </li>
                                 <li class="view-col-3">
@@ -893,15 +818,6 @@
                                     </div>
                                 </li> -->
                                 <!-- Feild -->
-                                <li class="view-col-3">
-                                    <span class="view-col-label">
-                                        Customer name and address
-                                    </span>
-                                    <span class="view-col-value">
-                                        {{warranty_job_order_request.job_order.customer.name}}<br />
-                                        {{warranty_job_order_request.job_order.customer.address}}
-                                    </span>
-                                </li>
                             </ul>
                         </div>
                     </div>
