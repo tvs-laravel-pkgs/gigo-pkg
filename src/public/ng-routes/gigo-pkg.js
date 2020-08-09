@@ -185,7 +185,7 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<parts-indent-repair-order-view></parts-indent-repair-order-view>',
         title: 'View Repair Order',
     }).
-     when('/part-indent/parts/view/:job_order_id', {
+    when('/part-indent/parts/view/:job_order_id', {
         template: '<parts-indent-parts-view></parts-indent-parts-view>',
         title: 'View Parts',
     }).
@@ -1143,7 +1143,7 @@ app.config(['$routeProvider', function($routeProvider) {
     }).
     when('/warranty-job-order-request/form/:request_id?', {
         template: '<warranty-job-order-request-form></warranty-job-order-request-form>',
-        title: 'Warranty Job Order Request - Form'
+        title: 'Product Performance Report - Form'
     }).
     when('/warranty-job-order-request/view/:request_id', {
         template: '<warranty-job-order-request-view></warranty-job-order-request-view>',

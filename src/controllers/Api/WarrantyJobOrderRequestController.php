@@ -4,9 +4,11 @@ namespace Abs\GigoPkg\Api;
 
 use Abs\BasicPkg\Traits\CrudTrait;
 use Abs\GigoPkg\Notifications\WarrantyJobOrderRequest as WjorNotification;
+use App\Country;
 use App\Http\Controllers\Controller;
 use App\Outlet;
 use App\User;
+use App\VehicleModel;
 use App\WarrantyJobOrderRequest;
 use Auth;
 use DB;
@@ -261,5 +263,29 @@ class WarrantyJobOrderRequestController extends Controller {
 		/*$this->data['outlets'] = DB::select('id','code as name')->where('company_id', Auth::user()->company_id)->get();
 		return response()->json($this->data);*/
 
+	}
+	public function getFormData() {
+		try {
+
+			$models = VehicleModel::where('company_id', Auth::user()->company_id)->get();
+			return response()->json([
+				'success' => true,
+				'extras' => [
+					'country_list' => Country::getDropDownList(),
+					'state_list' => [], //State::getDropDownList(),
+					'city_list' => [], //City::getDropDownList(),
+					'models' => $models,
+				],
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
 	}
 }

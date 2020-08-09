@@ -89,7 +89,11 @@ class Complaint extends BaseModel {
 
 	public function scopeFilterComplaintGroup($query, $complaint_group_id) {
 		$query->where('group_id', $complaint_group_id);
-		dd($query->toSql());
+		// dd($query->toSql());
+	}
+
+	public function complaintGroup() {
+		return $this->belongsTo('App\ComplaintGroup', 'group_id');
 	}
 
 	// Static Operations --------------------------------------------------------------

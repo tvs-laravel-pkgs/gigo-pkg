@@ -200,7 +200,9 @@ app.factory('WarrantyJobOrderRequestSvc', function($q, RequestSvc, $rootScope, $
         outlets: function(params) { // outlets
             return RequestSvc.post('/api/' + model + '/outlets', params);
         },
-
+        getFormData: function(params) { // getFormData
+            return RequestSvc.post('/api/' + model + '/get-form-data', params);
+        },
     };
 
 });

@@ -20,12 +20,35 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.hasPerm = HelperService.hasPerm;
 
         $scope.page = 'form';
+        $scope.customer_search_type = true;
+        $scope.vehicle_search_type = true;
 
         $scope.init = function() {
             $rootScope.loading = true;
 
             $scope.form_type = 'manual';
+            $.ajax({
+                    url: base_url + '/api/warranty-job-order-request/get-form-data',
+                    method: "POST",
+                    data: {},
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    $rootScope.loading = false;
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.extras = res.extras;
 
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    custom_noty('error', 'Something went wrong at server');
+                });
             let promises = {
                 service_type_options: ServiceTypeSvc.options(),
                 vehicle_primary_application_options: VehiclePrimaryApplicationSvc.options(),
@@ -58,8 +81,11 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.warranty_job_order_request = responses.warranty_job_order_request_read.data.warranty_job_order_request;
                         $scope.customer = $scope.warranty_job_order_request.job_order.customer;
                         $scope.customerChanged($scope.customer);
+                        self.country = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country;
+                        $scope.countryChanged();
                         $scope.calculateTotals();
                     } else {
+                        self.is_registered = 1;
                         $scope.warranty_job_order_request = {
                             wjor_repair_orders: [],
                             wjor_parts: [],
@@ -129,12 +155,13 @@ app.component('warrantyJobOrderRequestForm', {
                             part_total: 0,
                             attachments: [],
                             job_order: {
-                                vehicle: {},
-                                customer: {},
+                                vehicle: [],
+                                customer: [],
                                 // outlet: {},
                             },
                             photos: [],
                         };
+                        $scope.warranty_job_order_request.job_order.vehicle.is_sold = true;
                     }
                     $scope.customer = $scope.warranty_job_order_request.job_order.customer;
 
@@ -167,7 +194,7 @@ app.component('warrantyJobOrderRequestForm', {
                     // $("#file-1").fileinput(config);
                     // $("#file-2").fileinput(config);
 
-                    if ($scope.warranty_job_order_request.attachments.length == 0) {
+                    if ($scope.warranty_job_order_request.photos.length == 0) {
                         $("#file-1").addClass("required");
                     }
                     $rootScope.loading = false;
@@ -622,6 +649,76 @@ app.component('warrantyJobOrderRequestForm', {
                 //     });
             }
         });
+        self.searchCity = function(query) {
+            if (query) {
+                return new Promise(function(resolve, reject) {
+                    $http
+                        .post(
+                            laravel_routes['getCitySearchList'], {
+                                key: query,
+                            }
+                        )
+                        .then(function(response) {
+                            resolve(response.data);
+                        });
+                    //reject(response);
+                });
+            } else {
+                return [];
+            }
+        }
+        $scope.countryChanged = function() {
+            $.ajax({
+                    url: base_url + '/api/state/get-drop-down-List',
+                    method: "POST",
+                    data: {
+                        country_id: self.country.id,
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.extras.state_list = res.state_list;
 
+                    //ADD NEW OWNER TYPE
+                    /*if ($scope.type_id == 2) {
+                        self.state = $scope.job_order.state;
+                    } else {
+                        if (!$scope.job_order.vehicle.current_owner) {
+                            self.state = $scope.job_order.state;
+                        } else {
+                            self.state = $scope.job_order.vehicle.current_owner.customer.address.state;
+                        }
+                    }*/
+
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+        $(document).on('keyup', ".registration_number", function() {
+            if ($(this).val().length == 2) {
+                $('.registration_number').val($(this).val() + '-');
+            }
+            if ($(this).val().length == 5) {
+                $('.registration_number').val($(this).val() + '-');
+            }
+            if ($(this).val().length == 8) {
+                var regis_num = $(this).val().substr(7, 1);
+                if ($.isNumeric(regis_num)) {
+                    //Check Previous Character Number or String
+                    var previous_char = $(this).val().substr(6, 1);
+                    if (!$.isNumeric(previous_char)) {
+                        var regis_number = $(this).val().slice(0, -1);
+                        $('.registration_number').val(regis_number + '-' + regis_num);
+                    }
+                } else {
+                    $('.registration_number').val($(this).val() + '-');
+                }
+            }
+        });
     }
 });

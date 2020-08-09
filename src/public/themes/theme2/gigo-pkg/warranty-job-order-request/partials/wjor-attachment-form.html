@@ -47,10 +47,11 @@
             <hr class="hr-15"> -->
             <!-- Separater -->
             <div class="row">
-                <div class="col-xs-6 col-md-3" ng-repeat="(key, attachment) in warranty_job_order_request.attachments">
-                    <a href="./storage/app/public/wjor/{{attachment.name}}" target="_blank" class="thumbnail">
-                        <img ng-src="./storage/app/public/wjor/{{attachment.name}}" />
+                <div class="col-xs-6 col-md-3" ng-repeat="(key, photo) in warranty_job_order_request.photos">
+                    <a href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
+                        <img ng-src="./storage/app/public/wjor/{{photo.name}}" />
                     </a>
+                    <p>{{photo.path}}</p>
                 </div>
             </div>
         </div><!-- Column -->

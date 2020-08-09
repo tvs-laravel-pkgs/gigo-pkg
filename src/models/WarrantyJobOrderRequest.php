@@ -6,12 +6,16 @@ use Abs\HelperPkg\Traits\SeederTrait;
 use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Attachment;
 use App\BaseModel;
+use App\Customer;
 use App\FinancialYear;
 use App\JobCard;
 use App\Outlet;
+use App\Vehicle;
+use App\VehicleOwner;
 use App\WjorPart;
 use App\WjorRepairOrder;
 use Auth;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Storage;
@@ -194,10 +198,16 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'jobOrder.outlet',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
+				'jobOrder.vehicle.currentOwner.customer',
+				'jobOrder.vehicle.currentOwner.customer.address',
+				'jobOrder.vehicle.currentOwner.customer.address.country',
+				'jobOrder.vehicle.currentOwner.customer.address.state',
+				'jobOrder.vehicle.currentOwner.customer.address.city',
 				'jobOrder.status',
 				'jobOrder.customer',
 				'jobOrder.jobCard',
 				'complaint',
+				'complaint.complaintGroup',
 				'fault',
 				'supplier',
 				'primarySegment',
@@ -360,9 +370,81 @@ class WarrantyJobOrderRequest extends BaseModel {
 	}
 
 	public static function saveFromFormArray($input, $owner = null) {
+		// dd($input);
 		try {
 			DB::beginTransaction();
 			$owner = !is_null($owner) ? $owner : Auth::user();
+
+			if ($input['customer_search_type'] == 'true') {
+				$customer = Customer::find($input['customer_id']);
+			} else {
+				$customer = Customer::where('code', $input['customer_code'])->first();
+			}
+			if ($customer == null) {
+				$customer = new Customer;
+			}
+			$customer->company_id = Auth::user()->company_id;
+			$customer->code = $input['customer_code'];
+			$customer->name = $input['customer_name'];
+			$customer->mobile_no = $input['customer_mobile_no'];
+			$customer->email = $input['email'];
+			$customer->address = $input['address_line1'] . ' ' . $input['address_line2'];
+			$customer->zipcode = $input['zipcode'];
+			$customer->city = $input['city_name'];
+			$customer->save();
+
+			$customer_id = $customer->id;
+
+			$input['pincode'] = $input['zipcode'];
+			$customer->saveAddress($input);
+
+			$sold_date = null;
+			if ($input['sold_date']) {
+				$sold_date = date('Y-m-d', strtotime($input['sold_date']));
+			}
+			if ($input['vehicle_search_type'] == 'true') {
+				$vehicle = Vehicle::find($input['vehicle_id']);
+			} else {
+				$vehicle = Vehicle::where('chassis_number', $input['chassis_number'])->first();
+			}
+			if ($vehicle == null) {
+				$vehicle = new Vehicle;
+			}
+			$vehicle->company_id = Auth::user()->company_id;
+			$vehicle->engine_number = $input['engine_number'];
+			$vehicle->chassis_number = $input['chassis_number'];
+			$vehicle->model_id = $input['model_id'];
+			if ($input['vehicle_search_type'] == 'false') {
+				$vehicle->is_registered = $input['is_registered'];
+				$vehicle->registration_number = $input['registration_number'];
+			}
+			$vehicle->is_sold = ($input['is_sold'] == 'true') ? 1 : null;
+			$vehicle->sold_date = ($input['is_sold'] == 'true') ? $sold_date : null;
+			$vehicle->created_by_id = Auth::id();
+			$vehicle->save();
+
+			$input['vehicle_id'] = $vehicle->id;
+
+			$vehicle_owner = VehicleOwner::where([
+				'vehicle_id' => $vehicle->id,
+				'customer_id' => $customer->id,
+			])->first();
+			if ($vehicle_owner == null) {
+				//NEW OWNER
+				$vehicle_owner = new VehicleOwner;
+				$vehicle_owner->vehicle_id = $vehicle->id;
+				$vehicle_owner->from_date = Carbon::now();
+				$vehicle_owner->created_by_id = Auth::id();
+				$vehicle_owner->ownership_id = 8160;
+			} else {
+				$vehicle_owner->updated_by_id = Auth::id();
+				$vehicle_owner->updated_at = Carbon::now();
+				$vehicle_owner->ownership_id = 8161;
+			}
+
+			$vehicle_owner->customer_id = $customer->id;
+			$vehicle_owner->save();
+
 			if ($input['form_type'] == "manual") {
 				$job_card_number = $input['job_card_number'];
 				$job_card = JobCard::where('job_card_number', $job_card_number)->first();
@@ -376,7 +458,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 				$generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
 
-				$customer = json_decode($input['customer_id']);
+				if (isset($input['customer_id'])) {
+					$customer = json_decode($input['customer_id']);
+					$customer_id = $customer;
+				}
 
 				if (!$job_card) {
 					$job_order = new JobOrder;
@@ -390,7 +475,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 					$job_order->km_reading = $input['failed_at'];
 					$job_order->hr_reading = $input['failed_at'];
 					$job_order->quote_type_id = 2;
-					$job_order->customer_id = $customer->id;
+					$job_order->customer_id = $customer_id;
 					$job_order->save();
 					// $job_order->status_id = 8460; //Ready for Inward
 					// $job_order->number = 'JO-' . $job_order->id;
@@ -408,7 +493,28 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 					$job_order_id = $job_order->id;
 				} else {
-					$job_order_id = $job_card->job_order_id;
+					if ($job_card->job_order_id == null) {
+						$job_order = new JobOrder;
+						$job_order->company_id = $owner->company_id;
+						$job_order->number = $generateJONumber['number'];
+						$job_order->vehicle_id = $input['vehicle_id'];
+						$job_order->outlet_id = $input['outlet_id'];
+						$job_order->type_id = 4;
+						$job_order->quote_type_id = 2;
+						$job_order->km_reading_type_id = $input['reading_type_id'];
+						$job_order->km_reading = $input['failed_at'];
+						$job_order->hr_reading = $input['failed_at'];
+						$job_order->quote_type_id = 2;
+						$job_order->customer_id = $customer_id;
+						$job_order->save();
+						$job_order_id = $job_order->id;
+
+						$job_card = JobCard::find($job_card->id);
+						$job_card->job_order_id = $job_order_id;
+						$job_card->save();
+					} else {
+						$job_order_id = $job_card->job_order_id;
+					}
 				}
 			} else {
 				$job_order_id = $input['job_order_id'];
@@ -526,10 +632,16 @@ class WarrantyJobOrderRequest extends BaseModel {
 	public function syncParts($wjorParts) {
 		WjorPart::where('wjor_id', $this->id)->delete();
 		foreach ($wjorParts as $wjorPartInput) {
+			// dump($wjorPartInput->purchase_type);
 			$wjorPart = new WjorPart;
+			if (gettype($wjorPartInput->purchase_type) == "object") {
+				$purchase_type = $wjorPartInput->purchase_type->id;
+			} else {
+				$purchase_type = $wjorPartInput->purchase_type;
+			}
 			$wjorPart->wjor_id = $this->id;
 			$wjorPart->part_id = $wjorPartInput->part->id;
-			$wjorPart->purchase_type = $wjorPartInput->purchase_type;
+			$wjorPart->purchase_type = $purchase_type; // $wjorPartInput->purchase_type;
 			$wjorPart->qty = $wjorPartInput->qty;
 			$wjorPart->rate = $wjorPartInput->rate;
 			$wjorPart->net_amount = $wjorPartInput->net_amount;
