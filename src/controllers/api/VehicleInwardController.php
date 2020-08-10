@@ -4613,7 +4613,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$customer_mobile = $job_order->customer->mobile_no;
+			$customer_mobile = $job_order->contact_number;
 
 			if (!$customer_mobile) {
 				return response()->json([
@@ -4783,7 +4783,7 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
-			$customer_mobile = $job_order->customer->mobile_no;
+			$customer_mobile = $job_order->contact_number;
 			$vehicle_no = $job_order->vehicle->registration_number;
 
 			if (!$customer_mobile) {
