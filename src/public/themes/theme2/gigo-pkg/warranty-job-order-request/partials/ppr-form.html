@@ -283,7 +283,7 @@
                                 <li class="view-col-3" ng-if="form_type == 'manual' && vehicle_search_type==true">
                                     <div class="form-group">
                                         <label>
-                                            Vehicle
+                                            Search vehicle
                                             <sup class="mandatory">*</sup>
                                         </label>
                                         <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order.vehicle" md-search-text="vehicle_search_key" md-items="vehicle in searchVehicles(vehicle_search_key)" md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number" md-min-length="3" md-escape-options="clear" placeholder="Chassis # / Registration # / Engine #">
@@ -440,7 +440,7 @@
                                 <li class="view-col-3" ng-if="form_type=='manual' && customer_search_type == true ">
                                     <div class="form-group">
                                         <label>
-                                            Customer
+                                            Search customer
                                             <sup class="mandatory">*</sup>
                                         </label>
                                         <md-autocomplete class="type-sm" md-items="option in searchCustomer(customerSearchText)" md-selected-item="customer" md-search-text="customerSearchText" md-selected-item-change="customerChanged(customer)" md-item-text="option.code" md-min-length="3" placeholder="Customer Name" ng-model-options="{trackBy: '$value.id' }">
