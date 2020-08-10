@@ -251,6 +251,7 @@ class VehicleInwardController extends Controller {
 				'gateLog.chassisAttachment',
 				'customerApprovalAttachment',
 				'customerESign',
+				'VOCAttachment',
 			])
 				->select([
 					'job_orders.*',
@@ -3613,6 +3614,7 @@ class VehicleInwardController extends Controller {
 				'vehicle.status',
 				'status',
 				'customerVoices',
+				'VOCAttachment',
 			])
 				->select([
 					'job_orders.*',
@@ -3666,6 +3668,7 @@ class VehicleInwardController extends Controller {
 				'extras' => $extras,
 				'action' => $action,
 				'job_order' => $job_order,
+				'attachement_path' => url('storage/app/public/gigo/job_order/attachments/'),
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -3823,6 +3826,30 @@ class VehicleInwardController extends Controller {
 							'details' => isset($voice['details']) ? $voice['details'] : NULL,
 						]);
 					}
+				}
+
+				if (!empty($request->voice_recording)) {
+					$remove_previous_attachment = Attachment::where([
+						'entity_id' => $request->job_order_id,
+						'attachment_of_id' => 227,
+						'attachment_type_id' => 10090,
+					])->forceDelete();
+
+					$image = $request->voice_recording;
+					$time_stamp = date('Y_m_d_h_i_s');
+					$extension = $image->getClientOriginalExtension();
+					$name = $job_order->id . '_' . $time_stamp . '_Voice_Recording.' . $extension;
+					$image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+					//SAVE ATTACHMENT
+					$attachment = new Attachment;
+					$attachment->attachment_of_id = 227; //JOB ORDER
+					$attachment->attachment_type_id = 10090; //VOC Recording
+					$attachment->entity_id = $request->job_order_id;
+					$attachment->name = $name;
+					$attachment->created_by = auth()->user()->id;
+					$attachment->created_at = Carbon::now();
+					$attachment->save();
 				}
 			}
 
