@@ -18,6 +18,7 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.user = HelperService.getLoggedUser();
         $scope.hasPerm = HelperService.hasPerm;
+        self.hasPermission = HelperService.hasPermission;
 
         $scope.page = 'form';
         $scope.customer_search_type = true;
@@ -43,6 +44,11 @@ app.component('warrantyJobOrderRequestForm', {
                     }
                     $scope.extras = res.extras;
 
+                    employee_outlets_arr = [];
+                    angular.forEach(res.extras.employee_outlets, function(value, key) {
+                        employee_outlets_arr.push(value.id);
+                    });
+                    $scope.employee_outlets = employee_outlets_arr;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -162,6 +168,9 @@ app.component('warrantyJobOrderRequestForm', {
                             photos: [],
                         };
                         $scope.warranty_job_order_request.job_order.vehicle.is_sold = true;
+                        if (self.hasPermission('own-outlet-warranty-job-order-request')) {
+                            $scope.warranty_job_order_request.job_order.outlet = $scope.user.employee.outlet;
+                        }
                     }
                     $scope.customer = $scope.warranty_job_order_request.job_order.customer;
 
@@ -202,6 +211,14 @@ app.component('warrantyJobOrderRequestForm', {
         };
         $scope.init();
 
+        setTimeout(function() {
+            $('div[data-provide="datepicker"]').bootstrapDP({
+                format: "dd-mm-yyyy",
+                autoclose: "true",
+                endDate: new Date()
+            });
+        }, 5000);
+
         $scope.searchJobOrders = function(query) {
             return new Promise(function(resolve, reject) {
                 JobOrderSvc.options({ filter: { search: query } })
@@ -230,8 +247,31 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.searchOutlet = function(query) {
+            var params = {};
+            if (self.hasPermission('own-outlet-warranty-job-order-request')) {
+                params = {
+                    filter: {
+                        search: query,
+                        IdIn: [$scope.user.employee.outlet_id]
+                    },
+                };
+            } else if (self.hasPermission('mapped-outlets-warranty-job-order-request')) {
+                console.log($scope.employee_outlets);
+                params = {
+                    filter: {
+                        search: query,
+                        IdIn: $scope.employee_outlets
+                    },
+                };
+            } else {
+                params = {
+                    filter: {
+                        search: query,
+                    },
+                };
+            }
             return new Promise(function(resolve, reject) {
-                OutletSvc.options({ filter: { search: query } })
+                OutletSvc.options(params)
                     .then(function(response) {
                         resolve(response.data.options);
                     });

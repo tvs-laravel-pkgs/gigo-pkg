@@ -2,13 +2,12 @@
     <div class="page-header">
         <div class="page-header-inner">
             <div class="page-header-content-left">
-                 <div class="page-header-content title-block">
+                <div class="page-header-content title-block">
                     <h1 class="title type-2">Vehicles<span id="table_infos" class="badge badge-secondary"></span></h1>
                 </div><!-- Page Header Content -->
-                 <div class="page-header-content reset-block">
+                <div class="page-header-content reset-block">
                     <div class="reset-wrap">
-                        <button class="btn-reset reset-tooltip refresh_table my-tooltip"
-                        ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
                             <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
                         </button>
                     </div>
@@ -38,7 +37,8 @@
                         </ul>
                     </div>
                 </div>
-            </div> --><!-- Page Header Content Right -->
+            </div> -->
+            <!-- Page Header Content Right -->
         </div><!-- Page Header Inner -->
     </div><!-- Page Header -->
     <div class="page-main-content list-page-content">
@@ -53,7 +53,7 @@
                                 <th>Chassis Number</th>
                                 <th>Model</th>
                                 <th>Registration Number</th>
-                                <th>Vin Number</th>
+                                <!-- <th>Vin Number</th> -->
                                 <th>Sold Date</th>
                                 <th>Status</th>
                             </tr>
@@ -90,7 +90,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Make</label>
-                                <md-select ng-model="$ctrl.make_selected" md-on-close="clearSearchTerm()"data-md-container-class="selectdemoSelectHeader" placeholder="Select Make Type" ng-change="SelectedMake($ctrl.make_selected); $ctrl.model_selected =''; ">
+                                <md-select ng-model="$ctrl.make_selected" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Make Type" ng-change="SelectedMake($ctrl.make_selected); $ctrl.model_selected =''; ">
                                     <md-select-header class="demo-select-header">
                                         <input ng-model="searchmake" type="search" placeholder="Search Make" class="demo-header-searchbox md-text">
                                     </md-select-header>

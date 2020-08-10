@@ -95,17 +95,17 @@
                                             </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
-                                           <div class="input-text form-group">
-                                            <label>Is Registered<sup class="mandatory">*</sup></label>
-                                            <div class="tab-switch">
-                                                <md-switch ng-model="$ctrl.register_val" aria-label="Switch 3" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2" ng-change="RegistrationChange($ctrl.register_val)">
-                                                    {{ $ctrl.register_val }}
-                                                </md-switch>
-                                                <input type="hidden" name="register_val" value="{{$ctrl.register_val}}">
-                                            </div>
-                                        </div><!-- Form Group -->
-                                    </div><!-- Column -->
-                                    <div class="col-md-3" ng-show="$ctrl.show == 1">
+                                            <div class="input-text form-group">
+                                                <label>Is Registered<sup class="mandatory">*</sup></label>
+                                                <div class="tab-switch">
+                                                    <md-switch ng-model="$ctrl.register_val" aria-label="Switch 3" ng-true-value="'No'" ng-false-value="'Yes'" class="md-warn type-2" ng-change="RegistrationChange($ctrl.register_val)">
+                                                        {{ $ctrl.register_val }}
+                                                    </md-switch>
+                                                    <input type="hidden" name="register_val" value="{{$ctrl.register_val}}">
+                                                </div>
+                                            </div><!-- Form Group -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3" ng-show="$ctrl.show == 1">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Registration Number
@@ -114,26 +114,27 @@
                                                 <input type="text" class="form-control" ng-model="$ctrl.vehicle.registration_number" name="registration_number" placeholder="Enter Registration Number" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
-                                        <div class="col-md-3">
+                                        <!--<div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Vin Number
                                                     <sup class="mandatory"></sup>
                                                 </label>
                                                 <input type="text" class="form-control" ng-model="$ctrl.vehicle.vin_number" name="vin_number" placeholder="Enter Vin Number" />
+                                            </div>
+                                        </div>-->
+                                        <!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label>Sold Date<sup class="mandatory"></sup></label>
+                                                <div class="input-group date" data-provide="datepicker">
+                                                    <input type="text" ng-model="$ctrl.sold_date" name="sold_date" class="form-control" placeholder="Select  Date" />
+                                                    <div class="input-group-addon">
+                                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                    </div>
+                                                </div><!-- Input Group -->
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
-                                         <div class="col-md-3">
-                                    <div class="form-group">
-                                        <label>Sold Date<sup class="mandatory"></sup></label>
-                                        <div class="input-group date" data-provide="datepicker">
-                                            <input type="text" ng-model="$ctrl.sold_date" name="sold_date" class="form-control" placeholder="Select  Date" />
-                                            <div class="input-group-addon">
-                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
-                                            </div>
-                                        </div><!-- Input Group -->
-                                    </div><!-- Feild -->
-                                </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>

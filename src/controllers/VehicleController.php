@@ -41,7 +41,7 @@ class VehicleController extends Controller {
 				'vehicles.chassis_number',
 				'models.model_name',
 				'vehicles.registration_number',
-				'vehicles.vin_number',
+				// 'vehicles.vin_number',
 				'vehicles.sold_date',
 				DB::raw('IF(vehicles.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
@@ -68,11 +68,11 @@ class VehicleController extends Controller {
 					$query->where('vehicles.registration_number', 'LIKE', '%' . $request->registration_numbers . '%');
 				}
 			})
-			->where(function ($query) use ($request) {
+		/*->where(function ($query) use ($request) {
 				if (!empty($request->vin_numbers)) {
 					$query->where('vehicles.vin_number', 'LIKE', '%' . $request->vin_numbers . '%');
 				}
-			})
+			})*/
 			->where(function ($query) use ($request) {
 				if ($request->status == '1') {
 					$query->whereNull('vehicles.deleted_at');

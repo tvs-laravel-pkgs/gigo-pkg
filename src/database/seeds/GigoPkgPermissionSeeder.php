@@ -1366,8 +1366,8 @@ class GigoPkgPermissionSeeder extends Seeder {
 			[
 				'display_order' => 6,
 				'parent' => 'warranty-job-order-requests',
-				'name' => 'own-outlet-warranty-job-order-request',
-				'display_name' => 'Own Outlet Only',
+				'name' => 'all-outlet-warranty-job-order-request',
+				'display_name' => 'All Outlets',
 			],
 			[
 				'display_order' => 7,

@@ -58,6 +58,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 		"investigation_findings",
 		"cause_of_failure",
 		"status_id",
+		"request_type_id",
 	];
 
 	protected $dates = [
@@ -380,7 +381,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 			} else {
 				$customer = Customer::firstOrNew([
 					'company_id' => Auth::user()->company_id,
-					'code' => $input['customer_code']
+					'code' => $input['customer_code'],
 				]);
 			}
 			$customer->name = $input['customer_name'];
@@ -417,10 +418,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$vehicle->registration_number = $input['registration_number'];
 				$vehicle->is_registered = $vehicle->registration_number ? 1 : 0;
 			}
-			if($sold_date){
+			if ($sold_date) {
 				$vehicle->is_sold = 1;
 				$vehicle->sold_date = $sold_date;
-			}else{
+			} else {
 				$vehicle->is_sold = 0;
 				$vehicle->sold_date = null;
 			}

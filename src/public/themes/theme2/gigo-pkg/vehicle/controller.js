@@ -51,7 +51,7 @@ app.component('vehicleList', {
                     d.chassis_numbers = $('#chassis_numbers').val();
                     d.model_ids = $('#model_ids').val();
                     d.registration_numbers = $('#registration_numbers').val();
-                    d.vin_numbers = $('#vin_numbers').val();
+                    // d.vin_numbers = $('#vin_numbers').val();
                     d.status = $("#status").val();
                 },
             },
@@ -62,7 +62,7 @@ app.component('vehicleList', {
                 { data: 'chassis_number', name: 'vehicles.chassis_number' },
                 { data: 'model_name', name: 'models.model_name' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
-                { data: 'vin_number', name: 'vehicles.vin_number' },
+                // { data: 'vin_number', name: 'vehicles.vin_number' },
                 { data: 'sold_date', name: 'vehicles.sold_date' },
                 { data: 'status', name: '' },
 
@@ -167,7 +167,7 @@ app.component('vehicleList', {
             $("#chassis_numbers").val('');
             $("#model_ids").val('');
             $("#registration_numbers").val('');
-            $("#vin_numbers").val('');
+            // $("#vin_numbers").val('');
             $("#status").val('');
             dataTables.fnFilter();
             $('#vehicle-filter-modal').modal('hide');
@@ -274,10 +274,10 @@ app.component('vehicleForm', {
                     minlength: 10,
                     maxlength: 10,
                 },
-                'vin_number': {
+                /*'vin_number': {
                     minlength: 10,
                     maxlength: 32,
-                },
+                },*/
                 /*'sold_date':{
                     required:true,
                 },*/
@@ -295,10 +295,10 @@ app.component('vehicleForm', {
                     minlength: 'Minimum 10 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
-                'vin_number': {
+                /*'vin_number': {
                     minlength: 'Minimum 10 Characters',
                     maxlength: 'Maximum 10 Characters',
-                }
+                }*/
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');

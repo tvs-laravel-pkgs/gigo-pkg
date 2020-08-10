@@ -267,6 +267,7 @@ class WarrantyJobOrderRequestController extends Controller {
 	public function getFormData() {
 		try {
 
+			$employee_outlets = Auth::user()->employee->employee_outlets;
 			$models = VehicleModel::where('company_id', Auth::user()->company_id)->get();
 			return response()->json([
 				'success' => true,
@@ -275,6 +276,7 @@ class WarrantyJobOrderRequestController extends Controller {
 					'state_list' => [], //State::getDropDownList(),
 					'city_list' => [], //City::getDropDownList(),
 					'models' => $models,
+					'employee_outlets' => $employee_outlets,
 				],
 			]);
 
