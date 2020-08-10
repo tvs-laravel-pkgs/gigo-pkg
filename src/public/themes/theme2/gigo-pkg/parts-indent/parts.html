@@ -390,8 +390,8 @@ input[type=number] {
                                             <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                         </md-select-header>
                                         <md-optgroup>
-                                            <md-option ng-if="repair_order.removal_reason_id == null" ng-value="repair_order" ng-repeat="repair_order in options.repair_orders | filter:searchreturnEmployeeKey">
-                                                {{repair_order.code}} / {{repair_order.name}}
+                                            <md-option ng-if="job_repair_order.removal_reason_id == null" ng-value="job_repair_order" ng-repeat="job_repair_order in job_order.job_order_repair_orders | filter:searchreturnEmployeeKey">
+                                                {{job_repair_order.repair_order.code}} / {{job_repair_order.repair_order.name}}
                                             </md-option>
                                         </md-optgroup>
                                     </md-select>
@@ -488,8 +488,8 @@ input[type=number] {
                                         <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                     </md-select-header>
                                     <md-optgroup>
-                                        <md-option ng-if="repair_order.removal_reason_id == null" ng-value="repair_order" ng-repeat="repair_order in options.repair_orders | filter:searchreturnEmployeeKey">
-                                            {{repair_order.code}} / {{repair_order.name}}
+                                        <md-option ng-if="job_repair_order.removal_reason_id == null" ng-value="job_repair_order" ng-repeat="job_repair_order in job_order.job_order_repair_orders | filter:searchreturnEmployeeKey">
+                                            {{job_repair_order.repair_order.code}} / {{job_repair_order.repair_order.name}}
                                         </md-option>
                                     </md-optgroup>
                                 </md-select>

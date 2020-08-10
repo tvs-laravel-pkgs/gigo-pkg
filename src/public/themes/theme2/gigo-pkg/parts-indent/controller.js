@@ -446,14 +446,14 @@ app.component('partsIndentPartsView', {
 
             let promises = {
                 split_order_type_options: SplitOrderTypeSvc.options(),
-                repair_order_options: RepairOrderSvc.options(),
+                // repair_order_options: RepairOrderSvc.options($scope.job_order_id),
             };
 
             $scope.options = {};
             $q.all(promises)
                 .then(function(responses) {
                     $scope.options.split_order_types = responses.split_order_type_options.data.options;
-                    $scope.options.repair_orders = responses.repair_order_options.data.options;
+                    // $scope.options.repair_orders = responses.repair_order_options.data.options;
                     $rootScope.loading = false;
                 });
         };
