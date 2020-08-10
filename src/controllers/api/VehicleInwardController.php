@@ -3827,30 +3827,36 @@ class VehicleInwardController extends Controller {
 						]);
 					}
 				}
+			}
 
-				if (!empty($request->voice_recording)) {
-					$remove_previous_attachment = Attachment::where([
-						'entity_id' => $request->job_order_id,
-						'attachment_of_id' => 227,
-						'attachment_type_id' => 10090,
-					])->forceDelete();
+			//Remove Customer Voice Recording
+			if ($request->customer_recording_id) {
+				$remove_customer_attachment = Attachment::where('id', $request->customer_recording_id)->forceDelete();
+			}
 
-					$image = $request->voice_recording;
-					$time_stamp = date('Y_m_d_h_i_s');
-					$extension = $image->getClientOriginalExtension();
-					$name = $job_order->id . '_' . $time_stamp . '_Voice_Recording.' . $extension;
-					$image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+			//Save Customer Voice Recording
+			if (!empty($request->voice_recording)) {
+				$remove_previous_attachment = Attachment::where([
+					'entity_id' => $request->job_order_id,
+					'attachment_of_id' => 227,
+					'attachment_type_id' => 10090,
+				])->forceDelete();
 
-					//SAVE ATTACHMENT
-					$attachment = new Attachment;
-					$attachment->attachment_of_id = 227; //JOB ORDER
-					$attachment->attachment_type_id = 10090; //VOC Recording
-					$attachment->entity_id = $request->job_order_id;
-					$attachment->name = $name;
-					$attachment->created_by = auth()->user()->id;
-					$attachment->created_at = Carbon::now();
-					$attachment->save();
-				}
+				$image = $request->voice_recording;
+				$time_stamp = date('Y_m_d_h_i_s');
+				$extension = $image->getClientOriginalExtension();
+				$name = $job_order->id . '_' . $time_stamp . '_Voice_Recording.' . $extension;
+				$image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+				//SAVE ATTACHMENT
+				$attachment = new Attachment;
+				$attachment->attachment_of_id = 227; //JOB ORDER
+				$attachment->attachment_type_id = 10090; //VOC Recording
+				$attachment->entity_id = $request->job_order_id;
+				$attachment->name = $name;
+				$attachment->created_by = auth()->user()->id;
+				$attachment->created_at = Carbon::now();
+				$attachment->save();
 			}
 
 			DB::commit();
