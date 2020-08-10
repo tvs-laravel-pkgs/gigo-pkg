@@ -89,6 +89,8 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.warranty_job_order_request = {
                             wjor_repair_orders: [],
                             wjor_parts: [],
+                            has_warranty: 1,
+                            has_amc: 0,
                             repair_order_total: 0,
                             part_total: 0,
                             attachments: [],
@@ -98,6 +100,7 @@ app.component('warrantyJobOrderRequestForm', {
                                 outlet: {},
                             },
                             photos: [],
+                            attachments: [],
                         }
 
                         //for quick test
