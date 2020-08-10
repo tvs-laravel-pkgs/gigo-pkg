@@ -522,7 +522,7 @@ class GateInController extends Controller {
 			DB::commit();
 
 			$gate_in_data['number'] = $gate_log->number;
-			$gate_in_data['registration_number'] = $vehicle->registration_number ? $vehicle->registration_number : '-';
+			$gate_in_data['registration_number'] = $request->registration_number;
 
 			//Send SMS to Driver
 			if ($request->driver_mobile_number) {
