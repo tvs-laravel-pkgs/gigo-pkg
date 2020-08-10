@@ -1660,6 +1660,7 @@ class VehicleInwardController extends Controller {
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
+				'vehicle.currentOwner.customer',
 				'vehicle.lastJobOrder',
 				'vehicle.lastJobOrder.jobCard',
 				'type',
@@ -1687,6 +1688,15 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
+
+			//Check Customer
+			if ($job_order->vehicle->currentOwner) {
+				//Check Service Contact Num avail or not
+				if (!$job_order->contact_number) {
+					$job_order->contact_number = $job_order->vehicle->currentOwner->customer->mobile_no;
+				}
+			}
+
 			//ENABLE ESTIMATE STATUS
 			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
 			if ($inward_process_check) {
