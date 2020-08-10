@@ -705,6 +705,8 @@ class VehicleInwardController extends Controller {
 	public function getInwardPartIndentViewData(Request $r) {
 		try {
 			$job_order = JobOrder::with([
+				'jobOrderRepairOrders',
+				'jobOrderRepairOrders.repairOrder',
 				'jobCard',
 				'vehicle',
 				'vehicle.model',
