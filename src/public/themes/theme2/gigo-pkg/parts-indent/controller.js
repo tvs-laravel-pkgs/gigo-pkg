@@ -602,7 +602,7 @@ app.component('partsIndentPartsView', {
             if (part == false) {
                 $scope.parts_indent = {};
             } else {
-                $repair_orders = part.repair_order;
+                $scope.repair_orders = part.repair_order;
                 if (part.split_order_type_id != null) {
                     $split_id = part.split_order_type_id;
                     SplitOrderTypeSvc.read($split_id)
@@ -616,7 +616,7 @@ app.component('partsIndentPartsView', {
                             $scope.parts_indent.part = response.data.part;
                             $scope.parts_indent.part.qty = part.qty;
                             $scope.parts_indent.part.job_order_part_id = $job_order_part_id;
-                            $scope.parts_indent.repair_order = $repair_orders;
+                            $scope.parts_indent.repair_order_parts = $scope.repair_orders;
                             // $scope.calculatePartAmount();
                         });
                 }
@@ -641,6 +641,27 @@ app.component('partsIndentPartsView', {
                     $qty = part.qty;
                 }
             }
+            $.ajax({
+                    url: base_url + '/api/inward-part-indent/get-part-detail-pias',
+                    method: "POST",
+                    data: {
+                        code: part.code
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.available_quantity = res.available_quantity;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
             PartSvc.read(part.id)
                 .then(function(response) {
                     $scope.parts_indent.part.qty = $qty;
@@ -746,7 +767,7 @@ app.component('partsIndentPartsView', {
             console.log(val);
             if (val) {
                 list = [];
-                angular.forEach($scope.parts_indent.part.repair_order_parts, function(value, key) {
+                angular.forEach($scope.parts_indent.repair_order_parts, function(value, key) {
                     // angular.forEach($scope.parts_indent.repair_order, function(value, key) {
                     list.push(value.id);
                 });

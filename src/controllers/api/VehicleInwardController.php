@@ -1054,16 +1054,17 @@ class VehicleInwardController extends Controller {
 				->select('parts.code', 'pias_parts.id')
 				->where('parts.code', $part_code)
 				->first();
-			$outlet = DB::table($db2 . '.outlets as pias_outlets')
+
+			$outlet_ids = DB::table($db2 . '.outlets as pias_outlets')
 				->join('outlets', 'outlets.code', 'pias_outlets.code')
 				->select('outlets.code', 'pias_outlets.id')
 				->where(['outlets.code' => $user_outlet_code, 'outlets.company_id' => $company_id])
-				->first();
+				->get()->pluck('id')->toArray();
 
 			if (!$part) {
 				$error = 'Part';
 			}
-			if (!$outlet) {
+			if (!$outlet_ids) {
 				$error = 'Outlet';
 			}
 			if ($error != '') {
@@ -1076,7 +1077,9 @@ class VehicleInwardController extends Controller {
 
 			$stock_details = DB::table($db2 . '.stock_details')
 				->select('stock_details.outlet_id', 'stock_details.part_id', 'stock_details.available_quantity')
-				->where(['stock_details.outlet_id' => $outlet->id, 'stock_details.part_id' => $part->id])
+			// ->where(['stock_details.outlet_id' => $outlet->id, 'stock_details.part_id' => $part->id])
+				->where('stock_details.part_id', $part->id)
+				->whereIn('stock_details.outlet_id', $outlet_ids)
 				->first();
 
 			if ($stock_details) {
@@ -2126,6 +2129,8 @@ class VehicleInwardController extends Controller {
 				$repair_orders = [];
 			}
 
+			$repair_order_part_obj = Part::find($request->part_id);
+			$repair_order_part_obj->repair_order_parts()->sync([]);
 			if (sizeof($repair_orders) > 0) {
 				foreach ($repair_orders as $key => $value) {
 
@@ -2133,8 +2138,8 @@ class VehicleInwardController extends Controller {
 					// $job_order_repair_order_part_array[$key]['job_order_part_id'] = $job_order_part->id;
 					$repair_order_part_array[$key]['part_id'] = $request->part_id;
 				}
-				$repair_order_part_obj = Part::find($request->part_id);
-				$repair_order_part_obj->repair_order_parts()->detach();
+				// $repair_order_part_obj = Part::find($request->part_id);
+				// $repair_order_part_obj->repair_order_parts()->detach();
 
 				$repair_order_part_obj->repair_order_parts()->sync($repair_order_part_array);
 			}
@@ -3006,6 +3011,8 @@ class VehicleInwardController extends Controller {
 				$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$part_details[$key]['part'] = $value->part;
 				$part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+				$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
+
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$part_amount += $value->amount;
@@ -3035,7 +3042,13 @@ class VehicleInwardController extends Controller {
 		// dd($r->all());
 		try {
 
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::with([
+				'jobOrderRepairOrders' => function ($query) {
+					$query->where('is_recommended_by_oem', 1);
+				},
+				'jobOrderRepairOrders.repairOrder',
+			])
+				->find($r->id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -3206,7 +3219,13 @@ class VehicleInwardController extends Controller {
 		// dd($r->all());
 		try {
 
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::with([
+				'jobOrderRepairOrders' => function ($query) {
+					$query->where('is_recommended_by_oem', 0);
+				},
+				'jobOrderRepairOrders.repairOrder',
+			])
+				->find($r->id);
 
 			if (!$job_order) {
 				return response()->json([

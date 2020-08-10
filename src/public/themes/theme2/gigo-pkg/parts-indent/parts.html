@@ -351,6 +351,8 @@ input[type=number] {
         <form id="part-form">
             <input type="hidden" name="job_order_id" value="{{job_order.id}}">
             <input type="hidden" name="job_order_part_id" value="{{parts_indent.part.job_order_part_id}}">
+            <input type="hidden" name="type" value="Part Indent">
+            <input type="hidden" name="type_id" value="3">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
@@ -361,6 +363,24 @@ input[type=number] {
                 <div class="modal-body">
                     <div class="modal-form">
                         <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Repair Orders
+                                    </label>
+                                    <md-select multiple ng-model="parts_indent.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.repair_order_parts)" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-if="job_repair_order.removal_reason_id == null" ng-value="job_repair_order" ng-repeat="job_repair_order in job_order.job_order_repair_orders | filter:searchreturnEmployeeKey">
+                                                {{job_repair_order.repair_order.code}} / {{job_repair_order.repair_order.name}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" class="hidden_repair_order_ids" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>
@@ -380,7 +400,7 @@ input[type=number] {
                                     <input type="hidden" name="part_id" value="{{parts_indent.part.id}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
-                            <div class="col-md-4" ng-if="parts_indent.part">
+                            <!-- <div class="col-md-4" ng-if="parts_indent.part">
                                 <div class="form-group">
                                     <label>
                                         Repair Orders
@@ -396,8 +416,14 @@ input[type=number] {
                                         </md-optgroup>
                                     </md-select>
                                     <input type="hidden" class="hidden_repair_order_ids" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
-                                </div><!-- Field -->
-                            </div><!-- Column -->
+                                </div>
+                            </div> -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Available Quantity <sup class="mandatory">*</sup></label>
+                                    <input type="text" name="qty" ng-model="available_quantity" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Available Quantity" autocomplete="off" readonly />
+                                </div><!-- Feild -->
+                            </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>
