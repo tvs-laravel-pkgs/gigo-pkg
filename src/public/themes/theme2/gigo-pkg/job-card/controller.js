@@ -1769,7 +1769,7 @@ app.component('jobCardScheduleMaintenanceForm', {
 //Payable Labour 
 app.component('jobCardPayableLabourPartsForm', {
     templateUrl: job_card_parts_labour_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, ) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, $mdSelect) {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -1860,6 +1860,20 @@ app.component('jobCardPayableLabourPartsForm', {
             });
         }
 
+        $scope.selectingRepairOrder = function(val) {
+            console.log(val);
+            if (val) {
+                list = [];
+                angular.forEach($scope.job_card.repair_order, function(value, key) {
+                    // angular.forEach($scope.parts_indent.repair_order, function(value, key) {
+                    list.push(value.id);
+                });
+            } else {
+                list = [];
+            }
+            self.repair_order_ids = list;
+        }
+
         $scope.savePart = function() {
             var form_id = '#part_form';
             var v = jQuery(form_id).validate({
@@ -1920,6 +1934,10 @@ app.component('jobCardPayableLabourPartsForm', {
                     $rootScope.loading = false;
 
                 });
+            setTimeout(function() {
+                $scope.calculateLabourTotal();
+                $scope.calculatePartTotal();
+            }, 2000);
         };
         $scope.init();
         $scope.searchRepairOrders = function(query) {
@@ -1947,6 +1965,27 @@ app.component('jobCardPayableLabourPartsForm', {
                     $qty = part.qty;
                 }
             }
+            $.ajax({
+                    url: base_url + '/api/inward-part-indent/get-part-detail-pias',
+                    method: "POST",
+                    data: {
+                        code: part.code
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.available_quantity = res.available_quantity;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
             PartSvc.read(part.id)
                 .then(function(response) {
                     $scope.schedule_maintainance_part.part.qty = $qty;
@@ -2012,12 +2051,13 @@ app.component('jobCardPayableLabourPartsForm', {
             $('#labour_form_modal').modal('show');
         }
         $scope.showPartForm = function(part_index, part = null) {
-            // console.log(part.qty);
             $scope.schedule_maintainance_part = [];
             $scope.job_order_part_id = '';
             if (part_index === false) {
                 // $scope.part_details = {};
             } else {
+                $scope.repair_orders = part.repair_order;
+                console.log($scope.repair_orders);
                 if (part.split_order_type_id != null) {
                     $scope.job_order_part_id = part.id;
                     if (part.split_order_type_id == undefined) {
@@ -2035,6 +2075,7 @@ app.component('jobCardPayableLabourPartsForm', {
                         .then(function(response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;
+                            $scope.job_card.repair_order = $scope.repair_orders;
                             // $scope.calculatePartAmount();
                         });
                 }
@@ -2044,6 +2085,31 @@ app.component('jobCardPayableLabourPartsForm', {
             $scope.part_index = part_index;
             $scope.part_modal_action = part_index === false ? 'Add' : 'Edit';
             $('#part_form_modal').modal('show');
+        }
+
+        $scope.calculateLabourTotal = function() {
+            $total_amount = 0;
+            angular.forEach($scope.labour_details, function(labour, key) {
+                if (labour.removal_reason_id == undefined || labour.removal_reason_id == null) {
+                    $total_amount += parseFloat(labour.amount);
+                }
+            });
+            $scope.labour_total_amount = $total_amount.toFixed(2);
+            $scope.calculateTotalLabourParts();
+        }
+        $scope.calculatePartTotal = function() {
+            $total_amount = 0;
+            angular.forEach($scope.part_details, function(part, key) {
+                if (part.removal_reason_id == null || part.removal_reason_id == undefined) {
+                    $total_amount += parseFloat(part.amount);
+                }
+            });
+            $scope.parts_total_amount = $total_amount.toFixed(2);
+            $scope.calculateTotalLabourParts();
+        }
+        $scope.calculateTotalLabourParts = function() {
+            $scope.total_amount = parseFloat($scope.parts_total_amount) + parseFloat($scope.labour_total_amount);
+            $scope.total_amount = $scope.total_amount.toFixed(2);
         }
 
         $scope.button_action = function(id, type) {
@@ -2067,6 +2133,13 @@ app.component('jobCardPayableLabourPartsForm', {
         }
         /* Dropdown Arrow Function */
         arrowDropdown();
+
+        /* Modal Md Select Hide */
+        $('.modal').bind('click', function(event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
 
         $scope.removePayablePart = function(index, id, type) {
             $scope.delete_reason = 10021;
