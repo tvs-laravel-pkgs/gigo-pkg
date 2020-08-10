@@ -640,7 +640,7 @@
                                             Complaint group
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item="warranty_job_order_request.complaint_group" md-search-text="complaintGroupSearchKey" md-items="complaintGroup in searchCompaintGroup(complaintGroupSearchKey)" md-item-text="complaintGroup.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. Engine - Block">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.complaint_group" md-search-text="complaintGroupSearchKey" md-items="complaintGroup in searchCompaintGroup(complaintGroupSearchKey)" md-item-text="complaintGroup.code+' / '+complaintGroup.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. Engine - Block">
                                             <md-item-template>
                                                 <span>
                                                     {{complaintGroup.code+' / '+complaintGroup.name}}
