@@ -11,7 +11,7 @@
                 <div class="page-header-content title-block">
                     <h1 class="title">
                         <b>
-                            Warranty Job Order Request
+                            Product Performance Report
                         </b>
                     </h1>
                 </div><!-- Page Header Content -->
@@ -53,7 +53,7 @@
                             <button ng-if="hasPerm('delete-warranty-job-order-request')" type="button" ng-click="confirmDelete(warranty_job_order_request)" class="btn btn-red">
                                 Delete
                             </button>
-                            <button type="button" ng-if="warranty_job_order_request.status.id == 9100 && hasPerm('send-to-approval-warranty-job-order-request')" ng-click="sendToApproval(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                            <button type="button" ng-if="(warranty_job_order_request.status.id == 9100 || warranty_job_order_request.status.id == 9103 ) && hasPerm('send-to-approval-warranty-job-order-request')" ng-click="sendToApproval(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                 Send to approval
                             </button>
                             <button type="button" ng-if="warranty_job_order_request.status.id == 9101 && hasPerm('approve-warranty-job-order-request')" ng-click="showApprovalForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
@@ -80,8 +80,8 @@
                     Approve
                 </h5>
             </div>
+            <form id="approval-form">
             <div class="modal-body">
-                <form id="approval-form">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -116,17 +116,25 @@
                                 <input type="text" disabled="disabled" class="form-control" ng-model="user.name">
                             </div><!-- Field -->
                         </div><!-- Column -->
-                        <div class="col-md-12 text-right mb-15">
-                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
-                                Cancel
-                            </button>
-                            <button type="submit" class="btn btn-bordered btn-red approve_btn">
-                                Approve
-                            </button>
-                        </div><!-- Column -->
+
                     </div><!-- Row -->
-                </form>
             </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" data-dismiss="modal" class="reset-link">
+                            Cancel
+                        </button>
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
+                        <button type="submit" class="btn btn-primary btn-md">
+                            Approve
+                        </button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Footer -->
+            </form>
+
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
@@ -141,8 +149,8 @@
                     Request Resubmit
                 </h5>
             </div>
+            <form id="rejection-form">
             <div class="modal-body">
-                <form id="rejection-form">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -153,17 +161,24 @@
                                 <textarea class="form-control" name="rejected_reason" ng-model="warranty_job_order_request.rejected_reason"></textarea>
                             </div><!-- Field -->
                         </div><!-- Column -->
-                        <div class="col-md-12 text-right mb-15">
-                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
-                                Cancel
-                            </button>
-                            <button type="submit" class="btn btn-bordered btn-red reject_btn">
-                                Reject
-                            </button>
-                        </div><!-- Column -->
                     </div><!-- Row -->
-                </form>
             </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" data-dismiss="modal" class="reset-link">
+                            Cancel
+                        </button>
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
+                        <button type="submit" class="btn btn-primary btn-md">
+                            Submit
+                        </button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Footer -->
+            </form>
+
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
