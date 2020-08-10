@@ -31,21 +31,28 @@ class JobCard extends BaseModel {
 
 	//APPEND - INBETWEEN REGISTRATION NUMBER
 	public function getRegistrationNumberAttribute($value) {
-		$value = str_replace('-', '', $value);
-		$registration_number = str_split($value);
-		$registration_number_new = '';
+		$registration_number = '';
 
-		$registration_number_new .= $registration_number[0] . $registration_number[1] . '-' . $registration_number[2] . $registration_number[3] . '-';
+		if ($value) {
+			$value = str_replace('-', '', $value);
+			$reg_number = str_split($value);
 
-		if (preg_match('/^[A-Z]+$/', $registration_number[4]) && preg_match('/^[A-Z]+$/', $registration_number[5])) {
-			$registration_number_new .= $registration_number[4] . $registration_number[5] . '-' . $registration_number[6] . $registration_number[7] . $registration_number[8] . $registration_number[9];
-		} elseif (preg_match('/^[A-Z]+$/', $registration_number[4]) && preg_match('/^[0-9]+$/', $registration_number[5])) {
-			$registration_number_new .= $registration_number[4] . '-' . $registration_number[5] . $registration_number[6] . $registration_number[7] . $registration_number[8];
-		} else {
-			$registration_number_new .= $registration_number[4] . $registration_number[5] . $registration_number[6] . $registration_number[7];
+			$last_four_numbers = substr($value, -4);
+
+			$registration_number .= $reg_number[0] . $reg_number[1] . '-' . $reg_number[2] . $reg_number[3] . '-';
+
+			if (is_numeric($reg_number[4])) {
+				$registration_number .= $last_four_numbers;
+			} else {
+				$registration_number .= $reg_number[4];
+				if (is_numeric($reg_number[5])) {
+					$registration_number .= '-' . $last_four_numbers;
+				} else {
+					$registration_number .= $reg_number[5] . '-' . $last_four_numbers;
+				}
+			}
 		}
-
-		return $this->attributes['registration_number'] = $registration_number_new;
+		return $this->attributes['registration_number'] = $registration_number;
 	}
 
 	public function getDateAttribute($value) {
