@@ -207,6 +207,10 @@ class WarrantyJobOrderRequestController extends Controller {
 			$warranty_job_order_request->load($this->model::relationships('read'));
 
 			// $warranty_job_order_request->generatePDF();
+			return response()->json([
+				'success' => true,
+				'message' => 'PPR approved successfully',
+			]);
 
 		} catch (Exceprion $e) {
 			return response()->json([
