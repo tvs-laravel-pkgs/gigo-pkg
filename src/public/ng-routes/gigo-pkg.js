@@ -1135,11 +1135,11 @@ app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
     when('/warranty-job-order-request/card-list', {
         template: '<warranty-job-order-request-card-list></warranty-job-order-request-card-list>',
-        title: 'Warranty Job Order Requests'
+        title: 'Product Performance Reports'
     }).
     when('/warranty-job-order-request/table-list', {
         template: '<warranty-job-order-request-table-list></warranty-job-order-request-table-list>',
-        title: 'Warranty Job Order Requests'
+        title: 'Product Performance Reports'
     }).
     when('/warranty-job-order-request/form/:request_id?', {
         template: '<warranty-job-order-request-form></warranty-job-order-request-form>',
@@ -1147,6 +1147,6 @@ app.config(['$routeProvider', function($routeProvider) {
     }).
     when('/warranty-job-order-request/view/:request_id', {
         template: '<warranty-job-order-request-view></warranty-job-order-request-view>',
-        title: 'Warranty Job Order Request - View'
+        title: 'Product Performance Report - View'
     });
 }]);

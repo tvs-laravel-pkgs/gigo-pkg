@@ -251,6 +251,7 @@ class VehicleInwardController extends Controller {
 				'gateLog.chassisAttachment',
 				'customerApprovalAttachment',
 				'customerESign',
+				'VOCAttachment',
 			])
 				->select([
 					'job_orders.*',
@@ -1663,6 +1664,7 @@ class VehicleInwardController extends Controller {
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
+				'vehicle.currentOwner.customer',
 				'vehicle.lastJobOrder',
 				'vehicle.lastJobOrder.jobCard',
 				'type',
@@ -1690,6 +1692,15 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
+
+			//Check Customer
+			if ($job_order->vehicle->currentOwner) {
+				//Check Service Contact Num avail or not
+				if (!$job_order->contact_number) {
+					$job_order->contact_number = $job_order->vehicle->currentOwner->customer->mobile_no;
+				}
+			}
+
 			//ENABLE ESTIMATE STATUS
 			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
 			if ($inward_process_check) {
@@ -3622,6 +3633,7 @@ class VehicleInwardController extends Controller {
 				'vehicle.status',
 				'status',
 				'customerVoices',
+				'VOCAttachment',
 			])
 				->select([
 					'job_orders.*',
@@ -3675,6 +3687,7 @@ class VehicleInwardController extends Controller {
 				'extras' => $extras,
 				'action' => $action,
 				'job_order' => $job_order,
+				'attachement_path' => url('storage/app/public/gigo/job_order/attachments/'),
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -3833,6 +3846,36 @@ class VehicleInwardController extends Controller {
 						]);
 					}
 				}
+			}
+
+			//Remove Customer Voice Recording
+			if ($request->customer_recording_id) {
+				$remove_customer_attachment = Attachment::where('id', $request->customer_recording_id)->forceDelete();
+			}
+
+			//Save Customer Voice Recording
+			if (!empty($request->voice_recording)) {
+				$remove_previous_attachment = Attachment::where([
+					'entity_id' => $request->job_order_id,
+					'attachment_of_id' => 227,
+					'attachment_type_id' => 10090,
+				])->forceDelete();
+
+				$image = $request->voice_recording;
+				$time_stamp = date('Y_m_d_h_i_s');
+				$extension = $image->getClientOriginalExtension();
+				$name = $job_order->id . '_' . $time_stamp . '_Voice_Recording.' . $extension;
+				$image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+				//SAVE ATTACHMENT
+				$attachment = new Attachment;
+				$attachment->attachment_of_id = 227; //JOB ORDER
+				$attachment->attachment_type_id = 10090; //VOC Recording
+				$attachment->entity_id = $request->job_order_id;
+				$attachment->name = $name;
+				$attachment->created_by = auth()->user()->id;
+				$attachment->created_at = Carbon::now();
+				$attachment->save();
 			}
 
 			DB::commit();
@@ -4622,7 +4665,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$customer_mobile = $job_order->customer->mobile_no;
+			$customer_mobile = $job_order->contact_number;
 
 			if (!$customer_mobile) {
 				return response()->json([
@@ -4792,7 +4835,7 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
-			$customer_mobile = $job_order->customer->mobile_no;
+			$customer_mobile = $job_order->contact_number;
 			$vehicle_no = $job_order->vehicle->registration_number;
 
 			if (!$customer_mobile) {

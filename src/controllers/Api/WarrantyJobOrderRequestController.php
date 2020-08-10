@@ -99,7 +99,7 @@ class WarrantyJobOrderRequestController extends Controller {
 
 				$output .= '<a title="View" href="#!/warranty-job-order-request/view/' . $list_data->id . '" class="btn btn-sm btn-default"><span class="glyphicon glyphicon glyphicon-eye-open"></span></a>';
 
-				if ($list_data->status_id == 9100) {
+				if ($list_data->status_id == 9100 || $list_data->status_id == 9103) {
 					if (Entrust::can('edit-warranty-job-order-requests')) {
 						$output .= '<a href="#!/warranty-job-order-request/form/' . $list_data->id . '" id = "" title="Edit" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-pencil"></span></a>';
 					}
@@ -207,6 +207,10 @@ class WarrantyJobOrderRequestController extends Controller {
 			$warranty_job_order_request->load($this->model::relationships('read'));
 
 			// $warranty_job_order_request->generatePDF();
+			return response()->json([
+				'success' => true,
+				'message' => 'PPR approved successfully',
+			]);
 
 		} catch (Exceprion $e) {
 			return response()->json([
