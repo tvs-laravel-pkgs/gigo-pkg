@@ -21,7 +21,7 @@
                                 <md-autocomplete md-selected-item="wjor_repair_order.repair_order" md-search-text="repairOrderSearchKey" md-items="repair_order in searchRepairOrders(repairOrderSearchKey)" md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. ABS100" md-selected-item-change="repairOrderSelected(wjor_repair_order.repair_order)" md-input-id="repairOrderAutoCompleteId">
                                     <md-item-template>
                                         <span>
-                                            {{repair_order.code}} / {{wjor_repair_order.repair_order.name}}
+                                            {{repair_order.code}} / {{repair_order.name}}
                                         </span>
                                     </md-item-template>
                                     <md-not-found>
