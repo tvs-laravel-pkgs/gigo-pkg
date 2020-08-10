@@ -225,7 +225,7 @@
                                         </div>
                                     </div><!-- Feild -->
                                 </li>
-                                <li class="view-col-3">
+                                <li class="view-col-3" ng-if="false">
                                     <div class="form-group">
                                         <label>
                                             Request type
@@ -283,7 +283,7 @@
                                 <li class="view-col-3" ng-if="form_type == 'manual' && vehicle_search_type==true">
                                     <div class="form-group">
                                         <label>
-                                            Vehicle
+                                            Search vehicle
                                             <sup class="mandatory">*</sup>
                                         </label>
                                         <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order.vehicle" md-search-text="vehicle_search_key" md-items="vehicle in searchVehicles(vehicle_search_key)" md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number" md-min-length="3" md-escape-options="clear" placeholder="Chassis # / Registration # / Engine #">
@@ -440,7 +440,7 @@
                                 <li class="view-col-3" ng-if="form_type=='manual' && customer_search_type == true ">
                                     <div class="form-group">
                                         <label>
-                                            Customer
+                                            Search customer
                                             <sup class="mandatory">*</sup>
                                         </label>
                                         <md-autocomplete class="type-sm" md-items="option in searchCustomer(customerSearchText)" md-selected-item="customer" md-search-text="customerSearchText" md-selected-item-change="customerChanged(customer)" md-item-text="option.code" md-min-length="3" placeholder="Customer Name" ng-model-options="{trackBy: '$value.id' }">
@@ -640,7 +640,7 @@
                                             Complaint group
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item="warranty_job_order_request.complaint_group" md-search-text="complaintGroupSearchKey" md-items="complaintGroup in searchCompaintGroup(complaintGroupSearchKey)" md-item-text="complaintGroup.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. Engine - Block">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.complaint_group" md-search-text="complaintGroupSearchKey" md-items="complaintGroup in searchCompaintGroup(complaintGroupSearchKey)" md-item-text="complaintGroup.code+' / '+complaintGroup.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. Engine - Block">
                                             <md-item-template>
                                                 <span>
                                                     {{complaintGroup.code+' / '+complaintGroup.name}}
@@ -1005,7 +1005,7 @@
                                             run per day
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input type="text" class="form-control" autocomplete="off" name="runs_per_day" ng-model="warranty_job_order_request.runs_per_day" maxlength="3" />
+                                        <input type="text" class="form-control" autocomplete="off" name="runs_per_day" ng-model="warranty_job_order_request.runs_per_day" maxlength="4" />
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3">

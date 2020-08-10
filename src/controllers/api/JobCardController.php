@@ -2437,7 +2437,13 @@ class JobCardController extends Controller {
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
-			'status'])->find($request->id);
+			'status',
+			'jobOrder.jobOrderRepairOrders' => function ($query) {
+				$query->where('is_recommended_by_oem', 0);
+			},
+			'jobOrder.jobOrderRepairOrders.repairOrder',
+		])
+			->find($request->id);
 
 		if (!$job_card) {
 			return response()->json([
@@ -2540,6 +2546,7 @@ class JobCardController extends Controller {
 				$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$labour_details[$key]['status_id'] = $value->status_id;
+				$labour_details[$key]['repair_order'] = $value->repairOrder;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$labour_amount += $value->amount;
@@ -2568,6 +2575,7 @@ class JobCardController extends Controller {
 				$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$part_details[$key]['status_id'] = $value->status_id;
+				$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$part_amount += $value->amount;

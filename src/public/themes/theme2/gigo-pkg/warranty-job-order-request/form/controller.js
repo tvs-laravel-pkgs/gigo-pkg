@@ -95,6 +95,8 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.warranty_job_order_request = {
                             wjor_repair_orders: [],
                             wjor_parts: [],
+                            has_warranty: 1,
+                            has_amc: 0,
                             repair_order_total: 0,
                             part_total: 0,
                             attachments: [],
@@ -104,69 +106,70 @@ app.component('warrantyJobOrderRequestForm', {
                                 outlet: {},
                             },
                             photos: [],
+                            attachments: [],
                         }
 
                         //for quick test
-                        $scope.warranty_job_order_request = {
-                            wjor_repair_orders: [],
-                            wjor_parts: [],
-                            failure_date: '01-06-2020',
-                            has_warranty: 1,
-                            has_amc: 0,
-                            unit_serial_number: 'UNIT0001',
-                            service_types: [],
-                            // complaint: {
-                            //     id: 1
-                            // },
-                            // fault: {
-                            //     id: 2
-                            // },
-                            // supplier: {
-                            //     id: 1
-                            // },
-                            primary_segment: {
-                                id: 1
-                            },
-                            secondary_segment: {
-                                id: 1
-                            },
-                            operating_condition: {
-                                id: 9002,
-                            },
-                            normal_road_condition: {
-                                id: 9020,
-                            },
-                            failure_road_condition: {
-                                id: 9020,
-                            },
-                            load_range: {
-                                id: 9062,
-                            },
-                            terrain_at_failure: {
-                                id: 9081,
-                            },
-                            load_carried_type_id: 9041,
-                            reading_type_id: 8041,
-                            has_goodwill: 1,
-                            load_at_failure: 100,
-                            runs_per_day: 1000,
-                            last_lube_changed: 800,
-                            load_carried: 1200,
-                            failed_at: 1200,
-                            complaint_reported: 'Engine Noise',
-                            failure_observed: 'Engine screw is missing',
-                            investigation_findings: 'Engine screw is missing',
-                            cause_of_failure: 'Engine screw is missing',
-                            repair_order_total: 0,
-                            part_total: 0,
-                            attachments: [],
-                            job_order: {
-                                vehicle: [],
-                                customer: [],
-                                // outlet: {},
-                            },
-                            photos: [],
-                        };
+                        // $scope.warranty_job_order_request = {
+                        //     wjor_repair_orders: [],
+                        //     wjor_parts: [],
+                        //     failure_date: '01-06-2020',
+                        //     has_warranty: 1,
+                        //     has_amc: 0,
+                        //     unit_serial_number: 'UNIT0001',
+                        //     service_types: [],
+                        //     // complaint: {
+                        //     //     id: 1
+                        //     // },
+                        //     // fault: {
+                        //     //     id: 2
+                        //     // },
+                        //     // supplier: {
+                        //     //     id: 1
+                        //     // },
+                        //     primary_segment: {
+                        //         id: 1
+                        //     },
+                        //     secondary_segment: {
+                        //         id: 1
+                        //     },
+                        //     operating_condition: {
+                        //         id: 9002,
+                        //     },
+                        //     normal_road_condition: {
+                        //         id: 9020,
+                        //     },
+                        //     failure_road_condition: {
+                        //         id: 9020,
+                        //     },
+                        //     load_range: {
+                        //         id: 9062,
+                        //     },
+                        //     terrain_at_failure: {
+                        //         id: 9081,
+                        //     },
+                        //     load_carried_type_id: 9041,
+                        //     reading_type_id: 8041,
+                        //     has_goodwill: 1,
+                        //     load_at_failure: 100,
+                        //     runs_per_day: 1000,
+                        //     last_lube_changed: 800,
+                        //     load_carried: 1200,
+                        //     failed_at: 1200,
+                        //     complaint_reported: 'Engine Noise',
+                        //     failure_observed: 'Engine screw is missing',
+                        //     investigation_findings: 'Engine screw is missing',
+                        //     cause_of_failure: 'Engine screw is missing',
+                        //     repair_order_total: 0,
+                        //     part_total: 0,
+                        //     attachments: [],
+                        //     job_order: {
+                        //         vehicle: [],
+                        //         customer: [],
+                        //         // outlet: {},
+                        //     },
+                        //     photos: [],
+                        // };
                         $scope.warranty_job_order_request.job_order.vehicle.is_sold = true;
                         if (self.hasPermission('own-outlet-warranty-job-order-request')) {
                             $scope.warranty_job_order_request.job_order.outlet = $scope.user.employee.outlet;

@@ -1022,6 +1022,19 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             }
         }
 
+        $scope.selectingRepairOrder = function(val) {
+            if (val) {
+                list = [];
+                angular.forEach($scope.job_order.repair_order, function(value, key) {
+                    // angular.forEach($scope.parts_indent.repair_order, function(value, key) {
+                    list.push(value.id);
+                });
+            } else {
+                list = [];
+            }
+            self.repair_order_ids = list;
+        }
+
         self.removeLabourDetails = function($id, $labour_id) {
             $('.delete_labour_details').val($id);
             $('.labour_detail_id').val($labour_id);
@@ -1288,6 +1301,27 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     $qty = part.qty;
                 }
             }
+            $.ajax({
+                    url: base_url + '/api/inward-part-indent/get-part-detail-pias',
+                    method: "POST",
+                    data: {
+                        code: part.code
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.available_quantity = res.available_quantity;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
             PartSvc.read(part.id)
                 .then(function(response) {
                     $scope.schedule_maintainance_part.part.qty = $qty;
@@ -1337,13 +1371,15 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             $scope.labour_modal_action = labour_index === false ? 'Add' : 'Edit';
             $('#labour_form_modal').modal('show');
         }
+
         $scope.showPartForm = function(part_index, part = null) {
-            // console.log(part.qty);
+            // console.log(part);
             $scope.schedule_maintainance_part = [];
             $scope.job_order_part_id = '';
             if (part_index === false) {
                 // $scope.part_details = {};
             } else {
+                $scope.repair_orders = part.repair_order;
                 if (part.split_order_type_id != null) {
                     $scope.job_order_part_id = part.id;
                     if (part.split_order_type_id == undefined) {
@@ -1361,6 +1397,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                         .then(function(response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;
+                            $scope.job_order.repair_order = $scope.repair_orders;
                             // $scope.calculatePartAmount();
                         });
                 }
@@ -3550,6 +3587,18 @@ app.component('inwardVehiclePayableLabourPartForm', {
             //     }
             // });
         }
+        $scope.selectingRepairOrder = function(val) {
+            if (val) {
+                list = [];
+                angular.forEach($scope.job_order.repair_order, function(value, key) {
+                    // angular.forEach($scope.parts_indent.repair_order, function(value, key) {
+                    list.push(value.id);
+                });
+            } else {
+                list = [];
+            }
+            self.repair_order_ids = list;
+        }
 
         $scope.saveLabour = function() {
             var form_id = '#labour_form';
@@ -3654,6 +3703,11 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $rootScope.loading = false;
 
                 });
+
+            setTimeout(function() {
+                $scope.calculateLabourTotal();
+                $scope.calculatePartTotal();
+            }, 2000);
         };
         $scope.init();
         $scope.searchRepairOrders = function(query) {
@@ -3681,6 +3735,27 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $qty = part.qty;
                 }
             }
+            $.ajax({
+                    url: base_url + '/api/inward-part-indent/get-part-detail-pias',
+                    method: "POST",
+                    data: {
+                        code: part.code
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.available_quantity = res.available_quantity;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
             PartSvc.read(part.id)
                 .then(function(response) {
                     $scope.schedule_maintainance_part.part.qty = $qty;
@@ -3737,6 +3812,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
             if (part_index === false) {
                 // $scope.part_details = {};
             } else {
+                $scope.repair_orders = part.repair_order;
                 if (part.split_order_type_id != null) {
                     $scope.job_order_part_id = part.id;
                     if (part.split_order_type_id == undefined) {
@@ -3754,6 +3830,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                         .then(function(response) {
                             $scope.schedule_maintainance_part.part = response.data.part;
                             $scope.schedule_maintainance_part.part.qty = part.qty;
+                            $scope.job_order.repair_order = $scope.repair_orders;
                             // $scope.calculatePartAmount();
                         });
                 }
@@ -3886,28 +3963,27 @@ app.component('inwardVehiclePayableLabourPartForm', {
                 });
             }
         }
-
-        $scope.calTotal = function() {
-            var total_amount = 0;
-            var parts_amount = 0;
-            var labour_amount = 0;
-            angular.forEach($scope.job_order.job_order_repair_orders, function(value, key) {
-                labour_amount += parseFloat(value.amount);
+        $scope.calculateLabourTotal = function() {
+            $total_amount = 0;
+            angular.forEach($scope.labour_details, function(labour, key) {
+                if (labour.removal_reason_id == undefined || labour.removal_reason_id == null) {
+                    $total_amount += parseFloat(labour.amount);
+                }
             });
-            $scope.labour_total_amount = parseFloat(labour_amount).toFixed(2);
-
-            angular.forEach($scope.job_order.job_order_parts, function(value, key) {
-                parts_amount += parseFloat(value.amount);
-            });
-            $scope.parts_total_amount = parseFloat(parts_amount).toFixed(2);
-
-            $scope.total_amount = parseFloat($scope.parts_total_amount) + parseFloat($scope.labour_total_amount);
-
-            $scope.labour_total_amount = parseFloat($scope.labour_total_amount).toFixed(2);
-            $scope.parts_total_amount = parseFloat($scope.parts_total_amount).toFixed(2);
-            $scope.total_amount = parseFloat($scope.total_amount).toFixed(2);
-
+            $scope.labour_amount = $total_amount.toFixed(2);
+            // $scope.calculateTotalLabourParts();
         }
+        $scope.calculatePartTotal = function() {
+            $total_amount = 0;
+            angular.forEach($scope.part_details, function(part, key) {
+                if (part.removal_reason_id == null || part.removal_reason_id == undefined) {
+                    $total_amount += parseFloat(part.amount);
+                }
+            });
+            $scope.parts_rate = $total_amount.toFixed(2);
+            // $scope.calculateTotalLabourParts();
+        }
+        
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
 

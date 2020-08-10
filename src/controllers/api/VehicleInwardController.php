@@ -251,6 +251,7 @@ class VehicleInwardController extends Controller {
 				'gateLog.chassisAttachment',
 				'customerApprovalAttachment',
 				'customerESign',
+				'VOCAttachment',
 			])
 				->select([
 					'job_orders.*',
@@ -1054,16 +1055,17 @@ class VehicleInwardController extends Controller {
 				->select('parts.code', 'pias_parts.id')
 				->where('parts.code', $part_code)
 				->first();
-			$outlet = DB::table($db2 . '.outlets as pias_outlets')
+
+			$outlet_ids = DB::table($db2 . '.outlets as pias_outlets')
 				->join('outlets', 'outlets.code', 'pias_outlets.code')
 				->select('outlets.code', 'pias_outlets.id')
 				->where(['outlets.code' => $user_outlet_code, 'outlets.company_id' => $company_id])
-				->first();
+				->get()->pluck('id')->toArray();
 
 			if (!$part) {
 				$error = 'Part';
 			}
-			if (!$outlet) {
+			if (!$outlet_ids) {
 				$error = 'Outlet';
 			}
 			if ($error != '') {
@@ -1076,7 +1078,9 @@ class VehicleInwardController extends Controller {
 
 			$stock_details = DB::table($db2 . '.stock_details')
 				->select('stock_details.outlet_id', 'stock_details.part_id', 'stock_details.available_quantity')
-				->where(['stock_details.outlet_id' => $outlet->id, 'stock_details.part_id' => $part->id])
+			// ->where(['stock_details.outlet_id' => $outlet->id, 'stock_details.part_id' => $part->id])
+				->where('stock_details.part_id', $part->id)
+				->whereIn('stock_details.outlet_id', $outlet_ids)
 				->first();
 
 			if ($stock_details) {
@@ -1660,6 +1664,7 @@ class VehicleInwardController extends Controller {
 				'vehicle',
 				'vehicle.model',
 				'vehicle.status',
+				'vehicle.currentOwner.customer',
 				'vehicle.lastJobOrder',
 				'vehicle.lastJobOrder.jobCard',
 				'type',
@@ -1687,6 +1692,15 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
+
+			//Check Customer
+			if ($job_order->vehicle->currentOwner) {
+				//Check Service Contact Num avail or not
+				if (!$job_order->contact_number) {
+					$job_order->contact_number = $job_order->vehicle->currentOwner->customer->mobile_no;
+				}
+			}
+
 			//ENABLE ESTIMATE STATUS
 			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
 			if ($inward_process_check) {
@@ -2126,6 +2140,8 @@ class VehicleInwardController extends Controller {
 				$repair_orders = [];
 			}
 
+			$repair_order_part_obj = Part::find($request->part_id);
+			$repair_order_part_obj->repair_order_parts()->sync([]);
 			if (sizeof($repair_orders) > 0) {
 				foreach ($repair_orders as $key => $value) {
 
@@ -2133,8 +2149,8 @@ class VehicleInwardController extends Controller {
 					// $job_order_repair_order_part_array[$key]['job_order_part_id'] = $job_order_part->id;
 					$repair_order_part_array[$key]['part_id'] = $request->part_id;
 				}
-				$repair_order_part_obj = Part::find($request->part_id);
-				$repair_order_part_obj->repair_order_parts()->detach();
+				// $repair_order_part_obj = Part::find($request->part_id);
+				// $repair_order_part_obj->repair_order_parts()->detach();
 
 				$repair_order_part_obj->repair_order_parts()->sync($repair_order_part_array);
 			}
@@ -3006,6 +3022,8 @@ class VehicleInwardController extends Controller {
 				$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$part_details[$key]['part'] = $value->part;
 				$part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+				$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
+
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$part_amount += $value->amount;
@@ -3035,7 +3053,13 @@ class VehicleInwardController extends Controller {
 		// dd($r->all());
 		try {
 
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::with([
+				'jobOrderRepairOrders' => function ($query) {
+					$query->where('is_recommended_by_oem', 1);
+				},
+				'jobOrderRepairOrders.repairOrder',
+			])
+				->find($r->id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -3206,7 +3230,13 @@ class VehicleInwardController extends Controller {
 		// dd($r->all());
 		try {
 
-			$job_order = JobOrder::find($r->id);
+			$job_order = JobOrder::with([
+				'jobOrderRepairOrders' => function ($query) {
+					$query->where('is_recommended_by_oem', 0);
+				},
+				'jobOrderRepairOrders.repairOrder',
+			])
+				->find($r->id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -3603,6 +3633,7 @@ class VehicleInwardController extends Controller {
 				'vehicle.status',
 				'status',
 				'customerVoices',
+				'VOCAttachment',
 			])
 				->select([
 					'job_orders.*',
@@ -3656,6 +3687,7 @@ class VehicleInwardController extends Controller {
 				'extras' => $extras,
 				'action' => $action,
 				'job_order' => $job_order,
+				'attachement_path' => url('storage/app/public/gigo/job_order/attachments/'),
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -3814,6 +3846,36 @@ class VehicleInwardController extends Controller {
 						]);
 					}
 				}
+			}
+
+			//Remove Customer Voice Recording
+			if ($request->customer_recording_id) {
+				$remove_customer_attachment = Attachment::where('id', $request->customer_recording_id)->forceDelete();
+			}
+
+			//Save Customer Voice Recording
+			if (!empty($request->voice_recording)) {
+				$remove_previous_attachment = Attachment::where([
+					'entity_id' => $request->job_order_id,
+					'attachment_of_id' => 227,
+					'attachment_type_id' => 10090,
+				])->forceDelete();
+
+				$image = $request->voice_recording;
+				$time_stamp = date('Y_m_d_h_i_s');
+				$extension = $image->getClientOriginalExtension();
+				$name = $job_order->id . '_' . $time_stamp . '_Voice_Recording.' . $extension;
+				$image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+				//SAVE ATTACHMENT
+				$attachment = new Attachment;
+				$attachment->attachment_of_id = 227; //JOB ORDER
+				$attachment->attachment_type_id = 10090; //VOC Recording
+				$attachment->entity_id = $request->job_order_id;
+				$attachment->name = $name;
+				$attachment->created_by = auth()->user()->id;
+				$attachment->created_at = Carbon::now();
+				$attachment->save();
 			}
 
 			DB::commit();
@@ -4603,7 +4665,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$customer_mobile = $job_order->customer->mobile_no;
+			$customer_mobile = $job_order->contact_number;
 
 			if (!$customer_mobile) {
 				return response()->json([
@@ -4773,7 +4835,7 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
-			$customer_mobile = $job_order->customer->mobile_no;
+			$customer_mobile = $job_order->contact_number;
 			$vehicle_no = $job_order->vehicle->registration_number;
 
 			if (!$customer_mobile) {

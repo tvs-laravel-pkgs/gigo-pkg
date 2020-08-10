@@ -59,16 +59,6 @@
                         {{warranty_job_order_request.has_amc ? 'Active' : 'Inactive'}}
                     </span>
                 </li>
-                <li class="view-col-3" ng-if="false">
-                    <span class="view-col-label">
-                        Failure date
-                    </span>
-                    <span class="view-col-value">
-                        <b>
-                            23 Sep 2019
-                        </b>
-                    </span>
-                </li>
                 <li class="view-col-3" ng-if="warranty_job_order_request.authorization_number">
                     <span class="view-col-label">
                         Authorization Number
@@ -152,7 +142,11 @@
                                         Free services done
                                     </span>
                                     <span class="view-col-value" ng-if="warranty_job_order_request.service_types.length != 0">
-                                        {{service_types.join()}}
+                                        <ul>
+                                            <li ng-repeat="service_type in service_types">
+                                                - {{service_type}}
+                                            </li>
+                                        </ul>
                                     </span>
                                     <span class="view-col-value" ng-if="warranty_job_order_request.service_types.length == 0">
                                         N/A

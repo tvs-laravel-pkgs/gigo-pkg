@@ -307,6 +307,10 @@ class JobOrder extends BaseModel {
 		;
 	}
 
+	public function VOCAttachment() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10090);
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {

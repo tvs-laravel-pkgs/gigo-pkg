@@ -37,7 +37,7 @@ class WarrantyJobOrderRequest extends ConfigurableMail {
 	public function build() {
 		$this->from($this->configs['from']);
 
-		$this->subject($this->wjor->company->name . " -  Warranty Job Order Request - " . $this->wjor->number);
+		$this->subject($this->wjor->company->name . " -  Product Performance Report - " . $this->wjor->number);
 		return $this->view('email/wjor');
 
 		// $html = View::make('mail.customer.activity-mention.html', [

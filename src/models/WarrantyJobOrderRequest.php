@@ -461,7 +461,14 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$financial_year = $result['financial_year'];
 				$branch = Outlet::find($input['outlet_id']);
 
-				$generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
+				$jobOrderNumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
+				if(!$jobOrderNumber['success']){
+					return response()->json([
+						'success' => false,
+						'error' => 'No serial number configured for Job Order. FY : '.$financial_year->code.' Outlet : '.$branch->code,
+					]);
+				}
+
 
 				if (isset($input['customer_id'])) {
 					$customer = json_decode($input['customer_id']);
@@ -471,7 +478,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				if (!$job_card) {
 					$job_order = new JobOrder;
 					$job_order->company_id = $owner->company_id;
-					$job_order->number = $generateJONumber['number'];
+					$job_order->number = $jobOrderNumber['number'];
 					$job_order->vehicle_id = $input['vehicle_id'];
 					$job_order->outlet_id = $input['outlet_id'];
 					$job_order->type_id = 4;
@@ -501,7 +508,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 					if ($job_card->job_order_id == null) {
 						$job_order = new JobOrder;
 						$job_order->company_id = $owner->company_id;
-						$job_order->number = $generateJONumber['number'];
+						$job_order->number = $jobOrderNumber['number'];
 						$job_order->vehicle_id = $input['vehicle_id'];
 						$job_order->outlet_id = $input['outlet_id'];
 						$job_order->type_id = 4;
@@ -529,7 +536,14 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$record = new Self();
 				$record->company_id = $owner->company_id;
 				$record->created_by_id = Auth::id();
-				$record->number = rand();
+				$pprNumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
+				if(!$pprNumber['success']){
+					return response()->json([
+						'success' => false,
+						'error' => 'No serial number configured for PPR . FY : '.$financial_year->code.' Outlet : '.$branch->code,
+					]);
+				}
+				$record->number = $pprNumber['number'];
 
 			} else {
 				$record = Self::find($input['id']);
@@ -545,8 +559,8 @@ class WarrantyJobOrderRequest extends BaseModel {
 			$record->status_id = 9100; //New
 			// dd($record);
 			$record->save();
-			$record->number = 'WJOR-' . $record->id;
-			$record->save();
+			//$record->number = 'F20-PPR-' . $record->id;
+			//$record->save();
 
 			$service_types = json_decode($input['service_type_ids']);
 			$service_type_ids = [];
