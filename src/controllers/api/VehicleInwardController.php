@@ -2158,14 +2158,14 @@ class VehicleInwardController extends Controller {
 					$job_order_part->updated_at = Carbon::now();
 				} else {
 					$job_order_part = new JobOrderPart;
-					$job_order_part->job_order_id = $request->job_order_id;
-					$job_order_part->part_id = $request->part_id;
 					$job_order_part->created_by_id = Auth::user()->id;
 					$job_order_part->created_at = Carbon::now();
 				}
+				$job_order_part->estimate_order_id = $estimate_order_id;
 			}
 
-			$job_order_part->estimate_order_id = $estimate_order_id;
+			$job_order_part->job_order_id = $request->job_order_id;
+			$job_order_part->part_id = $request->part_id;
 			$job_order_part->is_customer_approved = 0;
 			$job_order_part->rate = $part->mrp;
 			$job_order_part->is_free_service = 0;
