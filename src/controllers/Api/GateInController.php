@@ -239,7 +239,7 @@ class GateInController extends Controller {
 					$customer_form_filled = 0;
 					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
 				}
-				$vehicle->registration_number = $request->registration_number;
+				$vehicle->registration_number = str_replace('-', '', $request->registration_number);
 				$vehicle->updated_by_id = Auth::user()->id;
 				$vehicle->save();
 			} else {
@@ -272,13 +272,13 @@ class GateInController extends Controller {
 				if ($request->chassis_number) {
 					$vehicle = Vehicle::firstOrNew([
 						'company_id' => Auth::user()->company_id,
-						'registration_number' => $request->registration_number,
+						'registration_number' => str_replace('-', '', $request->registration_number),
 						'chassis_number' => $request->chassis_number,
 					]);
 				} else {
 					$vehicle = Vehicle::firstOrNew([
 						'company_id' => Auth::user()->company_id,
-						'registration_number' => $request->registration_number,
+						'registration_number' => str_replace('-', '', $request->registration_number),
 						'engine_number' => $request->engine_number,
 					]);
 				}
@@ -317,7 +317,7 @@ class GateInController extends Controller {
 						'success' => false,
 						'error' => 'Validation Error',
 						'errors' => [
-							'Previous Job Order not completed!',
+							'Previous Job Order not completed on this Vehicle!',
 						],
 					]);
 				}
@@ -524,10 +524,18 @@ class GateInController extends Controller {
 			$gate_in_data['number'] = $gate_log->number;
 			$gate_in_data['registration_number'] = $request->registration_number;
 
+			$message = 'Dear Customer,Greetings! Your vehicle ' . $vehicle->registration_number . ' has arrived in TVS Service Center-' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A');
+
 			//Send SMS to Driver
 			if ($request->driver_mobile_number) {
-				$message = 'Dear Customer,Gatein entry created for ' . $vehicle->registration_number . ' at ' . Auth::user()->employee->outlet->ax_name;
 				$msg = sendSMSNotification($request->driver_mobile_number, $message);
+			}
+
+			//Send SMS to Customer
+			if ($job_order->customer) {
+				if ($job_order->customer->mobile_no) {
+					$msg = sendSMSNotification($job_order->customer->mobile_no, $message);
+				}
 			}
 
 			return response()->json([
