@@ -1374,6 +1374,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 
         $scope.showPartForm = function(part_index, part = null) {
             // console.log(part);
+            $scope.job_order.repair_order = [];
             $scope.schedule_maintainance_part = [];
             $scope.job_order_part_id = '';
             if (part_index === false) {
@@ -3807,6 +3808,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
         }
         $scope.showPartForm = function(part_index, part = null) {
             // console.log(part.qty);
+            $scope.job_order.repair_order = [];
             $scope.schedule_maintainance_part = [];
             $scope.job_order_part_id = '';
             if (part_index === false) {
