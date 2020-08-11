@@ -61,11 +61,21 @@
                 </li>
                 <li class="view-col-3" ng-if="warranty_job_order_request.authorization_number">
                     <span class="view-col-label">
-                        Authorization Number
+                        PPR Number
                     </span>
                     <span class="view-col-value">
                         <b>
                             {{warranty_job_order_request.authorization_number}}
+                        </b>
+                    </span>
+                </li>
+                <li class="view-col-3" ng-if="warranty_job_order_request.rejected_reason">
+                    <span class="view-col-label">
+                        Reason for return
+                    </span>
+                    <span class="view-col-value">
+                        <b>
+                            {{warranty_job_order_request.rejected_reason}}
                         </b>
                     </span>
                 </li>

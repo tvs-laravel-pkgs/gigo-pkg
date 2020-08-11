@@ -591,13 +591,14 @@ app.component('partsIndentPartsView', {
                 $scope.parts_indent.return_part.id = part.part_id;
                 $scope.parts_indent.return_part.qty = parseInt(part.qty);
                 $scope.parts_indent.employee.id = part.employee_id;
+                $scope.parts_indent.remarks = part.remarks;
                 $scope.parts_indent.return_part.job_order_part_id = part.job_order_part_id;
             }
             $('#return_part_form_modal').modal('show');
         }
 
         $scope.showPartForm = function(part) {
-            console.log(part);
+            // console.log(part);
             $job_order_part_id = part.job_order_part_id;
             if (part == false) {
                 $scope.parts_indent = {};
@@ -624,6 +625,58 @@ app.component('partsIndentPartsView', {
             $scope.modal_action = part === false ? 'Add' : 'Edit';
             $('#part_form_modal').modal('show');
         }
+
+        $scope.showRemarks = function(part) {
+            console.log(part);
+            $scope.job_order_part_id = part.job_order_part_id;
+            $scope.user_id = part.user_id;
+            $scope.returned_qty = part.qty;
+            $scope.job_order_returned_part_id = part.job_order_returned_part_id;
+            if (part.remarks) {
+                $('.remarks').val(part.remarks);
+            } else {
+                $('.remarks').val('');
+            }
+            var not_issued_return_form = '#not-issued-return-form';
+            var v = jQuery(not_issued_return_form).validate({
+                ignore: '',
+                rules: {
+                    'remarks': {
+                        required: true,
+                    },
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(not_issued_return_form)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/inward-part-indent/save-return-part',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.submit').button('reset');
+                            custom_noty('success', res.message);
+                            $('#return_part_view_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $scope.fetchData();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+            $('#return_part_view_modal').modal('show');
+        }
+
         $scope.searchParts = function(query) {
             return new Promise(function(resolve, reject) {
                 PartSvc.options({ filter: { search: query } })
@@ -787,6 +840,9 @@ app.component('partsIndentPartsView', {
                     required: true,
                 },
                 'returned_qty': {
+                    required: true,
+                },
+                'remarks': {
                     required: true,
                 },
             },

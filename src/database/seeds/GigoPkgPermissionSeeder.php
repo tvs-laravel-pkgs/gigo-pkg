@@ -952,7 +952,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_order' => 99,
 				'parent' => 'gigo-pages',
 				'name' => 'my-jobcard',
-				'display_name' => 'My JobCard List',
+				'display_name' => 'My JobCard',
 			],
 
 			//Job Order Repair Orders

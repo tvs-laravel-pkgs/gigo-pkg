@@ -1374,6 +1374,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 
         $scope.showPartForm = function(part_index, part = null) {
             // console.log(part);
+            $scope.job_order.repair_order = [];
             $scope.schedule_maintainance_part = [];
             $scope.job_order_part_id = '';
             if (part_index === false) {
@@ -2113,7 +2114,7 @@ app.component('inwardVehicleEstimateForm', {
                         $('#is_customer_agreed').val('0');
                     }
 
-                    if ($scope.job_order && $scope.job_order.is_customer_approved == null && $scope.job_order.is_customer_agreed == 1) {
+                    if ($scope.job_order && ($scope.job_order.is_customer_approved == null || $scope.job_order.is_customer_approved == 0) && $scope.job_order.is_customer_agreed == 1) {
                         $('.is_customer_agreed').show();
                         $('.btn-nxt').hide();
                     } else {
@@ -3807,6 +3808,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
         }
         $scope.showPartForm = function(part_index, part = null) {
             // console.log(part.qty);
+            $scope.job_order.repair_order = [];
             $scope.schedule_maintainance_part = [];
             $scope.job_order_part_id = '';
             if (part_index === false) {
@@ -3983,7 +3985,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
             $scope.parts_rate = $total_amount.toFixed(2);
             // $scope.calculateTotalLabourParts();
         }
-        
+
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
 
