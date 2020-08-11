@@ -85,28 +85,24 @@ class MaterialGatePassController extends Controller {
 			})
 			->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
 			->where('gate_passes.type_id', 8281) // Material Gate Pass
+			->orderBy('gate_passes.created_at', 'DESC')
+			->orderBy('gate_passes.status_id', 'ASC')
 			->groupBy('gate_passes.id');
 
-			if (!Entrust::can('view-all-outlet-material-gate-pass')) 
-            {
-	            if(Entrust::can('view-mapped-outlet-material-gate-pass'))
-				{
-				   $material_gate_passes->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
-				}
-				else if(Entrust::can('view-own-outlet-material-gate-pass'))
-				{
-				   $material_gate_passes->where('job_cards.outlet_id', Auth::user()->employee->outlet_id);
-				}
-				else{
-				    $material_gate_passes->where('gate_passes.created_by_id', Auth::user()->id);
-				}
-			
+		if (!Entrust::can('view-all-outlet-material-gate-pass')) {
+			if (Entrust::can('view-mapped-outlet-material-gate-pass')) {
+				$material_gate_passes->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+			} else if (Entrust::can('view-own-outlet-material-gate-pass')) {
+				$material_gate_passes->where('job_cards.outlet_id', Auth::user()->employee->outlet_id);
+			} else {
+				$material_gate_passes->where('gate_passes.created_by_id', Auth::user()->id);
 			}
+		}
 
 		return Datatables::of($material_gate_passes)
 			->rawColumns(['status', 'action'])
 			->editColumn('status', function ($material_gate_pass) {
-				$status = $material_gate_pass->status_id == '8302' ? 'green' : 'red';
+				$status = $material_gate_pass->status_id == '8302' ? 'green' : $material_gate_pass->status_id == '8301' ? 'blue' : 'red';
 				return '<span class="text-' . $status . '">' . $material_gate_pass->status . '</span>';
 			})
 			->addColumn('action', function ($material_gate_pass) {

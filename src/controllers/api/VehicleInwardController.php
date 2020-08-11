@@ -2144,29 +2144,46 @@ class VehicleInwardController extends Controller {
 			}
 
 			DB::beginTransaction();
+
+			if ($request->type == 'scheduled') {
+				$is_oem_recommended = 1;
+			} else {
+				$is_oem_recommended = 0;
+			}
+
 			$part = Part::where('id', $request->part_id)->first();
+			$request_qty = $request->qty;
 
 			if (!empty($request->job_order_part_id)) {
 				$job_order_part = JobOrderPart::find($request->job_order_part_id);
+				$job_order_part->updated_by_id = Auth::user()->id;
+				$job_order_part->updated_at = Carbon::now();
 			} else {
-				$job_order_part = new JobOrderPart;
+				//Check Request parts are already requested or not.
+				$job_order_part = JobOrderPart::where('job_order_id', $request->job_order_id)->where('part_id', $request->part_id)->where('split_order_type_id', $request->split_order_type_id)->where('is_free_service', 0)->where('status_id', 8200)->where('is_oem_recommended', $is_oem_recommended)->where('is_fixed_schedule', 0)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->first();
+				if ($job_order_part) {
+					$request_qty = $job_order_part->qty + $request->qty;
+					$job_order_part->updated_by_id = Auth::user()->id;
+					$job_order_part->updated_at = Carbon::now();
+				} else {
+					$job_order_part = new JobOrderPart;
+					$job_order_part->created_by_id = Auth::user()->id;
+					$job_order_part->created_at = Carbon::now();
+				}
 				$job_order_part->estimate_order_id = $estimate_order_id;
-				$job_order_part->is_customer_approved = 0;
 			}
+
 			$job_order_part->job_order_id = $request->job_order_id;
 			$job_order_part->part_id = $request->part_id;
-			$job_order_part->qty = $request->qty;
+			$job_order_part->is_customer_approved = 0;
 			$job_order_part->rate = $part->mrp;
 			$job_order_part->is_free_service = 0;
-			if ($request->type == 'scheduled') {
-				$job_order_part->is_oem_recommended = 1;
-			} else {
-				$job_order_part->is_oem_recommended = 0;
-			}
+			$job_order_part->qty = $request_qty;
+			$job_order_part->is_oem_recommended = $is_oem_recommended;
 			$job_order_part->split_order_type_id = $request->split_order_type_id;
-			$job_order_part->amount = $request->qty * $part->mrp;
+			$job_order_part->amount = $request_qty * $part->mrp;
 			$job_order_part->status_id = 8200; //Customer Approval Pending
-			$job_order_part->created_by_id = Auth::user()->id;
+
 			$job_order_part->save();
 
 			$repair_order_part_array = [];
@@ -4809,7 +4826,7 @@ class VehicleInwardController extends Controller {
 
 			//UPDATE JOB ORDER STATUS
 			$job_order_status_update = JobOrder::find($request->job_order_id);
-			$job_order_status_update->status_id = 8463; //Vehicle Inward Inprogress
+			$job_order_status_update->status_id = 8474; //Estimation approved onbehalf of customer
 			$job_order_status_update->is_customer_approved = 1;
 			$job_order_status_update->updated_at = Carbon::now();
 			$job_order_status_update->save();
