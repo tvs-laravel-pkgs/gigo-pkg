@@ -749,7 +749,7 @@ class VehicleInwardController extends Controller {
 
 						$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
 
-						$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
+						$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $value->id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'), 'job_order_returned_parts.remarks', 'job_order_returned_parts.id as job_order_returned_part_id')->first();
 
 						$part_details[$key]['id'] = $value->part_id;
 						$part_details[$key]['job_order_part_id'] = $value->id;
@@ -775,6 +775,10 @@ class VehicleInwardController extends Controller {
 						$part_details[$key]['returned_qty'] = $returned_qty->returned_qty;
 						$part_details[$key]['pending_qty'] = $value->qty - ($issued_qty->issued_qty - $returned_qty->returned_qty);
 						$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
+
+						$part_details[$key]['remarks'] = $returned_qty->remarks;
+						$part_details[$key]['job_order_returned_part_id'] = $returned_qty->job_order_returned_part_id;
+						$part_details[$key]['user_id'] = Auth::user()->id;
 
 						// if (in_array($value->split_order_type_id, $customer_paid_type)) {
 						// if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
@@ -808,6 +812,7 @@ class VehicleInwardController extends Controller {
 						'parts.name',
 						'parts.code',
 						'joip.issued_qty as qty',
+						DB::raw('"-" as remarks'),
 						DB::raw('DATE_FORMAT(joip.created_at,"%d/%m/%Y") as date'),
 						'configs.name as issue_mode',
 						'users.name as mechanic',
@@ -828,6 +833,7 @@ class VehicleInwardController extends Controller {
 						'parts.name',
 						'parts.code',
 						'jorp.returned_qty as qty',
+						'jorp.remarks',
 						DB::raw('DATE_FORMAT(jorp.created_at,"%d/%m/%Y") as date'),
 						DB::raw('"-" as issue_mode'),
 						'users.name as mechanic',
@@ -861,6 +867,7 @@ class VehicleInwardController extends Controller {
 	}
 	//SAVE RETURN PART
 	public function saveReturnPart(Request $request) {
+		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_part_id' => [
@@ -908,11 +915,13 @@ class VehicleInwardController extends Controller {
 
 			$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
 
-			if ($returned_qty > $issued_qty) {
-				return response()->json([
-					'success' => false,
-					'message' => 'Returning Quantity should not exceed Issued Quantity',
-				]);
+			if ($issued_qty > 0) {
+				if ($returned_qty > $issued_qty) {
+					return response()->json([
+						'success' => false,
+						'message' => 'Returning Quantity should not exceed Issued Quantity',
+					]);
+				}
 			}
 
 			DB::commit();
