@@ -341,6 +341,12 @@
     var estimation_type_card_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/estimation-type/card-list.html')}}';
     var estimation_type_modal_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/partials/estimation-type-modal-form.html')}}';
 </script>
+
+<script type='text/javascript'>
+    //Trade Plate Number
+    var trade_plate_number_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/trade-plate-number/list.html')}}';
+    var trade_plate_number_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/trade-plate-number/form.html')}}';
+</script>
 <!-- <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/estimation-type/controller.js')}}'></script> -->
 
 

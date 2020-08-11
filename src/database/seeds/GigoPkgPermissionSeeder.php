@@ -1829,6 +1829,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'inward-job-card-tab-pdf',
 				'display_name' => 'PDF',
 			],
+
+			//Trade Plate Number
+			[
+				'display_order' => 99,
+				'parent' => 'gigo-masters',
+				'name' => 'trade-plate-numbers',
+				'display_name' => 'Trade Plate Numbers',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'trade-plate-numbers',
+				'name' => 'add-trade-plate-number',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'trade-plate-numbers',
+				'name' => 'edit-trade-plate-number',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'trade-plate-numbers',
+				'name' => 'delete-trade-plate-number',
+				'display_name' => 'Delete',
+			],
 		];
 		Permission::createFromArrays($permissions);
 	}

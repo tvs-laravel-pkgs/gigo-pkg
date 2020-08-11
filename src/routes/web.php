@@ -194,6 +194,13 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/estimation-type/delete', 'EstimationTypeController@deleteEstimationType')->name('deleteEstimationType');
 	Route::get('/estimation-type/get-filter-data', 'EstimationTypeController@getEstimationTypeFilter')->name('getEstimationTypeFilter');
 
+	//Trade Plate Number
+	Route::get('/trade-plate-number/get-list', 'TradePlateNumberController@getTradePlateNumberList')->name('getTradePlateNumberList');
+	Route::get('/trade-plate-number/get-form-data', 'TradePlateNumberController@getTradePlateNumberFormData')->name('getTradePlateNumberFormData');
+	Route::post('/trade-plate-number/save', 'TradePlateNumberController@saveTradePlateNumber')->name('saveTradePlateNumber');
+	Route::get('/trade-plate-number/delete', 'TradePlateNumberController@deleteTradePlateNumber')->name('deleteTradePlateNumber');
+	Route::get('/trade-plate-number/get-filter-data', 'TradePlateNumberController@getTradePlateNumberFilter')->name('getTradePlateNumberFilter');
+
 	//Gate Pass
 	Route::get('/gate-pass/get-list', 'GatePassController@getGatePassList')->name('getGatePassList');
 	Route::get('/gate-pass/get-form-data', 'GatePassController@getGatePassFormData')->name('getGatePassFormData');

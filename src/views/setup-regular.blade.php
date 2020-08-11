@@ -1673,3 +1673,27 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 <script type="text/javascript" src='{{asset($gigo_pkg_prefix."/public/themes/".$theme."/gigo-pkg/warranty-job-order-request/controller.js")}}'></script>
 <script type="text/javascript" src='{{asset($gigo_pkg_prefix."/public/services/gigo-pkg-services.js")}}'></script>
 
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    //Trade Plate Number
+	    when('/trade-plate-number/list', {
+	        template: '<trade-plate-number-list></trade-plate-number-list>',
+	        title: 'Trade Plate Number',
+	    }).
+	    when('/trade-plate-number/add', {
+	        template: '<trade-plate-number-form></trade-plate-number-form>',
+	        title: 'Add Trade Plate Number',
+	    }).
+	    when('/trade-plate-number/edit/:id', {
+	        template: '<trade-plate-number-form></trade-plate-number-form>',
+	        title: 'Edit Trade Plate Number',
+	    });
+	}]);
+
+	//Trade Plate Number
+    var trade_plate_number_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/trade-plate-number/list.html')}}';
+    var trade_plate_number_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/trade-plate-number/form.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/trade-plate-number/controller.js')}}'></script>
+

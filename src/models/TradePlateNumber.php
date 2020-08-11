@@ -16,4 +16,12 @@ class TradePlateNumber extends BaseModel {
 		"trade_plate_number",
 	];
 
+	public function getInsuranceValidityFromAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
+	public function getInsuranceValidityToAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
 }

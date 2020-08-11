@@ -1150,3 +1150,20 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Product Performance Report - View'
     });
 }]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //Trade Plate Number
+    when('/trade-plate-number/list', {
+        template: '<trade-plate-number-list></trade-plate-number-list>',
+        title: 'Trade Plate Number',
+    }).
+    when('/trade-plate-number/add', {
+        template: '<trade-plate-number-form></trade-plate-number-form>',
+        title: 'Add Trade Plate Number',
+    }).
+    when('/trade-plate-number/edit/:id', {
+        template: '<trade-plate-number-form></trade-plate-number-form>',
+        title: 'Edit Trade Plate Number',
+    });
+}]);
