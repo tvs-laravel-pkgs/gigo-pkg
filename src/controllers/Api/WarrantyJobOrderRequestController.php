@@ -3,10 +3,11 @@
 namespace Abs\GigoPkg\Api;
 
 use Abs\BasicPkg\Traits\CrudTrait;
-use Abs\GigoPkg\Notifications\WarrantyJobOrderRequest as WjorNotification;
+use App\BharatStage;
 use App\Country;
 use App\Http\Controllers\Controller;
 use App\Outlet;
+use App\SplitOrderType;
 use App\User;
 use App\VehicleModel;
 use App\WarrantyJobOrderRequest;
@@ -168,9 +169,9 @@ class WarrantyJobOrderRequestController extends Controller {
 				];
 
 			}
-			$warranty_manager->notify(new WjorNotification([
+			/*$warranty_manager->notify(new WjorNotification([
 				'wjor' => $warranty_job_order_request,
-			]));
+			]));*/
 
 			// $warranty_job_order_request->generatePDF();
 
@@ -273,6 +274,8 @@ class WarrantyJobOrderRequestController extends Controller {
 
 			$employee_outlets = Auth::user()->employee->employee_outlets;
 			$models = VehicleModel::where('company_id', Auth::user()->company_id)->get();
+			$bharat_stages = BharatStage::where('company_id', Auth::user()->company_id)->get();
+			$split_order_types = SplitOrderType::where('company_id', Auth::user()->company_id)->get();
 			return response()->json([
 				'success' => true,
 				'extras' => [
@@ -281,6 +284,8 @@ class WarrantyJobOrderRequestController extends Controller {
 					'city_list' => [], //City::getDropDownList(),
 					'models' => $models,
 					'employee_outlets' => $employee_outlets,
+					'bharat_stages' => $bharat_stages,
+					'split_order_types' => $split_order_types,
 				],
 			]);
 

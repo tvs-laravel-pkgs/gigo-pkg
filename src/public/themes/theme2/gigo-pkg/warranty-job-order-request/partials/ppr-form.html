@@ -17,7 +17,6 @@
                         <input type="hidden" name="form_type" value="{{form_type}}">
                     </div>
                 </li> -->
-
                 <!-- Feild -->
                 <!-- todo abs : (need to disable future date) -->
                 <!-- <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle.is_sold && form_type == 'manual'">
@@ -36,8 +35,6 @@
                         </div>
                     </div>
                 </li> -->
-
-
                 <!-- Auto Form Fields -->
                 <!-- <li class="view-col-3" ng-if="form_type != 'manual'">
                     <div class="form-group">
@@ -247,7 +244,24 @@
                                         </div>
                                     </div><!-- Feild -->
                                 </li>
-
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Split Order Type
+                                        </label>
+                                        <md-select ng-model="warranty_job_order_request.split_order_type" placeholder="Select Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchSplitOrderType" type="search" placeholder="Search for a Split Order Type.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="split_order_type" ng-repeat="split_order_type in extras.split_order_types | filter:searchSplitOrderType">
+                                                    {{split_order_type.name}} / {{split_order_type.code}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input required type="hidden" name="split_order_type_id" value="{{warranty_job_order_request.split_order_type.id}}">
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -286,7 +300,7 @@
                                             Search vehicle
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order.vehicle" md-search-text="vehicle_search_key" md-items="vehicle in searchVehicles(vehicle_search_key)" md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number" md-min-length="3" md-escape-options="clear" placeholder="Chassis # / Registration # / Engine #">
+                                        <md-autocomplete md-selected-item-change="vehicleSelected(warranty_job_order_request.job_order.vehicle)" md-autofocus md-selected-item="warranty_job_order_request.job_order.vehicle" md-search-text="vehicle_search_key" md-items="vehicle in searchVehicles(vehicle_search_key)" md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number" md-min-length="3" md-escape-options="clear" placeholder="Chassis # / Registration # / Engine #">
                                             <md-item-template>
                                                 <span>
                                                     {{vehicle.chassis_number}}
@@ -299,17 +313,17 @@
                                         <input type="hidden" name="vehicle_id" value="{{warranty_job_order_request.job_order.vehicle.id}}">
                                     </div><!-- Feild -->
                                 </li>
-<!--                                <li class="view-col-3" ng-if="form_type == 'manual'">-->
-<!--                                    <div class="form-group">-->
-<!--                                        <label>Registration Type <sup class="mandatory">*</sup></label>-->
-<!--                                        <div class="common-radio-button type-4">-->
-<!--                                            <input type="radio" id="registered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="1">-->
-<!--                                            <label for="registered">Registered</label>-->
-<!--                                            <input type="radio" id="unregistered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="0">-->
-<!--                                            <label for="unregistered">Un Registered</label>-->
-<!--                                        </div>-->
-<!--                                    </div>&lt;!&ndash; Feild &ndash;&gt;-->
-<!--                                </li>-->
+                                <!--                                <li class="view-col-3" ng-if="form_type == 'manual'">-->
+                                <!--                                    <div class="form-group">-->
+                                <!--                                        <label>Registration Type <sup class="mandatory">*</sup></label>-->
+                                <!--                                        <div class="common-radio-button type-4">-->
+                                <!--                                            <input type="radio" id="registered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="1">-->
+                                <!--                                            <label for="registered">Registered</label>-->
+                                <!--                                            <input type="radio" id="unregistered" name="is_registered" ng-model="$ctrl.is_registered" ng-value="0">-->
+                                <!--                                            <label for="unregistered">Un Registered</label>-->
+                                <!--                                        </div>-->
+                                <!--                                    </div>&lt;!&ndash; Feild &ndash;&gt;-->
+                                <!--                                </li>-->
                                 <li class="view-col-3" ng-if="form_type == 'manual'">
                                     <div class="form-group">
                                         <label>
@@ -355,24 +369,24 @@
                                         <input required type="hidden" name="model_id" value="{{warranty_job_order_request.job_order.vehicle.model.id}}">
                                     </div><!-- Feild -->
                                 </li>
-<!--                                <li class="view-col-3" ng-if="form_type == 'manual'">-->
-<!--                                    <div class="form-group">-->
-<!--                                        <label>-->
-<!--                                            Vehicle sold?-->
-<!--                                            <sup class="mandatory">*</sup>-->
-<!--                                        </label>-->
-<!--                                        <div class="common-radio-button type-4">-->
-<!--                                            <input type="radio" id="is_sold_yes" name="is_sold" ng-model="warranty_job_order_request.job_order.vehicle.is_sold" ng-value="true">-->
-<!--                                            <label for="is_sold_yes">-->
-<!--                                                Yes-->
-<!--                                            </label>-->
-<!--                                            <input type="radio" id="is_sold_no" name="is_sold" ng-model="warranty_job_order_request.job_order.vehicle.is_sold" ng-value="false">-->
-<!--                                            <label for="is_sold_no">-->
-<!--                                                No-->
-<!--                                            </label>-->
-<!--                                        </div>-->
-<!--                                    </div>&lt;!&ndash; Feild &ndash;&gt;-->
-<!--                                </li>-->
+                                <!--                                <li class="view-col-3" ng-if="form_type == 'manual'">-->
+                                <!--                                    <div class="form-group">-->
+                                <!--                                        <label>-->
+                                <!--                                            Vehicle sold?-->
+                                <!--                                            <sup class="mandatory">*</sup>-->
+                                <!--                                        </label>-->
+                                <!--                                        <div class="common-radio-button type-4">-->
+                                <!--                                            <input type="radio" id="is_sold_yes" name="is_sold" ng-model="warranty_job_order_request.job_order.vehicle.is_sold" ng-value="true">-->
+                                <!--                                            <label for="is_sold_yes">-->
+                                <!--                                                Yes-->
+                                <!--                                            </label>-->
+                                <!--                                            <input type="radio" id="is_sold_no" name="is_sold" ng-model="warranty_job_order_request.job_order.vehicle.is_sold" ng-value="false">-->
+                                <!--                                            <label for="is_sold_no">-->
+                                <!--                                                No-->
+                                <!--                                            </label>-->
+                                <!--                                        </div>-->
+                                <!--                                    </div>&lt;!&ndash; Feild &ndash;&gt;-->
+                                <!--                                </li>-->
                                 <li class="view-col-3" ng-if="form_type == 'manual'">
                                     <div class="form-group">
                                         <label>
@@ -380,7 +394,7 @@
                                             Sold date
                                         </label>
                                         <div class="input-group date" data-provide="datepicker">
-                                            <input type="text" class="form-control" placeholder="Select sold date" ng-model="warranty_job_order_request.job_order.vehicle.sold_date" name="sold_date" readonly />
+                                            <input type="text" class="form-control" placeholder="Select sold date" ng-model="warranty_job_order_request.job_order.vehicle.sold_date" name="sold_date" readonly ng-change="soldDateChange(warranty_job_order_request.job_order.vehicle.sold_date)" />
                                             <div class="input-group-addon">
                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                             </div>
@@ -402,6 +416,33 @@
                                     <span class="view-data-list-value">
                                         <b>
                                             {{warranty_job_order_request.job_order.vehicle.sold_date}}
+                                        </b>
+                                    </span>
+                                </li>
+                                <li class="view-col-3" ng-if="form_type == 'manual'">
+                                    <!-- <div class="form-group">
+                                        <label>
+                                            Bharat Stages
+                                        </label>
+                                        <md-select ng-model="warranty_job_order_request.bharat_stages" placeholder="Select Bharat Stage" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchBharatStage" type="search" placeholder="Search for a Bharat Stage.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="bharat_stage" ng-repeat="bharat_stage in extras.bharat_stages | filter:searchBharatStage">
+                                                    {{bharat_stage.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input required type="hidden" name="bharat_stage_id" value="{{warranty_job_order_request.bharat_stages.id}}">
+                                    </div> -->
+                                    <!-- Feild -->
+                                    <span class="view-col-label">
+                                        Bharat Stages
+                                    </span>
+                                    <span class="view-data-list-value">
+                                        <b>
+                                            {{warranty_job_order_request.bharat_stages.name}}
                                         </b>
                                     </span>
                                 </li>
@@ -1020,7 +1061,7 @@
                                             </span>
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input type="text" class="form-control" autocomplete="off" name="failed_at" ng-model="warranty_job_order_request.failed_at" maxlength="5" />
+                                        <input type="text" class="form-control" autocomplete="off" name="failed_at" ng-model="warranty_job_order_request.failed_at" maxlength="6" />
                                     </div><!-- Feild -->
                                 </li>
                             </ul>

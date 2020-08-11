@@ -90,6 +90,7 @@ app.component('warrantyJobOrderRequestForm', {
                         self.country = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country;
                         $scope.countryChanged();
                         $scope.calculateTotals();
+                        $scope.soldDateChange($scope.warranty_job_order_request.job_order.vehicle.sold_date);
                     } else {
                         self.is_registered = 1;
                         $scope.warranty_job_order_request = {
@@ -107,6 +108,7 @@ app.component('warrantyJobOrderRequestForm', {
                             },
                             photos: [],
                             attachments: [],
+                            bharat_stages: [],
                         }
 
                         //for quick test
@@ -181,7 +183,7 @@ app.component('warrantyJobOrderRequestForm', {
                         theme: 'fas',
                         overwriteInitial: true,
                         // minFileCount: 1,
-                        maxFileSize: 5000,
+                        maxFileSize: 2048,
                         // required: true,
                         showUpload: false,
                         browseOnZoneClick: true,
@@ -222,6 +224,23 @@ app.component('warrantyJobOrderRequestForm', {
             });
         }, 5000);
 
+        $scope.soldDateChange = function(sold_date) {
+            // $sold_date = $scope.warranty_job_order_request.job_order.vehicle.sold_date;
+
+            $sold_date = new Date(sold_date.replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"))
+            $bs6_date = new Date("01-04-2020".replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"))
+            $bs3_date = new Date("01-04-2017".replace(/(\d{2})-(\d{2})-(\d{4})/, "$2/$1/$3"))
+            // console.log($sold_date, $bs6_date);
+
+            if ($sold_date > $bs6_date) { // BS6
+                $scope.warranty_job_order_request.bharat_stages = $scope.extras.bharat_stages[2];
+            } else if ($sold_date < $bs3_date) { // BS3
+                $scope.warranty_job_order_request.bharat_stages = $scope.extras.bharat_stages[0];
+            } else {
+                $scope.warranty_job_order_request.bharat_stages = $scope.extras.bharat_stages[1];
+            }
+        }
+
         $scope.searchJobOrders = function(query) {
             return new Promise(function(resolve, reject) {
                 JobOrderSvc.options({ filter: { search: query } })
@@ -238,6 +257,13 @@ app.component('warrantyJobOrderRequestForm', {
                         resolve(response.data.options);
                     });
             });
+        }
+
+        $scope.vehicleSelected = function(vehicle) {
+            // console.log(vehicle);
+            if (vehicle.vehicle_owners) {
+                $scope.warranty_job_order_request.job_order.customer = vehicle.vehicle_owners[0].customer;
+            }
         }
 
         $scope.searchCustomer = function(query) {

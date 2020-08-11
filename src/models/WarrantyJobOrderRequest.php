@@ -59,6 +59,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 		"cause_of_failure",
 		"status_id",
 		"request_type_id",
+		"split_order_type_id",
 	];
 
 	protected $dates = [
@@ -180,6 +181,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 		return $this->hasMany('App\Attachment', 'entity_id')->where('attachment_of_id', 9121);
 	}
 
+	public function splitOrderType() {
+		return $this->belongsTo('App\SplitOrderType', 'split_order_type_id');
+	}
+
 	public static function relationships($action = '') {
 		if ($action == 'index') {
 			$relationships = [
@@ -231,6 +236,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'wjorParts.part',
 				'photos',
 				'approvalAttachments',
+				'splitOrderType',
 			];
 		}
 
@@ -462,13 +468,12 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$branch = Outlet::find($input['outlet_id']);
 
 				$jobOrderNumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
-				if(!$jobOrderNumber['success']){
+				if (!$jobOrderNumber['success']) {
 					return response()->json([
 						'success' => false,
-						'error' => 'No serial number configured for Job Order. FY : '.$financial_year->code.' Outlet : '.$branch->code,
+						'error' => 'No serial number configured for Job Order. FY : ' . $financial_year->code . ' Outlet : ' . $branch->code,
 					]);
 				}
-
 
 				if (isset($input['customer_id'])) {
 					$customer = json_decode($input['customer_id']);
@@ -537,10 +542,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$record->company_id = $owner->company_id;
 				$record->created_by_id = Auth::id();
 				$pprNumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
-				if(!$pprNumber['success']){
+				if (!$pprNumber['success']) {
 					return response()->json([
 						'success' => false,
-						'error' => 'No serial number configured for PPR . FY : '.$financial_year->code.' Outlet : '.$branch->code,
+						'error' => 'No serial number configured for PPR . FY : ' . $financial_year->code . ' Outlet : ' . $branch->code,
 					]);
 				}
 				$record->number = $pprNumber['number'];

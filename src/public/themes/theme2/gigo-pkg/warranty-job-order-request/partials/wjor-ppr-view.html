@@ -79,6 +79,18 @@
                         </b>
                     </span>
                 </li>
+                <li class="view-col-3">
+                    <span class="view-col-label">
+                        Split Order Type
+                    </span>
+                    <span class="view-col-value" ng-if="warranty_job_order_request.split_order_type">
+                        {{warranty_job_order_request.split_order_type.name}} /
+                        {{warranty_job_order_request.split_order_type.code}}
+                    </span>
+                    <span class="view-col-value" ng-if="!warranty_job_order_request.split_order_type">
+                        -
+                    </span>
+                </li>
             </ul>
             <div class="panel-group" id="accordion">
                 <div class="panel panel-default type-3">
