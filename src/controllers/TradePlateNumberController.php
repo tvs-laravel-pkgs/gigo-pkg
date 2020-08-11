@@ -25,11 +25,24 @@ class TradePlateNumberController extends Controller {
 				['id' => '1', 'name' => 'Active'],
 				['id' => '0', 'name' => 'Inactive'],
 			],
+
+			'outlet_list' => collect(Outlet::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Outlet']),
 		];
+
 		return response()->json($this->data);
 	}
 
 	public function getTradePlateNumberList(Request $request) {
+
+		if ($request->date_range) {
+			$date_range = explode(' to ', $request->date_range);
+			$start_date = date('Y-m-d', strtotime($date_range[0]));
+			$end_date = date('Y-m-d', strtotime($date_range[1]));
+		} else {
+			$start_date = '';
+			$end_date = '';
+		}
+
 		$trade_plate_numbers = TradePlateNumber::withTrashed()
 
 			->select([
@@ -44,23 +57,18 @@ class TradePlateNumberController extends Controller {
 			->join('outlets', 'outlets.id', 'trade_plate_numbers.outlet_id')
 			->where('trade_plate_numbers.company_id', Auth::user()->company_id)
 
-		// ->where(function ($query) use ($request) {
-		// 	if (!empty($request->code)) {
-		// 		$query->where('estimation_types.code', 'LIKE', '%' . $request->code . '%');
-		// 	}
-		// })
+			->where(function ($query) use ($request) {
+				if (!empty($request->outlet_id) && $request->outlet_id != '<%$ctrl.outlet_id%>') {
+					$query->where('trade_plate_numbers.outlet_id', $request->outlet_id);
+				}
+			})
 
-		// ->where(function ($query) use ($request) {
-		// 	if (!empty($request->name)) {
-		// 		$query->where('estimation_types.name', 'LIKE', '%' . $request->name . '%');
-		// 	}
-		// })
-
-		// ->where(function ($query) use ($request) {
-		// 	if (!empty($request->minimum_amount)) {
-		// 		$query->where('estimation_types.minimum_amount', 'LIKE', '%' . $request->minimum_amount . '%');
-		// 	}
-		// })
+			->where(function ($query) use ($start_date, $end_date) {
+				if ($start_date && $end_date) {
+					$query->whereDate('trade_plate_numbers.insurance_validity_from', '>=', $start_date)
+						->whereDate('trade_plate_numbers.insurance_validity_to', '<=', $end_date);
+				}
+			})
 
 			->where(function ($query) use ($request) {
 				if ($request->status == '1') {
@@ -79,8 +87,25 @@ class TradePlateNumberController extends Controller {
 			})
 
 			->addColumn('insurance_validity_status', function ($trade_plate_numbers) {
-				$status = $trade_plate_numbers->status == 'Active' ? 'green' : 'red';
-				return '<span class="status-indicator ' . $status . '"></span>' . $trade_plate_numbers->status;
+				$status = '';
+				$current_date_time_stamp = strtotime(date('d-m-Y'));
+				$validity_from_date_time_stamp = strtotime($trade_plate_numbers->insurance_validity_from);
+				$validity_to_date_time_stamp = strtotime($trade_plate_numbers->insurance_validity_to);
+
+				if ($trade_plate_numbers->insurance_validity_from || $trade_plate_numbers->insurance_validity_to) {
+					if (($current_date_time_stamp >= $validity_from_date_time_stamp) && ($current_date_time_stamp <= $validity_to_date_time_stamp)) {
+						$status = '<span style="color:#28a745">Active</span>';
+					} else {
+						if ($current_date_time_stamp > $validity_to_date_time_stamp) {
+							$status = '<span style="color:#dc3545">Expired</span>';
+						} else {
+							$status = '<span style="color:#007bff">Upcoming</span>';
+						}
+					}
+				} else {
+					$status = '<span>-</span>';
+				}
+				return $status;
 			})
 
 			->addColumn('action', function ($trade_plate_numbers) {

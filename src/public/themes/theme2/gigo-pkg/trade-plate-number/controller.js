@@ -47,10 +47,9 @@ app.component('tradePlateNumberList', {
                 type: "GET",
                 dataType: "json",
                 data: function(d) {
-                    d.code = $("#code").val();
-                    d.name = $("#name").val();
-                    d.minimum_amount = $("#minimum_amount").val();
+                    d.outlet_id = $("#outlet_id").val();
                     d.status = $("#status").val();
+                    d.date_range = $("#date_range").val();
                 },
             },
 
@@ -61,7 +60,7 @@ app.component('tradePlateNumberList', {
                 { data: 'insurance_validity_from', searchable: false },
                 { data: 'insurance_validity_to', searchable: false },
                 { data: 'insurance_validity_status', searchable: false },
-                { data: 'status', name: '' },
+                { data: 'status', searchable: false },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -124,11 +123,30 @@ app.component('tradePlateNumberList', {
             $scope.searchTerm2 = '';
             $scope.searchTerm3 = '';
         };
+        
         /* Modal Md Select Hide */
         $('.modal').bind('click', function(event) {
             if ($('.md-select-menu-container').hasClass('md-active')) {
                 $mdSelect.hide();
             }
+        });
+
+        /* DateRange Picker */
+        $('.daterange').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
+        });
+
+        $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
+            // dataTables.fnFilter();
+        });
+
+        $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
         });
 
         $scope.applyFilter = function() {
@@ -138,10 +156,9 @@ app.component('tradePlateNumberList', {
         }
 
         $scope.reset_filter = function() {
-            $("#code").val('');
-            $("#name").val('');
-            $("#minimum_amount").val('');
+            $("#outlet_id").val('');
             $("#status").val('');
+            self.outlet_id = '';
             dataTables.fnFilter();
             $('#estimation-type-filter-modal').modal('hide');
         }
@@ -155,7 +172,7 @@ app.component('tradePlateNumberList', {
 
 app.component('tradePlateNumberForm', {
     templateUrl: trade_plate_number_form_template_url,
-    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $mdSelect) {
         var self = this;
 
         self.hasPermission = HelperService.hasPermission;

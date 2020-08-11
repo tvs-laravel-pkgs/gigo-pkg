@@ -75,15 +75,33 @@
             <div class="modal-body">
                 <div class="modal-form">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
-                                <label>
-                                    Minimum Amount
-                                </label>
-                                <input type="text" class="form-control" id="minimum_amount" name="minimum_amount" placeholder="Enter Minimum Amount" autocomplete="off">
+                                <label>Outlet<sup class="mandatory">*</sup></label>
+                                <md-select ng-model="$ctrl.outlet_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Outlet">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Outlet" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="outlet.id" ng-repeat="outlet in $ctrl.extras.outlet_list | filter:searchTerm">{{outlet.code}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm required" name="outlet_id" id="outlet_id" value="{{$ctrl.outlet_id}}">
+                                <!-- <div class="designation_error"></div> -->
                             </div><!-- Field -->
+                        </div><!-- column -->
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Insurance Validity Period</label>
+                                <div class="input-group date">
+                                    <input class="form-control daterange" placeholder="Select a Date Range" name="insurance_periods" ng-model="$ctrl.insurance_periods" id="date_range">
+                                    <span class="input-group-addon">
+                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                    </span>
+                                </div><!-- Input Group -->
+                            </div><!-- Feild -->
                         </div><!-- Column -->
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label>
                                     Status
