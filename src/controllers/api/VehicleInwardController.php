@@ -861,7 +861,6 @@ class VehicleInwardController extends Controller {
 	}
 	//SAVE RETURN PART
 	public function saveReturnPart(Request $request) {
-		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_part_id' => [
@@ -1050,6 +1049,24 @@ class VehicleInwardController extends Controller {
 			$db2 = config('database.connections.pias.database');
 			$error = '';
 
+			//GET TODAY DATE OF ISSUED PARTS FROM BPAS JOB ORDER ISSUED PARTS
+			$part = Part::where('code', $request->code)
+				->first();
+
+			$job_order_parts = JobOrderPart::where('part_id', $part->id)
+				->pluck('id')->toArray();
+
+			$issued_datas = JobOrderIssuedPart::where('issued_mode_id', 8480)
+				->whereDate('created_at', Carbon::today())
+				->get();
+
+			$part_issued_qty = 0;
+			foreach ($issued_datas as $issued_data) {
+				if (in_array($issued_data->job_order_part_id, $job_order_parts)) {
+					$part_issued_qty += $issued_data->issued_qty;
+				}
+			}
+
 			$part = DB::table($db2 . '.parts as pias_parts')
 				->join('parts', 'parts.code', 'pias_parts.code')
 				->select('parts.code', 'pias_parts.id')
@@ -1060,7 +1077,7 @@ class VehicleInwardController extends Controller {
 				->join('outlets', 'outlets.code', 'pias_outlets.code')
 				->select('outlets.code', 'pias_outlets.id')
 				->where(['outlets.code' => $user_outlet_code, 'outlets.company_id' => $company_id])
-				->get()->pluck('id')->toArray();
+				->pluck('id')->toArray();
 
 			if (!$part) {
 				$error = 'Part';
@@ -1085,6 +1102,18 @@ class VehicleInwardController extends Controller {
 
 			if ($stock_details) {
 				$available_qty = $stock_details->available_quantity;
+			}
+
+			if ($available_qty > 0) {
+				if ($available_qty > $part_issued_qty) {
+					$available_qty = $available_qty - $part_issued_qty;
+				} elseif ($available_qty < $part_issued_qty) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Not Enough Available Quantity!'],
+					]);
+				}
 			}
 
 			//Mentioned Parts Total Request Quantity
