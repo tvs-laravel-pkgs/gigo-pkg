@@ -244,7 +244,9 @@
                                                 </div><!-- Row -->
                                             </div>
                                             <div class="mb-30">
-                                                <button class="btn btn-md type2 btn-green btn-square" ng-click="addNewItem()">Add More</button>
+                                                <button class="btn btn-md type2 btn-green btn-square" ng-click="addNewItem()">
+                                                Add {{gate_pass.gate_pass_items.length > 0 ? 'More' : ''}}
+                                            </button>
                                             </div>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
@@ -254,7 +256,7 @@
                                                     <input type="hidden" name="attachment_removal_ids" id="attachment_removal_ids" value="">
                                                     <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                     <button type="submit" ng-click="saveItemDetails()" class="btn btn-red submit">
-                                                        Save & Close
+                                                        Save
                                                     </button>
                                                 </div>
                                             </div>

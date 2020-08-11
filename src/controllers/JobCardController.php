@@ -422,7 +422,12 @@ class JobCardController extends Controller {
 			'job_cards.job_card_number as jc_number',
 			'vehicles.registration_number',
 			DB::raw('COUNT(job_order_repair_orders.id) as no_of_ROTs'),
-			'configs.name as status', 'job_cards.created_at',
+			DB::raw("count((CASE WHEN repair_order_mechanics.status_id = '8261' THEN repair_order_mechanics.status_id END )) AS inprogress_count"),
+			DB::raw("count((CASE WHEN repair_order_mechanics.status_id = '8262' THEN repair_order_mechanics.status_id END )) AS paused_count"),
+			DB::raw("count((CASE WHEN repair_order_mechanics.status_id = '8263' THEN repair_order_mechanics.status_id END )) AS completed_count"),
+			DB::raw("count((CASE WHEN repair_order_mechanics.status_id = '8264' THEN repair_order_mechanics.status_id END )) AS rescheduled_count"),
+			// 'configs.name as status',
+			'job_cards.created_at',
 			'models.model_number',
 			'customers.name as customer_name',
 		])
@@ -436,7 +441,7 @@ class JobCardController extends Controller {
 			})
 			->join('customers', 'customers.id', 'vehicle_owners.customer_id')
 			->join('models', 'models.id', 'vehicles.model_id')
-			->join('configs', 'configs.id', 'repair_order_mechanics.status_id')
+		// ->join('configs', 'configs.id', 'repair_order_mechanics.status_id')
 			->where('repair_order_mechanics.mechanic_id', $user_id)
 			->groupBy('job_order_repair_orders.job_order_id')
 			->orderBy('job_cards.created_at', 'DESC')
@@ -465,6 +470,21 @@ class JobCardController extends Controller {
 			});
 
 		return Datatables::of($my_job_table_list)
+			->addColumn('status', function ($my_job_table_list) {
+				if ($my_job_table_list->rescheduled_count > 0) {
+					$status = '<span style="color:#fd7e14">Rescheduled</span>';
+				} elseif ($my_job_table_list->completed_count == $my_job_table_list->no_of_ROTs) {
+					$status = '<span style="color:#28a745">Completed</span>';
+				} elseif ($my_job_table_list->paused_count > 0) {
+					$status = '<span style="color:#4fc3f7">Work Paused</span>';
+				} elseif ($my_job_table_list->inprogress_count == 0 && $my_job_table_list->rescheduled_count == 0 && $my_job_table_list->completed_count == 0 && $my_job_table_list->paused_count == 0) {
+					$status = '<span style="color:#dc3545">Not Yet Started</span>';
+				} else {
+					$status = '<span style="color:#007bff">Work Inprogress</span>';
+				}
+				return $status;
+			})
+
 			->addColumn('action', function ($my_job_table_list) use ($user_id) {
 				$img1 = asset('./public/theme/img/table/cndn/view.svg');
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/edit-yellow-active.svg');
