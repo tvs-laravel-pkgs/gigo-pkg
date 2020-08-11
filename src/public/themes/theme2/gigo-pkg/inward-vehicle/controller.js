@@ -2114,7 +2114,7 @@ app.component('inwardVehicleEstimateForm', {
                         $('#is_customer_agreed').val('0');
                     }
 
-                    if ($scope.job_order && $scope.job_order.is_customer_approved == null && $scope.job_order.is_customer_agreed == 1) {
+                    if ($scope.job_order && ($scope.job_order.is_customer_approved == null || $scope.job_order.is_customer_approved == 0) && $scope.job_order.is_customer_agreed == 1) {
                         $('.is_customer_agreed').show();
                         $('.btn-nxt').hide();
                     } else {
@@ -3985,7 +3985,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
             $scope.parts_rate = $total_amount.toFixed(2);
             // $scope.calculateTotalLabourParts();
         }
-        
+
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
 

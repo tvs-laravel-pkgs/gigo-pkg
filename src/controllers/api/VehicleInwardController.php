@@ -4817,7 +4817,7 @@ class VehicleInwardController extends Controller {
 
 			//UPDATE JOB ORDER STATUS
 			$job_order_status_update = JobOrder::find($request->job_order_id);
-			$job_order_status_update->status_id = 8463; //Vehicle Inward Inprogress
+			$job_order_status_update->status_id = 8474; //Estimation approved onbehalf of customer
 			$job_order_status_update->is_customer_approved = 1;
 			$job_order_status_update->updated_at = Carbon::now();
 			$job_order_status_update->save();
