@@ -141,6 +141,46 @@
                                                                         </b>
                                                                     </span>
                                                                 </li>
+                                                                <li class="view-col-3" ng-if="job_card.job_order.is_appointment == 1">
+                                                                    <span class="view-col-label">
+                                                                        Is Appointment ?
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            Yes
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3" ng-if="job_card.job_order.is_appointment != 1">
+                                                                    <span class="view-col-label">
+                                                                        Is Appointment ?
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            No
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3" ng-if="job_card.job_order.is_appointment == 1">
+                                                                    <span class="view-col-label">
+                                                                        CRE
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.c_r_e_user.name}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
+                                                                <li class="view-col-3" ng-if="job_card.job_order.is_appointment == 1">
+                                                                    <span class="view-col-label">
+                                                                        Call Date
+                                                                    </span>
+                                                                    <span class="view-col-value">
+                                                                        <b>
+                                                                            {{job_card.job_order.call_date}}
+                                                                        </b>
+                                                                    </span>
+                                                                </li>
                                                             </ul>
                                                         </div><!-- View Data -->
                                                     </div><!-- Panel Body -->
@@ -173,7 +213,7 @@
                                                                     </span>
                                                                     <span class="view-col-value">
                                                                         <b>
-                                                                             {{job_card.job_order.vehicle.last_job_order.job_card.created_at}}
+                                                                            {{job_card.job_order.vehicle.last_job_order.job_card.created_at}}
                                                                         </b>
                                                                     </span>
                                                                 </li>

@@ -2115,7 +2115,8 @@ class JobCardController extends Controller {
 			'jobOrder.estimationType',
 			'jobOrder.driverLicenseAttachment',
 			'jobOrder.insuranceAttachment',
-			'jobOrder.rcBookAttachment'])
+			'jobOrder.rcBookAttachment',
+			'jobOrder.CREUser'])
 			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),

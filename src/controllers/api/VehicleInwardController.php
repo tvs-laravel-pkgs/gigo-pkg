@@ -14,6 +14,7 @@ use App\Config;
 use App\Country;
 use App\Customer;
 use App\CustomerVoice;
+use App\Employee;
 use App\Entity;
 use App\EstimationType;
 use App\FinancialYear;
@@ -254,6 +255,7 @@ class VehicleInwardController extends Controller {
 				'customerApprovalAttachment',
 				'customerESign',
 				'VOCAttachment',
+				'CREUser',
 			])
 				->select([
 					'job_orders.*',
@@ -1771,6 +1773,10 @@ class VehicleInwardController extends Controller {
 					'config_type_id' => 33,
 					'default_text' => 'Select Reading type',
 				]),
+				'cre_user_list' => collect(User::join('employees', 'employees.id', 'users.entity_id')
+						->where('users.user_type_id', 1)->where('users.company_id', Auth::user()->company_id)
+						->where('employees.outlet_id', Auth::user()->employee->outlet_id)->select('users.id',
+						DB::RAW('CONCAT(users.ecode," / ",users.name) as name'))->get())->prepend(['id' => '', 'name' => 'Select Employee']),
 			];
 
 			//Job card details need to get future
@@ -1862,6 +1868,13 @@ class VehicleInwardController extends Controller {
 					'nullable',
 					'min:10',
 					'max:10',
+				],
+				'cre_user_id' => [
+					'required_if:is_appointment,==,1',
+					'exists:users,id',
+				],
+				'call_date' => [
+					'required_if:is_appointment,==,1',
 				],
 				'driver_license_expiry_date' => [
 					'required',
@@ -1995,6 +2008,17 @@ class VehicleInwardController extends Controller {
 
 			$job_order->fill($request->all());
 			$job_order->status_id = 8463;
+
+			if ($request->is_appointment == 1) {
+				$job_order->is_appointment = 1;
+				$job_order->cre_user_id = $request->cre_user_id;
+				$job_order->call_date = date('Y-m-d', strtotime($request->call_date));
+			} else {
+				$job_order->is_appointment = 0;
+				$job_order->cre_user_id = NULL;
+				$job_order->call_date = NULL;
+			}
+
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();

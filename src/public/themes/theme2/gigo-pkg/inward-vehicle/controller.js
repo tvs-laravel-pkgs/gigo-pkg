@@ -3138,6 +3138,13 @@ app.component('inwardVehicleOrderDetailForm', {
                     $scope.checkLicenseExpiryDate($scope.job_order.driver_license_expiry_date);
                     $scope.checkInsuranceExpiryDate($scope.job_order.insurance_expiry_date);
                     $scope.$apply();
+
+                    if ($scope.job_order.is_appointment == 1) {
+                        self.appointment_status = 1;
+                    } else {
+                        self.appointment_status = 0;
+                    }
+
                 })
                 .fail(function(xhr) {
                     $rootScope.loading = false;
@@ -3234,6 +3241,22 @@ app.component('inwardVehicleOrderDetailForm', {
                     'rc_book_image': {
                         required: function(element) {
                             if (!$scope.job_order.rc_book_attachment) {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
+                    'cre_user_id': {
+                        required: function(element) {
+                            if (self.appointment_status == '1') {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
+                    'call_date': {
+                        required: function(element) {
+                            if (self.appointment_status == '1') {
                                 return true;
                             }
                             return false;
