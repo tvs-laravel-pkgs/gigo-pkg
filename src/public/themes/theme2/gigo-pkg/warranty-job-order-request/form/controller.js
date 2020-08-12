@@ -505,12 +505,61 @@ app.component('warrantyJobOrderRequestForm', {
             }
             PartSvc.read(part.id)
                 .then(function(response) {
+                    $rootScope.loading = true;
+
                     $scope.wjor_part.qty = 1;
                     $scope.wjor_part.rate = part.mrp;
                     $scope.wjor_part.part.tax_code = response.data.part.tax_code;
                     $scope.wjor_part.tax_code = response.data.part.tax_code;
                     $scope.wjor_part.purchase_type = 8480;
-                    $scope.calculatePartAmount();
+                    params = {
+                        filter: {
+                            part: part.id,
+                            outlet: $scope.warranty_job_order_request.job_order.outlet.id
+                        },
+                    };
+                    let formData = new FormData();
+                    formData.append('part', part.id);
+                    formData.append('outlet', $scope.warranty_job_order_request.job_order.outlet.id);
+
+                    $.ajax({
+                            url: base_url + '/api/part/stock_data',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            // alert($scope.warranty_job_order_request.request_type_id);
+
+                            if (res.stock_data == null) {
+                                $scope.wjor_part.rate = 0;
+                            } else {
+                                if ($scope.warranty_job_order_request.request_type_id == 9181) {
+                                    $scope.wjor_part.rate = res.stock_data.mrp;
+                                    $scope.wjor_part.part.tax_code = null;
+                                    $scope.wjor_part.tax_code = null;
+                                } else {
+                                    $scope.wjor_part.rate = res.stock_data.cost_price;
+                                }
+                                // $scope.wjor_part.mrp = res.stock_data.mrp;
+
+                            }
+                            $scope.calculatePartAmount();
+                            $rootScope.loading = false;
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+
                 });
 
         }
@@ -777,7 +826,7 @@ app.component('warrantyJobOrderRequestForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    console.log(res.options);
+                    // console.log(res.options);
                     $scope.extras.sub_aggregates = res.options;
                     $scope.$apply();
                 })

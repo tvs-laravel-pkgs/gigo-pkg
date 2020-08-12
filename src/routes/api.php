@@ -71,6 +71,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 			Route::post('save', $controller . 'Controller@save');
 			Route::post('remove', $controller . 'Controller@remove');
 			Route::get('options', $controller . 'Controller@options');
+			Route::post('stock_data', $controller . 'Controller@stock_data');
 		});
 
 		Route::group(['prefix' => 'job-order'], function () {
