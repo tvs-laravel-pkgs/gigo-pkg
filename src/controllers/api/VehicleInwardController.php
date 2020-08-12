@@ -764,6 +764,7 @@ class VehicleInwardController extends Controller {
 						$part_details[$key]['amount'] = $value->amount;
 						$part_details[$key]['is_free_service'] = $value->is_free_service;
 						$part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+						$part_details[$key]['is_customer_approved'] = $value->is_customer_approved;
 						if ($value->splitOrderType) {
 							$part_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
 						} else {

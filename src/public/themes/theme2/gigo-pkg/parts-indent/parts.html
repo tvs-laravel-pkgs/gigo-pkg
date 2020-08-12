@@ -100,10 +100,10 @@ input[type=number] {
                                                             {{part_detail.pending_qty}}
                                                         </td>
                                                         <td ng-class="part_detail.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                            <button type="button" ng-if="!job_order.part_intent_confirmed_date && ( job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 ) && part_detail.is_fixed_schedule == 0" ng-click="showPartForm(part_detail)" class="btn img-btn btn-delete">
+                                                            <button type="button" ng-if="!job_order.part_intent_confirmed_date && ( job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 ) && part_detail.is_fixed_schedule == 0 && part_detail.is_customer_approved != 1" ng-click="showPartForm(part_detail)" class="btn img-btn btn-delete">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </button>
-                                                            <button type="button" ng-if="!job_order.part_intent_confirmed_date && (  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 ) &&  part_detail.is_fixed_schedule == 0" class="btn img-btn btn-delete" ng-click="removePart(index,part_detail.job_order_part_id,'parts')">
+                                                            <button type="button" ng-if="!job_order.part_intent_confirmed_date && (  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 ) &&  part_detail.is_fixed_schedule == 0 && part_detail.is_customer_approved != 1" class="btn img-btn btn-delete" ng-click="removePart(index,part_detail.job_order_part_id,'parts')">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                             <button type="button" ng-if="job_order.job_card.status_id == 8227 && part_detail.issued_qty == 0.00" ng-click="showRemarks(part_detail)" class="btn img-btn btn-delete">
@@ -444,7 +444,7 @@ input[type=number] {
                                     <md-autocomplete md-selected-item="parts_indent.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
                                         <md-item-template>
                                             <span>
-                                                {{part.code}}
+                                                {{part.code}} / {{part.name}}
                                             </span>
                                         </md-item-template>
                                         <md-not-found>
