@@ -3,49 +3,47 @@
 namespace Abs\GigoPkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\Aggregate;
 use App\BaseModel;
 use App\Company;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class TaxCode extends BaseModel {
+class SubAggregate extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
-	protected $table = 'tax_codes';
+	protected $table = 'sub_aggregates';
 	public $timestamps = true;
-	protected $fillable = [
-		'company_id',
-		'code',
-		'type_id',
-	];
+	protected $fillable =
+		["company_id", "name", "aggregate_id"];
 
 	protected static $excelColumnRules = [
-		'Code' => [
-			'table_column_name' => 'code',
-			'rules' => [
-				'required' => [
-				],
-			],
-		],
-		'Type Name' => [
-			'table_column_name' => 'type_id',
+		'Aggregate' => [
+			'table_column_name' => 'aggregate_id',
 			'rules' => [
 				'required' => [
 				],
 				'fk' => [
-					'class' => 'App\Config',
+					'class' => 'App\Aggregate',
 					'foreign_table_column' => 'name',
+					'check_with_company' => true,
 				],
 			],
 		],
-
+		'Sub Aggregate' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
 	];
 
 	public static function saveFromObject($record_data) {
-		// dd($record_data);
+
 		$record = [
 			'Company Code' => $record_data->company_code,
-			'Code' => $record_data->code,
-			'Type Name' => $record_data->type_name,
+			'Aggregate' => $record_data->aggregate,
+			'Sub Aggregate' => $record_data->sub_aggregate,
 		];
 		return static::saveFromExcelArray($record);
 	}
@@ -74,19 +72,15 @@ class TaxCode extends BaseModel {
 			$created_by_id = $record_data['created_by_id'];
 		}
 
-		$type_id = null;
-
-		if (empty($record_data['Type Name'])) {
-			$errors[] = 'Type Name is empty';
+		if (empty($record_data['Aggregate'])) {
+			$errors[] = 'Aggregate is empty';
 		} else {
-			$type = Config::where([
-				'config_type_id' => 82,
-				'name' => $record_data['Type Name'],
+			$aggregate = Aggregate::where([
+				'company_id' => $admin->company_id,
+				'name' => $record_data['Aggregate'],
 			])->first();
-			if (!$type) {
-				$errors[] = 'Invalid Type Name : ' . $record_data['Type Name'];
-			} else {
-				$type_id = $type->id;
+			if ($aggregate == null) {
+				$errors[] = 'Aggregate not found : ' . $record_data['Aggregate'];
 			}
 		}
 
@@ -97,17 +91,18 @@ class TaxCode extends BaseModel {
 			];
 		}
 
-		$record = Self::firstOrNew([
+		// dump($aggregate, $record_data['Sub Aggregate']);
+		$record = self::firstOrNew([
 			'company_id' => $company->id,
-			'code' => $record_data['Code'],
+			'aggregate_id' => $aggregate->id,
+			'name' => $record_data['Sub Aggregate'],
 		]);
 		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+
 		if (!$result['success']) {
 			return $result;
 		}
-
-		$record->type_id = $type_id;
-		$record->company_id = $company->id;
+		$record->aggregate_id = $aggregate->id;
 		$record->created_by_id = $created_by_id;
 		$record->save();
 		return [
@@ -115,17 +110,8 @@ class TaxCode extends BaseModel {
 		];
 	}
 
-	public static function getList($params = [], $add_default = true, $default_text = 'Select Tax Code') {
-		$list = Collect(Self::select([
-			'id',
-			'code as name',
-		])
-				->orderBy('code')
-				->get());
-		if ($add_default) {
-			$list->prepend(['id' => '', 'name' => $default_text]);
-		}
-		return $list;
+	public function aggregate() {
+		return $this->belongsTo('App\Aggregate', 'aggregate_id');
 	}
 
 }

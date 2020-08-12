@@ -6,7 +6,7 @@ app.component('warrantyJobOrderRequestForm', {
         $rootScope.loading = true;
         $('#search').focus();
         var self = this;
-
+        $scope.business_data = [];
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -90,7 +90,10 @@ app.component('warrantyJobOrderRequestForm', {
                         self.country = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country;
                         $scope.countryChanged();
                         $scope.calculateTotals();
-                        $scope.soldDateChange($scope.warranty_job_order_request.job_order.vehicle.sold_date);
+                        // $scope.soldDateChange($scope.warranty_job_order_request.job_order.vehicle.sold_date);
+                        $scope.aggregateChange($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate);
+                        $scope.warranty_job_order_request.aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate.aggregate;
+                        $scope.warranty_job_order_request.sub_aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate;
                     } else {
                         self.is_registered = 1;
                         $scope.warranty_job_order_request = {
@@ -236,11 +239,11 @@ app.component('warrantyJobOrderRequestForm', {
             // console.log($sold_date, $bs6_date);
 
             if ($sold_date > $bs6_date) { // BS6
-                $scope.warranty_job_order_request.bharat_stages = $scope.extras.bharat_stages[2];
+                $scope.warranty_job_order_request.job_order.vehicle.bharat_stage = $scope.extras.bharat_stages[2];
             } else if ($sold_date < $bs3_date) { // BS3
-                $scope.warranty_job_order_request.bharat_stages = $scope.extras.bharat_stages[0];
+                $scope.warranty_job_order_request.job_order.vehicle.bharat_stage = $scope.extras.bharat_stages[0];
             } else {
-                $scope.warranty_job_order_request.bharat_stages = $scope.extras.bharat_stages[1];
+                $scope.warranty_job_order_request.job_order.vehicle.bharat_stage = $scope.extras.bharat_stages[1];
             }
         }
 
@@ -321,7 +324,8 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.searchCompaints = function(query) {
             return new Promise(function(resolve, reject) {
-                ComplaintSvc.options({ filter: { search: query, complaintGroup: $scope.warranty_job_order_request.complaint_group.id } })
+                ComplaintSvc.options({ filter: { search: query, subAggregate: $scope.warranty_job_order_request.sub_aggregate.id } })
+                    //complaintGroup: $scope.warranty_job_order_request.complaint_group.id
                     .then(function(response) {
                         resolve(response.data.options);
                     });
@@ -348,10 +352,15 @@ app.component('warrantyJobOrderRequestForm', {
 
 
         $scope.searchRepairOrders = function(query) {
+            console.log($scope.warranty_job_order_request.job_order.outlet.id);
             return new Promise(function(resolve, reject) {
                 RepairOrderSvc.options({ filter: { search: query } })
                     .then(function(response) {
                         resolve(response.data.options);
+                        OutletSvc.business_outlet({ filter: { outlet: $scope.warranty_job_order_request.job_order.outlet.id } })
+                            .then(function(response) {
+                                $scope.business_data = response.data.business_outlet;
+                            });
                     });
             });
         }
@@ -417,9 +426,16 @@ app.component('warrantyJobOrderRequestForm', {
             if (!repair_order) {
                 return;
             }
-
+            // console.log($scope.business_data);
             $scope.wjor_repair_order.qty = 1;
-            $scope.wjor_repair_order.rate = repair_order.claim_amount;
+            if ($scope.warranty_job_order_request.request_type_id == 9181) {
+                $scope.wjor_repair_order.rate = ($scope.business_data) ? $scope.business_data.ewp_claim_rate_per_hour : 0;
+            } else {
+                $scope.wjor_repair_order.rate = ($scope.business_data) ? $scope.business_data.warranty_claim_rate_per_hour : 0;
+            }
+            $scope.wjor_repair_order.rate = ($scope.wjor_repair_order.rate == null) ? 0 : $scope.wjor_repair_order.rate;
+            $scope.wjor_repair_order.rate = $scope.wjor_repair_order.rate * parseFloat($scope.wjor_repair_order.repair_order.hours);
+            // $scope.wjor_repair_order.rate = repair_order.claim_amount;
             $scope.wjor_repair_order.tax_code = repair_order.tax_code;
             HelperService.calculateTaxAndTotal($scope.wjor_repair_order, $scope.isSameState());
 
@@ -661,7 +677,15 @@ app.component('warrantyJobOrderRequestForm', {
                     required: true,
                     // digits: true,
                     minlength: 2,
-                    maxlength: 10,
+                    // maxlength: 10,
+                    maxlength: function() {
+                        if ($scope.warranty_job_order_request.reading_type_id == 8040) {
+                            return 6;
+                        } else {
+                            return 4;
+                        }
+                        // return $scope.warranty_job_order_request.job_order.vehicle.is_sold;
+                    },
                 },
                 'complaint_reported': {
                     required: true,
@@ -739,6 +763,29 @@ app.component('warrantyJobOrderRequestForm', {
                 return [];
             }
         }
+        $scope.aggregateChange = function(aggregate) {
+            // console.log(aggregate.id);
+            $.ajax({
+                    url: base_url + '/api/aggregates/get-sub-aggregates-list',
+                    method: "POST",
+                    data: {
+                        id: aggregate.id,
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    console.log(res.options);
+                    $scope.extras.sub_aggregates = res.options;
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
         $scope.countryChanged = function() {
             $.ajax({
                     url: base_url + '/api/state/get-drop-down-List',

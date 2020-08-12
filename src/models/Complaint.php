@@ -18,7 +18,7 @@ class Complaint extends BaseModel {
 	;
 
 	protected static $excelColumnRules = [
-		'Group Code' => [
+		/*'Group Code' => [
 			'table_column_name' => 'group_id',
 			'rules' => [
 				'required' => [
@@ -29,7 +29,7 @@ class Complaint extends BaseModel {
 					'check_with_company' => true,
 				],
 			],
-		],
+		],*/
 		'Code' => [
 			'table_column_name' => 'code',
 			'rules' => [
@@ -41,6 +41,18 @@ class Complaint extends BaseModel {
 			'table_column_name' => 'name',
 			'rules' => [
 				'required' => [
+				],
+			],
+		],
+		'Sub Aggregate' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+				'fk' => [
+					'class' => 'App\SubAggregate',
+					'foreign_table_column' => 'name',
+					'check_with_company' => true,
 				],
 			],
 		],
@@ -92,8 +104,16 @@ class Complaint extends BaseModel {
 		// dd($query->toSql());
 	}
 
+	public function scopeFilterSubAggregate($query, $sub_aggregate_id) {
+		$query->where('sub_aggregate_id', $sub_aggregate_id);
+	}
+
 	public function complaintGroup() {
 		return $this->belongsTo('App\ComplaintGroup', 'group_id');
+	}
+
+	public function subAggregate() {
+		return $this->belongsTo('App\SubAggregate', 'sub_aggregate_id');
 	}
 
 	// Static Operations --------------------------------------------------------------
@@ -157,17 +177,39 @@ class Complaint extends BaseModel {
 			$created_by_id = $record_data['created_by_id'];
 		}
 
-		$group = ComplaintGroup::where([
-			'company_id' => $admin->company_id,
-			'code' => $record_data['Group Code'],
-		])->first();
-		if (!$group) {
-			$errors[] = 'Group not found : ' . $record_data['Group'];
+		/*
+			$group = ComplaintGroup::where([
+				'company_id' => $admin->company_id,
+				'code' => $record_data['Group Code'],
+			])->first();
+			if (!$group) {
+				$errors[] = 'Group not found : ' . $record_data['Group'];
+			}
+		*/
+
+		if (empty($record_data['Sub Aggregate'])) {
+			$errors[] = 'Sub Aggregate is empty';
+		} else {
+			$sub_aggregate = SubAggregate::where([
+				'company_id' => $admin->company_id,
+				'name' => $record_data['Sub Aggregate'],
+			])->first();
+			if ($sub_aggregate == null) {
+				$errors[] = 'Sub Aggregate not found : ' . $record_data['Sub Aggregate'];
+			}
+		}
+
+		if (count($errors) > 0) {
+			return [
+				'success' => false,
+				'errors' => $errors,
+			];
 		}
 
 		$record = self::firstOrNew([
 			'company_id' => $company->id,
-			'group_id' => $group->id,
+			// 'group_id' => $group->id,
+			'sub_aggregate_id' => $sub_aggregate->id,
 			'code' => $record_data['Code'],
 		]);
 
@@ -175,7 +217,11 @@ class Complaint extends BaseModel {
 		if (!$result['success']) {
 			return $result;
 		}
+
 		$record->created_by_id = $created_by_id;
+		$record->sub_aggregate_id = $sub_aggregate->id;
+		$record->name = $record_data['Name'];
+		// dd($record);
 		$record->save();
 		return [
 			'success' => true,
@@ -186,12 +232,13 @@ class Complaint extends BaseModel {
 
 		$record = [
 			'Company Code' => $record_data->company_code,
-			'Group Code' => $record_data->group_code,
+			// 'Group Code' => $record_data->group_code,
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
 			'Hours' => $record_data->hours,
 			'KMs' => $record_data->kms,
 			'Months' => $record_data->months,
+			'Sub Aggregate' => $record_data->sub_aggregate,
 		];
 		return static::saveFromExcelArray($record);
 	}

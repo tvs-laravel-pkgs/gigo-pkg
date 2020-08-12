@@ -5,6 +5,7 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use App\Company;
+use App\Config;
 use App\SerialNumberGroup;
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -22,6 +23,7 @@ class SplitOrderType extends BaseModel {
 		"code",
 		"name",
 		"paid_by_id",
+		"claim_category_id",
 	];
 
 	public function paidBy() {
@@ -43,6 +45,17 @@ class SplitOrderType extends BaseModel {
 				],
 			],
 		],
+		'Claim Category' => [
+			'table_column_name' => 'claim_category_id',
+			'rules' => [
+				'nullable' => [
+				],
+				'fk' => [
+					'class' => 'App\Config',
+					'foreign_table_column' => 'name',
+				],
+			],
+		],
 	];
 
 	public function getDateOfJoinAttribute($value) {
@@ -58,6 +71,7 @@ class SplitOrderType extends BaseModel {
 			'Company Code' => $record_data->company_code,
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
+			'Claim Category' => $record_data->claim_category,
 		];
 		return static::saveFromExcelArray($record);
 	}
@@ -93,6 +107,19 @@ class SplitOrderType extends BaseModel {
 					'errors' => $errors,
 				];
 			}*/
+			$claim_category_id = null;
+
+			if (!empty($record_data['Claim Category'])) {
+				$claim_category = Config::where([
+					'config_type_id' => 405,
+					'name' => $record_data['Claim Category'],
+				])->first();
+				if (!$claim_category) {
+					$errors[] = 'Invalid Claim Category : ' . $record_data['Claim Category'];
+				} else {
+					$claim_category_id = $claim_category->id;
+				}
+			}
 
 			if (Self::$AUTO_GENERATE_CODE) {
 				if (empty($record_data['Code'])) {
@@ -133,6 +160,7 @@ class SplitOrderType extends BaseModel {
 				return $result;
 			}
 
+			$record->claim_category_id = $claim_category_id;
 			$record->company_id = $company->id;
 			$record->created_by_id = $created_by_id;
 			$record->save();

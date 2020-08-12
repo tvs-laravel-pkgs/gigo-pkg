@@ -406,5 +406,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//PDF
 		Route::post('job-card/pdf/get', 'JobCardController@getPdf');
 
+		// Aggregates
+		Route::post('aggregates/get-sub-aggregates-list', 'AggregateController@getSubAggregates');
+
 	});
 });

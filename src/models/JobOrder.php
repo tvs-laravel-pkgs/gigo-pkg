@@ -154,6 +154,7 @@ class JobOrder extends BaseModel {
 			'outlet',
 			'vehicle',
 			'vehicle.model',
+			'vehicle.bharat_stage',
 			'customer',
 			'jobCard',
 			'serviceType',

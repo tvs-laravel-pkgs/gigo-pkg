@@ -204,6 +204,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'jobOrder.outlet',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
+				'jobOrder.vehicle.bharat_stage',
 				'jobOrder.vehicle.currentOwner.customer',
 				'jobOrder.vehicle.currentOwner.customer.address',
 				'jobOrder.vehicle.currentOwner.customer.address.country',
@@ -214,6 +215,8 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'jobOrder.jobCard',
 				'complaint',
 				'complaint.complaintGroup',
+				'complaint.subAggregate',
+				'complaint.subAggregate.aggregate',
 				'fault',
 				'supplier',
 				'primarySegment',
@@ -420,6 +423,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 			}
 			$vehicle->chassis_number = $input['chassis_number'];
 			$vehicle->model_id = $input['model_id'];
+			$vehicle->bharat_stage_id = $input['bharat_stage_id'];
 			if ($input['vehicle_search_type'] == 'false') {
 				$vehicle->registration_number = $input['registration_number'];
 				$vehicle->is_registered = $vehicle->registration_number ? 1 : 0;
