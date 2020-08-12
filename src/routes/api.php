@@ -299,6 +299,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//Save Finish Worklog
 		Route::post('save-work-log', 'MyJobCardController@saveMyFinishWorkLog');
 
+		//MY TIME SHEET LIST
+		Route::post('mytimesheet/list', 'MyJobCardController@getTimeSheetQrCheck');
+
 		//Jobcard View Labour Assignment
 		Route::post('job-card/labour-assignment/get-form-data', 'JobCardController@LabourAssignmentFormData');
 		Route::post('job-card/get-mechanic', 'JobCardController@getMechanic');

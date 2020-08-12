@@ -412,6 +412,39 @@ class MyJobCardController extends Controller {
 	}
 
 	//My jobcard Timesheet
+	public function getTimeSheetQrCheck(Request $request) {
+		try {
+			$validator = Validator::make($request->all(), [
+				'user_id' => [
+					'required',
+					'exists:users,id',
+					'integer',
+				],
+			]);
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+			$user_details = User::with([
+				'employee',
+				'employee.outlet',
+				'employee.outlet.state',
+			])
+				->find($request->user_id);
+
+			return response()->json([
+				'success' => true,
+				'user_details' => $user_details,
+			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
 
 	public function getMyJobCardtimeSheetList(Request $request) {
 		$user_id = $request->user_id;

@@ -283,6 +283,11 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/kanban-app/my-job-card/scan-qr', {
         template: '<kanban-app-my-job-card-scan-qr></kanban-app-my-job-card-scan-qr>',
         title: 'My Job Card - Scan Qr',
+    }).
+    //Kanban My Time Sheet Scan Qr
+    when('/kanban-app/my-time-sheet/scan-qr', {
+        template: '<kanban-app-my-time-sheet-scan-qr></kanban-app-my-time-sheet-scan-qr>',
+        title: 'My Time Sheet - Scan Qr',
     });
 
 }]);

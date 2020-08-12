@@ -328,9 +328,9 @@ app.component('myJobcardTimesheetList', {
                 { data: 'created_at' },
                 { data: 'jc_number', name: 'job_cards.job_card_number', searchable: true },
                 { data: 'outlet', name: 'outlets.code', searchable: true },
-                { data: 'start_time' },
-                { data: 'end_time' },
-                { data: 'duration' },
+                { data: 'start_time' , searchable: false},
+                { data: 'end_time', searchable: false },
+                { data: 'duration', searchable: false },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)

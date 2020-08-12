@@ -230,19 +230,24 @@
 
 
 	    //Kanban App
-	     when('/kanban-app', {
+	    when('/kanban-app', {
 	        template: '<kanban-app></kanban-app>',
 	        title: 'Kanban App',
 	    }).
 	     //Kanban Attendance Scan Qr
-	     when('/kanban-app/attendance/scan-qr', {
+	    when('/kanban-app/attendance/scan-qr', {
 	        template: '<kanban-app-attendance-scan-qr></kanban-app-attendance-scan-qr>',
 	        title: 'Attendance - Scan Qr',
 	    }).
 	    //Kanban My Job Card Scan Qr
-	     when('/kanban-app/my-job-card/scan-qr', {
+	    when('/kanban-app/my-job-card/scan-qr', {
 	        template: '<kanban-app-my-job-card-scan-qr></kanban-app-my-job-card-scan-qr>',
 	        title: 'My Job Card - Scan Qr',
+	    }).
+	    //Kanban My Time Sheet Scan Qr
+	    when('/kanban-app/my-time-sheet/scan-qr', {
+	        template: '<kanban-app-my-time-sheet-scan-qr></kanban-app-my-time-sheet-scan-qr>',
+	        title: 'My Time Sheet - Scan Qr',
 	    });
 
 	}]);
@@ -314,6 +319,7 @@
      var kanban_app_dashboard_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/dashboard.html')}}";
      var kanban_app_attendance_sacn_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/attendance-qr.html')}}";
      var kanban_app_my_job_card_sacn_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/my-job-card-qr.html')}}";
+     var kanban_app_my_time_sheet_sacn_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/my-time-sheet-qr.html')}}";
      //Parts Indent
      var parts_indent_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/list.html')}}";
      var parts_indent_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/parts-indent/view.html')}}";
