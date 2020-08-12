@@ -185,13 +185,13 @@
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Item Name <sup class="mandatory">*</sup></label>
-                                                            <input type="text" name="item_details[{{index}}][name]" class="form-control required" ng-model="gate_pass_item.name" placeholder="Enter Name" autocomplete="off" value="" />
+                                                            <input type="text" name="item_details[{{index}}][name]" class="form-control required" ng-model="gate_pass_item.name" minlength="3" placeholder="Enter Name" autocomplete="off" value="" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Item Description <sup class="mandatory">*</sup></label>
-                                                            <input type="text" class="form-control required" placeholder="Enter Description" autocomplete="off" ng-model="gate_pass_item.item_description" name="item_details[{{index}}][item_description]" />
+                                                            <input type="text" class="form-control required" placeholder="Enter Description" autocomplete="off" minlength="3" ng-model="gate_pass_item.item_description" name="item_details[{{index}}][item_description]" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-3">
@@ -245,8 +245,8 @@
                                             </div>
                                             <div class="mb-30">
                                                 <button class="btn btn-md type2 btn-green btn-square" ng-click="addNewItem()">
-                                                Add {{gate_pass.gate_pass_items.length > 0 ? 'More' : ''}}
-                                            </button>
+                                                    Add {{gate_pass.gate_pass_items.length > 0 ? 'More' : ''}}
+                                                </button>
                                             </div>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">

@@ -14,6 +14,7 @@ use App\Config;
 use App\Country;
 use App\Customer;
 use App\CustomerVoice;
+use App\Entity;
 use App\EstimationType;
 use App\FinancialYear;
 use App\GateLog;
@@ -26,6 +27,7 @@ use App\JobOrderIssuedPart;
 use App\JobOrderPart;
 use App\JobOrderRepairOrder;
 use App\JobOrderReturnedPart;
+use App\Otp;
 use App\Outlet;
 use App\Part;
 use App\PartsGrnDetail;
@@ -4750,9 +4752,28 @@ class VehicleInwardController extends Controller {
 
 			$job_order = JobOrder::find($request->id);
 
-			$otp = $job_order->otp_no;
+			$otp_no = $job_order->otp_no;
 
-			$message = 'OTP is ' . $otp . ' for Job Card Approve On Behalf of Customer. Please enter OTP to verify your Job Card Approval';
+			$current_time = date("Y-m-d H:m:s");
+
+			$expired_time = Entity::where('entity_type_id', 32)->select('name')->first();
+			if ($expired_time) {
+				$expired_time = date("Y-m-d H:i:s", strtotime('+' . $expired_time->name . ' hours', strtotime($current_time)));
+			} else {
+				$expired_time = date("Y-m-d H:i:s", strtotime('+1 hours', strtotime($current_time)));
+			}
+
+			//Otp Save
+			$otp = new Otp;
+			$otp->entity_type_id = 10110;
+			$otp->entity_id = $job_order->id;
+			$otp->otp_no = $otp_no;
+			$otp->created_by_id = Auth::user()->id;
+			$otp->created_at = $current_time;
+			$otp->expired_at = $expired_time;
+			$otp->save();
+
+			$message = 'OTP is ' . $otp_no . ' for Job Card Approve On Behalf of Customer. Please enter OTP to verify your Job Card Approval';
 
 			$msg = sendSMSNotification($customer_mobile, $message);
 
@@ -4821,6 +4842,18 @@ class VehicleInwardController extends Controller {
 				return response()->json([
 					'success' => false,
 					'error' => 'Job Order Approve Behalf of Customer OTP is wrong. Please try again.',
+				]);
+			}
+
+			$current_time = date("Y-m-d H:m:s");
+
+			//Validate OTP -> Expired or Not
+			$otp_validate = OTP::where('entity_type_id', 10110)->where('entity_id', $request->job_order_id)->where('otp_no', '=', $request->otp_no)->where('expired_at', '>=', $current_time)
+				->first();
+			if (!$otp_validate) {
+				return response()->json([
+					'success' => false,
+					'error' => 'OTP Expired',
 				]);
 			}
 
