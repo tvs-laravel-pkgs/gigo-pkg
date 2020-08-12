@@ -2268,15 +2268,22 @@ app.component('jobCardPayableLabourPartsForm', {
             });
         }
 
-        $scope.sendConfirm = function() {
+        $scope.sendConfirm = function(type) {
+            $('.confirmation_type').val(type);
+            $("#confirmation_modal").modal('show');
+        }
+
+        $scope.sendOTPLinkConfirm = function() {
+            var type = $('.confirmation_type').val();
             var job_order_id = $scope.job_order.id;
-            if (job_order_id) {
+            if (job_order_id && type) {
                 $('.send_confirm').button('loading');
                 $.ajax({
                         url: base_url + '/api/job-card/send/confirmation',
                         method: "POST",
                         data: {
                             job_order_id: job_order_id,
+                            type: type,
                         },
                     })
                     .done(function(res) {
@@ -2286,16 +2293,115 @@ app.component('jobCardPayableLabourPartsForm', {
                             return;
                         }
                         console.log(res);
-                        custom_noty('success', 'URL send to Customer Successfully!!');
                         $("#confirmation_modal").modal('hide');
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
-                        $scope.fetchData();
+
+                        if (type == 2) {
+                            custom_noty('success', 'URL send to Customer Successfully!!');
+                            $scope.fetchData();
+                        } else {
+                            $('#otp').modal('show');
+                            $('#otp_no').val('');
+                            $('#otp').on('shown.bs.modal', function() {
+                                $(this).find('[autofocus]').focus();
+                            });
+                            $('.customer_mobile_no').html(res.mobile_number);
+                            // $(".approval_behalf").button('reset');
+                        }
+
                     })
                     .fail(function(xhr) {
                         $('.send_confirm').button('reset');
                     });
             }
+        }
+
+        //RESEND OTP
+        $scope.ResendOtp = function() {
+            var job_order_id = $scope.job_order.id;
+            $.ajax({
+                url: base_url + '/api/job-card/send/confirmation',
+                type: "POST",
+                data: {
+                    job_order_id: job_order_id,
+                    type: 1,
+                },
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+                success: function(response) {
+                    console.log(response);
+                    custom_noty('success', response.message);
+                },
+                error: function(textStatus, errorThrown) {
+                    custom_noty('error', 'Something went wrong at server');
+                }
+            });
+        }
+
+        //SAVE OTP
+        $scope.saveOTP = function(id) {
+            var form_id = '#approve_behalf_customer_confirm';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'otp_no': {
+                        required: true,
+                        number: true,
+                        minlength: 6,
+                        maxlength: 6,
+                    },
+                },
+                messages: {
+                    'otp_no': {
+                        required: 'OTP is required',
+                        number: 'OTP Must be a number',
+                        minlength: 'OTP Minimum 6 Characters',
+                        maxlength: 'OTP Maximum 6 Characters',
+                    },
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit_confirm').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/job-card/verify/otp',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                        })
+                        .done(function(res) {
+                            console.log(res);
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                $('.submit_confirm').button('reset');
+                                $('#otp_no').val('');
+                                $('#otp_no').focus();
+                                return;
+                            }
+                            console.log(res);
+                            $('.submit_confirm').button('reset');
+                            custom_noty('success', res.message);
+                            $('#otp_no').val('');
+                            $('#otp').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+
+                            $scope.fetchData();
+                        })
+                        .fail(function(xhr) {
+                            console.log(xhr);
+                            $('#otp_no').val('');
+                            $('.submit_confirm').button('reset');
+                            showServerErrorNoty();
+                        });
+                }
+            });
         }
     }
 });

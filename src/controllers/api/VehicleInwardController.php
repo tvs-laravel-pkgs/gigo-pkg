@@ -4820,10 +4820,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$job_order = JobOrder::with([
-				'gateLog',
-			])
-				->find($request->job_order_id);
+			$job_order = JobOrder::find($request->job_order_id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -4865,10 +4862,10 @@ class VehicleInwardController extends Controller {
 			$job_order_status_update->save();
 
 			//UPDATE JOB ORDER REPAIR ORDER STATUS
-			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_customer_approved', 0)->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			//UPDATE JOB ORDER PARTS STATUS
-			JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_customer_approved', 0)->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+			JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			JobOrderEstimate::where('job_order_id', $request->job_order_id)->where('status_id', 10071)->update(['status_id' => 10072, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 

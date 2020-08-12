@@ -22,6 +22,7 @@ use App\Attachment;
 use App\Config;
 use App\Customer;
 use App\Employee;
+use App\Entity;
 use App\FinancialYear;
 use App\GigoInvoice;
 use App\Http\Controllers\Controller;
@@ -29,6 +30,7 @@ use App\JobOrderEstimate;
 use App\JobOrderIssuedPart;
 use App\JobOrderPart;
 use App\JobOrderReturnedPart;
+use App\Otp;
 use App\Outlet;
 use App\SplitOrderType;
 use App\VehicleInspectionItem;
@@ -2723,10 +2725,7 @@ class JobCardController extends Controller {
 				]);
 			}
 
-			DB::beginTransaction();
-
-			$customer_mobile = $job_order->customer->mobile_no;
-			$vehicle_no = $job_order->vehicle->registration_number;
+			$customer_mobile = $job_order->contact_number;
 
 			if (!$customer_mobile) {
 				return response()->json([
@@ -2735,34 +2734,171 @@ class JobCardController extends Controller {
 				]);
 			}
 
-			$job_order->otp_no = mt_rand(111111, 999999);
-			$job_order->status_id = 8469; //Waiting for Customer Approval
+			$otp_no = mt_rand(111111, 999999);
+
+			DB::beginTransaction();
+
+			$job_order->otp_no = $otp_no;
+			// $job_order->status_id = 8469; //Waiting for Customer Approval
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
 
-			$url = url('/') . '/vehicle-inward/estimate/customer/view/' . $request->job_order_id . '/' . $job_order->otp_no;
+			if ($request->type == 2) {
 
-			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+				$vehicle_no = $job_order->vehicle->registration_number;
 
-			$message = 'Dear Customer,Kindly click below link to approve for revised TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no;
+				$url = url('/') . '/vehicle-inward/estimate/customer/view/' . $request->job_order_id . '/' . $job_order->otp_no;
 
-			$msg = sendSMSNotification($customer_mobile, $message);
+				$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-			//Update JobOrder Estimate
-			$job_order_estimate = JobOrderEstimate::where('job_order_id', $job_order->id)->orderBy('id', 'DESC')->first();
-			$job_order_estimate->status_id = 10071;
-			$job_order_estimate->updated_by_id = Auth::user()->id;
-			$job_order_estimate->updated_at = Carbon::now();
-			$job_order_estimate->save();
+				$message = 'Dear Customer,Kindly click below link to approve for revised TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no;
+
+				$msg = sendSMSNotification($customer_mobile, $message);
+
+				//Update JobOrder Estimate
+				$job_order_estimate = JobOrderEstimate::where('job_order_id', $job_order->id)->orderBy('id', 'DESC')->first();
+				$job_order_estimate->status_id = 10071;
+				$job_order_estimate->updated_by_id = Auth::user()->id;
+				$job_order_estimate->updated_at = Carbon::now();
+				$job_order_estimate->save();
+
+				DB::commit();
+
+				return response()->json([
+					'success' => true,
+					'message' => $message,
+				]);
+
+			} else {
+
+				$current_time = date("Y-m-d H:m:s");
+
+				$expired_time = Entity::where('entity_type_id', 32)->select('name')->first();
+				if ($expired_time) {
+					$expired_time = date("Y-m-d H:i:s", strtotime('+' . $expired_time->name . ' hours', strtotime($current_time)));
+				} else {
+					$expired_time = date("Y-m-d H:i:s", strtotime('+1 hours', strtotime($current_time)));
+				}
+
+				//Otp Save
+				$otp = new Otp;
+				$otp->entity_type_id = 10112;
+				$otp->entity_id = $job_order->id;
+				$otp->otp_no = $otp_no;
+				$otp->created_by_id = Auth::user()->id;
+				$otp->created_at = $current_time;
+				$otp->expired_at = $expired_time;
+				$otp->save();
+
+				DB::commit();
+
+				$message = 'OTP is ' . $otp_no . ' for Revised Job Card Approve On Behalf of Customer. Please enter OTP to verify your Revised Job Card Approval';
+
+				$msg = sendSMSNotification($customer_mobile, $message);
+
+				return response()->json([
+					'success' => true,
+					'mobile_number' => $customer_mobile,
+					'message' => 'OTP Sent successfully!!',
+				]);
+			}
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function verifyOtp(Request $request) {
+		// dd($request->all());
+		try {
+
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'exists:job_orders,id',
+					'integer',
+				],
+				'otp_no' => [
+					'required',
+					'min:8',
+					'integer',
+				],
+				'verify_otp' => [
+					'required',
+					'integer',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			$job_order = JobOrder::find($request->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$otp_validate = JobOrder::where('id', $request->job_order_id)
+				->where('otp_no', '=', $request->otp_no)
+				->first();
+			if (!$otp_validate) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Job Order Approve Behalf of Customer OTP is wrong. Please try again.',
+				]);
+			}
+
+			$current_time = date("Y-m-d H:m:s");
+
+			//Validate OTP -> Expired or Not
+			$otp_validate = OTP::where('entity_type_id', 10112)->where('entity_id', $request->job_order_id)->where('otp_no', '=', $request->otp_no)->where('expired_at', '>=', $current_time)
+				->first();
+
+			// dump($current_time);
+			if (!$otp_validate) {
+				return response()->json([
+					'success' => false,
+					'error' => 'OTP Expired',
+				]);
+			}
+
+			//UPDATE JOB ORDER STATUS
+			$job_order_status_update = JobOrder::find($request->job_order_id);
+			// $job_order_status_update->status_id = 8473; //Cusotomer Approved
+			$job_order_status_update->is_customer_approved = 1;
+			$job_order_status_update->updated_at = Carbon::now();
+			$job_order_status_update->save();
+
+			//UPDATE JOB ORDER REPAIR ORDER STATUS
+			JobOrderRepairOrder::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_at' => Carbon::now()]);
+
+			//UPDATE JOB ORDER PARTS STATUS
+			JobOrderPart::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_at' => Carbon::now()]);
+
+			JobOrderEstimate::where('job_order_id', $job_order->id)->where('status_id', 10071)->update(['status_id' => 10072, 'updated_at' => Carbon::now()]);
 
 			DB::commit();
 
 			return response()->json([
 				'success' => true,
-				'message' => $message,
+				'message' => 'Customer Approved Successfully',
 			]);
-
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
@@ -4124,14 +4260,14 @@ class JobCardController extends Controller {
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
 				'jobOrder.jobOrderRepairOrders' => function ($q) {
-					$q->whereNull('removal_reason_id')->whereNotNull('split_order_type_id');
+					$q->whereNull('removal_reason_id')->where('is_customer_approved', 1)->whereNotNull('split_order_type_id');
 				},
 				'jobOrder.jobOrderRepairOrders.repairOrder',
 				'jobOrder.jobOrderRepairOrders.repairOrder.repairOrderType',
 				'jobOrder.jobOrderRepairOrders.repairOrder.taxCode',
 				'jobOrder.jobOrderRepairOrders.repairOrder.taxCode.taxes',
 				'jobOrder.jobOrderParts' => function ($q) {
-					$q->whereNull('removal_reason_id')->whereNotNull('split_order_type_id');
+					$q->whereNull('removal_reason_id')->where('is_customer_approved', 1)->whereNotNull('split_order_type_id');
 				},
 				'jobOrder.jobOrderParts.part',
 				'jobOrder.jobOrderParts.part.taxCode',
