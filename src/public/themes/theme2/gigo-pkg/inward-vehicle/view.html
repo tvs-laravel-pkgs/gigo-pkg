@@ -534,6 +534,46 @@
                                                                             </b>
                                                                         </span>
                                                                     </li>
+                                                                    <li class="view-col-3" ng-if="job_order.is_appointment == 1">
+                                                                        <span class="view-col-label">
+                                                                            Is Appointment ?
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                Yes
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3" ng-if="job_order.is_appointment != 1">
+                                                                        <span class="view-col-label">
+                                                                            Is Appointment ?
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                No
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3" ng-if="job_order.is_appointment == 1">
+                                                                        <span class="view-col-label">
+                                                                            CRE
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.c_r_e_user.name}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
+                                                                    <li class="view-col-3" ng-if="job_order.is_appointment == 1">
+                                                                        <span class="view-col-label">
+                                                                            Call Date
+                                                                        </span>
+                                                                        <span class="view-col-value">
+                                                                            <b>
+                                                                                {{job_order.call_date}}
+                                                                            </b>
+                                                                        </span>
+                                                                    </li>
                                                                 </ul>
                                                             </div><!-- View Data -->
                                                             <a class="btn btn-secondary-dark btn-md btn-square" href=".#!/inward-vehicle/order-detail/form/{{job_order_id}}" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-order-details-edit')">

@@ -194,6 +194,59 @@
                                                                         <input type="text" class="form-control" placeholder="Enter Service Contact No" autocomplete="off" minlength="10" maxlength="10" ng-model="job_order.contact_number" name="contact_number" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
                                                                     </div><!-- Feild -->
                                                                 </div><!-- Column -->
+                                                                <div class="col-md-3">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Is Appointment ?
+                                                                        </label>
+                                                                        <div class="common-radio-button type-4">
+                                                                            <input type="radio" id="appointment" name="is_appointment" ng-value="1" value="1" ng-value="1" value="1" ng-model="$ctrl.appointment_status">
+                                                                            <label for="appointment">
+                                                                                Yes
+                                                                            </label>
+                                                                            <input type="radio" id="walkin" name="is_appointment" ng-value="0" value="0" ng-model="$ctrl.appointment_status">
+                                                                            <label for="walkin">
+                                                                                No
+                                                                            </label>
+                                                                        </div>
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-3" ng-if="$ctrl.appointment_status == 1">
+                                                                    <!-- <div class="col-md-4"> -->
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            CRE
+                                                                            <sup class="mandatory">*</sup>
+                                                                        </label>
+                                                                        <md-select ng-model="job_order.cre_user_id" placeholder="Select Employee" data-md-container-class="selectdemoSelectHeader">
+                                                                            <md-select-header class="demo-select-header">
+                                                                                <input ng-model="searchDriver" type="search" placeholder="Search for a Employee.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                            </md-select-header>
+                                                                            <md-optgroup>
+                                                                                <md-option ng-value="employee.id" ng-repeat="employee in extras.cre_user_list | filter:searchDriver">
+                                                                                    {{employee.name}}
+                                                                                </md-option>
+                                                                            </md-optgroup>
+                                                                        </md-select>
+                                                                        <input type="hidden" name="cre_user_id" class="required" value="{{job_order.cre_user_id}}">
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
+                                                                <div class="col-md-3" ng-if="$ctrl.appointment_status == 1">
+                                                                    <div class="form-group">
+                                                                        <label>
+                                                                            Call Date
+                                                                            <sup class="mandatory">
+                                                                                *
+                                                                            </sup>
+                                                                        </label>
+                                                                        <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
+                                                                            <input type="text" class="form-control required" placeholder="Select Date" ng-model="job_order.call_date" name="call_date" />
+                                                                            <div class="input-group-addon">
+                                                                                <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                                                            </div>
+                                                                        </div><!-- Input Group -->
+                                                                    </div><!-- Feild -->
+                                                                </div><!-- Column -->
                                                             </div><!-- Row -->
                                                         </div><!-- Panel Body -->
                                                     </div><!-- Panel Collapse -->
@@ -338,7 +391,7 @@
                                                                             </sup>
                                                                         </label>
                                                                         <div class="input-group date" data-date-start-view="2" data-provide="datepicker">
-                                                                            <input type="text" class="form-control" placeholder="Select Licence Expiry Date" ng-model="job_order.driver_license_expiry_date" name="driver_license_expiry_date" ng-change="checkLicenseExpiryDate(job_order.driver_license_expiry_date)"/>
+                                                                            <input type="text" class="form-control" placeholder="Select Licence Expiry Date" ng-model="job_order.driver_license_expiry_date" name="driver_license_expiry_date" ng-change="checkLicenseExpiryDate(job_order.driver_license_expiry_date)" />
                                                                             <div class="input-group-addon">
                                                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                                                             </div>

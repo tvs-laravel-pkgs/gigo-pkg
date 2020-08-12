@@ -146,6 +146,10 @@ class JobOrder extends BaseModel {
 		return $this->attributes['ewp_expiry_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
+	public function getCallDateAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
 	// Relationships --------------------------------------------------------------
 
 	public static function relationships($action = '') {
@@ -264,6 +268,10 @@ class JobOrder extends BaseModel {
 		return $this->belongsTo('App\User', 'floor_supervisor_id')
 		// ->where('company_id', Auth::user()->company_id)
 		;
+	}
+
+	public function CREUser() {
+		return $this->belongsTo('App\User', 'cre_user_id');
 	}
 
 	public function jobCard() {
