@@ -237,7 +237,8 @@
                                         <hr>
                                         <div class="col-md-12" ng-if="send_approval_status == 1">
                                             <div class="text-center pt-40">
-                                                <a class="btn btn-red job_completed" data-toggle="modal" data-target="#confirmation_modal">Send for Customer Approval</a>
+                                                <a class="btn btn-red job_completed" ng-click="sendConfirm(1)">Approve on behalf of Customer</a>
+                                                <a class="btn btn-red job_completed" ng-click="sendConfirm(2)">Send to Customer for Approval</a>
                                             </div>
                                         </div>
                                     </div><!-- Column -->
@@ -259,6 +260,7 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Modal Delete -->
+<!-- Modal -->
 <div class="modal fade alert-modal failure" id="confirmation_modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -268,8 +270,9 @@
             <div class="modal-body">
                 <p>Are you sure?Do you want to send this estimate for customer Approval? </p>
                 <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                <input type="hidden" class="confirmation_type" name="confirmation_type">
                 <button class="btn btn-rose" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-success send_confirm" ng-click="sendConfirm()">Yes</button>
+                <button class="btn btn-success send_confirm" ng-click="sendOTPLinkConfirm()">Yes</button>
             </div>
         </div>
     </div>
@@ -329,6 +332,28 @@
         </form>
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->
+<div class="modal modal-otp alert-modal fade" id="otp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="approve_behalf_customer_confirm">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <h6 class="title">ENTER OTP</h6>
+                    <p class="info">Received in Customer Mobile +91<span class="customer_mobile_no"></span></p>
+                    <div class="form-group">
+                        <input type="text" autofocus name="otp_no" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
+                        <input type="hidden" name="job_order_id" id="job_order_id" value="{{job_order.id}}" />
+                        <input type="hidden" name="verify_otp" id="id" value="1" />
+                    </div><!-- Feild -->
+                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm" ng-click="saveOTP()">SUBMIT</button>
+                    <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
+                </div><!-- Modal Body -->
+            </form>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div>
 <div class="modal fade filter" id="labour_form_modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <form id="labour_form">
@@ -354,7 +379,7 @@
                                     <md-autocomplete md-selected-item="schedule_maintainance_ro.repair_order" md-search-text="repairOrderSearchKey" md-items="repair_order in searchRepairOrders(repairOrderSearchKey)" md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. ABS100" md-selected-item-change="repairOrderSelected(schedule_maintainance_ro.repair_order)" md-input-id="repairOrderAutoCompleteId">
                                         <md-item-template>
                                             <span>
-                                                {{repair_order.code}}
+                                                {{repair_order.code}} / {{repair_order.name}}
                                             </span>
                                         </md-item-template>
                                         <md-not-found>
@@ -470,7 +495,7 @@
                                     <md-autocomplete md-selected-item="schedule_maintainance_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
                                         <md-item-template>
                                             <span>
-                                                {{part.code}}
+                                                {{part.code}} / {{part.name}}
                                             </span>
                                         </md-item-template>
                                         <md-not-found>
@@ -483,8 +508,8 @@
                             </div><!-- Column -->
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Available Quantity <sup class="mandatory">*</sup></label>
-                                    <input type="text" name="qty" ng-model="available_quantity" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Available Quantity" autocomplete="off" readonly />
+                                    <label>Available Quantity </label>
+                                    <input type="text" ng-model="available_quantity" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Available Quantity" autocomplete="off" readonly />
                                 </div><!-- Feild -->
                             </div>
                             <div class="col-md-4">

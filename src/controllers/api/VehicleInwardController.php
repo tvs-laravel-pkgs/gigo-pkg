@@ -764,6 +764,7 @@ class VehicleInwardController extends Controller {
 						$part_details[$key]['amount'] = $value->amount;
 						$part_details[$key]['is_free_service'] = $value->is_free_service;
 						$part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+						$part_details[$key]['is_customer_approved'] = $value->is_customer_approved;
 						if ($value->splitOrderType) {
 							$part_details[$key]['split_order_type'] = $value->splitOrderType->code . "|" . $value->splitOrderType->name;
 						} else {
@@ -4718,7 +4719,8 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Order Found!',
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
 				]);
 			}
 
@@ -4727,7 +4729,8 @@ class VehicleInwardController extends Controller {
 			if (!$customer_mobile) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Customer Mobile Number Not Found',
+					'error' => 'Validation Error',
+					'errors' => ['Customer Mobile Number Not Found!'],
 				]);
 			}
 
@@ -4746,7 +4749,8 @@ class VehicleInwardController extends Controller {
 			if (!$job_order_otp_update) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Card OTP Update Failed',
+					'error' => 'Validation Error',
+					'errors' => ['Job Order OTP Update Failed!'],
 				]);
 			}
 
@@ -4820,10 +4824,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$job_order = JobOrder::with([
-				'gateLog',
-			])
-				->find($request->job_order_id);
+			$job_order = JobOrder::find($request->job_order_id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -4841,7 +4842,8 @@ class VehicleInwardController extends Controller {
 			if (!$otp_validate) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Order Approve Behalf of Customer OTP is wrong. Please try again.',
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Approve Behalf of Customer OTP is wrong. Please try again.'],
 				]);
 			}
 
@@ -4853,7 +4855,8 @@ class VehicleInwardController extends Controller {
 			if (!$otp_validate) {
 				return response()->json([
 					'success' => false,
-					'error' => 'OTP Expired',
+					'error' => 'Validation Error',
+					'errors' => ['OTP Expired!'],
 				]);
 			}
 
@@ -4865,10 +4868,10 @@ class VehicleInwardController extends Controller {
 			$job_order_status_update->save();
 
 			//UPDATE JOB ORDER REPAIR ORDER STATUS
-			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_customer_approved', 0)->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+			JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			//UPDATE JOB ORDER PARTS STATUS
-			JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_customer_approved', 0)->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+			JobOrderPart::where('job_order_id', $request->job_order_id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
 			JobOrderEstimate::where('job_order_id', $request->job_order_id)->where('status_id', 10071)->update(['status_id' => 10072, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
@@ -4912,7 +4915,6 @@ class VehicleInwardController extends Controller {
 			])
 				->find($request->job_order_id);
 
-			// dd($job_order);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -4929,7 +4931,8 @@ class VehicleInwardController extends Controller {
 			if (!$customer_mobile) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Customer Mobile Number Not Found',
+					'error' => 'Validation Error',
+					'errors' => ['Customer Mobile Number Not Found!'],
 				]);
 			}
 
@@ -5097,6 +5100,17 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = JobOrder::find($request->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
+				]);
+			}
+
 			$job_order->estimation_type_id = $request->estimation_type_id;
 			$job_order->minimum_payable_amount = $request->minimum_payable_amount;
 			$job_order->estimate_ref_no = $generateNumber['number'];
@@ -5113,22 +5127,22 @@ class VehicleInwardController extends Controller {
 					'updated_at' => Carbon::now(),
 				]);
 
-			$customer_detail = Customer::select('customers.name', 'customers.mobile_no', 'vehicles.registration_number')
-				->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
-				->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
-				->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
-				->where('job_orders.id', $job_order->id)
-				->orderBy('vehicle_owners.from_date', 'DESC')
-				->first();
+			// $customer_detail = Customer::select('customers.name', 'customers.mobile_no', 'vehicles.registration_number')
+			// 	->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
+			// 	->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
+			// 	->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
+			// 	->where('job_orders.id', $job_order->id)
+			// 	->orderBy('vehicle_owners.from_date', 'DESC')
+			// 	->first();
 
-			if (!$customer_detail) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Customer Details Not Found!',
-				]);
-			}
+			// if (!$customer_detail) {
+			// 	return response()->json([
+			// 		'success' => false,
+			// 		'error' => 'Customer Details Not Found!',
+			// 	]);
+			// }
 
-			$mobile_number = $customer_detail->mobile_no;
+			$mobile_number = $job_order->contact_number;
 
 			if (!$mobile_number) {
 				return response()->json([
