@@ -48,7 +48,14 @@ class MyJobCardController extends Controller {
 				'job_cards.job_card_number as jc_number',
 				'vehicles.registration_number',
 				DB::raw('COUNT(job_order_repair_orders.id) as no_of_ROTs'),
-				'configs.name as status', 'job_cards.created_at',
+				DB::raw('CASE
+                        WHEN count((CASE WHEN repair_order_mechanics.status_id = "8264" THEN repair_order_mechanics.status_id END )) > 0 THEN "Rescheduled"
+                        WHEN count((CASE WHEN repair_order_mechanics.status_id = "8263" THEN repair_order_mechanics.status_id END )) =  COUNT(job_order_repair_orders.id) THEN "Completed"
+                        WHEN count((CASE WHEN repair_order_mechanics.status_id = "8260" THEN repair_order_mechanics.status_id END )) =  COUNT(job_order_repair_orders.id) THEN "Not Yet Started"
+                        WHEN count((CASE WHEN repair_order_mechanics.status_id = "8262" THEN repair_order_mechanics.status_id END )) > 0 && count((CASE WHEN repair_order_mechanics.status_id = "8264" THEN repair_order_mechanics.status_id END )) = 0 && count((CASE WHEN repair_order_mechanics.status_id = "8261" THEN repair_order_mechanics.status_id END )) = 0 THEN "Work Paused"
+                        ELSE "Work InProgress" END AS status'),
+				// 'configs.name as status',
+				'job_cards.created_at',
 				'models.model_number',
 				'customers.name as customer_name',
 			])
@@ -116,13 +123,20 @@ class MyJobCardController extends Controller {
 
 			$other_work_status = '0';
 
+			//Check Mechnic start any assigned work
+			//if started means other works cannot be started until current work paused or completed
+			$works_count = RepairOrderMechanic::where('mechanic_id', $request->mechanic_id)->where('status_id', 8261)->count();
+			if ($works_count > 0) {
+				$other_work_status = '1';
+			}
+
 			foreach ($my_job_orders as $key => $my_job_order) {
 
 				//Check in this job card assigned works any one started or not.
 				//if started means other work cannot be started until current work paused or completed
-				if ($my_job_order->status_id == '8261') {
-					$other_work_status = '1';
-				}
+				// if ($my_job_order->status_id == '8261') {
+				// 	$other_work_status = '1';
+				// }
 
 				$assigned_mechanics = User::join('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')->where('repair_order_mechanics.job_order_repair_order_id', $my_job_order->job_order_repair_order_id)->select('users.name')->get()->toArray();
 				$my_job_order->assigned_mechanics = $assigned_mechanics;
