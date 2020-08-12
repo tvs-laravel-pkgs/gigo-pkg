@@ -2716,7 +2716,6 @@ class JobCardController extends Controller {
 			])
 				->find($request->job_order_id);
 
-			// dd($job_order);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -2730,7 +2729,8 @@ class JobCardController extends Controller {
 			if (!$customer_mobile) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Customer Mobile Number Not Found',
+					'error' => 'Validation Error',
+					'errors' => ['Customer Mobile Number Not Found!'],
 				]);
 			}
 
@@ -2743,6 +2743,20 @@ class JobCardController extends Controller {
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
+
+			//Update JobCard Status
+			$job_card = JobCard::where('job_order_id', $job_order->id)->first();
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Card Not Found!'],
+				]);
+			}
+			$job_card->status_id = 8229; //Waiting for Customer Approval
+			$job_card->updated_by = Auth::user()->id;
+			$job_card->updated_at = Carbon::now();
+			$job_card->save();
 
 			if ($request->type == 2) {
 
@@ -2803,7 +2817,6 @@ class JobCardController extends Controller {
 					'message' => 'OTP Sent successfully!!',
 				]);
 			}
-
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
@@ -2860,7 +2873,8 @@ class JobCardController extends Controller {
 			if (!$otp_validate) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Order Approve Behalf of Customer OTP is wrong. Please try again.',
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Approve Behalf of Customer OTP is wrong. Please try again.'],
 				]);
 			}
 
@@ -2874,16 +2888,30 @@ class JobCardController extends Controller {
 			if (!$otp_validate) {
 				return response()->json([
 					'success' => false,
-					'error' => 'OTP Expired',
+					'error' => 'Validation Error',
+					'errors' => ['OTP Expired!'],
 				]);
 			}
 
 			//UPDATE JOB ORDER STATUS
 			$job_order_status_update = JobOrder::find($request->job_order_id);
-			// $job_order_status_update->status_id = 8473; //Cusotomer Approved
 			$job_order_status_update->is_customer_approved = 1;
 			$job_order_status_update->updated_at = Carbon::now();
 			$job_order_status_update->save();
+
+			//Update JobCard Status
+			$job_card = JobCard::where('job_order_id', $request->job_order_id)->first();
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Card Not Found!'],
+				]);
+			}
+			$job_card->status_id = 8221; //Work Inprogress
+			$job_card->updated_by = Auth::user()->id;
+			$job_card->updated_at = Carbon::now();
+			$job_card->save();
 
 			//UPDATE JOB ORDER REPAIR ORDER STATUS
 			JobOrderRepairOrder::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_at' => Carbon::now()]);

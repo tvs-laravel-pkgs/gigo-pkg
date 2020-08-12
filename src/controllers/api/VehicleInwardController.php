@@ -4718,7 +4718,8 @@ class VehicleInwardController extends Controller {
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Order Found!',
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Not Found!'],
 				]);
 			}
 
@@ -4727,7 +4728,8 @@ class VehicleInwardController extends Controller {
 			if (!$customer_mobile) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Customer Mobile Number Not Found',
+					'error' => 'Validation Error',
+					'errors' => ['Customer Mobile Number Not Found!'],
 				]);
 			}
 
@@ -4746,7 +4748,8 @@ class VehicleInwardController extends Controller {
 			if (!$job_order_otp_update) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Card OTP Update Failed',
+					'error' => 'Validation Error',
+					'errors' => ['Job Order OTP Update Failed!'],
 				]);
 			}
 
@@ -4838,7 +4841,8 @@ class VehicleInwardController extends Controller {
 			if (!$otp_validate) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Job Order Approve Behalf of Customer OTP is wrong. Please try again.',
+					'error' => 'Validation Error',
+					'errors' => ['Job Order Approve Behalf of Customer OTP is wrong. Please try again.'],
 				]);
 			}
 
@@ -4850,7 +4854,8 @@ class VehicleInwardController extends Controller {
 			if (!$otp_validate) {
 				return response()->json([
 					'success' => false,
-					'error' => 'OTP Expired',
+					'error' => 'Validation Error',
+					'errors' => ['OTP Expired!'],
 				]);
 			}
 
@@ -4909,7 +4914,6 @@ class VehicleInwardController extends Controller {
 			])
 				->find($request->job_order_id);
 
-			// dd($job_order);
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -4926,7 +4930,8 @@ class VehicleInwardController extends Controller {
 			if (!$customer_mobile) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Customer Mobile Number Not Found',
+					'error' => 'Validation Error',
+					'errors' => ['Customer Mobile Number Not Found!'],
 				]);
 			}
 
@@ -5094,6 +5099,17 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = JobOrder::find($request->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Order Not Found',
+					],
+				]);
+			}
+
 			$job_order->estimation_type_id = $request->estimation_type_id;
 			$job_order->minimum_payable_amount = $request->minimum_payable_amount;
 			$job_order->estimate_ref_no = $generateNumber['number'];
@@ -5110,22 +5126,22 @@ class VehicleInwardController extends Controller {
 					'updated_at' => Carbon::now(),
 				]);
 
-			$customer_detail = Customer::select('customers.name', 'customers.mobile_no', 'vehicles.registration_number')
-				->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
-				->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
-				->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
-				->where('job_orders.id', $job_order->id)
-				->orderBy('vehicle_owners.from_date', 'DESC')
-				->first();
+			// $customer_detail = Customer::select('customers.name', 'customers.mobile_no', 'vehicles.registration_number')
+			// 	->join('vehicle_owners', 'vehicle_owners.customer_id', 'customers.id')
+			// 	->join('vehicles', 'vehicle_owners.vehicle_id', 'vehicles.id')
+			// 	->join('job_orders', 'job_orders.vehicle_id', 'vehicles.id')
+			// 	->where('job_orders.id', $job_order->id)
+			// 	->orderBy('vehicle_owners.from_date', 'DESC')
+			// 	->first();
 
-			if (!$customer_detail) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Customer Details Not Found!',
-				]);
-			}
+			// if (!$customer_detail) {
+			// 	return response()->json([
+			// 		'success' => false,
+			// 		'error' => 'Customer Details Not Found!',
+			// 	]);
+			// }
 
-			$mobile_number = $customer_detail->mobile_no;
+			$mobile_number = $job_order->contact_number;
 
 			if (!$mobile_number) {
 				return response()->json([
