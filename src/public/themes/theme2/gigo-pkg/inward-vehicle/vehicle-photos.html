@@ -125,15 +125,14 @@
                                                         <h6 class=""><b>Other Attachments</b></h6>
                                                         <div class="img-upload-preview">
                                                             <input type="file" class="image_uploadify" accept="image/*" name="other_vehicle_attachments[]" multiple />
-                                                            <!-- ,application/pdf -->
                                                             <div class="imageuploadify">
-                                                                <!-- <div class="imageuploadify-images-list">
+                                                                <div class="imageuploadify-images-list">
                                                                     <div class="imageuploadify-container" ng-if="job_order.other_vehicle_attachment.length > 0" style="margin-left: 4px; margin-right: 4px;" ng-repeat="(key,other_vehicle_attachment_attachment) in job_order.other_vehicle_attachment">
                                                                         <button type="button" class="btn btn-danger glyphicon glyphicon-remove" ng-click="remove_attachment(other_vehicle_attachment_attachment.id,key)">
                                                                         </button>
                                                                         <img title="{{other_vehicle_attachment_attachment.name}}" src="./storage/app/public/gigo/job_order/attachments/{{other_vehicle_attachment_attachment.name}}">
                                                                     </div>
-                                                                </div> -->
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <input type="hidden" name="attachment_removal_ids" id="attachment_removal_ids" value="">
@@ -141,22 +140,20 @@
                                                 </div>
                                             </div><!-- Row -->
                                             <hr class="hr-15"><!-- Separater -->
-                                            <div class="col-md-12">
-                                            </div><!-- Column -->
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="submit" ng-click="saveVehicleAttachments(1)" class="btn btn-red submit">
+                                                    <button ng-click="saveVehicleAttachments(1)" class="btn btn-red submit">
                                                         Save & Close
                                                     </button>
-                                                    <a href=".#!//inward-vehicle/customer-detail/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
+                                                    <a href=".#!/inward-vehicle/customer-detail/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
                                                         Previous
                                                     </a>
                                                     <button ng-click="saveVehicleAttachments(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Next
                                                     </button>
-                                                </div>
+                                                </div><!-- Column -->
                                             </div>
                                         </div><!-- Tab Footer -->
                                     </form>

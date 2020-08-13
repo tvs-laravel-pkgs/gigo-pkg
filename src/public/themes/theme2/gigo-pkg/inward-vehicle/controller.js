@@ -3102,9 +3102,17 @@ app.component('inwardVehiclePhotos', {
 
         $scope.job_order_id = $routeParams.job_order_id;
 
+        /* Profile Upload */
+        setTimeout(function() {
+            profileImgUpload();
+        }, 1000);
+
+        setTimeout(function() {
+            $('.image_uploadify').imageuploadify();
+        }, 1000);
+
         //FETCH DATA
         $scope.fetchData = function() {
-            $rootScope.loading = true;
             $.ajax({
                     url: base_url + '/api/vehicle-inward/vehicle/photos/get-form-data',
                     method: "POST",
@@ -3113,7 +3121,6 @@ app.component('inwardVehiclePhotos', {
                     },
                 })
                 .done(function(res) {
-                    $rootScope.loading = false;
                     if (!res.success) {
                         showErrorNoty(res);
                         return;
@@ -3124,18 +3131,11 @@ app.component('inwardVehiclePhotos', {
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
-                    $rootScope.loading = false;
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
+
         $scope.fetchData();
-
-        /* Profile Upload */
-        setTimeout(function() {
-            profileImgUpload();
-        }, 1000);
-
-
 
         //Save Form Data 
         $scope.saveVehicleAttachments = function(id) {
@@ -3207,7 +3207,6 @@ app.component('inwardVehiclePhotos', {
                             $scope.button_action(id, 2);
                             if (!res.success) {
                                 $rootScope.loading = false;
-                                $('.submit').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }
@@ -3239,12 +3238,6 @@ app.component('inwardVehiclePhotos', {
             }
             $scope.job_order.other_vehicle_attachment.splice(index, 1);
         }
-
-        /* Dropdown Arrow Function */
-        arrowDropdown();
-
-        /* Image Uploadify Funtion */
-        $('.image_uploadify').imageuploadify();
 
         $scope.button_action = function(id, type) {
             if (type == 1) {
