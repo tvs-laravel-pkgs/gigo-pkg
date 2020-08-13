@@ -3989,6 +3989,7 @@ class VehicleInwardController extends Controller {
 				'status',
 				'roadTestDoneBy',
 				'roadTestPreferedBy',
+				'tradePlateNumber',
 			])
 				->select([
 					'job_orders.*',
@@ -4015,11 +4016,16 @@ class VehicleInwardController extends Controller {
 				$job_order->enable_estimate_status = true;
 			}
 
+			$trade_plate_number_list = collect(TradePlateNumber::where('status_id', 8240)->where('company_id', Auth::user()->company_id)->where('outlet_id', Auth::user()->employee->outlet_id)->whereDate('insurance_validity_to', '>=', date('Y-m-d'))->select('id', 'trade_plate_number')->get())->prepend(['id' => '', 'trade_plate_number' => 'Select Trade Plate']);
+
+			if ($job_order->tradePlateNumber) {
+				$trade_plate_number_list->push(['id' => $job_order->tradePlateNumber->id, 'trade_plate_number' => $job_order->tradePlateNumber->trade_plate_number]);
+			}
+
 			$extras = [
 				'road_test_by' => Config::getDropDownList(['config_type_id' => 36, 'add_default' => false]), //ROAD TEST DONE BY
 				'user_list' => User::getUserEmployeeList(['road_test' => true]),
-				'trade_plate_number_list' => collect(TradePlateNumber::where('company_id', Auth::user()->company_id)
-						->where('outlet_id', Auth::user()->employee->outlet_id)->whereDate('insurance_validity_to', '>=', date('Y-m-d'))->select('id', 'trade_plate_number')->get())->prepend(['id' => '', 'trade_plate_number' => 'Select Trade Plate']),
+				'trade_plate_number_list' => $trade_plate_number_list,
 			];
 
 			return response()->json([
@@ -4096,6 +4102,26 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = JobOrder::find($request->job_order_id);
+
+			//Check Previous Trade Plate Number same or not.If not means update Trade Plate Number status
+			if ($job_order->road_test_trade_plate_number_id != $request->road_test_trade_plate_number_id) {
+				//Update Current Trade Plate Number Status
+				$plate_number_update = TradePlateNumber::where('id', $request->road_test_trade_plate_number_id)
+					->update([
+						'status_id' => 8241, //ASSIGNED
+						'updated_by_id' => Auth::user()->id,
+						'updated_at' => Carbon::now(),
+					]);
+
+				//Update Previous Trade Plate Number Status
+				$plate_number_update = TradePlateNumber::where('id', $job_order->road_test_trade_plate_number_id)
+					->update([
+						'status_id' => 8240, //FREE
+						'updated_by_id' => Auth::user()->id,
+						'updated_at' => Carbon::now(),
+					]);
+			}
+
 			if ($request->is_road_test_required == 1) {
 				$job_order->is_road_test_required = $request->is_road_test_required;
 				$job_order->road_test_done_by_id = $request->road_test_done_by_id;
