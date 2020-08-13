@@ -78,6 +78,11 @@
                                             Customer Details
                                         </a>
                                     </li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-view')">
+                                        <a data-target="#vehicle_photos" data-toggle="tab" aria-expanded="true" class="filter">
+                                            Vehicle Photos
+                                        </a>
+                                    </li>
                                     <li ng-if="$ctrl.hasPermission('inward-job-card-tab-order-details-view')">
                                         <a data-target="#order_details" data-toggle="tab" aria-expanded="true" class="filter">
                                             Order Details
@@ -405,6 +410,85 @@
                                                     Add New Owner
                                                 </a>
                                             </button>
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                    <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="vehicle_photos" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Vehicle Photos</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="border-box">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="multi-img">
+                                                            <table class="table-info">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td class="text-center">Front Side</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">Back Side</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">Left Side</td>
+                                                                        <td></td>
+                                                                        <td class="text-center">Right Side</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.front_side_attachment.name}}" alt="Vehicle Image" /></td>
+                                                                        <td></td>
+                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.back_side_attachment.name}}" alt="Vehicle Image" /></td>
+                                                                        <td>&nbsp;&nbsp;</td>
+                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.left_side_attachment.name}}" alt="Vehicle Image" /></td>
+                                                                        <td></td>
+                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.right_side_attachment.name}}" alt="Vehicle Image" /></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div><!-- Column -->
+                                                    <div class="col-md-6">
+                                                        <div class="multi-img">
+                                                            <table class="table-info">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td colspan="{{job_order.other_vehicle_attachment.length}}" class="text-center">Other Vehicle Images</td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <table class="table-info">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <div class="gatein-img-list">
+                                                                                <div class="gatein-img-list-item attach-photo-view" ng-repeat="(key,other_vehicle_attachment) in job_order.other_vehicle_attachment">
+                                                                                    <img title="{{other_vehicle_attachment.name}}" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{other_vehicle_attachment.name}}" alt="Vehicle Image">
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div><!-- Column -->
+                                                </div><!-- Row -->
+                                            </div><!-- Border Box -->
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a href=".#!/inward-vehicle/vehicle/photos/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && job_order.is_customer_approved != 1 && $ctrl.hasPermission('inward-job-card-tab-vehicle-details-edit')">Edit</a>
+                                                </div>
+                                            </div><!-- Row -->
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">

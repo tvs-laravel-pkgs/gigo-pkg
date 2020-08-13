@@ -258,6 +258,11 @@ class VehicleInwardController extends Controller {
 				'VOCAttachment',
 				'CREUser',
 				'tradePlateNumber',
+				'frontSideAttachment',
+				'backSideAttachment',
+				'leftSideAttachment',
+				'rightSideAttachment',
+				'otherVehicleAttachment',
 			])
 				->select([
 					'job_orders.*',
