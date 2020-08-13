@@ -60,6 +60,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 		"status_id",
 		"request_type_id",
 		"split_order_type_id",
+		"total_labour_amount",
+		"total_part_cushioning_percentage",
+		"total_part_cushioning_charge",
+		"total_part_amount",
 	];
 
 	protected $dates = [
@@ -660,6 +664,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 	public function syncParts($wjorParts) {
 		WjorPart::where('wjor_id', $this->id)->delete();
 		foreach ($wjorParts as $wjorPartInput) {
+			// dump($wjorPartInput);
 			// dump($wjorPartInput->purchase_type);
 			$wjorPart = new WjorPart;
 			if (gettype($wjorPartInput->purchase_type) == "object") {
@@ -673,6 +678,8 @@ class WarrantyJobOrderRequest extends BaseModel {
 			$wjorPart->qty = $wjorPartInput->qty;
 			$wjorPart->rate = $wjorPartInput->rate;
 			$wjorPart->net_amount = $wjorPartInput->net_amount;
+			$wjorPart->handling_charge_percentage = $wjorPartInput->handling_charge_percentage;
+			$wjorPart->handling_charge = $wjorPartInput->handling_charge;
 			$wjorPart->tax_total = $wjorPartInput->tax_total;
 			$wjorPart->total_amount = $wjorPartInput->total_amount;
 			$wjorPart->save();
@@ -686,7 +693,6 @@ class WarrantyJobOrderRequest extends BaseModel {
 			}
 			// $wjorPart->taxes()->sync($taxes);
 		}
-
 	}
 
 	public function generatePDF() {
