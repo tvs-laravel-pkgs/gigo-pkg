@@ -4694,6 +4694,9 @@ app.component('inwardVehicleRoadTestDetailForm', {
                     'road_test_performed_by_id': {
                         required: true,
                     },
+                    'road_test_trade_plate_number_id': {
+                        required: true,
+                    },
                     // 'road_test_report': {
                     //     required: true,
                     // },

@@ -278,6 +278,10 @@ class JobOrder extends BaseModel {
 		return $this->hasOne('App\JobCard', 'job_order_id');
 	}
 
+	public function tradePlateNumber() {
+		return $this->belongsTo('App\TradePlateNumber', 'road_test_trade_plate_number_id');
+	}
+
 	public function warrentyPolicyAttachment() {
 		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 256);
 	}

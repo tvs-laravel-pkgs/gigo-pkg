@@ -1853,7 +1853,9 @@ class JobCardController extends Controller {
 			'jobOrder.status',
 			'jobOrder.roadTestDoneBy',
 			'jobOrder.roadTestPreferedBy',
-			'jobOrder.gateLog'])
+			'jobOrder.gateLog',
+			'jobOrder.tradePlateNumber',
+		])
 			->select([
 				'job_cards.*',
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%d/%m/%Y") as date'),
@@ -3361,7 +3363,9 @@ class JobCardController extends Controller {
 				'jobOrder.status',
 				'jobOrder.jobOrderPart',
 				'jobOrder.jobOrderPart.status',
-				'jobOrder.jobOrderRepairOrder',
+				'jobOrder.jobOrderRepairOrder' => function ($q) {
+					$q->whereNull('removal_reason_id');
+				},
 				'jobOrder.jobOrderRepairOrder.status',
 				'jobOrder.customerVoice',
 				'jobOrder.getEomRecomentation',
@@ -3454,7 +3458,9 @@ class JobCardController extends Controller {
 				// 'jobOrder.gateLog',
 				// 'jobOrder.gateLog.vehicleDetail',
 				// 'jobOrder.gateLog.vehicleDetail.vehicleModel',
-				'jobOrder.jobOrderRepairOrders',
+				'jobOrder.jobOrderRepairOrders' => function ($q) {
+					$q->whereNull('removal_reason_id')->where('is_customer_approved', 1);
+				},
 				'jobOrder.jobOrderRepairOrders.status',
 				'jobOrder.jobOrderRepairOrders.repairOrderMechanics',
 				'jobOrder.jobOrderRepairOrders.repairOrderMechanics.mechanic',

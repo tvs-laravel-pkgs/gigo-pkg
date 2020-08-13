@@ -40,6 +40,7 @@ use App\RepairOrderType;
 use App\ServiceType;
 use App\SplitOrderType;
 use App\State;
+use App\TradePlateNumber;
 use App\User;
 use App\VehicleInspectionItem;
 use App\VehicleInspectionItemGroup;
@@ -256,6 +257,7 @@ class VehicleInwardController extends Controller {
 				'customerESign',
 				'VOCAttachment',
 				'CREUser',
+				'tradePlateNumber',
 			])
 				->select([
 					'job_orders.*',
@@ -4016,6 +4018,8 @@ class VehicleInwardController extends Controller {
 			$extras = [
 				'road_test_by' => Config::getDropDownList(['config_type_id' => 36, 'add_default' => false]), //ROAD TEST DONE BY
 				'user_list' => User::getUserEmployeeList(['road_test' => true]),
+				'trade_plate_number_list' => collect(TradePlateNumber::where('company_id', Auth::user()->company_id)
+						->where('outlet_id', Auth::user()->employee->outlet_id)->whereDate('insurance_validity_to', '>=', date('Y-m-d'))->select('id', 'trade_plate_number')->get())->prepend(['id' => '', 'trade_plate_number' => 'Select Trade Plate']),
 			];
 
 			return response()->json([
@@ -4056,9 +4060,14 @@ class VehicleInwardController extends Controller {
 					'integer',
 				],
 				'road_test_performed_by_id' => [
-					'nullable',
+					'required_if:road_test_done_by_id,8101',
 					'integer',
 					'exists:users,id',
+				],
+				'road_test_trade_plate_number_id' => [
+					'required_if:road_test_done_by_id,8101',
+					'integer',
+					'exists:trade_plate_numbers,id',
 				],
 				// 'road_test_report' => [
 				// 	'required_if:is_road_test_required,1',
@@ -4095,6 +4104,7 @@ class VehicleInwardController extends Controller {
 					$job_order->road_test_performed_by_id = $request->road_test_performed_by_id;
 				} else {
 					$job_order->road_test_performed_by_id = NULL;
+					$job_order->road_test_trade_plate_number_id = NULL;
 				}
 				$job_order->road_test_report = $request->road_test_report;
 			} else {
@@ -4102,7 +4112,9 @@ class VehicleInwardController extends Controller {
 				$job_order->road_test_done_by_id = NULL;
 				$job_order->road_test_performed_by_id = NULL;
 				$job_order->road_test_report = NULL;
+				$job_order->road_test_trade_plate_number_id = NULL;
 			}
+			$job_order->road_test_trade_plate_number_id = $request->road_test_trade_plate_number_id;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->status_id = 8463;
