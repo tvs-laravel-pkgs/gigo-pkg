@@ -5,7 +5,8 @@ namespace Abs\GigoPkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Aggregate;
 use App\BaseModel;
-use App\Company;
+// use App\Company;
+use Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SubAggregate extends BaseModel {
@@ -14,7 +15,7 @@ class SubAggregate extends BaseModel {
 	protected $table = 'sub_aggregates';
 	public $timestamps = true;
 	protected $fillable =
-		["company_id", "name", "aggregate_id"];
+		["name", "aggregate_id", "code"];
 
 	protected static $excelColumnRules = [
 		'Aggregate' => [
@@ -24,13 +25,20 @@ class SubAggregate extends BaseModel {
 				],
 				'fk' => [
 					'class' => 'App\Aggregate',
-					'foreign_table_column' => 'name',
-					'check_with_company' => true,
+					'foreign_table_column' => 'code',
+					// 'check_with_company' => true,
 				],
 			],
 		],
-		'Sub Aggregate' => [
+		'Name' => [
 			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Code' => [
+			'table_column_name' => 'code',
 			'rules' => [
 				'required' => [
 				],
@@ -41,25 +49,29 @@ class SubAggregate extends BaseModel {
 	public static function saveFromObject($record_data) {
 
 		$record = [
-			'Company Code' => $record_data->company_code,
+			// 'Company Code' => $record_data->company_code,
 			'Aggregate' => $record_data->aggregate,
-			'Sub Aggregate' => $record_data->sub_aggregate,
+			'Name' => $record_data->name,
+			'Code' => $record_data->code,
 		];
 		return static::saveFromExcelArray($record);
 	}
 
 	public static function saveFromExcelArray($record_data) {
 		$errors = [];
-		$company = Company::where('code', $record_data['Company Code'])->first();
-		if (!$company) {
-			return [
-				'success' => false,
-				'errors' => ['Invalid Company : ' . $record_data['Company Code']],
-			];
-		}
+		/*
+			$company = Company::where('code', $record_data['Company Code'])->first();
+			if (!$company) {
+				return [
+					'success' => false,
+					'errors' => ['Invalid Company : ' . $record_data['Company Code']],
+				];
+			}
+		*/
 
 		if (!isset($record_data['created_by_id'])) {
-			$admin = $company->admin();
+			// $admin = $company->admin();
+			$admin = Auth::user();
 
 			if (!$admin) {
 				return [
@@ -67,7 +79,7 @@ class SubAggregate extends BaseModel {
 					'errors' => ['Default Admin user not found'],
 				];
 			}
-			$created_by_id = $admin->id;
+			$created_by_id = Auth::id(); //$admin->id;
 		} else {
 			$created_by_id = $record_data['created_by_id'];
 		}
@@ -76,8 +88,8 @@ class SubAggregate extends BaseModel {
 			$errors[] = 'Aggregate is empty';
 		} else {
 			$aggregate = Aggregate::where([
-				'company_id' => $admin->company_id,
-				'name' => $record_data['Aggregate'],
+				// 'company_id' => $admin->company_id,
+				'code' => $record_data['Aggregate'],
 			])->first();
 			if ($aggregate == null) {
 				$errors[] = 'Aggregate not found : ' . $record_data['Aggregate'];
@@ -93,9 +105,9 @@ class SubAggregate extends BaseModel {
 
 		// dump($aggregate, $record_data['Sub Aggregate']);
 		$record = self::firstOrNew([
-			'company_id' => $company->id,
+			// 'company_id' => $company->id,
 			'aggregate_id' => $aggregate->id,
-			'name' => $record_data['Sub Aggregate'],
+			'code' => $record_data['Name'],
 		]);
 		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
 
@@ -103,7 +115,7 @@ class SubAggregate extends BaseModel {
 			return $result;
 		}
 		$record->aggregate_id = $aggregate->id;
-		$record->created_by_id = $created_by_id;
+		$record->created_by = $created_by_id;
 		$record->save();
 		return [
 			'success' => true,
