@@ -196,6 +196,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('vehicle-inward/get-customer-detail', 'VehicleInwardController@getCustomerDetail');
 		Route::post('vehicle-inward/save-customer-detail', 'VehicleInwardController@saveCustomerDetail');
 
+		//VEHICLE PHOTOS FORM DATA AND SAVE
+		Route::post('vehicle-inward/vehicle/photos/get-form-data', 'VehicleInwardController@getVehiclePhotosFormData');
+		Route::post('vehicle-inward/vehicle/photos/save', 'VehicleInwardController@saveVehiclePhotos');
+
 		//ORDER DETAIL FORM DATA AND SAVE
 		Route::post('vehicle-inward/order-detail/get-form-data', 'VehicleInwardController@getOrderFormData');
 		Route::post('vehicle-inward/order-detail/save', 'VehicleInwardController@saveOrderDetail');

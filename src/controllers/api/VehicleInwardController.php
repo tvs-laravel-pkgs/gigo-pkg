@@ -1702,6 +1702,245 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	//VEHICLE PHOTOS
+	public function getVehiclePhotosFormData(Request $r) {
+		try {
+
+			$job_order = JobOrder::
+				with([
+				'vehicle',
+				'vehicle.model',
+				'vehicle.status',
+				'frontSideAttachment',
+				'backSideAttachment',
+				'leftSideAttachment',
+				'rightSideAttachment',
+				'otherVehicleAttachment',
+			])
+				->select([
+					'job_orders.*',
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
+					DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+				])
+				->find($r->id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job order Not found!',
+					],
+				]);
+			}
+
+			return response()->json([
+				'success' => true,
+				'job_order' => $job_order,
+				'attachement_path' => url('storage/app/public/gigo/job_order/attachments/'),
+			]);
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+
+	//DMS CHECKLIST SAVE
+	public function saveVehiclePhotos(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
+
+				'warranty_expiry_attachment' => [
+					// "required_if:warrany_status,==,1",
+					'mimes:jpeg,jpg,png',
+				],
+
+				'membership_attachment.*' => [
+					'nullable',
+					'mimes:jpeg,jpg,png',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+			$job_order = JobOrder::find($request->job_order_id);
+
+			if (!$job_order) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job order Not found!',
+					],
+				]);
+			}
+
+			//CREATE DIRECTORY TO STORAGE PATH
+			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
+			Storage::makeDirectory($attachment_path, 0777);
+
+			//SAVE FRONT SIDE IMAGE
+			if (!empty($request->front_side_image)) {
+				$remove_previous_attachment = Attachment::where([
+					'entity_id' => $request->job_order_id,
+					'attachment_of_id' => 227,
+					'attachment_type_id' => 10091,
+				])->forceDelete();
+
+				$image = $request->front_side_image;
+				$time_stamp = date('Y_m_d_h_i_s');
+				$extension = $image->getClientOriginalExtension();
+				$name = $job_order->id . '_' . $time_stamp . '_front_side_image.' . $extension;
+				$image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+				//SAVE ATTACHMENT
+				$attachment = new Attachment;
+				$attachment->attachment_of_id = 227; //JOB ORDER
+				$attachment->attachment_type_id = 10091; //Front Side
+				$attachment->entity_id = $request->job_order_id;
+				$attachment->name = $name;
+				$attachment->created_by = Auth()->user()->id;
+				$attachment->created_at = Carbon::now();
+				$attachment->save();
+
+			}
+
+			//SAVE BACK SIDE IMAGE
+			if (!empty($request->back_side_image)) {
+				$remove_previous_attachment = Attachment::where([
+					'entity_id' => $request->job_order_id,
+					'attachment_of_id' => 227,
+					'attachment_type_id' => 10092,
+				])->forceDelete();
+
+				$image = $request->back_side_image;
+				$time_stamp = date('Y_m_d_h_i_s');
+				$extension = $image->getClientOriginalExtension();
+				$name = $job_order->id . '_' . $time_stamp . '_back_side_image.' . $extension;
+				$image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+				//SAVE ATTACHMENT
+				$attachment = new Attachment;
+				$attachment->attachment_of_id = 227; //JOB ORDER
+				$attachment->attachment_type_id = 10092; //Back Side
+				$attachment->entity_id = $request->job_order_id;
+				$attachment->name = $name;
+				$attachment->created_by = Auth()->user()->id;
+				$attachment->created_at = Carbon::now();
+				$attachment->save();
+			}
+
+			//SAVE LEFT SIDE IMAGE
+			if (!empty($request->left_side_image)) {
+				$remove_previous_attachment = Attachment::where([
+					'entity_id' => $request->job_order_id,
+					'attachment_of_id' => 227,
+					'attachment_type_id' => 10093,
+				])->forceDelete();
+
+				$image = $request->left_side_image;
+				$time_stamp = date('Y_m_d_h_i_s');
+				$extension = $image->getClientOriginalExtension();
+				$name = $job_order->id . '_' . $time_stamp . '_left_side_image.' . $extension;
+				$image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+				//SAVE ATTACHMENT
+				$attachment = new Attachment;
+				$attachment->attachment_of_id = 227; //JOB ORDER
+				$attachment->attachment_type_id = 10093; //Left Side
+				$attachment->entity_id = $request->job_order_id;
+				$attachment->name = $name;
+				$attachment->created_by = Auth()->user()->id;
+				$attachment->created_at = Carbon::now();
+				$attachment->save();
+			}
+
+			//SAVE RIGHT SIDE IMAGE
+			if (!empty($request->right_side_image)) {
+				$remove_previous_attachment = Attachment::where([
+					'entity_id' => $request->job_order_id,
+					'attachment_of_id' => 227,
+					'attachment_type_id' => 10094,
+				])->forceDelete();
+
+				$image = $request->right_side_image;
+				$time_stamp = date('Y_m_d_h_i_s');
+				$extension = $image->getClientOriginalExtension();
+				$name = $job_order->id . '_' . $time_stamp . '_right_side_image.' . $extension;
+				$image->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+
+				//SAVE ATTACHMENT
+				$attachment = new Attachment;
+				$attachment->attachment_of_id = 227; //JOB ORDER
+				$attachment->attachment_type_id = 10094; //Right Side
+				$attachment->entity_id = $request->job_order_id;
+				$attachment->name = $name;
+				$attachment->created_by = Auth()->user()->id;
+				$attachment->created_at = Carbon::now();
+				$attachment->save();
+			}
+
+			//MULTIPLE ATTACHMENT REMOVAL
+			$attachment_removal_ids = json_decode($request->attachment_removal_ids);
+			if (!empty($attachment_removal_ids)) {
+				Attachment::whereIn('id', $attachment_removal_ids)->forceDelete();
+			}
+
+			if (!empty($request->other_vehicle_attachments)) {
+				foreach ($request->other_vehicle_attachments as $key => $other_vehicle_attachment) {
+					$value = rand(1, 100);
+					$image = $other_vehicle_attachment;
+
+					$file_name_with_extension = $image->getClientOriginalName();
+					$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+					$extension = $image->getClientOriginalExtension();
+					$time_stamp = date('Y_m_d_h_i_s');
+					$name = $job_order->id . '_' . $time_stamp . '_' . rand(10, 1000) . '_other_vehicle_image.' . $extension;
+
+					$other_vehicle_attachment->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+					$attachement = new Attachment;
+					$attachement->attachment_of_id = 227; //Job order
+					$attachement->attachment_type_id = 10095; //Other Vehicle Attachment
+					$attachement->entity_id = $job_order->id;
+					$attachement->name = $name;
+					$attachement->save();
+				}
+			}
+
+			DB::commit();
+			return response()->json([
+				'success' => true,
+				'message' => 'Vehicle Images saved successfully',
+			]);
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'message' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+
 	//JOB ORDER
 	public function getOrderFormData(Request $r) {
 		try {
@@ -3957,7 +4196,7 @@ class VehicleInwardController extends Controller {
 				$attachment->attachment_type_id = 10090; //VOC Recording
 				$attachment->entity_id = $request->job_order_id;
 				$attachment->name = $name;
-				$attachment->created_by = auth()->user()->id;
+				$attachment->created_by = Auth()->user()->id;
 				$attachment->created_at = Carbon::now();
 				$attachment->save();
 			}
@@ -5371,7 +5610,7 @@ class VehicleInwardController extends Controller {
 					$attachment->attachment_type_id = 254; //CUSTOMER SIGN PHOTO
 					$attachment->entity_id = $request->job_order_id;
 					$attachment->name = $filename;
-					$attachment->created_by = auth()->user()->id;
+					$attachment->created_by = Auth()->user()->id;
 					$attachment->created_at = Carbon::now();
 					$attachment->save();
 				}
@@ -5396,7 +5635,7 @@ class VehicleInwardController extends Controller {
 					$attachment->attachment_type_id = 253; //CUSTOMER E SIGN
 					$attachment->entity_id = $request->job_order_id;
 					$attachment->name = $filename;
-					$attachment->created_by = auth()->user()->id;
+					$attachment->created_by = Auth()->user()->id;
 					$attachment->created_at = Carbon::now();
 					$attachment->save();
 				}
