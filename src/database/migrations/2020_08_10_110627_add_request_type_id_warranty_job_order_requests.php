@@ -23,7 +23,9 @@ class AddRequestTypeIdWarrantyJobOrderRequests extends Migration {
 	 * @return void
 	 */
 	public function down() {
-		$table->dropForeign('warranty_job_order_requests_request_type_id_foreign');
-		$table->dropColumn('request_type_id');
+		Schema::table('warranty_job_order_requests', function (Blueprint $table) {
+			$table->dropForeign('warranty_job_order_requests_request_type_id_foreign');
+			$table->dropColumn('request_type_id');
+		});
 	}
 }

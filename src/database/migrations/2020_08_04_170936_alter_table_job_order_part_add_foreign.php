@@ -12,6 +12,7 @@ class AlterTableJobOrderPartAddForeign extends Migration {
 	 */
 	public function up() {
 		Schema::table('job_order_parts', function (Blueprint $table) {
+			$table->unsignedInteger('estimate_order_id')->nullable()->default(null)->change();
 			$table->foreign('estimate_order_id')->references('id')->on('job_order_estimates')->onDelete('SET NULL')->onUpdate('cascade');
 		});
 	}
