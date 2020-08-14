@@ -395,6 +395,12 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//Resend OTP for Material Gate Pass
 		Route::get('material-gate-pass/gate-out/otp-resend/{id}', 'MaterialGatePassController@sendOtpToCustomer');
 
+		//Road Test Gate Pass
+		Route::post('road-test-gate-pass/get', 'RoadTestGatePassController@getRoadTestGatePass');
+		Route::post('road-test-gate-pass/view/get-data', 'RoadTestGatePassController@getRoadTestGatePassViewData');
+		Route::post('road-test-gate-pass/gate-in-out/save', 'RoadTestGatePassController@saveRoadTestGateInAndOut');
+		Route::post('road-test-gate-pass/gate-out/confirm', 'RoadTestGatePassController@roadTestGateOutConfirm');
+
 		//VIEW BILL DETAILS
 		Route::post('job-card/bill-detail/view', 'JobCardController@viewBillDetails');
 		Route::post('job-card/bill-update/get-form-data', 'JobCardController@getBillDetailFormData');

@@ -71,6 +71,12 @@
     var material_gate_pass_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/card-list.html')}}";
     var material_gate_pass_form_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/form.html')}}";
     var material_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/material-gate-pass/view.html')}}";
+
+    //Road Test Gate pass
+    var road_test_gate_pass_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test-gate-pass/list.html')}}";
+    var road_test_gate_pass_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test-gate-pass/card-list.html')}}";
+    var road_test_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test-gate-pass/view.html')}}";
+
     //Kanban App
      var kanban_app_dashboard_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/dashboard.html')}}";
      var kanban_app_attendance_sacn_qr_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/kanban-app/attendance-qr.html')}}";
@@ -350,6 +356,12 @@
 </script>
 <!-- <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/estimation-type/controller.js')}}'></script> -->
 
+<script type='text/javascript'>
+    //Road test gate pass
+    var road_test_gate_pass_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test-gate-pass/list.html')}}";
+    var road_test_gate_pass_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test-gate-pass/card-list.html')}}";
+    var road_test_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test-gate-pass/view.html')}}";
+</script>
 
 <script type='text/javascript'>
 

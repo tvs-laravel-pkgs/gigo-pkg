@@ -84,7 +84,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Gate In Date</label>
-                                <div class="input-group date" data-provide="datepicker">
+                                <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
                                     <input type="text" class="form-control" placeholder="Select Gate In Date" ng-model="$ctrl.gate_in_date" id="gate_in_date" />
                                     <div class="input-group-addon">
                                         <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
@@ -125,7 +125,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Customer</label>
-                                <md-autocomplete md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer"  md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
+                                <md-autocomplete md-items="option in $ctrl.searchCustomer($ctrl.customerSearchText)" md-selected-item="$ctrl.customer" md-selected-item-change="selectedCustomer($ctrl.customer.id)" md-search-text="$ctrl.customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.name}}

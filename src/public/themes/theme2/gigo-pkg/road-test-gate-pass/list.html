@@ -3,7 +3,7 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
-                    <h1 class="title type-2">Vehicle Gate Passes<span class="badge badge-secondary" id="table_infos"></span></h1>
+                    <h1 class="title type-2">Road Test Gate Passes<span class="badge badge-secondary" id="table_infos"></span></h1>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
@@ -15,13 +15,13 @@
                 <div class="page-header-content search-block">
                     <div class="search_filter">
                         <label>
-                            <input type="search" ng-keyup="searchKey()" ng-model="$ctrl.search_key" id="search_vehicle_gate_pass" class="form-control" placeholder="Search" autofocus />
+                            <input type="search" ng-keyup="searchKey()" ng-model="$ctrl.search_key" id="search_material_gate_pass" class="form-control" placeholder="Search" autofocus />
                             <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
                         </label>
                     </div><!-- Search Filter -->
                 </div><!-- Page Header Content -->
                 <div class="page-header-content button-block">
-                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#vehicle-gate-pass-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#road-test-gate-pass-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
@@ -50,20 +50,19 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table" id="vehicle-gate-pass-list" style="width: 100% !important;">
+                            <table class="table" id="road_test_gate_pass_list" style="width: 100% !important;">
                                 <thead>
                                     <tr>
-                                        <th class="action width-100">Actions</th>
+                                        <th class="action width-100">Action</th>
                                         <th>Date & Time</th>
-                                        <th>Vehicle GP No.</th>
-                                        <th>Registration No</th>
-                                        <th>Driver Name</th>
-                                        <th>Driver Mobile</th>
-                                        <th>Veh. Model</th>
-                                        <th>Job Card No.</th>
+                                        <th>Gate Pass No</th>
+                                        <th>Job Order No</th>
+                                        <th>Registration Number</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
+                                <tbody>
+                                </tbody>
                             </table>
                         </div><!-- Column -->
                     </div><!-- Row -->
@@ -73,7 +72,7 @@
     </div><!-- List & Card Tab Wrap -->
 </div><!-- Content Wrap -->
 <!-- Modal -->
-<div class="modal fade filter" id="vehicle-gate-pass-filter-modal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade filter" id="road-test-gate-pass-filter-modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog filter-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -102,44 +101,10 @@
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Registration Number</label>
-                                <input type="text" class="form-control" id="registration_number" name="registration_number" placeholder="Enter Registration Number" autocomplete="off" ng-model="$ctrl.registration_number">
+                                <label>Job Order Number</label>
+                                <input type="text" class="form-control" id="job_order_number" name="job_order_number" placeholder="Enter Job Order No" autocomplete="off" ng-model="$ctrl.job_order_number">
                             </div><!-- Field -->
                         </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Driver Name</label>
-                                <input type="text" class="form-control" id="driver_name" name="driver_name" placeholder="Enter Driver Name" autocomplete="off" ng-model="$ctrl.driver_name">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Driver Mobile Number</label>
-                                <input type="text" class="form-control" id="driver_mobile_number" name="driver_mobile_number" placeholder="Enter Driver Mobile Number" autocomplete="off" ng-model="$ctrl.driver_mobile_number" minlength="10" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Job Card Number</label>
-                                <input type="text" class="form-control" id="job_card_number" name="job_card_number" placeholder="Enter Job Card No" autocomplete="off" ng-model="$ctrl.job_card_number">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Vehicle Model</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
-                                    <md-item-template>
-                                        <span>
-                                            {{option.model_name}}
-                                        </span>
-                                    </md-item-template>
-                                    <md-not-found>
-                                        No Vehicle Model matching "{{$ctrl.vehicleModelSearchText}}" were found.
-                                    </md-not-found>
-                                </md-autocomplete>
-                                <input type="hidden" id="model_id" name="model_id" value="">
-                            </div>
-                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Status</label>
@@ -160,7 +125,9 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_pass_created_date='';$ctrl.number='';$ctrl.registration_number='';$ctrl.driver_name='';$ctrl.driver_mobile_number='';$ctrl.vehicleModelSearchText='';$ctrl.job_card_number='';$ctrl.status_selected='';">Reset Filter</button>
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_pass_created_date='';$ctrl.number='';$ctrl.job_card_number='';$ctrl.work_order_no='';$ctrl.vendor_name='';$ctrl.vendor_code='';$ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                            Reset Filter
+                        </button>
                     </div><!-- Column -->
                     <div class="col-md-6 text-right">
                         <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">Apply</button>
@@ -171,20 +138,60 @@
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
 <!-- Submit Alert Modal -->
-<div class="modal modal-success alert-modal fade" id="confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal modal-success alert-modal fade" id="gate_in_confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-body text-center">
                 <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
-                <h6 class="title"><b>Gate Out Success</b></h6>
-                <p class="info data">Vehicle successfully gated Out</p>
-                <p class="info">Gate Pass No : <span id="gate_pass"></span></p>
-                <p class="info">Reg No : <span id="vehicle_registration_number"></p>
+                <h6 class="title"><b>Material Gate In Success</b></h6>
+                <p class="info data">Material successfully gated In</p>
+                <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
                 <div class="mt-30 mb-30">
-                    <a href="javascript:;" class="btn btn-success btn-square btn-block" ng-click="reloadPage()" data-dismiss="modal"><b>Done</b></a>
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></a>
+                    <!--  <button type="button" class="btn btn-success btn-square btn-block" ng-click="reloadPage()" data-dismiss="modal"><b>Done</b></button> -->
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->
 <!-- Modal -->
+<!-- Submit Alert Modal -->
+<div class="modal modal-success alert-modal fade" id="gate_out_confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
+                <h6 class="title"><b>Material Gate Out Success</b></h6>
+                <p class="info data">Material successfully gated Out</p>
+                <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
+                <div class="mt-30 mb-30">
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></a>
+                    <!-- <button type="button" class="btn btn-success btn-square btn-block" ng-click="reloadPage()" data-dismiss="modal"><b>Done</b></button> -->
+                </div><!-- Button -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
+<!-- Modal -->
+<div class="modal modal-otp alert-modal fade" id="otp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="material_gate_out_confirm">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <h6 class="title">ENTER OTP</h6>
+                    <p class="info">Received in Floor Supervisor Mobile +91 <span class="customer_mobile_no"></span></p>
+                    <div class="form-group">
+                        <input type="text" autofocus name="otp_no" id="otp_no" class="form-control text-center" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter OTP" autocomplete="off" />
+                        <input type="hidden" name="gate_pass_id" id="gate_pass_id" value="" />
+                    </div><!-- Feild -->
+                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm">SUBMIT</button>
+                    <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
+                </div><!-- Modal Body -->
+            </form>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
