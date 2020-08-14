@@ -1147,7 +1147,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			if ($part->partStock) {
-				$available_qty = $part->partStock->stock;
+				$available_qty = $part->partStock ? $part->partStock->stock : '0';
 			}
 
 			if ($available_qty > 0) {
@@ -2290,7 +2290,7 @@ class VehicleInwardController extends Controller {
 
 								$part_order->qty = $pvalue->pivot->quantity;
 								$part_order->split_order_type_id = $pvalue->pivot->split_order_type_id;
-								$part_order->rate = $part->partStock->mrp;
+								$part_order->rate = $part->partStock ? $part->partStock->mrp : '0';
 								$part_order->amount = $pvalue->pivot->amount;
 								$part_order->is_free_service = $value->is_free;
 								$part_order->status_id = 8200; //Customer Approval Pending
@@ -2500,15 +2500,16 @@ class VehicleInwardController extends Controller {
 				$job_order_part->estimate_order_id = $estimate_order_id;
 			}
 
+			$part_mrp = $part->partStock ? $part->partStock->mrp : 0;
 			$job_order_part->job_order_id = $request->job_order_id;
 			$job_order_part->part_id = $request->part_id;
 			$job_order_part->is_customer_approved = 0;
-			$job_order_part->rate = $part->partStock->mrp;
+			$job_order_part->rate = $part_mrp;
 			$job_order_part->is_free_service = 0;
 			$job_order_part->qty = $request_qty;
 			$job_order_part->is_oem_recommended = $is_oem_recommended;
 			$job_order_part->split_order_type_id = $request->split_order_type_id;
-			$job_order_part->amount = $request_qty * $part->partStock->mrp;
+			$job_order_part->amount = $request_qty * $part_mrp;
 			$job_order_part->status_id = 8200; //Customer Approval Pending
 
 			$job_order_part->save();
@@ -5525,7 +5526,9 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$job_order = JobOrder::find($request->job_order_id);
+			$job_order = JobOrder::with([
+				'vehicle',
+			])->find($request->job_order_id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -5581,7 +5584,7 @@ class VehicleInwardController extends Controller {
 
 			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $customer_detail->registration_number;
+			$message = 'Dear Customer,Kindly click below link to pay for TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $job_order->vehicle->registration_number;
 
 			$msg = sendSMSNotification($mobile_number, $message);
 

@@ -1969,9 +1969,9 @@ app.component('jobCardPayableLabourPartsForm', {
             PartSvc.read(part.id)
                 .then(function(response) {
                     console.log(response);
-                    $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock.mrp;
-                    $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock.cost_price;
-                    $scope.available_quantity = response.data.part.part_stock.stock;
+                    $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
+                    $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
+                    $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.schedule_maintainance_part.part.qty = $qty;
                     $scope.calculatePartAmount();
                 });
