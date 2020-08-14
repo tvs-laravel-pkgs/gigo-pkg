@@ -3058,6 +3058,189 @@ app.component('inwardVehicleCustomerDetail', {
         }
     }
 });
+
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+
+app.component('inwardVehiclePhotos', {
+    templateUrl: inward_vehicle_photos_template_url,
+    controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element) {
+        //for md-select search
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
+        var self = this;
+        self.hasPermission = HelperService.hasPermission;
+
+        if (!self.hasPermission('inward-job-card-tab-vehicle-details-edit')) {
+            window.location = "#!/inward-vehicle/table-list";
+        }
+
+        self.angular_routes = angular_routes;
+
+        HelperService.isLoggedIn();
+        self.user = $scope.user = HelperService.getLoggedUser();
+
+        $scope.job_order_id = $routeParams.job_order_id;
+
+        /* Profile Upload */
+        setTimeout(function() {
+            profileImgUpload();
+        }, 1000);
+
+        setTimeout(function() {
+            $('.image_uploadify').imageuploadify();
+        }, 1000);
+
+        //FETCH DATA
+        $scope.fetchData = function() {
+            $.ajax({
+                    url: base_url + '/api/vehicle-inward/vehicle/photos/get-form-data',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_order_id
+                    },
+                })
+                .done(function(res) {
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    $scope.job_order = res.job_order;
+
+                    console.log($scope.job_order);
+                    $scope.$apply();
+                })
+                .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        $scope.fetchData();
+
+        //Save Form Data 
+        $scope.saveVehicleAttachments = function(id) {
+            var form_id = '#vehicle_attachment_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'front_side_image': {
+                        required: function(element) {
+                            if (!$scope.job_order.front_side_attachment) {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
+                    'back_side_image': {
+                        required: function(element) {
+                            if (!$scope.job_order.back_side_attachment) {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
+                    'left_side_image': {
+                        required: function(element) {
+                            if (!$scope.job_order.left_side_attachment) {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
+                    'right_side_image': {
+                        required: function(element) {
+                            if (!$scope.job_order.right_side_attachment) {
+                                return true;
+                            }
+                            return false;
+                        },
+                    },
+                },
+                errorPlacement: function(error, element) {
+                    if (element.attr('name') == 'front_side_image') {
+                        error.appendTo($('.attachment_error'));
+                    } else if (element.attr('name') == 'back_side_image') {
+                        error.appendTo($('.attachment_error'));
+                    } else if (element.attr('name') == 'left_side_image') {
+                        error.appendTo($('.attachment_error'));
+                    } else if (element.attr('name') == 'right_side_image') {
+                        error.appendTo($('.attachment_error'));
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all fields');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $rootScope.loading = true;
+                    $scope.button_action(id, 1);
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/vehicle/photos/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            $scope.button_action(id, 2);
+                            if (!res.success) {
+                                $rootScope.loading = false;
+                                showErrorNoty(res);
+                                return;
+                            }
+                            if (id == 1) {
+                                custom_noty('success', res.message);
+                                $location.path('/inward-vehicle/table-list');
+                                $scope.$apply();
+                            } else {
+                                custom_noty('success', res.message);
+                                $location.path('/inward-vehicle/order-detail/form/' + $scope.job_order_id);
+                                $scope.$apply();
+                            }
+                        })
+                        .fail(function(xhr) {
+                            $rootScope.loading = false;
+                            $scope.button_action(id, 2);
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        self.attachment_removal_id = [];
+        $scope.remove_attachment = function(attachment_id, index) {
+            console.log(attachment_id, index);
+            if (attachment_id) {
+                self.attachment_removal_id.push(attachment_id);
+                $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
+            }
+            $scope.job_order.other_vehicle_attachment.splice(index, 1);
+        }
+
+        $scope.button_action = function(id, type) {
+            if (type == 1) {
+                if (id == 1) {
+                    $('.submit').button('loading');
+                    $('.btn-nxt').attr("disabled", "disabled");
+                } else {
+                    $('.btn-nxt').button('loading');
+                    $('.submit').attr("disabled", "disabled");
+                }
+                $('.btn-prev').bind('click', false);
+            } else {
+                $('.submit').button('reset');
+                $('.btn-nxt').button('reset');
+                $('.btn-prev').unbind('click', false);
+                $(".btn-nxt").removeAttr("disabled");
+                $(".submit").removeAttr("disabled");
+            }
+        }
+    }
+});
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
 
@@ -4656,6 +4839,9 @@ app.component('inwardVehicleRoadTestDetailForm', {
                         required: true,
                     },
                     'road_test_performed_by_id': {
+                        required: true,
+                    },
+                    'road_test_trade_plate_number_id': {
                         required: true,
                     },
                     // 'road_test_report': {

@@ -35,7 +35,7 @@
                                         <h5 class="color-primary mb-10"><b>Road Test</b></h5>
                                         <div class="view-details mb-no">
                                             <ul class="view-row pb-none">
-                                                <li class="view-col-4">
+                                                <li class="view-col-3">
                                                     <span class="view-col-label">
                                                         Road Test
                                                     </span>
@@ -44,7 +44,7 @@
                                                             {{job_card.job_order.is_road_test_required ==1 ? "Registered" : "UnRegistered"}}
                                                         </b></span>
                                                 </li>
-                                                <li class="view-col-4" ng-show="job_card.job_order.is_road_test_required==1">
+                                                <li class="view-col-3" ng-if="job_card.job_order.is_road_test_required==1">
                                                     <span class="view-col-label">
                                                         Road Test by
                                                     </span>
@@ -54,7 +54,27 @@
                                                         </b>
                                                     </span>
                                                 </li>
-                                                <li class="view-col-4" ng-show="job_card.job_order.is_road_test_required==1 && job_card.job_order.road_test_done_by.name=='Employee'">
+                                                <li class="view-col-3" ng-if="job_card.job_order.is_road_test_required==1 && job_card.job_order.road_test_done_by_id!=8101">
+                                                    <span class="view-col-label">
+                                                        Driver Name
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_card.job_order.driver_name}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3" ng-if="job_card.job_order.is_road_test_required==1 && job_card.job_order.road_test_done_by_id==8101">
+                                                    <span class="view-col-label">
+                                                        Trade Plate Number
+                                                    </span>
+                                                    <span class="view-col-value">
+                                                        <b>
+                                                            {{job_card.job_order.trade_plate_number.trade_plate_number}}
+                                                        </b>
+                                                    </span>
+                                                </li>
+                                                <li class="view-col-3" ng-if="job_card.job_order.is_road_test_required==1 && job_card.job_order.road_test_done_by_id==8101">
                                                     <span class="view-col-label">
                                                         Driver Name
                                                     </span>

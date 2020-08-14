@@ -607,6 +607,10 @@ app.config(['$routeProvider', function($routeProvider) {
         template: '<inward-vehicle-customer-detail></inward-vehicle-customer-detail>',
         title: 'Inward Vehicle - Customer Detail',
     }).
+    when('/inward-vehicle/vehicle/photos/:job_order_id', {
+        template: '<inward-vehicle-photos></inward-vehicle-photos>',
+        title: 'Inward Vehicle - Vehicle Photos',
+    }).
     when('/inward-vehicle/order-detail/form/:job_order_id', {
         template: '<inward-vehicle-order-detail-form></inward-vehicle-order-detail-form>',
         title: 'Inward Vehicle - Order Detail Form',

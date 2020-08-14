@@ -328,7 +328,7 @@ class GateInController extends Controller {
 			$job_order->number = rand();
 			$job_order->fill($request->all());
 			$job_order->vehicle_id = $vehicle->id;
-			$job_order->trade_plate_number_id = $trade_plate_number ? $trade_plate_number->id : NULL;
+			$job_order->gatein_trade_plate_number_id = $trade_plate_number ? $trade_plate_number->id : NULL;
 			$job_order->outlet_id = Auth::user()->employee->outlet_id;
 			$job_order->status_id = 8460; //Ready for Inward
 			$job_order->save();

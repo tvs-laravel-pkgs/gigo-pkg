@@ -42,7 +42,7 @@
                                             </h5>
                                             <hr class="hr-15">
                                             <div class="row">
-                                                <div class="col-md-4" id="road_test_required">
+                                                <div class="col-md-3" id="road_test_required">
                                                     <div class="form-group">
                                                         <label>
                                                             Road Test Required ?
@@ -60,7 +60,7 @@
                                                         <div id="errorRoadTestRequired"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-4" ng-if="job_order.is_road_test_required == 1">
+                                                <div class="col-md-3" ng-if="job_order.is_road_test_required == 1">
                                                     <div class="form-group">
                                                         <label>
                                                             Road Test by
@@ -78,7 +78,27 @@
                                                         <div id="errorRoadTestDone"></div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-4" id="road_test_driver" ng-if="job_order.is_road_test_required == 1 && job_order.road_test_done_by_id == 8101">
+                                                <div class="col-md-3" id="road_test_driver" ng-if="job_order.is_road_test_required == 1 && job_order.road_test_done_by_id == 8101">
+                                                    <!-- <div class="col-md-4"> -->
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Trade Plate Number
+                                                            <sup class="mandatory">*</sup>
+                                                        </label>
+                                                        <md-select ng-model="job_order.road_test_trade_plate_number_id" placeholder="Select Trade Plate Number" data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchNumber" type="search" placeholder="Search for a Trade Plate Number.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="list.id" ng-repeat="list in extras.trade_plate_number_list | filter:searchNumber">
+                                                                    {{list.trade_plate_number}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="road_test_trade_plate_number_id" value="{{job_order.road_test_trade_plate_number_id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-3" id="road_test_driver" ng-if="job_order.is_road_test_required == 1 && job_order.road_test_done_by_id == 8101">
                                                     <!-- <div class="col-md-4"> -->
                                                     <div class="form-group">
                                                         <label>

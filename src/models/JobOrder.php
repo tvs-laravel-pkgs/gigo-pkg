@@ -278,6 +278,10 @@ class JobOrder extends BaseModel {
 		return $this->hasOne('App\JobCard', 'job_order_id');
 	}
 
+	public function tradePlateNumber() {
+		return $this->belongsTo('App\TradePlateNumber', 'road_test_trade_plate_number_id');
+	}
+
 	public function warrentyPolicyAttachment() {
 		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 256);
 	}
@@ -318,6 +322,26 @@ class JobOrder extends BaseModel {
 
 	public function VOCAttachment() {
 		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10090);
+	}
+
+	public function frontSideAttachment() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10091);
+	}
+
+	public function backSideAttachment() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10092);
+	}
+
+	public function leftSideAttachment() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10093);
+	}
+
+	public function rightSideAttachment() {
+		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10094);
+	}
+
+	public function otherVehicleAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10095);
 	}
 
 	// Query Scopes --------------------------------------------------------------
