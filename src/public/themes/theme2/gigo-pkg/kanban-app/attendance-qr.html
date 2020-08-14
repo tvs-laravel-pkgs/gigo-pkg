@@ -94,6 +94,7 @@
                                         <div class="white-box-wrap">
                                             <ul class="shift-time-list">
                                                 <li class="shift-time-list-item">Shift Start Time - {{punch_user.shift_start_time}}</li>
+                                                <li class="shift-time-list-item">Shift End Time - {{punch_user.shift_end_time}}</li>
                                             </ul>
                                             <h4 class="date text-center">{{punch_user.punch_data.date}}</h4>
                                             <span class="time text-center">Check In Time- {{punch_user.punch_data.in_time}}</span>
@@ -149,6 +150,7 @@
                                             <ul class="shift-time-list">
                                                 <li class="shift-time-list-item">Check In Time - {{punch_user.punch_data.in_time}}</li>
                                                 <li class="shift-time-list-item">Total Hours Worked : {{punch_user.punch_data.duration | date:'shortTime'}}</li>
+                                                <li class="shift-time-list-item">Shift End Time - {{punch_user.shift_start_time}}</li>
                                                 <li class="shift-time-list-item">Shift End Time - {{punch_user.shift_end_time}}</li>
                                             </ul>
                                             <h4 class="date text-center">{{punch_user.punch_data.date}}</h4>
