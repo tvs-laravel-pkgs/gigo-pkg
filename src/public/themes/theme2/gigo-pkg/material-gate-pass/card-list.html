@@ -1,5 +1,5 @@
 <div class="content-wrap cndn-wrap">
- <div class="page-header">
+    <div class="page-header">
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
@@ -124,7 +124,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Gate Pass Date</label>
-                                <div class="input-group date" data-provide="datepicker">
+                                <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
                                     <input type="text" class="form-control" placeholder="Select Gate Pass Date" ng-model="$ctrl.gate_pass_created_date" id="gate_pass_created_date" />
                                     <div class="input-group-addon">
                                         <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
@@ -183,8 +183,8 @@
                 <div class="row">
                     <div class="col-md-6">
                         <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_pass_created_date='';$ctrl.number='';$ctrl.job_card_number='';$ctrl.work_order_no='';$ctrl.vendor_name='';$ctrl.vendor_code='';$ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
-                        Reset Filter
-                    </button>
+                            Reset Filter
+                        </button>
                     </div><!-- Column -->
                     <div class="col-md-6 text-right">
                         <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">Apply</button>

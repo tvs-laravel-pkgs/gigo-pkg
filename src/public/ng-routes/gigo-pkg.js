@@ -1176,3 +1176,20 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Edit Trade Plate Number',
     });
 }]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //Road Test Gate Pass
+    when('/road-test-gate-pass/table-list', {
+        template: '<road-test-gate-pass-table-list></road-test-gate-pass-table-list>',
+        title: 'Road Test Gate Pass - Table List',
+    }).
+    when('/road-test-gate-pass/card-list', {
+        template: '<road-test-gate-pass-card-list></road-test-gate-pass-card-list>',
+        title: 'Road Test Gate Pass - Card List',
+    }).
+    when('/road-test-gate-pass/view/:id', {
+        template: '<road-test-gate-pass-view></road-test-gate-pass-view>',
+        title: 'View Road Test Gate Pass',
+    });
+}]);

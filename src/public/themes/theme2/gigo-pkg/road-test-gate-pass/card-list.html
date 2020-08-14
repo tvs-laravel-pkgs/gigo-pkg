@@ -4,9 +4,9 @@
             <div class="page-header-content-left">
                 <div class="page-header-content title-block">
                     <h1 class="title type-2">
-                        Vehicle Gate Passes
+                        Road Test Gate Passes
                         <span class="badge badge-secondary">
-                            {{vehicle_gate_passes.length}}
+                            {{road_test_gate_passes.length}}
                         </span>
                     </h1>
                 </div><!-- Page Header Content -->
@@ -26,7 +26,7 @@
                     </div><!-- Search Filter -->
                 </div><!-- Page Header Content -->
                 <div class="page-header-content button-block">
-                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#vehicle-gate-pass-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#road-test-gate-pass-card-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
             <div class="page-header-content-right">
@@ -55,7 +55,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <ul class="card-list">
-                            <li ng-repeat="(index,vehicle_gate_pass) in vehicle_gate_passes">
+                            <li ng-repeat="(index,vehicle_gate_pass) in road_test_gate_passes">
                                 <div class="card-box">
                                     <div class="card-box-body">
                                         <p class="card-top-info">Created on : {{vehicle_gate_pass.date_and_time}} </p>
@@ -63,12 +63,12 @@
                                             <div class="box-left">
                                                 <div class="box-color green">
                                                     <div class="box-color-title">{{vehicle_gate_pass.registration_number}}</div>
-                                                    <div class="box-color-subtitle">{{vehicle_gate_pass.model_name}}</div>
+                                                    <div class="box-color-subtitle">{{vehicle_gate_pass.model}}</div>
                                                 </div>
                                             </div><!-- Box Left -->
                                             <div class="box-right">
                                                 <div class="box-info">
-                                                    <div class="box-info-head">V Gate Pass No</div>
+                                                    <div class="box-info-head">Gate Pass No</div>
                                                     <div class="box-info-body">
                                                         <div class="box-info-body-title" style="font-size:11px;">{{vehicle_gate_pass.gate_pass_no}}</div>
                                                     </div>
@@ -76,12 +76,12 @@
                                             </div><!-- Box Right -->
                                         </div><!-- Box List -->
                                         <div class="card-box-content mb-8">
-                                            <img class="img-responsive" src="./public/theme/img/content/jc_profile.svg" alt="Image" />
-                                            <span class="card-box-content-value"><b>{{vehicle_gate_pass.driver_name}} | {{vehicle_gate_pass.driver_mobile_number}}</b></span>
+                                            <img class="img-responsive" src="./public/theme/img/content/jc_membership.svg" alt="Image" />
+                                            <span class="card-box-content-value"><b>{{vehicle_gate_pass.trade_plate_number}}</b></span>
                                         </div>
                                         <div class="card-box-content">
                                             <img class="img-responsive" src="./public/theme/img/content/jc_setup.svg" alt="Image" />
-                                            <span class="card-box-content-value">JC No : {{vehicle_gate_pass.job_card_number}}</span>
+                                            <span class="card-box-content-value">JO No : {{vehicle_gate_pass.job_order_number}}</span>
                                         </div>
                                     </div><!-- Card Box Body -->
                                     <div class="card-box-footer">
@@ -92,8 +92,7 @@
                                             </div>
                                         </div>
                                         <div class="card-box-footer-right">
-                                            <a href="#!/vehicle-gate-pass/view/{{vehicle_gate_pass.gate_log_id}}" class="btn btn-square btn-md btn-red">View</a>
-                                            <!-- <button class="btn btn-square btn-md btn-secondary-dark" ng-show="vehicle_gate_pass.status_id == 8340" ng-click=vehicleGateOut(vehicle_gate_pass.gate_log_id)>Gate Out</button> -->
+                                            <a href="#!/road-test-gate-pass/view/{{vehicle_gate_pass.id}}" class="btn btn-square btn-md btn-red">View</a>
                                         </div>
                                     </div><!-- Card Box Footer -->
                                 </div><!-- Card Box -->
@@ -106,7 +105,7 @@
     </div><!-- Card Tab Content -->
 </div><!-- Content Wrap -->
 <!-- Modal -->
-<div class="modal fade filter" id="vehicle-gate-pass-filter-modal" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade filter" id="road-test-gate-pass-card-filter-modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog filter-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -135,44 +134,10 @@
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Registration Number</label>
-                                <input type="text" class="form-control" id="registration_number" name="registration_number" placeholder="Enter Registration Number" autocomplete="off" ng-model="$ctrl.registration_number">
+                                <label>Job Order Number</label>
+                                <input type="text" class="form-control" id="job_order_number" name="job_order_number" placeholder="Enter Job Order No" autocomplete="off" ng-model="$ctrl.job_order_number">
                             </div><!-- Field -->
                         </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Driver Name</label>
-                                <input type="text" class="form-control" id="driver_name" name="driver_name" placeholder="Enter Driver Name" autocomplete="off" ng-model="$ctrl.driver_name">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Driver Mobile Number</label>
-                                <input type="text" class="form-control" id="driver_mobile_number" name="driver_mobile_number" placeholder="Enter Driver Mobile Number" autocomplete="off" ng-model="$ctrl.driver_mobile_number" minlength="10" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Job Card Number</label>
-                                <input type="text" class="form-control" id="job_card_number" name="job_card_number" placeholder="Enter Job Card No" autocomplete="off" ng-model="$ctrl.job_card_number">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Vehicle Model</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
-                                    <md-item-template>
-                                        <span>
-                                            {{option.model_name}}
-                                        </span>
-                                    </md-item-template>
-                                    <md-not-found>
-                                        No Vehicle Model matching "{{$ctrl.vehicleModelSearchText}}" were found.
-                                    </md-not-found>
-                                </md-autocomplete>
-                                <input type="hidden" id="model_id" name="model_id" value="">
-                            </div>
-                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Status</label>
@@ -193,7 +158,9 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_pass_created_date='';$ctrl.number='';$ctrl.registration_number='';$ctrl.driver_name='';$ctrl.driver_mobile_number='';$ctrl.vehicleModelSearchText='';$ctrl.job_card_number='';$ctrl.status_selected='';">Reset Filter</button>
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_pass_created_date='';$ctrl.number='';$ctrl.job_card_number='';$ctrl.work_order_no='';$ctrl.vendor_name='';$ctrl.vendor_code='';$ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                            Reset Filter
+                        </button>
                     </div><!-- Column -->
                     <div class="col-md-6 text-right">
                         <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">Apply</button>
@@ -203,21 +170,3 @@
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
-<!-- Submit Alert Modal -->
-<div class="modal modal-success alert-modal fade" id="confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
-                <h6 class="title"><b>Gate Out Success</b></h6>
-                <p class="info data">Vehicle successfully gated Out</p>
-                <p class="info">Gate Pass No : <span id="gate_pass"></span></p>
-                <p class="info">Reg No : <span id="vehicle_registration_number"></p>
-                <div class="mt-30 mb-30">
-                    <a href="javascript:;" class="btn btn-success btn-square btn-block" ng-click="reloadPage()" data-dismiss="modal"><b>Done</b></a>
-                </div><!-- Button -->
-            </div><!-- Modal Body -->
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
-<!-- Modal -->

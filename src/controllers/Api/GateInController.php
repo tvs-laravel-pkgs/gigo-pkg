@@ -41,6 +41,7 @@ class GateInController extends Controller {
 					'default_text' => 'Select Reading type',
 				]),
 				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id = NULL, $params),
+				'trade_plate_number_list' => TradePlateNumber::get(),
 			];
 			return response()->json([
 				'success' => true,
@@ -68,6 +69,7 @@ class GateInController extends Controller {
 			//REGISTRATION NUMBER VALIDATION
 			$error = '';
 			if ($request->registration_number) {
+				$regis_number = $request->registration_number;
 				$registration_no_count = strlen($request->registration_number);
 				if ($registration_no_count < 8) {
 					return response()->json([
@@ -78,7 +80,6 @@ class GateInController extends Controller {
 						],
 					]);
 				} else {
-
 					$registration_number = explode('-', $request->registration_number);
 
 					if (count($registration_number) > 2) {
@@ -110,9 +111,21 @@ class GateInController extends Controller {
 						]);
 					}
 				}
+			} else {
+				$regis_number = '-';
 			}
 			//REMOVE - INBETWEEN REGISTRATION NUMBER
-			$request['registration_number'] = str_replace('-', '', $request->registration_number);
+			$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+
+			if (!$request->chassis_number && !$request->engine_number) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						"Please enter Chassis / Engine number!",
+					],
+				]);
+			}
 
 			$validator = Validator::make($request->all(), [
 				'vehicle_photo' => [
@@ -191,26 +204,6 @@ class GateInController extends Controller {
 				]);
 			}
 
-			$trade_plate_number = NULL;
-			// UNREGISTRED VEHICLE
-			if ($request->is_registered == 0) {
-				$trade_plate_number = TradePlateNumber::firstOrNew([
-					'company_id' => Auth::user()->company_id,
-					'outlet_id' => Auth::user()->employee->outlet_id,
-					'trade_plate_number' => $request->plate_number,
-				]);
-
-				if (!$trade_plate_number->exists) {
-					$trade_plate_number->created_by_id = Auth::user()->id;
-					$trade_plate_number->created_at = Carbon::now();
-				} else {
-					$trade_plate_number->updated_by_id = Auth::user()->id;
-					$trade_plate_number->updated_at = Carbon::now();
-				}
-
-				$trade_plate_number->save();
-			}
-
 			if ($request->search_type == 1 && $request->vehicle_id) {
 
 				//Check Validation
@@ -239,7 +232,7 @@ class GateInController extends Controller {
 					$customer_form_filled = 0;
 					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
 				}
-				$vehicle->registration_number = str_replace('-', '', $request->registration_number);
+				$vehicle->registration_number = $request->registration_number;
 				$vehicle->updated_by_id = Auth::user()->id;
 				$vehicle->save();
 			} else {
@@ -269,16 +262,18 @@ class GateInController extends Controller {
 					]);
 				}
 
+				// $request->registration_number = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+
 				if ($request->chassis_number) {
 					$vehicle = Vehicle::firstOrNew([
 						'company_id' => Auth::user()->company_id,
-						'registration_number' => str_replace('-', '', $request->registration_number),
+						'registration_number' => $request->registration_number,
 						'chassis_number' => $request->chassis_number,
 					]);
 				} else {
 					$vehicle = Vehicle::firstOrNew([
 						'company_id' => Auth::user()->company_id,
-						'registration_number' => str_replace('-', '', $request->registration_number),
+						'registration_number' => $request->registration_number,
 						'engine_number' => $request->engine_number,
 					]);
 				}
@@ -302,11 +297,12 @@ class GateInController extends Controller {
 					$vehicle->updated_by_id = Auth::user()->id;
 				}
 
+				// $request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+
 				$vehicle->fill($request->all());
 				$vehicle->save();
 
 				$request->vehicle_id = $vehicle->id;
-
 			}
 
 			//CHECK VEHICLE PREVIOUS JOBCARD STATUS
@@ -328,7 +324,7 @@ class GateInController extends Controller {
 			$job_order->number = rand();
 			$job_order->fill($request->all());
 			$job_order->vehicle_id = $vehicle->id;
-			$job_order->gatein_trade_plate_number_id = $trade_plate_number ? $trade_plate_number->id : NULL;
+			$job_order->gatein_trade_plate_number_id = $request->plate_number ? $request->plate_number : NULL;
 			$job_order->outlet_id = Auth::user()->employee->outlet_id;
 			$job_order->status_id = 8460; //Ready for Inward
 			$job_order->save();
@@ -522,19 +518,21 @@ class GateInController extends Controller {
 			DB::commit();
 
 			$gate_in_data['number'] = $gate_log->number;
-			$gate_in_data['registration_number'] = $request->registration_number;
+			$gate_in_data['registration_number'] = $regis_number;
 
-			$message = 'Dear Customer,Greetings! Your vehicle ' . $vehicle->registration_number . ' has arrived in TVS Service Center-' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A');
+			if ($regis_number != '-') {
+				$message = 'Dear Customer,Greetings! Your vehicle ' . $vehicle->registration_number . ' has arrived in TVS Service Center-' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A');
 
-			//Send SMS to Driver
-			if ($request->driver_mobile_number) {
-				$msg = sendSMSNotification($request->driver_mobile_number, $message);
-			}
+				//Send SMS to Driver
+				if ($request->driver_mobile_number) {
+					$msg = sendSMSNotification($request->driver_mobile_number, $message);
+				}
 
-			//Send SMS to Customer
-			if ($job_order->customer) {
-				if ($job_order->customer->mobile_no) {
-					$msg = sendSMSNotification($job_order->customer->mobile_no, $message);
+				//Send SMS to Customer
+				if ($job_order->customer) {
+					if ($job_order->customer->mobile_no) {
+						$msg = sendSMSNotification($job_order->customer->mobile_no, $message);
+					}
 				}
 			}
 

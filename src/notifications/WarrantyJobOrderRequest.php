@@ -42,7 +42,8 @@ class WarrantyJobOrderRequest extends Notification {
 			'al_warranty_manager' => $al_warranty_manager,
 			'wjor' => $this->wjor,
 		]))
-			->to($al_warranty_manager->email);
+			->to($al_warranty_manager->email)
+			->cc($this->wjor->cc_emails);
 	}
 
 	/**

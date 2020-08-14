@@ -6,8 +6,7 @@ use Abs\BasicPkg\Traits\CrudTrait;
 use App\Aggregate;
 use App\Http\Controllers\Controller;
 use App\SubAggregate;
-use App\User;
-use Auth;
+// use Auth;
 use Illuminate\Http\Request;
 
 class AggregateController extends Controller {
@@ -20,7 +19,8 @@ class AggregateController extends Controller {
 	}
 
 	public function getSubAggregates(Request $r) {
-		$sub_aggregates = SubAggregate::where('company_id', Auth::user()->company_id)->where('aggregate_id', $r->id)->get();
+		//where('company_id', Auth::user()->company_id)->
+		$sub_aggregates = SubAggregate::where('aggregate_id', $r->id)->get();
 		return response()->json(['success' => true, 'options' => $sub_aggregates]);
 
 	}

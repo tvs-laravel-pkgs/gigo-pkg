@@ -187,6 +187,7 @@ app.component('warrantyJobOrderRequestForm', {
                         }
                     }
                     $scope.customer = $scope.warranty_job_order_request.job_order.customer;
+                    $scope.warranty_job_order_request.request_type_id = 9180;
 
                     $scope.bfiConfig = {
                         theme: 'fas',
@@ -272,6 +273,9 @@ app.component('warrantyJobOrderRequestForm', {
             // console.log(vehicle);
             if (vehicle.vehicle_owners) {
                 $scope.warranty_job_order_request.job_order.customer = vehicle.vehicle_owners[0].customer;
+            }
+            if (vehicle.bharat_stage == null && vehicle.sold_date != null) {
+                $scope.soldDateChange(vehicle.sold_date);
             }
         }
 
@@ -413,7 +417,7 @@ app.component('warrantyJobOrderRequestForm', {
 
             if (index !== false) {
                 $scope.wjor_repair_order = $scope.warranty_job_order_request.wjor_repair_orders[index];
-                HelperService.calculateTaxAndTotal($scope.wjor_repair_order, $scope.isSameState(), true);
+                HelperService.calculateTaxAndTotal($scope.wjor_repair_order, $scope.isSameState());
             } else {
                 $scope.wjor_repair_order = {}
             }
@@ -440,7 +444,7 @@ app.component('warrantyJobOrderRequestForm', {
             $scope.wjor_repair_order.rate = $scope.wjor_repair_order.rate * parseFloat($scope.wjor_repair_order.repair_order.hours);
             // $scope.wjor_repair_order.rate = repair_order.claim_amount;
             $scope.wjor_repair_order.tax_code = repair_order.tax_code;
-            HelperService.calculateTaxAndTotal($scope.wjor_repair_order, $scope.isSameState(), true);
+            HelperService.calculateTaxAndTotal($scope.wjor_repair_order, $scope.isSameState());
 
             console.log($scope.wjor_repair_order);
         }
@@ -450,7 +454,7 @@ app.component('warrantyJobOrderRequestForm', {
                 custom_noty('error', 'Claim Amount should not exceed ' + wjor_repair_order.repair_order.maximum_claim_amount);
                 return false;
             } else {
-                HelperService.calculateTaxAndTotal(wjor_repair_order, $scope.isSameState(), true);
+                HelperService.calculateTaxAndTotal(wjor_repair_order, $scope.isSameState());
             }
         }
 

@@ -17,7 +17,9 @@ use App\WjorRepairOrder;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use File;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use PDF;
 use Storage;
 use Validator;
 
@@ -696,18 +698,24 @@ class WarrantyJobOrderRequest extends BaseModel {
 	}
 
 	public function generatePDF() {
-		// foreach ($this->photos as $photo) {
-		// 	dump(url('storage/app/wjor/' . $photo->name));
-		// }
+		/*foreach ($this->photos as $photo) {
+			dump(url('storage/app/wjor/' . $photo->name));
+		}*/
+		// File::delete(storage_path('app/public/wjor-pdfs/' . $this->number . '.pdf'));
 
-		// dd($this->photos);
-		// $pdf = PDF::loadView('pdf-gigo/wjor', [
-		// 	'wjor' => $this,
-		// 	'company' => $this->company,
-		// 	'outlet' => $this->jobOrder->outlet,
-		// 	'title' => 'Warranty Job Order Request',
-		// ]);
-		// return $pdf->save(storage_path('app/public/wjor-pdfs/' . $this->number . '.pdf'));
+		$pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
+			->loadView('pdf-gigo/wjor', [
+				'wjor' => $this,
+				'company' => $this->company,
+				'outlet' => $this->jobOrder->outlet,
+				'title' => 'Warranty Job Order Request',
+			]);
+		$path = storage_path('app/public/wjor-pdfs/');
+		if (!file_exists($path)) {
+			File::makeDirectory($path, $mode = 0777, true, true);
+		}
+
+		return $pdf->save(storage_path('app/public/wjor-pdfs/' . $this->number . '.pdf'));
 	}
 
 	public function loadBusiness($business_code) {

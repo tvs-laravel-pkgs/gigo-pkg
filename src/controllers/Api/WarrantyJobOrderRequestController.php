@@ -70,10 +70,18 @@ class WarrantyJobOrderRequestController extends Controller {
 			$list_data->where('job_orders.number', 'like', '%' . $request->job_card_no . '%');
 		}
 
-		if (Entrust::can('own-warranty-job-order-request')) {
-			$list_data->where('warranty_job_order_requests.created_by_id', Auth::id());
-		} else if (Entrust::can('own-outlet-warranty-job-order-request')) {
+		/*
+			if (Entrust::can('own-warranty-job-order-request')) {
+				$list_data->where('warranty_job_order_requests.created_by_id', Auth::id());
+			} else if (Entrust::can('own-outlet-warranty-job-order-request')) {
+				$list_data->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+			}
+		*/
+		if (Entrust::can('own-outlet-warranty-job-order-request')) {
 			$list_data->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+		} else if (Entrust::can('mapped-outlets-warranty-job-order-request')) {
+			$list_data->leftJoin('employee_outlet', 'employee_outlet.outlet_id', 'outlets.id')
+				->where('employee_outlet.employee_id', Auth::user()->employee->id);
 		}
 
 		if (Entrust::can('verify-only-warranty-job-order-request')) {
@@ -142,6 +150,7 @@ class WarrantyJobOrderRequestController extends Controller {
 	}
 
 	public function sendToApproval(Request $request) {
+		// dd($request->all());
 		try {
 			DB::beginTransaction();
 			$warranty_job_order_request = WarrantyJobOrderRequest::find($request->id);
@@ -163,7 +172,19 @@ class WarrantyJobOrderRequestController extends Controller {
 
 			//SENDING EMAIL TO BUSINESS'S WARRANTY MANAGER
 			$warranty_job_order_request->loadBusiness('ALSERV');
+
+			$cc_emails = [];
+			if ($warranty_job_order_request->jobOrder->outlet->al_serv_ppr_request_cc_emails) {
+				foreach ($warranty_job_order_request->jobOrder->outlet->al_serv_ppr_request_cc_emails as $key => $user) {
+					if ($user->email != null) {
+						$cc_emails[] = $user->email;
+					}
+				}
+			}
+			$warranty_job_order_request->cc_emails = $cc_emails;
+
 			$warranty_manager = User::find($warranty_job_order_request->jobOrder->outlet->business->pivot->warranty_manager_id);
+
 			if (!$warranty_manager) {
 				return [
 					'success' => false,
@@ -171,11 +192,12 @@ class WarrantyJobOrderRequestController extends Controller {
 				];
 
 			}
+
 			$warranty_manager->notify(new WjorNotification([
 				'wjor' => $warranty_job_order_request,
 			]));
 
-			// $warranty_job_order_request->generatePDF();
+			$warranty_job_order_request->generatePDF();
 
 			DB::commit();
 
@@ -209,7 +231,7 @@ class WarrantyJobOrderRequestController extends Controller {
 
 			$warranty_job_order_request->load($this->model::relationships('read'));
 
-			// $warranty_job_order_request->generatePDF();
+			$warranty_job_order_request->generatePDF();
 			return response()->json([
 				'success' => true,
 				'message' => 'PPR approved successfully',
@@ -224,11 +246,41 @@ class WarrantyJobOrderRequestController extends Controller {
 	}
 
 	public function reject(Request $request) {
+		// dd($request->all());
 		try {
 			$warranty_job_order_request = WarrantyJobOrderRequest::find($request->id);
 			$warranty_job_order_request->rejected_reason = $request->rejected_reason;
 			$warranty_job_order_request->status_id = 9103; //rejected
 			$warranty_job_order_request->save();
+
+			$warranty_job_order_request->load($this->model::relationships('read'));
+
+			//SENDING EMAIL TO BUSINESS'S WARRANTY MANAGER
+			$warranty_job_order_request->loadBusiness('ALSERV');
+
+			$cc_emails = [];
+			if ($warranty_job_order_request->jobOrder->outlet->al_serv_ppr_request_cc_emails) {
+				foreach ($warranty_job_order_request->jobOrder->outlet->al_serv_ppr_request_cc_emails as $key => $user) {
+					if ($user->email != null) {
+						$cc_emails[] = $user->email;
+					}
+				}
+			}
+			$warranty_job_order_request->cc_emails = $cc_emails;
+
+			$warranty_manager = User::find($warranty_job_order_request->jobOrder->outlet->business->pivot->warranty_manager_id);
+
+			if (!$warranty_manager) {
+				return [
+					'success' => false,
+					'error' => 'Warranty manager not configured : Outlet Code - ' . $warranty_job_order_request->jobOrder->outlet->code . ', Business : ' . $warranty_job_order_request->jobOrder->outlet->business->name,
+				];
+
+			}
+			$warranty_manager->notify(new WjorNotification([
+				'wjor' => $warranty_job_order_request,
+			]));
+
 			return Self::read($warranty_job_order_request->id);
 		} catch (Exceprion $e) {
 			return response()->json([
@@ -277,7 +329,8 @@ class WarrantyJobOrderRequestController extends Controller {
 			$models = VehicleModel::where('company_id', Auth::user()->company_id)->get();
 			$bharat_stages = BharatStage::where('company_id', Auth::user()->company_id)->get();
 			$split_order_types = SplitOrderType::where('company_id', Auth::user()->company_id)->where('claim_category_id', 11112)->get();
-			$aggregates = Aggregate::where('company_id', Auth::user()->company_id)->get();
+			$aggregates = Aggregate::all();
+			// $aggregates = Aggregate::where('company_id', Auth::user()->company_id)->get();
 			return response()->json([
 				'success' => true,
 				'extras' => [

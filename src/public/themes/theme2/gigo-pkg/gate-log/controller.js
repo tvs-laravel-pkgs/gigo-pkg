@@ -418,8 +418,8 @@ app.component('gateLogForm', {
                     //     }
                     //     return false;
                     // },
-                    minlength: 10,
-                    maxlength: 10,
+                    // minlength: 10,
+                    // maxlength: 10,
                 },
                 'driver_name': {
                     // 'nullable',

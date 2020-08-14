@@ -98,7 +98,9 @@ class MaterialGatePassController extends Controller {
 			;
 			if (!Entrust::can('view-all-outlet-material-gate-pass')) {
 				if (Entrust::can('view-mapped-outlet-material-gate-pass')) {
-					$material_gate_passes_list->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+					$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+					array_push($outlet_ids, Auth::user()->employee->outlet_id);
+					$material_gate_passes_list->whereIn('job_cards.outlet_id', $outlet_ids);
 				} else if (Entrust::can('view-own-outlet-material-gate-pass')) {
 					$material_gate_passes_list->where('job_cards.outlet_id', Auth::user()->employee->outlet_id);
 				} else {

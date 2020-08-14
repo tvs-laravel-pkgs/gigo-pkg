@@ -1708,3 +1708,27 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/trade-plate-number/controller.js')}}'></script>
 
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    //Road Test Gate Pass
+	    when('/road-test-gate-pass/table-list', {
+	        template: '<road-test-gate-pass-table-list></road-test-gate-pass-table-list>',
+	        title: 'Road Test Gate Pass - Table List',
+	    }).
+	    when('/road-test-gate-pass/card-list', {
+	        template: '<road-test-gate-pass-card-list></road-test-gate-pass-card-list>',
+	        title: 'Road Test Gate Pass - Card List',
+	    }).
+	    when('/road-test-gate-pass/view/:id', {
+	        template: '<road-test-gate-pass-view></road-test-gate-pass-view>',
+	        title: 'View Road Test Gate Pass',
+	    });
+	}]);
+
+	var road_test_gate_pass_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test-gate-pass/list.html')}}";
+    var road_test_gate_pass_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test-gate-pass/card-list.html')}}";
+    var road_test_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test-gate-pass/view.html')}}";
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test/controller.js')}}'></script>
+
