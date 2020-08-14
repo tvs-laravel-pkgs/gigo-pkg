@@ -96,6 +96,10 @@ class SubAggregate extends BaseModel {
 			}
 		}
 
+		if (empty($record_data['Name'])) {
+			$errors[] = 'Name is empty';
+		}
+
 		if (count($errors) > 0) {
 			return [
 				'success' => false,
@@ -107,7 +111,7 @@ class SubAggregate extends BaseModel {
 		$record = self::firstOrNew([
 			// 'company_id' => $company->id,
 			'aggregate_id' => $aggregate->id,
-			'code' => $record_data['Name'],
+			'code' => $record_data['Code'],
 		]);
 		$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
 

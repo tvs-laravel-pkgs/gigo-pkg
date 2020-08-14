@@ -52,7 +52,7 @@ class Complaint extends BaseModel {
 				'fk' => [
 					'class' => 'App\SubAggregate',
 					'foreign_table_column' => 'name',
-					'check_with_company' => true,
+					// 'check_with_company' => true,
 				],
 			],
 		],
@@ -191,7 +191,7 @@ class Complaint extends BaseModel {
 			$errors[] = 'Sub Aggregate is empty';
 		} else {
 			$sub_aggregate = SubAggregate::where([
-				'company_id' => $admin->company_id,
+				// 'company_id' => $admin->company_id,
 				'name' => $record_data['Sub Aggregate'],
 			])->first();
 			if ($sub_aggregate == null) {
