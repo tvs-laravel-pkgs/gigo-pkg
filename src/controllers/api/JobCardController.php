@@ -1756,6 +1756,7 @@ class JobCardController extends Controller {
 		if ($invoice->exists) {
 			//FIRST
 			$invoice->invoice_amount = $params['invoice_amount'];
+			$invoice->balance_amount = $params['invoice_amount'];
 			$invoice->updated_by_id = Auth::user()->id;
 			$invoice->updated_at = Carbon::now();
 		} else {
@@ -1769,6 +1770,7 @@ class JobCardController extends Controller {
 			$invoice->outlet_id = $params['outlet_id'];
 			$invoice->sbu_id = 54; //SERVICE ALSERV
 			$invoice->invoice_amount = $params['invoice_amount'];
+			$invoice->balance_amount = $params['invoice_amount'];
 			$invoice->status_id = 10031; //PENDING
 			$invoice->created_by_id = Auth::user()->id;
 			$invoice->created_at = Carbon::now();

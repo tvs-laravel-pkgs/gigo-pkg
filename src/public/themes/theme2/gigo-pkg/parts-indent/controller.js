@@ -694,29 +694,11 @@ app.component('partsIndentPartsView', {
                     $qty = part.qty;
                 }
             }
-            $.ajax({
-                    url: base_url + '/api/inward-part-indent/get-part-detail-pias',
-                    method: "POST",
-                    data: {
-                        code: part.code
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.available_quantity = res.available_quantity;
-                    $scope.$apply();
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });
             PartSvc.read(part.id)
                 .then(function(response) {
+                    $scope.parts_indent.part.mrp = response.data.part.part_stock.mrp;
+                    $scope.parts_indent.part.total_amount = response.data.part.part_stock.cost_price;
+                    $scope.available_quantity = response.data.part.part_stock.stock;
                     $scope.parts_indent.part.qty = $qty;
                     $scope.calculatePartAmount();
                 });
@@ -800,6 +782,11 @@ app.component('partsIndentPartsView', {
                         }
                         $('.submit').button('reset');
                         custom_noty('success', res.message);
+                        $scope.parts_indent = {};
+                        $scope.available_quantity = {};
+                        $('#part_form_modal').modal('hide');
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
                         $scope.fetchData();
                     })
                     .fail(function(xhr) {
@@ -808,11 +795,10 @@ app.component('partsIndentPartsView', {
                     });
 
                 // $scope.calculatePartTotal();
-                $scope.parts_indent = {};
-                $('#part_form_modal').modal('hide');
-                $('body').removeClass('modal-open');
-                $('.modal-backdrop').remove();
-                $scope.fetchData();
+                // $('#part_form_modal').modal('hide');
+                // $('body').removeClass('modal-open');
+                // $('.modal-backdrop').remove();
+                // $scope.fetchData();
             }
         });
 
@@ -1216,6 +1202,13 @@ app.component('partsIndentIssuePartForm', {
                         if (!res.success) {
                             showErrorNoty(res);
                             return;
+                        }
+                        $scope.part = res.part;
+                        if ($scope.part) {
+                            console.log($scope.part.part_type.name);
+                            if ($scope.part.part_type.name == 'Lubricants') {
+                                custom_noty('error', 'This part is liquid so issue all quantity this time. Not Allowed next time.  You can Update Already Issued Part!');
+                            }
                         }
                         $scope.available_quantity = res.available_quantity;
                         $scope.total_request_qty = res.total_request_qty;

@@ -20,4 +20,8 @@ class PartStock extends Model {
 		'mrp',
 	];
 
+	public function outlet() {
+		return $this->belongsTo('App\Outlet', 'outlet_id');
+	}
+
 }

@@ -1301,29 +1301,11 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     $qty = part.qty;
                 }
             }
-            $.ajax({
-                    url: base_url + '/api/inward-part-indent/get-part-detail-pias',
-                    method: "POST",
-                    data: {
-                        code: part.code
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.available_quantity = res.available_quantity;
-                    $scope.$apply();
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });
             PartSvc.read(part.id)
                 .then(function(response) {
+                    $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock.mrp;
+                    $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock.cost_price;
+                    $scope.available_quantity = response.data.part.part_stock.stock;
                     $scope.schedule_maintainance_part.part.qty = $qty;
                     $scope.calculatePartAmount();
                 });
@@ -3759,29 +3741,11 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $qty = part.qty;
                 }
             }
-            $.ajax({
-                    url: base_url + '/api/inward-part-indent/get-part-detail-pias',
-                    method: "POST",
-                    data: {
-                        code: part.code
-                    },
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                    },
-                })
-                .done(function(res) {
-                    if (!res.success) {
-                        showErrorNoty(res);
-                        return;
-                    }
-                    $scope.available_quantity = res.available_quantity;
-                    $scope.$apply();
-                })
-                .fail(function(xhr) {
-                    custom_noty('error', 'Something went wrong at server');
-                });
             PartSvc.read(part.id)
                 .then(function(response) {
+                    $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock.mrp;
+                    $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock.cost_price;
+                    $scope.available_quantity = response.data.part.part_stock.stock;
                     $scope.schedule_maintainance_part.part.qty = $qty;
                     $scope.calculatePartAmount();
                 });

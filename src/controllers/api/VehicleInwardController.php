@@ -1057,23 +1057,52 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		try {
 			$available_qty = 0;
-			$part_code = $request->code;
-			$user_outlet_code = Auth::user()->outlet->code;
-			$company_id = Auth::user()->company_id;
-			$db2 = config('database.connections.pias.database');
+
+			//GET DATA FROM PIAS TABLE
+
+			// $part_code = $request->code;
+			// $user_outlet_code = Auth::user()->outlet->code;
+			// $company_id = Auth::user()->company_id;
+			// $db2 = config('database.connections.pias.database');
+			// $part = DB::table($db2 . '.parts as pias_parts')
+			// 	->join('parts', 'parts.code', 'pias_parts.code')
+			// 	->select('parts.code', 'pias_parts.id')
+			// 	->where('parts.code', $part_code)
+			// 	->first();
+
+			// $outlet_ids = DB::table($db2 . '.outlets as pias_outlets')
+			// 	->join('outlets', 'outlets.code', 'pias_outlets.code')
+			// 	->select('outlets.code', 'pias_outlets.id')
+			// 	->where(['outlets.code' => $user_outlet_code, 'outlets.company_id' => $company_id])
+			// 	->pluck('id')->toArray();
+			// $stock_details = DB::table($db2 . '.stock_details')
+			// 	->select('stock_details.outlet_id', 'stock_details.part_id', 'stock_details.available_quantity')
+			// // ->where(['stock_details.outlet_id' => $outlet->id, 'stock_details.part_id' => $part->id])
+			// 	->where('stock_details.part_id', $part->id)
+			// 	->whereIn('stock_details.outlet_id', $outlet_ids)
+			// 	->first();
+
+			// if ($stock_details) {
+			// 	$available_qty = $stock_details->available_quantity;
+
 			$error = '';
 
 			//GET TODAY DATE OF ISSUED PARTS FROM BPAS JOB ORDER ISSUED PARTS
-			$part = Part::where('code', $request->code)
+			$part = Part::with([
+				'partType',
+				'partStock',
+				'partStock.outlet',
+			])
+				->where('code', $request->code)
 				->first();
 
 			$job_order_parts = JobOrderPart::where('part_id', $part->id)
 				->pluck('id')->toArray();
 
+			//ISSUED PARTS
 			$issued_datas = JobOrderIssuedPart::where('issued_mode_id', 8480)
 				->whereDate('created_at', Carbon::today())
 				->get();
-
 			$part_issued_qty = 0;
 			foreach ($issued_datas as $issued_data) {
 				if (in_array($issued_data->job_order_part_id, $job_order_parts)) {
@@ -1081,24 +1110,26 @@ class VehicleInwardController extends Controller {
 				}
 			}
 
-			$part = DB::table($db2 . '.parts as pias_parts')
-				->join('parts', 'parts.code', 'pias_parts.code')
-				->select('parts.code', 'pias_parts.id')
-				->where('parts.code', $part_code)
-				->first();
-
-			$outlet_ids = DB::table($db2 . '.outlets as pias_outlets')
-				->join('outlets', 'outlets.code', 'pias_outlets.code')
-				->select('outlets.code', 'pias_outlets.id')
-				->where(['outlets.code' => $user_outlet_code, 'outlets.company_id' => $company_id])
-				->pluck('id')->toArray();
+			//RETURNED PARTS
+			$returned_datas = JobOrderReturnedPart::whereDate('created_at', Carbon::today())
+				->get();
+			$part_returned_qty = 0;
+			foreach ($returned_datas as $returned_data) {
+				if (in_array($returned_data->job_order_part_id, $job_order_parts)) {
+					$part_returned_qty += $returned_data->returned_qty;
+				}
+			}
 
 			if (!$part) {
 				$error = 'Part';
+				if (!$part->partStock) {
+					$error = 'Part Stock';
+					if (!$part->partStock->Outlet) {
+						$error = 'Outlet';
+					}
+				}
 			}
-			if (!$outlet_ids) {
-				$error = 'Outlet';
-			}
+
 			if ($error != '') {
 				return response()->json([
 					'success' => false,
@@ -1107,20 +1138,13 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			$stock_details = DB::table($db2 . '.stock_details')
-				->select('stock_details.outlet_id', 'stock_details.part_id', 'stock_details.available_quantity')
-			// ->where(['stock_details.outlet_id' => $outlet->id, 'stock_details.part_id' => $part->id])
-				->where('stock_details.part_id', $part->id)
-				->whereIn('stock_details.outlet_id', $outlet_ids)
-				->first();
-
-			if ($stock_details) {
-				$available_qty = $stock_details->available_quantity;
+			if ($part->partStock) {
+				$available_qty = $part->partStock->stock;
 			}
 
 			if ($available_qty > 0) {
 				if ($available_qty > $part_issued_qty) {
-					$available_qty = $available_qty - $part_issued_qty;
+					$available_qty = $available_qty - $part_issued_qty + $part_returned_qty;
 				} elseif ($available_qty < $part_issued_qty) {
 					return response()->json([
 						'success' => false,
@@ -1140,7 +1164,8 @@ class VehicleInwardController extends Controller {
 
 			$responseArr = array(
 				'success' => true,
-				'available_quantity' => $available_qty,
+				'part' => $part,
+				'available_quantity' => number_format($available_qty, 2),
 				'total_request_qty' => $total_request_qty,
 				'total_issued_qty' => $total_issued_qty,
 				'total_balance_qty' => $total_balance_qty,
@@ -1192,6 +1217,16 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			$part = Part::with(['partType', 'partStock'])->find($request->part_id);
+
+			if (!$part) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Parts Details cannot be found'],
+				]);
+			}
+
 			$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
 
 			$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
@@ -1208,34 +1243,48 @@ class VehicleInwardController extends Controller {
 				}
 
 				$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
-				if ($pending_qty < $request->issued_qty) {
-					return response()->json([
-						'success' => false,
-						'message' => 'Returning Quantity should not exceed Pending Quantity',
-					]);
+				if (empty($request->job_order_issued_part_id)) {
+					if ($pending_qty < $request->issued_qty) {
+						return response()->json([
+							'success' => false,
+							'message' => 'Returning Quantity should not exceed Pending Quantity',
+						]);
+					}
 				}
 
 			}
+
+			if (!empty($part->partType)) {
+				if (empty($request->job_order_issued_part_id)) {
+					if ($part->partType->name == 'Lubricants' && (($issued_qty->issued_qty) > 0)) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Not able to add. You can update this part!',
+						]);
+					}
+				}
+			}
+			// dd(1);
 
 			DB::beginTransaction();
 			// dd($request->issue_mode_id);
 			if ($request->issued_mode_id != 8480 && $request->job_order_issued_part_id == null) {
 
-				$db2 = config('database.connections.pias.database');
+				// $db2 = config('database.connections.pias.database');
 
-				$parts = DB::table($db2 . '.parts as pias_parts')
-					->join('parts', 'parts.code', 'pias_parts.code')
-					->select('parts.code', 'pias_parts.id')
-					->where('parts.id', $request->part_id)
-					->first();
+				// $parts = DB::table($db2 . '.parts as pias_parts')
+				// 	->join('parts', 'parts.code', 'pias_parts.code')
+				// 	->select('parts.code', 'pias_parts.id')
+				// 	->where('parts.id', $request->part_id)
+				// 	->first();
 
-				if (!$parts) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => ['Parts Details cannot be found'],
-					]);
-				}
+				// if (!$parts) {
+				// 	return response()->json([
+				// 		'success' => false,
+				// 		'error' => 'Validation Error',
+				// 		'errors' => ['Parts Details cannot be found'],
+				// 	]);
+				// }
 
 				if (date('m') > 3) {
 					$year = date('Y') + 1;
@@ -1963,7 +2012,6 @@ class VehicleInwardController extends Controller {
 					}
 
 					foreach ($job_order->vehicle->model->vehicleSegment->vehicle_service_schedule->vehicle_service_schedule_service_types as $key => $value) {
-
 						//Save Repair Orders
 						if ($value->service_type_id == $request->service_type_id && $value->repair_orders) {
 							foreach ($value->repair_orders as $rkey => $rvalue) {
@@ -1986,11 +2034,14 @@ class VehicleInwardController extends Controller {
 						//Save Parts
 						if ($value->service_type_id == $request->service_type_id && $value->parts) {
 							foreach ($value->parts as $pkey => $pvalue) {
+
 								$part_order = JobOrderPart::firstOrNew(['job_order_id' => $request->job_order_id, 'part_id' => $pvalue->id]);
+
+								$part = Part::with(['partStock'])->find($part_order->part_id);
 
 								$part_order->qty = $pvalue->pivot->quantity;
 								$part_order->split_order_type_id = $pvalue->pivot->split_order_type_id;
-								$part_order->rate = $pvalue->rate;
+								$part_order->rate = $part->partStock->mrp;
 								$part_order->amount = $pvalue->pivot->amount;
 								$part_order->is_free_service = $value->is_free;
 								$part_order->status_id = 8200; //Customer Approval Pending
@@ -2178,7 +2229,7 @@ class VehicleInwardController extends Controller {
 				$is_oem_recommended = 0;
 			}
 
-			$part = Part::where('id', $request->part_id)->first();
+			$part = Part::with(['partStock'])->where('id', $request->part_id)->first();
 			$request_qty = $request->qty;
 
 			if (!empty($request->job_order_part_id)) {
@@ -2203,12 +2254,12 @@ class VehicleInwardController extends Controller {
 			$job_order_part->job_order_id = $request->job_order_id;
 			$job_order_part->part_id = $request->part_id;
 			$job_order_part->is_customer_approved = 0;
-			$job_order_part->rate = $part->mrp;
+			$job_order_part->rate = $part->partStock->mrp;
 			$job_order_part->is_free_service = 0;
 			$job_order_part->qty = $request_qty;
 			$job_order_part->is_oem_recommended = $is_oem_recommended;
 			$job_order_part->split_order_type_id = $request->split_order_type_id;
-			$job_order_part->amount = $request_qty * $part->mrp;
+			$job_order_part->amount = $request_qty * $part->partStock->mrp;
 			$job_order_part->status_id = 8200; //Customer Approval Pending
 
 			$job_order_part->save();
