@@ -2631,8 +2631,8 @@ app.component('inwardVehicleVehicleDetail', {
                         //     }
                         //     return false;
                         // },
-                        minlength: 10,
-                        maxlength: 10,
+                        // minlength: 10,
+                        // maxlength: 10,
                     },
                     'sold_date': {
                         required: function(element) {
@@ -2695,8 +2695,8 @@ app.component('inwardVehicleVehicleDetail', {
                                 showErrorNoty(res);
                                 return;
                             }
+                            custom_noty('success', res.message);
                             if (id == 1) {
-                                custom_noty('success', res.message);
                                 $location.path('/inward-vehicle/table-list');
                             } else {
                                 $location.path('/inward-vehicle/customer-detail/' + $scope.job_order.id);

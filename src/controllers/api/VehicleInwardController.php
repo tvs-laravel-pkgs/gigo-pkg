@@ -1473,6 +1473,7 @@ class VehicleInwardController extends Controller {
 				'tradePlate',
 				'status',
 				'gateLog',
+				'GateInTradePlateNumber',
 			])
 				->select([
 					'job_orders.*',
@@ -1512,6 +1513,7 @@ class VehicleInwardController extends Controller {
 				'job_order' => $job_order,
 				'extras' => [
 					'model_list' => VehicleModel::getDropDownList(),
+					'trade_plate_number_list' => TradePlateNumber::get(),
 				],
 				'attachement_path' => url('storage/app/public/gigo/gate_in/attachments/'),
 			]);
@@ -4316,6 +4318,8 @@ class VehicleInwardController extends Controller {
 
 			if ($job_order->tradePlateNumber) {
 				$trade_plate_number_list->push(['id' => $job_order->tradePlateNumber->id, 'trade_plate_number' => $job_order->tradePlateNumber->trade_plate_number]);
+			} else {
+				$job_order->road_test_trade_plate_number_id = $job_order->gatein_trade_plate_number_id ? $job_order->gatein_trade_plate_number_id : NULL;
 			}
 
 			$extras = [
