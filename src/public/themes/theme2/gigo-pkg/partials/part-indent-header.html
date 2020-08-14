@@ -1,4 +1,4 @@
-<div class="page-tab-form-top">
+<div class="page-tab-form-top work-tooltip" style="width: 100% !important">
     <div class="page-tab-form-top-left">
         <div class="page-tab-form-top-left-title">General Info</div>
         <div class="page-tab-form-top-left-link">
@@ -30,4 +30,33 @@
             Status : {{status}}
         </div>
     </div><!-- Page Tab Form Top Right -->
+    <div class="hide work_tooltip_hide">
+        <div class="work-tooltip-wrap">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="work-tooltip-title">General Info</h4>
+                </div>
+                <div class="col-md-6">
+                    <span class="work-tooltip-label">Vehicle Registration Number</span>
+                    <span class="work-tooltip-value">{{job_order.vehicle.registration_number}}</span>
+                    <div class="mb-10"></div>
+                </div>
+                <div class="col-md-6">
+                    <span class="work-tooltip-label">Vehicle Model</span>
+                    <span class="work-tooltip-value">{{job_order.vehicle.model.model_number}}</span>
+                    <div class="mb-10"></div>
+                </div>
+                <div class="col-md-6">
+                    <span class="work-tooltip-label">Driver Name</span>
+                    <span class="work-tooltip-value">{{job_order.driver_name}}</span>
+                    <div class="mb-10"></div>
+                </div>
+                <div class="col-md-6">
+                    <span class="work-tooltip-label">Gate In Date, Time</span>
+                    <span class="work-tooltip-value">{{job_order.date}}, {{job_order.time}}</span>
+                    <div class="mb-10"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div><!-- Page Tab Form Top -->

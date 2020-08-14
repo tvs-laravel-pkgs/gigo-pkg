@@ -4115,7 +4115,22 @@ app.component('jobCardCaptureVocView', {
 app.directive('jobcardHeader', function() {
     return {
         templateUrl: job_card_header_template_url,
-        controller: function() {}
+        controller: function() {
+             /* Work Tooltip */
+            $(document).on('mouseover', ".work-tooltip", function() {
+                var $this = $(this);
+                if (!$this.attr('title')) {
+                    console.log('true');
+                    var $this_content = $this.children(".work_tooltip_hide").html();
+                    $this.tooltip({
+                        title: $this_content,
+                        html: true,
+                        placement: "bottom"
+                    });
+                    $this.tooltip('show');
+                }
+            });
+        }
     }
 });
 //------------------------------------------------------------------------------------------------------------------------
