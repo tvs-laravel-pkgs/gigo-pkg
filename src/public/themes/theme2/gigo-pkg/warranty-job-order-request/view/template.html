@@ -47,6 +47,9 @@
                 <div class="tab-pane-footer">
                     <div class="row">
                         <div class="col-md-12">
+                            <a target="_blank" href="./storage/app/public/wjor-pdfs/{{warranty_job_order_request.number}}.pdf" ng-if="warranty_job_order_request.status.id != '9100'" class="btn btn-red">
+                                PDF
+                            </a>
                             <a href="./#!/warranty-job-order-request/form/{{warranty_job_order_request.id}}" ng-if="(warranty_job_order_request.status.id == 9100 || warranty_job_order_request.status.id == 9103) && hasPerm('edit-warranty-job-order-requests')" class="btn btn-red">
                                 Edit
                             </a>
@@ -81,7 +84,7 @@
                 </h5>
             </div>
             <form id="approval-form">
-            <div class="modal-body">
+                <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -116,25 +119,23 @@
                                 <input type="text" disabled="disabled" class="form-control" ng-model="user.name">
                             </div><!-- Field -->
                         </div><!-- Column -->
-
                     </div><!-- Row -->
-            </div>
-            <div class="modal-footer">
-                <div class="row">
-                    <div class="col-md-6">
-                        <button type="button" data-dismiss="modal" class="reset-link">
-                            Cancel
-                        </button>
-                    </div><!-- Column -->
-                    <div class="col-md-6 text-right">
-                        <button type="submit" class="btn btn-primary btn-md">
-                            Approve
-                        </button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div><!-- Modal Footer -->
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button" data-dismiss="modal" class="reset-link">
+                                Cancel
+                            </button>
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="submit" class="btn btn-primary btn-md">
+                                Approve
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
             </form>
-
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->
@@ -150,7 +151,7 @@
                 </h5>
             </div>
             <form id="rejection-form">
-            <div class="modal-body">
+                <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -162,23 +163,22 @@
                             </div><!-- Field -->
                         </div><!-- Column -->
                     </div><!-- Row -->
-            </div>
-            <div class="modal-footer">
-                <div class="row">
-                    <div class="col-md-6">
-                        <button type="button" data-dismiss="modal" class="reset-link">
-                            Cancel
-                        </button>
-                    </div><!-- Column -->
-                    <div class="col-md-6 text-right">
-                        <button type="submit" class="btn btn-primary btn-md">
-                            Submit
-                        </button>
-                    </div><!-- Column -->
-                </div><!-- Row -->
-            </div><!-- Modal Footer -->
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button" data-dismiss="modal" class="reset-link">
+                                Cancel
+                            </button>
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="submit" class="btn btn-primary btn-md">
+                                Submit
+                            </button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
             </form>
-
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->

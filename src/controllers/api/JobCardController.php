@@ -3457,6 +3457,8 @@ class JobCardController extends Controller {
 			$job_card_time_log = JobCard::with([
 				'status',
 				'jobOrder',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
 				// 'jobOrder.gateLog',
 				// 'jobOrder.gateLog.vehicleDetail',
 				// 'jobOrder.gateLog.vehicleDetail.vehicleModel',
@@ -3464,6 +3466,7 @@ class JobCardController extends Controller {
 					$q->whereNull('removal_reason_id')->where('is_customer_approved', 1);
 				},
 				'jobOrder.jobOrderRepairOrders.status',
+				'jobOrder.jobOrderRepairOrders.repairOrder',
 				'jobOrder.jobOrderRepairOrders.repairOrderMechanics',
 				'jobOrder.jobOrderRepairOrders.repairOrderMechanics.mechanic',
 				'jobOrder.jobOrderRepairOrders.repairOrderMechanics.status',

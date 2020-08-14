@@ -125,6 +125,9 @@ app.component('warrantyJobOrderRequestTableList', {
         $scope.searchWarrantyJobOrderRequest = function() {
             dataTables.fnFilter(self.search_key);
         }
+        $(".refresh_table").click(function() {
+            dataTables.fnFilter();
+        });
         $scope.applyFilter = function() {
             dataTables.fnFilter();
             $('#warranty-job-order-request-filter-modal').modal('hide');
