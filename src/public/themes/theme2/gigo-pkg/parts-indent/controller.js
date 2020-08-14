@@ -491,6 +491,7 @@ app.component('partsIndentPartsView', {
                     $scope.job_order_parts = res.job_order_parts;
                     $scope.repair_order_mechanics = res.repair_order_mechanics;
                     $scope.indent_part_logs = res.indent_part_logs;
+                    $scope.issued_parts_list = res.issued_parts_list;
 
                     if (res.job_order.job_card) {
                         if (res.job_order.job_card.status_id == '8227') {
@@ -630,7 +631,7 @@ app.component('partsIndentPartsView', {
             console.log(part);
             $scope.job_order_part_id = part.job_order_part_id;
             $scope.user_id = part.user_id;
-            $scope.returned_qty = part.qty;
+            $scope.returned_qty = 0;
             $scope.job_order_returned_part_id = part.job_order_returned_part_id;
             if (part.remarks) {
                 $('.remarks').val(part.remarks);
@@ -740,7 +741,7 @@ app.component('partsIndentPartsView', {
 
             },
             invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Kindly fix');
+                custom_noty('error', 'You have errors, Kindly check all fields');
             },
             submitHandler: function(form) {
 
@@ -1207,7 +1208,7 @@ app.component('partsIndentIssuePartForm', {
                         if ($scope.part) {
                             console.log($scope.part.part_type.name);
                             if ($scope.part.part_type.name == 'Lubricants') {
-                                custom_noty('error', 'This part is liquid so issue all quantity this time. Not Allowed next time.  You can Update Already Issued Part!');
+                                custom_noty('error', 'Mentioned Lubricant item cannot issued multiple times.Kindly issue only one time!');
                             }
                         }
                         $scope.available_quantity = res.available_quantity;

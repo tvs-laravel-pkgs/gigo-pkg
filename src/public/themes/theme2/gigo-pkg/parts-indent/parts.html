@@ -294,69 +294,71 @@ input[type=number] {
                 </h5>
             </div>
             <div class="modal-body">
-                <form id="return-part-form">
-                    <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                    <input type="hidden" name="job_order_returned_part_id" value="{{$ctrl.job_order_returned_part_id}}">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    Part
-                                </label>
-                                <md-select ng-model="parts_indent.return_part" placeholder="Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
-                                    <md-select-header class="demo-select-header">
-                                        <input ng-model="searchreturnPartKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
-                                    </md-select-header>
-                                    <md-optgroup>
-                                        <md-option ng-value="return_part" ng-repeat="return_part in job_order_parts | filter:searchreturnPartKey">
-                                            {{return_part.name}} / {{return_part.code}}
-                                        </md-option>
-                                    </md-optgroup>
-                                </md-select>
-                                <input type="hidden" name="job_order_part_id" value="{{parts_indent.return_part.job_order_part_id}}">
-                                <input type="hidden" name="part_id" value="{{parts_indent.return_part.id}}">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    Employee
-                                </label>
-                                <md-select ng-model="parts_indent.employee" placeholder="Employee" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
-                                    <md-select-header class="demo-select-header">
-                                        <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
-                                    </md-select-header>
-                                    <md-optgroup>
-                                        <md-option ng-value="employee" ng-repeat="employee in repair_order_mechanics | filter:searchreturnEmployeeKey">
-                                            {{employee.name}}
-                                        </md-option>
-                                    </md-optgroup>
-                                </md-select>
-                                <input type="hidden" name="returned_to_id" value="{{parts_indent.employee.id}}">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Quantity <sup class="mandatory">*</sup></label>
-                                <input type="number" name="returned_qty" ng-model="parts_indent.return_part.qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
-                            </div><!-- Feild -->
-                        </div><!-- Column -->
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label>Remarks <sup class="mandatory">*</sup></label>
-                                <textarea class="form-control" rows="5" ng-model="parts_indent.remarks" id="remarks" name="remarks"></textarea>
-                            </div><!-- Feild -->
-                        </div><!-- Column -->
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 text-right mb-15">
-                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
-                                Cancel
-                            </button>
-                            <button type="submit" class="btn btn-bordered submit approve_btn">Submit</button>
-                        </div><!-- Column -->
-                    </div><!-- Row -->
-                </form>
+                <div class="modal-form">
+                    <form id="return-part-form">
+                        <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                        <input type="hidden" name="job_order_returned_part_id" value="{{$ctrl.job_order_returned_part_id}}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Part
+                                    </label>
+                                    <md-select ng-model="parts_indent.return_part" placeholder="Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchreturnPartKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="return_part" ng-repeat="return_part in issued_parts_list | filter:searchreturnPartKey">
+                                                {{return_part.name}} / {{return_part.code}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="job_order_part_id" value="{{parts_indent.return_part.job_order_part_id}}">
+                                    <input type="hidden" name="part_id" value="{{parts_indent.return_part.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Employee
+                                    </label>
+                                    <md-select ng-model="parts_indent.employee" placeholder="Employee" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="employee" ng-repeat="employee in repair_order_mechanics | filter:searchreturnEmployeeKey">
+                                                {{employee.name}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="returned_to_id" value="{{parts_indent.employee.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quantity <sup class="mandatory">*</sup></label>
+                                    <input type="number" name="returned_qty" ng-model="parts_indent.return_part.qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Remarks <sup class="mandatory">*</sup></label>
+                                    <textarea class="form-control" rows="5" ng-model="parts_indent.remarks" id="remarks" name="remarks"></textarea>
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-right mb-15">
+                                <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-bordered submit approve_btn">Submit</button>
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </form>
+                </div>
             </div>
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
@@ -379,22 +381,24 @@ input[type=number] {
                     </h5>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label>Remarks <sup class="mandatory">*</sup></label>
-                                <textarea class="form-control remarks" rows="5" name="remarks" ng-model="part.remarks"></textarea>
-                            </div><!-- Feild -->
-                        </div><!-- Column -->
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Remarks <sup class="mandatory">*</sup></label>
+                                    <textarea class="form-control remarks" rows="5" name="remarks" ng-model="part.remarks"></textarea>
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-right mb-15">
+                                <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-bordered submit">Submit</button>
+                            </div><!-- Column -->
+                        </div><!-- Row -->
                     </div>
-                    <div class="row">
-                        <div class="col-md-12 text-right mb-15">
-                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
-                                Cancel
-                            </button>
-                            <button type="submit" class="btn btn-bordered submit">Submit</button>
-                        </div><!-- Column -->
-                    </div><!-- Row -->
                 </div>
             </form>
         </div><!-- Modal Content -->
@@ -553,139 +557,141 @@ input[type=number] {
                 </h5>
             </div>
             <div class="modal-body">
-                <form id="part-form">
-                    <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                    <input type="hidden" name="job_order_part_id" value="{{parts_indent.part.job_order_part_id}}">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    Repair Orders
-                                </label>
-                                <md-select multiple ng-model="parts_indent.part.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.part.repair_order_parts)" ng-model-options="{trackBy: '$value.id' }">
-                                    <!-- parts_indent.repair_order -->
-                                    <md-select-header class="demo-select-header">
-                                        <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
-                                    </md-select-header>
-                                    <md-optgroup>
-                                        <md-option ng-if="job_repair_order.removal_reason_id == null" ng-value="job_repair_order" ng-repeat="job_repair_order in job_order.job_order_repair_orders | filter:searchreturnEmployeeKey">
-                                            {{job_repair_order.repair_order.code}} / {{job_repair_order.repair_order.name}}
-                                        </md-option>
-                                    </md-optgroup>
-                                </md-select>
-                                <input type="hidden" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    Part Code
-                                    <span class="mandatory">*</span>
-                                </label>
-                                <md-autocomplete md-selected-item="parts_indent.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
-                                    <md-item-template>
-                                        <span>
-                                            {{part.code}}
-                                        </span>
-                                    </md-item-template>
-                                    <md-not-found>
-                                        No records matching "{{partSearchKey}}" were found.
-                                    </md-not-found>
-                                </md-autocomplete>
-                                <input type="hidden" name="part_id" value="{{parts_indent.part.id}}">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    Split Order Type
-                                </label>
-                                <md-select ng-model="parts_indent.split_order_type" placeholder="Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
-                                    <md-select-header class="demo-select-header">
-                                        <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
-                                    </md-select-header>
-                                    <md-optgroup>
-                                        <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
-                                            {{split_order_type.name}} / {{split_order_type.code}}
-                                        </md-option>
-                                    </md-optgroup>
-                                </md-select>
-                                <input type="hidden" name="split_order_type_id" value="{{parts_indent.split_order_type.id}}">
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                    </div>
-                    <div class="row" ng-if="parts_indent.part">
-                        <div class="col-md-4" ng-if="parts_indent.part">
-                            <div class="form-group">
-                                <label>
-                                    Part Description
-                                </label>
-                                <label>
-                                    {{parts_indent.part.name}}
-                                </label>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    MRP
-                                </label>
-                                <label>
-                                    {{parts_indent.part.mrp | currency}}
-                                </label>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    Quantity
-                                </label>
-                                <div class="input-group">
-                                    <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="qty" ng-model="parts_indent.part.qty" maxlength="12">
-                                    <!-- <span class="input-group-addon">
+                <div class="modal-form">
+                    <form id="part-form">
+                        <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+                        <input type="hidden" name="job_order_part_id" value="{{parts_indent.part.job_order_part_id}}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Repair Orders
+                                    </label>
+                                    <md-select multiple ng-model="parts_indent.part.repair_order_parts" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(parts_indent.part.repair_order_parts)" ng-model-options="{trackBy: '$value.id' }">
+                                        <!-- parts_indent.repair_order -->
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-if="job_repair_order.removal_reason_id == null" ng-value="job_repair_order" ng-repeat="job_repair_order in job_order.job_order_repair_orders | filter:searchreturnEmployeeKey">
+                                                {{job_repair_order.repair_order.code}} / {{job_repair_order.repair_order.name}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Part Code
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <md-autocomplete md-selected-item="parts_indent.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
+                                        <md-item-template>
+                                            <span>
+                                                {{part.code}}
+                                            </span>
+                                        </md-item-template>
+                                        <md-not-found>
+                                            No records matching "{{partSearchKey}}" were found.
+                                        </md-not-found>
+                                    </md-autocomplete>
+                                    <input type="hidden" name="part_id" value="{{parts_indent.part.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Split Order Type
+                                    </label>
+                                    <md-select ng-model="parts_indent.split_order_type" placeholder="Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                                {{split_order_type.name}} / {{split_order_type.code}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="split_order_type_id" value="{{parts_indent.split_order_type.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                        </div>
+                        <div class="row" ng-if="parts_indent.part">
+                            <div class="col-md-4" ng-if="parts_indent.part">
+                                <div class="form-group">
+                                    <label>
+                                        Part Description
+                                    </label>
+                                    <label>
+                                        {{parts_indent.part.name}}
+                                    </label>
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        MRP
+                                    </label>
+                                    <label>
+                                        {{parts_indent.part.mrp | currency}}
+                                    </label>
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Quantity
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="qty" ng-model="parts_indent.part.qty" maxlength="12">
+                                        <!-- <span class="input-group-addon">
                                     {{wjor_part.part.uom.name}}
                                 </span> -->
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row" ng-if="parts_indent.part">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    UOM
-                                </label>
-                                <label>
-                                    {{parts_indent.part.uom.code}}
-                                </label>
+                        <div class="row" ng-if="parts_indent.part">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        UOM
+                                    </label>
+                                    <label>
+                                        {{parts_indent.part.uom.code}}
+                                    </label>
+                                </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        <b>
+                                            Amount
+                                        </b>
+                                    </label>
+                                    <label>
+                                        <b>
+                                            {{parts_indent.part.total_amount | currency}}
+                                        </b>
+                                    </label>
+                                </div><!-- Field -->
+                            </div><!-- Column -->
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    <b>
-                                        Amount
-                                    </b>
-                                </label>
-                                <label>
-                                    <b>
-                                        {{parts_indent.part.total_amount | currency}}
-                                    </b>
-                                </label>
-                            </div><!-- Field -->
-                        </div><!-- Column -->
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 text-right mb-15">
-                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
-                                Cancel
-                            </button>
-                            <button type="submit" class="submit btn btn-bordered btn-red approve_btn">
-                                Submit
-                            </button>
-                        </div><!-- Column -->
-                    </div><!-- Row -->
-                </form>
+                        <div class="row">
+                            <div class="col-md-12 text-right mb-15">
+                                <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="submit btn btn-bordered btn-red approve_btn">
+                                    Submit
+                                </button>
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </form>
+                </div>
             </div>
         </div><!-- Modal Content -->
     </div><!-- Modal Dialog -->
@@ -701,38 +707,40 @@ input[type=number] {
                     <h4 class="modal-title">Delete Request</h4>
                 </div>
                 <div class="modal-body">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label>
-                                                Delete Reason
-                                                <sup class="mandatory">*</sup></label>
-                                            <div class="common-radio-button type-4">
-                                                <input type="radio" id="worngly_entered" name="removal_reason_id" ng-model="delete_reason" ng-value="10021" value="10021" ng-checked="delete_reason">
-                                                <label for="worngly_entered">
-                                                    Added By Mistake
-                                                </label>
-                                                <input type="radio" ng-model="delete_reason" id="customer_delete" name="removal_reason_id" ng-value="10022" value="10022">
-                                                <label for="customer_delete">
-                                                    Customer Denied
-                                                </label>
-                                            </div>
-                                            <div id="errorDeleteReasonRequired"></div>
-                                        </div><!-- Feild -->
-                                    </div><!-- Column -->
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                            <div class="col-md-12" ng-if="delete_reason == '10022'">
-                                <div class="form-group">
-                                    <label>Remarks <sup class="mandatory">*</sup></label>
-                                    <textarea class="form-control" rows="5" id="removal_reason" name="removal_reason"></textarea>
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                        </div><!-- Row -->
-                    </div><!-- Container -->
+                    <div class="modal-form">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>
+                                                    Delete Reason
+                                                    <sup class="mandatory">*</sup></label>
+                                                <div class="common-radio-button type-4">
+                                                    <input type="radio" id="worngly_entered" name="removal_reason_id" ng-model="delete_reason" ng-value="10021" value="10021" ng-checked="delete_reason">
+                                                    <label for="worngly_entered">
+                                                        Added By Mistake
+                                                    </label>
+                                                    <input type="radio" ng-model="delete_reason" id="customer_delete" name="removal_reason_id" ng-value="10022" value="10022">
+                                                    <label for="customer_delete">
+                                                        Customer Denied
+                                                    </label>
+                                                </div>
+                                                <div id="errorDeleteReasonRequired"></div>
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                                <div class="col-md-12" ng-if="delete_reason == '10022'">
+                                    <div class="form-group">
+                                        <label>Remarks <sup class="mandatory">*</sup></label>
+                                        <textarea class="form-control" rows="5" id="removal_reason" name="removal_reason"></textarea>
+                                    </div><!-- Feild -->
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Container -->
+                    </div>
                 </div><!-- Modal Body -->
                 <div class="modal-footer">
                     <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">

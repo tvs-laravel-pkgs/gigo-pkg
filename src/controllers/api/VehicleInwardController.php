@@ -804,9 +804,12 @@ class VehicleInwardController extends Controller {
 			$job_order_parts = array();
 			$repair_order_mechanics = array();
 			$indent_part_logs = array();
+			$issued_parts_list = array();
 
 			if ($job_order->jobCard) {
 				$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*', 'job_order_parts.id as job_order_part_id')->where('job_order_parts.job_order_id', $r->id)->whereNull('removal_reason_id')->get();
+
+				$issued_parts_list = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->join('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')->select('parts.*', 'job_order_parts.id as job_order_part_id')->where('job_order_parts.job_order_id', $r->id)->whereNull('removal_reason_id')->get();
 
 				$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
 					->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')
@@ -867,6 +870,7 @@ class VehicleInwardController extends Controller {
 				'job_order_parts' => $job_order_parts,
 				'repair_order_mechanics' => $repair_order_mechanics,
 				'indent_part_logs' => $indent_part_logs,
+				'issued_parts_list' => $issued_parts_list,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -1267,7 +1271,7 @@ class VehicleInwardController extends Controller {
 					if ($part->partType->name == 'Lubricants' && (($issued_qty->issued_qty) > 0)) {
 						return response()->json([
 							'success' => false,
-							'error' => 'Not able to add. You can update this part!',
+							'error' => 'Mentioned Lubricant item cannot add multiple times!',
 						]);
 					}
 				}

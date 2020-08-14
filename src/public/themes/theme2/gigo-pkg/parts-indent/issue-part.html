@@ -54,7 +54,7 @@ input[type=number] {
                                                                     </md-select-header>
                                                                     <md-optgroup>
                                                                         <md-option ng-value="return_part" ng-repeat="return_part in job_order_parts | filter:searchreturnPartKey">
-                                                                            {{return_part.code}}
+                                                                            {{return_part.code}} / {{return_part.name}}
                                                                         </md-option>
                                                                     </md-optgroup>
                                                                 </md-select>
