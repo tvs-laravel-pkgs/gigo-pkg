@@ -433,6 +433,16 @@ class JobCardController extends Controller {
 			//UPDATE JOB ORDER PARTS STATUS
 			JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
+			$generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);
+
+			if (!$generate_estimate_pdf) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Something went on Server.Please Try again later!!'],
+				]);
+			}
+
 			DB::commit();
 
 			return response()->json([
@@ -631,6 +641,7 @@ class JobCardController extends Controller {
 				'gatePasses.gatePassDetail',
 				'gatePasses.gatePassDetail.vendor',
 				'gatePasses.gatePassDetail.vendorType',
+				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
 				'status',
@@ -2762,6 +2773,17 @@ class JobCardController extends Controller {
 			$job_card->updated_by = Auth::user()->id;
 			$job_card->updated_at = Carbon::now();
 			$job_card->save();
+
+			//Generate Revised Estimate PDF
+			$generate_revised_estimate_pdf = JobCard::generateRevisedEstimatePDF($job_card->id);
+
+			if (!$generate_revised_estimate_pdf) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Something went on Server.Please Try again later!!'],
+				]);
+			}
 
 			if ($request->type == 2) {
 

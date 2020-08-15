@@ -11,6 +11,7 @@ use App\JobOrderReturnedPart;
 use App\SplitOrderType;
 use DB;
 use PDF;
+use Storage;
 
 class PDFController extends Controller {
 
@@ -118,50 +119,47 @@ class PDFController extends Controller {
 	}
 
 	public function estimate($id) {
-		$estimate_order = JobOrderEstimate::select('job_order_estimates.id', 'job_order_estimates.created_at')->join('job_orders', 'job_order_estimates.job_order_id', 'job_orders.id')->join('job_cards', 'job_cards.job_order_id', 'job_orders.id')->where('job_cards.id', $id)->orderBy('job_order_estimates.id', 'ASC')->first();
+		$estimate_order = JobOrderEstimate::select('job_order_estimates.id', 'job_order_estimates.created_at')->where('job_order_estimates.job_order_id', $id)->orderBy('job_order_estimates.id', 'ASC')->first();
 
-		$this->data['estimate'] = $job_card = JobCard::with([
-			'gatePasses',
-			'jobOrder',
-			'jobOrder.type',
-			'jobOrder.vehicle',
-			'jobOrder.vehicle.model',
-			'jobOrder.vehicle.status',
-			'jobOrder.outlet',
-			'jobOrder.gateLog',
-			'jobOrder.vehicle.currentOwner.customer',
-			'jobOrder.vehicle.currentOwner.customer.primaryAddress',
-			'jobOrder.vehicle.currentOwner.customer.primaryAddress.country',
-			'jobOrder.vehicle.currentOwner.customer.primaryAddress.state',
-			'jobOrder.vehicle.currentOwner.customer.primaryAddress.city',
-			'jobOrder.serviceType',
-			'jobOrder.jobOrderRepairOrders' => function ($q) use ($estimate_order) {
+		$this->data['estimate'] = $job_order = JobOrder::with([
+			'type',
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
+			'outlet',
+			'gateLog',
+			'vehicle.currentOwner.customer',
+			'vehicle.currentOwner.customer.primaryAddress',
+			'vehicle.currentOwner.customer.primaryAddress.country',
+			'vehicle.currentOwner.customer.primaryAddress.state',
+			'vehicle.currentOwner.customer.primaryAddress.city',
+			'serviceType',
+			'jobOrderRepairOrders' => function ($q) use ($estimate_order) {
 				$q->where('estimate_order_id', $estimate_order->id);
 			},
-			'jobOrder.jobOrderRepairOrders.repairOrder',
-			'jobOrder.jobOrderRepairOrders.repairOrder.repairOrderType',
-			'jobOrder.floorAdviser',
-			'jobOrder.serviceAdviser',
-			'jobOrder.roadTestPreferedBy.employee',
-			'jobOrder.jobOrderParts' => function ($q) use ($estimate_order) {
+			'jobOrderRepairOrders.repairOrder',
+			'jobOrderRepairOrders.repairOrder.repairOrderType',
+			'floorAdviser',
+			'serviceAdviser',
+			'roadTestPreferedBy.employee',
+			'jobOrderParts' => function ($q) use ($estimate_order) {
 				$q->where('estimate_order_id', $estimate_order->id);
 			},
-			'jobOrder.jobOrderParts.part',
-			'jobOrder.jobOrderParts.part.taxCode',
-			'jobOrder.jobOrderParts.part.taxCode.taxes'])
+			'jobOrderParts.part',
+			'jobOrderParts.part.taxCode',
+			'jobOrderParts.part.taxCode.taxes'])
 			->select([
-				'job_cards.*',
-				DB::raw('DATE_FORMAT(job_cards.created_at,"%d-%m-%Y") as jobdate'),
-				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d-%m-%Y") as jobdate'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 			])
 			->find($id);
-
 		$parts_amount = 0;
 		$labour_amount = 0;
 		$total_amount = 0;
 
 		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+		if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
 			$tax_type = 1160; //Within State
 		} else {
 			$tax_type = 1161; //Inter State
@@ -180,13 +178,13 @@ class PDFController extends Controller {
 
 		$tax_percentage = 0;
 		$labour_details = array();
-		if ($job_card->jobOrder->jobOrderRepairOrders) {
+		if ($job_order->jobOrderRepairOrders) {
 			$i = 1;
 			$total_labour_qty = 0;
 			$total_labour_mrp = 0;
 			$total_labour_price = 0;
 			$total_labour_tax = 0;
-			foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $labour) {
+			foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
 				if (in_array($labour->split_order_type_id, $customer_paid_type_id) || !$labour->split_order_type_id) {
 					if ($labour->is_free_service != 1 && $labour->removal_reason_id == null) {
 						$total_amount = 0;
@@ -250,13 +248,13 @@ class PDFController extends Controller {
 		}
 
 		$part_details = array();
-		if ($job_card->jobOrder->jobOrderParts) {
+		if ($job_order->jobOrderParts) {
 			$j = 1;
 			$total_parts_qty = 0;
 			$total_parts_mrp = 0;
 			$total_parts_price = 0;
 			$total_parts_tax = 0;
-			foreach ($job_card->jobOrder->jobOrderParts as $key => $parts) {
+			foreach ($job_order->jobOrderParts as $key => $parts) {
 				if (in_array($parts->split_order_type_id, $customer_paid_type_id) || !$parts->split_order_type_id) {
 					if ($parts->is_free_service != 1 && $parts->removal_reason_id == null) {
 						$total_amount = 0;
@@ -349,7 +347,18 @@ class PDFController extends Controller {
 		$this->data['round_total_amount'] = number_format($round_off, 2);
 		$this->data['total_amount'] = number_format(round($total_amount), 2);
 
-		$pdf = PDF::loadView('pdf-gigo/estimate-pdf', $this->data);
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $job_order->id . '_estimate.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/estimate-pdf', $this->data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return $pdf->stream('estimate.pdf');
 	}
@@ -810,6 +819,7 @@ class PDFController extends Controller {
 		$this->data['total_parts_tax'] = $total_parts_tax;
 		$this->data['parts_total_amount'] = number_format($parts_amount, 2);
 		$this->data['labour_total_amount'] = number_format($labour_amount, 2);
+		$this->data['date'] = date('d-m-Y');
 		//FOR ROUND OFF
 		if ($total_amount <= round($total_amount)) {
 			$round_off = round($total_amount) - $total_amount;
@@ -820,7 +830,18 @@ class PDFController extends Controller {
 		$this->data['round_total_amount'] = number_format($round_off, 2);
 		$this->data['total_amount'] = number_format(round($total_amount), 2);
 
-		$pdf = PDF::loadView('pdf-gigo/revised-estimate-pdf', $this->data);
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $job_card->jobOrder->id . '_revised_estimate.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/revised-estimate-pdf', $this->data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return $pdf->stream('revised-estimate.pdf');
 	}
