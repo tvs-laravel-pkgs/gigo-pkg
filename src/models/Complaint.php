@@ -45,13 +45,13 @@ class Complaint extends BaseModel {
 			],
 		],
 		'Sub Aggregate' => [
-			'table_column_name' => 'name',
+			'table_column_name' => 'sub_aggregate_id',
 			'rules' => [
 				'required' => [
 				],
 				'fk' => [
 					'class' => 'App\SubAggregate',
-					'foreign_table_column' => 'name',
+					'foreign_table_column' => 'code',
 					// 'check_with_company' => true,
 				],
 			],
@@ -192,7 +192,7 @@ class Complaint extends BaseModel {
 		} else {
 			$sub_aggregate = SubAggregate::where([
 				// 'company_id' => $admin->company_id,
-				'name' => $record_data['Sub Aggregate'],
+				'code' => $record_data['Sub Aggregate'],
 			])->first();
 			if ($sub_aggregate == null) {
 				$errors[] = 'Sub Aggregate not found : ' . $record_data['Sub Aggregate'];
