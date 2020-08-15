@@ -2934,7 +2934,7 @@ app.component('inwardVehicleCustomerDetail', {
                                 $scope.$apply();
                             } else {
                                 custom_noty('success', res.message);
-                                $location.path('/inward-vehicle/order-detail/form/' + $routeParams.job_order_id);
+                                $location.path('/inward-vehicle/vehicle/photos/' + $routeParams.job_order_id);
                                 $scope.$apply();
                             }
                         })
@@ -4682,7 +4682,7 @@ app.component('inwardVehicleVocDetailForm', {
                 // messages: {
                 // },
                 invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check all tabs');
+                    custom_noty('error', 'You have errors, Please check all fields');
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(voc_form_id)[0]);

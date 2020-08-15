@@ -654,6 +654,23 @@ class JobCardController extends Controller {
 					'errors' => ['Job Card Not Found!'],
 				]);
 			}
+
+			//Check Estimate PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->jobOrder->id . '_estimate.pdf');
+			if (file_exists($directoryPath)) {
+				$job_card->estimate_pdf = url('storage/app/public/gigo/pdf/' . $job_card->jobOrder->id . '_estimate.pdf');
+			} else {
+				$job_card->estimate_pdf = '';
+			}
+
+			//Check RevisedEstimate PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->jobOrder->id . '_revised_estimate.pdf');
+			if (file_exists($directoryPath)) {
+				$job_card->revised_estimate_pdf = url('storage/app/public/gigo/pdf/' . $job_card->jobOrder->id . '_revised_estimate.pdf');
+			} else {
+				$job_card->revised_estimate_pdf = '';
+			}
+
 			return response()->json([
 				'success' => true,
 				'job_card' => $job_card,

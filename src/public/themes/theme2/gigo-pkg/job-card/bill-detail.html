@@ -136,7 +136,15 @@
                                                                             </b>
                                                                         </td>
                                                                         <td>
-                                                                            {{job_card.job_order.km_reading}}
+                                                                            {{job_card.job_order.km_reading_type_id == 8041 ? 'Hr' : 'KM'}}
+                                                                        </td>
+                                                                        <td>
+                                                                            <b>
+                                                                                Cum. KM/HR Reading
+                                                                            </b>
+                                                                        </td>
+                                                                        <td>
+                                                                            {{job_card.job_order.km_reading_type_id == 8041 ? job_card.job_order.hr_reading : job_card.job_order.km_reading}}
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
@@ -147,14 +155,6 @@
                                                                         </td>
                                                                         <td>
                                                                             {{job_card.job_order.vehicle.engine_number}}
-                                                                        </td>
-                                                                        <td>
-                                                                            <b>
-                                                                                Cum. KM/HR Reading
-                                                                            </b>
-                                                                        </td>
-                                                                        <td>
-                                                                            {{job_card.job_order.km_reading}}
                                                                         </td>
                                                                     </tr>
                                                                     <tr>

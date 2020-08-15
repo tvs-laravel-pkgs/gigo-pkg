@@ -295,7 +295,7 @@ input[type=number] {
             </div>
             <div class="modal-body">
                 <div class="modal-form">
-                    <form id="return-part-form">
+                    <form id="return-part-form" autocomplete="off">
                         <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                         <input type="hidden" name="job_order_returned_part_id" value="{{$ctrl.job_order_returned_part_id}}">
                         <div class="row">
@@ -366,7 +366,7 @@ input[type=number] {
 <div class="modal fade filter" id="return_part_view_modal">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="not-issued-return-form">
+            <form id="not-issued-return-form" autocomplete="off">
                 <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                 <input type="hidden" name="job_order_part_id" value="{{job_order_part_id}}">
                 <input type="hidden" name="returned_to_id" value="{{user_id}}">
@@ -406,7 +406,7 @@ input[type=number] {
 </div><!-- Modal -->
 <div class="modal fade filter" id="part_form_modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
-        <form id="part-form">
+        <form id="part-form" autocomplete="off">
             <input type="hidden" name="job_order_id" value="{{job_order.id}}">
             <input type="hidden" name="job_order_part_id" value="{{parts_indent.part.job_order_part_id}}">
             <input type="hidden" name="type" value="Part Indent">
@@ -558,7 +558,7 @@ input[type=number] {
             </div>
             <div class="modal-body">
                 <div class="modal-form">
-                    <form id="part-form">
+                    <form id="part-form" autocomplete="off">
                         <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                         <input type="hidden" name="job_order_part_id" value="{{parts_indent.part.job_order_part_id}}">
                         <div class="row">
@@ -698,7 +698,7 @@ input[type=number] {
 </div><!-- Modal -->
 <div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm finance-view-modal" role="document">
-        <form id="labour_parts_remove">
+        <form id="labour_parts_remove" autocomplete="off">
             <input type="hidden" name="labour_parts_id" id="labour_parts_id" value="">
             <input type="hidden" name="payable_type" id="payable_type" value="">
             <div class="modal-content">

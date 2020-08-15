@@ -59,8 +59,11 @@ Content Wrap -->
                                                         <div class="checklist-item-value">
                                                             Estimate
                                                         </div>
-                                                        <div class="checklist-item-value-sm">
+                                                        <div class="checklist-item-value-sm" ng-if="!estimate_pdf">
                                                             <a target="_blank" href="{{estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        </div>
+                                                        <div class="checklist-item-value-sm" ng-if="estimate_pdf">
+                                                            <a target="_blank" href="{{estimate_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -74,14 +77,16 @@ Content Wrap -->
                                                         </div>
                                                     </div>
                                                 </li> -->
-
                                                 <li>
                                                     <div class="checklist-item-wrap pad-big">
                                                         <div class="checklist-item-value">
                                                             Revised Estimate
                                                         </div>
-                                                        <div class="checklist-item-value-sm">
+                                                        <div class="checklist-item-value-sm" ng-if="!revised_estimate_pdf">
                                                             <a target="_blank" href="{{revised_estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        </div>
+                                                        <div class="checklist-item-value-sm" ng-if="revised_estimate_pdf">
+                                                            <a target="_blank" href="{{revised_estimate_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -105,7 +110,6 @@ Content Wrap -->
                                                         </div>
                                                     </div>
                                                 </li> -->
-
                                                 <li class="ng-hide">
                                                     <div class="checklist-item-wrap pad-big">
                                                         <div class="checklist-item-value">
@@ -126,8 +130,7 @@ Content Wrap -->
                                                         </div>
                                                     </div>
                                                 </li>
-
-                                               <!--  <li>
+                                                <!--  <li>
                                                     <div class="checklist-item-wrap pad-big">
                                                         <div class="checklist-item-value">
                                                             Warrenty Pick List PDF
@@ -157,7 +160,6 @@ Content Wrap -->
                                                         </div>
                                                     </div>
                                                 </li> -->
-
                                                 <li>
                                                     <div class="checklist-item-wrap pad-big">
                                                         <div class="checklist-item-value">
@@ -168,7 +170,6 @@ Content Wrap -->
                                                         </div>
                                                     </div>
                                                 </li>
-
                                                 <li>
                                                     <div class="checklist-item-wrap pad-big">
                                                         <div class="checklist-item-value">
@@ -179,7 +180,6 @@ Content Wrap -->
                                                         </div>
                                                     </div>
                                                 </li>
-
                                                 <li>
                                                     <div class="checklist-item-wrap pad-big">
                                                         <div class="checklist-item-value">
@@ -210,7 +210,6 @@ Content Wrap -->
                                                         </div>
                                                     </div>
                                                 </li>
-
                                             </ul>
                                         </div>
                                         <div class="mb-10"></div><!-- Spacing -->
