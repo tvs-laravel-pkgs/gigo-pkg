@@ -8,8 +8,8 @@
                     <a href="#!/job-card/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>Bill Details</b></h1>
-                    <p class="subtitle">Job Card / Bill Details</p>
+                    <h1 class="title"><b>Split Order</b></h1>
+                    <p class="subtitle">Job Card / Split Order</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -29,7 +29,7 @@
                                         Split Order
                                     </h5>
                                     <div class="panel-group" id="accordion">
-                                        <div class="panel panel-default type-4" ng-if="unassigned_total_count > 0">
+                                        <div class="panel panel-default type-3" ng-if="unassigned_total_count > 0">
                                             <div class="panel-heading">
                                                 <a class="panel-title in unassigned_tab" data-toggle="collapse" data-parent="#accordion" data-target="#unassigned_items">
                                                     Unassigned Items - {{unassigned_total_count}} Items
@@ -111,7 +111,7 @@
                                                 </div><!-- Panel Body -->
                                             </div><!-- Panel Collapse -->
                                         </div><!-- Panel -->
-                                        <div class="panel panel-default type-4" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-if="split_order_type.total_items > 0">
+                                        <div class="panel panel-default type-3" ng-repeat="(key,split_order_type) in extras.split_order_types" ng-if="split_order_type.total_items > 0">
                                             <div class="panel-heading">
                                                 <a class="panel-title" data-toggle="collapse" data-parent="#accordion" data-target="#{{split_order_type.id}}">
                                                     {{split_order_type.code}} - {{split_order_type.name}} - {{split_order_type.total_items}} {{split_order_type.total_items > 1 ? 'items' : 'item'}}
