@@ -182,6 +182,7 @@ app.component('warrantyJobOrderRequestForm', {
                         //     photos: [],
                         // };
                         $scope.warranty_job_order_request.job_order.vehicle.is_sold = true;
+                        $scope.warranty_job_order_request.total_part_cushioning_percentage = 0;
                         if (self.hasPermission('own-outlet-warranty-job-order-request')) {
                             $scope.warranty_job_order_request.job_order.outlet = $scope.user.employee.outlet;
                         }
@@ -395,9 +396,15 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.customerChanged = function(customer) {
+            $scope.warranty_job_order_request.customer_address = {};
             CustomerSvc.read(customer.id)
                 .then(function(response) {
                     $scope.warranty_job_order_request.job_order.customer = response.data.customer;
+                    if (typeof response.data.customer.address != null && typeof response.data.customer.address != 'string') {
+                        $scope.warranty_job_order_request.customer_address = response.data.customer.address;
+                    } else if (typeof response.data.customer.primary_address != null && typeof response.data.customer.primary_address != 'string') {
+                        $scope.warranty_job_order_request.customer_address = response.data.customer.primary_address;
+                    }
                 });
         }
 

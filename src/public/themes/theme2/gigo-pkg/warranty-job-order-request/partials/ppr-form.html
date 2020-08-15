@@ -557,7 +557,7 @@
                                             Address Line 1
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input required type="text" class="form-control" placeholder="Enter Address Line 1" autocomplete="off" ng-model="warranty_job_order_request.job_order.vehicle.current_owner.customer.address.address_line1" name="address_line1">
+                                        <input required type="text" class="form-control" placeholder="Enter Address Line 1" autocomplete="off" ng-model="warranty_job_order_request.customer_address.address_line1" name="address_line1">
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-if="form_type=='manual'">
@@ -566,7 +566,7 @@
                                             Address Line 2
                                             <sup class="mandatory"></sup>
                                         </label>
-                                        <input type="text" class="form-control" placeholder="Enter Address Line 2" autocomplete="off" ng-model="warranty_job_order_request.job_order.vehicle.current_owner.customer.address.address_line2" name="address_line2">
+                                        <input type="text" class="form-control" placeholder="Enter Address Line 2" autocomplete="off" ng-model="warranty_job_order_request.customer_address.address_line2" name="address_line2">
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-if="form_type=='manual'">
@@ -575,7 +575,7 @@
                                             Country
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-select ng-model="warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country" placeholder="Select Country" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged()">
+                                        <md-select ng-model="warranty_job_order_request.customer_address.country" placeholder="Select Country" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged()">
                                             <md-select-header class="demo-select-header">
                                                 <input ng-model="searchCountry" type="search" placeholder="Search for a country.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                             </md-select-header>
@@ -585,7 +585,7 @@
                                                 </md-option>
                                             </md-optgroup>
                                         </md-select>
-                                        <input required type="hidden" name="country_id" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country.id}}">
+                                        <input required type="hidden" name="country_id" value="{{warranty_job_order_request.customer_address.country.id}}">
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-if="form_type=='manual'">
@@ -594,7 +594,7 @@
                                             State
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-select ng-model="warranty_job_order_request.job_order.vehicle.current_owner.customer.address.state" placeholder="Select State" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select ng-model="warranty_job_order_request.customer_address.state" placeholder="Select State" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                             <md-select-header class="demo-select-header">
                                                 <input ng-model="searchState" type="search" placeholder="Search for a state.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                             </md-select-header>
@@ -604,7 +604,7 @@
                                                 </md-option>
                                             </md-optgroup>
                                         </md-select>
-                                        <input required type="hidden" name="state_id" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.state.id}}">
+                                        <input required type="hidden" name="state_id" value="{{warranty_job_order_request.customer_address.state.id}}">
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-if="form_type=='manual'">
@@ -613,7 +613,7 @@
                                             City
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus>
+                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.customer_address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus>
                                             <md-item-template>
                                                 <span>
                                                     {{option.name}}
@@ -624,7 +624,7 @@
                                             </md-not-found>
                                         </md-autocomplete>
                                         <input required type="hidden" id="city_id" name="city_id" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.id}}">
-                                        <input required type="hidden" id="city_name" name="city_name" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.name}}">
+                                        <input required type="hidden" id="city_name" name="city_name" value="{{warranty_job_order_request.customer_address.city.name}}">
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-if="form_type=='manual'">
