@@ -30,8 +30,6 @@ class RepairOrder extends BaseModel {
 		'skill_level_id',
 		'hours',
 		'amount',
-		'claim_amount',
-		'maximum_claim_amount',
 		'tax_code_id',
 		'uom_id',
 	];
@@ -104,29 +102,6 @@ class RepairOrder extends BaseModel {
 			'table_column_name' => 'amount',
 			'rules' => [
 				'required' => [
-				],
-				'unsigned_decimal' => [
-					'size' => '12,2',
-				],
-			],
-		],
-		'Claim Amount' => [
-			'table_column_name' => 'claim_amount',
-			'rules' => [
-				'required' => [
-				],
-				'unsigned_decimal' => [
-					'size' => '12,2',
-				],
-			],
-		],
-		'Maximum Claim Amount' => [
-			'table_column_name' => 'maximum_claim_amount',
-			'rules' => [
-				'required_if' => [
-					'claim_amount',
-				],
-				'nullable' => [
 				],
 				'unsigned_decimal' => [
 					'size' => '12,2',
@@ -300,8 +275,6 @@ class RepairOrder extends BaseModel {
 			'Hours' => $record_data->hours,
 			'Skill Level Short Name' => $record_data->skill_level_short_name,
 			'Amount' => $record_data->amount,
-			'Claim Amount' => $record_data->claim_amount,
-			'Maximum Claim Amount' => $record_data->maximum_claim_amount,
 			'Alt Code' => $record_data->alt_code,
 			'UOM Short Name' => $record_data->uom_short_name,
 			'Tax Code' => $record_data->tax_code,
