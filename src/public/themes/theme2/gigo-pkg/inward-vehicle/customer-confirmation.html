@@ -67,7 +67,7 @@
                                                 <div id="signArea">
                                                     <div class="photo-sign-caption">Customer E Sign</div>
                                                     <br>
-                                                    <div class="col-md-6">
+                                                    <div ng-class="{'col-md-6':job_order.customer_e_sign.length > 0 ,'col-md-12':job_order.customer_e_sign.length == 0}">
                                                         <div class="sig sigWrapper" style="height:auto;">
                                                             <div class="typed"></div>
                                                             <!-- <canvas class="sign-pad" id="sign-pad" width="300" height="100"></canvas> -->
@@ -77,8 +77,8 @@
                                                         <button id="clear-signature">Clear</button>
                                                         <span id="eror_customer_sign"></span>
                                                     </div>
-                                                    <div class="col-md-6">
-                                                        <img ng-if="job_order.customer_e_sign.length > 0" src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_e_sign[0].name}}" id="customer_pic" height="150" width="450">
+                                                    <div class="col-md-6" ng-if="job_order.customer_e_sign.length > 0">
+                                                        <img src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_e_sign[0].name}}" id="customer_pic" height="150" width="450">
                                                     </div>
                                                 </div>
                                             </div>

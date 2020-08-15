@@ -448,7 +448,7 @@
                                         Part Code
                                         <span class="mandatory">*</span>
                                     </label>
-                                    <md-autocomplete md-selected-item="schedule_maintainance_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
+                                    <md-autocomplete md-selected-item="schedule_maintainance_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="4" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
                                         <md-item-template>
                                             <span>
                                                 {{part.code}} / {{part.name}}
