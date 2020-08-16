@@ -45,7 +45,7 @@ class SplitOrderType extends BaseModel {
 				],
 			],
 		],
-		'Claim Category' => [
+		'Paid By' => [
 			'table_column_name' => 'claim_category_id',
 			'rules' => [
 				'nullable' => [
@@ -53,6 +53,23 @@ class SplitOrderType extends BaseModel {
 				'fk' => [
 					'class' => 'App\Config',
 					'foreign_table_column' => 'name',
+					'additional_conditions' => [
+						'config_type_id' => 400,
+					],
+				],
+			],
+		],
+		'Claim Category' => [
+			'table_column_name' => 'paid_by_id',
+			'rules' => [
+				'nullable' => [
+				],
+				'fk' => [
+					'class' => 'App\Config',
+					'foreign_table_column' => 'name',
+					'additional_conditions' => [
+						'config_type_id' => 405,
+					],
 				],
 			],
 		],
@@ -176,40 +193,6 @@ class SplitOrderType extends BaseModel {
 			];
 		}
 	}
-	/*public static function createFromObject($record_data) {
-
-		$errors = [];
-		$company = Company::where('code', $record_data->company)->first();
-		if (!$company) {
-			dump('Invalid Company : ' . $record_data->company);
-			return;
-		}
-
-		$admin = $company->admin();
-		if (!$admin) {
-			dump('Default Admin user not found');
-			return;
-		}
-
-		$type = Config::where('name', $record_data->type)->where('config_type_id', 89)->first();
-		if (!$type) {
-			$errors[] = 'Invalid Tax Type : ' . $record_data->type;
-		}
-
-		if (count($errors) > 0) {
-			dump($errors);
-			return;
-		}
-
-		$record = self::firstOrNew([
-			'company_id' => $company->id,
-			'name' => $record_data->tax_name,
-		]);
-		$record->type_id = $type->id;
-		$record->created_by_id = $admin->id;
-		$record->save();
-		return $record;
-	}*/
 
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Split Order Type') {
 		$list = Collect(Self::select([
