@@ -475,8 +475,14 @@ app.component('vehicleGatePassView', {
                         showErrorNoty(res);
                         return;
                     }
+                    console.log(res);
                     self.vehicle_gate_pass = res.view_vehicle_gate_pass;
-                    $scope.gatepass_url = base_url + '/gigo-pkg/pdf/gatepass/' + self.vehicle_gate_pass.job_order.job_card.id;
+                    if (self.vehicle_gate_pass.gate_pass.job_card_id) {
+                        $scope.gatepass_url = res.pdf_link + '/' + self.vehicle_gate_pass.job_order.id + '_job_card_gatepass.pdf';
+                    } else {
+                        $scope.gatepass_url = res.pdf_link + '/' + self.vehicle_gate_pass.job_order.id + '_estimate_gatepass.pdf';
+                    }
+                    // $scope.gatepass_url = base_url + '/gigo-pkg/pdf/gatepass/' + self.vehicle_gate_pass.job_order.job_card.id;
                     $scope.covering_letter_url = base_url + '/gigo-pkg/pdf/covering-letter/' + self.vehicle_gate_pass.job_order.job_card.id;
                     $scope.$apply();
                 })

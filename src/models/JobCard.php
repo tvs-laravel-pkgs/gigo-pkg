@@ -444,4 +444,56 @@ class JobCard extends BaseModel {
 		return true;
 	}
 
+	public static function generateGatePassPDF($job_card_id) {
+		$data['gate_pass'] = $job_card = JobCard::with([
+			'jobOrder.type',
+			'jobOrder.quoteType',
+			'jobOrder.serviceType',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'jobOrder.vehicle.status',
+			'jobOrder.outlet',
+			'jobOrder.gateLog',
+			'jobOrder.gatePass',
+			'jobOrder.vehicle.currentOwner.customer',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress.country',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress.state',
+			'jobOrder.vehicle.currentOwner.customer.primaryAddress.city',
+			'jobOrder.jobOrderRepairOrders.repairOrder',
+			'jobOrder.jobOrderRepairOrders.repairOrder.repairOrderType',
+			'jobOrder.floorAdviser',
+			'jobOrder.serviceAdviser',
+		])
+			->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d-%m-%Y") as jobdate'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_card_id);
+
+		$params['field_type_id'] = [11, 12];
+		$company_id = $job_card->company_id;
+		$data['extras'] = [
+			'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_card->jobOrder->id, $params, '', '', $company_id),
+		];
+
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$data['date'] = date('d-m-Y');
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $job_card->jobOrder->id . '_job_card_gatepass.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/job-card-gate-pass-pdf', $data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
+
+		return true;
+	}
+
 }

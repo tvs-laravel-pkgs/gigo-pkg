@@ -209,20 +209,28 @@ class VehicleInventoryItem extends BaseModel {
 		return $list;
 	}
 
-	public static function getInventoryList($job_order_id = NULL, $params = [], $add_default = true, $default_text = '') {
+	public static function getInventoryList($job_order_id = NULL, $params = [], $add_default = true, $default_text = '', $company_id = NULL) {
 		$list = Self::select([
 			'id',
 			'name',
 			'field_type_id',
 		])
-			->where('company_id', Auth::user()->company_id)
 			->orderBy('id');
+
+		if (!empty($company_id)) {
+			$list = $list->where('company_id', $company_id);
+		} else {
+			$list = $list->where('company_id', Auth::user()->company_id);
+		}
+
 		if (count($params) > 0) {
 			foreach ($params as $key => $value) {
 				$list->whereIn($key, $value);
 			}
 		}
+
 		$list = collect($list->get()->keyBy('id'));
+
 		$job_order = JobOrder::find($job_order_id);
 		if ($job_order) {
 			$vehicle_inventory_items = $job_order->vehicleInventoryItem()->orderBy('id')->get()->toArray();

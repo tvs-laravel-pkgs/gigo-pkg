@@ -164,6 +164,7 @@ class VehicleGatePassController extends Controller {
 			return response()->json([
 				'success' => true,
 				'view_vehicle_gate_pass' => $view_vehicle_gate_pass,
+				'pdf_link' => url('storage/app/public/gigo/pdf'),
 			]);
 		} catch (Exception $e) {
 			return response()->json([
