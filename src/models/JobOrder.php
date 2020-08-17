@@ -358,7 +358,7 @@ class JobOrder extends BaseModel {
 
 	public function estimationDeniedPaymentDetails() {
 		return $this->hasMany('App\Invoice', 'entity_id', 'id')->where('invoice_of_id', 7427);
-
+	}
 	public function gatePass() {
 		return $this->hasOne('App\GatePass', 'job_order_id');
 	}
