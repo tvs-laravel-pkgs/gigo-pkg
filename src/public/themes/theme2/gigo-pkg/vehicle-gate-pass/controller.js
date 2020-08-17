@@ -302,7 +302,7 @@ app.component('vehicleGatePassTableList', {
                 { data: 'driver_name', name: 'job_orders.driver_name' },
                 { data: 'driver_mobile_number', name: 'job_orders.driver_mobile_number' },
                 { data: 'model_name', name: 'models.model_name' },
-                { data: 'job_card_number', name: 'job_cards.job_card_number' },
+                { data: 'job_card_number', name: 'job_orders.number' },
                 { data: 'status', name: 'configs.name' },
 
             ],

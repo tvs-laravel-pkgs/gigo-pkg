@@ -113,6 +113,29 @@
                     <div id="collapse0" class="panel-collapse collapse in">
                         <div class="panel-body">
                             <ul class="view-row mb-no">
+                                <li class="view-col-3">
+                                    <!-- ng-if="false"-->
+                                    <div class="form-group">
+                                        <label>
+                                            Request type
+                                            <sup class="mandatory">*</sup>
+                                        </label>
+                                        <div class="common-radio-button type-4">
+                                            <input type="radio" id="warranty" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9180">
+                                            <label for="warranty">
+                                                Warranty
+                                            </label>
+                                            <input type="radio" id="ewp" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9181">
+                                            <label for="ewp">
+                                                EWP
+                                            </label>
+                                            <input type="radio" id="amc" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9182">
+                                            <label for="amc">
+                                                AMC
+                                            </label>
+                                        </div>
+                                    </div><!-- Feild -->
+                                </li>
                                 <li class="view-col-3" ng-if="form_type != 'manual'">
                                     <div class="form-group">
                                         <label>
@@ -152,7 +175,7 @@
                                             </sup>
                                         </label>
                                         <div class="input-group date" data-provide="datepicker">
-                                            <input type="text" class="form-control" placeholder="Select Failure Date" ng-model="warranty_job_order_request.failure_date" name="failure_date" readonly />
+                                            <input type="text" class="form-control" placeholder="Select Failure Date" ng-model="warranty_job_order_request.failure_date" name="failure_date" />
                                             <div class="input-group-addon">
                                                 <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                             </div>
@@ -194,7 +217,7 @@
                                         {{warranty_job_order_request.job_order.outlet.business.pivot.sac_code}}
                                     </span>
                                 </li>
-                                <!-- <li class="view-col-3">
+                                <li class="view-col-3">
                                     <div class="form-group">
                                         <label>
                                             Warranty status
@@ -221,30 +244,8 @@
                                             <label for="amc_no">Inactive</label>
                                         </div>
                                     </div>
-                                </li> -->
-                                <li class="view-col-3">
-                                    <!-- ng-if="false"-->
-                                    <div class="form-group">
-                                        <label>
-                                            Request type
-                                            <sup class="mandatory">*</sup>
-                                        </label>
-                                        <div class="common-radio-button type-4">
-                                            <input type="radio" id="warranty" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9180">
-                                            <label for="warranty">
-                                                Warranty
-                                            </label>
-                                            <input type="radio" id="ewp" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9181">
-                                            <label for="ewp">
-                                                EWP
-                                            </label>
-                                            <input type="radio" id="amc" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9182">
-                                            <label for="amc">
-                                                AMC
-                                            </label>
-                                        </div>
-                                    </div><!-- Feild -->
                                 </li>
+
                                 <li class="view-col-3">
                                     <div class="form-group">
                                         <label>
