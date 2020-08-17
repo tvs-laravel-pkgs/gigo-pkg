@@ -9,6 +9,14 @@
             <ul class="view-row mb-no">
                 <li class="view-col-3">
                     <span class="view-col-label">
+                        Request Type
+                    </span>
+                    <span class="view-col-value">
+                        {{warranty_job_order_request.request_type.name}}
+                    </span>
+                </li>
+                <li class="view-col-3">
+                    <span class="view-col-label">
                         Job Card
                     </span>
                     <span class="view-data-list-value">
@@ -33,6 +41,14 @@
                         <b>
                             {{warranty_job_order_request.job_order.vehicle.sold_date}}
                         </b>
+                    </span>
+                </li>
+                <li class="view-col-3" ng-if="warranty_job_order_request.job_order.vehicle.is_sold">
+                    <span class="view-col-label">
+                        Bharat Stages
+                    </span>
+                    <span class="view-col-value">
+                        {{warranty_job_order_request.job_order.vehicle.bharat_stage.name}}
                     </span>
                 </li>
                 <li class="view-col-3">
@@ -176,6 +192,25 @@
                                 </li>
                                 <li class="view-col-3">
                                     <span class="view-col-label">
+                                        Aggregate
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.complaint.sub_aggregate.aggregate.code}} /
+                                        {{warranty_job_order_request.complaint.sub_aggregate.aggregate.code}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Sub Aggregate
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.complaint.sub_aggregate.code}}
+                                        /
+                                        {{warranty_job_order_request.complaint.sub_aggregate.name}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
                                         Complaint code
                                     </span>
                                     <span class="view-col-value">
@@ -259,8 +294,14 @@
                                         Customer name and address
                                     </span>
                                     <span class="view-col-value">
-                                        {{warranty_job_order_request.job_order.customer.name}}
-                                        {{warranty_job_order_request.job_order.customer.address}}
+                                        {{warranty_job_order_request.job_order.customer.name}},
+                                        <!-- {{warranty_job_order_request.job_order.customer.address}} -->
+                                        {{warranty_job_order_request.job_order.customer.primary_address.address_line1}}
+                                        {{warranty_job_order_request.job_order.customer.primary_address.address_line2}},
+                                        {{warranty_job_order_request.job_order.customer.primary_address.city.name}},
+                                        {{warranty_job_order_request.job_order.customer.primary_address.state.name}},
+                                        {{warranty_job_order_request.job_order.customer.primary_address.country.name}},
+                                        {{warranty_job_order_request.job_order.customer.zipcode}}.
                                     </span>
                                 </li>
                             </ul>

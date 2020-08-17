@@ -125,7 +125,7 @@
                             </td>
                             <td>
                                 <div class="form-group">
-                                    <input type="text" ng-keyup="calculateCushionCharges()" class="form-control" placeholder="Part Cushioning Percentage" name="total_part_cushioning_percentage" ng-model="warranty_job_order_request.total_part_cushioning_percentage" maxlength="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                    <input ng-readonly="page=='view'" type="text" ng-keyup="calculateCushionCharges()" class="form-control" placeholder="Part Cushioning Percentage" name="total_part_cushioning_percentage" ng-model="warranty_job_order_request.total_part_cushioning_percentage" maxlength="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                 </div><!-- Field -->
                             </td>
                             <td class="text-left">

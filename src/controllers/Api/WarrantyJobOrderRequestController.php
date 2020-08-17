@@ -186,11 +186,10 @@ class WarrantyJobOrderRequestController extends Controller {
 			$warranty_manager = User::find($warranty_job_order_request->jobOrder->outlet->business->pivot->warranty_manager_id);
 
 			if (!$warranty_manager) {
-				return [
+				return response()->json([
 					'success' => false,
 					'error' => 'Warranty manager not configured : Outlet Code - ' . $warranty_job_order_request->jobOrder->outlet->code . ', Business : ' . $warranty_job_order_request->jobOrder->outlet->business->name,
-				];
-
+				]);
 			}
 
 			$warranty_manager->notify(new WjorNotification([
@@ -230,6 +229,7 @@ class WarrantyJobOrderRequestController extends Controller {
 			$warranty_job_order_request->save();
 
 			$warranty_job_order_request->load($this->model::relationships('read'));
+			$warranty_job_order_request->loadBusiness('ALSERV');
 
 			$warranty_job_order_request->generatePDF();
 			return response()->json([
