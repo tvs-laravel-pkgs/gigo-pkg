@@ -35,7 +35,7 @@ class VehicleGatePassController extends Controller {
 			'job_orders.driver_mobile_number',
 			'vehicles.registration_number',
 			'models.model_name',
-			'job_cards.job_card_number',
+			'job_orders.number as job_card_number',
 			'gate_passes.number as gate_pass_no',
 			'configs.name as status',
 			'gate_passes.id',
@@ -43,8 +43,8 @@ class VehicleGatePassController extends Controller {
 			'gate_passes.status_id',
 			DB::raw('DATE_FORMAT(gate_passes.created_at,"%d/%m/%Y, %h:%s %p") as date_and_time'),
 		])
-			->join('job_cards', 'job_cards.id', 'gate_passes.job_card_id')
-			->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')
+			->join('job_orders', 'job_orders.id', 'gate_passes.job_order_id')
+			->leftJoin('job_cards', 'job_cards.id', 'gate_passes.job_card_id')
 			->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
 			->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
 			->join('models', 'models.id', 'vehicles.model_id')
@@ -81,7 +81,7 @@ class VehicleGatePassController extends Controller {
 			})
 			->where(function ($query) use ($request) {
 				if (!empty($request->job_card_number)) {
-					$query->where('job_cards.job_card_number', 'LIKE', '%' . $request->job_card_number . '%');
+					$query->where('job_orders.number', 'LIKE', '%' . $request->job_card_number . '%');
 				}
 			})
 			->where(function ($query) use ($request) {
@@ -97,9 +97,9 @@ class VehicleGatePassController extends Controller {
 
 		if (!Entrust::can('gate-out-all')) {
 			if (Entrust::can('gate-out-mapped-outlet')) {
-				$vehicle_gate_passes->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
+				$vehicle_gate_passes->whereIn('job_orders.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 			} elseif (Entrust::can('gate-out-own-outlet')) {
-				$vehicle_gate_passes->where('job_cards.outlet_id', Auth::user()->employee->outlet_id);
+				$vehicle_gate_passes->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
 			} else {
 				$vehicle_gate_passes->where('gate_passes.created_by_id', Auth::user()->id);
 			}
