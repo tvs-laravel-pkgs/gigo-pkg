@@ -88,6 +88,7 @@ class SplitOrderType extends BaseModel {
 			'Company Code' => $record_data->company_code,
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
+			'Paid By' => $record_data->paid_by,
 			'Claim Category' => $record_data->claim_category,
 		];
 		return static::saveFromExcelArray($record);

@@ -358,6 +358,9 @@ class JobOrder extends BaseModel {
 
 	public function estimationDeniedPaymentDetails() {
 		return $this->hasMany('App\Invoice', 'entity_id', 'id')->where('invoice_of_id', 7427);
+
+	public function gatePass() {
+		return $this->hasOne('App\GatePass', 'job_order_id');
 	}
 
 	// Query Scopes --------------------------------------------------------------
@@ -428,6 +431,56 @@ class JobOrder extends BaseModel {
 		return $list;
 	}
 
+	public static function generateEstimateGatePassPDF($job_order_id) {
+		$data['gate_pass'] = $job_order = JobOrder::with([
+			'type',
+			'quoteType',
+			'serviceType',
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
+			'outlet',
+			'gateLog',
+			'gatePass',
+			'vehicle.currentOwner.customer',
+			'vehicle.currentOwner.customer.primaryAddress',
+			'vehicle.currentOwner.customer.primaryAddress.country',
+			'vehicle.currentOwner.customer.primaryAddress.state',
+			'vehicle.currentOwner.customer.primaryAddress.city',
+			'jobOrderRepairOrders.repairOrder',
+			'jobOrderRepairOrders.repairOrder.repairOrderType',
+			'floorAdviser',
+			'serviceAdviser',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d-%m-%Y") as jobdate'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_order_id);
+
+		$params['field_type_id'] = [11, 12];
+		$data['extras'] = [
+			'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id, $params),
+		];
+
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$data['date'] = date('d-m-Y');
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $job_order->id . '_estimate_gatepass.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/estimation-gate-pass', $data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
+
+		return true;
+	}
 	public static function generateEstimatePDF($job_order_id) {
 
 		$estimate_order = JobOrderEstimate::select('job_order_estimates.id', 'job_order_estimates.created_at')->where('job_order_estimates.job_order_id', $job_order_id)->orderBy('job_order_estimates.id', 'ASC')->first();
