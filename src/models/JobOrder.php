@@ -356,6 +356,10 @@ class JobOrder extends BaseModel {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10095);
 	}
 
+	public function estimationDeniedPaymentDetails() {
+		return $this->hasMany('App\Invoice', 'entity_id', 'id')->where('invoice_of_id', 7427);
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {
