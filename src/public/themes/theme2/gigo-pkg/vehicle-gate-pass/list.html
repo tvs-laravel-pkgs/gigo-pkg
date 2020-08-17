@@ -60,7 +60,7 @@
                                         <th>Driver Name</th>
                                         <th>Driver Mobile</th>
                                         <th>Veh. Model</th>
-                                        <th>Job Card No.</th>
+                                        <th>Job Order No.</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -120,14 +120,14 @@
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Job Card Number</label>
-                                <input type="text" class="form-control" id="job_card_number" name="job_card_number" placeholder="Enter Job Card No" autocomplete="off" ng-model="$ctrl.job_card_number">
+                                <label>Job Order Number</label>
+                                <input type="text" class="form-control" id="job_card_number" name="job_card_number" placeholder="Enter Job Order No" autocomplete="off" ng-model="$ctrl.job_card_number">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Vehicle Model</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
+                                <md-autocomplete md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.model_name}}

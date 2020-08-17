@@ -115,8 +115,14 @@ class SplitOrderTypeController extends Controller {
 		$params['config_type_id'] = 400; //PAID BY
 		$params['add_default'] = true;
 		$params['default_text'] = 'Select Paid By';
+
+		$params1['config_type_id'] = 405; //PAID BY
+		$params1['add_default'] = true;
+		$params1['default_text'] = 'Select Claim Category';
+
 		$this->data['extras'] = [
 			'paid_by' => Config::getDropDownList($params),
+			'claim_category' => Config::getDropDownList($params1),
 		];
 
 		return response()->json($this->data);

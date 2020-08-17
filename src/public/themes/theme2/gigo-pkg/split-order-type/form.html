@@ -68,6 +68,22 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
+                                                    Claim Category
+                                                </label>
+                                                <md-select ng-model="$ctrl.split_order_type.claim_category_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Claim Category">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchCategory" type="search" placeholder="Search for a Paid By" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="claim_category.id" ng-repeat="claim_category in $ctrl.extras.claim_category | filter:searchCategory">{{claim_category.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control" name="claim_category_id" id="claim_category_id" value="{{$ctrl.split_order_type.claim_category_id}}">
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
                                                     Paid By
                                                     <sup class="mandatory">*</sup>
                                                 </label>

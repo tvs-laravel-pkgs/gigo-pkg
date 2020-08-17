@@ -5109,6 +5109,18 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
+			//Check Road Test Passes or not
+			$road_test = RoadTestGatePass::where('job_order_id', $request->job_order_id)->whereIn('status_id', [8300, 8301])->first();
+			if ($road_test) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Road Test not Completed!',
+					],
+				]);
+			}
+
 			$job_order->estimated_amount = $request->estimated_amount;
 			$estimated_delivery_date = $request->est_delivery_date . ' ' . $request->est_delivery_time;
 			$job_order->estimated_delivery_date = date('Y-m-d H:i:s', strtotime($estimated_delivery_date));
@@ -5117,7 +5129,6 @@ class VehicleInwardController extends Controller {
 			$job_order->status_id = 8463;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
-
 			// INWARD PROCESS CHECK - ESTIMATE
 			$job_order->inwardProcessChecks()->where('tab_id', 8706)->update(['is_form_filled' => 1]);
 
