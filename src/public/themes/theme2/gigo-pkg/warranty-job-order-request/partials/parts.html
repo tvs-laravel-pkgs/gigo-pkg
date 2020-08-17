@@ -42,6 +42,9 @@
                             <th class="text-right">
                                 Tax Amount
                             </th>
+                            <th class="text-right">
+                                Handling Charges
+                            </th>
                             <!-- <th class="text-right">
                                 Quantity
                             </th> -->
@@ -90,6 +93,9 @@
                             <td class="text-right">
                                 {{job_order_part.tax_total| currency}}
                             </td>
+                            <td class="text-right">
+                                {{job_order_part.handling_charge | currency}}
+                            </td>
                             <td class="wid-180 white-space-unset text-right">
                                 {{job_order_part.total_amount | currency}}
                             </td>
@@ -117,12 +123,17 @@
                                     </label>
                                 </div><!-- Field -->
                             </td>
-                            <td colspan="3">
+                            <td>
                                 <div class="form-group">
                                     <input type="text" ng-keyup="calculateCushionCharges()" class="form-control" placeholder="Part Cushioning Percentage" name="total_part_cushioning_percentage" ng-model="warranty_job_order_request.total_part_cushioning_percentage" maxlength="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                 </div><!-- Field -->
                             </td>
-                            <td colspan="5" class="wid-180 white-space-unset text-right">
+                            <td class="text-left">
+                                <div class="form-group">
+                                    <label>%</label>
+                                </div>
+                            </td>
+                            <td colspan="7" class="wid-180 white-space-unset text-right">
                                 <b>
                                     Total Cushioning Charges:
                                     {{warranty_job_order_request.total_part_cushioning_charge | currency}}

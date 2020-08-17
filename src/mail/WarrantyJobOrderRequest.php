@@ -25,7 +25,7 @@ class WarrantyJobOrderRequest extends ConfigurableMail {
 		$this->wjor = $params['wjor'];
 		$this->company = $params['wjor']->company;
 		$this->outlet = $params['wjor']->jobOrder->outlet;
-		$this->title = 'Warranty Job Order Request';
+		$this->title = 'Product Performance Report';
 		$this->al_warranty_manager = $params['al_warranty_manager'];
 	}
 
