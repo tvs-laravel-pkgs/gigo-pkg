@@ -63,6 +63,10 @@ class GatePass extends Model {
 		return $this->belongsTo('App\JobCard', 'job_card_id');
 	}
 
+	public function jobOrder() {
+		return $this->belongsTo('App\JobOrder', 'job_order_id');
+	}
+
 	public function gatePassItems() {
 		return $this->hasMany('App\GatePassItem', 'gate_pass_id');
 	}

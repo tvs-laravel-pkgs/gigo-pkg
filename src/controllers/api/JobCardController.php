@@ -433,14 +433,18 @@ class JobCardController extends Controller {
 			//UPDATE JOB ORDER PARTS STATUS
 			JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
-			$generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);
+			$estimate_file_name = $request->job_order_id . '_estimate.pdf';
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $estimate_file_name);
+			if (!file_exists($directoryPath)) {
+				$generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);
 
-			if (!$generate_estimate_pdf) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => ['Something went on Server.Please Try again later!!'],
-				]);
+				if (!$generate_estimate_pdf) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Something went on Server.Please Try again later!!'],
+					]);
+				}
 			}
 
 			DB::commit();
@@ -2791,15 +2795,20 @@ class JobCardController extends Controller {
 			$job_card->updated_at = Carbon::now();
 			$job_card->save();
 
-			//Generate Revised Estimate PDF
-			$generate_revised_estimate_pdf = JobCard::generateRevisedEstimatePDF($job_card->id);
+			$estimate_file_name = $job_card->id . '_revised_estimate.pdf';
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $estimate_file_name);
+			if (!file_exists($directoryPath)) {
 
-			if (!$generate_revised_estimate_pdf) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => ['Something went on Server.Please Try again later!!'],
-				]);
+				//Generate Revised Estimate PDF
+				$generate_estimate_pdf = JobCard::generateRevisedEstimatePDF($job_card->id);
+
+				if (!$generate_estimate_pdf) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Something went on Server.Please Try again later!!'],
+					]);
+				}
 			}
 
 			if ($request->type == 2) {
