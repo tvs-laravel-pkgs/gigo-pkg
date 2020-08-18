@@ -5559,7 +5559,7 @@ class VehicleInwardController extends Controller {
 			$job_order->estimation_type_id = $request->estimation_type_id;
 			$job_order->minimum_payable_amount = $request->minimum_payable_amount;
 			$job_order->estimate_ref_no = $generateNumber['number'];
-			$job_order->status_id = 8470;
+			$job_order->status_id = 8475; // Estimation Payment Pending
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
