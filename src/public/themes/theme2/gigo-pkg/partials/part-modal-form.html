@@ -76,7 +76,7 @@
                                             Quantity
                                         </label>
                                         <div class="input-group">
-                                            <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="quantity" ng-model="wjor_part.qty" maxlength="12">
+                                            <input type="text" ng-keyup="calculateHandlingCharge()" class="form-control" name="quantity" ng-model="wjor_part.qty" maxlength="12">
                                             <span class="input-group-addon">
                                                 {{wjor_part.part.uom.name}}
                                             </span>
@@ -88,7 +88,7 @@
                                         <label>
                                             Rate
                                         </label>
-                                        <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="rate" ng-model="wjor_part.rate" maxlength="12" ng-readonly1="wjor_part.purchase_type != '8481'">
+                                        <input type="text" ng-keyup="calculateHandlingCharge()" class="form-control" name="rate" ng-model="wjor_part.rate" maxlength="12" ng-readonly1="wjor_part.purchase_type != '8481'">
                                     </div><!-- Field -->
                                 </div><!-- Column -->
                                 <div class="col-md-4">
