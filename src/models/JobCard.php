@@ -7,6 +7,8 @@ use Abs\TaxPkg\Tax;
 use App\BaseModel;
 use App\Company;
 use App\Config;
+use App\JobOrderIssuedPart;
+use App\JobOrderReturnedPart;
 use App\SplitOrderType;
 use Auth;
 use DB;
@@ -596,6 +598,171 @@ class JobCard extends BaseModel {
 		$name = $job_card->id . '_labour_invoice.pdf';
 
 		$pdf = PDF::loadView('pdf-gigo/bill-detail-labour-pdf', $data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
+
+		return true;
+	}
+
+	public static function generateJobcardPartPDF($job_card_id) {
+
+		$split_order_type_ids = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+
+		$data['job_card'] = $job_card = JobCard::with([
+			'jobOrder',
+			'jobOrder.outlet',
+			'jobOrder.serviceType',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'jobOrder.jobOrderParts' => function ($query) use ($split_order_type_ids) {
+				$query->whereIn('job_order_parts.split_order_type_id', $split_order_type_ids)->whereNull('removal_reason_id');
+			},
+			'jobOrder.jobOrderParts.part',
+			'jobOrder.jobOrderParts.part.taxCode',
+			'jobOrder.jobOrderParts.part.taxCode.taxes',
+			'status',
+		])
+			->find($job_card_id);
+
+		if (!$job_card) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Job Card Not found!',
+			]);
+		}
+
+		$job_card['creation_date'] = date('d-m-Y', strtotime($job_card->created_at));
+
+		$parts_amount = 0;
+		$total_amount = 0;
+
+		//Check which tax applicable for customer
+		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+			$tax_type = 1160; //Within State
+		} else {
+			$tax_type = 1161; //Inter State
+		}
+
+		//Count Tax Type
+		$taxes = Tax::get();
+
+		//GET SEPERATE TAXEX
+		$seperate_tax = array();
+		for ($i = 0; $i < count($taxes); $i++) {
+			$seperate_tax[$i] = 0.00;
+		}
+
+		$tax_percentage = 0;
+
+		$part_details = array();
+		if ($job_card->jobOrder->jobOrderParts) {
+			$i = 1;
+			$total_parts_qty = 0;
+			$total_parts_mrp = 0;
+			$total_parts_price = 0;
+			$total_parts_tax = 0;
+			foreach ($job_card->jobOrder->jobOrderParts as $key => $parts) {
+				// if (in_array($parts->split_order_type_id, $customer_paid_type_id)) {
+				if ($parts->is_free_service != 1) {
+					$total_amount = 0;
+					//Check Parts Issued or Not
+					$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $parts->id)->sum('issued_qty');
+
+					//Check Parts Retunred or Not
+					$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $parts->id)->sum('returned_qty');
+
+					$total_qty = $issued_qty - $returned_qty;
+
+					if ($total_qty > 0) {
+						$billing_parts_amount = $total_qty * $parts->rate;
+						$part_details[$key]['sno'] = $i;
+						$part_details[$key]['code'] = $parts->part->code;
+						$part_details[$key]['name'] = $parts->part->name;
+						$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
+						// $part_details[$key]['qty'] = $parts->qty;
+						$part_details[$key]['qty'] = $total_qty;
+						$part_details[$key]['rate'] = $parts->rate;
+						// $part_details[$key]['amount'] = $parts->amount;
+						$part_details[$key]['amount'] = number_format((float) $billing_parts_amount, 2, '.', '');
+						$part_details[$key]['is_free_service'] = $parts->is_free_service;
+						$tax_amount = 0;
+						// $tax_percentage = 0;
+						$tax_values = array();
+						if ($parts->part->taxCode) {
+							foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									// $tax_percentage += $value->pivot->percentage;
+									$percentage_value = ($billing_parts_amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_values[$tax_key] = $percentage_value;
+								$tax_amount += $percentage_value;
+
+								if (count($seperate_tax) > 0) {
+									$seperate_tax_value = $seperate_tax[$tax_key];
+								} else {
+									$seperate_tax_value = 0;
+								}
+								$seperate_tax[$tax_key] = $seperate_tax_value + $percentage_value;
+							}
+						} else {
+							for ($i = 0; $i < count($taxes); $i++) {
+								$tax_values[$i] = 0.00;
+							}
+						}
+
+						$total_parts_qty += $parts->qty;
+						$total_parts_mrp += $parts->rate;
+						$total_parts_price += $parts->amount;
+						$total_parts_tax += $tax_amount;
+
+						$part_details[$key]['tax_values'] = $tax_values;
+						$part_details[$key]['tax_amount'] = $tax_amount;
+						$total_amount = $tax_amount + $billing_parts_amount;
+						$total_amount = number_format((float) $total_amount, 2, '.', '');
+						if ($parts->is_free_service != 1) {
+							$parts_amount += $total_amount;
+						}
+						$part_details[$key]['total_amount'] = $total_amount;
+						$i++;
+					}
+				}
+				// }
+			}
+		}
+
+		foreach ($seperate_tax as $key => $s_tax) {
+			$seperate_tax[$key] = convert_number_to_words($s_tax);
+		}
+		$data['seperate_taxes'] = $seperate_tax;
+
+		$total_taxable_amount = $total_parts_tax;
+		$data['tax_percentage'] = convert_number_to_words($tax_percentage);
+		$data['total_taxable_amount'] = convert_number_to_words($total_taxable_amount);
+
+		$total_amount = $parts_amount;
+		$data['taxes'] = $taxes;
+		$data['total_amount'] = number_format($total_amount, 2);
+		$data['round_total_amount'] = number_format($total_amount, 2);
+
+		$data['part_details'] = $part_details;
+		$data['total_parts_qty'] = $total_parts_qty;
+		$data['total_parts_mrp'] = $total_parts_mrp;
+		$data['total_parts_price'] = $total_parts_price;
+		$data['total_parts_tax'] = $total_parts_tax;
+		$data['parts_round_total_amount'] = round($parts_amount);
+		$data['parts_total_amount'] = number_format($parts_amount, 2);
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$data['date'] = date('d-m-Y');
+
+		$name = $job_card->id . '_part_invoice.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/bill-detail-part-pdf', $data)->setPaper('a4', 'portrait');
 
 		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 

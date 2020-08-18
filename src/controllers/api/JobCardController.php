@@ -1822,7 +1822,18 @@ class JobCardController extends Controller {
 			}
 		}
 
-		dd();
+		if ($params['invoice_of_id'] == 7426) {
+			//Generate JobCard Part PDF
+			$generate_estimate_pdf = JobCard::generateJobcardPartPDF($params['job_card_id']);
+
+			if (!$generate_estimate_pdf) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Something went on Server.Please Try again later!!'],
+				]);
+			}
+		}
 
 		DB::commit();
 
