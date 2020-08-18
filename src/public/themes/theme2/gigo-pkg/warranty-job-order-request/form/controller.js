@@ -88,8 +88,7 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.customer = $scope.warranty_job_order_request.job_order.customer;
                         $scope.customerChanged($scope.customer);
                         self.country = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country;
-                        $scope.countryChanged();
-                        $scope.calculateTotals();
+                        $scope.countryChanged(true);
                         // $scope.soldDateChange($scope.warranty_job_order_request.job_order.vehicle.sold_date);
                         $scope.aggregateChange($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate);
                         $scope.warranty_job_order_request.aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate.aggregate;
@@ -97,6 +96,7 @@ app.component('warrantyJobOrderRequestForm', {
                         setTimeout(function() {
                             $scope.calculateCushionCharges();
                         }, 2000);
+                        $scope.calculateTotals();
                     } else {
                         self.is_registered = 1;
                         $scope.warranty_job_order_request = {
@@ -272,13 +272,15 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.vehicleSelected = function(vehicle) {
             console.log(vehicle);
-            if (vehicle.vehicle_owners) {
-                $scope.warranty_job_order_request.job_order.customer = vehicle.vehicle_owners[0].customer;
-                $scope.customerChanged(vehicle.vehicle_owners[0].customer)
-                // $scope.warranty_job_order_request.customer_address
-            }
-            if (vehicle.bharat_stage == null && vehicle.sold_date != null) {
-                $scope.soldDateChange(vehicle.sold_date);
+            if (vehicle) {
+                if (vehicle.vehicle_owners) {
+                    $scope.warranty_job_order_request.job_order.customer = vehicle.vehicle_owners[0].customer;
+                    $scope.customerChanged(vehicle.vehicle_owners[0].customer)
+                    // $scope.warranty_job_order_request.customer_address
+                }
+                if (vehicle.bharat_stage == null && vehicle.sold_date != null) {
+                    $scope.soldDateChange(vehicle.sold_date);
+                }
             }
         }
 
@@ -559,7 +561,10 @@ app.component('warrantyJobOrderRequestForm', {
 
                             if (res.stock_data == null) {
                                 $scope.wjor_part.rate = 0;
+                                $scope.wjor_part.part.mrp = 0;
+
                             } else {
+                                $scope.wjor_part.part.mrp = res.stock_data.mrp;
                                 if ($scope.warranty_job_order_request.request_type_id == 9181) {
                                     $scope.wjor_part.rate = res.stock_data.mrp;
                                     $scope.wjor_part.part.tax_code = null;
@@ -612,6 +617,15 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.calculatePartAmount = function() {
             HelperService.calculateTaxAndTotal($scope.wjor_part, $scope.isSameState(), true);
+            $scope.calculateTotals();
+        }
+
+        $scope.requestTypeChanges = function() {
+            $scope.warranty_job_order_request.wjor_parts = [];
+            $scope.warranty_job_order_request.total_part_cushioning_percentage = 0;
+            $scope.warranty_job_order_request.total_part_cushioning_charge = 0;
+            $scope.warranty_job_order_request.total_part_amount = 0;
+            // $scope.calculatePartAmount();
             $scope.calculateTotals();
         }
 
@@ -812,7 +826,7 @@ app.component('warrantyJobOrderRequestForm', {
             },
             submitHandler: function(form) {
                 let formData = new FormData($(form_id1)[0]);
-
+                $('.submit').button('loading');
                 $.ajax({
                         url: base_url + '/api/warranty-job-order-request/save',
                         method: "POST",
@@ -826,13 +840,19 @@ app.component('warrantyJobOrderRequestForm', {
                     .done(function(res) {
                         if (!res.success) {
                             showErrorNoty(res);
+                            $('.submit').button('reset');
+
                             return;
                         }
+                        $('.submit').button('reset');
+
                         showNoty('success', 'Warranty job order request saved successfully');
                         $location.path('/warranty-job-order-request/table-list');
                         $scope.$apply();
                     })
                     .fail(function(xhr) {
+                        $('.submit').button('reset');
+
                         custom_noty('error', 'Something went wrong at server');
                     });
                 // WarrantyJobOrderRequestSvc.save($scope.warranty_job_order_request)
@@ -883,13 +903,15 @@ app.component('warrantyJobOrderRequestForm', {
                 });
         }
 
-        $scope.countryChanged = function() {
+        $scope.countryChanged = function(onload = null) {
+            $country_id = (onload) ? $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country.id : $scope.warranty_job_order_request.customer_address.country.id;
             $.ajax({
                     url: base_url + '/api/state/get-drop-down-List',
                     method: "POST",
                     data: {
+                        country_id: $country_id,
                         // country_id: $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country.id,
-                        country_id: $scope.warranty_job_order_request.customer_address.country.id,
+                        // country_id: $scope.warranty_job_order_request.customer_address.country.id,
                     },
                 })
                 .done(function(res) {

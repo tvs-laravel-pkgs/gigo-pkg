@@ -18,6 +18,7 @@ class GatePass extends Model {
 		"type_id",
 		"number",
 		"status_id",
+		"job_order_id",
 		"job_card_id",
 		"gate_in_date",
 		"gate_out_date",

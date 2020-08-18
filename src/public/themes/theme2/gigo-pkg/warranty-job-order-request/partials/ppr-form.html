@@ -121,15 +121,15 @@
                                             <sup class="mandatory">*</sup>
                                         </label>
                                         <div class="common-radio-button type-4">
-                                            <input type="radio" id="warranty" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9180">
+                                            <input ng-change="requestTypeChanges()" type="radio" id="warranty" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9180">
                                             <label for="warranty">
                                                 Warranty
                                             </label>
-                                            <input type="radio" id="ewp" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9181">
+                                            <input ng-change="requestTypeChanges()" type="radio" id="ewp" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9181">
                                             <label for="ewp">
                                                 EWP
                                             </label>
-                                            <input type="radio" id="amc" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9182">
+                                            <input ng-change="requestTypeChanges()" type="radio" id="amc" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9182">
                                             <label for="amc">
                                                 AMC
                                             </label>
@@ -245,7 +245,6 @@
                                         </div>
                                     </div>
                                 </li>
-
                                 <li class="view-col-3">
                                     <div class="form-group">
                                         <label>

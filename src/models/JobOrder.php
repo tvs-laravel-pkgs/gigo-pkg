@@ -356,6 +356,9 @@ class JobOrder extends BaseModel {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10095);
 	}
 
+	public function estimationDeniedPaymentDetails() {
+		return $this->hasMany('App\Invoice', 'entity_id', 'id')->where('invoice_of_id', 7427);
+	}
 	public function gatePass() {
 		return $this->hasOne('App\GatePass', 'job_order_id');
 	}
@@ -457,8 +460,9 @@ class JobOrder extends BaseModel {
 			->find($job_order_id);
 
 		$params['field_type_id'] = [11, 12];
+		$company_id = $job_order->company_id;
 		$data['extras'] = [
-			'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id, $params),
+			'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id, $params, '', '', $company_id),
 		];
 
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
@@ -470,7 +474,7 @@ class JobOrder extends BaseModel {
 		$save_path = storage_path('app/public/gigo/pdf');
 		Storage::makeDirectory($save_path, 0777);
 
-		$name = $job_order->id . '_estimate_gatepass.pdf';
+		$name = $job_order_id . '_estimate_gatepass.pdf';
 
 		$pdf = PDF::loadView('pdf-gigo/estimation-gate-pass', $data)->setPaper('a4', 'portrait');
 

@@ -19,6 +19,7 @@ use App\Entity;
 use App\EstimationType;
 use App\FinancialYear;
 use App\GateLog;
+use App\GigoInvoice;
 use App\Http\Controllers\Controller;
 use App\JobCard;
 use App\JobOrder;
@@ -5536,7 +5537,7 @@ class VehicleInwardController extends Controller {
 					'success' => false,
 					'error' => 'Validation Error',
 					'errors' => [
-						'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+						'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
 					],
 				]);
 			}
@@ -5586,6 +5587,42 @@ class VehicleInwardController extends Controller {
 			// 	]);
 			// }
 
+			$params['job_order_id'] = $request->job_order_id;
+			$params['customer_id'] = $job_order->customer->id;
+			$params['outlet_id'] = $job_order->outlet->id;
+			//ESTIMATION INVOICE ADD
+			if ($request->minimum_payable_amount > 0) {
+				$params['invoice_of_id'] = 7427; // PART JOB CARD
+				$params['invoice_amount'] = $request->minimum_payable_amount;
+
+				//GENERATE GATE IN VEHICLE NUMBER
+				$generateNumber = SerialNumberGroup::generateNumber(101, $financial_year->id, $branch->state_id, $branch->id);
+				if (!$generateNumber['success']) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'No Invoice Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+						],
+					]);
+				}
+
+				$error_messages_1 = [
+					'number.required' => 'Serial number is required',
+					'number.unique' => 'Serial number is already taken',
+				];
+				$validator_1 = Validator::make($generateNumber, [
+					'number' => [
+						'required',
+						'unique:invoices,invoice_number,' . $params['job_order_id'] . ',entity_id,company_id,' . Auth::user()->company_id,
+					],
+				], $error_messages_1);
+
+				$params['invoice_number'] = $generateNumber['number'];
+
+				$this->saveGigoInvoice($params);
+			}
+
 			$mobile_number = $job_order->contact_number;
 
 			if (!$mobile_number) {
@@ -5619,6 +5656,45 @@ class VehicleInwardController extends Controller {
 				],
 			]);
 		}
+	}
+
+	public function saveGigoInvoice($params) {
+		// dd($params);
+		DB::beginTransaction();
+
+		$invoice = GigoInvoice::firstOrNew([
+			'invoice_of_id' => $params['invoice_of_id'],
+			'entity_id' => $params['job_order_id'],
+		]);
+		// dump($params);
+		// dd(1);
+		if ($invoice->exists) {
+			//FIRST
+			$invoice->invoice_amount = $params['invoice_amount'];
+			$invoice->balance_amount = $params['invoice_amount'];
+			$invoice->updated_by_id = Auth::user()->id;
+			$invoice->updated_at = Carbon::now();
+		} else {
+			//NEW
+			$invoice->company_id = Auth::user()->company_id;
+			$invoice->invoice_number = $params['invoice_number'];
+			$invoice->invoice_date = date('Y-m-d');
+			$invoice->customer_id = $params['customer_id'];
+			$invoice->invoice_of_id = $params['invoice_of_id']; // JOB ORDER
+			$invoice->entity_id = $params['job_order_id'];
+			$invoice->outlet_id = $params['outlet_id'];
+			$invoice->sbu_id = 54; //SERVICE ALSERV
+			$invoice->invoice_amount = $params['invoice_amount'];
+			$invoice->balance_amount = $params['invoice_amount'];
+			$invoice->status_id = 10031; //PENDING
+			$invoice->created_by_id = Auth::user()->id;
+			$invoice->created_at = Carbon::now();
+		}
+		$invoice->save();
+
+		DB::commit();
+
+		return true;
 	}
 
 	// CUSTOMER CONFIRMATION GET FORM DATA
