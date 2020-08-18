@@ -182,6 +182,7 @@ class TradePlateNumberController extends Controller {
 				$trade_plate_number->company_id = Auth::user()->company_id;
 				$trade_plate_number->created_by_id = Auth::user()->id;
 				$trade_plate_number->created_at = Carbon::now();
+				$trade_plate_number->status_id = 8240;
 			} else {
 				$trade_plate_number = TradePlateNumber::withTrashed()->find($request->id);
 				$trade_plate_number->updated_by_id = Auth::user()->id;
@@ -192,7 +193,7 @@ class TradePlateNumberController extends Controller {
 			$trade_plate_number->outlet_id = $request->outlet_id;
 			$trade_plate_number->insurance_validity_from = date('Y-m-d', strtotime($insurance_periods[0]));
 			$trade_plate_number->insurance_validity_to = date('Y-m-d', strtotime($insurance_periods[1]));
-			$trade_plate_number->status_id = 8240;
+
 			if ($request->status == 'Inactive') {
 				$trade_plate_number->deleted_at = Carbon::now();
 			} else {
