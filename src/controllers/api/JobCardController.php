@@ -691,6 +691,22 @@ class JobCardController extends Controller {
 				$job_card->parts_pdf = '';
 			}
 
+			//Check Covering Letter PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->jobOrder->id . '_covering_letter.pdf');
+			if (file_exists($directoryPath)) {
+				$job_card->covering_letter_pdf = url('storage/app/public/gigo/pdf/' . $job_card->jobOrder->id . '_covering_letter.pdf');
+			} else {
+				$job_card->covering_letter_pdf = '';
+			}
+
+			//Check GatePass PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->jobOrder->id . '_gatepass.pdf');
+			if (file_exists($directoryPath)) {
+				$job_card->gate_pass_pdf = url('storage/app/public/gigo/pdf/' . $job_card->jobOrder->id . '_gatepass.pdf');
+			} else {
+				$job_card->gate_pass_pdf = '';
+			}
+
 			return response()->json([
 				'success' => true,
 				'job_card' => $job_card,

@@ -21,7 +21,7 @@ class PDFController extends Controller {
 
 	public function gatePass($id) {
 
-		$this->data['gate_pass'] = JobCard::with([
+		$this->data['gate_pass'] = $gatepass = JobCard::with([
 			'gatePasses',
 			'company',
 			'jobOrder',
@@ -57,15 +57,24 @@ class PDFController extends Controller {
 			'inventory_type_list' => VehicleInventoryItem::getInventoryList($this->data['gate_pass']->jobOrder->id, $params),
 		];
 
-		// dd($this->data['gate_pass']);
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
 
-		$pdf = PDF::loadView('pdf-gigo/gate-pass-pdf', $this->data);
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $gatepass->jobOrder->id . '_gatepass.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/job-card-gate-pass-pdf', $this->data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return $pdf->stream('gate-pass.pdf');
 	}
 
 	public function coveringletter($id) {
-		$this->data['covering_letter'] = JobCard::with([
+		$this->data['covering_letter'] = $job_card = JobCard::with([
 			'gatePasses',
 			'gigoInvoices',
 			'company',
@@ -113,7 +122,18 @@ class PDFController extends Controller {
 
 		$this->data['gigo_invoices'] = $gigo_invoice;
 
-		$pdf = PDF::loadView('pdf-gigo/covering-letter-pdf', $this->data);
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $job_card->jobOrder->id . '_covering_letter.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/covering-letter-pdf', $this->data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return $pdf->stream('covering-letter.pdf');
 	}
