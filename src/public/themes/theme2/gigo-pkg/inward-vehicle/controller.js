@@ -1006,7 +1006,10 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     $scope.total_amount = res.total_amount;
                     $scope.labour_amount = res.labour_amount;
                     $scope.parts_rate = res.parts_rate;
+                    $scope.labours = res.labours;
                     $scope.$apply();
+
+                    self.repair_order_ids = [];
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -1326,8 +1329,6 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             if (labour_index === false) {
                 // $scope.labour_details = {};
             } else {
-                // console.log(labour);
-                // return false;
                 if (labour.split_order_type_id != null) {
                     $scope.repair_order_id = labour.id;
                     if (labour.split_order_type_id == undefined) {
@@ -1356,12 +1357,17 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 
         $scope.showPartForm = function(part_index, part = null) {
             // console.log(part);
+            self.repair_order_ids = [];
             $scope.job_order.repair_order = [];
             $scope.schedule_maintainance_part = [];
             $scope.job_order_part_id = '';
             if (part_index === false) {
                 // $scope.part_details = {};
             } else {
+                angular.forEach(part.repair_order, function(part, key) {
+                    self.repair_order_ids.push(part.id)
+                });
+
                 $scope.repair_orders = part.repair_order;
                 if (part.split_order_type_id != null) {
                     $scope.job_order_part_id = part.id;
@@ -3730,6 +3736,8 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $scope.labour_total_amount = res.labour_total_amount;
                     $scope.total_labour_count = res.total_labour_count;
                     $scope.extras = res.extras;
+                    $scope.labours = res.labours;
+                    self.repair_order_ids = [];
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -3981,12 +3989,16 @@ app.component('inwardVehiclePayableLabourPartForm', {
         }
         $scope.showPartForm = function(part_index, part = null) {
             // console.log(part.qty);
+            self.repair_order_ids = [];
             $scope.job_order.repair_order = [];
             $scope.schedule_maintainance_part = [];
             $scope.job_order_part_id = '';
             if (part_index === false) {
                 // $scope.part_details = {};
             } else {
+                angular.forEach(part.repair_order, function(part, key) {
+                    self.repair_order_ids.push(part.id)
+                });
                 $scope.repair_orders = part.repair_order;
                 if (part.split_order_type_id != null) {
                     $scope.job_order_part_id = part.id;
