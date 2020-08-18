@@ -675,6 +675,22 @@ class JobCardController extends Controller {
 				$job_card->revised_estimate_pdf = '';
 			}
 
+			//Check Labour PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->id . '_labour_invoice.pdf');
+			if (file_exists($directoryPath)) {
+				$job_card->labour_pdf = url('storage/app/public/gigo/pdf/' . $job_card->id . '_labour_invoice.pdf');
+			} else {
+				$job_card->labour_pdf = '';
+			}
+
+			//Check Parts PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->id . '_part_invoice.pdf');
+			if (file_exists($directoryPath)) {
+				$job_card->parts_pdf = url('storage/app/public/gigo/pdf/' . $job_card->id . '_part_invoice.pdf');
+			} else {
+				$job_card->parts_pdf = '';
+			}
+
 			return response()->json([
 				'success' => true,
 				'job_card' => $job_card,
