@@ -160,10 +160,13 @@ class VehicleGatePassController extends Controller {
 
 			// CHANGE FORMAT OF GATE IN DATE AND TIME
 			$view_vehicle_gate_pass->gate_in_date_time = date('d/m/Y h:i a', strtotime($view_vehicle_gate_pass->gate_in_date));
+			$view_vehicle_gate_pass->covering_letter_pdf = url('storage/app/public/gigo/pdf/' . $view_vehicle_gate_pass->jobOrder->id . '_covering_letter.pdf');
+			$view_vehicle_gate_pass->gate_pass_pdf = url('storage/app/public/gigo/pdf/' . $view_vehicle_gate_pass->jobOrder->id . '_gatepass.pdf');
 
 			return response()->json([
 				'success' => true,
 				'view_vehicle_gate_pass' => $view_vehicle_gate_pass,
+				'pdf_link' => url('storage/app/public/gigo/pdf'),
 			]);
 		} catch (Exception $e) {
 			return response()->json([

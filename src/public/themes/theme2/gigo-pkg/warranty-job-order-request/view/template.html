@@ -56,7 +56,7 @@
                             <button ng-if="hasPerm('delete-warranty-job-order-request')" type="button" ng-click="confirmDelete(warranty_job_order_request)" class="btn btn-red">
                                 Delete
                             </button>
-                            <button type="button" ng-if="(warranty_job_order_request.status.id == 9100 || warranty_job_order_request.status.id == 9103 ) && hasPerm('send-to-approval-warranty-job-order-request')" ng-click="sendToApproval(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                            <button type="button" ng-if="(warranty_job_order_request.status.id == 9100 || warranty_job_order_request.status.id == 9103 ) && hasPerm('send-to-approval-warranty-job-order-request')" ng-click="sendToApproval(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt sendToApproval">
                                 Send to approval
                             </button>
                             <button type="button" ng-if="warranty_job_order_request.status.id == 9101 && hasPerm('approve-warranty-job-order-request')" ng-click="showApprovalForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">

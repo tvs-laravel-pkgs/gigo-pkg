@@ -7,8 +7,7 @@
                 </div><!-- Page Header Content -->
                 <div class="page-header-content reset-block">
                     <div class="reset-wrap">
-                        <button class="btn-reset reset-tooltip refresh_table my-tooltip"
-                        ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
                             <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
                         </button>
                     </div>
@@ -51,7 +50,8 @@
                                 <th>Actions</th>
                                 <th>Code</th>
                                 <th>Name</th>
-                                <th>Group</th>
+                                <th>Sub Aggregate</th>
+                                <!-- <th>Group</th> -->
                                 <th>Hours</th>
                                 <th>Kilometer</th>
                                 <th>Month</th>
@@ -87,7 +87,7 @@
                                 <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" autocomplete="off">
                             </div>
                         </div> -->
-                                     <div class="col-md-6">
+                        <!--  <div class="col-md-6">
                                             <div class="input-text form-group">
                                                 <label>Complaint Group<sup class="mandatory">*</sup></label>
                                     <md-select ng-model="$ctrl.complaint_selected" ng-change="onSelectedgroup($ctrl.complaint_selected)" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Complaint Group">
@@ -99,35 +99,49 @@
                                                     </md-optgroup>
                                                 </md-select>
                                                 <input type="hidden" class="form-control required" name="group" id="group" value="">
-                                            </div><!-- Field -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-6">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Hours
-                                                    <sup class="mandatory"></sup>
-                                                </label>
-                                                <input type="text" class="form-control"  name="hours" id="hour" placeholder="Enter Hours" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-6">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Kilometer
-                                                    <sup class="mandatory"></sup>
-                                                </label>
-                                                <input type="text" class="form-control" id="kms" name="kms" placeholder="Enter Kilometer" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
-                                        <div class="col-md-6">
-                                            <div class="input-text form-group">
-                                                <label>
-                                                    Month
-                                                    <sup class="mandatory"></sup>
-                                                </label>
-                                                <input type="text" class="form-control" id="month" name="month" placeholder="Enter Month" />
-                                            </div><!-- Feild -->
-                                        </div><!-- Column -->
+                                            </div>
+                                        </div> -->
+                        <div class="col-md-6">
+                            <div class="input-text form-group">
+                                <label>Sub Aggregate<sup class="mandatory">*</sup></label>
+                                <md-select ng-model="$ctrl.sub_aggregate_selected" ng-change="onSelectedSubAggregate($ctrl.sub_aggregate_selected)" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Sub Aggregate">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchType" type="search" placeholder="Search Sub Aggregate" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="sub_aggregate.id" ng-repeat="sub_aggregate in $ctrl.sub_aggregate | filter:searchType">{{sub_aggregate.code}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control required" name="sub_aggregate" id="sub_aggregate" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-text form-group">
+                                <label>
+                                    Hours
+                                    <sup class="mandatory"></sup>
+                                </label>
+                                <input type="text" class="form-control" name="hours" id="hour" placeholder="Enter Hours" />
+                            </div><!-- Feild -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="input-text form-group">
+                                <label>
+                                    Kilometer
+                                    <sup class="mandatory"></sup>
+                                </label>
+                                <input type="text" class="form-control" id="kms" name="kms" placeholder="Enter Kilometer" />
+                            </div><!-- Feild -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="input-text form-group">
+                                <label>
+                                    Month
+                                    <sup class="mandatory"></sup>
+                                </label>
+                                <input type="text" class="form-control" id="month" name="month" placeholder="Enter Month" />
+                            </div><!-- Feild -->
+                        </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Status</label>

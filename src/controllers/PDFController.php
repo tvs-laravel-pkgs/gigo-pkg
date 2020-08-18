@@ -21,7 +21,7 @@ class PDFController extends Controller {
 
 	public function gatePass($id) {
 
-		$this->data['gate_pass'] = JobCard::with([
+		$this->data['gate_pass'] = $gatepass = JobCard::with([
 			'gatePasses',
 			'company',
 			'jobOrder',
@@ -57,15 +57,24 @@ class PDFController extends Controller {
 			'inventory_type_list' => VehicleInventoryItem::getInventoryList($this->data['gate_pass']->jobOrder->id, $params),
 		];
 
-		// dd($this->data['gate_pass']);
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
 
-		$pdf = PDF::loadView('pdf-gigo/gate-pass-pdf', $this->data);
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $gatepass->jobOrder->id . '_gatepass.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/job-card-gate-pass-pdf', $this->data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return $pdf->stream('gate-pass.pdf');
 	}
 
 	public function coveringletter($id) {
-		$this->data['covering_letter'] = JobCard::with([
+		$this->data['covering_letter'] = $job_card = JobCard::with([
 			'gatePasses',
 			'gigoInvoices',
 			'company',
@@ -113,7 +122,18 @@ class PDFController extends Controller {
 
 		$this->data['gigo_invoices'] = $gigo_invoice;
 
-		$pdf = PDF::loadView('pdf-gigo/covering-letter-pdf', $this->data);
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $job_card->jobOrder->id . '_covering_letter.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/covering-letter-pdf', $this->data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return $pdf->stream('covering-letter.pdf');
 	}
@@ -1946,8 +1966,64 @@ class PDFController extends Controller {
 			$total_labour_price = 0;
 			$total_labour_tax = 0;
 			foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $labour) {
-				// if (in_array($labour->split_order_type_id, $customer_paid_type_id)) {
-				if ($labour->is_free_service != 1) {
+				if (in_array($labour->split_order_type_id, $customer_paid_type_id)) {
+					if ($labour->is_free_service != 1) {
+						$total_amount = 0;
+						$labour_details[$key]['sno'] = $i;
+						$labour_details[$key]['code'] = $labour->repairOrder->code;
+						$labour_details[$key]['name'] = $labour->repairOrder->name;
+						$labour_details[$key]['hsn_code'] = $labour->repairOrder->taxCode ? $labour->repairOrder->taxCode->code : '-';
+						$labour_details[$key]['qty'] = $labour->qty;
+						$labour_details[$key]['amount'] = $labour->amount;
+						$labour_details[$key]['rate'] = $labour->repairOrder->amount;
+						$labour_details[$key]['is_free_service'] = $labour->is_free_service;
+						$tax_amount = 0;
+						// $tax_percentage = 0;
+						$labour_total_cgst = 0;
+						$labour_total_sgst = 0;
+						$labour_total_igst = 0;
+						$tax_values = array();
+						if ($labour->repairOrder->taxCode) {
+							foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									// $tax_percentage += $value->pivot->percentage;
+									$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_values[$tax_key] = $percentage_value;
+								$tax_amount += $percentage_value;
+
+								if (count($seperate_tax) > 0) {
+									$seperate_tax_value = $seperate_tax[$tax_key];
+								} else {
+									$seperate_tax_value = 0;
+								}
+								$seperate_tax[$tax_key] = $seperate_tax_value + $percentage_value;
+							}
+						} else {
+							for ($i = 0; $i < count($taxes); $i++) {
+								$tax_values[$i] = 0.00;
+							}
+						}
+						$labour_total_sgst += $labour_total_sgst;
+						$labour_total_igst += $labour_total_igst;
+						$total_labour_qty += $labour->qty;
+						$total_labour_mrp += $labour->amount;
+						$total_labour_price += $labour->repairOrder->amount;
+						$total_labour_tax += $tax_amount;
+
+						$labour_details[$key]['tax_values'] = $tax_values;
+						$labour_details[$key]['tax_amount'] = $tax_amount;
+						$total_amount = $tax_amount + $labour->amount;
+						$total_amount = number_format((float) $total_amount, 2, '.', '');
+
+						$labour_details[$key]['total_amount'] = $total_amount;
+						// if ($labour->is_free_service != 1) {
+						$labour_amount += $total_amount;
+						// }
+					}
+				} else {
 					$total_amount = 0;
 					$labour_details[$key]['sno'] = $i;
 					$labour_details[$key]['code'] = $labour->repairOrder->code;
@@ -2003,7 +2079,6 @@ class PDFController extends Controller {
 					$labour_amount += $total_amount;
 					// }
 				}
-				// }
 				$i++;
 			}
 		}
@@ -2016,8 +2091,73 @@ class PDFController extends Controller {
 			$total_parts_price = 0;
 			$total_parts_tax = 0;
 			foreach ($job_card->jobOrder->jobOrderParts as $key => $parts) {
-				// if (in_array($parts->split_order_type_id, $customer_paid_type_id)) {
-				if ($parts->is_free_service != 1) {
+				if (in_array($parts->split_order_type_id, $customer_paid_type_id)) {
+					if ($parts->is_free_service != 1) {
+						//Check Parts Issued or Not
+						$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $parts->id)->sum('issued_qty');
+
+						//Check Parts Retunred or Not
+						$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $parts->id)->sum('returned_qty');
+
+						$total_qty = $issued_qty - $returned_qty;
+
+						if ($total_qty > 0) {
+							$total_amount = 0;
+							$billing_parts_amount = $total_qty * $parts->rate;
+							$part_details[$key]['sno'] = $i;
+							$part_details[$key]['code'] = $parts->part->code;
+							$part_details[$key]['name'] = $parts->part->name;
+							$part_details[$key]['hsn_code'] = $parts->part->taxCode ? $parts->part->taxCode->code : '-';
+							// $part_details[$key]['qty'] = $parts->qty;
+							$part_details[$key]['qty'] = $total_qty;
+							$part_details[$key]['rate'] = $parts->rate;
+							// $part_details[$key]['amount'] = $parts->amount;
+							$part_details[$key]['amount'] = number_format((float) $billing_parts_amount, 2, '.', '');
+							$part_details[$key]['is_free_service'] = $parts->is_free_service;
+							$tax_amount = 0;
+							// $tax_percentage = 0;
+							$tax_values = array();
+							if ($parts->part->taxCode) {
+								foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+									$percentage_value = 0;
+									if ($value->type_id == $tax_type) {
+										// $tax_percentage += $value->pivot->percentage;
+										$percentage_value = ($billing_parts_amount * $value->pivot->percentage) / 100;
+										$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+									}
+									$tax_values[$tax_key] = $percentage_value;
+									$tax_amount += $percentage_value;
+
+									if (count($seperate_tax) > 0) {
+										$seperate_tax_value = $seperate_tax[$tax_key];
+									} else {
+										$seperate_tax_value = 0;
+									}
+									$seperate_tax[$tax_key] = $seperate_tax_value + $percentage_value;
+								}
+							} else {
+								for ($i = 0; $i < count($taxes); $i++) {
+									$tax_values[$i] = 0.00;
+								}
+							}
+
+							$total_parts_qty += $parts->qty;
+							$total_parts_mrp += $parts->rate;
+							$total_parts_price += $parts->amount;
+							$total_parts_tax += $tax_amount;
+
+							$part_details[$key]['tax_values'] = $tax_values;
+							$part_details[$key]['tax_amount'] = $tax_amount;
+							$total_amount = $tax_amount + $billing_parts_amount;
+							$total_amount = number_format((float) $total_amount, 2, '.', '');
+							if ($parts->is_free_service != 1) {
+								$parts_amount += $total_amount;
+							}
+							$part_details[$key]['total_amount'] = $total_amount;
+							$i++;
+						}
+					}
+				} else {
 					//Check Parts Issued or Not
 					$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $parts->id)->sum('issued_qty');
 
@@ -2082,7 +2222,6 @@ class PDFController extends Controller {
 						$i++;
 					}
 				}
-				// }
 			}
 		}
 
@@ -2162,6 +2301,7 @@ class PDFController extends Controller {
 		}
 
 		$job_card['creation_date'] = date('d-m-Y', strtotime($job_card->created_at));
+		$this->data['date'] = date('d-m-Y');
 
 		$labour_amount = 0;
 		$total_amount = 0;
@@ -2277,7 +2417,18 @@ class PDFController extends Controller {
 		$this->data['labour_round_total_amount'] = round($labour_amount);
 		$this->data['labour_total_amount'] = number_format($labour_amount, 2);
 
-		$pdf = PDF::loadView('pdf-gigo/bill-detail-labour-pdf', $this->data);
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $job_card->id . '_labour_invoice.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/bill-detail-labour-pdf', $this->data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return $pdf->stream('bill-detail-labour-pdf');
 	}
@@ -2314,6 +2465,7 @@ class PDFController extends Controller {
 		}
 
 		$job_card['creation_date'] = date('d-m-Y', strtotime($job_card->created_at));
+		$this->data['date'] = date('d-m-Y');
 
 		$parts_amount = 0;
 		$total_amount = 0;
@@ -2437,7 +2589,18 @@ class PDFController extends Controller {
 		$this->data['parts_round_total_amount'] = round($parts_amount);
 		$this->data['parts_total_amount'] = number_format($parts_amount, 2);
 
-		$pdf = PDF::loadView('pdf-gigo/bill-detail-part-pdf', $this->data);
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $job_card->id . '_part_invoice.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/bill-detail-part-pdf', $this->data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return $pdf->stream('bill-detail-part-pdf');
 	}

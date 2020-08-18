@@ -357,12 +357,16 @@ app.component('roadTestGatePassView', {
         }
 
 
-        $scope.reloadPage = function() {
+        $scope.reloadPage = function(id) {
             $('#gate_in_confirm_notification').modal('hide');
             $('#gate_out_confirm_notification').modal('hide');
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
-            $scope.fetchData();
+            if (id == 1) {
+                window.location = "#!/road-test-gate-pass/table-list";
+            } else {
+                $scope.fetchData();
+            }
         }
 
         // $scope.refresh = function() {

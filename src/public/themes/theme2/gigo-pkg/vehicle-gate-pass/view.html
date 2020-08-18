@@ -158,8 +158,8 @@
                                                             <div class="checklist-item-value">
                                                                 Covering Letter
                                                             </div>
-                                                            <div class="checklist-item-value-sm">
-                                                                <a target="_blank" class="btn btn-secondary-dark btn-square btn-block" href="{{covering_letter_url}}">PDF</a>
+                                                            <div class="checklist-item-value-sm" ng-if="$ctrl.vehicle_gate_pass.covering_letter_pdf">
+                                                                <a target="_blank" href="{{$ctrl.vehicle_gate_pass.covering_letter_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                             </div>
                                                         </div>
                                                     </li>
@@ -168,8 +168,8 @@
                                                             <div class="checklist-item-value">
                                                                 Gatepass
                                                             </div>
-                                                            <div class="checklist-item-value-sm">
-                                                                <a target="_blank" href="{{gatepass_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                            <div class="checklist-item-value-sm" ng-if="$ctrl.vehicle_gate_pass.gate_pass_pdf">
+                                                                <a target="_blank" href="{{$ctrl.vehicle_gate_pass.gate_pass_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                             </div>
                                                         </div>
                                                     </li>

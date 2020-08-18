@@ -66,7 +66,7 @@ Content Wrap -->
                                                 <input type="text" class="form-control" ng-model="$ctrl.complaint.name" name="name" placeholder="Enter Name" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
-                                        <div class="col-md-3">
+                                        <!-- <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>Complaint Group<sup class="mandatory">*</sup></label>
                                                 <md-select ng-model="$ctrl.complaint.group_id" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Complaint Group">
@@ -78,6 +78,21 @@ Content Wrap -->
                                                     </md-optgroup>
                                                 </md-select>
                                                 <input type="hidden" class="form-control required" name="group_id" id="group_id" value="{{$ctrl.complaint.group_id}}">
+                                            </div>
+                                        </div> -->
+                                        <!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>Sub Aggregate<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.complaint.sub_aggregate_id" md-on-close="clearSearchType()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Sub Aggregate">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchType" type="search" placeholder="Search Sub Aggregate" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="sub_aggregate.id" ng-repeat="sub_aggregate in $ctrl.sub_aggregate | filter:searchType">{{sub_aggregate.code}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" name="sub_aggregate_id" id="sub_aggregate_id" value="{{$ctrl.complaint.sub_aggregate_id}}">
                                             </div><!-- Field -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">
@@ -98,7 +113,7 @@ Content Wrap -->
                                                 <input type="text" class="form-control" ng-model="$ctrl.complaint.kms" name="kms" placeholder="Enter Kilometer" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
-                                         <div class="col-md-3">
+                                        <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
                                                     Months

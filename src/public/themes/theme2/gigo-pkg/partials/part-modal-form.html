@@ -47,11 +47,11 @@
                                     Purchase Type
                                 </label>
                                 <div class="common-radio-button type-4">
-                                    <input type="radio" id="option_stock" name="purchase_type" ng-model="wjor_part.purchase_type" ng-value="8480">
+                                    <input type="radio" ng-change="purchaseTypeChange()" id="option_stock" name="purchase_type" ng-model="wjor_part.purchase_type" ng-value="8480">
                                     <label for="option_stock">
                                         Stock
                                     </label>
-                                    <input type="radio" id="option_local" name="purchase_type" ng-model="wjor_part.purchase_type" ng-value="8481">
+                                    <input type="radio" ng-change="purchaseTypeChange()" id="option_local" name="purchase_type" ng-model="wjor_part.purchase_type" ng-value="8481">
                                     <label for="option_local">
                                         Local Purchase
                                     </label>
@@ -88,7 +88,7 @@
                                         <label>
                                             Rate
                                         </label>
-                                        <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="rate" ng-model="wjor_part.rate" maxlength="12" ng-readonly="wjor_part.purchase_type != '8481'">
+                                        <input type="text" ng-keyup="calculatePartAmount()" class="form-control" name="rate" ng-model="wjor_part.rate" maxlength="12" ng-readonly1="wjor_part.purchase_type != '8481'">
                                     </div><!-- Field -->
                                 </div><!-- Column -->
                                 <div class="col-md-4">
@@ -115,7 +115,7 @@
                         </div><!-- Column -->
                         <div class="col-md-12" ng-if="wjor_part.part">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-4" ng-hide="warranty_job_order_request.request_type_id == '9181'">
                                     <div class="form-group">
                                         <label>
                                             Handling Charge Percentage
@@ -123,7 +123,7 @@
                                         <input type="text" ng-keyup="calculateHandlingCharge()" class="form-control" name="handling_charge_percentage" ng-model="wjor_part.handling_charge_percentage" maxlength="3" ng-readonly="warranty_job_order_request.request_type_id == '9181'" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
                                     </div><!-- Field -->
                                 </div><!-- Column -->
-                                <div class="col-md-4">
+                                <div class="col-md-4" ng-hide="warranty_job_order_request.request_type_id == '9181'">
                                     <div class="form-group">
                                         <label>
                                             Handling Charges

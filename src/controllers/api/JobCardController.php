@@ -433,14 +433,18 @@ class JobCardController extends Controller {
 			//UPDATE JOB ORDER PARTS STATUS
 			JobOrderPart::where('job_order_id', $request->job_order_id)->update(['status_id' => 8201, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
 
-			$generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);
+			$estimate_file_name = $request->job_order_id . '_estimate.pdf';
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $estimate_file_name);
+			if (!file_exists($directoryPath)) {
+				$generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);
 
-			if (!$generate_estimate_pdf) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => ['Something went on Server.Please Try again later!!'],
-				]);
+				if (!$generate_estimate_pdf) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Something went on Server.Please Try again later!!'],
+					]);
+				}
 			}
 
 			DB::commit();
@@ -669,6 +673,38 @@ class JobCardController extends Controller {
 				$job_card->revised_estimate_pdf = url('storage/app/public/gigo/pdf/' . $job_card->jobOrder->id . '_revised_estimate.pdf');
 			} else {
 				$job_card->revised_estimate_pdf = '';
+			}
+
+			//Check Labour PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->id . '_labour_invoice.pdf');
+			if (file_exists($directoryPath)) {
+				$job_card->labour_pdf = url('storage/app/public/gigo/pdf/' . $job_card->id . '_labour_invoice.pdf');
+			} else {
+				$job_card->labour_pdf = '';
+			}
+
+			//Check Parts PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->id . '_part_invoice.pdf');
+			if (file_exists($directoryPath)) {
+				$job_card->parts_pdf = url('storage/app/public/gigo/pdf/' . $job_card->id . '_part_invoice.pdf');
+			} else {
+				$job_card->parts_pdf = '';
+			}
+
+			//Check Covering Letter PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->jobOrder->id . '_covering_letter.pdf');
+			if (file_exists($directoryPath)) {
+				$job_card->covering_letter_pdf = url('storage/app/public/gigo/pdf/' . $job_card->jobOrder->id . '_covering_letter.pdf');
+			} else {
+				$job_card->covering_letter_pdf = '';
+			}
+
+			//Check GatePass PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->jobOrder->id . '_gatepass.pdf');
+			if (file_exists($directoryPath)) {
+				$job_card->gate_pass_pdf = url('storage/app/public/gigo/pdf/' . $job_card->jobOrder->id . '_gatepass.pdf');
+			} else {
+				$job_card->gate_pass_pdf = '';
 			}
 
 			return response()->json([
@@ -1805,6 +1841,32 @@ class JobCardController extends Controller {
 		}
 		$invoice->save();
 
+		if ($params['invoice_of_id'] == 7425) {
+			//Generate JobCard Labour PDF
+			$generate_estimate_pdf = JobCard::generateJobcardLabourPDF($params['job_card_id']);
+
+			if (!$generate_estimate_pdf) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Something went on Server.Please Try again later!!'],
+				]);
+			}
+		}
+
+		if ($params['invoice_of_id'] == 7426) {
+			//Generate JobCard Part PDF
+			$generate_estimate_pdf = JobCard::generateJobcardPartPDF($params['job_card_id']);
+
+			if (!$generate_estimate_pdf) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Something went on Server.Please Try again later!!'],
+				]);
+			}
+		}
+
 		DB::commit();
 
 		return true;
@@ -2791,15 +2853,20 @@ class JobCardController extends Controller {
 			$job_card->updated_at = Carbon::now();
 			$job_card->save();
 
-			//Generate Revised Estimate PDF
-			$generate_revised_estimate_pdf = JobCard::generateRevisedEstimatePDF($job_card->id);
+			$estimate_file_name = $job_card->id . '_revised_estimate.pdf';
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $estimate_file_name);
+			if (!file_exists($directoryPath)) {
 
-			if (!$generate_revised_estimate_pdf) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => ['Something went on Server.Please Try again later!!'],
-				]);
+				//Generate Revised Estimate PDF
+				$generate_estimate_pdf = JobCard::generateRevisedEstimatePDF($job_card->id);
+
+				if (!$generate_estimate_pdf) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Something went on Server.Please Try again later!!'],
+					]);
+				}
 			}
 
 			if ($request->type == 2) {

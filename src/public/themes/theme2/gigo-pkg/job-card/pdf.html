@@ -39,8 +39,11 @@ Content Wrap -->
                                                         <div class="checklist-item-value">
                                                             Covering Letter
                                                         </div>
-                                                        <div class="checklist-item-value-sm">
-                                                            <a target="_blank" class="btn btn-secondary-dark btn-square btn-block" href="{{covering_letter_url}}">PDF</a>
+                                                        <div class="checklist-item-value-sm" ng-if="!covering_letter_pdf">
+                                                            <a target="_blank" href="{{covering_letter_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        </div>
+                                                        <div class="checklist-item-value-sm" ng-if="covering_letter_pdf">
+                                                            <a target="_blank" href="{{covering_letter_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -49,8 +52,11 @@ Content Wrap -->
                                                         <div class="checklist-item-value">
                                                             Gatepass
                                                         </div>
-                                                        <div class="checklist-item-value-sm">
-                                                            <a target="_blank" href="{{gatepass_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        <div class="checklist-item-value-sm" ng-if="!gate_pass_pdf">
+                                                            <a target="_blank" href="{{gate_pass_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        </div>
+                                                        <div class="checklist-item-value-sm" ng-if="gate_pass_pdf">
+                                                            <a target="_blank" href="{{gate_pass_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -195,8 +201,11 @@ Content Wrap -->
                                                         <div class="checklist-item-value">
                                                             Labour Invoice
                                                         </div>
-                                                        <div class="checklist-item-value-sm">
-                                                            <a target="_blank" href="{{labour_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        <div class="checklist-item-value-sm" ng-if="!labour_pdf">
+                                                            <a target="_blank" href="{{labour_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        </div>
+                                                        <div class="checklist-item-value-sm" ng-if="labour_pdf">
+                                                            <a target="_blank" href="{{labour_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -205,8 +214,11 @@ Content Wrap -->
                                                         <div class="checklist-item-value">
                                                             Parts Invoice
                                                         </div>
-                                                        <div class="checklist-item-value-sm">
-                                                            <a target="_blank" href="{{parts_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        <div class="checklist-item-value-sm" ng-if="!parts_pdf">
+                                                            <a target="_blank" href="{{parts_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        </div>
+                                                        <div class="checklist-item-value-sm" ng-if="parts_pdf">
+                                                            <a target="_blank" href="{{parts_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>

@@ -148,15 +148,21 @@ app.component('warrantyJobOrderRequestView', {
                 showNoty('error', 'You have errors, Kindly fix');
             },
             submitHandler: function(form) {
+                $('.sendToApproval').attr('readonly', true).text('loading');
+                // $('.sendToApproval').button('loading');
+
                 WarrantyJobOrderRequestSvc.approve($scope.warranty_job_order_request)
                     .then(function(response) {
                         if (!response.data.success) {
+                            $('.sendToApproval').button('reset');
                             showErrorNoty(response.data);
                             return;
                         }
                         $('#approve_modal').modal('hide');
                         $('body').removeClass('modal-open');
                         $('.modal-backdrop').remove();
+                        $('.sendToApproval').button('reset');
+
                         showNoty('success', 'Warranty job order request approved successfully');
                         $location.path('/warranty-job-order-request/table-list');
                     });

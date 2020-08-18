@@ -84,15 +84,8 @@
                                             </div>
                                         </div>
                                         <div class="card-box-body" ng-if="my_job_order.status_id == 8260 ||  my_job_order.status_id == 8264">
-                                            <!-- <span class="card-box-content-wrap" ng-click="StartWork(8261,key)">
-                                                <div class="card-box-content bg-dark">
-                                                    <span class="info">
-                                                        Start
-                                                    </span>
-                                                </div>
-                                            </span> -->
-                                            <span class="card-box-content-wrap" ng-class="{'my-disable':other_work_status == 1}" ng-click="ConfirmStart(my_job_order.repair_code,my_job_order.repair_name,8261,key)">
-                                                <div class="card-box-content bg-dark">
+                                            <span class="card-box-content-wrap" ng-class="{'my-disable alstart':other_work_status == 1}" ng-click="ConfirmStart(my_job_order.repair_code,my_job_order.repair_name,8261,key)">
+                                                <div class="card-box-content" ng-class="{'bg-dark':other_work_status == 0,'bg-grey':other_work_status == 1}">
                                                     <span class="info">
                                                         Start
                                                     </span>

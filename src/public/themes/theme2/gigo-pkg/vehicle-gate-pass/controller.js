@@ -475,9 +475,8 @@ app.component('vehicleGatePassView', {
                         showErrorNoty(res);
                         return;
                     }
+                    console.log(res);
                     self.vehicle_gate_pass = res.view_vehicle_gate_pass;
-                    $scope.gatepass_url = base_url + '/gigo-pkg/pdf/gatepass/' + self.vehicle_gate_pass.job_order.job_card.id;
-                    $scope.covering_letter_url = base_url + '/gigo-pkg/pdf/covering-letter/' + self.vehicle_gate_pass.job_order.job_card.id;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {

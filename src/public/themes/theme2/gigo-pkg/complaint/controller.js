@@ -49,7 +49,7 @@ app.component('complaintList', {
                 data: function(d) {
                     d.code = $("#code").val();
                     d.name = $("#name").val();
-                    d.group = $("#group").val();
+                    d.sub_aggregate = $("#sub_aggregate").val();
                     d.hour = $("#hour").val();
                     d.kms = $("#kms").val();
                     d.month = $("#month").val();
@@ -59,12 +59,12 @@ app.component('complaintList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'complaints.code',searchable: true },
-                { data: 'name', name: 'complaints.name' ,searchable: true },
-                { data: 'group_code', name: 'complaint_groups.code' ,searchable: true },
-                { data: 'hours', name: 'complaints.hours' ,searchable: true },
-                { data: 'kms', name: 'complaints.kms' ,searchable: true },
-                 { data: 'months', name: 'complaints.months' ,searchable: true },
+                { data: 'code', name: 'complaints.code', searchable: true },
+                { data: 'name', name: 'complaints.name', searchable: true },
+                { data: 'sub_aggregate_code', name: 'sub_aggregates.code', searchable: true },
+                { data: 'hours', name: 'complaints.hours', searchable: true },
+                { data: 'kms', name: 'complaints.kms', searchable: true },
+                { data: 'months', name: 'complaints.months', searchable: true },
                 { data: 'status', name: '' },
 
             ],
@@ -119,10 +119,14 @@ app.component('complaintList', {
             // console.log(response);
             self.extras = response.data.extras;
             self.complaint_group = response.data.complaint_group;
+            self.sub_aggregate = response.data.sub_aggregate;
         });
 
         $scope.onSelectedgroup = function(complaint_selected) {
             $('#group').val(complaint_selected);
+        }
+        $scope.onSelectedSubAggregate = function(sub_aggregate_selected) {
+            $('#sub_aggregate').val(sub_aggregate_selected);
         }
 
         $element.find('input').on('keydown', function(ev) {
@@ -183,6 +187,7 @@ app.component('complaintForm', {
         ).then(function(response) {
             self.complaint = response.data.complaint;
             self.complaint_group = response.data.complaint_group;
+            self.sub_aggregate = response.data.sub_aggregate;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
@@ -210,7 +215,10 @@ app.component('complaintForm', {
                     minlength: 3,
                     maxlength: 191,
                 },
-                'group_id': {
+                /*'group_id': {
+                    required: true,
+                },*/
+                'sub_aggregate_id': {
                     required: true,
                 },
                 'hours': {

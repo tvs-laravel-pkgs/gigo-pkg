@@ -452,7 +452,7 @@ class MyJobCardController extends Controller {
 
 		$my_job_timesheet = MechanicTimeLog::select([
 			'job_cards.id',
-			'job_cards.job_card_number as jc_number', 'outlets.code as outlet', 'repair_orders.code', 'mechanic_time_logs.end_date_time', 'mechanic_time_logs.start_date_time', 'mechanic_time_logs.created_at',
+			'job_cards.job_card_number as jc_number', 'outlets.code as outlet', 'repair_orders.code', 'mechanic_time_logs.end_date_time', 'mechanic_time_logs.start_date_time', 'mechanic_time_logs.created_at', DB::raw('concat(repair_orders.code," / ",repair_orders.name) as labour_work'),
 		])
 			->join('repair_order_mechanics', 'repair_order_mechanics.id', 'mechanic_time_logs.repair_order_mechanic_id')
 			->join('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')
@@ -499,22 +499,23 @@ class MyJobCardController extends Controller {
 			})
 
 			->addColumn('start_time', function ($my_job_timesheet) {
-				$start_time = date('H:i', strtotime($my_job_timesheet['start_date_time']));
-				$time = date("g:i a", strtotime($start_time));
-				return $time;
+				$start_time = date('H:i A', strtotime($my_job_timesheet['start_date_time']));
+				// $time = date("g:i a", strtotime($start_time));
+				return $start_time;
 			})
 
 			->addColumn('end_time', function ($my_job_timesheet) {
-				$end_time = date('H:i', strtotime($my_job_timesheet['end_date_time']));
-				$time = date("g:i a", strtotime($end_time));
-				return $time;
+				$end_time = date('H:i A', strtotime($my_job_timesheet['end_date_time']));
+				// $time = date("g:i a", strtotime($end_time));
+				return $end_time;
 			})
 
 			->addColumn('created_at', function ($my_job_timesheet) {
-				$created_at_date = date('Y-m-d', strtotime($my_job_timesheet['created_at']));
-				$created_at = date('H:i', strtotime($my_job_timesheet['created_at']));
-				$time = date("g:i a", strtotime($created_at));
-				return $created_at_date . " " . $time;
+				$created_at_date = date('d-m-Y', strtotime($my_job_timesheet['created_at']));
+				// $created_at = date('H:i', strtotime($my_job_timesheet['created_at']));
+				// $time = date("g:i a", strtotime($created_at));
+				// return $created_at_date . " " . $time;
+				return $created_at_date;
 
 			})
 

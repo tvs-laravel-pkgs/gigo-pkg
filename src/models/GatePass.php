@@ -18,6 +18,7 @@ class GatePass extends Model {
 		"type_id",
 		"number",
 		"status_id",
+		"job_order_id",
 		"job_card_id",
 		"gate_in_date",
 		"gate_out_date",
@@ -61,6 +62,10 @@ class GatePass extends Model {
 	}
 	public function jobCard() {
 		return $this->belongsTo('App\JobCard', 'job_card_id');
+	}
+
+	public function jobOrder() {
+		return $this->belongsTo('App\JobOrder', 'job_order_id');
 	}
 
 	public function gatePassItems() {

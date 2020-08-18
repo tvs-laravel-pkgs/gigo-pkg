@@ -190,6 +190,9 @@ class WarrantyJobOrderRequest extends BaseModel {
 	public function splitOrderType() {
 		return $this->belongsTo('App\SplitOrderType', 'split_order_type_id');
 	}
+	public function requestType() {
+		return $this->belongsTo('App\Config', 'request_type_id');
+	}
 
 	public static function relationships($action = '') {
 		if ($action == 'index') {
@@ -246,6 +249,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'photos',
 				'approvalAttachments',
 				'splitOrderType',
+				'requestType',
 			];
 		}
 
