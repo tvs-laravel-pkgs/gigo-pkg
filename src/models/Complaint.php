@@ -14,7 +14,7 @@ class Complaint extends BaseModel {
 	protected $table = 'complaints';
 	public $timestamps = true;
 	protected $fillable =
-		["company_id", "code", "name", "group_id", "hours", "kms", "months"]
+		["company_id", "code", "name", "group_id", "sub_aggregate_id", "hours", "kms", "months"]
 	;
 
 	protected static $excelColumnRules = [
