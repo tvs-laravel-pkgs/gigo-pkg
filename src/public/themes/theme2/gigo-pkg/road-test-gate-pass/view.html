@@ -140,7 +140,7 @@
                 <p class="info">Gate Pass No : {{$ctrl.road_test_gate_pass.number}}</span></p>
                 <p class="info">Reg No : {{$ctrl.road_test_gate_pass.job_order.vehicle ? $ctrl.road_test_gate_pass.job_order.vehicle.registration_number : '--'}}</p>
                 <div class="mt-30 mb-30">
-                    <a href="javascript:;" class="btn btn-success btn-square btn-block" ng-click="reloadPage()"><b>Done</b></a>
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" ng-click="reloadPage(1)"><b>Done</b></a>
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->
@@ -151,12 +151,12 @@
         <div class="modal-content">
             <div class="modal-body text-center">
                 <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
-                <h6 class="title"><b>Gate Out Success</b></h6>
+                <h6 class="title"><b>Gate In Success</b></h6>
                 <p class="info data">Vehicle successfully Road Test Gate In</p>
                 <p class="info">Gate Pass No : {{$ctrl.road_test_gate_pass.number}}</span></p>
                 <p class="info">Reg No : {{$ctrl.road_test_gate_pass.job_order.vehicle ? $ctrl.road_test_gate_pass.job_order.vehicle.registration_number : '--'}}</p>
                 <div class="mt-30 mb-30">
-                    <a href="javascript:;" class="btn btn-success btn-square btn-block" ng-click="reloadPage()"><b>Done</b></a>
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" ng-click="reloadPage(2)"><b>Done</b></a>
                 </div><!-- Button -->
             </div><!-- Modal Body -->
         </div><!-- Modal Content -->
