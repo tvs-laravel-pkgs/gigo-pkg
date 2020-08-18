@@ -1283,21 +1283,21 @@ class VehicleInwardController extends Controller {
 			// dd($request->issue_mode_id);
 			if ($request->issued_mode_id != 8480 && $request->job_order_issued_part_id == null) {
 
-				// $db2 = config('database.connections.pias.database');
+				$db2 = config('database.connections.pias.database');
 
-				// $parts = DB::table($db2 . '.parts as pias_parts')
-				// 	->join('parts', 'parts.code', 'pias_parts.code')
-				// 	->select('parts.code', 'pias_parts.id')
-				// 	->where('parts.id', $request->part_id)
-				// 	->first();
+				$parts = DB::table($db2 . '.parts as pias_parts')
+					->join('parts', 'parts.code', 'pias_parts.code')
+					->select('parts.code', 'pias_parts.id')
+					->where('parts.id', $request->part_id)
+					->first();
 
-				// if (!$parts) {
-				// 	return response()->json([
-				// 		'success' => false,
-				// 		'error' => 'Validation Error',
-				// 		'errors' => ['Parts Details cannot be found'],
-				// 	]);
-				// }
+				if (!$parts) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Parts Details cannot be found'],
+					]);
+				}
 
 				if (date('m') > 3) {
 					$year = date('Y') + 1;
@@ -1374,6 +1374,14 @@ class VehicleInwardController extends Controller {
 				$parts_grn->created_by_id = Auth::id();
 				$parts_grn->created_at = Carbon::now();
 				$parts_grn->save();
+
+				DB::commit();
+
+				return response()->json([
+					'success' => true,
+					'message' => 'Local Purchase Request Created Successfully!!',
+				]);
+
 			} else {
 				$job_order_isssued_part = JobOrderIssuedPart::find($request->job_order_issued_part_id);
 				if ($job_order_isssued_part == null) {
@@ -1387,14 +1395,14 @@ class VehicleInwardController extends Controller {
 
 				$job_order_isssued_part->fill($request->all());
 				$job_order_isssued_part->save();
+
+				DB::commit();
+
+				return response()->json([
+					'success' => true,
+					'message' => 'Part Issued Successfully!!',
+				]);
 			}
-
-			DB::commit();
-
-			return response()->json([
-				'success' => true,
-				'message' => 'Issued Part saved Successfully!!',
-			]);
 
 		} catch (Exception $e) {
 			return response()->json([
