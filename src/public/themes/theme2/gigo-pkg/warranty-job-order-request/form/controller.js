@@ -455,6 +455,7 @@ app.component('warrantyJobOrderRequestForm', {
             $scope.wjor_repair_order.rate = ($scope.wjor_repair_order.rate == null) ? 0 : $scope.wjor_repair_order.rate;
             $scope.wjor_repair_order.rate = $scope.wjor_repair_order.rate * parseFloat($scope.wjor_repair_order.repair_order.hours);
             // $scope.wjor_repair_order.rate = repair_order.claim_amount;
+            $scope.wjor_repair_order.rate = $scope.wjor_repair_order.rate.toFixed(2);
             $scope.wjor_repair_order.tax_code = repair_order.tax_code;
             HelperService.calculateTaxAndTotal($scope.wjor_repair_order, $scope.isSameState());
 
@@ -569,6 +570,8 @@ app.component('warrantyJobOrderRequestForm', {
                                     $scope.wjor_part.rate = res.stock_data.mrp;
                                     $scope.wjor_part.part.tax_code = null;
                                     $scope.wjor_part.tax_code = null;
+                                    $scope.wjor_part.handling_charge_percentage = 0;
+                                    $scope.wjor_part.handling_charge = 0;
                                 } else {
                                     $scope.wjor_part.rate = res.stock_data.cost_price;
                                 }
