@@ -601,7 +601,7 @@ app.component('warrantyJobOrderRequestForm', {
             $scope.calculatePartAmount();
         }
 
-        $scope.calculateCushionCharges = function() {
+        $scope.calculateCushionCharges = function(partcal = null) {
 
             $cushion_percentage = parseFloat($scope.warranty_job_order_request.total_part_cushioning_percentage);
             if (isNaN($cushion_percentage)) {
@@ -611,7 +611,9 @@ app.component('warrantyJobOrderRequestForm', {
             $cushioning_charges = ($cushion_percentage / 100) * parseFloat($scope.warranty_job_order_request.part_total);
             $scope.warranty_job_order_request.total_part_cushioning_charge = $cushioning_charges;
             $scope.warranty_job_order_request.total_part_amount = parseFloat($cushioning_charges) + parseFloat($scope.warranty_job_order_request.part_total);
-            $scope.calculatePartAmount();
+            if (partcal == null) {
+                $scope.calculatePartAmount();
+            }
             // $scope.calculateTotals();
         }
 
@@ -658,9 +660,9 @@ app.component('warrantyJobOrderRequestForm', {
                     $scope.warranty_job_order_request.wjor_parts[$scope.index] = $scope.wjor_part;
                 }
                 $scope.calculateTotals();
-                $scope.warranty_job_order_request.total_part_amount = parseFloat($cushioning_charges) + parseFloat($scope.warranty_job_order_request.part_total);
+                // $scope.warranty_job_order_request.total_part_amount = parseFloat($cushioning_charges) + parseFloat($scope.warranty_job_order_request.part_total);
 
-                $scope.calculateCushionCharges();
+                $scope.calculateCushionCharges(true);
                 $('#part_form_modal').modal('hide');
                 $('body').removeClass('modal-open');
                 $('.modal-backdrop').remove();
