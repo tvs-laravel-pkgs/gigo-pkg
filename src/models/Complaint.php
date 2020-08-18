@@ -44,14 +44,14 @@ class Complaint extends BaseModel {
 				],
 			],
 		],
-		'Sub Aggregate' => [
+		'Sub Aggregate Name' => [
 			'table_column_name' => 'sub_aggregate_id',
 			'rules' => [
 				'required' => [
 				],
 				'fk' => [
 					'class' => 'App\SubAggregate',
-					'foreign_table_column' => 'code',
+					'foreign_table_column' => 'name',
 					// 'check_with_company' => true,
 				],
 			],
@@ -187,15 +187,15 @@ class Complaint extends BaseModel {
 			}
 		*/
 
-		if (empty($record_data['Sub Aggregate'])) {
+		if (empty($record_data['Sub Aggregate Name'])) {
 			$errors[] = 'Sub Aggregate is empty';
 		} else {
 			$sub_aggregate = SubAggregate::where([
 				// 'company_id' => $admin->company_id,
-				'code' => $record_data['Sub Aggregate'],
+				'name' => $record_data['Sub Aggregate Name'],
 			])->first();
 			if ($sub_aggregate == null) {
-				$errors[] = 'Sub Aggregate not found : ' . $record_data['Sub Aggregate'];
+				$errors[] = 'Sub Aggregate not found : ' . $record_data['Sub Aggregate Name'];
 			}
 		}
 
@@ -235,10 +235,10 @@ class Complaint extends BaseModel {
 			// 'Group Code' => $record_data->group_code,
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
-			'Hours' => $record_data->hours,
-			'KMs' => $record_data->kms,
-			'Months' => $record_data->months,
-			'Sub Aggregate' => $record_data->sub_aggregate,
+			//'Hours' => $record_data->hours,
+			//'KMs' => $record_data->kms,
+			//'Months' => $record_data->months,
+			'Sub Aggregate Name' => $record_data->sub_aggregate_name,
 		];
 		return static::saveFromExcelArray($record);
 	}
