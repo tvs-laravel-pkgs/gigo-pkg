@@ -301,7 +301,7 @@
                                             Search vehicle
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item-change="vehicleSelected(warranty_job_order_request.job_order.vehicle)" md-autofocus md-selected-item="warranty_job_order_request.job_order.vehicle" md-search-text="vehicle_search_key" md-items="vehicle in searchVehicles(vehicle_search_key)" md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number" md-min-length="3" md-escape-options="clear" placeholder="Chassis # / Registration # / Engine #" md-input-id="vehicle_ac" >
+                                        <md-autocomplete md-selected-item-change="vehicleSelected(warranty_job_order_request.job_order.vehicle)" md-autofocus md-selected-item="warranty_job_order_request.job_order.vehicle" md-search-text="vehicle_search_key" md-items="vehicle in searchVehicles(vehicle_search_key)" md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number" md-min-length="3" md-escape-options="clear" placeholder="Chassis # / Registration # / Engine #" md-input-id="vehicle_ac">
                                             <md-item-template>
                                                 <span>
                                                     {{vehicle.registration_number}} / {{vehicle.chassis_number}}
@@ -613,7 +613,7 @@
                                             City
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus md-input-id="city_ac">
+                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.customer_address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus md-input-id="city_ac">
                                             <md-item-template>
                                                 <span>
                                                     {{option.name}}
@@ -623,8 +623,10 @@
                                                 No City matching "{{$ctrl.citySearchText}}" were found.
                                             </md-not-found>
                                         </md-autocomplete>
-                                        <input required type="hidden" id="city_id" name="city_id" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.id}}">
-                                        <input type="hidden" id="city_name" name="city_name" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.name}}">
+                                        <!-- <input required type="hidden" id="city_id" name="city_id" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.id}}">
+                                        <input type="hidden" id="city_name" name="city_name" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.name}}"> -->
+                                        <input required type="hidden" id="city_id" name="city_id" value="{{warranty_job_order_request.customer_address.city.id}}">
+                                        <input type="hidden" id="city_name" name="city_name" value="{{warranty_job_order_request.customer_address.city.name}}">
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-if="form_type=='manual'">

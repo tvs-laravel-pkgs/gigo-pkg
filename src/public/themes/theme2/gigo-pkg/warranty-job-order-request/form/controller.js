@@ -275,7 +275,7 @@ app.component('warrantyJobOrderRequestForm', {
             if (vehicle) {
                 if (vehicle.vehicle_owners) {
                     $scope.warranty_job_order_request.job_order.customer = vehicle.vehicle_owners[0].customer;
-                    $scope.customerChanged(vehicle.vehicle_owners[0].customer)
+                    $scope.customerChanged(vehicle.vehicle_owners[0].customer);
                     // $scope.warranty_job_order_request.customer_address
                 }
                 if (vehicle.bharat_stage == null && vehicle.sold_date != null) {
@@ -409,6 +409,7 @@ app.component('warrantyJobOrderRequestForm', {
                     } else if (typeof response.data.customer.primary_address != null && typeof response.data.customer.primary_address != 'string') {
                         $scope.warranty_job_order_request.customer_address = response.data.customer.primary_address;
                     }
+                    $scope.countryChanged();
                 });
         }
 
@@ -915,6 +916,7 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.countryChanged = function(onload = null) {
+            console.log($scope.warranty_job_order_request.customer_address);
             $country_id = (onload) ? $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country.id : $scope.warranty_job_order_request.customer_address.country.id;
             $.ajax({
                     url: base_url + '/api/state/get-drop-down-List',

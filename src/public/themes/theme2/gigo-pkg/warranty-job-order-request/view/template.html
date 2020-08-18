@@ -62,7 +62,7 @@
                             <button type="button" ng-if="warranty_job_order_request.status.id == 9101 && hasPerm('approve-warranty-job-order-request')" ng-click="showApprovalForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                 Approve
                             </button>
-                            <button type="button" ng-if="warranty_job_order_request.status.id == 9101 && hasPerm('approve-warranty-job-order-request')" ng-click="showRejectForm(warranty_job_order_request)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                            <button type="button" ng-if="warranty_job_order_request.status.id == 9101 && hasPerm('approve-warranty-job-order-request')" ng-click="showRejectForm(warranty_job_order_request)" class="requestResubmit btn btn-secondary-dark btn-min-wdth btn-nxt">
                                 Request Resubmit
                             </button>
                         </div>
@@ -129,7 +129,7 @@
                             </button>
                         </div><!-- Column -->
                         <div class="col-md-6 text-right">
-                            <button type="submit" class="btn btn-primary btn-md">
+                            <button type="submit" class="submit btn btn-primary btn-md">
                                 Approve
                             </button>
                         </div><!-- Column -->
@@ -172,7 +172,7 @@
                             </button>
                         </div><!-- Column -->
                         <div class="col-md-6 text-right">
-                            <button type="submit" class="btn btn-primary btn-md">
+                            <button type="submit" class="submit btn btn-primary btn-md">
                                 Submit
                             </button>
                         </div><!-- Column -->
