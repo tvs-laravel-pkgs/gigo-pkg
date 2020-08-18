@@ -624,7 +624,7 @@
                                             </md-not-found>
                                         </md-autocomplete>
                                         <input required type="hidden" id="city_id" name="city_id" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.id}}">
-                                        <input required type="hidden" id="city_name" name="city_name" value="{{warranty_job_order_request.customer_address.city.name}}">
+                                        <input type="hidden" id="city_name" name="city_name" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.name}}">
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-if="form_type=='manual'">
