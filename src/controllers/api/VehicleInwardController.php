@@ -719,7 +719,9 @@ class VehicleInwardController extends Controller {
 	public function getInwardPartIndentViewData(Request $r) {
 		try {
 			$job_order = JobOrder::with([
-				'jobOrderRepairOrders',
+				'jobOrderRepairOrders' => function ($q) {
+					$q->whereNull('removal_reason_id');
+				},
 				'jobOrderRepairOrders.repairOrder',
 				'jobCard',
 				'vehicle',
@@ -754,6 +756,15 @@ class VehicleInwardController extends Controller {
 			}
 
 			$part_amount = 0;
+
+			$labours = array();
+			if ($job_order->jobOrderRepairOrders) {
+				foreach ($job_order->jobOrderRepairOrders as $key => $value) {
+					$labours[$key]['id'] = $value->repair_order_id;
+					$labours[$key]['code'] = $value->repairOrder->code;
+					$labours[$key]['name'] = $value->repairOrder->name;
+				}
+			}
 
 			$part_details = array();
 			if ($job_order->jobOrderParts) {
@@ -872,6 +883,7 @@ class VehicleInwardController extends Controller {
 				'repair_order_mechanics' => $repair_order_mechanics,
 				'indent_part_logs' => $indent_part_logs,
 				'issued_parts_list' => $issued_parts_list,
+				'labours' => $labours,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -3374,6 +3386,8 @@ class VehicleInwardController extends Controller {
 		$part_amount = 0;
 
 		$labour_details = array();
+		$labours = array();
+
 		if ($job_order->jobOrderRepairOrders) {
 			foreach ($job_order->jobOrderRepairOrders as $key => $value) {
 				$labour_details[$key]['id'] = $value->id;
@@ -3398,6 +3412,10 @@ class VehicleInwardController extends Controller {
 				} else {
 					$labour_details[$key]['amount'] = 0;
 				}
+
+				$labours[$key]['id'] = $value->repair_order_id;
+				$labours[$key]['code'] = $value->repairOrder->code;
+				$labours[$key]['name'] = $value->repairOrder->name;
 			}
 		}
 
@@ -3440,6 +3458,7 @@ class VehicleInwardController extends Controller {
 		$result['labour_amount'] = $labour_amount;
 		$result['part_amount'] = $part_amount;
 		$result['total_amount'] = $total_amount;
+		$result['labours'] = $labours;
 
 		return $result;
 	}
@@ -3490,6 +3509,7 @@ class VehicleInwardController extends Controller {
 				'total_amount' => $result['total_amount'],
 				'labour_amount' => $result['labour_amount'],
 				'parts_rate' => $result['part_amount'],
+				'labours' => $result['labours'],
 			]);
 
 		} catch (\Exception $e) {
@@ -3668,6 +3688,7 @@ class VehicleInwardController extends Controller {
 				'total_labour_count' => $total_labour_count,
 				'labour_total_amount' => $result['labour_amount'],
 				'parts_total_amount' => $result['part_amount'],
+				'labours' => $result['labours'],
 			]);
 
 		} catch (\Exception $e) {
