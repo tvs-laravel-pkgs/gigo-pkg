@@ -903,7 +903,10 @@ app.component('warrantyJobOrderRequestForm', {
                         return;
                     }
                     // console.log(res.options);
-                    $scope.extras.sub_aggregates = res.options;
+                    setTimeout(function() {
+                        $scope.extras.sub_aggregates = res.options;
+                    }, 1500);
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -927,7 +930,9 @@ app.component('warrantyJobOrderRequestForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    $scope.extras.state_list = res.state_list;
+                    setTimeout(function() {
+                        $scope.extras.state_list = res.state_list;
+                    }, 1500);
 
                     //ADD NEW OWNER TYPE
                     /*if ($scope.type_id == 2) {
