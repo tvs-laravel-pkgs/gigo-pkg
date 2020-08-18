@@ -1809,6 +1809,21 @@ class JobCardController extends Controller {
 		}
 		$invoice->save();
 
+		if ($params['invoice_of_id'] == 7425) {
+			//Generate JobCard Labour PDF
+			$generate_estimate_pdf = JobCard::generateJobcardLabourPDF($params['job_card_id']);
+
+			if (!$generate_estimate_pdf) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Something went on Server.Please Try again later!!'],
+				]);
+			}
+		}
+
+		dd();
+
 		DB::commit();
 
 		return true;
