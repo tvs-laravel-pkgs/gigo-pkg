@@ -76,6 +76,20 @@ class RepairOrder extends BaseModel {
 				],
 			],
 		],
+		'Tax Code' => [
+			'table_column_name' => 'tax_code_id',
+			'rules' => [
+				'nullable' => [
+				],
+				'fk' => [
+					'class' => 'App\TaxCode',
+					'foreign_table_column' => 'code',
+					'check_with_company' => true,
+					'additional_conditions' => [
+					],
+				],
+			],
+		],
 		'Hours' => [
 			'table_column_name' => 'hours',
 			'rules' => [
