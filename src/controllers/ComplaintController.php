@@ -28,7 +28,8 @@ class ComplaintController extends Controller {
 			],
 		];
 		$this->data['complaint_group'] = collect(ComplaintGroup::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Complaint Group']);
-		$this->data['sub_aggregate'] = SubAggregate::select('id', 'code')->get()->prepend(['id' => '', 'code' => 'Select Complaint Group']);
+		$this->data['sub_aggregate'] = collect(SubAggregate::select('id', 'code')->get())->prepend(['id' => '', 'code' => 'Select Complaint Group']);
+
 		return response()->json($this->data);
 	}
 
@@ -129,7 +130,7 @@ class ComplaintController extends Controller {
 			$action = 'Edit';
 		}
 		$this->data['complaint_group'] = collect(ComplaintGroup::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Complaint Group']);
-		$this->data['sub_aggregate'] = SubAggregate::select('id', 'code', 'name')->get()->prepend(['id' => '', 'name' => '', 'code' => 'Select Complaint Group']);
+		$this->data['sub_aggregate'] = collect(SubAggregate::select('id', 'code')->get())->prepend(['id' => '', 'code' => 'Select Complaint Group']);
 		$this->data['success'] = true;
 		$this->data['complaint'] = $complaint;
 		$this->data['action'] = $action;

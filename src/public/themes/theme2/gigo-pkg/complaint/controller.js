@@ -49,7 +49,6 @@ app.component('complaintList', {
                 data: function(d) {
                     d.code = $("#code").val();
                     d.name = $("#name").val();
-                    // d.group = $("#group").val();
                     d.sub_aggregate = $("#sub_aggregate").val();
                     d.hour = $("#hour").val();
                     d.kms = $("#kms").val();
