@@ -1,9 +1,10 @@
 <?php
 
 namespace Abs\GigoPkg;
-use App\Http\Controllers\Controller;
 use Abs\GigoPkg\Complaint;
 use Abs\GigoPkg\ComplaintGroup;
+use App\Http\Controllers\Controller;
+use App\SubAggregate;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -26,7 +27,8 @@ class ComplaintController extends Controller {
 				['id' => '0', 'name' => 'Inactive'],
 			],
 		];
-		$this->data['complaint_group'] = collect(ComplaintGroup::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Complaint Group']);
+		$this->data['complaint_group'] = collect(ComplaintGroup::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Complaint Group']);
+		$this->data['sub_aggregate'] = SubAggregate::select('id', 'code')->get()->prepend(['id' => '', 'code' => 'Select Complaint Group']);
 		return response()->json($this->data);
 	}
 
@@ -37,13 +39,15 @@ class ComplaintController extends Controller {
 				'complaints.id',
 				'complaints.name',
 				'complaints.code',
-				'complaint_groups.code as group_code',
+				// 'complaint_groups.code as group_code',
+				'sub_aggregates.code as sub_aggregate_code',
 				'complaints.hours',
 				'complaints.kms',
 				'complaints.months',
 				DB::raw('IF(complaints.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
-			->leftJoin('complaint_groups', 'complaint_groups.id', 'complaints.group_id')
+			->leftJoin('sub_aggregates', 'sub_aggregates.id', 'complaints.sub_aggregate_id')
+		// ->leftJoin('complaint_groups', 'complaint_groups.id', 'complaints.group_id')
 			->where('complaints.company_id', Auth::user()->company_id)
 			->where(function ($query) use ($request) {
 				if (!empty($request->code)) {
@@ -55,11 +59,20 @@ class ComplaintController extends Controller {
 					$query->where('complaints.name', 'LIKE', '%' . $request->name . '%');
 				}
 			})
+		/*
 			->where(function ($query) use ($request) {
 				if (!empty($request->group)) {
 					$query->where('complaints.group_id', $request->group);
 				}
 			})
+			*/
+
+			->where(function ($query) use ($request) {
+				if (!empty($request->sub_aggregate)) {
+					$query->where('complaints.sub_aggregate_id', $request->sub_aggregate);
+				}
+			})
+
 			->where(function ($query) use ($request) {
 				if (!empty($request->hour)) {
 					$query->where('complaints.hours', $request->hour);
@@ -85,7 +98,7 @@ class ComplaintController extends Controller {
 		;
 
 		return Datatables::of($complaints)
-			 ->addColumn('status', function ($complaints) {
+			->addColumn('status', function ($complaints) {
 				$status = $complaints->status == 'Active' ? 'green' : 'red';
 				return '<span class="status-indigator ' . $status . '"></span>' . $complaints->status;
 			})
@@ -99,7 +112,7 @@ class ComplaintController extends Controller {
 					$output .= '<a href="#!/gigo-pkg/complaint/edit/' . $complaints->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
 				if (Entrust::can('delete-complaint')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#complaint-delete-modal" onclick="angular.element(this).scope().deleteComplaint('.$complaints->id.')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#complaint-delete-modal" onclick="angular.element(this).scope().deleteComplaint(' . $complaints->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
 				return $output;
 			})
@@ -115,7 +128,8 @@ class ComplaintController extends Controller {
 			$complaint = Complaint::withTrashed()->find($id);
 			$action = 'Edit';
 		}
-		$this->data['complaint_group'] = collect(ComplaintGroup::select('id','code')->where('company_id',Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Complaint Group']);
+		$this->data['complaint_group'] = collect(ComplaintGroup::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Complaint Group']);
+		$this->data['sub_aggregate'] = SubAggregate::select('id', 'code', 'name')->get()->prepend(['id' => '', 'name' => '', 'code' => 'Select Complaint Group']);
 		$this->data['success'] = true;
 		$this->data['complaint'] = $complaint;
 		$this->data['action'] = $action;
@@ -133,8 +147,8 @@ class ComplaintController extends Controller {
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
-				'group_id.required' => 'Complaint Group is Required',
-				'group_id.unique' => 'Complaint Group is already taken',
+				// 'group_id.required' => 'Complaint Group is Required',
+				// 'group_id.unique' => 'Complaint Group is already taken',
 				'kms.max' => 'Kilometer is Maximum 10 Charachers',
 				'hours.max' => 'Hours is Maximum 10 Charachers',
 				'months.max' => 'Hours is Maximum 8 Charachers',
@@ -152,11 +166,17 @@ class ComplaintController extends Controller {
 					'max:191',
 					'unique:complaints,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
-				'group_id' => [
+				/*'group_id' => [
 					'required:true',
 					'unique:complaints,code,' . $request->id . ',id,group_id,' . $request->group_id . ',company_id,' . Auth::user()->company_id,
-                    'unique:complaints,name,' . $request->id . ',id,group_id,' . $request->group_id . ',company_id,' . Auth::user()->company_id,
-  
+					'unique:complaints,name,' . $request->id . ',id,group_id,' . $request->group_id . ',company_id,' . Auth::user()->company_id,
+
+				],*/
+				'sub_aggregate_id' => [
+					'required:true',
+					'unique:complaints,code,' . $request->id . ',id,sub_aggregate_id,' . $request->sub_aggregate_id . ',company_id,' . Auth::user()->company_id,
+					'unique:complaints,name,' . $request->id . ',id,sub_aggregate_id,' . $request->sub_aggregate_id . ',company_id,' . Auth::user()->company_id,
+
 				],
 			], $error_messages);
 			if ($validator->fails()) {
@@ -219,5 +239,4 @@ class ComplaintController extends Controller {
 		}
 	}
 
-	
 }
