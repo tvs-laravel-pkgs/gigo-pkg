@@ -62,7 +62,6 @@ app.component('complaintList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'code', name: 'complaints.code', searchable: true },
                 { data: 'name', name: 'complaints.name', searchable: true },
-                // { data: 'group_code', name: 'complaint_groups.code', searchable: true },
                 { data: 'sub_aggregate_code', name: 'sub_aggregates.code', searchable: true },
                 { data: 'hours', name: 'complaints.hours', searchable: true },
                 { data: 'kms', name: 'complaints.kms', searchable: true },
