@@ -658,6 +658,8 @@ app.component('warrantyJobOrderRequestForm', {
                     $scope.warranty_job_order_request.wjor_parts[$scope.index] = $scope.wjor_part;
                 }
                 $scope.calculateTotals();
+                $scope.warranty_job_order_request.total_part_amount = parseFloat($cushioning_charges) + parseFloat($scope.warranty_job_order_request.part_total);
+
                 $('#part_form_modal').modal('hide');
                 $('body').removeClass('modal-open');
                 $('.modal-backdrop').remove();
