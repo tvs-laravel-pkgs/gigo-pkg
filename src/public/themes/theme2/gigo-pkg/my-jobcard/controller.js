@@ -328,7 +328,8 @@ app.component('myJobcardTimesheetList', {
                 { data: 'created_at' },
                 { data: 'jc_number', name: 'job_cards.job_card_number', searchable: true },
                 { data: 'outlet', name: 'outlets.code', searchable: true },
-                { data: 'start_time' , searchable: false},
+                { data: 'labour_work', name: 'repair_orders.name', searchable: true },
+                { data: 'start_time', searchable: false },
                 { data: 'end_time', searchable: false },
                 { data: 'duration', searchable: false },
             ],
@@ -404,13 +405,34 @@ app.component('myJobcardTimesheetList', {
             self.date = this.value;
         });
 
-        // FOR FILTER
-        $http.get(
-            laravel_routes['getMyJobCarduserDetails']
-        ).then(function(response) {
-            $scope.user_details = response.data.user_details;
-        });
 
+        $.ajax({
+                url: base_url + '/api/mytimesheet/list',
+                method: "POST",
+                data: {
+                    user_id: $routeParams.user_id,
+                },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                },
+            })
+            .done(function(res) {
+                if (!res.success) {
+                    showErrorNoty(res);
+                    return;
+                }
+                $scope.user_details = res.user_details;
+                $scope.$apply();
+            })
+            .fail(function(xhr) {
+                custom_noty('error', 'Something went wrong at server');
+            });
+
+        // $http.get(
+        //     laravel_routes['getMyJobCarduserDetails']
+        // ).then(function(response) {
+        //     $scope.user_details = response.data.user_details;
+        // });
 
         $scope.applyFilter = function() {
             $('#myjob-card-filter-modal').modal('hide');

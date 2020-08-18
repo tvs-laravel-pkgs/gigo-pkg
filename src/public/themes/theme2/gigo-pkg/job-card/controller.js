@@ -1457,6 +1457,12 @@ app.component('jobCardPdf', {
                     $scope.revised_estimate_url = base_url + '/gigo-pkg/pdf/revised-estimate/' + $scope.job_card.id;
                     $scope.estimate_pdf = res.job_card.estimate_pdf;
                     $scope.revised_estimate_pdf = res.job_card.revised_estimate_pdf;
+
+                    $scope.labour_url = base_url + '/gigo-pkg/pdf/job-card/labour/bill-detail/' + $scope.job_card.id;
+                    $scope.parts_url = base_url + '/gigo-pkg/pdf/job-card/part/bill-detail/' + $scope.job_card.id;
+                    $scope.labour_pdf = res.job_card.labour_pdf;
+                    $scope.parts_pdf = res.job_card.parts_pdf;
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {

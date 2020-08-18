@@ -1410,7 +1410,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 
             },
             invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Kindly fix');
+                custom_noty('error', 'You have errors, Please check all fields');
             },
             submitHandler: function(form) {
 
@@ -1451,7 +1451,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
 
             },
             invalidHandler: function(event, validator) {
-                custom_noty('error', 'You have errors, Kindly fix');
+                custom_noty('error', 'You have errors, Please check all fields');
             },
             submitHandler: function(form) {
                 $scope.schedule_maintainance_ro.repair_order.split_order_type_id = $scope.schedule_maintainance_ro.split_order_type.id;
@@ -1685,6 +1685,9 @@ app.component('inwardVehicleUpdatejcForm', {
                     } else {
                         error.insertAfter(element);
                     }
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all fields');
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);
@@ -2676,7 +2679,7 @@ app.component('inwardVehicleVehicleDetail', {
                     }
                 },
                 invalidHandler: function(event, validator) {
-                    custom_noty('error', 'You have errors, Please check fields');
+                    custom_noty('error', 'You have errors, Please check all fields');
                 },
                 submitHandler: function(form) {
                     let formData = new FormData($(form_id)[0]);

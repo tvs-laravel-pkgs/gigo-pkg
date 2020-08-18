@@ -195,8 +195,11 @@ Content Wrap -->
                                                         <div class="checklist-item-value">
                                                             Labour Invoice
                                                         </div>
-                                                        <div class="checklist-item-value-sm">
-                                                            <a target="_blank" href="{{labour_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        <div class="checklist-item-value-sm" ng-if="!labour_pdf">
+                                                            <a target="_blank" href="{{labour_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        </div>
+                                                        <div class="checklist-item-value-sm" ng-if="labour_pdf">
+                                                            <a target="_blank" href="{{labour_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
@@ -205,8 +208,11 @@ Content Wrap -->
                                                         <div class="checklist-item-value">
                                                             Parts Invoice
                                                         </div>
-                                                        <div class="checklist-item-value-sm">
-                                                            <a target="_blank" href="{{parts_pdf_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        <div class="checklist-item-value-sm" ng-if="!parts_pdf">
+                                                            <a target="_blank" href="{{parts_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                        </div>
+                                                        <div class="checklist-item-value-sm" ng-if="parts_pdf">
+                                                            <a target="_blank" href="{{parts_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
                                                         </div>
                                                     </div>
                                                 </li>
