@@ -314,7 +314,10 @@ input[type=number] {
                                                         Item Description
                                                     </th>
                                                     <th>
-                                                        Qty
+                                                        Issued Qty
+                                                    </th>
+                                                    <th ng-if="$ctrl.material_gate_pass.status_id==8303">
+                                                        Received Qty
                                                     </th>
                                                     <th>
                                                         Return Qty
@@ -332,8 +335,11 @@ input[type=number] {
                                                     <td>
                                                         {{gate_pass_item.qty}}
                                                     </td>
+                                                    <td ng-if="$ctrl.material_gate_pass.status_id==8303">
+                                                        {{gate_pass_item.return_qty}}
+                                                    </td>
                                                     <td>
-                                                        <input type="number" name="gate_pass_items[{{key}}][return_qty]" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Rteurn Qty" autocomplete="off" value="{{gate_pass_item.return_qty ? gate_pass_item.qty-gate_pass_item.return_qty : gate_pass_item.qty}}" max="{{gate_pass_item.return_qty ? gate_pass_item.qty-gate_pass_item.return_qty : gate_pass_item.qty}}"/>
+                                                        <input type="number" name="gate_pass_items[{{key}}][return_qty]" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Ex : 1" autocomplete="off" value="{{gate_pass_item.return_qty ? gate_pass_item.qty-gate_pass_item.return_qty : gate_pass_item.qty}}" max="{{gate_pass_item.return_qty ? gate_pass_item.qty-gate_pass_item.return_qty : gate_pass_item.qty}}" />
                                                     </td>
                                                 </tr>
                                             </tbody>

@@ -257,19 +257,21 @@ class MaterialGatePassController extends Controller {
 
 					$gate_pass_item_detail->save();
 
-					$material_inard_log = new MaterialInwardLog;
-					$material_inard_log->gass_pass_item_id = $gate_pass_item_detail->id;
-					$material_inard_log->qty = $gate_pass_item['return_qty'];
-					$material_inard_log->created_by_id = Auth::user()->id;
-					$material_inard_log->created_at = date('Y-m-d');
-					$material_inard_log->save();
+					if ($gate_pass_item['return_qty'] > 0) {
+						$material_inard_log = new MaterialInwardLog;
+						$material_inard_log->gass_pass_item_id = $gate_pass_item_detail->id;
+						$material_inard_log->qty = $gate_pass_item['return_qty'];
+						$material_inard_log->created_by_id = Auth::user()->id;
+						$material_inard_log->created_at = date('Y-m-d');
+						$material_inard_log->save();
+					}
 
 					$total_qty += $gate_pass_item_detail->qty;
 					$total_return_qty += $gate_pass_item_detail->return_qty;
 				}
 
 				if ($total_qty != $total_return_qty) {
-					$status = 8303; //Gate In Partial Pending
+					$status = 8303; //Gate In Partial Completed
 				} else {
 					$status = 8302; //Gate In Success
 				}
