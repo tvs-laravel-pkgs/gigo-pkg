@@ -4060,6 +4060,10 @@ class VehicleInwardController extends Controller {
 				->where('company_id', Auth::user()->company_id)
 				->find($r->id);
 
+			$expired_time = Entity::where('entity_type_id', 33)->select('name')->first();
+
+			$VOC_expiry_date = date("Y-m-d", strtotime('+' . $expired_time->name . 'months', strtotime(Carbon::today()->toDateString())));
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -4074,6 +4078,23 @@ class VehicleInwardController extends Controller {
 			} else {
 				$action = 'add';
 			}
+
+			$job_order_vehicles = JobOrder::with(['customerVoices'])
+				->where('vehicle_id', $job_order->vehicle->id)
+				->where('id', '!=', $r->id)
+				->whereDate('created_at', '<=', $VOC_expiry_date)
+				->get();
+			// ->pluck('id')->toArray();
+
+			if (!empty($job_order_vehicles)) {
+				$previous_customer_voice_ids = [];
+				foreach ($job_order_vehicles as $key => $job_order_vehicle) {
+					foreach ($job_order_vehicle->customerVoices as $customerVoice) {
+						$previous_customer_voice_ids[] = $customerVoice->id;
+					}
+				}
+			}
+			$job_order['previous_customer_voice_ids'] = array_unique($previous_customer_voice_ids);
 
 			$customer_voice_list = $job_order->vehicle->model->customerVoices->toArray();
 			$customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();

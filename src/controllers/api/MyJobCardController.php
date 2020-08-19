@@ -8,6 +8,7 @@ use Abs\GigoPkg\MechanicTimeLog;
 use Abs\GigoPkg\PauseWorkReason;
 use Abs\GigoPkg\RepairOrderMechanic;
 use App\Http\Controllers\Controller;
+use App\JobOrder;
 use App\User;
 use Auth;
 use Carbon\Carbon;
@@ -298,11 +299,35 @@ class MyJobCardController extends Controller {
 				]);
 			}
 
+			//ACTUAL HOURS TO COMPLETE WORK
+			$actual_hrs = JobOrderRepairOrder::where('id', $request->job_repair_order_id)->pluck('qty')->first();
+
+			//Total Working hours of mechanic
+			$mechanic_time_log = MechanicTimeLog::select('start_date_time', 'end_date_time')->where('repair_order_mechanic_id', $repair_order_mechanic->id)->get()->toArray();
+
+			//EMPLOYEE TAKE TIME TO COMPLETE WORK
+			if ($mechanic_time_log) {
+				foreach ($mechanic_time_log as $key => $repair_order_mechanic_time_log) {
+					$time1 = strtotime($repair_order_mechanic_time_log['start_date_time']);
+					$time2 = strtotime($repair_order_mechanic_time_log['end_date_time']);
+					if ($time2 < $time1) {
+						$time2 += 86400;
+					}
+					$duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+				}
+				$total_duration = sum_mechanic_duration($duration);
+				$format_change = explode(':', $total_duration);
+
+				$hour = $format_change[0] . 'h';
+				$minutes = $format_change[1] . 'm';
+				$seconds = $format_change[2] . 's';
+				$total_hours = $hour . ' ' . $minutes . ' ' . $seconds;
+				unset($duration);
+			}
+
 			if ($request->type == 1) {
 
 				DB::beginTransaction();
-
-				$actual_hrs = JobOrderRepairOrder::where('id', $request->job_repair_order_id)->pluck('qty')->first();
 
 				//Check End Date empty or not.IF not empty update lost record
 				$mechanic_end_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->orderby('id', 'DESC')->first();
@@ -313,33 +338,11 @@ class MyJobCardController extends Controller {
 					$mechanic_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->whereNull('end_date_time')->update(['end_date_time' => Carbon::now()]);
 				}
 
-				//Total Working hours of mechanic
-				$mechanic_time_log = MechanicTimeLog::select('start_date_time', 'end_date_time')->where('repair_order_mechanic_id', $repair_order_mechanic->id)->get()->toArray();
-
 				//Mechanic Start Time
 				$work_start_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->orderby('id', 'ASC')->select('start_date_time as work_start_time')->first();
 
 				//Mechanic End Time
 				$work_end_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->orderby('id', 'DESC')->select('end_date_time as work_end_time')->first();
-
-				if ($mechanic_time_log) {
-					foreach ($mechanic_time_log as $key => $repair_order_mechanic_time_log) {
-						$time1 = strtotime($repair_order_mechanic_time_log['start_date_time']);
-						$time2 = strtotime($repair_order_mechanic_time_log['end_date_time']);
-						if ($time2 < $time1) {
-							$time2 += 86400;
-						}
-						$duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
-					}
-					$total_duration = sum_mechanic_duration($duration);
-					$format_change = explode(':', $total_duration);
-
-					$hour = $format_change[0] . 'h';
-					$minutes = $format_change[1] . 'm';
-					$seconds = $format_change[2] . 's';
-					$total_hours = $hour . ' ' . $minutes . ' ' . $seconds;
-					unset($duration);
-				}
 
 				$work_logs['message'] = "Work Log Saved Successfully";
 				$work_logs['work_start_date_time'] = $work_start_date_time->work_start_time;
@@ -353,6 +356,7 @@ class MyJobCardController extends Controller {
 					'work_logs' => $work_logs,
 				]);
 			} else {
+				DB::beginTransaction();
 
 				//Update Worklog Status
 				$mechanic_end_time_log = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->orderby('id', 'DESC')->first();
@@ -372,6 +376,8 @@ class MyJobCardController extends Controller {
 
 					$job_card = JobCard::find($request->job_card_id);
 
+					$job_order = JobOrder::find($job_card->job_order_id);
+
 					if ($job_card) {
 						$mechanic_status = RepairOrderMechanic::join('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->where('job_order_repair_orders.job_order_id', $job_card->job_order_id)->where('repair_order_mechanics.status_id', '!=', 8263)->count();
 
@@ -381,6 +387,27 @@ class MyJobCardController extends Controller {
 						}
 					}
 				}
+
+				//GET SERVICE ADVISER MOBILE NUMBER
+				$service_adviser_mobile = $job_order->serviceAdviser ? $job_order->serviceAdviser->contact_number : '';
+				//GET FLOOR SUPERVISER MOBILE NUMBER
+				$floor_superviser_mobile = $job_order->floorAdviser ? $job_order->floorAdviser->contact_number : '';
+
+				$message = 'Labour Exceed the actual hours!';
+
+				//EXTRA TIME TO COMPLETE WORK SMS SEND TO SUPERVISER AND FLOOR ADVISER
+				if ($actual_hrs && $total_duration) {
+					if (strtotime($total_duration) > strtotime($actual_hrs)) {
+						if ($service_adviser_mobile) {
+							$msg = sendSMSNotification($service_adviser_mobile, $message);
+						}
+						if ($floor_superviser_mobile) {
+							$msg = sendSMSNotification($floor_superviser_mobile, $message);
+						}
+					}
+				}
+
+				DB::commit();
 
 				return response()->json([
 					'success' => true,

@@ -4672,18 +4672,30 @@ app.component('inwardVehicleVocDetailForm', {
 
         // $('.voc_remark_details_0').hide();
         $scope.onSelectedVoc = function(id, index) {
+            $scope.previous_customer_voice_ids = [];
+            angular.forEach($scope.job_order.previous_customer_voice_ids, function(value, key) {
+                $scope.previous_customer_voice_ids.push(value);
+            });
+
             if ($scope.job_order.OTH_ID == id) {
                 console.log('in');
                 $('.customer_voice_remark_' + index).prop('disabled', false);
                 $('.customer_voice_remark_' + index).addClass('required');
                 $('.voc_remark_details_' + index).show();
                 // $scope.voc_remark_details_+index = true;
+
+                $(".voc_already_used_" + index).addClass('ng-hide');
             } else {
                 console.log('out');
                 // $scope.voc_remark_details_+index = false;
                 $('.customer_voice_remark_' + index).prop('disabled', true);
                 $('.customer_voice_remark_' + index).removeClass('required');
                 $('.voc_remark_details_' + index).hide();
+                if (jQuery.inArray(id, $scope.previous_customer_voice_ids) != -1) {
+                    $(".voc_already_used_" + index).removeClass('ng-hide');
+                } else {
+                    $(".voc_already_used_" + index).addClass('ng-hide');
+                }
             }
         }
 
