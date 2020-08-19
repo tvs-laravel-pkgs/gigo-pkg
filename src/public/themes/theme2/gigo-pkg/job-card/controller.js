@@ -3083,6 +3083,10 @@ app.component('jobCardLabourReview', {
         $scope.job_card_id = $routeParams.job_card_id;
         $scope.job_order_repair_order_id = $routeParams.job_order_repair_order_id;
 
+        setTimeout(function() {
+            $('.image_uploadify').imageuploadify();
+        }, 1000);
+
         //FETCH DATA
         $scope.fetchLabourReviewData = function() {
             // console.log(1);
@@ -3113,6 +3117,15 @@ app.component('jobCardLabourReview', {
                 });
         }
         $scope.fetchLabourReviewData();
+
+        self.attachment_removal_id = [];
+        $scope.remove_attachment = function(attachment_id, index) {
+            if (attachment_id) {
+                self.attachment_removal_id.push(attachment_id);
+                $('#attachment_removal_ids').val(JSON.stringify(self.attachment_removal_id));
+            }
+            $scope.job_order_repair_order.labour_review_attachment.splice(index, 1);
+        }
 
         //Save Form Data 
         $scope.saveLabourReview = function() {

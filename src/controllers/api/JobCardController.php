@@ -1344,6 +1344,7 @@ class JobCardController extends Controller {
 
 			//REPAIR ORDER
 			$job_order_repair_order = JobOrderRepairOrder::with([
+				'labourReviewAttachment',
 				'repairOrder',
 				'repairOrderMechanics',
 				'repairOrderMechanics.mechanic',
@@ -1544,6 +1545,34 @@ class JobCardController extends Controller {
 							'updated_by' => Auth::user()->id,
 							'updated_at' => Carbon::now(),
 						]);
+				}
+
+				//MULTIPLE ATTACHMENT REMOVAL
+				$attachment_removal_ids = json_decode($request->attachment_removal_ids);
+				if (!empty($attachment_removal_ids)) {
+					Attachment::whereIn('id', $attachment_removal_ids)->forceDelete();
+				}
+
+				//Save Labour Review Attachment
+				if (!empty($request->review_attachments)) {
+					foreach ($request->review_attachments as $key => $review_attachment) {
+						$value = rand(1, 100);
+						$image = $review_attachment;
+
+						$file_name_with_extension = $image->getClientOriginalName();
+						$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+						$extension = $image->getClientOriginalExtension();
+						$time_stamp = date('Y_m_d_h_i_s');
+						$name = $job_order_repair_order->id . '_' . $time_stamp . '_' . rand(10, 1000) . '_labour_review_image.' . $extension;
+
+						$review_attachment->move(storage_path('app/public/gigo/job_order/attachments/'), $name);
+						$attachement = new Attachment;
+						$attachement->attachment_of_id = 227; //Job order
+						$attachement->attachment_type_id = 10096; //Labour Review Attachment
+						$attachement->entity_id = $job_order_repair_order->id;
+						$attachement->name = $name;
+						$attachement->save();
+					}
 				}
 			} else {
 				$job_card = JobCard::where('id', $request->job_card_id)

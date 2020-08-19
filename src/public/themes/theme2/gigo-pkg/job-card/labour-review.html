@@ -144,6 +144,24 @@
                                                 <textarea class="form-control" rows="4" placeholder="Enter Remarks" name="remarks">{{labour_review_data.job_order.job_order_repair_orders[0].remarks}}</textarea>
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
+                                        <div class="col-md-12" ng-if="$ctrl.action == 8187">
+                                            <div class="light-box form-group">
+                                                <h6 class=""><b>Attachments</b></h6>
+                                                <div class="img-upload-preview">
+                                                    <input type="file" class="image_uploadify" accept="image/*" name="review_attachments[]" multiple />
+                                                    <div class="imageuploadify">
+                                                        <div class="imageuploadify-images-list">
+                                                            <div class="imageuploadify-container" ng-if="job_order_repair_order.labour_review_attachment.length > 0" style="margin-left: 4px; margin-right: 4px;" ng-repeat="(key,labour_review_attachment) in job_order_repair_order.labour_review_attachment">
+                                                                <button type="button" class="btn btn-danger glyphicon glyphicon-remove" ng-click="remove_attachment(labour_review_attachment.id,key)">
+                                                                </button>
+                                                                <img title="{{labour_review_attachment.name}}" src="./storage/app/public/gigo/job_order/attachments/{{labour_review_attachment.name}}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" name="attachment_removal_ids" id="attachment_removal_ids" value="">
+                                            </div><!-- Form Group -->
+                                        </div>
                                     </div><!-- Row -->
                                 </div><!-- Column -->
                             </div><!-- Row -->
@@ -162,4 +180,4 @@
         </div><!-- Container -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
-<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
+<script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>

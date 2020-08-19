@@ -42,6 +42,10 @@ class JobOrderRepairOrder extends Model {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
 
+	public function labourReviewAttachment() {
+		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10096);
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
