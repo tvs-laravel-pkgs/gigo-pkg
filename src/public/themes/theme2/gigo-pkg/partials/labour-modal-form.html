@@ -76,7 +76,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>
-                                            Net Amount <span ng-if="wjor_repair_order.repair_order.category_id == 9140">( Maximum Claim : {{wjor_repair_order.repair_order.maximum_claim_amount|currency}})</span>
+                                            Net Amount
+                                            <span ng-if="wjor_repair_order.repair_order.category_id == 9140 && false">( Maximum Claim : {{wjor_repair_order.repair_order.maximum_claim_amount|currency}})</span>
                                         </label>
                                         <input type="text" ng-keyup="claimAmountChange(wjor_repair_order)" class="form-control" name="net_amount" ng-model="wjor_repair_order.rate" maxlength="12" ng-readonly="wjor_repair_order.repair_order.category_id != 9140">
                                         <!-- Editable only if Miscellaneous -->
