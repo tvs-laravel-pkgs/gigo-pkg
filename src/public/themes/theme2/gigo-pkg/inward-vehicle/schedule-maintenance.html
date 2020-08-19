@@ -428,15 +428,12 @@
                                     <label>
                                         Repair Orders
                                     </label>
-                                    <md-select multiple ng-model="job_order.repair_order" placeholder="Select Repair Orders" data-md-container-class="selectdemoSelectHeader" ng-change="selectingRepairOrder(job_order.repair_order)" ng-model-options="{trackBy: '$value.id' }">
-                                        <!-- parts_indent.repair_order -->
+                                    <md-select multiple ng-model="$ctrl.repair_order_ids" placeholder="Select Repair Order" md-on-close="clearSearchRejectedReason()" data-md-container-class="selectdemoSelectHeader">
                                         <md-select-header class="demo-select-header">
-                                            <input ng-model="searchreturnEmployeeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                            <input ng-model="searchRepairOrder" type="search" placeholder="Search Repair Order.." class="demo-header-searchbox md-text">
                                         </md-select-header>
                                         <md-optgroup>
-                                            <md-option ng-if="job_repair_order.removal_reason_id == null" ng-value="job_repair_order" ng-repeat="job_repair_order in job_order.job_order_repair_orders | filter:searchreturnEmployeeKey">
-                                                {{job_repair_order.repair_order.code}} / {{job_repair_order.repair_order.name}}
-                                            </md-option>
+                                            <md-option ng-value="category.id" ng-repeat="category in labours | filter:searchRepairOrder">{{category.code}} / {{category.name}}</md-option>
                                         </md-optgroup>
                                     </md-select>
                                     <input type="hidden" name="repair_orders" value="{{$ctrl.repair_order_ids}}">

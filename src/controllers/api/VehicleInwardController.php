@@ -719,7 +719,9 @@ class VehicleInwardController extends Controller {
 	public function getInwardPartIndentViewData(Request $r) {
 		try {
 			$job_order = JobOrder::with([
-				'jobOrderRepairOrders',
+				'jobOrderRepairOrders' => function ($q) {
+					$q->whereNull('removal_reason_id');
+				},
 				'jobOrderRepairOrders.repairOrder',
 				'jobCard',
 				'vehicle',
@@ -754,6 +756,15 @@ class VehicleInwardController extends Controller {
 			}
 
 			$part_amount = 0;
+
+			$labours = array();
+			if ($job_order->jobOrderRepairOrders) {
+				foreach ($job_order->jobOrderRepairOrders as $key => $value) {
+					$labours[$key]['id'] = $value->repair_order_id;
+					$labours[$key]['code'] = $value->repairOrder->code;
+					$labours[$key]['name'] = $value->repairOrder->name;
+				}
+			}
 
 			$part_details = array();
 			if ($job_order->jobOrderParts) {
@@ -872,6 +883,7 @@ class VehicleInwardController extends Controller {
 				'repair_order_mechanics' => $repair_order_mechanics,
 				'indent_part_logs' => $indent_part_logs,
 				'issued_parts_list' => $issued_parts_list,
+				'labours' => $labours,
 			]);
 		} catch (\Exception $e) {
 			return response()->json([
@@ -3374,6 +3386,8 @@ class VehicleInwardController extends Controller {
 		$part_amount = 0;
 
 		$labour_details = array();
+		$labours = array();
+
 		if ($job_order->jobOrderRepairOrders) {
 			foreach ($job_order->jobOrderRepairOrders as $key => $value) {
 				$labour_details[$key]['id'] = $value->id;
@@ -3398,6 +3412,10 @@ class VehicleInwardController extends Controller {
 				} else {
 					$labour_details[$key]['amount'] = 0;
 				}
+
+				$labours[$key]['id'] = $value->repair_order_id;
+				$labours[$key]['code'] = $value->repairOrder->code;
+				$labours[$key]['name'] = $value->repairOrder->name;
 			}
 		}
 
@@ -3440,6 +3458,7 @@ class VehicleInwardController extends Controller {
 		$result['labour_amount'] = $labour_amount;
 		$result['part_amount'] = $part_amount;
 		$result['total_amount'] = $total_amount;
+		$result['labours'] = $labours;
 
 		return $result;
 	}
@@ -3490,6 +3509,7 @@ class VehicleInwardController extends Controller {
 				'total_amount' => $result['total_amount'],
 				'labour_amount' => $result['labour_amount'],
 				'parts_rate' => $result['part_amount'],
+				'labours' => $result['labours'],
 			]);
 
 		} catch (\Exception $e) {
@@ -3668,6 +3688,7 @@ class VehicleInwardController extends Controller {
 				'total_labour_count' => $total_labour_count,
 				'labour_total_amount' => $result['labour_amount'],
 				'parts_total_amount' => $result['part_amount'],
+				'labours' => $result['labours'],
 			]);
 
 		} catch (\Exception $e) {
@@ -4420,83 +4441,88 @@ class VehicleInwardController extends Controller {
 			//Check Previous Trade Plate Number same or not.If not means update Trade Plate Number status
 			if ($job_order->road_test_trade_plate_number_id != $request->road_test_trade_plate_number_id) {
 
-				//Check Vehicle Road Test Status
-				$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 8301)->first();
-				if ($road_test) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => [
-							'Cannot update Trade Plate Number While Vehicle Road Test in Progress!.',
-						],
-					]);
+				if (!$request->road_test_trade_plate_number_id) {
+					$delete_road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->forceDelete();
 				} else {
-					//Update Current Trade Plate Number Status
-					$plate_number_update = TradePlateNumber::where('id', $request->road_test_trade_plate_number_id)
-						->update([
-							'status_id' => 8241, //ASSIGNED
-							'updated_by_id' => Auth::user()->id,
-							'updated_at' => Carbon::now(),
+					//Check Vehicle Road Test Status
+					$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 8301)->first();
+					if ($road_test) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => [
+								'Cannot update Trade Plate Number While Vehicle Road Test in Progress!.',
+							],
 						]);
-
-					//Update Previous Trade Plate Number Status
-					$plate_number_update = TradePlateNumber::where('id', $job_order->road_test_trade_plate_number_id)
-						->update([
-							'status_id' => 8240, //FREE
-							'updated_by_id' => Auth::user()->id,
-							'updated_at' => Carbon::now(),
-						]);
-
-					$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 8300)->first();
-					if (!$road_test) {
-
-						//Generate Serial Number
-						if (date('m') > 3) {
-							$year = date('Y') + 1;
-						} else {
-							$year = date('Y');
-						}
-						//GET FINANCIAL YEAR ID
-						$financial_year = FinancialYear::where('from', $year)
-							->where('company_id', Auth::user()->company_id)
-							->first();
-						if (!$financial_year) {
-							return response()->json([
-								'success' => false,
-								'error' => 'Validation Error',
-								'errors' => [
-									'Fiancial Year Not Found',
-								],
-							]);
-						}
-						//GET BRANCH/OUTLET
-						$branch = Outlet::where('id', $job_order->outlet_id)->first();
-
-						//GENERATE GATE IN VEHICLE NUMBER
-						$generateNumber = SerialNumberGroup::generateNumber(105, $financial_year->id, $branch->state_id, $branch->id);
-						if (!$generateNumber['success']) {
-							return response()->json([
-								'success' => false,
-								'error' => 'Validation Error',
-								'errors' => [
-									'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
-								],
-							]);
-						}
-
-						$road_test = new RoadTestGatePass;
-						$road_test->company_id = Auth::user()->company_id;
-						$road_test->job_order_id = $job_order->id;
-						$road_test->status_id = 8300;
-						$road_test->number = $generateNumber['number'];
-						$road_test->created_by_id = Auth::user()->id;
-						$road_test->created_at = Carbon::now();
 					} else {
-						$road_test->updated_by_id = Auth::user()->id;
-						$road_test->updated_at = Carbon::now();
-					}
+						//Update Current Trade Plate Number Status
+						$plate_number_update = TradePlateNumber::where('id', $request->road_test_trade_plate_number_id)
+							->update([
+								'status_id' => 8241, //ASSIGNED
+								'updated_by_id' => Auth::user()->id,
+								'updated_at' => Carbon::now(),
+							]);
 
-					$road_test->save();
+						//Update Previous Trade Plate Number Status
+						$plate_number_update = TradePlateNumber::where('id', $job_order->road_test_trade_plate_number_id)
+							->update([
+								'status_id' => 8240, //FREE
+								'updated_by_id' => Auth::user()->id,
+								'updated_at' => Carbon::now(),
+							]);
+
+						$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 8300)->first();
+
+						if (!$road_test) {
+
+							//Generate Serial Number
+							if (date('m') > 3) {
+								$year = date('Y') + 1;
+							} else {
+								$year = date('Y');
+							}
+							//GET FINANCIAL YEAR ID
+							$financial_year = FinancialYear::where('from', $year)
+								->where('company_id', Auth::user()->company_id)
+								->first();
+							if (!$financial_year) {
+								return response()->json([
+									'success' => false,
+									'error' => 'Validation Error',
+									'errors' => [
+										'Fiancial Year Not Found',
+									],
+								]);
+							}
+							//GET BRANCH/OUTLET
+							$branch = Outlet::where('id', $job_order->outlet_id)->first();
+
+							//GENERATE GATE IN VEHICLE NUMBER
+							$generateNumber = SerialNumberGroup::generateNumber(105, $financial_year->id, $branch->state_id, $branch->id);
+							if (!$generateNumber['success']) {
+								return response()->json([
+									'success' => false,
+									'error' => 'Validation Error',
+									'errors' => [
+										'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+									],
+								]);
+							}
+
+							$road_test = new RoadTestGatePass;
+							$road_test->company_id = Auth::user()->company_id;
+							$road_test->job_order_id = $job_order->id;
+							$road_test->status_id = 8300;
+							$road_test->number = $generateNumber['number'];
+							$road_test->created_by_id = Auth::user()->id;
+							$road_test->created_at = Carbon::now();
+						} else {
+							$road_test->updated_by_id = Auth::user()->id;
+							$road_test->updated_at = Carbon::now();
+						}
+
+						$road_test->save();
+					}
 				}
 			}
 

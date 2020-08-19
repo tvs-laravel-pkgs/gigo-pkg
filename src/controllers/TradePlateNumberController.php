@@ -182,6 +182,7 @@ class TradePlateNumberController extends Controller {
 				$trade_plate_number->company_id = Auth::user()->company_id;
 				$trade_plate_number->created_by_id = Auth::user()->id;
 				$trade_plate_number->created_at = Carbon::now();
+				$trade_plate_number->status_id = 8240;
 			} else {
 				$trade_plate_number = TradePlateNumber::withTrashed()->find($request->id);
 				$trade_plate_number->updated_by_id = Auth::user()->id;

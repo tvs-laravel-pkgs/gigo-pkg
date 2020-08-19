@@ -492,6 +492,7 @@ app.component('partsIndentPartsView', {
                     $scope.repair_order_mechanics = res.repair_order_mechanics;
                     $scope.indent_part_logs = res.indent_part_logs;
                     $scope.issued_parts_list = res.issued_parts_list;
+                    $scope.labours = res.labours;
 
                     if (res.job_order.job_card) {
                         if (res.job_order.job_card.status_id == '8227') {
@@ -510,6 +511,8 @@ app.component('partsIndentPartsView', {
                     }
 
                     $scope.$apply();
+
+                    self.repair_order_ids = [];
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -600,10 +603,14 @@ app.component('partsIndentPartsView', {
 
         $scope.showPartForm = function(part) {
             // console.log(part);
+            self.repair_order_ids = [];
             $job_order_part_id = part.job_order_part_id;
             if (part == false) {
                 $scope.parts_indent = {};
             } else {
+                angular.forEach(part.repair_order, function(part, key) {
+                    self.repair_order_ids.push(part.id)
+                });
                 $scope.repair_orders = part.repair_order;
                 if (part.split_order_type_id != null) {
                     $split_id = part.split_order_type_id;

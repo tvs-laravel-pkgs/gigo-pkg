@@ -812,9 +812,75 @@ class JobCard extends BaseModel {
 		$save_path = storage_path('app/public/gigo/pdf');
 		Storage::makeDirectory($save_path, 0777);
 
-		$name = $job_card->jobOrder->id . '_job_card_gatepass.pdf';
+		$name = $job_card->jobOrder->id . '_gatepass.pdf';
 
 		$pdf = PDF::loadView('pdf-gigo/job-card-gate-pass-pdf', $data)->setPaper('a4', 'portrait');
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
+
+		return true;
+	}
+
+	public static function generateCoveringLetterPDF($job_card_id) {
+
+		$data['covering_letter'] = $covering_letter = JobCard::with([
+			'gatePasses',
+			'gigoInvoices',
+			'company',
+			'jobOrder',
+			'jobOrder.type',
+			'jobOrder.vehicle',
+			'jobOrder.vehicle.model',
+			'jobOrder.vehicle.status',
+			'jobOrder.outlet',
+			'jobOrder.gateLog',
+			'jobOrder.vehicle.currentOwner.customer',
+			'jobOrder.vehicle.currentOwner.customer.address',
+			'jobOrder.vehicle.currentOwner.customer.address.country',
+			'jobOrder.vehicle.currentOwner.customer.address.state',
+			'jobOrder.vehicle.currentOwner.customer.address.city',
+			'jobOrder.serviceType',
+			'jobOrder.jobOrderRepairOrders.repairOrder',
+			'jobOrder.jobOrderRepairOrders.repairOrder.repairOrderType',
+			'jobOrder.floorAdviser',
+			'jobOrder.serviceAdviser'])
+			->select([
+				'job_cards.*',
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%d-%m-%Y") as jobdate'),
+				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_card_id);
+
+		$gigo_invoice = [];
+		if (isset($covering_letter->gigoInvoices)) {
+			foreach ($covering_letter->gigoInvoices as $key => $gigoInvoice) {
+				$gigo_invoice[$key]['bill_no'] = $gigoInvoice->invoice_number;
+				$gigo_invoice[$key]['bill_date'] = date('d-m-Y', strtotime($gigoInvoice->invoice_date));
+				$gigo_invoice[$key]['invoice_amount'] = $gigoInvoice->invoice_amount;
+
+				//FOR ROUND OFF
+				if ($gigoInvoice->invoice_amount <= round($gigoInvoice->invoice_amount)) {
+					$round_off = round($gigoInvoice->invoice_amount) - $gigoInvoice->invoice_amount;
+				} else {
+					$round_off = round($gigoInvoice->invoice_amount) - $gigoInvoice->invoice_amount;
+				}
+				$gigo_invoice[$key]['round_off'] = number_format($round_off, 2);
+				$gigo_invoice[$key]['total_amount'] = number_format(round($gigoInvoice->invoice_amount), 2);
+			}
+		}
+
+		$data['gigo_invoices'] = $gigo_invoice;
+
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $covering_letter->jobOrder->id . '_covering_letter.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/covering-letter-pdf', $data)->setPaper('a4', 'portrait');
 
 		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 

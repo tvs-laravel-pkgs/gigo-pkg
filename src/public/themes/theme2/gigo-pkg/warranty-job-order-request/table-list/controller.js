@@ -159,6 +159,9 @@ app.component('warrantyJobOrderRequestTableList', {
                             showNoty('success', 'Warranty job order request initiated successfully');
                             // warranty_job_order_request.status = response.data.warranty_job_order_request.status;
                             dataTables.fnFilter();
+                        }).catch(function(error) {
+                            console.log(error);
+                            // showErrorNoty(error.data.error);
                         });
                 });
         }

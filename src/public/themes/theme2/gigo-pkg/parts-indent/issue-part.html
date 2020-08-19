@@ -96,7 +96,7 @@ input[type=number] {
                                                             </md-select-header>
                                                             <md-optgroup>
                                                                 <md-option ng-value="employee" ng-repeat="employee in repair_order_mechanics | filter:searchreturnEmployeeKey">
-                                                                    {{employee.name}}
+                                                                    {{employee.ecode}} / {{employee.name}}
                                                                 </md-option>
                                                             </md-optgroup>
                                                         </md-select>

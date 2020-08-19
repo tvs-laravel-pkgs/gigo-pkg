@@ -1457,6 +1457,18 @@ app.component('jobCardPdf', {
                     $scope.revised_estimate_url = base_url + '/gigo-pkg/pdf/revised-estimate/' + $scope.job_card.id;
                     $scope.estimate_pdf = res.job_card.estimate_pdf;
                     $scope.revised_estimate_pdf = res.job_card.revised_estimate_pdf;
+
+                    $scope.labour_url = base_url + '/gigo-pkg/pdf/job-card/labour/bill-detail/' + $scope.job_card.id;
+                    $scope.parts_url = base_url + '/gigo-pkg/pdf/job-card/part/bill-detail/' + $scope.job_card.id;
+                    $scope.labour_pdf = res.job_card.labour_pdf;
+                    $scope.parts_pdf = res.job_card.parts_pdf;
+
+                    $scope.covering_letter_url = base_url + '/gigo-pkg/pdf/covering-letter/' + $scope.job_card.id;
+                    $scope.covering_letter_pdf = res.job_card.covering_letter_pdf;
+
+                    $scope.gate_pass_url = base_url + '/gigo-pkg/pdf/gatepass/' + $scope.job_card.id;
+                    $scope.gate_pass_pdf = res.job_card.gate_pass_pdf;
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1466,7 +1478,7 @@ app.component('jobCardPdf', {
         $scope.fetchData();
 
         $scope.gatepass_url = base_url + '/gigo-pkg/pdf/gatepass/' + $routeParams.job_card_id;
-        $scope.covering_letter_url = base_url + '/gigo-pkg/pdf/covering-letter/' + $routeParams.job_card_id;
+        // $scope.covering_letter_url = base_url + '/gigo-pkg/pdf/covering-letter/' + $routeParams.job_card_id;
         $scope.insurance_estimate_url = base_url + '/gigo-pkg/pdf/insurance-estimate/' + $routeParams.job_card_id;
         // $scope.revised_estimate_url = base_url + '/gigo-pkg/pdf/revised-estimate/' + $routeParams.job_card_id;
         $scope.job_card_pdf_url = base_url + '/gigo-pkg/pdf/job-card/' + $routeParams.job_card_id;

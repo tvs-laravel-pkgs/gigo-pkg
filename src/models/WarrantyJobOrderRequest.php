@@ -390,10 +390,12 @@ class WarrantyJobOrderRequest extends BaseModel {
 	}
 
 	public static function saveFromFormArray($input, $owner = null) {
-		// dd($input);
 		try {
 			DB::beginTransaction();
 			$owner = !is_null($owner) ? $owner : Auth::user();
+
+			$input['total_part_cushioning_charge'] = ($input['total_part_cushioning_charge'] != null) ? $input['total_part_cushioning_charge'] : 0;
+			$input['total_part_amount'] = ($input['total_part_amount'] != null) ? $input['total_part_amount'] : 0;
 
 			if ($input['customer_search_type'] == 'true') {
 				$customer = Customer::find($input['customer_id']);
@@ -412,11 +414,13 @@ class WarrantyJobOrderRequest extends BaseModel {
 			$customer->zipcode = $input['zipcode'];
 			$customer->city = $input['city_name'];
 			$customer->updated_by_id = Auth::id();
+			$customer->company_id = Auth::user()->company_id;
 			$customer->save();
 
 			$customer_id = $customer->id;
 
 			$input['pincode'] = $input['zipcode'];
+
 			$customer->saveAddress($input);
 
 			$sold_date = null;
