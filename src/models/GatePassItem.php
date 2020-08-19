@@ -19,6 +19,8 @@ class GatePassItem extends Model {
 		"item_model",
 		"item_serial_no",
 		"qty",
+		"return_qty",
+		"status_id",
 		"remarks",
 	];
 

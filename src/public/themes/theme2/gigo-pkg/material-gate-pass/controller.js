@@ -578,7 +578,7 @@ app.component('materialGatePassView', {
         }
 
         self.user = $scope.user = HelperService.getLoggedUser();
-
+        self.job_order_id = $routeParams.id;
         //VIEW GATE PASS
         $.ajax({
             url: base_url + '/api/material-gate-pass/view/get-data',
@@ -595,6 +595,7 @@ app.component('materialGatePassView', {
                     showErrorNoty(response);
                     return;
                 }
+                console.log(response);
                 self.material_gate_pass = response.material_gate_pass;
                 if (self.material_gate_pass.status_id == 8300) { //Gate Out Pending
                     self.type = 'Out';
@@ -607,6 +608,64 @@ app.component('materialGatePassView', {
                 custom_noty('error', 'Something went wrong at server');
             }
         });
+
+        $scope.gate_pass_item = function($type, $material_gate_pass) {
+            console.log($type, $material_gate_pass);
+            self.type = $type;
+            self.material_gate_pass = $material_gate_pass;
+            $('#gate_in_items').modal('show');
+        }
+
+        $scope.gatePassRetuenSave = function() {
+            var form_id = '#material_gate_pass_item';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'remarks': {
+                        minlength: 3,
+                        maxlength: 191,
+                    },
+                },
+                messages: {
+                    'remarks': {
+                        minlength: 'Minimum 3 Characters',
+                        maxlength: 'Maximum 191 Characters',
+                    }
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/material-gate-pass/gate-in-out/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                        })
+                        .done(function(res) {
+                            console.log(res);
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                $('.submit').button('reset');
+                                return;
+                            }
+                            console.log(res);
+                            $('#gate_in_items').modal('hide');
+
+                            $(".gate_pass_no").text(res.gate_pass.number);
+                            $('#gate_in_confirm_notification').modal('show');
+                            $('.submit').button('reset');
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            showServerErrorNoty();
+                        });
+                }
+            });
+        }
 
         //GATE OUT
         var form_id = '#material_gate_pass';

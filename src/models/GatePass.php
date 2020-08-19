@@ -75,6 +75,10 @@ class GatePass extends Model {
 		return $this->hasMany('App\GatePassItem', 'gate_pass_id')->count();
 	}
 
+	public function gatePassGatePassItems() {
+		return $this->belongsToMany('App\GatePassItem', 'gate_pass_gate_pass_item', 'gate_pass_id', 'gate_pass_item_id')->withPivot(['return_qty', 'gate_in_date']);
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];

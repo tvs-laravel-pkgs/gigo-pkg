@@ -1,4 +1,17 @@
 <!-- Content Wrap -->
+<style>
+    /* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>
 <div class="content-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -86,7 +99,7 @@
                                     </div>
                                 </div><!-- Column -->
                             </div><!-- Row -->
-                            <div class="row" ng-if="$ctrl.material_gate_pass.status_id==8301 || $ctrl.material_gate_pass.status_id==8302">
+                            <div class="row" ng-if="$ctrl.material_gate_pass.status_id==8301 || $ctrl.material_gate_pass.status_id==8302 || $ctrl.material_gate_pass.status_id==8303">
                                 <div class="col-md-12">
                                     <h5 class="font-semi-dark mb-0">MGP : {{$ctrl.material_gate_pass.number ? $ctrl.material_gate_pass.number : ''}}</h5>
                                     <p class=" mb-20">Created on : {{$ctrl.material_gate_pass.created_at ? $ctrl.material_gate_pass.created_at : ''}}</p>
@@ -166,11 +179,11 @@
                                                             <tbody>
                                                                 <tr>
                                                                     <td>Make</td>
-                                                                    <td>: {{item.item_make}}</td>
+                                                                    <td>: {{item.item_make ? item.item_make : '-'}}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Model</td>
-                                                                    <td>: {{item.item_model}}</td>
+                                                                    <td>: {{item.item_model ? item.item_model : '-'}}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>Serial no</td>
@@ -208,7 +221,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <a href="#!/material-gate-pass/table-list" class="btn btn-bordered btn-grey">Cancel</a>
-                            <button class="btn btn-secondary-dark submit" ng-show="$ctrl.material_gate_pass.status_id==8301" type="submit">Confirm Gate In</button>
+                            <button class="btn btn-secondary-dark submit" ng-show="$ctrl.material_gate_pass.status_id==8301 || $ctrl.material_gate_pass.status_id==8303" type="button" ng-click="gate_pass_item($ctrl.type,$ctrl.material_gate_pass)">Confirm Gate In</button>
                             <button class="btn btn-secondary-dark submit" ng-show="$ctrl.material_gate_pass.status_id==8300" type="submit">Confirm Gate Out</button>
                         </div>
                     </div>
@@ -272,5 +285,72 @@
                 </div><!-- Modal Body -->
             </form>
         </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<!-- Modal -->
+<div class="modal fade filter" id="gate_in_items" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog finance-view-modal" role="document">
+        <form id="material_gate_pass_item" autocomplete="off">
+            <input type="hidden" name="gate_pass_id" id="gate_pass_id" value="{{$ctrl.material_gate_pass.id}}">
+            <input type="hidden" name="type" value="{{$ctrl.type}}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h4 class="modal-title">Gate In Item Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        Item Name
+                                                    </th>
+                                                    <th>
+                                                        Item Description
+                                                    </th>
+                                                    <th>
+                                                        Qty
+                                                    </th>
+                                                    <th>
+                                                        Return Qty
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="(key,gate_pass_item) in $ctrl.material_gate_pass.gate_pass_items" ng-if="gate_pass_item.status_id != 11123">
+                                                    <td><input type="hidden" name="gate_pass_items[{{key}}][id]" value="{{gate_pass_item.id}}">
+                                                        {{gate_pass_item.name}}
+                                                    </td>
+                                                    <td>
+                                                        {{gate_pass_item.item_description}}
+                                                    </td>
+                                                    <td>
+                                                        {{gate_pass_item.qty}}
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" name="gate_pass_items[{{key}}][return_qty]" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Rteurn Qty" autocomplete="off" value="{{gate_pass_item.return_qty ? gate_pass_item.qty-gate_pass_item.return_qty : gate_pass_item.qty}}" max="{{gate_pass_item.return_qty ? gate_pass_item.qty-gate_pass_item.return_qty : gate_pass_item.qty}}"/>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div><!-- Column -->
+                            </div><!-- Row -->
+                        </div><!-- Container -->
+                    </div>
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">
+                        Cancel
+                    </button>
+                    <button class="btn btn-red submit" ng-click="gatePassRetuenSave()">Submit</button>
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
     </div><!-- Modal Dialog -->
 </div><!-- Modal -->

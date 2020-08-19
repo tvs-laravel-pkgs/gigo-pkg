@@ -6,8 +6,10 @@ use App\Customer;
 use App\Entity;
 use App\GatePass;
 use App\GatePassDetail;
+use App\GatePassItem;
 use App\Http\Controllers\Controller;
 use App\JobCard;
+use App\MaterialInwardLog;
 use App\Otp;
 use App\User;
 use Auth;
@@ -235,23 +237,67 @@ class MaterialGatePassController extends Controller {
 				]);
 			}
 
-			$gate_pass = GatePass::find($request->gate_pass_id);
+			$gate_pass = GatePass::with(['gatePassItems'])->find($request->gate_pass_id);
 			if ($request->type == 'In') {
+
 				DB::beginTransaction();
+				$total_qty = 0;
+				$total_return_qty = 0;
+				foreach ($request->gate_pass_items as $gate_pass_item) {
+					$gate_pass_item_detail = GatePassItem::find($gate_pass_item['id']);
+					$return_qty = $gate_pass_item_detail->return_qty + $gate_pass_item['return_qty'];
+					$gate_pass_item_detail->return_qty = $return_qty;
+					if ($return_qty > 0 && $return_qty != $gate_pass_item_detail->qty) {
+						$gate_pass_item_detail->status_id = 11122; //PARTIAL
+					} elseif ($gate_pass_item_detail->qty == $return_qty) {
+						$gate_pass_item_detail->status_id = 11123; //COMPLETED
+					} else {
+						$gate_pass_item_detail->status_id = 11121; //PENDING
+					}
+
+					$gate_pass_item_detail->save();
+
+					$material_inard_log = new MaterialInwardLog;
+					$material_inard_log->gass_pass_item_id = $gate_pass_item_detail->id;
+					$material_inard_log->qty = $gate_pass_item['return_qty'];
+					$material_inard_log->created_by_id = Auth::user()->id;
+					$material_inard_log->created_at = date('Y-m-d');
+					$material_inard_log->save();
+
+					$total_qty += $gate_pass_item_detail->qty;
+					$total_return_qty += $gate_pass_item_detail->return_qty;
+				}
+
+				if ($total_qty != $total_return_qty) {
+					$status = 8303; //Gate In Partial Pending
+				} else {
+					$status = 8302; //Gate In Success
+				}
+
 				GatePass::where('id', $request->gate_pass_id)->update([
-					'status_id' => 8302, //Gate In Success
+					'status_id' => $status,
 					'gate_in_date' => Carbon::now(),
 					'gate_in_remarks' => $request->remarks ? $request->remarks : NULL,
 					'updated_by_id' => Auth::user()->id,
 					'updated_at' => Carbon::now(),
 				]);
+
 				DB::commit();
-				return response()->json([
-					'success' => true,
-					'gate_pass' => $gate_pass,
-					'type' => $request->type,
-					'message' => 'Material Gate ' . $request->type . ' successfully completed !!',
-				]);
+				if ($status == 8303) {
+					return response()->json([
+						'success' => true,
+						'gate_pass' => $gate_pass,
+						'type' => $request->type,
+						'message' => 'Material Gate ' . $request->type . ' partially completed !!',
+					]);
+				} else {
+					return response()->json([
+						'success' => true,
+						'gate_pass' => $gate_pass,
+						'type' => $request->type,
+						'message' => 'Material Gate ' . $request->type . ' successfully completed !!',
+					]);
+				}
 			} else {
 				$otp_response = $this->sendOtpToCustomer($gate_pass->id);
 				return $otp_response;
