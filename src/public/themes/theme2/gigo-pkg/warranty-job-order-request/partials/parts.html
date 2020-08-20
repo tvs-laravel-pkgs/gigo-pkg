@@ -40,11 +40,11 @@
                             </th>
  -->
                             <th class="text-right">
-                                Tax Amount
+                                Tax Amount & Handling Charges
                             </th>
-                            <th class="text-right">
+                            <!-- <th class="text-right">
                                 Handling Charges
-                            </th>
+                            </th> -->
                             <!-- <th class="text-right">
                                 Quantity
                             </th> -->
@@ -90,12 +90,12 @@
                                 {{(job_order_part.rate*tax.pivot.percentage)/100 | currency}}
                             </td>
  -->
-                            <td class="text-right">
+                            <td class="text-center">
                                 {{job_order_part.tax_total| currency}}
                             </td>
-                            <td class="text-right">
+                            <!-- <td class="text-right">
                                 {{job_order_part.handling_charge | currency}}
-                            </td>
+                            </td> -->
                             <td class="wid-180 white-space-unset text-right">
                                 {{job_order_part.total_amount | currency}}
                             </td>
@@ -108,7 +108,7 @@
                             </td>
                             <td class="text-right">
                             </td>
-                            <td colspan="8" class="wid-180 white-space-unset text-right">
+                            <td colspan="7" class="wid-180 white-space-unset text-right">
                                 <b>
                                     Total Parts :
                                     {{warranty_job_order_request.part_total | currency}}
@@ -116,6 +116,8 @@
                             </td>
                         </tr>
                         <tr class="ptb-9" ng-if="warranty_job_order_request.wjor_parts">
+                            <td colspan="3">
+                            </td>
                             <td>
                                 <div class="form-group">
                                     <label>
@@ -133,7 +135,7 @@
                                     <label>%</label>
                                 </div>
                             </td>
-                            <td colspan="7" class="wid-180 white-space-unset text-right">
+                            <td colspan="3" class="wid-180 white-space-unset text-right">
                                 <b>
                                     Total Cushioning Charges:
                                     {{warranty_job_order_request.total_part_cushioning_charge | currency}}
@@ -142,7 +144,7 @@
                             </td>
                         </tr>
                         <tr class="ptb-9" ng-if="warranty_job_order_request.wjor_parts">
-                            <td colspan="10" class="wid-180 white-space-unset text-right">
+                            <td colspan="9" class="wid-180 white-space-unset text-right">
                                 <b>
                                     Total:
                                     {{warranty_job_order_request.total_part_amount | currency}}

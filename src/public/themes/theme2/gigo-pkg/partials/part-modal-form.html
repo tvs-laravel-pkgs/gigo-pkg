@@ -91,6 +91,14 @@
                                         <input type="text" ng-blur="calculateHandlingCharge()" ng-keyup="calculateHandlingCharge()" class="form-control" name="rate" ng-model="wjor_part.rate" maxlength="12" ng-readonly1="wjor_part.purchase_type != '8481'">
                                     </div><!-- Field -->
                                 </div><!-- Column -->
+                                <div class="col-md-4" ng-hide="warranty_job_order_request.request_type_id == '9181'">
+                                    <div class="form-group">
+                                        <label>
+                                            Handling Charge Percentage
+                                        </label>
+                                        <input type="text" ng-keyup="calculateHandlingCharge()" class="form-control" name="handling_charge_percentage" ng-model="wjor_part.handling_charge_percentage" maxlength="3" ng-readonly="warranty_job_order_request.request_type_id == '9181'" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                    </div><!-- Field -->
+                                </div><!-- Column -->
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>
@@ -115,32 +123,15 @@
                         </div><!-- Column -->
                         <div class="col-md-12" ng-if="wjor_part.part">
                             <div class="row">
-                                <div class="col-md-4" ng-hide="warranty_job_order_request.request_type_id == '9181'">
-                                    <div class="form-group">
-                                        <label>
-                                            Handling Charge Percentage
-                                        </label>
-                                        <input type="text" ng-keyup="calculateHandlingCharge()" class="form-control" name="handling_charge_percentage" ng-model="wjor_part.handling_charge_percentage" maxlength="3" ng-readonly="warranty_job_order_request.request_type_id == '9181'" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                    </div><!-- Field -->
-                                </div><!-- Column -->
-                                <div class="col-md-4" ng-hide="warranty_job_order_request.request_type_id == '9181'">
+                                <!-- <div class="col-md-4" ng-hide="warranty_job_order_request.request_type_id == '9181'">
                                     <div class="form-group">
                                         <label>
                                             Handling Charges
                                         </label>
                                         <input type="text" class="form-control" name="handling_charge" ng-model="wjor_part.handling_charge" maxlength="12" readonly>
-                                    </div><!-- Field -->
-                                </div><!-- Column -->
-                                <div class="col-md-4" ng-if="false">
-                                    <div class="form-group">
-                                        <label>
-                                            Handling charges (4%)
-                                        </label>
-                                        <label class="form-control-view">
-                                            {{wjor_part.handling_charges | currency}}
-                                        </label>
-                                    </div><!-- Field -->
-                                </div><!-- Column -->
+                                    </div>
+                                </div> -->
+                                <!-- Column -->
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>
@@ -155,7 +146,9 @@
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Modal Form -->
-                <!-- {{wjor_part | json}} -->
+                <!-- <pre>
+                    {{wjor_part.tax_code | json}}
+                </pre> -->
             </div><!-- Modal Body -->
             <div class="modal-footer box-shadow">
                 <div class="row">

@@ -573,19 +573,31 @@ app.component('warrantyJobOrderRequestForm', {
                             } else {
                                 $scope.wjor_part.part.mrp = res.stock_data.mrp;
                                 if ($scope.warranty_job_order_request.request_type_id == 9181) {
+                                    // EWP Request Type
                                     $scope.wjor_part.rate = res.stock_data.mrp;
                                     $scope.wjor_part.part.tax_code = null;
                                     $scope.wjor_part.tax_code = null;
                                     $scope.wjor_part.handling_charge_percentage = 0;
                                     $scope.wjor_part.handling_charge = 0;
                                 } else {
+                                    // AMC And Warranty Request Type
                                     $scope.wjor_part.rate = res.stock_data.cost_price;
+
+                                    if ($scope.wjor_part.tax_code) {
+                                        $scope.wjor_part.tax_code.taxes.push({
+                                            'name': 'Handling Charges',
+                                            'pivot': {
+                                                'percentage': $scope.wjor_part.handling_charge_percentage,
+                                            },
+                                            'type_id': ($scope.isSameState()) ? 1160 : 1161,
+                                        });
+                                    }
                                 }
                                 // $scope.wjor_part.mrp = res.stock_data.mrp;
 
                             }
                             $scope.calculatePartAmount();
-                            $scope.calculateHandlingCharge();
+                            // $scope.calculateHandlingCharge();
                             $rootScope.loading = false;
                             $scope.$apply();
                         })
@@ -603,11 +615,21 @@ app.component('warrantyJobOrderRequestForm', {
         };
 
         $scope.calculateHandlingCharge = function() {
-            $handling_charge = parseFloat($scope.wjor_part.net_amount) * (parseFloat($scope.wjor_part.handling_charge_percentage) / 100);
+            /*$handling_charge = parseFloat($scope.wjor_part.net_amount) * (parseFloat($scope.wjor_part.handling_charge_percentage) / 100);
             if (isNaN($handling_charge)) {
                 $handling_charge = 0;
             }
-            $scope.wjor_part.handling_charge = $handling_charge.toFixed(2);
+            $scope.wjor_part.handling_charge = $handling_charge.toFixed(2);*/
+            if ($scope.wjor_part.tax_code) {
+                angular.forEach($scope.wjor_part.tax_code.taxes, function(tax) {
+                    if (tax.name == 'Handling Charges') {
+                        if ($scope.wjor_part.handling_charge_percentage == '') {
+                            $scope.wjor_part.handling_charge_percentage = 0;
+                        }
+                        tax.pivot.percentage = $scope.wjor_part.handling_charge_percentage;
+                    }
+                });
+            }
             $scope.calculatePartAmount();
         }
 
@@ -628,7 +650,7 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.calculatePartAmount = function() {
-            HelperService.calculateTaxAndTotal($scope.wjor_part, $scope.isSameState(), true);
+            HelperService.calculateTaxAndTotal($scope.wjor_part, $scope.isSameState());
             $scope.calculateTotals();
         }
 

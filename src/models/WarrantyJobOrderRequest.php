@@ -685,6 +685,18 @@ class WarrantyJobOrderRequest extends BaseModel {
 			} else {
 				$purchase_type = $wjorPartInput->purchase_type;
 			}
+			$taxes = [];
+			foreach ($wjorPartInput->taxes as $key => $tax) {
+				if ($tax->name != "Handling Charges") {
+					$taxes[$tax->id] = [
+						'percentage' => $tax->pivot->percentage,
+						'amount' => $tax->pivot->amount,
+					];
+				} else {
+					$wjorPartInput->handling_charge_percentage = $tax->pivot->percentage;
+					$wjorPartInput->handling_charge = $tax->pivot->amount;
+				}
+			}
 			$wjorPart->wjor_id = $this->id;
 			$wjorPart->part_id = $wjorPartInput->part->id;
 			$wjorPart->purchase_type = $purchase_type; // $wjorPartInput->purchase_type;
@@ -697,13 +709,6 @@ class WarrantyJobOrderRequest extends BaseModel {
 			$wjorPart->total_amount = $wjorPartInput->total_amount;
 			$wjorPart->save();
 
-			$taxes = [];
-			foreach ($wjorPartInput->taxes as $key => $tax) {
-				$taxes[$tax->id] = [
-					'percentage' => $tax->pivot->percentage,
-					'amount' => $tax->pivot->amount,
-				];
-			}
 			// $wjorPart->taxes()->sync($taxes);
 		}
 	}
@@ -719,7 +724,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'wjor' => $this,
 				'company' => $this->company,
 				'outlet' => $this->jobOrder->outlet,
-				'title' => 'Warranty Job Order Request',
+				'title' => 'Product Performance Report',
 			]);
 		$path = storage_path('app/public/wjor-pdfs/');
 		if (!file_exists($path)) {
