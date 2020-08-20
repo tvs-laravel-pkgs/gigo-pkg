@@ -534,7 +534,11 @@ app.component('warrantyJobOrderRequestForm', {
                     $scope.wjor_part.part.tax_code = response.data.part.tax_code;
                     $scope.wjor_part.tax_code = response.data.part.tax_code;
                     $scope.wjor_part.purchase_type = 8480;
-                    $scope.wjor_part.handling_charge_percentage = 4;
+                    if ($scope.warranty_job_order_request.request_type_id == 9181) {
+                        $scope.wjor_part.handling_charge_percentage = 0;
+                    } else {
+                        $scope.wjor_part.handling_charge_percentage = 4;
+                    }
                     $scope.wjor_part.handling_charge = 0;
                     params = {
                         filter: {
