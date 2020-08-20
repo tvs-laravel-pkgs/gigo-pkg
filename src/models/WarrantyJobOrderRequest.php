@@ -406,6 +406,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				]);
 			}
 			$customer->name = $input['customer_name'];
+			$customer->code = $input['customer_code'];
 			$customer->mobile_no = $input['customer_mobile_no'];
 			$customer->email = $input['email'];
 			$customer->gst_number = $input['gst_number'];
@@ -413,6 +414,8 @@ class WarrantyJobOrderRequest extends BaseModel {
 			$customer->address = $input['address_line1'] . ' ' . $input['address_line2'];
 			$customer->zipcode = $input['zipcode'];
 			$customer->city = $input['city_name'];
+			$customer->city_id = $input['city_id'];
+			$customer->state_id = $input['state_id'];
 			$customer->updated_by_id = Auth::id();
 			$customer->company_id = Auth::user()->company_id;
 			$customer->save();
