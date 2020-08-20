@@ -26,6 +26,7 @@ use App\Entity;
 use App\FinancialYear;
 use App\GigoInvoice;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\WpoSoapController;
 use App\JobOrderEstimate;
 use App\JobOrderIssuedPart;
 use App\JobOrderPart;
@@ -49,6 +50,10 @@ class JobCardController extends Controller {
 	use CrudTrait;
 	public $model = JobCard::class;
 	public $successStatus = 200;
+
+	public function __construct(WpoSoapController $getSoap = null) {
+		$this->getSoap = $getSoap;
+	}
 
 	public function getJobCardList(Request $request) {
 		try {
@@ -2202,6 +2207,24 @@ class JobCardController extends Controller {
 				DB::raw('DATE_FORMAT(job_cards.created_at,"%h:%i %p") as time'),
 			])
 			->find($request->id);
+
+		//CUSTMER PENDING AMOUNT CALAULATE
+		$total_invoice_amount = 0;
+		$total_received_amount = 0;
+		if ($job_card->jobOrder->vehicle) {
+			if ($job_card->jobOrder->vehicle->currentOwner) {
+				$customer_code = $job_card->jobOrder->vehicle->currentOwner->customer->code;
+				$params2 = ['CustomerCode' => $customer_code];
+				$cust_invoices = $this->getSoap->getCustomerInvoiceDetails($params2);
+				if ($cust_invoices) {
+					foreach ($cust_invoices as $cust_invoice) {
+						$total_invoice_amount += $cust_invoice['invoice_amount'];
+						$total_received_amount += $cust_invoice['received_amount'];
+					}
+				}
+			}
+		}
+		$job_card->jobOrder['total_due_amount'] = $total_invoice_amount - $total_received_amount;
 
 		if (!$job_card) {
 			return response()->json([

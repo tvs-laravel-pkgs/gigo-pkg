@@ -306,6 +306,24 @@ class VehicleInwardController extends Controller {
 				$tax_type = 1160; //Within State
 			}
 
+			//CUSTMER PENDING AMOUNT CALAULATE
+			$total_invoice_amount = 0;
+			$total_received_amount = 0;
+			if ($job_order->vehicle) {
+				if ($job_order->vehicle->currentOwner) {
+					$customer_code = $job_order->vehicle->currentOwner->customer->code;
+					$params2 = ['CustomerCode' => $customer_code];
+					$cust_invoices = $this->getSoap->getCustomerInvoiceDetails($params2);
+					if ($cust_invoices) {
+						foreach ($cust_invoices as $cust_invoice) {
+							$total_invoice_amount += $cust_invoice['invoice_amount'];
+							$total_received_amount += $cust_invoice['received_amount'];
+						}
+					}
+				}
+			}
+			$job_order['total_due_amount'] = $total_invoice_amount - $total_received_amount;
+
 			//Count Tax Type
 			$taxes = Tax::get();
 
