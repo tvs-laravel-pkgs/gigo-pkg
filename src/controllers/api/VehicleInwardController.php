@@ -21,6 +21,7 @@ use App\FinancialYear;
 use App\GateLog;
 use App\GigoInvoice;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\WpoSoapController;
 use App\JobCard;
 use App\JobOrder;
 use App\JobOrderCampaign;
@@ -60,6 +61,10 @@ use Validator;
 
 class VehicleInwardController extends Controller {
 	public $successStatus = 200;
+
+	public function __construct(WpoSoapController $getSoap = null) {
+		$this->getSoap = $getSoap;
+	}
 
 	public function getGateInList(Request $request) {
 		try {
@@ -1587,6 +1592,25 @@ class VehicleInwardController extends Controller {
 					],
 				]);
 			}
+
+			//CUSTMER PENDING AMOUNT CALAULATE
+			$total_invoice_amount = 0;
+			$total_received_amount = 0;
+			if ($job_order->vehicle) {
+				if ($job_order->vehicle->currentOwner) {
+					$customer_code = $job_order->vehicle->currentOwner->customer->code;
+					$params2 = ['CustomerCode' => $customer_code];
+					$cust_invoices = $this->getSoap->getCustomerInvoiceDetails($params2);
+					if ($cust_invoices) {
+						foreach ($cust_invoices as $cust_invoice) {
+							$total_invoice_amount += $cust_invoice['invoice_amount'];
+							$total_received_amount += $cust_invoice['received_amount'];
+						}
+					}
+				}
+			}
+			$job_order['total_due_amount'] = $total_invoice_amount - $total_received_amount;
+
 			//ENABLE ESTIMATE STATUS
 			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
 			if ($inward_process_check) {

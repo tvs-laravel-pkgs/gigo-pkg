@@ -112,6 +112,16 @@
                                                             </b>
                                                         </span>
                                                     </li>
+                                                    <li class="view-col-3" ng-if="job_order.total_due_amount > 0">
+                                                        <span class="view-col-label">
+                                                            Customer Due Amount
+                                                        </span>
+                                                        <span class="view-data-list-value mandatory">
+                                                            <b>
+                                                                <img class="img-responsive img-inline" src="./public/theme/img/table/cndn/table-rupee.svg" alt="Rupee" /> {{job_order.total_due_amount | number:2}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
                                                 </ul>
                                                 <button ng-click="showOwnerForm()" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.is_customer_agreed!=1">
                                                     Edit
