@@ -141,16 +141,6 @@
                                         </label>
                                     </div><!-- Field -->
                                 </div><!-- Column -->
-                                <div class="col-md-4" ng-if="false">
-                                    <div class="form-group">
-                                        <label>
-                                            Cushioning charges (4%)
-                                        </label>
-                                        <label class="form-control-view">
-                                            {{wjor_part.cushioning_charges | currency}}
-                                        </label>
-                                    </div><!-- Field -->
-                                </div><!-- Column -->
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>
@@ -165,6 +155,7 @@
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Modal Form -->
+                {{wjor_part | json}}
             </div><!-- Modal Body -->
             <div class="modal-footer box-shadow">
                 <div class="row">

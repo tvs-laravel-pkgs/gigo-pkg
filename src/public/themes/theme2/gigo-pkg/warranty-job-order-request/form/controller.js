@@ -590,11 +590,12 @@ app.component('warrantyJobOrderRequestForm', {
 
                 });
 
-        }
+        };
+
         $scope.purchaseTypeChange = function() {
             $scope.wjor_part.handling_charge_percentage = 0;
             $scope.wjor_part.handling_charge = 0;
-        }
+        };
 
         $scope.calculateHandlingCharge = function() {
             $handling_charge = parseFloat($scope.wjor_part.net_amount) * (parseFloat($scope.wjor_part.handling_charge_percentage) / 100);
