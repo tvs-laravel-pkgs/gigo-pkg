@@ -416,7 +416,8 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.isSameState = function() {
             if ($scope.warranty_job_order_request.job_order && $scope.warranty_job_order_request.job_order.customer && $scope.warranty_job_order_request.job_order.outlet) {
-                var customer_state = $scope.warranty_job_order_request.job_order.customer.state_id;
+                // var customer_state = $scope.warranty_job_order_request.job_order.customer.state_id;
+                var customer_state = $scope.warranty_job_order_request.customer_address.state.id;
                 var job_order_state = $scope.warranty_job_order_request.job_order.outlet.state_id;
                 return customer_state == job_order_state;
             }
