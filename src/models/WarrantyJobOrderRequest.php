@@ -559,7 +559,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$record = new Self();
 				$record->company_id = $owner->company_id;
 				$record->created_by_id = Auth::id();
-				$pprNumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
+				$pprNumber = SerialNumberGroup::generateNumber(30, $financial_year->id, $branch->state_id, $branch->id);
 				if (!$pprNumber['success']) {
 					return response()->json([
 						'success' => false,
