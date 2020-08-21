@@ -956,7 +956,7 @@ app.component('warrantyJobOrderRequestForm', {
                     // console.log(res.options);
                     setTimeout(function() {
                         $scope.extras.sub_aggregates = res.options;
-                    }, 1500);
+                    }, 2000);
 
                     $scope.$apply();
                 })
@@ -984,7 +984,7 @@ app.component('warrantyJobOrderRequestForm', {
                     }
                     setTimeout(function() {
                         $scope.extras.state_list = res.state_list;
-                    }, 1500);
+                    }, 2000);
 
                     //ADD NEW OWNER TYPE
                     /*if ($scope.type_id == 2) {
