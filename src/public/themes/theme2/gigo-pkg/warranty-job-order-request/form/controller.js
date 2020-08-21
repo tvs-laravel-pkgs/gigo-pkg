@@ -396,6 +396,7 @@ app.component('warrantyJobOrderRequestForm', {
             OutletSvc.getBusiness({ outletId: outlet.id, businessName: 'ALSERV' })
                 .then(function(response) {
                     $scope.warranty_job_order_request.job_order.outlet.business = response.data.business;
+                    $scope.requestTypeChanges();
                 });
         }
 
@@ -416,8 +417,10 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.isSameState = function() {
             if ($scope.warranty_job_order_request.job_order && $scope.warranty_job_order_request.job_order.customer && $scope.warranty_job_order_request.job_order.outlet) {
-                // var customer_state = $scope.warranty_job_order_request.job_order.customer.state_id;
-                var customer_state = $scope.warranty_job_order_request.customer_address.state.id;
+                var customer_state = $scope.warranty_job_order_request.job_order.customer.state_id;
+                if ($scope.warranty_job_order_request.customer_address.state != undefined) {
+                    var customer_state = $scope.warranty_job_order_request.customer_address.state.id;
+                }
                 var job_order_state = $scope.warranty_job_order_request.job_order.outlet.state_id;
                 return customer_state == job_order_state;
             }
@@ -583,7 +586,7 @@ app.component('warrantyJobOrderRequestForm', {
                                     // AMC And Warranty Request Type
                                     $scope.wjor_part.rate = res.stock_data.cost_price;
 
-                                    if ($scope.wjor_part.tax_code) {
+                                    /*if ($scope.wjor_part.tax_code) {
                                         $scope.wjor_part.tax_code.taxes.push({
                                             'name': 'Handling Charges',
                                             'pivot': {
@@ -591,13 +594,23 @@ app.component('warrantyJobOrderRequestForm', {
                                             },
                                             'type_id': ($scope.isSameState()) ? 1160 : 1161,
                                         });
-                                    }
+                                    } else {
+                                        var handling_charge = [{
+                                            'name': 'Handling Charges',
+                                            'pivot': {
+                                                'percentage': $handling_percentage,
+                                                'amount': 0,
+                                            },
+                                            'type_id': ($scope.isSameState()) ? 1160 : 1161,
+                                        }];
+                                        part.tax_code = { 'taxes': handling_charge };
+                                    }*/
                                 }
                                 // $scope.wjor_part.mrp = res.stock_data.mrp;
 
                             }
                             $scope.calculatePartAmount();
-                            // $scope.calculateHandlingCharge();
+                            $scope.calculateHandlingCharge();
                             $rootScope.loading = false;
                             $scope.$apply();
                         })
@@ -614,13 +627,13 @@ app.component('warrantyJobOrderRequestForm', {
             $scope.wjor_part.handling_charge = 0;
         };
 
-        $scope.calculateHandlingCharge = function() {
-            /*$handling_charge = parseFloat($scope.wjor_part.net_amount) * (parseFloat($scope.wjor_part.handling_charge_percentage) / 100);
+        $scope.calculateHandlingCharge = function(field = null) {
+            $handling_charge = parseFloat($scope.wjor_part.net_amount) * (parseFloat($scope.wjor_part.handling_charge_percentage) / 100);
             if (isNaN($handling_charge)) {
                 $handling_charge = 0;
             }
-            $scope.wjor_part.handling_charge = $handling_charge.toFixed(2);*/
-            if ($scope.wjor_part.tax_code) {
+            $scope.wjor_part.handling_charge = $handling_charge.toFixed(2);
+            /*if ($scope.wjor_part.tax_code) {
                 angular.forEach($scope.wjor_part.tax_code.taxes, function(tax) {
                     if (tax.name == 'Handling Charges') {
                         if ($scope.wjor_part.handling_charge_percentage == '') {
@@ -629,6 +642,14 @@ app.component('warrantyJobOrderRequestForm', {
                         tax.pivot.percentage = $scope.wjor_part.handling_charge_percentage;
                     }
                 });
+            }*/
+            if (field != null && field == 'qty') {
+                $(".qtyText").blur().focus();
+
+            }
+            if (field != null && field == 'rate') {
+                $(".rateText").blur().focus();
+
             }
             $scope.calculatePartAmount();
         }
@@ -650,7 +671,7 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.calculatePartAmount = function() {
-            HelperService.calculateTaxAndTotal($scope.wjor_part, $scope.isSameState());
+            HelperService.calculateTaxAndTotal($scope.wjor_part, $scope.isSameState(), true);
             $scope.calculateTotals();
         }
 
@@ -704,6 +725,7 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.removePart = function(index) {
             $scope.warranty_job_order_request.wjor_parts.splice(index, 1);
             $scope.calculateTotals();
+            $scope.calculateCushionCharges();
         }
 
         // Common -------------------------------------

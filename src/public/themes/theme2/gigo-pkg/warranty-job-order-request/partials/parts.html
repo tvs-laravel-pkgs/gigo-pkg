@@ -40,11 +40,11 @@
                             </th>
  -->
                             <th class="text-right">
-                                Tax Amount & Handling Charges
+                                Tax Amount
                             </th>
-                            <!-- <th class="text-right">
+                            <th class="text-right">
                                 Handling Charges
-                            </th> -->
+                            </th>
                             <!-- <th class="text-right">
                                 Quantity
                             </th> -->
@@ -93,9 +93,9 @@
                             <td class="text-center">
                                 {{job_order_part.tax_total| currency}}
                             </td>
-                            <!-- <td class="text-right">
+                            <td class="text-right">
                                 {{job_order_part.handling_charge | currency}}
-                            </td> -->
+                            </td>
                             <td class="wid-180 white-space-unset text-right">
                                 {{job_order_part.total_amount | currency}}
                             </td>
@@ -108,7 +108,7 @@
                             </td>
                             <td class="text-right">
                             </td>
-                            <td colspan="7" class="wid-180 white-space-unset text-right">
+                            <td colspan="8" class="wid-180 white-space-unset text-right">
                                 <b>
                                     Total Parts :
                                     {{warranty_job_order_request.part_total | currency}}
@@ -116,7 +116,7 @@
                             </td>
                         </tr>
                         <tr class="ptb-9" ng-if="warranty_job_order_request.wjor_parts">
-                            <td colspan="3">
+                            <td colspan="4">
                             </td>
                             <td>
                                 <div class="form-group">
@@ -144,7 +144,7 @@
                             </td>
                         </tr>
                         <tr class="ptb-9" ng-if="warranty_job_order_request.wjor_parts">
-                            <td colspan="9" class="wid-180 white-space-unset text-right">
+                            <td colspan="10" class="wid-180 white-space-unset text-right">
                                 <b>
                                     Total:
                                     {{warranty_job_order_request.total_part_amount | currency}}
