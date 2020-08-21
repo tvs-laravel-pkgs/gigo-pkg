@@ -399,6 +399,10 @@ app.component('warrantyJobOrderRequestForm', {
                     $scope.requestTypeChanges();
                 });
         }
+        $scope.stateChanged = function() {
+            $scope.warranty_job_order_request.customer_address.city = null;
+            $scope.requestTypeChanges();
+        }
 
         $scope.customerChanged = function(customer) {
             $scope.warranty_job_order_request.customer_address = {};
