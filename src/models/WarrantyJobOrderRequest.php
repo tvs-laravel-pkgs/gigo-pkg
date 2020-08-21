@@ -410,6 +410,13 @@ class WarrantyJobOrderRequest extends BaseModel {
 					'code' => $input['customer_code'],
 				]);
 			}
+			if(!$customer){
+				return response()->json([
+					'success' => false,
+					'error' => 'Kindly select customer',
+				]);
+
+			}
 			$customer->name = $input['customer_name'];
 			$customer->code = $input['customer_code'];
 			$customer->mobile_no = $input['customer_mobile_no'];
@@ -442,6 +449,13 @@ class WarrantyJobOrderRequest extends BaseModel {
 					'company_id' => Auth::user()->company_id,
 					'engine_number' => $input['engine_number'],
 				]);
+			}
+			if(!$vehicle){
+				return response()->json([
+					'success' => false,
+					'error' => 'Kindly select vehicle',
+				]);
+
 			}
 			$vehicle->chassis_number = $input['chassis_number'];
 			$vehicle->model_id = $input['model_id'];

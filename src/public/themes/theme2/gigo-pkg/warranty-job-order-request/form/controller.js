@@ -2,7 +2,7 @@ angular.module('app').requires.push('angularBootstrapFileinput');
 
 app.component('warrantyJobOrderRequestForm', {
     templateUrl: warrantyJobOrderRequestForm,
-    controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc, VehicleSvc, OutletSvc, CustomerSvc, ComplaintGroupSvc) {
+    controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc, VehicleSvc, OutletSvc, CustomerSvc, ComplaintGroupSvc, $localstorage) {
         $rootScope.loading = true;
         var pageLoaded = 0;
         $('#search').focus();
@@ -16,6 +16,10 @@ app.component('warrantyJobOrderRequestForm', {
             $location.path('/login');
             return;
         }
+        $scope.saveTempData = function(){
+            $localstorage.setObject('ppr',$scope.warranty_job_order_request);
+            $location.path('/warranty-job-order-request/table-list');
+        };
 
         $scope.user = HelperService.getLoggedUser();
         $scope.hasPerm = HelperService.hasPerm;
@@ -100,26 +104,30 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.calculateTotals();
                     } else {
                         self.is_registered = 1;
-                        $scope.warranty_job_order_request = {
-                            wjor_repair_orders: [],
-                            wjor_parts: [],
-                            has_warranty: 1,
-                            has_amc: 0,
-                            load_carried_type_id: 9041,
-                            reading_type_id: 8041,
-                            has_goodwill: 1,
-                            repair_order_total: 0,
-                            part_total: 0,
-                            attachments: [],
-                            job_order: {
-                                vehicle: {},
-                                customer: {},
-                                outlet: {},
-                            },
-                            photos: [],
-                            attachments: [],
-                            bharat_stages: [],
+                        $scope.warranty_job_order_request = $localstorage.getObject('ppr');
+                        if(!$scope.warranty_job_order_request){
+                            $scope.warranty_job_order_request = {
+                                wjor_repair_orders: [],
+                                wjor_parts: [],
+                                has_warranty: 1,
+                                has_amc: 0,
+                                load_carried_type_id: 9041,
+                                reading_type_id: 8041,
+                                has_goodwill: 1,
+                                repair_order_total: 0,
+                                part_total: 0,
+                                attachments: [],
+                                job_order: {
+                                    vehicle: {},
+                                    customer: {},
+                                    outlet: {},
+                                },
+                                photos: [],
+                                attachments: [],
+                                bharat_stages: [],
+                            };
                         }
+
 
                         //for quick test
                         // $scope.warranty_job_order_request = {
