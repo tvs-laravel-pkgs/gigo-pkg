@@ -4,6 +4,7 @@ app.component('warrantyJobOrderRequestForm', {
     templateUrl: warrantyJobOrderRequestForm,
     controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc, VehicleSvc, OutletSvc, CustomerSvc, ComplaintGroupSvc) {
         $rootScope.loading = true;
+        var pageLoaded = 0;
         $('#search').focus();
         var self = this;
         $scope.business_data = [];
@@ -396,12 +397,18 @@ app.component('warrantyJobOrderRequestForm', {
             OutletSvc.getBusiness({ outletId: outlet.id, businessName: 'ALSERV' })
                 .then(function(response) {
                     $scope.warranty_job_order_request.job_order.outlet.business = response.data.business;
-                    $scope.requestTypeChanges();
+                    if (pageLoaded == 1) {
+                        // $scope.warranty_job_order_request.customer_address.city = null;
+                        $scope.requestTypeChanges();
+                    }
                 });
         }
+
         $scope.stateChanged = function() {
-            $scope.warranty_job_order_request.customer_address.city = null;
-            $scope.requestTypeChanges();
+            if (pageLoaded == 1) {
+                // $scope.warranty_job_order_request.customer_address.city = null;
+                $scope.requestTypeChanges();
+            }
         }
 
         $scope.customerChanged = function(customer) {
@@ -988,6 +995,9 @@ app.component('warrantyJobOrderRequestForm', {
                     }
                     setTimeout(function() {
                         $scope.extras.state_list = res.state_list;
+                        setTimeout(function() {
+                            pageLoaded = 1;
+                        }, 4000);
                     }, 2000);
 
                     //ADD NEW OWNER TYPE
