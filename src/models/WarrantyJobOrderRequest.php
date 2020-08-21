@@ -153,6 +153,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 		return $this->belongsTo('App\Customer', 'customer_id');
 	}
 
+	public function authorizationBy() {
+		return $this->belongsTo('App\User', 'authorization_by');
+	}
+
 	public function serviceTypes() {
 		return $this->belongsToMany('App\ServiceType', 'wjor_service_type', 'wjor_id', 'service_type_id');
 	}
@@ -250,6 +254,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'approvalAttachments',
 				'splitOrderType',
 				'requestType',
+				'authorizationBy',
 			];
 		}
 
@@ -713,7 +718,6 @@ class WarrantyJobOrderRequest extends BaseModel {
 			dump(url('storage/app/wjor/' . $photo->name));
 		}*/
 		// File::delete(storage_path('app/public/wjor-pdfs/' . $this->number . '.pdf'));
-
 		$pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
 			->loadView('pdf-gigo/wjor', [
 				'wjor' => $this,

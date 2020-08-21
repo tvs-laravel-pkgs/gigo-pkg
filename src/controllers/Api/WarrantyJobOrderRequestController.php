@@ -221,9 +221,12 @@ class WarrantyJobOrderRequestController extends Controller {
 	}
 
 	public function approve(Request $request) {
+		// dd($request->all());
 		try {
 			$warranty_job_order_request = WarrantyJobOrderRequest::find($request->id);
 			$warranty_job_order_request->authorization_number = $request->authorization_number;
+			$warranty_job_order_request->authorization_date = date('Y-m-d');
+			$warranty_job_order_request->authorization_by = Auth::id();
 			$warranty_job_order_request->remarks = $request->remarks;
 			$warranty_job_order_request->status_id = 9102; //approved
 			$warranty_job_order_request->save();

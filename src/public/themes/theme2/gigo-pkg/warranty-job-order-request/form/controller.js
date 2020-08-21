@@ -401,14 +401,13 @@ app.component('warrantyJobOrderRequestForm', {
                     console.log(error);
                 });
             if (pageLoaded == 1) {
-                // $scope.warranty_job_order_request.customer_address.city = null;
                 $scope.requestTypeChanges();
             }
         }
 
         $scope.stateChanged = function() {
             if (pageLoaded == 1) {
-                // $scope.warranty_job_order_request.customer_address.city = null;
+                $scope.warranty_job_order_request.customer_address.city = null;
                 $scope.requestTypeChanges();
             }
         }
