@@ -127,8 +127,6 @@ class JobCardController extends Controller {
 				$job_cards->where('job_cards.floor_supervisor_id', Auth::user()->id);
 			}
 
-		} else {
-			$job_cards->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')");
 		}
 
 		$job_cards->groupBy('job_cards.id')
