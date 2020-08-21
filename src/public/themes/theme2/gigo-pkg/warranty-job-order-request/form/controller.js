@@ -397,11 +397,13 @@ app.component('warrantyJobOrderRequestForm', {
             OutletSvc.getBusiness({ outletId: outlet.id, businessName: 'ALSERV' })
                 .then(function(response) {
                     $scope.warranty_job_order_request.job_order.outlet.business = response.data.business;
-                    if (pageLoaded == 1) {
-                        // $scope.warranty_job_order_request.customer_address.city = null;
-                        $scope.requestTypeChanges();
-                    }
+                }).catch(function(error) {
+                    console.log(error);
                 });
+            if (pageLoaded == 1) {
+                // $scope.warranty_job_order_request.customer_address.city = null;
+                $scope.requestTypeChanges();
+            }
         }
 
         $scope.stateChanged = function() {
