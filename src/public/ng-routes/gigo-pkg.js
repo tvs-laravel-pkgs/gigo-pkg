@@ -962,17 +962,18 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/job-card/estimate/:job_card_id', {
         template: '<job-card-estimate-form></job-card-estimate-form>',
         title: 'Job Card Estimate',
-
     }).
     when('/job-card/estimate-status/:job_card_id', {
         template: '<job-card-estimate-status-form></job-card-estimate-status-form>',
         title: 'Job Card Estimate Status',
-
     }).
     when('/job-card/expert-diagnosis/:job_card_id', {
         template: '<job-card-expert-diagnosis-form></job-card-expert-diagnosis-form>',
         title: 'Job Card Export Diagnosis',
-
+    }).
+    when('/job-card/floating-work/:job_card_id', {
+        template: '<job-card-floating-form></job-card-floating-form>',
+        title: 'Job Card Floating Works',
     }).
     when('/job-card/schedule/:job_card_id', {
         template: '<job-card-schedule-form></job-card-schedule-form>',
@@ -1191,5 +1192,22 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/road-test-gate-pass/view/:id', {
         template: '<road-test-gate-pass-view></road-test-gate-pass-view>',
         title: 'View Road Test Gate Pass',
+    });
+}]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //Road Test Gate Pass
+    when('/floating-gate-pass/table-list', {
+        template: '<floating-gate-pass-table-list></floating-gate-pass-table-list>',
+        title: 'Floating Gate Pass - Table List',
+    }).
+    when('/floating-gate-pass/card-list', {
+        template: '<floating-gate-pass-card-list></floating-gate-pass-card-list>',
+        title: 'Floating Gate Pass - Card List',
+    }).
+    when('/floating-gate-pass/view/:id', {
+        template: '<floating-gate-pass-view></floating-gate-pass-view>',
+        title: 'View Floating Gate Pass',
     });
 }]);

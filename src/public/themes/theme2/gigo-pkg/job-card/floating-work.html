@@ -1,0 +1,101 @@
+<style type="text/css">
+.my-disable {
+    pointer-events: none;
+}
+</style>
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/job-card/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>Floating Works</b></h1>
+                    <p class="subtitle">Job Card / Floating Works</p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <div class="page-tab-form pb-70">
+            <jobcard-header></jobcard-header>
+            <div class="tab-form-wrap type-2">
+                <jobcard-tabs ng-init="active_tab = 'floating-work'"></jobcard-tabs>
+                <div class="tab-form-body">
+                    <div class="tab-content">
+                        <!-- TAB PANEL -->
+                        <div class="tab-pane fade in active" id="schedules" data-animation="fadeInUp" data-animation-delay="300">
+                            <div class="tab-pane-wrap">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h5 class="title-red">
+                                            Floating Works
+                                        </h5>
+                                        <div class="schedules-box-wrap" ng-repeat="(key,job_order_repair_order) in job_card.job_order.job_order_repair_orders">
+                                            <div class="left-wrap border-bottom">
+                                                <div class="schedules-left-wrap">
+                                                    <span class="info">{{job_order_repair_order.repair_order.code}}</span>
+                                                    <span class="title">{{job_order_repair_order.repair_order.name}}</span>
+                                                </div>
+                                                <div class="schedules-right-wrap">
+                                                    <button class="btn btn-secondary-dark btn-square assign_mechanic_{{job_order_repair_order.repair_order.id}}" ng-show="job_order_repair_order.status_id == 8181" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Assign</button>
+                                                    <!-- ng-click="assign_mechanic(job_order_repair_order.repair_order.code,job_order_repair_order.repair_order.name)" -->
+                                                    <a class="btn btn-bordered btn-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id !=8182 && job_order_repair_order.status_id !=8180" ng-click="viewTimeLog(job_order_repair_order.id)" data-target="#view_time_log_modal" data-toggle="modal">View Time Log</a>
+                                                    <a href="#!/job-card/labour-review/{{job_card_id}}/{{job_order_repair_order.id}}" class="btn btn-secondary-dark btn-square" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185">Review</a>
+                                                    <a class="btn btn-secondary-dark btn-square assign_mechanic_{{job_order_repair_order.repair_order.id}}" ng-show="job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id != 8187 && job_order_repair_order.status_id != 8185 && job_order_repair_order.status_id !=8180" ng-click=assignMechanic(job_order_repair_order.repair_order.id)>Re-Assign</a>
+                                                </div>
+                                            </div><!-- Left Wrap -->
+                                            <div class="right-wrap">
+                                                <span ng-class="{'bg-blue type-2': (job_order_repair_order.status_id == 8183 || job_order_repair_order.status_id == 8184) , 'bg-red': (job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 || job_order_repair_order.status_id ==8180) ,'bg-yellow type-2':(job_order_repair_order.status_id != 8181 && job_order_repair_order.status_id == 8185),'bg-yellow type-2':(job_order_repair_order.status_id == 8185),'bg-red type-2':(job_order_repair_order.status_id == 8186),'bg-green type-2':(job_order_repair_order.status_id == 8187)} " class="status">
+                                                    {{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 || job_order_repair_order.status_id ==8180 ? 'Pending' : job_order_repair_order.status.name}}
+                                                    <span class="time">{{job_order_repair_order.status_id == 8181 || job_order_repair_order.status_id ==8182 || job_order_repair_order.status_id ==8180 ? '': job_order_repair_order.overall_total_duration}}</span>
+                                                </span>
+                                            </div><!-- Right Wrap -->
+                                            <div class="assigned-info" ng-if="job_order_repair_order.repair_order_mechanics.length > 0">
+                                                <span class="title">Assigned To</span>
+                                                <ul class="flex-row type-2 assigned-info-list">
+                                                    <li class="flex-col-3" ng-repeat="(key,repair_order_mechanic) in job_order_repair_order.repair_order_mechanics">
+                                                        <div class="assigned-info-list-item">
+                                                            <span class="title">{{repair_order_mechanic.mechanic.name}}</span>
+                                                            <span class="info">
+                                                                <a ng-click="getMechanicTimeLog(repair_order_mechanic.id,job_order_repair_order.repair_order.id)" data-toggle="modal" data-target="#time_log_modal">
+                                                                    {{repair_order_mechanic.status.name}} | {{repair_order_mechanic.total_duration}} <br>
+                                                                    <span class="color-red">
+                                                                        View Time Log
+                                                                    </span>
+                                                                </a>
+                                                            </span>
+                                                        </div><!-- Assigned Info List Item -->
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div><!-- Schedules Box Wrap -->
+                                        <hr>
+                                        <div class="col-md-12">
+                                            <div class="text-center pt-10">
+                                                <a class="btn btn-red job_completed" ng-if="job_card.status_id == 8223" ng-click="saveJobStatus()">Mark Job as Completed</a>
+                                            </div>
+                                            <div class="mb-20"></div>
+                                        </div>
+                                    </div><!-- Column -->
+                                    <div class="tab-pane-footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <a href=".#!/job-card/dms-checklist/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                <a href=".#!/job-card/part-indent/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                            </div>
+                                        </div>
+                                    </div><!-- Tab Footer -->
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                        </div><!-- Tabe Pane -->
+                    </div><!-- Tab Content -->
+                </div><!-- Tab Form Body -->
+            </div><!-- Tab Form Wrap -->
+        </div><!-- Page Form -->
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
