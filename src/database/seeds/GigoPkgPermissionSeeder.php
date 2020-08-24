@@ -160,7 +160,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			//Parts Indent
 			[
 				'display_order' => 99,
-				'parent' => null,
+				'parent' => 'gigo-pages',
 				'name' => 'parts-indent',
 				'display_name' => 'Parts Indent',
 			],
@@ -181,12 +181,6 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'parent' => 'parts-indent',
 				'name' => 'view-parts-indent',
 				'display_name' => 'View',
-			],
-			[
-				'display_order' => 4,
-				'parent' => 'parts-indent',
-				'name' => 'view-only-parts-indent',
-				'display_name' => 'View Only Part Indent',
 			],
 			[
 				'display_order' => 5,
@@ -1829,6 +1823,18 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'inward-job-card-tab-pdf',
 				'display_name' => 'PDF',
 			],
+			[
+				'display_order' => 99,
+				'parent' => 'inward-job-card-tabs',
+				'name' => 'inward-job-card-tab-floating-work-edit',
+				'display_name' => 'Floating Work Edit',
+			],
+			[
+				'display_order' => 99,
+				'parent' => 'inward-job-card-tabs',
+				'name' => 'inward-job-card-tab-floating-work-view',
+				'display_name' => 'Floating Work View',
+			],
 
 			//Trade Plate Number
 			[
@@ -1885,6 +1891,38 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_order' => 6,
 				'parent' => 'road-test-gate-passes',
 				'name' => 'view-all-outlet-road-test-gate-pass',
+				'display_name' => 'View All Outlet',
+			],
+
+			//FLOATING GATE PASS
+			[
+				'display_order' => 99,
+				'parent' => 'gigo-pages',
+				'name' => 'floating-gate-passes',
+				'display_name' => 'Floating Gate Passes',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'floating-gate-passes',
+				'name' => 'view-floating-gate-pass',
+				'display_name' => 'View',
+			],
+			[
+				'display_order' => 4,
+				'parent' => 'floating-gate-passes',
+				'name' => 'view-own-outlet-floating-gate-pass',
+				'display_name' => 'View Own Outlet',
+			],
+			[
+				'display_order' => 5,
+				'parent' => 'floating-gate-passes',
+				'name' => 'view-mapped-outlet-floating-gate-pass',
+				'display_name' => 'View Mapped Outlet',
+			],
+			[
+				'display_order' => 6,
+				'parent' => 'floating-gate-passes',
+				'name' => 'view-all-outlet-floating-gate-pass',
 				'display_name' => 'View All Outlet',
 			],
 		];

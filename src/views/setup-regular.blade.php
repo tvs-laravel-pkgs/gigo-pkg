@@ -1304,61 +1304,54 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 	    when('/gigo-pkg/job-card/material-outward/:job_card_id/:gatepass_id', {
 	        template: '<job-card-material-outward-form></job-card-material-outward-form>',
 	        title: 'Job Card Material Outward',
-
 	    }).
 	    when('/gigo-pkg/job-card/material-outward/:job_card_id', {
 	        template: '<job-card-material-outward-form></job-card-material-outward-form>',
 	        title: 'Job Card Material Outward',
-
 	    }).
 	    when('/gigo-pkg/job-card/road-test-observation/:job_card_id', {
 	        template: '<job-card-road-test-observation-form></job-card-road-test-observation-form>',
 	        title: 'Job Card Road Test Observation',
-
 	    }).
 	    when('/gigo-pkg/job-card/vehicle-inspection/:job_card_id', {
 	        template: '<job-card-vehicle-inspection-form></job-card-vehicle-inspection-form>',
 	        title: 'Job Card Vehicle Inspection',
-
 	    }).
 	    when('/gigo-pkg/job-card/dms-checklist/:job_card_id', {
 	        template: '<job-card-dms-checklist-form></job-card-dms-checklist-form>',
 	        title: 'Job Card DMS Check List',
-
 	    }).
 	    when('/gigo-pkg/job-card/part-indent/:job_card_id', {
 	        template: '<job-card-part-indent-form></job-card-part-indent-form>',
 	        title: 'Job Card Part Indent',
-
 	    }).
 	    when('/gigo-pkg/job-card/schedule-maintenance/:job_card_id', {
 	        template: '<job-card-schedule-maintenance-form></job-card-schedule-maintenance-form>',
 	        title: 'Job Card Scheduled Maintenance',
-
 	    }).
 	    when('/gigo-pkg/job-card/payable-labour-parts/:job_card_id', {
 	        template: '<job-card-payable-labour-parts-form></job-card-payable-labour-parts-form>',
 	        title: 'Job Card Payable Labour Parts',
-
 	    }).
 	    when('/gigo-pkg/job-card/estimate/:job_card_id', {
 	        template: '<job-card-estimate-form></job-card-estimate-form>',
 	        title: 'Job Card Estimate',
-
 	    }).
 	    when('/gigo-pkg/job-card/estimate-status/:job_card_id', {
 	        template: '<job-card-estimate-status-form></job-card-estimate-status-form>',
 	        title: 'Job Card Estimate Status',
-
 	    }).
 	    when('/gigo-pkg/job-card/expert-diagnosis/:job_card_id', {
 	        template: '<job-card-expert-diagnosis-form></job-card-expert-diagnosis-form>',
 	        title: 'Job Card Export Diagnosis',
-
 	    }).
 	    when('/job-card/schedule/:job_card_id', {
 	        template: '<job-card-schedule-form></job-card-schedule-form>',
 	        title: 'Job Card Schedules',
+	    }).
+	     when('/job-card/floating-work/:job_card_id', {
+	        template: '<job-card-floating-form></job-card-floating-form>',
+	        title: 'Job Card Floating Works',
 	    }).
 	    when('/gigo-pkg/job-card/labour-review/:job_card_id/:job_order_repair_order_id', {
 	        template: '<job-card-labour-review></job-card-labour-review>',
@@ -1412,6 +1405,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var job_card_export_diagonosis_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/expert-diagnosis.html')}}';
     var job_card_vehicle_inspection_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/vehicle-inspection.html')}}';
     var job_card_dms_checklist_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/dms-checklist.html')}}';
+    var job_card_floating_work_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/floating-work.html')}}";
     var job_card_schedule_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/schedule.html')}}";
     var job_card_labour_review_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/labour-review.html')}}";
     var job_card_bil_detail_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/job-card/bill-detail.html')}}";
@@ -1731,4 +1725,28 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var road_test_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test-gate-pass/view.html')}}";
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/road-test/controller.js')}}'></script>
+
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    //Road Test Gate Pass
+	    when('/floating-gate-pass/table-list', {
+	        template: '<floating-gate-pass-table-list></floating-gate-pass-table-list>',
+	        title: 'Floating Gate Pass - Table List',
+	    }).
+	    when('/floating-gate-pass/card-list', {
+	        template: '<floating-gate-pass-card-list></floating-gate-pass-card-list>',
+	        title: 'Floating Gate Pass - Card List',
+	    }).
+	    when('/floating-gate-pass/view/:id', {
+	        template: '<floating-gate-pass-view></floating-gate-pass-view>',
+	        title: 'View Floating Gate Pass',
+	    });
+	}]);
+
+	var floating_gate_pass_table_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/floating-gate-pass/list.html')}}";
+    var floating_gate_pass_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/floating-gate-pass/card-list.html')}}";
+    var floating_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/floating-gate-pass/view.html')}}";
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/floating-gate-pass/controller.js')}}'></script>
 

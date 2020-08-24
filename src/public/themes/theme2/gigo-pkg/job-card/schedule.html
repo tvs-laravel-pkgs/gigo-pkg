@@ -77,7 +77,7 @@
                                         <hr>
                                         <div class="col-md-12">
                                             <div class="text-center pt-10">
-                                                <a class="btn btn-red job_completed" ng-if="job_card.status_id == 8223" ng-click="saveJobStatus()">Mark Job as Completed</a>
+                                                <a class="btn btn-red" ng-if="job_card.status_id == 8223" data-toggle="modal" data-target="#confirm_finish_work">Mark Job as Completed</a>
                                             </div>
                                             <div class="mb-20"></div>
                                         </div>
@@ -99,6 +99,21 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<div class="modal fade alert-modal failure" id="confirm_finish_work" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Confirmation?</h4>
+            </div>
+            <div class="modal-body">
+                <h5 id="repair_code"></h5>
+                <p>Are you sure? Do you confirm all labour works are completed in this Job Card?</p>
+                <button class="btn btn-rose" data-dismiss="modal" aria-label="Close">No</button>
+                <button class="btn btn-success job_completed" aria-label="Close" ng-click="saveJobStatus()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Modal -->
 <div class="modal modal-center fade assign-labours-modal-wrap" id="assign_labours" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-md" role="document">

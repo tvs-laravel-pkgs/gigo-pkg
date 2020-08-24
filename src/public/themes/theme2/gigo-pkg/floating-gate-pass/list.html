@@ -1,0 +1,197 @@
+<div class="content-wrap cndn-wrap">
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content title-block">
+                    <h1 class="title type-2">Floating Gate Passes<span class="badge badge-secondary" id="table_infos"></span></h1>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content reset-block">
+                    <div class="reset-wrap">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
+                            <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
+                        </button>
+                    </div>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content search-block">
+                    <div class="search_filter">
+                        <label>
+                            <input type="search" ng-keyup="searchKey()" ng-model="$ctrl.search_key" id="search_material_gate_pass" class="form-control" placeholder="Search" autofocus />
+                            <button class="btn-clear my-tooltip" ng-click="clear_search()" ng-shortcut="'meta+shift+c'" ng-shortcut-click data-title="ctrl+shift+c">Clear</button>
+                        </label>
+                    </div><!-- Search Filter -->
+                </div><!-- Page Header Content -->
+                <div class="page-header-content button-block">
+                    <button class="btn btn-bordered my-tooltip" data-toggle="modal" data-target="#road-test-gate-pass-filter-modal" ng-shortcut="'meta+shift+f'" ng-shortcut-click data-title="ctrl+shift+f"><i class="icon ion-md-funnel"></i>Filter</button>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+            <div class="page-header-content-right">
+                <div class="page-header-content tab-block">
+                    <div class="list-card-icon-wrap">
+                        <div class="list-icon in" ng-click="listRedirect('table')">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <div class="card-icon" ng-click="listRedirect('card')">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div><!-- List Card Wrap -->
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Right -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <div class="list-card-tab-wrap">
+        <div class="list-tab-content in">
+            <div class="page-main-content list-page-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table" id="floating_gate_pass_list" style="width: 100% !important;">
+                                <thead>
+                                    <tr>
+                                        <th class="action width-100">Action</th>
+                                        <th>Date & Time</th>
+                                        <th>Gate Pass No</th>
+                                        <th>Job Order No</th>
+                                        <th>Registration Number</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Container -->
+            </div><!-- Page Main Content -->
+        </div><!-- List Tab Content -->
+    </div><!-- List & Card Tab Wrap -->
+</div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal fade filter" id="road-test-gate-pass-filter-modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog filter-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                <h5 class="modal-title" id="myModalLabel">Filter</h5>
+            </div><!-- Modal Header -->
+            <div class="modal-body">
+                <div class="modal-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Gate Pass Date</label>
+                                <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
+                                    <input type="text" class="form-control" placeholder="Select Gate Pass Date" ng-model="$ctrl.gate_pass_created_date" id="gate_pass_created_date" />
+                                    <div class="input-group-addon">
+                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                    </div>
+                                </div><!-- Input Group -->
+                            </div><!-- Feild -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Gate Pass Number</label>
+                                <input type="text" class="form-control" id="number" name="number" placeholder="Enter Gate Pass No" autocomplete="off" ng-model="$ctrl.number">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Job Order Number</label>
+                                <input type="text" class="form-control" id="job_order_number" name="job_order_number" placeholder="Enter Job Order No" autocomplete="off" ng-model="$ctrl.job_order_number">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <md-select ng-model="$ctrl.status_selected" md-on-close="clearSearchTerm()" ng-change="onSelectedStatus($ctrl.status_selected)" data-md-container-class="selectdemoSelectHeader" placeholder="Select Status">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchTerm1" type="search" placeholder="Search for a Status" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="status.id" ng-repeat="status in $ctrl.extras.status_list | filter:searchTerm1">{{status.name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="status_id" id="status_id" value="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Form -->
+            </div><!-- Modal Body -->
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_pass_created_date='';$ctrl.number='';$ctrl.job_card_number='';$ctrl.work_order_no='';$ctrl.vendor_name='';$ctrl.vendor_code='';$ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                            Reset Filter
+                        </button>
+                    </div><!-- Column -->
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">Apply</button>
+                    </div><!-- Column -->
+                </div><!-- Row -->
+            </div><!-- Modal Footer -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<!-- Submit Alert Modal -->
+<div class="modal modal-success alert-modal fade" id="gate_in_confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
+                <h6 class="title"><b>Material Gate In Success</b></h6>
+                <p class="info data">Material successfully gated In</p>
+                <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
+                <div class="mt-30 mb-30">
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></a>
+                    <!--  <button type="button" class="btn btn-success btn-square btn-block" ng-click="reloadPage()" data-dismiss="modal"><b>Done</b></button> -->
+                </div><!-- Button -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
+<!-- Submit Alert Modal -->
+<div class="modal modal-success alert-modal fade" id="gate_out_confirm_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
+                <h6 class="title"><b>Material Gate Out Success</b></h6>
+                <p class="info data">Material successfully gated Out</p>
+                <p class="info data"><b>Material Gate Pass No : <span class="gate_pass_no"></span></b></p>
+                <div class="mt-30 mb-30">
+                    <a href="javascript:;" class="btn btn-success btn-square btn-block" data-dismiss="modal" ng-click="reloadPage()"><b>Done</b></a>
+                    <!-- <button type="button" class="btn btn-success btn-square btn-block" ng-click="reloadPage()" data-dismiss="modal"><b>Done</b></button> -->
+                </div><!-- Button -->
+            </div><!-- Modal Body -->
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<!-- Modal -->
+<!-- Modal -->
+<div class="modal modal-otp alert-modal fade" id="otp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="material_gate_out_confirm">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <h6 class="title">ENTER OTP</h6>
+                    <p class="info">Received in Floor Supervisor Mobile +91 <span class="customer_mobile_no"></span></p>
+                    <div class="form-group">
+                        <input type="text" autofocus name="otp_no" id="otp_no" class="form-control text-center" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter OTP" autocomplete="off" />
+                        <input type="hidden" name="gate_pass_id" id="gate_pass_id" value="" />
+                    </div><!-- Feild -->
+                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm">SUBMIT</button>
+                    <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
+                </div><!-- Modal Body -->
+            </form>
+        </div><!-- Modal Content -->
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->

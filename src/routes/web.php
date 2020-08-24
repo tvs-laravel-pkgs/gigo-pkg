@@ -220,6 +220,10 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/road-test-gate-pass/get-list', 'RoadTestGatePassController@getRoadTestGatePassList')->name('getRoadTestGatePassList');
 	Route::get('/road-test-gate-pass/get-filter-data', 'RoadTestGatePassController@getRoadTestGatePassFilter')->name('getRoadTestGatePassFilter');
 
+	//Floating Gate Pass
+	Route::get('/floating-gate-pass/get-list', 'FloatingGatePassController@getFloatingGatePassList')->name('getFloatingGatePassList');
+	Route::get('/floating-gate-pass/get-filter-data', 'FloatingGatePassController@getFloatingGatePassFilter')->name('getFloatingGatePassFilter');
+
 	//Gate Log
 	Route::get('gate-log/get-list', 'Api\GateInController@getGateLogList')->name('getGateLogList');
 	Route::get('/gate-log/get-filter-data', 'Api\GateInController@getGateLogFilter')->name('getGateLogFilter');

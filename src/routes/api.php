@@ -401,6 +401,11 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('road-test-gate-pass/gate-in-out/save', 'RoadTestGatePassController@saveRoadTestGateInAndOut');
 		Route::post('road-test-gate-pass/gate-out/confirm', 'RoadTestGatePassController@roadTestGateOutConfirm');
 
+		//Floating Gate Pass
+		Route::post('floating-gate-pass/get', 'FloatingGatePassController@getFloatingGatePass');
+		Route::post('floating-gate-pass/view/get-data', 'FloatingGatePassController@getFloatingGatePassViewData');
+		Route::post('floating-gate-pass/gate-in-out/save', 'FloatingGatePassController@saveFloatingGateInAndOut');
+
 		//VIEW BILL DETAILS
 		Route::post('job-card/bill-detail/view', 'JobCardController@viewBillDetails');
 		Route::post('job-card/bill-update/get-form-data', 'JobCardController@getBillDetailFormData');
