@@ -180,6 +180,10 @@ class WarrantyJobOrderRequestController extends Controller {
 						$cc_emails[] = $user->email;
 					}
 				}
+				$logged_user_mail = Auth::user()->email;
+				if ($logged_user_mail != null && !in_array($logged_user_mail, $cc_emails)) {
+					$cc_emails[] = $logged_user_mail;
+				}
 			}
 			$warranty_job_order_request->cc_emails = $cc_emails;
 
@@ -267,6 +271,10 @@ class WarrantyJobOrderRequestController extends Controller {
 					if ($user->email != null) {
 						$cc_emails[] = $user->email;
 					}
+				}
+				$logged_user_mail = Auth::user()->email;
+				if ($logged_user_mail != null && !in_array($logged_user_mail, $cc_emails)) {
+					$cc_emails[] = $logged_user_mail;
 				}
 			}
 			$warranty_job_order_request->cc_emails = $cc_emails;
