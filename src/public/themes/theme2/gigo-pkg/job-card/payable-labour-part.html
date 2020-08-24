@@ -546,7 +546,10 @@
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">MRP</span>
-                                    <span class="view-data-list-value">{{schedule_maintainance_part.part.mrp | currency}}</span>
+                                    <!-- <span class="view-data-list-value">{{schedule_maintainance_part.part.mrp | currency}}</span> -->
+                                     <input class="form-control" ng-if="available_quantity == 0" ng-model="schedule_maintainance_part.part.mrp" type="text" name="mrp" value="{{schedule_maintainance_part.part.mrp}}" ng-keyup="calculatePartAmount()" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                    
+                                    <span ng-if="available_quantity != 0"  class="view-data-list-value">{{schedule_maintainance_part.part.mrp | currency}}</span>
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">UOM</span>
