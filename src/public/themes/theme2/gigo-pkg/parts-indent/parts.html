@@ -113,7 +113,7 @@ input[type=number] {
                                                     </tr>
                                                     <tr class="ptb-9">
                                                         <td colspan="6">
-                                                            <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)" ng-if="!job_order.part_intent_confirmed_date &&  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 ">
+                                                            <button type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showPartForm(false)" ng-if="!job_order.part_intent_confirmed_date &&  job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227 && labours.length > 0">
                                                                 Add Part
                                                             </button>
                                                             <a ng-if="job_order.job_card && (job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227) " href=".#!/part-indent/issue-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
