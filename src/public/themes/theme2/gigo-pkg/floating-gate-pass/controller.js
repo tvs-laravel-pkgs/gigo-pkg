@@ -17,7 +17,7 @@ app.component('floatingGatePassCardList', {
         self.user = $scope.user = HelperService.getLoggedUser();
         self.gate_pass_created_date = '';
         self.number = '';
-        self.job_order_number = '';
+        self.job_card_number = '';
         self.status_id = '';
         if (!localStorage.getItem('search_key')) {
             self.search_key = '';
@@ -34,7 +34,7 @@ app.component('floatingGatePassCardList', {
                         search_key: self.search_key,
                         gate_pass_created_date: self.gate_pass_created_date,
                         number: self.number,
-                        job_order_number: self.job_order_number,
+                        job_card_number: self.job_card_number,
                         status_id: self.status_id,
                     },
                     beforeSend: function(xhr) {
@@ -46,7 +46,7 @@ app.component('floatingGatePassCardList', {
                         showErrorNoty(res);
                         return;
                     }
-                    $scope.road_test_gate_passes = res.road_test_gate_passes;
+                    $scope.floating_gate_passes = res.floating_gate_passes;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -179,17 +179,19 @@ app.component('floatingGatePassTableList', {
                 data: function(d) {
                     d.gate_pass_created_date = $("#gate_pass_created_date").val();
                     d.number = $("#number").val();
-                    d.job_order_number = $("#job_order_number").val();
+                    d.job_card_number = $("#job_card_number").val();
                     d.status_id = $("#status_id").val();
                 },
             },
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'date_and_time', searchable: false },
-                { data: 'gate_pass_no', name: 'road_test_gate_pass.number' },
-                { data: 'job_order_number', name: 'job_orders.number' },
+                { data: 'floating_gate_pass_no', name: 'floating_stock_logs.number' },
+                { data: 'job_card_number', name: 'job_cards.job_card_number' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
-                { data: 'status', name: 'configs.name' },
+                { data: 'outward_date', searchable: false  },
+                { data: 'inward_date', searchable: false  },
+                { data: 'status', searchable: false  },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -244,7 +246,7 @@ app.component('floatingGatePassTableList', {
         $scope.reset_filter = function() {
             $("#gate_pass_created_date").val('');
             $("#number").val('');
-            $("#job_order_number").val('');
+            $("#job_card_number").val('');
             $("#status_id").val('');
             dataTables.fnFilter();
             $('#material-gate-pass-filter-modal').modal('hide');

@@ -55,9 +55,11 @@
                                     <tr>
                                         <th class="action width-100">Action</th>
                                         <th>Date & Time</th>
-                                        <th>Gate Pass No</th>
-                                        <th>Job Order No</th>
+                                        <th>Floating Gate Pass No</th>
+                                        <th>Job Card No</th>
                                         <th>Registration Number</th>
+                                        <th>Outward Date</th>
+                                        <th>Inward Date</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -101,8 +103,8 @@
                         </div><!-- Column -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Job Order Number</label>
-                                <input type="text" class="form-control" id="job_order_number" name="job_order_number" placeholder="Enter Job Order No" autocomplete="off" ng-model="$ctrl.job_order_number">
+                                <label>Job Card Number</label>
+                                <input type="text" class="form-control" id="job_card_number" name="job_card_number" placeholder="Enter Job Card No" autocomplete="off" ng-model="$ctrl.job_card_number">
                             </div><!-- Field -->
                         </div><!-- Column -->
                         <div class="col-md-6">
@@ -125,7 +127,7 @@
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_pass_created_date='';$ctrl.number='';$ctrl.job_card_number='';$ctrl.work_order_no='';$ctrl.vendor_name='';$ctrl.vendor_code='';$ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.gate_pass_created_date='';$ctrl.number='';$ctrl.job_card_number='';$ctrl.status_selected='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
                             Reset Filter
                         </button>
                     </div><!-- Column -->
