@@ -32,19 +32,27 @@ class FloatingGatePassController extends Controller {
 
 		$floating_gate_passes = FloatingGatePass::select([
 			'floating_stock_logs.id',
+			'job_cards.id as job_card_id',
 			'floating_stock_logs.outward_date',
 			'floating_stock_logs.inward_date',
 			'job_cards.job_card_number as job_card_number',
 			'floating_stock_logs.number as floating_gate_pass_no',
 			'floating_stock_logs.status_id',
-			'configs.name as status',
+			// 'configs.name as status',
 			'vehicles.registration_number',
+			DB::raw('COUNT(floating_stock_logs.id) as no_of_parts'),
 			DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y, %h:%s %p") as date_and_time'),
+			DB::raw('CASE
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8300" THEN floating_stock_logs.status_id END )) > 0 THEN "Gate Out Pending"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8303" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Partial Completed"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8302" THEN floating_stock_logs.status_id END )) =  COUNT(floating_stock_logs.id) THEN "GateIn Success"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8301" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Pending"
+                        ELSE "Gate Out Pending" END AS status'),
 		])
 			->join('job_cards', 'floating_stock_logs.job_card_id', 'job_cards.id')
 			->join('job_orders', 'job_cards.job_order_id', 'job_orders.id')
 			->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
-			->join('configs', 'configs.id', 'floating_stock_logs.status_id')
+		// ->join('configs', 'configs.id', 'floating_stock_logs.status_id')
 			->where(function ($query) use ($request) {
 				if (!empty($request->gate_pass_created_date)) {
 					$query->whereDate('floating_stock_logs.created_at', date('Y-m-d', strtotime($request->gate_pass_created_date)));
@@ -66,6 +74,7 @@ class FloatingGatePassController extends Controller {
 				}
 			})
 
+			->groupBy('floating_stock_logs.job_card_id')
 			->orderBy('floating_stock_logs.created_at', 'DESC');
 
 		if (!Entrust::can('view-all-outlet-floating-gate-pass')) {
@@ -88,7 +97,7 @@ class FloatingGatePassController extends Controller {
 				$img1 = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$img1_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/view.svg');
 				$output = '';
-				$output .= '<a href="#!/floating-gate-pass/view/' . $floating_gate_passes->id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				$output .= '<a href="#!/floating-gate-pass/view/' . $floating_gate_passes->job_card_id . '" id = "" title="View"><img src="' . $img1 . '" alt="View" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				return $output;
 			})
 			->make(true);

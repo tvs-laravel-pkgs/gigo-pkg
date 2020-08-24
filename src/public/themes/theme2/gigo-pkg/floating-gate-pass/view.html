@@ -5,14 +5,14 @@
         <div class="page-header-inner">
             <div class="page-header-content-left">
                 <div class="page-header-content button-block">
-                    <a href="#!/road-test-gate-pass/table-list" type="button" class="btn-back btn-img my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">
+                    <a href="#!/floating-gate-pass/table-list" type="button" class="btn-back btn-img my-tooltip" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left">
                         <img class="img-responsive" src="./public/theme/img/content/previous.svg" />
                     </a>
                 </div>
                 <div class="page-header-content title-block">
-                    <h1 class="title">Road Test Gate Pass</h1>
+                    <h1 class="title">Floating Gate Pass</h1>
                     <p class="subtitle">
-                        <a href="#!/road-test-gate-pass/table-list">Road Test Gate Pass </a> / View
+                        <a href="#!/floating-gate-pass/table-list">Floating Gate Pass </a> / View
                     </p>
                 </div>
             </div>
@@ -20,18 +20,18 @@
     </div><!-- Page Header -->
     <!-- Page Main Content -->
     <div class="page-main-content form-content">
-        <form id="road_test_gate_pass">
-            <input type="hidden" name="gate_pass_id" value="{{$ctrl.road_test_gate_pass.id}}">
-            <input ng-if="$ctrl.road_test_gate_pass.status_id==8301" type="hidden" name="type" value="In">
-            <input ng-if="$ctrl.road_test_gate_pass.status_id==8300" type="hidden" name="type" value="Out">
+        <form id="floating_gate_pass">
+            <input type="hidden" name="job_card_id" value="{{$ctrl.floating_gate_pass.id}}">
+            <input ng-if="$ctrl.floating_gate_pass.floating_gate_out_length == 0" type="hidden" name="type" value="In">
+            <input ng-if="$ctrl.floating_gate_pass.floating_gate_out_length > 0" type="hidden" name="type" value="Out">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="page-form pb-60">
                             <div class="row">
-                                <div class="col-lg-10">
-                                    <h5 class="font-semi-dark mb-0">{{$ctrl.road_test_gate_pass.job_order.vehicle ? $ctrl.road_test_gate_pass.job_order.vehicle.registration_number : '--'}}</h5>
-                                    <h6 class=""><b>{{$ctrl.road_test_gate_pass.job_order.vehicle.model ? $ctrl.road_test_gate_pass.job_order.vehicle.model.model_number : '--'}}</b></h6>
+                                <div class="col-lg-12">
+                                    <h5 class="font-semi-dark mb-0">{{$ctrl.floating_gate_pass.job_order.vehicle ? $ctrl.floating_gate_pass.job_order.vehicle.registration_number : '--'}}</h5>
+                                    <h6 class=""><b>{{$ctrl.floating_gate_pass.job_order.vehicle.model ? $ctrl.floating_gate_pass.job_order.vehicle.model.model_number : '--'}}</b></h6>
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="border-box">
@@ -41,35 +41,15 @@
                                                             <tbody>
                                                                 <tr>
                                                                     <td><b>Driver Name</b></td>
-                                                                    <td>{{$ctrl.road_test_gate_pass.job_order.road_test_prefered_by.name}}</td>
+                                                                    <td>{{$ctrl.floating_gate_pass.job_order.driver_name}}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td><b>Driver Mobile No</b></td>
-                                                                    <td>{{$ctrl.road_test_gate_pass.job_order.road_test_prefered_by.contact_number}}</td>
+                                                                    <td>{{$ctrl.floating_gate_pass.job_order.driver_mobile_number}}</td>
                                                                 </tr>
                                                                 <tr>
-                                                                    <td><b>Gate Pass No</b></td>
-                                                                    <td>{{$ctrl.road_test_gate_pass.number}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Job Order No</b></td>
-                                                                    <td>{{$ctrl.road_test_gate_pass.job_order.number}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Gate Out Date & Time</b></td>
-                                                                    <td>{{$ctrl.road_test_gate_pass.gate_out_date}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Gate In Date & Time</b></td>
-                                                                    <td>{{$ctrl.road_test_gate_pass.gate_in_date}}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><b>Status</b></td>
-                                                                    <td>{{$ctrl.road_test_gate_pass.status.name}}</td>
-                                                                </tr>
-                                                                <tr ng-if="$ctrl.road_test_gate_pass.gate_pass.status_id == 8302">
-                                                                    <td><b>Remarks</b></td>
-                                                                    <td>{{$ctrl.road_test_gate_pass.gate_out_remarks}}</td>
+                                                                    <td><b>Job Card No</b></td>
+                                                                    <td>{{$ctrl.floating_gate_pass.job_card_number}}</td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
@@ -88,13 +68,13 @@
                                                                         <td class="text-center">Chassis Image</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td><img class="img-responsive" src="{{$ctrl.road_test_gate_pass.gate_in_attachment_path}}/{{$ctrl.road_test_gate_pass.job_order.gate_log.vehicle_attachment.name}}" alt="Images" /></td>
+                                                                        <td><img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.vehicle_attachment.name}}" alt="Images" /></td>
                                                                         <td></td>
-                                                                        <td><img class="img-responsive" src="{{$ctrl.road_test_gate_pass.gate_in_attachment_path}}/{{$ctrl.road_test_gate_pass.job_order.gate_log.km_attachment.name}}" alt="Images" /></td>
+                                                                        <td><img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.km_attachment.name}}" alt="Images" /></td>
                                                                         <td>&nbsp;&nbsp;</td>
-                                                                        <td> <img class="img-responsive" src="{{$ctrl.road_test_gate_pass.gate_in_attachment_path}}/{{$ctrl.road_test_gate_pass.job_order.gate_log.driver_attachment.name}}" alt="Images" /></td>
+                                                                        <td> <img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.driver_attachment.name}}" alt="Images" /></td>
                                                                         <td></td>
-                                                                        <td><img class="img-responsive" src="{{$ctrl.road_test_gate_pass.gate_in_attachment_path}}/{{$ctrl.road_test_gate_pass.job_order.gate_log.chassis_attachment.name}}" alt="Images" /></td>
+                                                                        <td><img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.chassis_attachment.name}}" alt="Images" /></td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
@@ -104,11 +84,77 @@
                                             </div><!-- Border Box -->
                                         </div><!-- Column -->
                                     </div><!-- Row -->
-                                    <div class="row" ng-if="$ctrl.road_test_gate_pass.status_id == 8300">
+                                </div><!-- Column -->
+                                <div class="col-lg-12">
+                                    <br>
+                                    <h5 class="font-semi-dark mb-0">Floating Parts</h5>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="border-box">
+                                                <div class="row">
+                                                    <div class="container">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="table-responsive">
+                                                                    <table class="table table-dark-grey">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>
+                                                                                    Part Code
+                                                                                </th>
+                                                                                <th>
+                                                                                    Part Description
+                                                                                </th>
+                                                                                <th>
+                                                                                    Qty
+                                                                                </th>
+                                                                                <th>
+                                                                                    Outward Date
+                                                                                </th>
+                                                                                <th>
+                                                                                    Inward Date
+                                                                                </th>
+                                                                                <th>
+                                                                                    Status
+                                                                                </th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr ng-repeat="(key,float_log) in $ctrl.floating_gate_pass.float_logs">
+                                                                                <td>
+                                                                                    {{float_log.float_stock.part.code}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{float_log.float_stock.part.name}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{float_log.qty}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{float_log.outward_date}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{float_log.inward_date}}
+                                                                                </td>
+                                                                                <td>
+                                                                                    {{float_log.status.name}}
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div><!-- Column -->
+                                                        </div><!-- Row -->
+                                                    </div><!-- Container -->
+                                                </div><!-- Row -->
+                                            </div><!-- Border Box -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                    <div class="row" ng-if="$ctrl.floating_gate_pass.floating_gate_out_length > 0">
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label>Remarks</label>
-                                                <textarea class="form-control" ng-model="$ctrl.road_test_gate_pass.gate_out_remarks" rows="4" placeholder="Enter Remarks" name="gate_out_remarks"></textarea>
+                                                <textarea class="form-control" name="remarks" id="remarks" rows="4" placeholder="Enter Remarks"></textarea>
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                     </div><!-- Row -->
@@ -120,9 +166,10 @@
                 <div class="page-form-footer">
                     <div class="row">
                         <div class="col-md-12">
-                            <a href="#!/road-test-gate-pass/table-list" class="btn btn-bordered btn-grey">Cancel</a>
-                            <button class="btn btn-secondary-dark submit" ng-show="$ctrl.road_test_gate_pass.status_id==8301" ng-click="saveGatePass(1)">Confirm Gate In</button>
-                            <button class="btn btn-secondary-dark submit" ng-show="$ctrl.road_test_gate_pass.status_id==8300" ng-click="saveGatePass(2)">Confirm Gate Out</button>
+                            <a href="#!/floating-gate-pass/table-list" class="btn btn-bordered btn-grey">Cancel</a>
+                            <!-- <button class="btn btn-secondary-dark submit" ng-show="$ctrl.floating_gate_pass.status_id==8301" ng-click="saveGatePass(1)">Confirm Gate In</button> -->
+                            <!-- <button class="btn btn-secondary-dark submit" ng-show="$ctrl.floating_gate_pass.status_id==8300" ng-click="saveGatePass(2)">Confirm Gate Out</button> -->
+                            <button class="btn btn-secondary-dark submit" ng-show="$ctrl.floating_gate_pass.floating_gate_out_length > 0" ng-click="saveGatePass(2)">Confirm Gate Out</button>
                         </div>
                     </div>
                 </div><!-- Page Form Footer -->
@@ -136,9 +183,9 @@
             <div class="modal-body text-center">
                 <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
                 <h6 class="title"><b>Gate Out Success</b></h6>
-                <p class="info data">Vehicle successfully Road Test Gate Out</p>
-                <p class="info">Gate Pass No : {{$ctrl.road_test_gate_pass.number}}</span></p>
-                <p class="info">Reg No : {{$ctrl.road_test_gate_pass.job_order.vehicle ? $ctrl.road_test_gate_pass.job_order.vehicle.registration_number : '--'}}</p>
+                <p class="info data">Vehicle successfully Gate Out</p>
+                <p class="info">JobCard No : {{$ctrl.floating_gate_pass.job_card_number}}</span></p>
+                <p class="info">Reg No : {{$ctrl.floating_gate_pass.job_order.vehicle ? $ctrl.floating_gate_pass.job_order.vehicle.registration_number : '--'}}</p>
                 <div class="mt-30 mb-30">
                     <a href="javascript:;" class="btn btn-success btn-square btn-block" ng-click="reloadPage(1)"><b>Done</b></a>
                 </div><!-- Button -->
@@ -153,8 +200,8 @@
                 <img class="img-responsive img-center" src="./public/theme/img/content/success-green.svg" />
                 <h6 class="title"><b>Gate In Success</b></h6>
                 <p class="info data">Vehicle successfully Road Test Gate In</p>
-                <p class="info">Gate Pass No : {{$ctrl.road_test_gate_pass.number}}</span></p>
-                <p class="info">Reg No : {{$ctrl.road_test_gate_pass.job_order.vehicle ? $ctrl.road_test_gate_pass.job_order.vehicle.registration_number : '--'}}</p>
+                <p class="info">Gate Pass No : {{$ctrl.floating_gate_pass.job_card_number}}</span></p>
+                <p class="info">Reg No : {{$ctrl.floating_gate_pass.job_order.vehicle ? $ctrl.floating_gate_pass.job_order.vehicle.registration_number : '--'}}</p>
                 <div class="mt-30 mb-30">
                     <a href="javascript:;" class="btn btn-success btn-square btn-block" ng-click="reloadPage(2)"><b>Done</b></a>
                 </div><!-- Button -->

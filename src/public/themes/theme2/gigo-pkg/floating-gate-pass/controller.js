@@ -189,9 +189,9 @@ app.component('floatingGatePassTableList', {
                 { data: 'floating_gate_pass_no', name: 'floating_stock_logs.number' },
                 { data: 'job_card_number', name: 'job_cards.job_card_number' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
-                { data: 'outward_date', searchable: false  },
-                { data: 'inward_date', searchable: false  },
-                { data: 'status', searchable: false  },
+                { data: 'outward_date', searchable: false },
+                { data: 'inward_date', searchable: false },
+                { data: 'status', searchable: false },
 
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -278,7 +278,7 @@ app.component('floatingGatePassView', {
                 url: base_url + '/api/floating-gate-pass/view/get-data',
                 type: "POST",
                 data: {
-                    'gate_pass_id': $routeParams.id,
+                    'id': $routeParams.id,
                 },
                 dataType: "json",
                 beforeSend: function(xhr) {
@@ -289,8 +289,8 @@ app.component('floatingGatePassView', {
                         showErrorNoty(response);
                         return;
                     }
-                    self.road_test_gate_pass = response.road_test_gate_pass;
-                    if (self.road_test_gate_pass.status_id == 8300) { //Gate Out Pending
+                    self.floating_gate_pass = response.floating_gate_pass;
+                    if (self.floating_gate_pass.status_id == 8300) { //Gate Out Pending
                         self.type = 'Out';
                     } else {
                         self.type = 'In';
@@ -306,7 +306,7 @@ app.component('floatingGatePassView', {
 
         //Save Form Data 
         $scope.saveGatePass = function(id) {
-            var form_id = '#road_test_gate_pass';
+            var form_id = '#floating_gate_pass';
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
@@ -364,11 +364,11 @@ app.component('floatingGatePassView', {
             $('#gate_out_confirm_notification').modal('hide');
             $('body').removeClass('modal-open');
             $('.modal-backdrop').remove();
-            if (id == 1) {
-                window.location = "#!/floating-gate-pass/table-list";
-            } else {
-                $scope.fetchData();
-            }
+            // if (id == 1) {
+            // window.location = "#!/floating-gate-pass/table-list";
+            // } else {
+            $scope.fetchData();
+            // }
         }
     }
 });

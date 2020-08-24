@@ -60,4 +60,8 @@ class FloatingGatePass extends BaseModel {
 	public function status() {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
+
+	public function floatStock() {
+		return $this->belongsTo('App\FloatStock', 'floating_stock_id');
+	}
 }

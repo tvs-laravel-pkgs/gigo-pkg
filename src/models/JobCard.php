@@ -130,6 +130,10 @@ class JobCard extends BaseModel {
 		return $this->hasOne('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 228)->where('attachment_type_id', 255);
 	}
 
+	public function floatLogs() {
+		return $this->hasMany('App\FloatingGatePass');
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {

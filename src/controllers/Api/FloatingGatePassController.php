@@ -4,8 +4,7 @@ namespace Abs\GigoPkg\Api;
 
 use App\FloatingGatePass;
 use App\Http\Controllers\Controller;
-use App\JobOrder;
-use App\TradePlateNumber;
+use App\JobCard;
 use App\User;
 use Auth;
 use Carbon\Carbon;
@@ -30,17 +29,24 @@ class FloatingGatePassController extends Controller {
 				'job_cards.job_card_number as job_card_number',
 				'floating_stock_logs.number as floating_gate_pass_no',
 				'floating_stock_logs.status_id',
-				'configs.name as status',
+				// 'configs.name as status',
+				'job_cards.id as job_card_id',
 				'vehicles.registration_number',
 				'models.model_name as model',
 				'job_orders.driver_name',
 				'job_orders.driver_mobile_number',
 				DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y, %h:%s %p") as date_and_time'),
+				DB::raw('CASE
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8300" THEN floating_stock_logs.status_id END )) > 0 THEN "Gate Out Pending"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8303" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Partial Completed"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8302" THEN floating_stock_logs.status_id END )) =  count(floating_stock_logs.id) THEN "GateIn Success"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8301" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Pending"
+                        ELSE "Gate Out Pending" END AS status'),
 			])
 				->join('job_cards', 'floating_stock_logs.job_card_id', 'job_cards.id')
 				->join('job_orders', 'job_cards.job_order_id', 'job_orders.id')
 				->join('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
-				->join('configs', 'configs.id', 'floating_stock_logs.status_id')
+			// ->join('configs', 'configs.id', 'floating_stock_logs.status_id')
 				->join('models', 'models.id', 'vehicles.model_id')
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
@@ -71,6 +77,7 @@ class FloatingGatePassController extends Controller {
 						$query->where('floating_stock_logs.status_id', $request->status_id);
 					}
 				})
+				->groupBy('floating_stock_logs.job_card_id')
 				->orderBy('floating_stock_logs.created_at', 'DESC')
 			;
 
@@ -115,37 +122,61 @@ class FloatingGatePassController extends Controller {
 	public function getFloatingGatePassViewData(Request $r) {
 		// dd($r->all());
 		try {
-
-			$road_test_gate_pass = RoadTestGatePass::with([
+			$floating_gate_pass = JobCard::with([
 				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
-				'jobOrder.roadTestPreferedBy',
 				'jobOrder.gateLog',
 				'jobOrder.gateLog.vehicleAttachment',
 				'jobOrder.gateLog.kmAttachment',
 				'jobOrder.gateLog.driverAttachment',
 				'jobOrder.gateLog.chassisAttachment',
-				'status',
+				'floatLogs',
+				'floatLogs.floatStock',
+				'floatLogs.floatStock.part',
+				'floatLogs.status',
 			])
-				->find($r->gate_pass_id);
+				->find($r->id);
 
-			if (!$road_test_gate_pass) {
+			if (!$floating_gate_pass) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
-					'error' => [
-						'Road Test Gate Pass Not Found!',
-					],
+					'errors' => ['Job Card Not Found!'],
 				]);
 			}
 
-			$road_test_gate_pass->gate_in_attachment_path = url('storage/app/public/gigo/gate_in/attachments/');
+			// $floating_gate_pass = FloatingGatePass::with([
+			// 	'jobCard',
+			// 	'jobCard.jobOrder',
+			// 	'jobCard.jobOrder.vehicle',
+			// 	'jobCard.jobOrder.vehicle.model',
+			// 	'jobCard.jobOrder.roadTestPreferedBy',
+			// 	'jobCard.jobOrder.gateLog',
+			// 	'jobCard.jobOrder.gateLog.vehicleAttachment',
+			// 	'jobCard.jobOrder.gateLog.kmAttachment',
+			// 	'jobCard.jobOrder.gateLog.driverAttachment',
+			// 	'jobCard.jobOrder.gateLog.chassisAttachment',
+			// 	'status',
+			// ])
+			// 	->find($r->gate_pass_id);
+
+			// if (!$floating_gate_pass) {
+			// 	return response()->json([
+			// 		'success' => false,
+			// 		'error' => 'Validation Error',
+			// 		'error' => [
+			// 			'Floating Gate Pass Not Found!',
+			// 		],
+			// 	]);
+			// }
+			$floating_gate_pass->floating_gate_out_length = FloatingGatePass::where('status_id', 8300)->count();
+
+			$floating_gate_pass->gate_in_attachment_path = url('storage/app/public/gigo/gate_in/attachments/');
 
 			return response()->json([
 				'success' => true,
-				'road_test_gate_pass' => $road_test_gate_pass,
-				// 'customer_detail' => $customer,
+				'floating_gate_pass' => $floating_gate_pass,
 			]);
 
 		} catch (\Exception $e) {
@@ -163,16 +194,16 @@ class FloatingGatePassController extends Controller {
 		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
-				'gate_pass_id' => [
+				'job_card_id' => [
 					'required',
 					'integer',
-					'exists:road_test_gate_pass,id',
+					'exists:job_cards,id',
 				],
 				'type' => [
 					'required',
 					'string',
 				],
-				'gate_out_remarks' => [
+				'remarks' => [
 					'nullable',
 				],
 			]);
@@ -186,33 +217,31 @@ class FloatingGatePassController extends Controller {
 			}
 
 			DB::beginTransaction();
-			$gate_pass = RoadTestGatePass::find($request->gate_pass_id);
-			if ($gate_pass) {
-				if ($request->type == 'Out') {
-					$gate_pass->gate_out_date = Carbon::now();
-					$gate_pass->gate_out_remarks = $request->gate_out_remarks ? $request->gate_out_remarks : NULL;
-					$gate_pass->status_id = 8301;
-				} else {
-					$gate_pass->gate_in_date = Carbon::now();
-					$gate_pass->status_id = 8302;
-
-					$job_order = JobOrder::where('id', $gate_pass->job_order_id)->first();
-
-					//TradePlateNUmber Status Update
-					$trade_plate_number = TradePlateNumber::where('id', $job_order->road_test_trade_plate_number_id)->update(['status_id' => 8240, 'updated_at' => Carbon::now()]);
-				}
-				$gate_pass->updated_by_id = Auth::user()->id;
-				$gate_pass->updated_at = Carbon::now();
-				$gate_pass->save();
+			if ($request->type == 'Out') {
+				//Update Floating gatepass status
+				FloatingGatePass::where('job_card_id', $request->job_card_id)->where('status_id', 8300)->update(['status_id' => 8301, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now(), 'outward_date' => Carbon::now(), 'outward_remarks' => $request->remarks ? $request->remarks : NULL]);
 			}
+			// $gate_pass = FloatingGatePass::find($request->gate_pass_id);
+			// if ($gate_pass) {
+			// 	if ($request->type == 'Out') {
+			// 		$gate_pass->outward_date = Carbon::now();
+			// 		$gate_pass->outward_remarks = $request->gate_out_remarks ? $request->gate_out_remarks : NULL;
+			// 		$gate_pass->status_id = 8301;
+			// 	} else {
+			// 		$gate_pass->inward_date = Carbon::now();
+			// 		$gate_pass->status_id = 8302;
+			// 	}
+			// 	$gate_pass->updated_by_id = Auth::user()->id;
+			// 	$gate_pass->updated_at = Carbon::now();
+			// 	$gate_pass->save();
+			// }
 
 			DB::commit();
 
 			return response()->json([
 				'success' => true,
-				'gate_pass' => $gate_pass,
 				'type' => $request->type,
-				'message' => 'Road Test Gate ' . $request->type . ' successfully completed !!',
+				'message' => 'Floating Gate ' . $request->type . ' successfully completed !!',
 			]);
 
 		} catch (\Exception $e) {
