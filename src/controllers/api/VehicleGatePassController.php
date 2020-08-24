@@ -136,6 +136,7 @@ class VehicleGatePassController extends Controller {
 				'chassisAttachment',
 				'status',
 				'gatePass',
+				'gatePass.status',
 				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
