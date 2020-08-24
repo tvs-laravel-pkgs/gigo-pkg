@@ -16,8 +16,8 @@ app.component('warrantyJobOrderRequestForm', {
             $location.path('/login');
             return;
         }
-        $scope.saveTempData = function(){
-            $localstorage.setObject('ppr',$scope.warranty_job_order_request);
+        $scope.saveTempData = function() {
+            $localstorage.setObject('ppr', $scope.warranty_job_order_request);
             $location.path('/warranty-job-order-request/table-list');
         };
 
@@ -105,7 +105,7 @@ app.component('warrantyJobOrderRequestForm', {
                     } else {
                         self.is_registered = 1;
                         $scope.warranty_job_order_request = $localstorage.getObject('ppr');
-                        if(!$scope.warranty_job_order_request){
+                        if (!$scope.warranty_job_order_request) {
                             $scope.warranty_job_order_request = {
                                 wjor_repair_orders: [],
                                 wjor_parts: [],
@@ -696,6 +696,7 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.requestTypeChanges = function() {
+            $scope.warranty_job_order_request.wjor_repair_orders = [];
             $scope.warranty_job_order_request.wjor_parts = [];
             $scope.warranty_job_order_request.total_part_cushioning_percentage = 0;
             $scope.warranty_job_order_request.total_part_cushioning_charge = 0;
