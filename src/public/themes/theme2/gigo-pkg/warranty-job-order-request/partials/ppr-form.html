@@ -1037,7 +1037,7 @@
                                             Last lube change on failed aggregate(KM)
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input type="text" class="form-control" autocomplete="off" name="last_lube_changed" ng-model="warranty_job_order_request.last_lube_changed" maxlength="6" />
+                                        <input id="last_lube_changed" type="text" class="form-control" autocomplete="off" name="last_lube_changed" ng-model="warranty_job_order_request.last_lube_changed" maxlength="6" />
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3">
@@ -1104,7 +1104,7 @@
                                             </span>
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input type="text" class="form-control" autocomplete="off" name="failed_at" ng-model="warranty_job_order_request.failed_at" maxlength="6" />
+                                        <input ng-blur="failedAtKeyup()" id="failed_at" type="text" class="form-control" autocomplete="off" name="failed_at" ng-model="warranty_job_order_request.failed_at" maxlength="6" />
                                     </div><!-- Feild -->
                                 </li>
                             </ul>

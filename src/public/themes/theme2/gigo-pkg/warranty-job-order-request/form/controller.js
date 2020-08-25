@@ -758,6 +758,15 @@ app.component('warrantyJobOrderRequestForm', {
             console.log($scope.warranty_job_order_request.estimate_total);
         }
 
+        $scope.failedAtKeyup = function() {
+            $failed_at = parseInt($scope.warranty_job_order_request.failed_at);
+            $last_lube_changed = parseInt($scope.warranty_job_order_request.last_lube_changed);
+            $reading_type_id = $scope.warranty_job_order_request.reading_type_id
+            if ($reading_type_id == 8040 && $failed_at < $last_lube_changed) {
+                custom_noty('error', 'Failed KM Value Should be Greater than Last lube change');
+            }
+        }
+
         // Main Form Submit -------------------------------------
 
         var form_id1 = '#form';
@@ -862,7 +871,14 @@ app.component('warrantyJobOrderRequestForm', {
                     required: true,
                     // digits: true,
                     minlength: 2,
-                    maxlength: 10,
+                    // maxlength: 10,
+                    maxlength: function() {
+                        if ($scope.warranty_job_order_request.reading_type_id == 8040) {
+                            return 4;
+                        } else {
+                            return 2;
+                        }
+                    },
                 },
                 'failed_at': {
                     required: true,

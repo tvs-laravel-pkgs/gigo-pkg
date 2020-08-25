@@ -410,11 +410,11 @@ class WarrantyJobOrderRequest extends BaseModel {
 					'code' => $input['customer_code'],
 				]);
 			}
-			if(!$customer){
-				return response()->json([
+			if (!$customer) {
+				return [
 					'success' => false,
 					'error' => 'Kindly select customer',
-				]);
+				];
 
 			}
 			$customer->name = $input['customer_name'];
@@ -450,11 +450,11 @@ class WarrantyJobOrderRequest extends BaseModel {
 					'engine_number' => $input['engine_number'],
 				]);
 			}
-			if(!$vehicle){
-				return response()->json([
+			if (!$vehicle) {
+				return [
 					'success' => false,
 					'error' => 'Kindly select vehicle',
-				]);
+				];
 
 			}
 			$vehicle->chassis_number = $input['chassis_number'];
@@ -480,17 +480,33 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'vehicle_id' => $vehicle->id,
 				'customer_id' => $customer->id,
 			])->first();
+
+			$vehicle_ownership_latest = VehicleOwner::where([
+				'vehicle_id' => $vehicle->id,
+			])->orderBy('ownership_id', 'desc')->first();
+
+			$ownership_id = 8160;
+
+			if ($vehicle_ownership_latest != null && $vehicle_ownership_latest->ownership_id == 8164) {
+				return [
+					'success' => false,
+					'error' => 'Vehicle Owner Cannot be added, Please choose different Customer.',
+				];
+			} else if ($vehicle_ownership_latest != null && $vehicle_ownership_latest->ownership_id < 8164) {
+				$ownership_id = $vehicle_ownership_latest->ownership_id + 1;
+			}
+			// dd($ownership_id, $vehicle_owner, $vehicle->id);
 			if ($vehicle_owner == null) {
 				//NEW OWNER
 				$vehicle_owner = new VehicleOwner;
 				$vehicle_owner->vehicle_id = $vehicle->id;
 				$vehicle_owner->from_date = Carbon::now();
 				$vehicle_owner->created_by_id = Auth::id();
-				$vehicle_owner->ownership_id = 8160;
+				$vehicle_owner->ownership_id = $ownership_id; //8160;
 			} else {
 				$vehicle_owner->updated_by_id = Auth::id();
 				$vehicle_owner->updated_at = Carbon::now();
-				$vehicle_owner->ownership_id = 8161;
+				// $vehicle_owner->ownership_id = 8161;
 			}
 
 			$vehicle_owner->customer_id = $customer->id;
