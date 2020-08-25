@@ -254,6 +254,30 @@ class VehicleGatePassController extends Controller {
 			$gate_out_data['gate_pass_no'] = !empty($gate_pass->number) ? $gate_pass->number : NULL;
 			$gate_out_data['registration_number'] = !empty($gate_log->jobOrder->vehicle) ? $gate_log->jobOrder->vehicle->registration_number : NULL;
 
+			if ($gate_out_data['registration_number']) {
+				$number = $gate_out_data['registration_number'];
+			} else {
+				if ($gate_log->jobOrder->vehicle->chassis_number) {
+					$number = $gate_log->jobOrder->vehicle->chassis_number;
+				} else {
+					$number = $gate_log->jobOrder->vehicle->engine_number;
+				}
+			}
+
+			$message = 'Dear Customer, Greetings! Your vehicle ' . $number . ' has successfully Gate out from TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A');
+
+			//Send SMS to Driver
+			if ($gate_log->jobOrder->driver_mobile_number) {
+				$msg = sendSMSNotification($gate_log->jobOrder->driver_mobile_number, $message);
+			}
+
+			//Send SMS to Customer
+			if ($gate_log->jobOrder->customer) {
+				if ($gate_log->jobOrder->customer->mobile_no) {
+					$msg = sendSMSNotification($gate_log->jobOrder->customer->mobile_no, $message);
+				}
+			}
+
 			return response()->json([
 				'success' => true,
 				'gate_out_data' => $gate_out_data,
