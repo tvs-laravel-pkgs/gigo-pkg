@@ -39,7 +39,7 @@
                                         <div class="col-md-12">
                                             <h5 class="color-primary mb-10"><b>Customer Estimation Approval</b></h5>
                                             <hr class="hr-15"><!-- Separater -->
-                                            <div class="photo-sign-wrap" style="width: 100%;height: 500px">
+                                            <div class="photo-sign-wrap">
                                                 <div class="photo-sign-caption">Customer Photo</div>
                                                 <div class="row">
                                                     <div class="col-md-6">
@@ -48,7 +48,7 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <img ng-if="job_order.customer_approval_attachment.length > 0" src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_approval_attachment[0].name}}" id="customer_pic" height="360" width="100%">
-                                                        <canvas ng-show="$ctrl.screenShot" id="canvas" width="550" height="360"></canvas>
+                                                        <canvas ng-show="$ctrl.screenShot" id="canvas" class="canvs-img" width="100%" height="360"></canvas>
                                                     </div>
                                                 </div>
                                                 <!-- <div class="col-md-12">
@@ -63,7 +63,7 @@
                                             </div><!-- Photo Sign Wrap -->
                                         </div><!-- Column -->
                                         <div class="col-md-12">
-                                            <div class="photo-sign-wrap" style="width: 100%;height: 300px">
+                                            <div class="photo-sign-wrap">
                                                 <div id="signArea">
                                                     <div class="photo-sign-caption">Customer E Sign</div>
                                                     <br>
@@ -71,7 +71,7 @@
                                                         <div class="sig sigWrapper" style="height:auto;">
                                                             <div class="typed"></div>
                                                             <!-- <canvas class="sign-pad" id="sign-pad" width="300" height="100"></canvas> -->
-                                                            <canvas id="signature" width="450" height="150" style="border: 1px solid #ddd;"></canvas>
+                                                            <canvas id="signature" class="canvs-sign" width="100%" height="150" style="border: 1px solid #ddd;"></canvas>
                                                             <input type="hidden" name="customer_e_sign" value="" id="customer_sign">
                                                         </div>
                                                         <button id="clear-signature">Clear</button>
