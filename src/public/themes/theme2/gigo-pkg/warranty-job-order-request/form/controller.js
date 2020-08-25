@@ -283,8 +283,9 @@ app.component('warrantyJobOrderRequestForm', {
             console.log(vehicle);
             if (vehicle) {
                 if (vehicle.vehicle_owners) {
-                    $scope.warranty_job_order_request.job_order.customer = vehicle.vehicle_owners[0].customer;
-                    $scope.customerChanged(vehicle.vehicle_owners[0].customer);
+                    $len = vehicle.vehicle_owners.length - 1;
+                    $scope.warranty_job_order_request.job_order.customer = vehicle.vehicle_owners[$len].customer;
+                    $scope.customerChanged(vehicle.vehicle_owners[$len].customer);
                     // $scope.warranty_job_order_request.customer_address
                 }
                 if (vehicle.bharat_stage == null && vehicle.sold_date != null) {
