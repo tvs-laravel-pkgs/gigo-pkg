@@ -495,7 +495,7 @@ class JobCardController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('my-jobcard')) {
+				if (Entrust::can('mobile-my-job-cards')) {
 					$output .= '<a href="#!/my-jobcard/view/' . $user_id . '/' . $my_job_table_list->id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
 
 				}

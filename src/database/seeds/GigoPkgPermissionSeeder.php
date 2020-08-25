@@ -1158,13 +1158,13 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'Attendance',
 			],
 			[
-				'display_order' => 99,
-				'parent' => 'mobile-permissions',
+				'display_order' => 2,
+				'parent' => 'kanban-app',
 				'name' => 'mobile-my-job-cards',
 				'display_name' => 'My Job Cards',
 			],
 			[
-				'display_order' => 1,
+				'display_order' => 3,
 				'parent' => 'kanban-app',
 				'name' => 'mobile-my-time-sheet',
 				'display_name' => 'My Time Sheet',

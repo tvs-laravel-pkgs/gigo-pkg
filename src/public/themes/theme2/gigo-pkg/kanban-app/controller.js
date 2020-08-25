@@ -4,6 +4,7 @@ app.component('kanbanApp', {
     controller: function($http, $location, HelperService, $scope, $rootScope, $route, $routeParams) {
         $scope.loading = true;
         var self = this;
+        self.hasPermission = HelperService.hasPermission;
         $scope.hasPerm = HelperService.hasPerm;
         //self.user = $scope.user = HelperService.getLoggedUser();
         $scope.user = JSON.parse(localStorage.getItem('user'));

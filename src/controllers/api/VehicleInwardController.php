@@ -1062,7 +1062,7 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		try {
 
-			$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*', 'job_order_parts.id as job_order_part_id')->where('job_order_parts.job_order_id', $request->id)->whereNull('removal_reason_id')->get();
+			$job_order_parts = Part::join('job_order_parts', 'job_order_parts.part_id', 'parts.id')->where('job_order_parts.job_order_id', $request->id)->whereNull('removal_reason_id')->where('job_order_parts.is_customer_approved', 1)->select('parts.*', 'job_order_parts.id as job_order_part_id')->get();
 
 			$repair_order_mechanics = User::leftJoin('repair_order_mechanics', 'repair_order_mechanics.mechanic_id', 'users.id')
 				->leftJoin('job_order_repair_orders', 'job_order_repair_orders.id', 'repair_order_mechanics.job_order_repair_order_id')->select('users.*')

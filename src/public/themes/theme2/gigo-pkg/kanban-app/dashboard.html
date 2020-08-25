@@ -45,7 +45,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <ul class="flex-row ">
-                                    <li class="flex-col-4 mb-20">
+                                    <li class="flex-col-4 mb-20" ng-if="$ctrl.hasPermission('mobile-attendanace')">
                                         <div class="white-box-wrap">
                                             <!-- <a href=".#!/gigo-pkg/kanban-app/attendance/scan-qr" ng-if="hasPerm('mobile-attendanace')"><img class="img-responsive img-center" src="./public/theme/img/content/attendance.svg" alt="Attendance" /> -->
                                             <a href=".#!/kanban-app/attendance/scan-qr">
@@ -54,7 +54,7 @@
                                             </a>
                                         </div><!-- White Box Wrap -->
                                     </li>
-                                    <li class="flex-col-4 mb-20">
+                                    <li class="flex-col-4 mb-20" ng-if="$ctrl.hasPermission('mobile-my-job-cards')">
                                         <div class="white-box-wrap">
                                             <a href=".#!/kanban-app/my-job-card/scan-qr">
                                                 <img class="img-responsive img-center" src="./public/theme/img/content/job-card.svg" alt="Job cards" />
@@ -62,7 +62,7 @@
                                             </a>
                                         </div><!-- White Box Wrap -->
                                     </li>
-                                    <li class="flex-col-4 mb-20">
+                                    <li class="flex-col-4 mb-20" ng-if="$ctrl.hasPermission('mobile-my-time-sheet')">
                                         <div class="white-box-wrap">
                                             <!-- <a href=".#!/my-jobcard/timesheet-list/{{user.employee.id}}"> -->
                                             <a href=".#!/kanban-app/my-time-sheet/scan-qr">

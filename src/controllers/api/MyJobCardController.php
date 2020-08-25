@@ -154,7 +154,7 @@ class MyJobCardController extends Controller {
 
 				if ($my_job_order->status_id == 8263) {
 					$mechanic_time_log = MechanicTimeLog::select('start_date_time', 'end_date_time')->where('repair_order_mechanic_id', $my_job_order->id)->get()->toArray();
-					$total_hours = '00:00:00';
+					$total_hours = '00:00';
 					if ($mechanic_time_log) {
 						foreach ($mechanic_time_log as $key => $repair_order_mechanic_time_log) {
 							$time1 = strtotime($repair_order_mechanic_time_log['start_date_time']);
@@ -169,8 +169,9 @@ class MyJobCardController extends Controller {
 
 						$hour = $format_change[0];
 						$minutes = $format_change[1];
-						$seconds = $format_change[2];
-						$total_hours = $hour . ':' . $minutes . ':' . $seconds;
+						// $seconds = $format_change[2];
+						// $total_hours = $hour . ':' . $minutes . ':' . $seconds;
+						$total_hours = $hour . ':' . $minutes;
 						unset($duration);
 					}
 					$my_job_order->total_time = $total_hours;
@@ -320,8 +321,9 @@ class MyJobCardController extends Controller {
 
 				$hour = $format_change[0] . 'h';
 				$minutes = $format_change[1] . 'm';
-				$seconds = $format_change[2] . 's';
-				$total_hours = $hour . ' ' . $minutes . ' ' . $seconds;
+				// $seconds = $format_change[2] . 's';
+				// $total_hours = $hour . ' ' . $minutes . ' ' . $seconds;
+				$total_hours = $hour . ' ' . $minutes;
 				unset($duration);
 			}
 

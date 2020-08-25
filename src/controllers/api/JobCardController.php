@@ -78,6 +78,7 @@ class JobCardController extends Controller {
 				'job_cards.bay_id',
 				'job_orders.id as job_order_id',
 				'job_cards.created_at',
+				'job_cards.status_id',
 				'vehicles.registration_number',
 				'models.model_name as vehicle_model',
 				'customers.name as customer_name',
