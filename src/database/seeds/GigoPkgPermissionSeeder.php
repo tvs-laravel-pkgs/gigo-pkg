@@ -1427,6 +1427,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 			],
 
 			//Inward Vehicle and Job Card Tab Permissions
+			//Inward
 			[
 				'display_order' => 99,
 				'parent' => null,
@@ -1673,6 +1674,7 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'inward-job-card-tab-estimation-status-view',
 				'display_name' => 'View',
 			],
+			//Jobcard
 			[
 				'display_order' => 15,
 				'parent' => 'inward-job-card-tabs',
@@ -1824,14 +1826,20 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'display_name' => 'PDF',
 			],
 			[
-				'display_order' => 99,
+				'display_order' => 24,
 				'parent' => 'inward-job-card-tabs',
+				'name' => 'inward-job-card-tab-floating-work',
+				'display_name' => 'Floating Work',
+			],
+			[
+				'display_order' => 99,
+				'parent' => 'inward-job-card-tab-floating-work',
 				'name' => 'inward-job-card-tab-floating-work-edit',
 				'display_name' => 'Floating Work Edit',
 			],
 			[
 				'display_order' => 99,
-				'parent' => 'inward-job-card-tabs',
+				'parent' => 'inward-job-card-tab-floating-work',
 				'name' => 'inward-job-card-tab-floating-work-view',
 				'display_name' => 'Floating Work View',
 			],

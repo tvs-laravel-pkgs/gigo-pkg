@@ -136,10 +136,17 @@
                                                 </div>
                                             </div>
                                             <div class="card-box-footer-right">
-                                                <a href=".#!/job-card/bay-view/{{job_card.job_card_id}}" class="btn btn-square btn-md btn-red">
-                                                    View
-                                                </a>
-                                                <a ng-show="!job_card.bay_id" href="#!/job-card/assign-bay/{{job_card.job_card_id}}" class="btn btn-square btn-md btn-secondary-dark">Assign Bay</a>
+                                                <span ng-if="$ctrl.hasPermission('inward-job-card-tab-bay-edit')">
+                                                    <a href=".#!/job-card/bay-view/{{job_card.job_card_id}}" class="btn btn-square btn-md btn-red">
+                                                        View
+                                                    </a>
+                                                    <a ng-show="!job_card.bay_id" href="#!/job-card/assign-bay/{{job_card.job_card_id}}" class="btn btn-square btn-md btn-secondary-dark">Assign Bay</a>
+                                                </span>
+                                                <span ng-if="!$ctrl.hasPermission('inward-job-card-tab-bay-edit') && (job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226 || job_card.status_id == 8228)">
+                                                    <a href=".#!/job-card/split-order/{{job_card.job_card_id}}" class="btn btn-square btn-md btn-red">
+                                                        View
+                                                    </a>
+                                                </span>
                                             </div>
                                         </div><!-- Card Box Footer -->
                                     </div><!-- Card Box -->

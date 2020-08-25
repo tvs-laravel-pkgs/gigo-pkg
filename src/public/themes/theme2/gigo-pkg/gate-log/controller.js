@@ -40,8 +40,6 @@ app.component('gateLogList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getGateLogList'],
                 type: "GET",

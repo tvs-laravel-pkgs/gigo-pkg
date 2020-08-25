@@ -119,14 +119,12 @@ class JobCardController extends Controller {
 
 		if (!Entrust::can('view-overall-outlets-job-card')) {
 			if (Entrust::can('view-mapped-outlet-job-card')) {
-
 				$job_cards->whereIn('job_cards.outlet_id', Auth::user()->employee->outlets->pluck('id')->toArray());
 			} else if (Entrust::can('view-own-outlet-job-card')) {
 				$job_cards->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')");
 			} else {
-				$job_cards->where('job_cards.floor_supervisor_id', Auth::user()->id);
+				$job_cards->where('job_cards.outlet_id', Auth::user()->working_outlet_id);
 			}
-
 		}
 
 		$job_cards->groupBy('job_cards.id')
@@ -145,9 +143,15 @@ class JobCardController extends Controller {
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
 				if (Entrust::can('job-cards')) {
-					$output .= '<a href="#!/job-card/bay-view/' . $job_card->job_card_id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
-					if (!$job_card->bay_id) {
-						$output .= '<a href="#!/job-card/assign-bay/' . $job_card->job_card_id . '"  class="btn btn-secondary-dark btn-sm">Assign Bay</a>';
+					if (Entrust::can('inward-job-card-tab-bay-edit')) {
+						$output .= '<a href="#!/job-card/bay-view/' . $job_card->job_card_id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
+						if (!$job_card->bay_id) {
+							$output .= '<a href="#!/job-card/assign-bay/' . $job_card->job_card_id . '"  class="btn btn-secondary-dark btn-sm">Assign Bay</a>';
+						}
+					} else {
+						if ($job_card->status_id == 8224 || $job_card->status_id == 8225 || $job_card->status_id == 8226 || $job_card->status_id == 8228) {
+							$output .= '<a href="#!/job-card/split-order/' . $job_card->job_card_id . '" class=""><img class="img-responsive" src="' . $img1 . '" alt="View" /></a>';
+						}
 					}
 				}
 

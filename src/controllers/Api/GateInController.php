@@ -521,18 +521,28 @@ class GateInController extends Controller {
 			$gate_in_data['registration_number'] = $regis_number;
 
 			if ($regis_number != '-') {
-				$message = 'Dear Customer,Greetings! Your vehicle ' . $vehicle->registration_number . ' has arrived in TVS Service Center-' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A');
-
-				//Send SMS to Driver
-				if ($request->driver_mobile_number) {
-					$msg = sendSMSNotification($request->driver_mobile_number, $message);
+				$number = $regis_number;
+			} else {
+				if ($vehicle->chassis_number) {
+					$gate_in_data['registration_number'] = $vehicle->chassis_number;
+					$number = $vehicle->chassis_number;
+				} else {
+					$gate_in_data['registration_number'] = $vehicle->engine_number;
+					$number = $vehicle->engine_number;
 				}
+			}
 
-				//Send SMS to Customer
-				if ($job_order->customer) {
-					if ($job_order->customer->mobile_no) {
-						$msg = sendSMSNotification($job_order->customer->mobile_no, $message);
-					}
+			$message = 'Dear Customer, Greetings! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A');
+
+			//Send SMS to Driver
+			if ($request->driver_mobile_number) {
+				$msg = sendSMSNotification($request->driver_mobile_number, $message);
+			}
+
+			//Send SMS to Customer
+			if ($job_order->customer) {
+				if ($job_order->customer->mobile_no) {
+					$msg = sendSMSNotification($job_order->customer->mobile_no, $message);
 				}
 			}
 

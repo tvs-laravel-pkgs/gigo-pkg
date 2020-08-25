@@ -8,115 +8,115 @@
                         Job Order 
                     </a>
                 </li> -->
-                <li ng-class="{active:active_tab == 'schedule-maintendance'}">
+                <li ng-class="{active:active_tab == 'schedule-maintendance'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-view')">
                     <a class="filter" href=".#!/job-card/schedule-maintenance/{{job_card_id}}">
                         Scheduled Maintenance
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'labour-parts'}">
+                <li ng-class="{active:active_tab == 'labour-parts'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-other-labour-parts-edit')">
                     <a class="filter" href=".#!/job-card/payable-labour-parts/{{job_card_id}}">
                         Additional Labour & Parts
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'bay'}">
+                <li ng-class="{active:active_tab == 'bay'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-bay')">
                     <a class="filter" href=".#!/job-card/bay-view/{{job_card_id}}">
                         Bay
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'schedules'}">
+                <li ng-class="{active:active_tab == 'schedules'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-schedules')">
                     <a class="filter" href=".#!/job-card/schedule/{{job_card_id}}">
                         Schedules</a>
                 </li>
-                <li ng-class="{active:active_tab == 'floating-work'}">
+                <li ng-class="{active:active_tab == 'floating-work'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-floating-work')">
                     <a class="filter" href=".#!/job-card/floating-work/{{job_card_id}}">
                         Floating Works</a>
                 </li>
-                <li ng-class="{active:active_tab == 'part-indent'}">
+                <li ng-class="{active:active_tab == 'part-indent'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-part-indent')">
                     <a class="filter" href=".#!/job-card/part-indent/{{job_card_id}}">
                         Part Indent
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'material-gatepass'}">
+                <li ng-class="{active:active_tab == 'material-gatepass'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-osl')">
                     <a class="filter" href=".#!/job-card/material-gatepass/{{job_card_id}}">
                         OSL
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'split-order'}" ng-if="job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226 || job_card.status_id == 8228">
+                <li ng-class="{active:active_tab == 'split-order'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-split-order') && (job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226 || job_card.status_id == 8228)">
                     <a class="filter" href=".#!/job-card/split-order/{{job_card_id}}">
                         Split Order
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'returnable-items'}">
+                <li ng-class="{active:active_tab == 'returnable-items'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-returnable-items')">
                     <a class="filter" href=".#!/job-card/returnable-item/{{job_card_id}}">
                         Returnable Items
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'bill-detail'}" ng-if="job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226 || job_card.status_id == 8228">
+                <li ng-class="{active:active_tab == 'bill-detail'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-bill-details') && (job_card.status_id == 8224 || job_card.status_id == 8225 || job_card.status_id == 8226 || job_card.status_id == 8228)">
                     <a class="filter" href=".#!/job-card/bill-detail/{{job_card_id}}">
                         Bill Details
                     </a>
                 </li>
-                <!-- <li ng-class="{active:active_tab == 'estimate-status'}" ng-if="!$ctrl.view_only_part_indent">
+                <!-- <li ng-class="{active:active_tab == 'estimate-status'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-view')">
                     <a class="filter" href=".#!/job-card/estimate-status/{{job_card_id}}">
                         Estimation Status
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'estimate'}" ng-if="!$ctrl.view_only_part_indent">
+                <li ng-class="{active:active_tab == 'estimate'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-estimation-status-view')">
                     <a class="filter" href=".#!/job-card/estimate/{{job_card_id}}">
                         Estimate
                     </a>
                 </li> -->
-                <li ng-class="{active:active_tab == 'dms-checklist'}">
+                <li ng-class="{active:active_tab == 'dms-checklist'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-service-package-details-view')">
                     <a class="filter" href=".#!/job-card/dms-checklist/{{job_card_id}}">
                         Service Package Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'vehicle-inspection'}">
+                <li ng-class="{active:active_tab == 'vehicle-inspection'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-inspection-report-view')">
                     <a class="filter" href=".#!/job-card/vehicle-inspection/{{job_card_id}}">
                         Vehicle Inspection Report
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'expert-diagnosis'}">
+                <li ng-class="{active:active_tab == 'expert-diagnosis'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-expert-diagnosis-report-view')">
                     <a class="filter" href=".#!/job-card/expert-diagnosis/{{job_card_id}}">
                         Expert Diagnosis
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'road-test'}">
+                <li ng-class="{active:active_tab == 'road-test'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-road-test-view')">
                     <a class="filter" href=".#!/job-card/road-test-observation/{{job_card_id}}">
                         Road Test
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'capture-voc'}">
+                <li ng-class="{active:active_tab == 'capture-voc'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-capture-voc-view')">
                     <a class="filter" href=".#!/job-card/capture-voc/{{job_card_id}}">
                         Capture VOC
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'inventory'}">
+                <li ng-class="{active:active_tab == 'inventory'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-inventory-view')">
                     <a class="filter" href=".#!/job-card/inventory/{{job_card_id}}">
                         Inventory
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'order-detail'}">
+                <li ng-class="{active:active_tab == 'order-detail'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-order-details-view')">
                     <a class="filter" href=".#!/job-card/order-detail/{{job_card_id}}">
                         Order Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'customer-detail'}">
+                <li ng-class="{active:active_tab == 'customer-detail'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-customer-details-view')">
                     <a class="filter" href=".#!/job-card/customer-detail/{{job_card_id}}">
                         Customer Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'vehicle-detail'}">
+                <li ng-class="{active:active_tab == 'vehicle-detail'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-details-view')">
                     <a class="filter" href=".#!/job-card/vehicle-detail/{{job_card_id}}">
                         Vehicle Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'gatein-detail'}">
+                <li ng-class="{active:active_tab == 'gatein-detail'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-gate-in-details')">
                     <a class="filter" href=".#!/job-card/gatein-detail/{{job_card_id}}">
                         Gate In Details
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'pdf'}">
+                <li ng-class="{active:active_tab == 'pdf'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-pdf')">
                     <a class="filter" href=".#!/job-card/pdf/{{job_card_id}}">
                         PDF
                     </a>

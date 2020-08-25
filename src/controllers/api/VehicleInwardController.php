@@ -2567,7 +2567,7 @@ class VehicleInwardController extends Controller {
 				$job_order_part->estimate_order_id = $estimate_order_id;
 			}
 
-			$part_mrp = $part->partStock ? ($part->partStock->stock == 0 ? $request->mrp : $part->partStock->mrp) : $request->mrp;
+			$part_mrp = $request->mrp ? $request->mrp : 0;
 			$job_order_part->job_order_id = $request->job_order_id;
 			$job_order_part->part_id = $request->part_id;
 			$job_order_part->is_customer_approved = 0;

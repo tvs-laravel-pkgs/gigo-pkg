@@ -160,12 +160,13 @@ class JobCardController extends Controller {
 			if (!Entrust::can('view-overall-outlets-job-card')) {
 				if (Entrust::can('view-mapped-outlet-job-card')) {
 					$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
-					array_push($outlet_ids, Auth::user()->employee->outlet_id);
+					// array_push($outlet_ids, Auth::user()->employee->outlet_id);
 					$job_card_list->whereIn('job_cards.outlet_id', $outlet_ids);
 				} else if (Entrust::can('view-own-outlet-job-card')) {
 					$job_card_list->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)->whereRaw("IF (job_cards.`status_id` = '8220', job_cards.`floor_supervisor_id` IS  NULL, job_cards.`floor_supervisor_id` = '" . $request->floor_supervisor_id . "')");
 				} else {
-					$job_card_list->where('job_cards.floor_supervisor_id', Auth::user()->id);
+					// $job_card_list->where('job_cards.floor_supervisor_id', Auth::user()->id);
+					$job_card_list->where('job_cards.outlet_id', Auth::user()->working_outlet_id);
 				}
 			}
 
@@ -2628,6 +2629,7 @@ class JobCardController extends Controller {
 			'parts_total_amount' => $result['part_amount'],
 			'job_card' => $job_card,
 			'send_approval_status' => $send_approval_status,
+			'labours' => $result['labours'],
 		]);
 
 		// return response()->json([
@@ -2679,6 +2681,7 @@ class JobCardController extends Controller {
 		$part_amount = 0;
 
 		$labour_details = array();
+		$labours = array();
 		if ($job_order->jobOrderRepairOrders) {
 			foreach ($job_order->jobOrderRepairOrders as $key => $value) {
 				$labour_details[$key]['id'] = $value->id;
@@ -2703,6 +2706,10 @@ class JobCardController extends Controller {
 				} else {
 					$labour_details[$key]['amount'] = 0;
 				}
+
+				$labours[$key]['id'] = $value->repair_order_id;
+				$labours[$key]['code'] = $value->repairOrder->code;
+				$labours[$key]['name'] = $value->repairOrder->name;
 			}
 		}
 
@@ -2743,6 +2750,7 @@ class JobCardController extends Controller {
 		$result['labour_amount'] = $labour_amount;
 		$result['part_amount'] = $part_amount;
 		$result['total_amount'] = $total_amount;
+		$result['labours'] = $labours;
 
 		return $result;
 	}

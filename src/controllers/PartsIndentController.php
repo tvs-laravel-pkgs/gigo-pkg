@@ -150,7 +150,9 @@ class PartsIndentController extends Controller {
 				$view_img = asset("/public/theme/img/table/view.svg");
 				$output = '';
 				if (Entrust::can('view-parts-indent')) {
-					$output .= '<a href="#!/part-indent/vehicle/view/' . $job_cards->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_hover_img . '" onmouseout=this.src="' . $view_img . '"></a>';
+					if ($job_cards->job_card_number || $job_cards->job_order_status == 8472) {
+						$output .= '<a href="#!/part-indent/vehicle/view/' . $job_cards->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_hover_img . '" onmouseout=this.src="' . $view_img . '"></a>';
+					}
 				}
 				return $output;
 			})

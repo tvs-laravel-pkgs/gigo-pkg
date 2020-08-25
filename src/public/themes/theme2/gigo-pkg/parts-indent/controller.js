@@ -604,10 +604,16 @@ app.component('partsIndentPartsView', {
         $scope.showPartForm = function(part) {
             // console.log(part);
             self.repair_order_ids = [];
+            $scope.part_mrp = 0;
+            $scope.part_id = '';
             $job_order_part_id = part.job_order_part_id;
             if (part == false) {
                 $scope.parts_indent = {};
             } else {
+
+                $scope.part_mrp = part.rate;
+                $scope.part_id = part.id;
+
                 angular.forEach(part.repair_order, function(part, key) {
                     self.repair_order_ids.push(part.id)
                 });
@@ -704,7 +710,13 @@ app.component('partsIndentPartsView', {
             }
             PartSvc.read(part.id)
                 .then(function(response) {
-                    $scope.parts_indent.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
+                    // $scope.parts_indent.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
+                    $scope.parts_indent.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+
+                    if (part.id == $scope.part_id) {
+                        $scope.parts_indent.part.mrp = $scope.part_mrp;
+                    }
+
                     $scope.parts_indent.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
                     $scope.parts_indent.part.qty = $qty;

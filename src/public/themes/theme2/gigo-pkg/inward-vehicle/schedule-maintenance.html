@@ -9,7 +9,6 @@
     opacity: 0.5;
     /*cursor: not-allowed;*/
 }
-
 </style>
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
@@ -446,7 +445,7 @@
                                         Part Code
                                         <span class="mandatory">*</span>
                                     </label>
-                                    <md-autocomplete md-selected-item="schedule_maintainance_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="4" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
+                                    <md-autocomplete md-selected-item="schedule_maintainance_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="4" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="partSelected(part)">
                                         <md-item-template>
                                             <span>
                                                 {{part.code}} / {{part.name}}
@@ -457,7 +456,6 @@
                                         </md-not-found>
                                     </md-autocomplete>
                                     <input type="hidden" name="part_id" value="{{schedule_maintainance_part.part.id}}">
-                                    <input type="hidden" name="mrp" value="{{schedule_maintainance_part.part.mrp}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
                             <div class="col-md-4">
@@ -501,10 +499,10 @@
                                 <li class="view-col-4">
                                     <span class="view-col-label">MRP</span>
                                     <!-- <span class="view-data-list-value">{{schedule_maintainance_part.part.mrp | currency}}</span> -->
-
                                     <input class="form-control" ng-if="available_quantity == 0" ng-model="schedule_maintainance_part.part.mrp" type="text" name="mrp" value="{{schedule_maintainance_part.part.mrp}}" ng-keyup="calculatePartAmount()" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
-                                    
-                                    <span ng-if="available_quantity != 0"  class="view-data-list-value">{{schedule_maintainance_part.part.mrp | currency}}</span>
+                                    <span ng-if="available_quantity != 0" class="view-data-list-value">
+                                        <input class="form-control" ng-if="available_quantity != 0" type="hidden" name="mrp" value="{{schedule_maintainance_part.part.mrp}}">
+                                        {{schedule_maintainance_part.part.mrp | currency}}</span>
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">UOM</span>

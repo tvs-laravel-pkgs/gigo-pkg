@@ -43,8 +43,6 @@ app.component('jobCardTableList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getJobCardTableList'],
                 type: "GET",
@@ -1824,6 +1822,8 @@ app.component('jobCardPayableLabourPartsForm', {
                     $scope.labour_total_amount = res.labour_total_amount;
                     $scope.job_card = res.job_card;
                     $scope.send_approval_status = res.send_approval_status;
+                    $scope.labours = res.labours;
+                    self.repair_order_ids = [];
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1984,7 +1984,13 @@ app.component('jobCardPayableLabourPartsForm', {
             PartSvc.read(part.id)
                 .then(function(response) {
                     console.log(response);
-                    $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
+                    // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? (response.data.part.part_stock.stock != 0 ? response.data.part.part_stock.mrp : (response.data.part.job_order_parts.length != 0 ? response.data.part.job_order_parts[0].rate : '0')) : '0';
+                    $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.stock > 0 ? response.data.part.part_stock.mrp : '0' : '0';
+
+                    if (part.id == $scope.part_id) {
+                        $scope.schedule_maintainance_part.part.mrp = $scope.part_mrp;
+                    }
+
                     // $scope.schedule_maintainance_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.mrp : '0';
                     $scope.schedule_maintainance_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : '0';
                     $scope.available_quantity = response.data.part.part_stock ? response.data.part.part_stock.stock : '0';
@@ -2053,9 +2059,17 @@ app.component('jobCardPayableLabourPartsForm', {
         $scope.showPartForm = function(part_index, part = null) {
             $scope.schedule_maintainance_part = [];
             $scope.job_order_part_id = '';
+            $scope.part_mrp = 0;
+            $scope.part_id = '';
             if (part_index === false) {
                 // $scope.part_details = {};
             } else {
+                $scope.part_mrp = part.rate;
+                $scope.part_id = part.part_id;
+
+                angular.forEach(part.repair_order, function(part, key) {
+                    self.repair_order_ids.push(part.id)
+                });
                 $scope.repair_orders = part.repair_order;
                 console.log($scope.repair_orders);
                 if (part.split_order_type_id != null) {
