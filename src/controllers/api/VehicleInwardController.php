@@ -3806,7 +3806,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			$extras = [
-				'part_list' => Part::getList(),
+				'part_list' => Part::getListWithStock(),
 				'split_order_list' => SplitOrderType::get(),
 			];
 
