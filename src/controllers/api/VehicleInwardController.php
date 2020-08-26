@@ -6220,6 +6220,35 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	public function getPartsSearchList(Request $request) {
+		// dd($request->all());
+		$key = $request->key;
+		$list = [];
+
+		if ($key) {
+			$list = Part::select(
+				'parts.id',
+				'parts.name',
+				'parts.code',
+				'part_stocks.stock',
+				'part_stocks.mrp'
+			)
+				->leftJoin('part_stocks', function ($join) {
+					$join->on('part_stocks.part_id', 'parts.id')
+						->where('outlet_id', Auth::user()->employee->outlet_id);
+				})
+				->where(function ($q) use ($key) {
+					$q->where('parts.code', 'like', $key . '%')
+						->orWhere('parts.name', 'like', '%' . $key . '%')
+					;
+				})
+				->orderBy('parts.name')
+				->get();
+		}
+
+		return response()->json($list);
+	}
+
 	//GATE IN DETAIL
 	// public function getGateInDetail(Request $r) {
 	// 	try {

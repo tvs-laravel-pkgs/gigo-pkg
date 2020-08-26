@@ -164,6 +164,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('gate-in-entry/create', 'GateInController@createGateInEntry');
 		Route::post('gatelog/vehicle/search', 'GateInController@getVehicleSearchList');
 
+		//PART SEARCH
+		Route::post('vehicle-inward/part/search', 'VehicleInwardController@getPartsSearchList');
+
 		//VEHICLE INWARD
 		Route::post('vehicle-inward/get', 'VehicleInwardController@getGateInList');
 
