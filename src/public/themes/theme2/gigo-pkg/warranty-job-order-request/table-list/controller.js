@@ -81,6 +81,12 @@ app.component('warrantyJobOrderRequestTableList', {
             serverSide: true,
             paging: true,
             stateSave: true,
+            fixedHeader: {
+                header: true,
+                footer: true
+            },
+            // scrollY: '500px',
+            scrollX: true,
             scrollY: table_scroll + "px",
             scrollCollapse: true,
             ajax: {
@@ -108,7 +114,7 @@ app.component('warrantyJobOrderRequestTableList', {
                 { data: 'status', name: 'configs.name' },
                 { data: 'requested_by', name: 'users.name' },
                 { data: 'customer_name', name: 'customers.name' },
-                { data: 'model_number', name: 'models.model_number' },
+                { data: 'mod_name', name: 'mod.model_name' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'chassis_number', name: 'vehicles.chassis_number' },
             ],

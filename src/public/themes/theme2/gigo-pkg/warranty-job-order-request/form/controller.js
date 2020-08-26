@@ -949,6 +949,8 @@ app.component('warrantyJobOrderRequestForm', {
                             $('.submit').button('reset');
 
                             showNoty('success', 'Warranty job order request saved successfully');
+                            $localstorage.remove('ppr');
+
                             $location.path('/warranty-job-order-request/table-list');
                             $scope.$apply();
                         })
@@ -965,6 +967,7 @@ app.component('warrantyJobOrderRequestForm', {
                 //     });
             }
         });
+
         self.searchCity = function(query) {
             if (query) {
                 return new Promise(function(resolve, reject) {

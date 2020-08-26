@@ -525,10 +525,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 				$jobOrderNumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
 				if (!$jobOrderNumber['success']) {
-					return response()->json([
+					return [
 						'success' => false,
 						'error' => 'No serial number configured for Job Order. FY : ' . $financial_year->code . ' Outlet : ' . $branch->code,
-					]);
+					];
 				}
 
 				if (isset($input['customer_id'])) {
@@ -599,10 +599,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$record->created_by_id = Auth::id();
 				$pprNumber = SerialNumberGroup::generateNumber(30, $financial_year->id, $branch->state_id, $branch->id);
 				if (!$pprNumber['success']) {
-					return response()->json([
+					return [
 						'success' => false,
 						'error' => 'No serial number configured for PPR . FY : ' . $financial_year->code . ' Outlet : ' . $branch->code,
-					]);
+					];
 				}
 				$record->number = $pprNumber['number'];
 

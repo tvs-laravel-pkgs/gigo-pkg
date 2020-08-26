@@ -39,7 +39,8 @@ class WarrantyJobOrderRequestController extends Controller {
 			'customers.name as customer_name',
 			'vehicles.chassis_number',
 			'vehicles.registration_number',
-			'models.model_number',
+			// 'models.model_number',
+			'mod.model_name as mod_name',
 			DB::raw('CONCAT(users.name," / ",users.username) as requested_by'),
 			'warranty_job_order_requests.status_id',
 			'configs.name as status',
@@ -48,11 +49,12 @@ class WarrantyJobOrderRequestController extends Controller {
 			->leftJoin('outlets', 'outlets.id', 'job_orders.outlet_id')
 			->leftJoin('customers', 'customers.id', 'job_orders.customer_id')
 			->leftJoin('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
-			->leftJoin('models', 'models.id', 'vehicles.model_id')
+			->leftJoin('models as mod', 'mod.id', 'vehicles.model_id')
 			->leftJoin('configs', 'configs.id', 'warranty_job_order_requests.status_id')
 			->leftJoin('users', 'users.id', 'warranty_job_order_requests.created_by_id')
 		;
 
+		// dd($list_data->get()->toArray());
 		if ($request->request_date != null) {
 			$date = date('Y-m-d', strtotime($request->request_date));
 			$list_data->whereDate('warranty_job_order_requests.created_at', $date);
@@ -64,7 +66,7 @@ class WarrantyJobOrderRequestController extends Controller {
 			$list_data->where('customers.id', $request->customer_id);
 		}
 		if ($request->model_id != null) {
-			$list_data->where('models.id', $request->model_id);
+			$list_data->where('mod.id', $request->model_id);
 		}
 		if ($request->job_card_no != null) {
 			$list_data->where('job_orders.number', 'like', '%' . $request->job_card_no . '%');
