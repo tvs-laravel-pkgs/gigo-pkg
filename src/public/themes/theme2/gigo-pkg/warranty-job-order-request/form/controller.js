@@ -760,12 +760,15 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.failedAtKeyup = function() {
+            $isValidFailedAt = true;
             $failed_at = parseInt($scope.warranty_job_order_request.failed_at);
             $last_lube_changed = parseInt($scope.warranty_job_order_request.last_lube_changed);
             $reading_type_id = $scope.warranty_job_order_request.reading_type_id
             if ($reading_type_id == 8040 && $failed_at < $last_lube_changed) {
                 custom_noty('error', 'Failed KM Value Should be Greater than Last lube change');
+                $isValidFailedAt = false;
             }
+            return false;
         }
 
         // Main Form Submit -------------------------------------
@@ -922,36 +925,39 @@ app.component('warrantyJobOrderRequestForm', {
                 custom_noty('error', 'You have errors, Please check all tabs');
             },
             submitHandler: function(form) {
-                let formData = new FormData($(form_id1)[0]);
-                $('.submit').button('loading');
-                $.ajax({
-                        url: base_url + '/api/warranty-job-order-request/save',
-                        method: "POST",
-                        data: formData,
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
-                        },
-                        processData: false,
-                        contentType: false,
-                    })
-                    .done(function(res) {
-                        if (!res.success) {
-                            showErrorNoty(res);
+                $scope.failedAtKeyup();
+                if ($isValidFailedAt == true) {
+                    let formData = new FormData($(form_id1)[0]);
+                    $('.submit').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/warranty-job-order-request/save',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                $('.submit').button('reset');
+
+                                return;
+                            }
                             $('.submit').button('reset');
 
-                            return;
-                        }
-                        $('.submit').button('reset');
+                            showNoty('success', 'Warranty job order request saved successfully');
+                            $location.path('/warranty-job-order-request/table-list');
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
 
-                        showNoty('success', 'Warranty job order request saved successfully');
-                        $location.path('/warranty-job-order-request/table-list');
-                        $scope.$apply();
-                    })
-                    .fail(function(xhr) {
-                        $('.submit').button('reset');
-
-                        custom_noty('error', 'Something went wrong at server');
-                    });
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
                 // WarrantyJobOrderRequestSvc.save($scope.warranty_job_order_request)
                 //     .then(function(response) {
                 //         showNoty('success', 'Warranty job order request saved successfully');
