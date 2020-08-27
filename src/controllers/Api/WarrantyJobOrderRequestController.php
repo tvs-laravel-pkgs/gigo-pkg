@@ -33,7 +33,8 @@ class WarrantyJobOrderRequestController extends Controller {
 		$list_data = WarrantyJobOrderRequest::select([
 			'warranty_job_order_requests.id',
 			'warranty_job_order_requests.number',
-			'job_orders.number as job_card_number',
+			// 'job_orders.number as job_card_number',
+			'job_cards.job_card_number',
 			DB::raw('DATE_FORMAT(warranty_job_order_requests.created_at,"%d/%m/%Y %h:%i %p") as request_date'),
 			'outlets.code as outlet_name',
 			'customers.name as customer_name',
@@ -46,6 +47,7 @@ class WarrantyJobOrderRequestController extends Controller {
 			'configs.name as status',
 		])
 			->leftJoin('job_orders', 'job_orders.id', 'warranty_job_order_requests.job_order_id')
+			->leftJoin('job_cards', 'job_cards.job_order_id', 'job_orders.id')
 			->leftJoin('outlets', 'outlets.id', 'job_orders.outlet_id')
 			->leftJoin('customers', 'customers.id', 'job_orders.customer_id')
 			->leftJoin('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
@@ -69,7 +71,8 @@ class WarrantyJobOrderRequestController extends Controller {
 			$list_data->where('mod.id', $request->model_id);
 		}
 		if ($request->job_card_no != null) {
-			$list_data->where('job_orders.number', 'like', '%' . $request->job_card_no . '%');
+			$list_data->where('job_cards.job_card_number', 'like', '%' . $request->job_card_no . '%');
+			//job_orders.number
 		}
 
 		/*
