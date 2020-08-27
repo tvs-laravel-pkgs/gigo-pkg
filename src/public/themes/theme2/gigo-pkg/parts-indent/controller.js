@@ -464,6 +464,8 @@ app.component('partsIndentPartsView', {
             }
         });
 
+        self.part_type = 1;
+
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
@@ -492,6 +494,7 @@ app.component('partsIndentPartsView', {
                     $scope.issued_parts_list = res.issued_parts_list;
                     $scope.labours = res.labours;
                     $scope.floating_part_logs = res.floating_part_logs;
+                    $scope.floating_parts = res.floating_parts;
 
                     if (res.job_order.job_card) {
                         if (res.job_order.job_card.status_id == '8227') {

@@ -333,12 +333,29 @@ input[type=number] {
                         <input type="hidden" name="job_order_id" value="{{job_order.id}}">
                         <input type="hidden" name="job_order_returned_part_id" value="{{$ctrl.job_order_returned_part_id}}">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label>
-                                        Part
+                                        Part Type
                                     </label>
-                                    <md-select ng-model="parts_indent.return_part" placeholder="Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                    <div class="common-radio-button type-4">
+                                        <input type="radio" id="regular" name="part_type" ng-value="1" value="1" ng-value="1" value="1" ng-model="$ctrl.part_type">
+                                        <label for="regular">
+                                            Regular Stock
+                                        </label>
+                                        <input type="radio" id="floating" name="part_type" ng-value="0" value="0" ng-model="$ctrl.part_type">
+                                        <label for="floating">
+                                            Floating Stock
+                                        </label>
+                                    </div>
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-6" ng-if="$ctrl.part_type == 1">
+                                <div class="form-group">
+                                    <label>
+                                        Part <sup class="mandatory">*</sup>
+                                    </label>
+                                    <md-select ng-model="parts_indent.return_part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                         <md-select-header class="demo-select-header">
                                             <input ng-model="searchreturnPartKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
                                         </md-select-header>
@@ -352,10 +369,29 @@ input[type=number] {
                                     <input type="hidden" name="part_id" value="{{parts_indent.return_part.id}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
-                            <div class="col-md-4">
+                            <div class="col-md-6" ng-if="$ctrl.part_type != 1">
                                 <div class="form-group">
                                     <label>
-                                        Employee
+                                        Part <sup class="mandatory">*</sup>
+                                    </label>
+                                    <md-select ng-model="floating_part" placeholder="Select Floating Part" data-md-container-class="selectdemoSelectHeader">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchreturnFloatPartKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="floating_part" ng-repeat="floating_part in floating_parts | filter:searchreturnFloatPartKey">
+                                                {{floating_part.name}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="floating_stock_id" class="required" value="{{floating_part.floating_stock_id}}">
+                                    <input type="hidden" name="floating_gate_pass_id" class="required" value="{{floating_part.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>
+                                        Employee <sup class="mandatory">*</sup>
                                     </label>
                                     <md-select ng-model="parts_indent.employee" placeholder="Employee" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                         <md-select-header class="demo-select-header">
@@ -363,14 +399,14 @@ input[type=number] {
                                         </md-select-header>
                                         <md-optgroup>
                                             <md-option ng-value="employee" ng-repeat="employee in repair_order_mechanics | filter:searchreturnEmployeeKey">
-                                                {{employee.name}}
+                                                {{employee.ecode}} / {{employee.name}}
                                             </md-option>
                                         </md-optgroup>
                                     </md-select>
                                     <input type="hidden" name="returned_to_id" value="{{parts_indent.employee.id}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Quantity <sup class="mandatory">*</sup></label>
                                     <input type="number" name="returned_qty" ng-model="parts_indent.return_part.qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Quantity" autocomplete="off" />

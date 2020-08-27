@@ -701,14 +701,14 @@ app.component('vehicleServiceScheduleForm', {
                     });
             });
         }
-        $scope.partSelected  = function(part) {
+        $scope.partSelected = function(part) {
             if (!part) {
                 return;
             }
             PartSvc.read(part.id)
                 .then(function(response) {
-                    $scope.service_type_part.part.mrp = response.data.part.part_stock.mrp;
-                    $scope.service_type_part.part.total_amount = response.data.part.part_stock.cost_price;
+                    $scope.service_type_part.part.mrp = response.data.part.part_stock ? response.data.part.part_stock.mrp : 0;
+                    $scope.service_type_part.part.total_amount = response.data.part.part_stock ? response.data.part.part_stock.cost_price : 0;
                     $scope.service_type_part.part.qty = 1;
                     // $scope.service_type_part.part.total_amount = $scope.service_type_part.part.qty * $scope.service_type_part.part.mrp;
                     /*$scope.service_type_part.rate = part.mrp;

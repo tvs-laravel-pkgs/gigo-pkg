@@ -842,6 +842,7 @@ class VehicleInwardController extends Controller {
 			$repair_order_mechanics = array();
 			$indent_part_logs = array();
 			$issued_parts_list = array();
+			$floating_parts = array();
 
 			if ($job_order->jobCard) {
 				$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*', 'job_order_parts.id as job_order_part_id')->where('job_order_parts.job_order_id', $r->id)->whereNull('removal_reason_id')->get();
@@ -897,6 +898,10 @@ class VehicleInwardController extends Controller {
 						'job_order_parts.removal_reason_id'
 
 					)->union($indent_part_logs_issues)->orderBy('date', 'DESC')->get();
+
+				$floating_parts = collect(FloatingGatePass::join('floating_stocks', 'floating_stocks.id', 'floating_stock_logs.floating_stock_id')->join('parts', 'parts.id', 'floating_stocks.part_id')
+						->where('floating_stock_logs.job_card_id', $job_order->jobCard->id)->where('floating_stock_logs.status_id', 11163)->select('floating_stock_logs.floating_stock_id', 'floating_stock_logs.qty as qty',
+						DB::RAW('CONCAT(parts.code," / ",parts.name) as name'), 'floating_stock_logs.id')->get())->prepend(['floating_stock_id' => '', 'name' => 'Select Part']);
 			}
 
 			//Floating Parts
@@ -907,13 +912,12 @@ class VehicleInwardController extends Controller {
 				->select(DB::raw('"Floating Part Issue" as transaction_type'), DB::raw('"In Stock" as issue_mode'), 'parts.code', 'parts.name', 'users.name as mechanic', 'floating_stock_logs.qty as qty', 'floating_stock_logs.id', 'floating_stock_logs.status_id', DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y") as date'))
 				->get();
 
-			// dd($floating_part_logs);
-
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
 				'part_details' => $part_details,
 				'floating_part_logs' => $floating_part_logs,
+				'floating_parts' => $floating_parts,
 				// 'part_amount' => $part_amount,
 				'job_order_parts' => $job_order_parts,
 				'repair_order_mechanics' => $repair_order_mechanics,
@@ -935,62 +939,126 @@ class VehicleInwardController extends Controller {
 	public function saveReturnPart(Request $request) {
 		// dd($request->all());
 		try {
-			$validator = Validator::make($request->all(), [
-				'job_order_part_id' => [
-					'required',
-					'integer',
-					'exists:job_order_parts,id',
-				],
-				'returned_to_id' => [
-					'required',
-					'integer',
-					'exists:users,id',
-				],
-				'returned_qty' => [
-					'required',
-					'numeric',
-				],
+			if ($request->part_type == 1) {
+				$validator = Validator::make($request->all(), [
+					'job_order_part_id' => [
+						'required',
+						'integer',
+						'exists:job_order_parts,id',
+					],
+					'returned_to_id' => [
+						'required',
+						'integer',
+						'exists:users,id',
+					],
+					'returned_qty' => [
+						'required',
+						'numeric',
+					],
 
-			]);
-
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
 				]);
-			}
 
-			DB::beginTransaction();
-			// $job_order_returned_part = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->first();
-			$job_order_returned_part = JobOrderReturnedPart::find($request->job_order_returned_part_id);
-			if ($job_order_returned_part == null) {
-				$job_order_returned_part = new JobOrderReturnedPart;
-				$job_order_returned_part->created_by_id = Auth::id();
-				$job_order_returned_part->created_at = Carbon::now();
-			} else {
-				$job_order_returned_part->updated_by_id = Auth::id();
-				$job_order_returned_part->updated_at = Carbon::now();
-			}
-			$job_order_returned_part->fill($request->all());
-			$job_order_returned_part->save();
-
-			$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->sum('issued_qty');
-
-			$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->sum('returned_qty');
-
-			$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
-
-			if ($issued_qty > 0) {
-				if ($returned_qty > $issued_qty) {
+				if ($validator->fails()) {
 					return response()->json([
 						'success' => false,
-						'message' => 'Returning Quantity should not exceed Issued Quantity',
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
 					]);
 				}
-			}
 
-			DB::commit();
+				DB::beginTransaction();
+				// $job_order_returned_part = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->first();
+				$job_order_returned_part = JobOrderReturnedPart::find($request->job_order_returned_part_id);
+				if ($job_order_returned_part == null) {
+					$job_order_returned_part = new JobOrderReturnedPart;
+					$job_order_returned_part->created_by_id = Auth::id();
+					$job_order_returned_part->created_at = Carbon::now();
+				} else {
+					$job_order_returned_part->updated_by_id = Auth::id();
+					$job_order_returned_part->updated_at = Carbon::now();
+				}
+				$job_order_returned_part->fill($request->all());
+				$job_order_returned_part->save();
+
+				$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->sum('issued_qty');
+
+				$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->sum('returned_qty');
+
+				$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
+
+				if ($issued_qty > 0) {
+					if ($returned_qty > $issued_qty) {
+						return response()->json([
+							'success' => false,
+							'message' => 'Returning Quantity should not exceed Issued Quantity',
+						]);
+					}
+				}
+
+				DB::commit();
+
+			} else {
+				$validator = Validator::make($request->all(), [
+					'floating_gate_pass_id' => [
+						'required',
+						'integer',
+						'exists:floating_stock_logs,id',
+					],
+					'floating_stock_id' => [
+						'required',
+						'integer',
+						'exists:floating_stocks,id',
+					],
+					'returned_to_id' => [
+						'required',
+						'integer',
+						'exists:users,id',
+					],
+					'returned_qty' => [
+						'required',
+						'numeric',
+					],
+
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				DB::beginTransaction();
+
+				$floating_stock = FloatingGatePass::where('id', $request->floating_gate_pass_id)->first();
+
+				if ($request->returned_qty > 0) {
+					if ($request->returned_qty > $floating_stock->qty) {
+						return response()->json([
+							'success' => false,
+							'message' => 'Returning Quantity should not exceed Issued Quantity',
+						]);
+					}
+				}
+
+				$floating_stock->inward_date = date('Y-m-d h:i:s');
+				$floating_stock->returned_to_id = $request->returned_to_id;
+				$floating_stock->status_id = 11165;
+				$floating_stock->updated_by_id = Auth::user()->id;
+				$floating_stock->updated_at = Carbon::now();
+				$floating_stock->save();
+
+				//Update Stock
+				$floating_part = FloatStock::where('id', $floating_stock->floating_stock_id)->first();
+				$floating_part->issued_qty = $floating_part->issued_qty - $request->returned_qty;
+				$floating_part->available_qty = $floating_part->available_qty + $request->returned_qty;
+				$floating_part->updated_by_id = Auth::user()->id;
+				$floating_part->updated_at = Carbon::now();
+				$floating_part->save();
+
+				DB::commit();
+			}
 
 			return response()->json([
 				'success' => true,
@@ -1257,8 +1325,6 @@ class VehicleInwardController extends Controller {
 		try {
 
 			if ($request->part_type == 1) {
-				dump('Regular Stock');
-				dd($request->all());
 				$validator = Validator::make($request->all(), [
 					'job_order_part_id' => [
 						'required',
