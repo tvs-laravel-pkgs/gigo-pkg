@@ -4865,8 +4865,8 @@ app.component('inwardVehicleCustomerConfirmationForm', {
                         })
                         .done(function(res) {
                             $('.btn-prev').unbind('click', false);
+                            $('.submit').button('reset');
                             if (!res.success) {
-                                $('.submit').button('reset');
                                 showErrorNoty(res);
                                 return;
                             }
