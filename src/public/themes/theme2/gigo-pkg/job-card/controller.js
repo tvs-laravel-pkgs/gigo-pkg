@@ -2823,7 +2823,7 @@ app.component('jobCardFloatingForm', {
         //FETCH DATA
         $scope.fetchData = function() {
             $.ajax({
-                    url: base_url + '/api/job-card/labour-assignment/get-form-data',
+                    url: base_url + '/api/job-card/floating-work/get-form-data',
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id
@@ -2838,11 +2838,42 @@ app.component('jobCardFloatingForm', {
                         return;
                     }
                     console.log(res);
-                    $scope.job_card = res.job_card_view;
-                    $scope.job_completed_status = res.job_completed_status;
+                    $scope.job_card = res.job_card;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
+
+        $scope.saveFloatingGatePass = function() {
+            $('.confirm_gatepass').button('loading');
+            $.ajax({
+                    url: base_url + '/api/job-card/floating-gatepass/status/update',
+                    method: "POST",
+                    data: {
+                        id: $routeParams.job_card_id,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    $('.confirm_gatepass').button('reset');
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+
+                    custom_noty('success', res.message);
+                    $("#confirmation_modal").modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
+                    $scope.fetchData();
+                })
+                .fail(function(xhr) {
+                    $('.confirm_gatepass').button('reset');
                     custom_noty('error', 'Something went wrong at server');
                 });
         }

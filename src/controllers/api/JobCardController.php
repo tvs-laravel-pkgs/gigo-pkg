@@ -24,6 +24,7 @@ use App\Customer;
 use App\Employee;
 use App\Entity;
 use App\FinancialYear;
+use App\FloatingGatePass;
 use App\GigoInvoice;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WpoSoapController;
@@ -881,6 +882,95 @@ class JobCardController extends Controller {
 				'job_card' => $job_card,
 				'extras' => $extras,
 			]);
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	//FLOATING WORK
+	public function floatingWorkFormData(Request $r) {
+		// dd($r->all());
+		try {
+			//JOB CARD
+			$job_card = JobCard::with([
+				'status',
+				'jobOrder',
+				'jobOrder.vehicle',
+				'jobOrder.vehicle.model',
+			])->find($r->id);
+
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Job Card Not Found!',
+					],
+				]);
+			}
+
+			$job_card->floating_parts = $floating_parts = FloatingGatePass::join('floating_stocks', 'floating_stocks.id', 'floating_stock_logs.floating_stock_id')
+				->join('parts', 'parts.id', 'floating_stocks.part_id')
+				->join('users', 'floating_stock_logs.issued_to_id', 'users.id')
+				->join('configs', 'configs.id', 'floating_stock_logs.status_id')
+				->where('floating_stock_logs.job_card_id', $r->id)
+				->select('parts.code', 'parts.name', 'users.name as mechanic', 'floating_stock_logs.qty as qty', 'floating_stock_logs.id', 'floating_stock_logs.status_id', 'floating_stock_logs.number', DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y") as date'), 'floating_stock_logs.inward_date', 'floating_stock_logs.outward_date', 'configs.name as status_name')
+				->get();
+
+			$job_card->floating_part_confirmation_status = FloatingGatePass::where('floating_stock_logs.job_card_id', $r->id)->where('status_id', 11160)->count();
+
+			return response()->json([
+				'success' => true,
+				'job_card' => $job_card,
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => ['Exception Error' => $e->getMessage()],
+			]);
+		}
+	}
+
+	public function updateFloatingGatePassStatus(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'id' => [
+					'required',
+					'integer',
+					'exists:job_cards,id',
+				],
+
+			]);
+
+			if ($validator->fails()) {
+				$errors = $validator->errors()->all();
+				$success = false;
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$floating_gatepass = FloatingGatePass::where('job_card_id', $request->id)->where('status_id', 11160)
+				->update(['status_id' => 11161, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Floating GatePass Updated Successfully!!',
+			]);
+
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,

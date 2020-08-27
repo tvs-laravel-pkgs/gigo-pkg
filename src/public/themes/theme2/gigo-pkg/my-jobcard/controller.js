@@ -129,8 +129,6 @@ app.component('myJobcardTableList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getMyJobCardtableList'],
                 type: "GET",
@@ -311,8 +309,6 @@ app.component('myJobcardTimesheetList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getMyJobCardtimeSheetList'],
                 type: "GET",

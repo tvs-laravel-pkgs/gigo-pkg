@@ -43,10 +43,10 @@ class FloatingGatePassController extends Controller {
 			DB::raw('COUNT(floating_stock_logs.id) as no_of_parts'),
 			DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y, %h:%s %p") as date_and_time'),
 			DB::raw('CASE
-                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8300" THEN floating_stock_logs.status_id END )) > 0 THEN "Gate Out Pending"
-                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8303" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Partial Completed"
-                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8302" THEN floating_stock_logs.status_id END )) =  COUNT(floating_stock_logs.id) THEN "GateIn Success"
-                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8301" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Pending"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "11161" THEN floating_stock_logs.status_id END )) > 0 THEN "Gate Out Pending"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "11164" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Partial Completed"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "11163" THEN floating_stock_logs.status_id END )) =  COUNT(floating_stock_logs.id) THEN "GateIn Success"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "11162" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Pending"
                         ELSE "Gate Out Pending" END AS status'),
 		])
 			->join('job_cards', 'floating_stock_logs.job_card_id', 'job_cards.id')

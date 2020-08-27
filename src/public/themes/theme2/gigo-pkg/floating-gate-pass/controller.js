@@ -170,8 +170,6 @@ app.component('floatingGatePassTableList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getFloatingGatePassList'],
                 type: "GET",
@@ -290,7 +288,7 @@ app.component('floatingGatePassView', {
                         return;
                     }
                     self.floating_gate_pass = response.floating_gate_pass;
-                    if (self.floating_gate_pass.status_id == 8300) { //Gate Out Pending
+                    if (self.floating_gate_pass.status_id == 11161) { //Gate Out Pending
                         self.type = 'Out';
                     } else {
                         self.type = 'In';

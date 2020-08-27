@@ -42,8 +42,6 @@ app.component('partsIndentList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getPartsindentList'],
                 type: "GET",
@@ -493,6 +491,7 @@ app.component('partsIndentPartsView', {
                     $scope.indent_part_logs = res.indent_part_logs;
                     $scope.issued_parts_list = res.issued_parts_list;
                     $scope.labours = res.labours;
+                    $scope.floating_part_logs = res.floating_part_logs;
 
                     if (res.job_order.job_card) {
                         if (res.job_order.job_card.status_id == '8227') {
@@ -896,6 +895,13 @@ app.component('partsIndentPartsView', {
             $('#log_type').val(log.transaction_type);
 
         }
+        $scope.removeFloatingLog = function(index, log) {
+            console.log(log);
+            $('#delete_log').modal('show');
+            $('#log_id').val(log.id);
+            $('#log_type').val('Float');
+        }
+
         $scope.deleteConfirm = function() {
             $id = $('#log_id').val();
             $type = $('#log_type').val();
@@ -1034,6 +1040,12 @@ app.component('partsIndentIssuePartForm', {
         $scope.job_order_id = $routeParams.job_order_id;
         self.job_order_issued_part_id = $routeParams.id;
         $scope.issue_part = {};
+        self.part_type = 1;
+
+        $element.find('input').on('keydown', function(ev) {
+            ev.stopPropagation();
+        });
+
         $scope.fetchData = function() {
             $.ajax({
                     url: base_url + '/api/inward-part-indent/get-issue-part-form-data',
@@ -1056,6 +1068,7 @@ app.component('partsIndentIssuePartForm', {
                     $scope.repair_order_mechanics = res.repair_order_mechanics;
                     $scope.issue_modes = res.issue_modes
                     $scope.issued_part = res.issue_data;
+                    $scope.floating_parts = res.floating_parts;
                     if ($scope.issued_part) {
                         PartSvc.read($scope.issued_part.part_id)
                             .then(function(response) {
@@ -1065,6 +1078,7 @@ app.component('partsIndentIssuePartForm', {
                             });
                         $scope.issued_to = res.issue_to_user;
                         $scope.issued_part.issued_qty = parseFloat($scope.issued_part.issued_qty);
+                        $scope.issued_mode_id = res.issue_data.issued_mode_id;
                     }
                     $scope.$apply();
                 })
@@ -1080,7 +1094,12 @@ app.component('partsIndentIssuePartForm', {
                 ignore: '',
                 rules: {
                     'job_order_part_id': {
-                        required: true,
+                        required: function(element) {
+                            if (self.part_type == '1') {
+                                return true;
+                            }
+                            return false;
+                        },
                     },
                     'issued_qty': {
                         required: true,
@@ -1234,6 +1253,12 @@ app.component('partsIndentIssuePartForm', {
                         $scope.total_request_qty = res.total_request_qty;
                         $scope.total_issued_qty = res.total_issued_qty;
                         $scope.total_balance_qty = res.total_balance_qty;
+
+                        if ($scope.available_quantity >= 1) {
+                            $scope.issued_mode_id = 8480;
+                        } else {
+                            $scope.issued_mode_id = 8481;
+                        }
                         $scope.$apply();
                     })
                     .fail(function(xhr) {

@@ -22,8 +22,8 @@
     <div class="page-main-content form-content">
         <form id="road_test_gate_pass">
             <input type="hidden" name="gate_pass_id" value="{{$ctrl.road_test_gate_pass.id}}">
-            <input ng-if="$ctrl.road_test_gate_pass.status_id==8301" type="hidden" name="type" value="In">
-            <input ng-if="$ctrl.road_test_gate_pass.status_id==8300" type="hidden" name="type" value="Out">
+            <input ng-if="$ctrl.road_test_gate_pass.status_id==11141" type="hidden" name="type" value="In">
+            <input ng-if="$ctrl.road_test_gate_pass.status_id==11140" type="hidden" name="type" value="Out">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
@@ -67,7 +67,7 @@
                                                                     <td><b>Status</b></td>
                                                                     <td>{{$ctrl.road_test_gate_pass.status.name}}</td>
                                                                 </tr>
-                                                                <tr ng-if="$ctrl.road_test_gate_pass.gate_pass.status_id == 8302">
+                                                                <tr ng-if="$ctrl.road_test_gate_pass.gate_pass.status_id == 11142">
                                                                     <td><b>Remarks</b></td>
                                                                     <td>{{$ctrl.road_test_gate_pass.gate_out_remarks}}</td>
                                                                 </tr>
@@ -104,7 +104,7 @@
                                             </div><!-- Border Box -->
                                         </div><!-- Column -->
                                     </div><!-- Row -->
-                                    <div class="row" ng-if="$ctrl.road_test_gate_pass.status_id == 8300">
+                                    <div class="row" ng-if="$ctrl.road_test_gate_pass.status_id == 11140">
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label>Remarks</label>
@@ -121,8 +121,8 @@
                     <div class="row">
                         <div class="col-md-12">
                             <a href="#!/road-test-gate-pass/table-list" class="btn btn-bordered btn-grey">Cancel</a>
-                            <button class="btn btn-secondary-dark submit" ng-show="$ctrl.road_test_gate_pass.status_id==8301" ng-click="saveGatePass(1)">Confirm Gate In</button>
-                            <button class="btn btn-secondary-dark submit" ng-show="$ctrl.road_test_gate_pass.status_id==8300" ng-click="saveGatePass(2)">Confirm Gate Out</button>
+                            <button class="btn btn-secondary-dark submit" ng-show="$ctrl.road_test_gate_pass.status_id==11141" ng-click="saveGatePass(1)">Confirm Gate In</button>
+                            <button class="btn btn-secondary-dark submit" ng-show="$ctrl.road_test_gate_pass.status_id==11140" ng-click="saveGatePass(2)">Confirm Gate Out</button>
                         </div>
                     </div>
                 </div><!-- Page Form Footer -->
