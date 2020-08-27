@@ -949,7 +949,9 @@ app.component('warrantyJobOrderRequestForm', {
                             $('.submit').button('reset');
 
                             showNoty('success', 'Warranty job order request saved successfully');
-                            $localstorage.remove('ppr');
+                            if ($routeParams.request_id == undefined) {
+                                $localstorage.remove('ppr');
+                            }
 
                             $location.path('/warranty-job-order-request/table-list');
                             $scope.$apply();
