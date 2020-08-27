@@ -843,6 +843,7 @@ class VehicleInwardController extends Controller {
 			$indent_part_logs = array();
 			$issued_parts_list = array();
 			$floating_parts = array();
+			$floating_part_logs = array();
 
 			if ($job_order->jobCard) {
 				$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*', 'job_order_parts.id as job_order_part_id')->where('job_order_parts.job_order_id', $r->id)->whereNull('removal_reason_id')->get();
@@ -902,15 +903,15 @@ class VehicleInwardController extends Controller {
 				$floating_parts = collect(FloatingGatePass::join('floating_stocks', 'floating_stocks.id', 'floating_stock_logs.floating_stock_id')->join('parts', 'parts.id', 'floating_stocks.part_id')
 						->where('floating_stock_logs.job_card_id', $job_order->jobCard->id)->where('floating_stock_logs.status_id', 11163)->select('floating_stock_logs.floating_stock_id', 'floating_stock_logs.qty as qty',
 						DB::RAW('CONCAT(parts.code," / ",parts.name) as name'), 'floating_stock_logs.id')->get())->prepend(['floating_stock_id' => '', 'name' => 'Select Part']);
-			}
 
-			//Floating Parts
-			$floating_part_logs = FloatingGatePass::join('floating_stocks', 'floating_stocks.id', 'floating_stock_logs.floating_stock_id')
-				->join('parts', 'parts.id', 'floating_stocks.part_id')
-				->join('users', 'floating_stock_logs.issued_to_id', 'users.id')
-				->where('floating_stock_logs.job_card_id', $job_order->jobCard->id)
-				->select(DB::raw('"Floating Part Issue" as transaction_type'), DB::raw('"In Stock" as issue_mode'), 'parts.code', 'parts.name', 'users.name as mechanic', 'floating_stock_logs.qty as qty', 'floating_stock_logs.id', 'floating_stock_logs.status_id', DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y") as date'))
-				->get();
+				//Floating Parts
+				$floating_part_logs = FloatingGatePass::join('floating_stocks', 'floating_stocks.id', 'floating_stock_logs.floating_stock_id')
+					->join('parts', 'parts.id', 'floating_stocks.part_id')
+					->join('users', 'floating_stock_logs.issued_to_id', 'users.id')
+					->where('floating_stock_logs.job_card_id', $job_order->jobCard->id)
+					->select(DB::raw('"Floating Part Issue" as transaction_type'), DB::raw('"In Stock" as issue_mode'), 'parts.code', 'parts.name', 'users.name as mechanic', 'floating_stock_logs.qty as qty', 'floating_stock_logs.id', 'floating_stock_logs.status_id', DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y") as date'))
+					->get();
+			}
 
 			return response()->json([
 				'success' => true,
@@ -5397,17 +5398,7 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			if ($job_order->is_road_test_required == 1 && !$job_order->road_test_report) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Please Update Road Test Observations',
-					],
-				]);
-			}
-
-			//Check Road Test Passes or not
+			//Check Road Test Process or not
 			$road_test = RoadTestGatePass::where('job_order_id', $request->job_order_id)->whereIn('status_id', [11140, 11141])->first();
 			if ($road_test) {
 				return response()->json([
@@ -5415,6 +5406,16 @@ class VehicleInwardController extends Controller {
 					'error' => 'Validation Error',
 					'errors' => [
 						'Road Test not Completed!',
+					],
+				]);
+			}
+
+			if ($job_order->is_road_test_required == 1 && !$job_order->road_test_report) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Please Update Road Test Observations',
 					],
 				]);
 			}

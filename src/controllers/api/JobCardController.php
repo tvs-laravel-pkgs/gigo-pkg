@@ -918,7 +918,7 @@ class JobCardController extends Controller {
 				->join('users', 'floating_stock_logs.issued_to_id', 'users.id')
 				->join('configs', 'configs.id', 'floating_stock_logs.status_id')
 				->where('floating_stock_logs.job_card_id', $r->id)
-				->select('parts.code', 'parts.name', 'users.name as mechanic', 'floating_stock_logs.qty as qty', 'floating_stock_logs.id', 'floating_stock_logs.status_id', 'floating_stock_logs.number', DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y") as date'), 'floating_stock_logs.inward_date', 'floating_stock_logs.outward_date', 'configs.name as status_name')
+				->select('parts.code', 'parts.name', 'users.name as mechanic', 'floating_stock_logs.qty as qty', 'floating_stock_logs.id', 'floating_stock_logs.status_id', 'floating_stock_logs.number', DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y") as date'), 'floating_stock_logs.inward_date', 'floating_stock_logs.status_id', 'floating_stock_logs.outward_date', 'configs.name as status_name')
 				->get();
 
 			$job_card->floating_part_confirmation_status = FloatingGatePass::where('floating_stock_logs.job_card_id', $r->id)->where('status_id', 11160)->count();
