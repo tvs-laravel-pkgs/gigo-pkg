@@ -218,7 +218,41 @@ input[type=number] {
                                                             </button>
                                                         </td>
                                                     </tr>
-                                                    <tr ng-if="indent_part_logs.length == 0">
+                                                    <tr class="ptb-12" ng-repeat="(index,floating_part_log) in floating_part_logs">
+                                                        <td>
+                                                            {{floating_part_log.code}}
+                                                        </td>
+                                                        <td>
+                                                            {{floating_part_log.name}}
+                                                        </td>
+                                                        <td>
+                                                            {{floating_part_log.transaction_type}}
+                                                        </td>
+                                                        <td>
+                                                            {{floating_part_log.qty}}
+                                                        </td>
+                                                        <td>
+                                                            {{floating_part_log.issue_mode}}
+                                                        </td>
+                                                        <td>
+                                                            {{floating_part_log.mechanic}}
+                                                        </td>
+                                                        <td>
+                                                            {{floating_part_log.date}}
+                                                        </td>
+                                                        <td>
+                                                            {{floating_part_log.remarks}}
+                                                        </td>
+                                                        <td>
+                                                            <!-- <a ng-if="log.transaction_type == 'Issue' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227" href=".#!/part-indent/issue-part/form/{{job_order.id}}/{{log.job_order_part_increment_id}}" class="btn img-btn btn-delete">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                            </a> -->
+                                                            <button ng-if="floating_part_log.status_id == 11160" type="button" class="btn img-btn btn-delete" ng-click="removeFloatingLog(index,floating_part_log)">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr ng-if="indent_part_logs.length == 0 && floating_part_logs.length == 0">
                                                         <td colspan="9" class="text-center">No Logs Found</td>
                                                     </tr>
                                                 </tbody>
@@ -766,7 +800,7 @@ input[type=number] {
                 <input type="hidden" name="log_type" id="log_type" value="">
                 <input type="hidden" name="log_id" id="log_id" value="">
                 <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">Cancel</button>
-                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button" data-dismiss="modal" aria-label="Close">Yes</button>
+                <button class="btn btn-rose" ng-click="deleteConfirm()" type="button">Yes</button>
             </div>
         </div>
     </div>

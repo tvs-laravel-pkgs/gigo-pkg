@@ -319,6 +319,10 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//JobOrder Repair order form save
 		Route::post('labour-assignment-form-save', 'JobCardController@LabourAssignmentFormSave');
 
+		//Jobcard Flaoting Work
+		Route::post('job-card/floating-work/get-form-data', 'JobCardController@floatingWorkFormData');
+		Route::post('job-card/floating-gatepass/status/update', 'JobCardController@updateFloatingGatePassStatus');
+
 		//Material-GatePass Vendor list
 		Route::post('get-vendor-list', 'JobCardController@VendorList');
 

@@ -46,6 +46,23 @@ input[type=number] {
                                                 <div class="col-md-12">
                                                     <div class="row">
                                                         <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>
+                                                                    Part Type
+                                                                </label>
+                                                                <div class="common-radio-button type-4">
+                                                                    <input type="radio" id="regular" name="part_type" ng-value="1" value="1" ng-value="1" value="1" ng-model="$ctrl.part_type">
+                                                                    <label for="regular">
+                                                                        Regular Stock
+                                                                    </label>
+                                                                    <input type="radio" id="floating" name="part_type" ng-value="0" value="0" ng-model="$ctrl.part_type">
+                                                                    <label for="floating">
+                                                                        Floating Stock
+                                                                    </label>
+                                                                </div>
+                                                            </div><!-- Feild -->
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-4" ng-show="$ctrl.part_type == 1">
                                                             <div class="input-text form-group">
                                                                 <label>Part No <sup class="mandatory">*</sup></label>
                                                                 <md-select ng-model="return_part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="issuedPartSelected(return_part)">
@@ -62,19 +79,42 @@ input[type=number] {
                                                                 <input type="hidden" name="part_id" value="{{return_part.id}}">
                                                             </div><!-- Form Group -->
                                                         </div><!-- Column -->
+                                                        <div class="col-md-4" ng-show="$ctrl.part_type != 1">
+                                                            <div class="input-text form-group">
+                                                                <label>Part No <sup class="mandatory">*</sup></label>
+                                                                <md-select ng-model="floating_part" placeholder="Select Part" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                                                    <md-select-header class="demo-select-header">
+                                                                        <input ng-model="searchFloatingPart" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                                                    </md-select-header>
+                                                                    <md-optgroup>
+                                                                        <md-option ng-value="floating_part" ng-repeat="floating_part in floating_parts | filter:searchFloatingPart">
+                                                                            {{floating_part.code}} / {{floating_part.name}}
+                                                                        </md-option>
+                                                                    </md-optgroup>
+                                                                </md-select>
+                                                                <input type="hidden" name="floating_stock_id" value="{{floating_part.floating_stock_id}}">
+                                                            </div><!-- Form Group -->
+                                                        </div><!-- Column -->
                                                     </div><!-- Row -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-4">
+                                                <div class="col-md-4" ng-if="$ctrl.part_type == 1">
                                                     <div class="input-text form-group">
                                                         <label>Issuing Quantity <sup class="mandatory">*</sup></label>
                                                         <input type="number" name="issued_qty" min="1" max="{{$ctrl.job_order_issued_part_id && part.part_type.name =='Lubricants' ? total_request_qty : total_balance_qty}}" ng-model="issued_part.issued_qty" step="0.01" class="form-control" placeholder="Enter Issue Quantity" autocomplete="off" />
                                                         <input type="hidden" name="available_qty" id="available_qty" value="{{available_quantity}}" ng-model="available_quantity">
                                                     </div><!-- Form Group -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-4">
+                                                <div class="col-md-4" ng-if="$ctrl.part_type != 1">
+                                                    <div class="input-text form-group">
+                                                        <label>Issuing Quantity <sup class="mandatory">*</sup></label>
+                                                        <input type="number" name="issued_qty" min="1" max="{{floating_part.available_qty}}" ng-model="issued_part.issued_qty" step="0.01" class="form-control" placeholder="Enter Issue Quantity" autocomplete="off" />
+                                                        <input type="hidden" name="available_qty" id="available_qty" value="{{floating_part.available_qty}}" ng-model="floating_part.available_qty">
+                                                    </div><!-- Form Group -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="$ctrl.part_type == 1">
                                                     <div class="input-text form-group">
                                                         <label>Issue Mode <sup class="mandatory">*</sup></label>
-                                                        <md-select ng-model="issued_part.issued_mode_id" placeholder="Select Issue Mode" data-md-container-class="selectdemoSelectHeader">
+                                                        <md-select ng-model="issued_mode_id" placeholder="Select Issue Mode" data-md-container-class="selectdemoSelectHeader" ng-disabled="issued_mode_id == 8480">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchIssueMode" type="search" placeholder="Search Issue Mode.." class="demo-header-searchbox md-text">
                                                             </md-select-header>
@@ -84,7 +124,7 @@ input[type=number] {
                                                                 </md-option>
                                                             </md-optgroup>
                                                         </md-select>
-                                                        <input type="hidden" name="issued_mode_id" class="required" value="{{issued_part.issued_mode_id}}">
+                                                        <input type="hidden" name="issued_mode_id" class="required" value="{{issued_mode_id}}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
@@ -107,7 +147,7 @@ input[type=number] {
                                         </div><!-- Column -->
                                         <div class="col-lg-4">
                                             <div class="dark-wrap">
-                                                <div class="row">
+                                                <div class="row" ng-if="$ctrl.part_type == 1">
                                                     <div class="col-md-12">
                                                         <div class="text-wrap mb-20">
                                                             <span class="text-label">Description</span>
@@ -139,12 +179,32 @@ input[type=number] {
                                                         </div>
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
+                                                <div class="row" ng-if="$ctrl.part_type != 1">
+                                                    <div class="col-md-12">
+                                                        <div class="text-wrap mb-20">
+                                                            <span class="text-label">Description</span>
+                                                            <span class="text-value">{{floating_part.name}}</span>
+                                                        </div>
+                                                    </div><!-- Column -->
+                                                    <div class="col-md-6">
+                                                        <div class="text-wrap mb-20">
+                                                            <span class="text-label">Available Qty</span>
+                                                            <span class="text-value">{{floating_part.available_qty}}</span>
+                                                        </div>
+                                                    </div><!-- Column -->
+                                                    <div class="col-md-6">
+                                                        <div class="text-wrap mb-20">
+                                                            <span class="text-label">Issued Qty</span>
+                                                            <span class="text-value">{{floating_part.issued_qty}}</span>
+                                                        </div>
+                                                    </div><!-- Column -->
+                                                </div><!-- Row -->
                                             </div><!-- Dark Wrap -->
                                         </div><!-- Column -->
                                     </div><!-- Row -->
                                 </div><!-- Column -->
                             </div><!-- Row -->
-                            <div class="row" ng-if='issued_part.issued_mode_id == 8481'>
+                            <div class="row" ng-if='issued_mode_id == 8481 && $ctrl.part_type == 1'>
                                 <div class="col-md-12">
                                     <h5 class="color-primary mb-10">
                                         <b>

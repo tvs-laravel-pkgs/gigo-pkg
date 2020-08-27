@@ -37,10 +37,10 @@ class FloatingGatePassController extends Controller {
 				'job_orders.driver_mobile_number',
 				DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y, %h:%s %p") as date_and_time'),
 				DB::raw('CASE
-                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8300" THEN floating_stock_logs.status_id END )) > 0 THEN "Gate Out Pending"
-                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8303" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Partial Completed"
-                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8302" THEN floating_stock_logs.status_id END )) =  count(floating_stock_logs.id) THEN "GateIn Success"
-                        WHEN count((CASE WHEN floating_stock_logs.status_id = "8301" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Pending"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "11161" THEN floating_stock_logs.status_id END )) > 0 THEN "Gate Out Pending"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "11164" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Partial Completed"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "11163" THEN floating_stock_logs.status_id END )) =  count(floating_stock_logs.id) THEN "GateIn Success"
+                        WHEN count((CASE WHEN floating_stock_logs.status_id = "11162" THEN floating_stock_logs.status_id END )) > 0 THEN "GateIn Pending"
                         ELSE "Gate Out Pending" END AS status'),
 			])
 				->join('job_cards', 'floating_stock_logs.job_card_id', 'job_cards.id')
@@ -170,7 +170,7 @@ class FloatingGatePassController extends Controller {
 			// 		],
 			// 	]);
 			// }
-			$floating_gate_pass->floating_gate_out_length = FloatingGatePass::where('status_id', 8300)->count();
+			$floating_gate_pass->floating_gate_out_length = FloatingGatePass::where('status_id', 11161)->count();
 
 			$floating_gate_pass->gate_in_attachment_path = url('storage/app/public/gigo/gate_in/attachments/');
 
@@ -219,7 +219,7 @@ class FloatingGatePassController extends Controller {
 			DB::beginTransaction();
 			if ($request->type == 'Out') {
 				//Update Floating gatepass status
-				FloatingGatePass::where('job_card_id', $request->job_card_id)->where('status_id', 8300)->update(['status_id' => 8301, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now(), 'outward_date' => Carbon::now(), 'outward_remarks' => $request->remarks ? $request->remarks : NULL]);
+				FloatingGatePass::where('job_card_id', $request->job_card_id)->where('status_id', 11161)->update(['status_id' => 11162, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now(), 'outward_date' => Carbon::now(), 'outward_remarks' => $request->remarks ? $request->remarks : NULL]);
 			}
 			// $gate_pass = FloatingGatePass::find($request->gate_pass_id);
 			// if ($gate_pass) {

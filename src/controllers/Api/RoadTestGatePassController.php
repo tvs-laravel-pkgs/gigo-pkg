@@ -190,10 +190,10 @@ class RoadTestGatePassController extends Controller {
 				if ($request->type == 'Out') {
 					$gate_pass->gate_out_date = Carbon::now();
 					$gate_pass->gate_out_remarks = $request->gate_out_remarks ? $request->gate_out_remarks : NULL;
-					$gate_pass->status_id = 8301;
+					$gate_pass->status_id = 11141;
 				} else {
 					$gate_pass->gate_in_date = Carbon::now();
-					$gate_pass->status_id = 8302;
+					$gate_pass->status_id = 11142;
 
 					$job_order = JobOrder::where('id', $gate_pass->job_order_id)->first();
 

@@ -170,8 +170,6 @@ app.component('roadTestGatePassTableList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getRoadTestGatePassList'],
                 type: "GET",
@@ -288,7 +286,7 @@ app.component('roadTestGatePassView', {
                         return;
                     }
                     self.road_test_gate_pass = response.road_test_gate_pass;
-                    if (self.road_test_gate_pass.status_id == 8300) { //Gate Out Pending
+                    if (self.road_test_gate_pass.status_id == 11140) { //Gate Out Pending
                         self.type = 'Out';
                     } else {
                         self.type = 'In';

@@ -18,6 +18,8 @@ use App\Employee;
 use App\Entity;
 use App\EstimationType;
 use App\FinancialYear;
+use App\FloatingGatePass;
+use App\FloatStock;
 use App\GateLog;
 use App\GigoInvoice;
 use App\Http\Controllers\Controller;
@@ -897,10 +899,21 @@ class VehicleInwardController extends Controller {
 					)->union($indent_part_logs_issues)->orderBy('date', 'DESC')->get();
 			}
 
+			//Floating Parts
+			$floating_part_logs = FloatingGatePass::join('floating_stocks', 'floating_stocks.id', 'floating_stock_logs.floating_stock_id')
+				->join('parts', 'parts.id', 'floating_stocks.part_id')
+				->join('users', 'floating_stock_logs.issued_to_id', 'users.id')
+				->where('floating_stock_logs.job_card_id', $job_order->jobCard->id)
+				->select(DB::raw('"Floating Part Issue" as transaction_type'), DB::raw('"In Stock" as issue_mode'), 'parts.code', 'parts.name', 'users.name as mechanic', 'floating_stock_logs.qty as qty', 'floating_stock_logs.id', 'floating_stock_logs.status_id', DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y") as date'))
+				->get();
+
+			// dd($floating_part_logs);
+
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
 				'part_details' => $part_details,
+				'floating_part_logs' => $floating_part_logs,
 				// 'part_amount' => $part_amount,
 				'job_order_parts' => $job_order_parts,
 				'repair_order_mechanics' => $repair_order_mechanics,
@@ -1019,7 +1032,7 @@ class VehicleInwardController extends Controller {
 
 				$delete_part_log = JobOrderReturnedPart::find($request->id)->forceDelete();
 
-			} else {
+			} elseif ($request->type == 'Issue') {
 				$validator = Validator::make($request->all(), [
 					'id' => [
 						'required',
@@ -1038,6 +1051,37 @@ class VehicleInwardController extends Controller {
 
 				$delete_part_log = JobOrderIssuedPart::find($request->id)->forceDelete();
 
+			} else {
+				$validator = Validator::make($request->all(), [
+					'id' => [
+						'required',
+						'integer',
+						'exists:floating_stock_logs,id',
+					],
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				//Floating Stock Logs
+				$floating_stock_log = FloatingGatePass::where('id', $request->id)->first();
+
+				//Update Floating Stock
+				$floating_stock = FloatStock::where('id', $floating_stock_log->floating_stock_id)->first();
+				if ($floating_stock) {
+					$floating_stock->issued_qty = $floating_stock->issued_qty - $floating_stock_log->qty;
+					$floating_stock->available_qty = $floating_stock->available_qty + $floating_stock_log->qty;
+					$floating_stock->updated_by_id = Auth::user()->id;
+					$floating_stock->updated_at = Carbon::now();
+					$floating_stock->save();
+				}
+
+				$floating_stock_log = FloatingGatePass::where('id', $request->id)->forceDelete();
 			}
 			// dd($delete_part_log);
 			DB::commit();
@@ -1081,9 +1125,12 @@ class VehicleInwardController extends Controller {
 				)
 				->first();
 
+			$floating_parts = Part::join('floating_stocks', 'floating_stocks.part_id', 'parts.id')->where('floating_stocks.outlet_id', Auth::user()->employee->outlet_id)->select('parts.*', 'floating_stocks.available_qty', 'floating_stocks.issued_qty', 'floating_stocks.id as floating_stock_id')->get();
+
 			$responseArr = array(
 				'success' => true,
 				'job_order_parts' => $job_order_parts,
+				'floating_parts' => $floating_parts,
 				'repair_order_mechanics' => $repair_order_mechanics,
 				'issue_modes' => $issue_modes,
 				'issue_data' => $issue_data,
@@ -1105,33 +1152,6 @@ class VehicleInwardController extends Controller {
 		// dd($request->all());
 		try {
 			$available_qty = 0;
-
-			//GET DATA FROM PIAS TABLE
-
-			// $part_code = $request->code;
-			// $user_outlet_code = Auth::user()->outlet->code;
-			// $company_id = Auth::user()->company_id;
-			// $db2 = config('database.connections.pias.database');
-			// $part = DB::table($db2 . '.parts as pias_parts')
-			// 	->join('parts', 'parts.code', 'pias_parts.code')
-			// 	->select('parts.code', 'pias_parts.id')
-			// 	->where('parts.code', $part_code)
-			// 	->first();
-
-			// $outlet_ids = DB::table($db2 . '.outlets as pias_outlets')
-			// 	->join('outlets', 'outlets.code', 'pias_outlets.code')
-			// 	->select('outlets.code', 'pias_outlets.id')
-			// 	->where(['outlets.code' => $user_outlet_code, 'outlets.company_id' => $company_id])
-			// 	->pluck('id')->toArray();
-			// $stock_details = DB::table($db2 . '.stock_details')
-			// 	->select('stock_details.outlet_id', 'stock_details.part_id', 'stock_details.available_quantity')
-			// // ->where(['stock_details.outlet_id' => $outlet->id, 'stock_details.part_id' => $part->id])
-			// 	->where('stock_details.part_id', $part->id)
-			// 	->whereIn('stock_details.outlet_id', $outlet_ids)
-			// 	->first();
-
-			// if ($stock_details) {
-			// 	$available_qty = $stock_details->available_quantity;
 
 			$error = '';
 
@@ -1235,98 +1255,43 @@ class VehicleInwardController extends Controller {
 	public function saveIssuedPart(Request $request) {
 		// dd($request->all());
 		try {
-			$validator = Validator::make($request->all(), [
-				'job_order_part_id' => [
-					'required',
-					'integer',
-					'exists:job_order_parts,id',
-				],
-				'issued_to_id' => [
-					'required',
-					'integer',
-					'exists:users,id',
-				],
-				'issued_qty' => [
-					'required',
-					'numeric',
-				],
-				'issued_mode_id' => [
-					'required',
-					'exists:configs,id',
-				],
 
-			]);
+			if ($request->part_type == 1) {
+				dump('Regular Stock');
+				dd($request->all());
+				$validator = Validator::make($request->all(), [
+					'job_order_part_id' => [
+						'required',
+						'integer',
+						'exists:job_order_parts,id',
+					],
+					'issued_to_id' => [
+						'required',
+						'integer',
+						'exists:users,id',
+					],
+					'issued_qty' => [
+						'required',
+						'numeric',
+					],
+					'issued_mode_id' => [
+						'required',
+						'exists:configs,id',
+					],
 
-			if ($validator->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
 				]);
-			}
 
-			$part = Part::with(['partType', 'partStock'])->find($request->part_id);
-
-			if (!$part) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => ['Parts Details cannot be found'],
-				]);
-			}
-
-			$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
-
-			$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
-
-			$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
-
-			if ($request->issued_mode_id == 8480) {
-				$pias_available_qty = $request->available_qty;
-				if (intval($request->issued_qty) > intval($pias_available_qty)) {
+				if ($validator->fails()) {
 					return response()->json([
 						'success' => false,
-						'message' => 'Issue Quantity should not exceed Available Quantity',
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
 					]);
 				}
 
-				$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
-				if (empty($request->job_order_issued_part_id)) {
-					if ($pending_qty < $request->issued_qty) {
-						return response()->json([
-							'success' => false,
-							'message' => 'Returning Quantity should not exceed Pending Quantity',
-						]);
-					}
-				}
+				$part = Part::with(['partType', 'partStock'])->find($request->part_id);
 
-			}
-
-			if (!empty($part->partType)) {
-				if (empty($request->job_order_issued_part_id)) {
-					if ($part->partType->name == 'Lubricants' && (($issued_qty->issued_qty) > 0)) {
-						return response()->json([
-							'success' => false,
-							'error' => 'Mentioned Lubricant item cannot add multiple times!',
-						]);
-					}
-				}
-			}
-			// dd(1);
-
-			DB::beginTransaction();
-			// dd($request->issue_mode_id);
-			if ($request->issued_mode_id != 8480 && $request->job_order_issued_part_id == null) {
-
-				$db2 = config('database.connections.pias.database');
-
-				$parts = DB::table($db2 . '.parts as pias_parts')
-					->join('parts', 'parts.code', 'pias_parts.code')
-					->select('parts.code', 'pias_parts.id')
-					->where('parts.id', $request->part_id)
-					->first();
-
-				if (!$parts) {
+				if (!$part) {
 					return response()->json([
 						'success' => false,
 						'error' => 'Validation Error',
@@ -1334,111 +1299,279 @@ class VehicleInwardController extends Controller {
 					]);
 				}
 
-				if (date('m') > 3) {
-					$year = date('Y') + 1;
+				$issued_qty = JobOrderIssuedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_issued_parts.issued_qty),0) as issued_qty'))->first();
+
+				$returned_qty = JobOrderReturnedPart::where('job_order_part_id', $request->job_order_part_id)->select(DB::raw('IFNULL(SUM(job_order_returned_parts.returned_qty),0) as returned_qty'))->first();
+
+				$job_order_part_qty = JobOrderPart::find($request->job_order_part_id);
+
+				if ($request->issued_mode_id == 8480) {
+					$pias_available_qty = $request->available_qty;
+					if (intval($request->issued_qty) > intval($pias_available_qty)) {
+						return response()->json([
+							'success' => false,
+							'message' => 'Issue Quantity should not exceed Available Quantity',
+						]);
+					}
+
+					$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
+					if (empty($request->job_order_issued_part_id)) {
+						if ($pending_qty < $request->issued_qty) {
+							return response()->json([
+								'success' => false,
+								'message' => 'Returning Quantity should not exceed Pending Quantity',
+							]);
+						}
+					}
+
+				}
+
+				if (!empty($part->partType)) {
+					if (empty($request->job_order_issued_part_id)) {
+						if ($part->partType->name == 'Lubricants' && (($issued_qty->issued_qty) > 0)) {
+							return response()->json([
+								'success' => false,
+								'error' => 'Mentioned Lubricant item cannot add multiple times!',
+							]);
+						}
+					}
+				}
+				// dd(1);
+
+				DB::beginTransaction();
+				// dd($request->issue_mode_id);
+				if ($request->issued_mode_id != 8480 && $request->job_order_issued_part_id == null) {
+
+					$db2 = config('database.connections.pias.database');
+
+					$parts = DB::table($db2 . '.parts as pias_parts')
+						->join('parts', 'parts.code', 'pias_parts.code')
+						->select('parts.code', 'pias_parts.id')
+						->where('parts.id', $request->part_id)
+						->first();
+
+					if (!$parts) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => ['Parts Details cannot be found'],
+						]);
+					}
+
+					if (date('m') > 3) {
+						$year = date('Y') + 1;
+					} else {
+						$year = date('Y');
+					}
+
+					$financial_year = FinancialYear::where('from', $year)->first();
+					if (!$financial_year) {
+						return response()->json(['success' => false, 'errors' => ['No Serial number found!!!']]);
+					}
+					$branch = Outlet::where('id', Auth::user()->employee->outlet->id)->first();
+
+					$generateNumber = SerialNumberGroup::generateNumber(19, $financial_year->id, $branch->state_id, $branch->id);
+
+					if (!$generateNumber['success']) {
+						return response()->json(['success' => false, 'errors' => ['No Serial number found']]);
+					}
+					// $job_card = JobCard::where('job_order_id', $request->job_order_id)->first();
+					$job_order = JobOrder::with([
+						'jobCard',
+					])->find($request->job_order_id);
+
+					$parts_request = new PartsRequest;
+					$parts_request->request_type_id = 8500;
+					$parts_request->number = $generateNumber['number'];
+					$parts_request->remarks = $request->remarks;
+					$parts_request->advance_amount_received_details = $request->advance_amount_received_details;
+					$parts_request->warranty_approved_reasons = $request->warranty_approved_reasons;
+					$parts_request->created_by_id = Auth::id();
+					$parts_request->created_at = Carbon::now();
+					$parts_request->updated_at = NULL;
+					$parts_request->status_id = 8520;
+
+					if ($job_order && $job_order->jobCard) {
+						$parts_request->job_card_id = $job_order->jobCard->id;
+					}
+					$parts_request->customer_id = $job_order->customer_id;
+					$parts_request->save();
+
+					$local_purchase_count = PartsRequestDetail::where('parts_request_id', $parts_request->id)->where('request_type_id', 8541)->count();
+					$local_purchase_count++;
+					$number_format = sprintf("%03d", $local_purchase_count);
+
+					$parts_request_detail = new PartsRequestDetail;
+					$parts_request_detail->parts_request_id = $parts_request->id;
+					$parts_request_detail->number = $parts_request->number . "_LP_" . $number_format;
+					$parts_request_detail->request_type_id = 8541;
+					$parts_request_detail->status_id = 8520;
+					$parts_request_detail->save();
+
+					// $parts_detail = PartsRequestPart::firstOrNew(['parts_request_detail_id' => $parts_request_detail->id, 'part_id' => $request->job_order_part_id]);
+					$parts_detail = new PartsRequestPart;
+					$parts_detail->parts_request_detail_id = $parts_request_detail->id;
+					$parts_detail->part_id = $parts->id;
+					$parts_detail->dbm_part_id = $parts->id;
+					$parts_detail->request_qty = $request->quantity;
+					$parts_detail->unit_price = $request->unit_price;
+					$parts_detail->mrp = $request->mrp;
+					$parts_detail->total_price = $request->total;
+					$parts_detail->tax_percentage = $request->tax_percentage;
+					$parts_detail->tax_amount = $request->tax_amount;
+					$parts_detail->total_amount = $request->total_amount;
+					$parts_detail->status_id = 8520;
+					$parts_detail->created_by_id = Auth::id();
+					$parts_detail->created_at = Carbon::now();
+					$parts_detail->save();
+
+					$parts_grn = new PartsGrnDetail;
+					$parts_grn->parts_request_detail_id = $parts_request_detail->id;
+					$parts_grn->supplier_id = $request->supplier_id;
+					$parts_grn->po_number = $request->po_number;
+					$parts_grn->po_amount = $request->po_amount;
+					$parts_grn->created_by_id = Auth::id();
+					$parts_grn->created_at = Carbon::now();
+					$parts_grn->save();
+
+					DB::commit();
+
+					return response()->json([
+						'success' => true,
+						'message' => 'Local Purchase Request Created Successfully!!',
+					]);
+
 				} else {
-					$year = date('Y');
+					$job_order_isssued_part = JobOrderIssuedPart::find($request->job_order_issued_part_id);
+					if ($job_order_isssued_part == null) {
+						$job_order_isssued_part = new JobOrderIssuedPart;
+						$job_order_isssued_part->created_by_id = Auth::id();
+						$job_order_isssued_part->created_at = Carbon::now();
+					} else {
+						$job_order_isssued_part->updated_by_id = Auth::id();
+						$job_order_isssued_part->updated_at = Carbon::now();
+					}
+
+					$job_order_isssued_part->fill($request->all());
+					$job_order_isssued_part->save();
+
+					DB::commit();
+
+					return response()->json([
+						'success' => true,
+						'message' => 'Part Issued Successfully!!',
+					]);
 				}
+			} else {
+				// dump('Floating Stock');
 
-				$financial_year = FinancialYear::where('from', $year)->first();
-				if (!$financial_year) {
-					return response()->json(['success' => false, 'errors' => ['No Serial number found!!!']]);
-				}
-				$branch = Outlet::where('id', Auth::user()->employee->outlet->id)->first();
-
-				$generateNumber = SerialNumberGroup::generateNumber(19, $financial_year->id, $branch->state_id, $branch->id);
-
-				if (!$generateNumber['success']) {
-					return response()->json(['success' => false, 'errors' => ['No Serial number found']]);
-				}
-				// $job_card = JobCard::where('job_order_id', $request->job_order_id)->first();
-				$job_order = JobOrder::with([
-					'jobCard',
-				])->find($request->job_order_id);
-
-				$parts_request = new PartsRequest;
-				$parts_request->request_type_id = 8500;
-				$parts_request->number = $generateNumber['number'];
-				$parts_request->remarks = $request->remarks;
-				$parts_request->advance_amount_received_details = $request->advance_amount_received_details;
-				$parts_request->warranty_approved_reasons = $request->warranty_approved_reasons;
-				$parts_request->created_by_id = Auth::id();
-				$parts_request->created_at = Carbon::now();
-				$parts_request->updated_at = NULL;
-				$parts_request->status_id = 8520;
-
-				if ($job_order && $job_order->jobCard) {
-					$parts_request->job_card_id = $job_order->jobCard->id;
-				}
-				$parts_request->customer_id = $job_order->customer_id;
-				$parts_request->save();
-
-				$local_purchase_count = PartsRequestDetail::where('parts_request_id', $parts_request->id)->where('request_type_id', 8541)->count();
-				$local_purchase_count++;
-				$number_format = sprintf("%03d", $local_purchase_count);
-
-				$parts_request_detail = new PartsRequestDetail;
-				$parts_request_detail->parts_request_id = $parts_request->id;
-				$parts_request_detail->number = $parts_request->number . "_LP_" . $number_format;
-				$parts_request_detail->request_type_id = 8541;
-				$parts_request_detail->status_id = 8520;
-				$parts_request_detail->save();
-
-				// $parts_detail = PartsRequestPart::firstOrNew(['parts_request_detail_id' => $parts_request_detail->id, 'part_id' => $request->job_order_part_id]);
-				$parts_detail = new PartsRequestPart;
-				$parts_detail->parts_request_detail_id = $parts_request_detail->id;
-				$parts_detail->part_id = $parts->id;
-				$parts_detail->dbm_part_id = $parts->id;
-				$parts_detail->request_qty = $request->quantity;
-				$parts_detail->unit_price = $request->unit_price;
-				$parts_detail->mrp = $request->mrp;
-				$parts_detail->total_price = $request->total;
-				$parts_detail->tax_percentage = $request->tax_percentage;
-				$parts_detail->tax_amount = $request->tax_amount;
-				$parts_detail->total_amount = $request->total_amount;
-				$parts_detail->status_id = 8520;
-				$parts_detail->created_by_id = Auth::id();
-				$parts_detail->created_at = Carbon::now();
-				$parts_detail->save();
-
-				$parts_grn = new PartsGrnDetail;
-				$parts_grn->parts_request_detail_id = $parts_request_detail->id;
-				$parts_grn->supplier_id = $request->supplier_id;
-				$parts_grn->po_number = $request->po_number;
-				$parts_grn->po_amount = $request->po_amount;
-				$parts_grn->created_by_id = Auth::id();
-				$parts_grn->created_at = Carbon::now();
-				$parts_grn->save();
-
-				DB::commit();
-
-				return response()->json([
-					'success' => true,
-					'message' => 'Local Purchase Request Created Successfully!!',
+				$validator = Validator::make($request->all(), [
+					'job_order_id' => [
+						'required',
+						'integer',
+						'exists:job_orders,id',
+					],
+					'issued_to_id' => [
+						'required',
+						'integer',
+						'exists:users,id',
+					],
+					'issued_qty' => [
+						'required',
+						'numeric',
+					],
 				]);
 
-			} else {
-				$job_order_isssued_part = JobOrderIssuedPart::find($request->job_order_issued_part_id);
-				if ($job_order_isssued_part == null) {
-					$job_order_isssued_part = new JobOrderIssuedPart;
-					$job_order_isssued_part->created_by_id = Auth::id();
-					$job_order_isssued_part->created_at = Carbon::now();
-				} else {
-					$job_order_isssued_part->updated_by_id = Auth::id();
-					$job_order_isssued_part->updated_at = Carbon::now();
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
 				}
 
-				$job_order_isssued_part->fill($request->all());
-				$job_order_isssued_part->save();
+				$job_card = JobCard::where('job_order_id', $request->job_order_id)->first();
 
-				DB::commit();
+				if (!$job_card) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Job Card Not Found',
+						],
+					]);
+				}
+
+				//Check Gateout Pending Floating gatepass
+				$floating_gate_pass = FloatingGatePass::where('job_card_id', $job_card->id)->where('status_id', 11160)->first();
+				if ($floating_gate_pass) {
+					$number = $floating_gate_pass->number;
+				} else {
+					if (date('m') > 3) {
+						$year = date('Y') + 1;
+					} else {
+						$year = date('Y');
+					}
+					//GET FINANCIAL YEAR ID
+					$financial_year = FinancialYear::where('from', $year)
+						->where('company_id', Auth::user()->company_id)
+						->first();
+					if (!$financial_year) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => [
+								'Fiancial Year Not Found',
+							],
+						]);
+					}
+					//GET BRANCH/OUTLET
+					$branch = Outlet::where('id', $job_card->outlet_id)->first();
+
+					//GENERATE GATE IN VEHICLE NUMBER
+					$generateNumber = SerialNumberGroup::generateNumber(111, $financial_year->id, $branch->state_id, $branch->id);
+					if (!$generateNumber['success']) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => [
+								'No Floating Gatepass number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+							],
+						]);
+					}
+
+					$number = $generateNumber['number'];
+				}
+
+				$floating_stock = FloatStock::where('id', $request->floating_stock_id)->first();
+				if ($floating_stock) {
+					//Floating Stocks save
+					$floating_stock_log = new FloatingGatePass;
+					$floating_stock_log->company_id = Auth::user()->company_id;
+					$floating_stock_log->outlet_id = $job_card->outlet_id;
+					$floating_stock_log->number = $number;
+					$floating_stock_log->job_card_id = $job_card->id;
+					$floating_stock_log->floating_stock_id = $request->floating_stock_id;
+					$floating_stock_log->qty = $request->issued_qty;
+					$floating_stock_log->issued_to_id = $request->issued_to_id;
+					$floating_stock_log->status_id = 11160;
+					$floating_stock_log->created_by_id = Auth::user()->id;
+					// $floating_stock_log->updated_by_id = Auth::user()->id;
+					$floating_stock_log->created_at = Carbon::now();
+					// $floating_stock_log->updated_at	 = Carbon::now();
+					$floating_stock_log->save();
+
+					//Update Floating Stock
+					$floating_stock->issued_qty = $floating_stock->issued_qty + $request->issued_qty;
+					$floating_stock->available_qty = $floating_stock->available_qty - $request->issued_qty;
+					$floating_stock->save();
+				}
 
 				return response()->json([
 					'success' => true,
-					'message' => 'Part Issued Successfully!!',
+					'message' => 'Floating Part Issued Successfully!!',
 				]);
 			}
-
 		} catch (Exception $e) {
 			return response()->json([
 				'success' => false,
@@ -2083,6 +2216,7 @@ class VehicleInwardController extends Controller {
 				'driverLicenseAttachment',
 				'insuranceAttachment',
 				'rcBookAttachment',
+				'CREUser',
 			])
 				->select([
 					'job_orders.*',
@@ -4508,7 +4642,7 @@ class VehicleInwardController extends Controller {
 					$delete_road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->forceDelete();
 				} else {
 					//Check Vehicle Road Test Status
-					$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 8301)->first();
+					$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 11141)->first();
 					if ($road_test) {
 						return response()->json([
 							'success' => false,
@@ -4534,7 +4668,7 @@ class VehicleInwardController extends Controller {
 								'updated_at' => Carbon::now(),
 							]);
 
-						$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 8300)->first();
+						$road_test = RoadTestGatePass::where('job_order_id', $job_order->id)->where('status_id', 11140)->first();
 
 						if (!$road_test) {
 
@@ -4575,7 +4709,7 @@ class VehicleInwardController extends Controller {
 							$road_test = new RoadTestGatePass;
 							$road_test->company_id = Auth::user()->company_id;
 							$road_test->job_order_id = $job_order->id;
-							$road_test->status_id = 8300;
+							$road_test->status_id = 11140;
 							$road_test->number = $generateNumber['number'];
 							$road_test->created_by_id = Auth::user()->id;
 							$road_test->created_at = Carbon::now();
@@ -5208,7 +5342,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			//Check Road Test Passes or not
-			$road_test = RoadTestGatePass::where('job_order_id', $request->job_order_id)->whereIn('status_id', [8300, 8301])->first();
+			$road_test = RoadTestGatePass::where('job_order_id', $request->job_order_id)->whereIn('status_id', [11140, 11141])->first();
 			if ($road_test) {
 				return response()->json([
 					'success' => false,
