@@ -56,28 +56,32 @@
                                                     </div><!-- Column -->
                                                     <div class="col-md-6">
                                                         <div class="multi-img">
-                                                            <table class="table-info">
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td class="text-center">Vehicle Image</td>
-                                                                        <td></td>
-                                                                        <td class="text-center">KM Image</td>
-                                                                        <td></td>
-                                                                        <td class="text-center">Driver Image</td>
-                                                                        <td></td>
-                                                                        <td class="text-center">Chassis Image</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td><img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.vehicle_attachment.name}}" alt="Images" /></td>
-                                                                        <td></td>
-                                                                        <td><img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.km_attachment.name}}" alt="Images" /></td>
-                                                                        <td>&nbsp;&nbsp;</td>
-                                                                        <td> <img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.driver_attachment.name}}" alt="Images" /></td>
-                                                                        <td></td>
-                                                                        <td><img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.chassis_attachment.name}}" alt="Images" /></td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
+                                                            <ul class="multi-img-list">
+                                                                <li class="multi-img-list-item">
+                                                                    <span class="info">Vehicle Image</span>
+                                                                    <span class="value">
+                                                                        <img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.vehicle_attachment.name}}" alt="Images" />
+                                                                    </span>
+                                                                </li>
+                                                                <li class="multi-img-list-item">
+                                                                    <span class="info">KM Image</span>
+                                                                    <span class="value">
+                                                                        <img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.km_attachment.name}}" alt="Images" />
+                                                                    </span>
+                                                                </li>
+                                                                <li class="multi-img-list-item">
+                                                                    <span class="info">Driver Image</span>
+                                                                    <span class="value">
+                                                                        <img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.driver_attachment.name}}" alt="Images" />
+                                                                    </span>
+                                                                </li>
+                                                                <li class="multi-img-list-item">
+                                                                    <span class="info">Chassis Image</span>
+                                                                    <span class="value">
+                                                                        <img class="img-responsive" src="{{$ctrl.floating_gate_pass.gate_in_attachment_path}}/{{$ctrl.floating_gate_pass.job_order.gate_log.chassis_attachment.name}}" alt="Images" />
+                                                                    </span>
+                                                                </li>
+                                                            </ul>
                                                         </div>
                                                     </div><!-- Column -->
                                                 </div><!-- Row -->
