@@ -48,7 +48,7 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <img ng-if="job_order.customer_approval_attachment.length > 0" src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_approval_attachment[0].name}}" id="customer_pic" height="360" width="100%">
-                                                        <canvas ng-show="$ctrl.screenShot" id="canvas" class="canvs-img" width="100%" height="360"></canvas>
+                                                        <canvas ng-show="$ctrl.screenShot" id="canvas" class="canvs-img" width="400" height="360"></canvas>
                                                     </div>
                                                 </div>
                                                 <!-- <div class="col-md-12">
@@ -71,15 +71,16 @@
                                                         <div class="sig sigWrapper" style="height:auto;">
                                                             <div class="typed"></div>
                                                             <!-- <canvas class="sign-pad" id="sign-pad" width="300" height="100"></canvas> -->
-                                                            <canvas id="signature" class="canvs-sign" width="100%" height="150" style="border: 1px solid #ddd;"></canvas>
+                                                            <canvas id="signature" class="canvs-sign" width="300" height="150" style="border: 1px solid #ddd;"></canvas>
                                                             <input type="hidden" name="customer_e_sign" value="" id="customer_sign">
                                                         </div>
                                                         <button id="clear-signature">Clear</button>
                                                         <span id="eror_customer_sign"></span>
                                                     </div>
                                                     <div class="col-md-6" ng-if="job_order.customer_e_sign.length > 0">
-                                                        <img src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_e_sign[0].name}}" id="customer_pic" height="150" width="450">
+                                                        <img src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_e_sign[0].name}}" id="customer_pic" height="150" width="100%">
                                                     </div>
+                                                    <br>
                                                 </div>
                                             </div>
                                             <!-- <button ng-click="snapshot_sign">Take Snapshot</button> -->
@@ -110,7 +111,7 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap-->
 <!-- Inward Details Modal -->
-<div class="modal modal-success alert-modal fade" id="inward_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal modal-success alert-modal fade" id="inward_notification" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-sm" role="document">
         <form id="initiateJob">
             <input type="hidden" name="job_order_id" value="{{$ctrl.job_order.id}}">

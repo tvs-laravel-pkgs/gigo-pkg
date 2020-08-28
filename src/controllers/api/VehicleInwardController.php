@@ -4007,7 +4007,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			$extras = [
-				'part_list' => Part::getListWithStock(),
+				// 'part_list' => Part::getListWithStock(),
 				'split_order_list' => SplitOrderType::get(),
 			];
 
@@ -4768,7 +4768,7 @@ class VehicleInwardController extends Controller {
 									'success' => false,
 									'error' => 'Validation Error',
 									'errors' => [
-										'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+										'No Road Test Gate Pass number found for FY : ' . $financial_year->year . ', State : ' . $branch->code . ', Outlet : ' . $branch->code,
 									],
 								]);
 							}
