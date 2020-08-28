@@ -23,5 +23,8 @@ class PartStock extends Model {
 	public function outlet() {
 		return $this->belongsTo('App\Outlet', 'outlet_id');
 	}
+	public function partStockRack() {
+		return $this->belongsToMany('Abs\GigoPkg\PartStockRack', 'part_stock_rack', 'part_stock_id', 'rack_id')->withPivot('quantity');
+	}
 
 }
