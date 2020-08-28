@@ -64,6 +64,9 @@
                                                         <th>
                                                             Status
                                                         </th>
+                                                        <th>
+                                                            Action
+                                                        </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -92,6 +95,9 @@
                                                         <td>
                                                             {{floating_part.status_name}}
                                                         </td>
+                                                        <td><button type="button" ng-if="floating_part.status_id == 11162" ng-click="showRemarks(floating_part.id)" class="btn img-btn btn-delete">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/table/add-hover.svg" alt="View" />
+                                                            </button></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -137,3 +143,18 @@
     </div>
 </div>
 <!-- Modal -->
+<div class="modal fade alert-modal failure" id="floating_part_return_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Confirmation?</h4>
+            </div>
+            <div class="modal-body">
+                <h5 id="repair_code"></h5>
+                <p>Are you sure? Do you return this part?</p>
+                <button class="btn btn-rose" data-dismiss="modal" aria-label="Close">No</button>
+                <button class="btn btn-success confirm_part_return" aria-label="Close" ng-click="returnFloatingGatePass()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>

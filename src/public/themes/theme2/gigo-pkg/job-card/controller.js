@@ -2846,6 +2846,8 @@ app.component('jobCardFloatingForm', {
                 });
         }
 
+        $scope.fetchData();
+
         $scope.saveFloatingGatePass = function() {
             $('.confirm_gatepass').button('loading');
             $.ajax({
@@ -2853,6 +2855,7 @@ app.component('jobCardFloatingForm', {
                     method: "POST",
                     data: {
                         id: $routeParams.job_card_id,
+                        type: 1,
                     },
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
@@ -2877,7 +2880,44 @@ app.component('jobCardFloatingForm', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
-        $scope.fetchData();
+
+        $scope.showRemarks = function(stock_id) {
+            $scope.stock_id = stock_id;
+            $('#floating_part_return_modal').modal('show');
+        }
+
+        $scope.returnFloatingGatePass = function() {
+            $('.confirm_part_return').button('loading');
+            $.ajax({
+                    url: base_url + '/api/job-card/floating-gatepass/status/update',
+                    method: "POST",
+                    data: {
+                        id: $scope.stock_id,
+                        type: 2,
+                    },
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                })
+                .done(function(res) {
+                    $('.confirm_part_return').button('reset');
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+
+                    custom_noty('success', res.message);
+                    $("#floating_part_return_modal").modal('hide');
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
+
+                    $scope.fetchData();
+                })
+                .fail(function(xhr) {
+                    $('.confirm_part_return').button('reset');
+                    custom_noty('error', 'Something went wrong at server');
+                });
+        }
     }
 });
 

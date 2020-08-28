@@ -940,36 +940,68 @@ class JobCardController extends Controller {
 	public function updateFloatingGatePassStatus(Request $request) {
 		// dd($request->all());
 		try {
-			$validator = Validator::make($request->all(), [
-				'id' => [
-					'required',
-					'integer',
-					'exists:job_cards,id',
-				],
+			if ($request->type == 2) {
+				$validator = Validator::make($request->all(), [
+					'id' => [
+						'required',
+						'integer',
+						'exists:floating_stock_logs,id',
+					],
 
-			]);
+				]);
 
-			if ($validator->fails()) {
-				$errors = $validator->errors()->all();
-				$success = false;
+				if ($validator->fails()) {
+					$errors = $validator->errors()->all();
+					$success = false;
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				DB::beginTransaction();
+
+				$floating_gatepass = FloatingGatePass::where('id', $request->id)->update(['status_id' => 11163, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
+				DB::commit();
+
 				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator->errors()->all(),
+					'success' => true,
+					'message' => 'Floating Part Updated Successfully!!',
+				]);
+			} else {
+				$validator = Validator::make($request->all(), [
+					'id' => [
+						'required',
+						'integer',
+						'exists:job_cards,id',
+					],
+
+				]);
+
+				if ($validator->fails()) {
+					$errors = $validator->errors()->all();
+					$success = false;
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				DB::beginTransaction();
+
+				$floating_gatepass = FloatingGatePass::where('job_card_id', $request->id)->where('status_id', 11160)
+					->update(['status_id' => 11161, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
+				DB::commit();
+
+				return response()->json([
+					'success' => true,
+					'message' => 'Floating GatePass Updated Successfully!!',
 				]);
 			}
-
-			DB::beginTransaction();
-
-			$floating_gatepass = FloatingGatePass::where('job_card_id', $request->id)->where('status_id', 11160)
-				->update(['status_id' => 11161, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
-
-			DB::commit();
-
-			return response()->json([
-				'success' => true,
-				'message' => 'Floating GatePass Updated Successfully!!',
-			]);
 
 		} catch (Exception $e) {
 			return response()->json([
