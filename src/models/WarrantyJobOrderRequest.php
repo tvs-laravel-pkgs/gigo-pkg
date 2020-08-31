@@ -586,6 +586,20 @@ class WarrantyJobOrderRequest extends BaseModel {
 						$job_card->job_order_id = $job_order_id;
 						$job_card->save();
 					} else {
+						$job_order = JobOrder::find($job_card->job_order_id);
+						$job_order->company_id = $owner->company_id;
+						$job_order->number = $jobOrderNumber['number'];
+						$job_order->vehicle_id = $input['vehicle_id'];
+						$job_order->outlet_id = $input['outlet_id'];
+						$job_order->type_id = 4;
+						$job_order->quote_type_id = 2;
+						$job_order->km_reading_type_id = $input['reading_type_id'];
+						$job_order->km_reading = $input['failed_at'];
+						$job_order->hr_reading = $input['failed_at'];
+						$job_order->quote_type_id = 2;
+						$job_order->customer_id = $customer_id;
+						$job_order->save();
+
 						$job_order_id = $job_card->job_order_id;
 					}
 				}
