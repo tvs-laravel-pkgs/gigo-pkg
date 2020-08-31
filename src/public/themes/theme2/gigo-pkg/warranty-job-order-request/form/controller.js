@@ -3,6 +3,9 @@ angular.module('app').requires.push('angularBootstrapFileinput');
 app.component('warrantyJobOrderRequestForm', {
     templateUrl: warrantyJobOrderRequestForm,
     controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc, VehicleSvc, OutletSvc, CustomerSvc, ComplaintGroupSvc, $localstorage) {
+        //FormFocus
+        formFocus();
+
         $rootScope.loading = true;
         var pageLoaded = 0;
         $('#search').focus();
@@ -763,10 +766,12 @@ app.component('warrantyJobOrderRequestForm', {
             $isValidFailedAt = true;
             $failed_at = parseInt($scope.warranty_job_order_request.failed_at);
             $last_lube_changed = parseInt($scope.warranty_job_order_request.last_lube_changed);
-            $reading_type_id = $scope.warranty_job_order_request.reading_type_id
-            if ($reading_type_id == 8040 && $failed_at < $last_lube_changed) {
-                custom_noty('error', 'Failed KM Value Should be Greater than Last lube change');
-                $isValidFailedAt = false;
+            $reading_type_id = $scope.warranty_job_order_request.reading_type_id;
+            if (!isNaN($last_lube_changed)) {
+                if ($reading_type_id == 8040 && $failed_at < $last_lube_changed) {
+                    custom_noty('error', 'Failed KM Value Should be Greater than Last lube change');
+                    $isValidFailedAt = false;
+                }
             }
             return false;
         }
@@ -853,7 +858,7 @@ app.component('warrantyJobOrderRequestForm', {
                     // digits: true,
                 },
                 'last_lube_changed': {
-                    required: true,
+                    // required: true,
                     // digits: true,
                     minlength: 2,
                     maxlength: 10,

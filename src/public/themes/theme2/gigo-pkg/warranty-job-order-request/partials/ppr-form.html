@@ -123,15 +123,15 @@
                                         <div class="common-radio-button type-4">
                                             <input ng-change="requestTypeChanges()" type="radio" id="warranty" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9180">
                                             <label for="warranty">
-                                                Warranty
+                                                Warranty<span class="rd-focused"></span>
                                             </label>
                                             <input ng-change="requestTypeChanges()" type="radio" id="ewp" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9181">
                                             <label for="ewp">
-                                                EWP
+                                                EWP<span class="rd-focused"></span>
                                             </label>
                                             <input ng-change="requestTypeChanges()" type="radio" id="amc" name="request_type_id" ng-model="warranty_job_order_request.request_type_id" ng-value="9182">
                                             <label for="amc">
-                                                AMC
+                                                AMC<span class="rd-focused"></span>
                                             </label>
                                         </div>
                                     </div><!-- Feild -->
@@ -142,7 +142,8 @@
                                             Job order number
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order" md-search-text="jobOrderSearchKey" md-items="job_order in searchJobOrders(jobOrderSearchKey)" md-item-text="job_order.number" md-min-length="3" md-escape-options="clear" placeholder="Ex. JO001" md-input-id="jo_ac">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.job_order" md-search-text="jobOrderSearchKey" md-items="job_order in searchJobOrders(jobOrderSearchKey)" md-item-text="job_order.number" md-min-length="3" md-escape-options="clear" placeholder="Ex. JO001" md-input-id="jo_ac">
+                                            <!-- md-autofocus  -->
                                             <md-item-template>
                                                 <span>
                                                     {{job_order.number}}
@@ -188,7 +189,8 @@
                                             Outlet
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-autofocus md-selected-item="warranty_job_order_request.job_order.outlet" md-search-text="outlet_search_key" md-items="outlet in searchOutlet(outlet_search_key)" md-item-text="outlet.code+' / '+outlet.name" md-min-length="2" md-escape-options="clear" placeholder="Outlet" ng-model-options="{trackBy: '$value.id' }" md-selected-item-change="outletChanged(warranty_job_order_request.job_order.outlet)" name="outlet_id">
+                                        <md-autocomplete md-selected-item="warranty_job_order_request.job_order.outlet" md-search-text="outlet_search_key" md-items="outlet in searchOutlet(outlet_search_key)" md-item-text="outlet.code+' / '+outlet.name" md-min-length="2" md-escape-options="clear" placeholder="Outlet" ng-model-options="{trackBy: '$value.id' }" md-selected-item-change="outletChanged(warranty_job_order_request.job_order.outlet)" name="outlet_id">
+                                            <!-- md-autofocus  -->
                                             <md-item-template>
                                                 <span>
                                                     {{outlet.code}} / {{outlet.name}}
@@ -225,9 +227,9 @@
                                         </label>
                                         <div class="common-radio-button type-4">
                                             <input type="radio" id="warranty_yes" name="has_warranty" ng-model="warranty_job_order_request.has_warranty" ng-value="1">
-                                            <label for="warranty_yes">Active</label>
+                                            <label for="warranty_yes">Active<span class="rd-focused"></span></label>
                                             <input type="radio" id="warranty_no" name="has_warranty" ng-model="warranty_job_order_request.has_warranty" ng-value="0">
-                                            <label for="warranty_no">Inactive</label>
+                                            <label for="warranty_no">Inactive<span class="rd-focused"></span></label>
                                         </div>
                                     </div>
                                 </li>
@@ -239,9 +241,9 @@
                                         </label>
                                         <div class="common-radio-button type-4">
                                             <input type="radio" id="amc_yes" name="has_amc" ng-model="warranty_job_order_request.has_amc" ng-value="1">
-                                            <label for="amc_yes">Active</label>
+                                            <label for="amc_yes">Active<span class="rd-focused"></span></label>
                                             <input type="radio" id="amc_no" name="has_amc" ng-model="warranty_job_order_request.has_amc" ng-value="0">
-                                            <label for="amc_no">Inactive</label>
+                                            <label for="amc_no">Inactive<span class="rd-focused"></span></label>
                                         </div>
                                     </div>
                                 </li>
@@ -262,6 +264,15 @@
                                         </md-select>
                                         <input required type="hidden" name="split_order_type_id" value="{{warranty_job_order_request.split_order_type.id}}">
                                     </div>
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Claim Number
+                                            <sup class="mandatory"></sup>
+                                        </label>
+                                        <input type="text" class="form-control" autocomplete="off" name="claim_number" ng-model="warranty_job_order_request.claim_number" placeholder="Claim Number" />
+                                    </div><!-- Feild -->
                                 </li>
                             </ul>
                         </div>
@@ -286,11 +297,11 @@
                                         <div class="common-radio-button type-4">
                                             <input type="radio" id="vehicle_search_type_yes" name="vehicle_search_type" ng-model="vehicle_search_type" ng-value="true">
                                             <label for="vehicle_search_type_yes">
-                                                Existing
+                                                Existing<span class="rd-focused"></span>
                                             </label>
                                             <input type="radio" id="vehicle_search_type_no" name="vehicle_search_type" ng-model="vehicle_search_type" ng-value="false">
                                             <label for="vehicle_search_type_no">
-                                                New
+                                                New<span class="rd-focused"></span>
                                             </label>
                                         </div>
                                     </div><!-- Feild -->
@@ -301,7 +312,8 @@
                                             Search vehicle
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item-change="vehicleSelected(warranty_job_order_request.job_order.vehicle)" md-autofocus md-selected-item="warranty_job_order_request.job_order.vehicle" md-search-text="vehicle_search_key" md-items="vehicle in searchVehicles(vehicle_search_key)" md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number" md-min-length="3" md-escape-options="clear" placeholder="Chassis # / Registration # / Engine #" md-input-id="vehicle_ac">
+                                        <md-autocomplete md-selected-item-change="vehicleSelected(warranty_job_order_request.job_order.vehicle)" md-selected-item="warranty_job_order_request.job_order.vehicle" md-search-text="vehicle_search_key" md-items="vehicle in searchVehicles(vehicle_search_key)" md-item-text="vehicle.chassis_number +' / '+ vehicle.registration_number" md-min-length="3" md-escape-options="clear" placeholder="Chassis # / Registration # / Engine #" md-input-id="vehicle_ac">
+                                            <!-- md-autofocus  -->
                                             <md-item-template>
                                                 <span>
                                                     {{vehicle.registration_number}} / {{vehicle.chassis_number}}
@@ -472,11 +484,11 @@
                                         <div class="common-radio-button type-4">
                                             <input type="radio" id="customer_search_type_yes" name="customer_search_type" ng-model="customer_search_type" ng-value="true">
                                             <label for="customer_search_type_yes">
-                                                Existing
+                                                Existing<span class="rd-focused"></span>
                                             </label>
                                             <input type="radio" id="customer_search_type_no" name="customer_search_type" ng-model="customer_search_type" ng-value="false">
                                             <label for="customer_search_type_no">
-                                                New
+                                                New<span class="rd-focused"></span>
                                             </label>
                                         </div>
                                     </div><!-- Feild -->
@@ -613,7 +625,8 @@
                                             City
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.customer_address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-autofocus md-input-id="city_ac">
+                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.customer_address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-input-id="city_ac">
+                                            <!-- md-autofocus  -->
                                             <md-item-template>
                                                 <span>
                                                     {{option.name}}
@@ -899,11 +912,11 @@
                                         <div class="common-radio-button type-4">
                                             <input type="radio" id="has_goodwill_yes" name="has_goodwill" ng-model="warranty_job_order_request.has_goodwill" ng-value="1">
                                             <label for="has_goodwill_yes">
-                                                Yes
+                                                Yes<span class="rd-focused"></span>
                                             </label>
                                             <input type="radio" id="has_goodwill_no" name="has_goodwill" ng-model="warranty_job_order_request.has_goodwill" ng-value="0">
                                             <label for="has_goodwill_no">
-                                                No
+                                                No<span class="rd-focused"></span>
                                             </label>
                                         </div>
                                     </div><!-- Feild -->
@@ -974,11 +987,11 @@
                                         <div class="common-radio-button type-4">
                                             <input type="radio" id="radio_ton" name="load_carried_type_id" ng-model="warranty_job_order_request.load_carried_type_id" ng-value="9040">
                                             <label for="radio_ton">
-                                                Tons
+                                                Tons<span class="rd-focused"></span>
                                             </label>
                                             <input type="radio" id="radio_passenger" name="load_carried_type_id" ng-model="warranty_job_order_request.load_carried_type_id" ng-value="9041">
                                             <label for="radio_passenger">
-                                                Passenger
+                                                Passenger<span class="rd-focused"></span>
                                             </label>
                                         </div>
                                     </div><!-- Feild -->
@@ -1034,15 +1047,6 @@
                                 <li class="view-col-3">
                                     <div class="form-group">
                                         <label>
-                                            Last lube change on failed aggregate(KM)
-                                            <sup class="mandatory">*</sup>
-                                        </label>
-                                        <input id="last_lube_changed" type="text" class="form-control" autocomplete="off" name="last_lube_changed" ng-model="warranty_job_order_request.last_lube_changed" maxlength="6" />
-                                    </div><!-- Feild -->
-                                </li>
-                                <li class="view-col-3">
-                                    <div class="form-group">
-                                        <label>
                                             Terrain at the time of failure
                                             <sup class="mandatory">*</sup>
                                         </label>
@@ -1068,13 +1072,38 @@
                                         <div class="common-radio-button type-4">
                                             <input type="radio" id="radio_km" name="reading_type_id" ng-model="warranty_job_order_request.reading_type_id" ng-value="8040">
                                             <label for="radio_km">
-                                                KM
+                                                KM<span class="rd-focused"></span>
                                             </label>
                                             <input type="radio" id="radio_hrs" name="reading_type_id" ng-model="warranty_job_order_request.reading_type_id" ng-value="8041">
                                             <label for="radio_hrs">
-                                                HRS
+                                                HRS<span class="rd-focused"></span>
                                             </label>
                                         </div>
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Last lube change on failed aggregate
+                                            <!-- (KM) -->
+                                            <span ng-if="warranty_job_order_request.reading_type_id == 8040">
+                                                (KM)
+                                            </span>
+                                            <span ng-if="warranty_job_order_request.reading_type_id == 8041">
+                                                (HRS)
+                                            </span>
+                                            <sup class="mandatory"></sup>
+                                        </label>
+                                        <input id="last_lube_changed" type="text" class="form-control" autocomplete="off" name="last_lube_changed" ng-model="warranty_job_order_request.last_lube_changed" maxlength="6" />
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Remarks for not changing Lube
+                                            <sup class="mandatory"></sup>
+                                        </label>
+                                        <textarea class="form-control" autocomplete="off" name="remarks_for_not_changing_lube" ng-model="warranty_job_order_request.remarks_for_not_changing_lube"></textarea>
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3">

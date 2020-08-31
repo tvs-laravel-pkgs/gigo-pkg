@@ -66,6 +66,9 @@ class WarrantyJobOrderRequest extends BaseModel {
 		"total_part_cushioning_percentage",
 		"total_part_cushioning_charge",
 		"total_part_amount",
+		"remarks_for_not_changing_lube",
+		"claim_number",
+		"failure_type_id",
 	];
 
 	protected $dates = [

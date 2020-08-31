@@ -117,6 +117,17 @@
                         -
                     </span>
                 </li>
+                <li class="view-col-3">
+                    <span class="view-col-label">
+                        Claim Number
+                    </span>
+                    <span class="view-col-value" ng-if="warranty_job_order_request.claim_number">
+                        {{warranty_job_order_request.claim_number}}
+                    </span>
+                    <span class="view-col-value" ng-if="!warranty_job_order_request.claim_number">
+                        -
+                    </span>
+                </li>
             </ul>
             <div class="panel-group" id="accordion">
                 <div class="panel panel-default type-3">
@@ -384,14 +395,6 @@
                                 </li>
                                 <li class="view-col-3">
                                     <span class="view-col-label">
-                                        Last lube change on failed aggregate(KM)
-                                    </span>
-                                    <span class="view-col-value">
-                                        {{warranty_job_order_request.last_lube_changed}}
-                                    </span>
-                                </li>
-                                <li class="view-col-3">
-                                    <span class="view-col-label">
                                         Terrain at the time of failure
                                     </span>
                                     <span class="view-col-value">
@@ -408,7 +411,23 @@
                                 </li>
                                 <li class="view-col-3">
                                     <span class="view-col-label">
-                                        KM / HRS run per day
+                                        Last lube change on failed aggregate({{warranty_job_order_request.reading_type.name}})
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.last_lube_changed}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Remarks for not changing Lube
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.remarks_for_not_changing_lube}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        {{warranty_job_order_request.reading_type.name}} run per day
                                     </span>
                                     <span class="view-col-value">
                                         {{warranty_job_order_request.runs_per_day}}
@@ -416,7 +435,7 @@
                                 </li>
                                 <li class="view-col-3">
                                     <span class="view-col-label">
-                                        Failed KM / HRS
+                                        Failed {{warranty_job_order_request.reading_type.name}}
                                     </span>
                                     <span class="view-col-value">
                                         {{warranty_job_order_request.failed_at}}
