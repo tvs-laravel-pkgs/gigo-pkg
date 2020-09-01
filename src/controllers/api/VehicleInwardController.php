@@ -1530,8 +1530,6 @@ class VehicleInwardController extends Controller {
 					]);
 				}
 			} else {
-				// dump('Floating Stock');
-
 				$validator = Validator::make($request->all(), [
 					'job_order_id' => [
 						'required',
@@ -1568,6 +1566,8 @@ class VehicleInwardController extends Controller {
 						],
 					]);
 				}
+
+				DB::beginTransaction();
 
 				//Check Gateout Pending Floating gatepass
 				$floating_gate_pass = FloatingGatePass::where('job_card_id', $job_card->id)->where('status_id', 11160)->first();
@@ -1613,27 +1613,32 @@ class VehicleInwardController extends Controller {
 				$floating_stock = FloatStock::where('id', $request->floating_stock_id)->first();
 				if ($floating_stock) {
 					//Floating Stocks save
-					$floating_stock_log = new FloatingGatePass;
+					$floating_stock_log = FloatingGatePass::firstOrNew(['outlet_id' => $job_card->outlet_id, 'job_card_id' => $job_card->id, 'floating_stock_id' => $request->floating_stock_id, 'status_id' => 11160]);
+
+					if ($floating_stock_log->exists) {
+						$floating_stock_log->updated_by_id = Auth::user()->id;
+						$floating_stock_log->updated_at = Carbon::now();
+					} else {
+						$floating_stock_log->created_by_id = Auth::user()->id;
+						$floating_stock_log->created_at = Carbon::now();
+					}
+
 					$floating_stock_log->company_id = Auth::user()->company_id;
-					$floating_stock_log->outlet_id = $job_card->outlet_id;
 					$floating_stock_log->number = $number;
-					$floating_stock_log->job_card_id = $job_card->id;
-					$floating_stock_log->floating_stock_id = $request->floating_stock_id;
 					$floating_stock_log->qty = $request->issued_qty;
 					$floating_stock_log->issued_to_id = $request->issued_to_id;
-					$floating_stock_log->status_id = 11160;
-					$floating_stock_log->created_by_id = Auth::user()->id;
-					// $floating_stock_log->updated_by_id = Auth::user()->id;
-					$floating_stock_log->created_at = Carbon::now();
-					// $floating_stock_log->updated_at	 = Carbon::now();
 					$floating_stock_log->save();
 
 					//Update Floating Stock
-					$floating_stock->issued_qty = $floating_stock->issued_qty + $request->issued_qty;
-					$floating_stock->available_qty = $floating_stock->available_qty - $request->issued_qty;
+					//Total Issue Qty
+					$issued_qty = FloatingGatePass::where('outlet_id', $job_card->outlet_id)->where('floating_stock_id', $request->floating_stock_id)->whereNotIn('status_id', [11164, 11165])->sum('qty');
+
+					$floating_stock->issued_qty = $issued_qty;
+					$floating_stock->available_qty = $floating_stock->qty - ($issued_qty);
 					$floating_stock->save();
 				}
 
+				DB::commit();
 				return response()->json([
 					'success' => true,
 					'message' => 'Floating Part Issued Successfully!!',

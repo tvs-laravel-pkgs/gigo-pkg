@@ -15,6 +15,8 @@ class FloatingGatePass extends BaseModel {
 		"outlet_id",
 		"number",
 		"job_card_id",
+		"floating_stock_id",
+		"status_id",
 	];
 
 	// Getters --------------------------------------------------------------
