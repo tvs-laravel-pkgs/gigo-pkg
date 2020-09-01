@@ -843,7 +843,8 @@ class VehicleInwardController extends Controller {
 			$indent_part_logs = array();
 			$issued_parts_list = array();
 			$floating_parts = array();
-			$floating_part_logs = array();
+			$floating_part_issue_logs = array();
+			$floating_part_return_logs = array();
 
 			if ($job_order->jobCard) {
 				$job_order_parts = Part::leftJoin('job_order_parts', 'job_order_parts.part_id', 'parts.id')->select('parts.*', 'job_order_parts.id as job_order_part_id')->where('job_order_parts.job_order_id', $r->id)->whereNull('removal_reason_id')->get();
@@ -863,7 +864,7 @@ class VehicleInwardController extends Controller {
 					->where('job_order_id', $r->id)
 				// ->whereNotIn('job_order_parts.removal_reason_id', [10021])
 					->select(
-						DB::raw('"Issue" as transaction_type'),
+						DB::raw('"Regular Part Issued" as transaction_type'),
 						'parts.name',
 						'parts.code',
 						'joip.issued_qty as qty',
@@ -884,7 +885,7 @@ class VehicleInwardController extends Controller {
 					->where('job_order_id', $r->id)
 				// ->whereNotIn('job_order_parts.removal_reason_id', [10021])
 					->select(
-						DB::raw('"Return" as transaction_type'),
+						DB::raw('"Regular Part Returned" as transaction_type'),
 						'parts.name',
 						'parts.code',
 						'jorp.returned_qty as qty',
@@ -904,12 +905,22 @@ class VehicleInwardController extends Controller {
 						->where('floating_stock_logs.job_card_id', $job_order->jobCard->id)->where('floating_stock_logs.status_id', 11163)->select('floating_stock_logs.floating_stock_id', 'floating_stock_logs.qty as qty',
 						DB::RAW('CONCAT(parts.code," / ",parts.name) as name'), 'floating_stock_logs.id')->get())->prepend(['floating_stock_id' => '', 'name' => 'Select Part']);
 
-				//Floating Parts
-				$floating_part_logs = FloatingGatePass::join('floating_stocks', 'floating_stocks.id', 'floating_stock_logs.floating_stock_id')
+				//Floating Parts Issue
+				$floating_part_issue_logs = FloatingGatePass::join('floating_stocks', 'floating_stocks.id', 'floating_stock_logs.floating_stock_id')
 					->join('parts', 'parts.id', 'floating_stocks.part_id')
 					->join('users', 'floating_stock_logs.issued_to_id', 'users.id')
 					->where('floating_stock_logs.job_card_id', $job_order->jobCard->id)
-					->select(DB::raw('"Floating Part Issue" as transaction_type'), DB::raw('"In Stock" as issue_mode'), 'parts.code', 'parts.name', 'users.name as mechanic', 'floating_stock_logs.qty as qty', 'floating_stock_logs.id', 'floating_stock_logs.status_id', DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y") as date'))
+					->select(DB::raw('"Floating Part Issued" as transaction_type'), DB::raw('"In Stock" as issue_mode'), 'parts.code', 'parts.name', 'users.name as mechanic', 'floating_stock_logs.qty as qty', 'floating_stock_logs.id', 'floating_stock_logs.status_id', DB::raw('DATE_FORMAT(floating_stock_logs.created_at,"%d/%m/%Y") as date'))
+					->get();
+
+				//Floating Parts Reurned
+				$floating_part_return_logs = FloatingGatePass::join('floating_stocks', 'floating_stocks.id', 'floating_stock_logs.floating_stock_id')
+					->join('parts', 'parts.id', 'floating_stocks.part_id')
+					->join('users', 'floating_stock_logs.returned_to_id', 'users.id')
+					->where('floating_stock_logs.job_card_id', $job_order->jobCard->id)
+					->select(DB::raw('"Floating Part Returned" as transaction_type'), DB::raw('"-" as issue_mode'), 'parts.code', 'parts.name', 'users.name as mechanic', 'floating_stock_logs.qty as qty', 'floating_stock_logs.inward_remarks as remarks', 'floating_stock_logs.id', 'floating_stock_logs.status_id', DB::raw('DATE_FORMAT(floating_stock_logs.inward_date,"%d/%m/%Y") as date'))
+					->whereNotNull('floating_stock_logs.inward_date')
+					->where('floating_stock_logs.status_id', 11165)
 					->get();
 			}
 
@@ -917,7 +928,8 @@ class VehicleInwardController extends Controller {
 				'success' => true,
 				'job_order' => $job_order,
 				'part_details' => $part_details,
-				'floating_part_logs' => $floating_part_logs,
+				'floating_part_issue_logs' => $floating_part_issue_logs,
+				'floating_part_return_logs' => $floating_part_return_logs,
 				'floating_parts' => $floating_parts,
 				// 'part_amount' => $part_amount,
 				'job_order_parts' => $job_order_parts,
@@ -1044,6 +1056,7 @@ class VehicleInwardController extends Controller {
 				}
 
 				$floating_stock->inward_date = date('Y-m-d h:i:s');
+				$floating_stock->inward_remarks = $request->remarks;
 				$floating_stock->returned_to_id = $request->returned_to_id;
 				$floating_stock->status_id = 11165;
 				$floating_stock->updated_by_id = Auth::user()->id;
