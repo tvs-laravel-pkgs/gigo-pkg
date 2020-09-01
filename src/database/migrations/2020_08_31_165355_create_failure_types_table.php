@@ -18,7 +18,15 @@ class CreateFailureTypesTable extends Migration {
 
 			$table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade')->onUpdate('cascade');
 			$table->unique(['company_id', 'name']);
+
+			$table->unsignedinteger('created_by');
+			$table->unsignedinteger('updated_by')->nullable();
+			$table->unsignedinteger('deleted_by')->nullable();
 			$table->timestamps();
+
+			$table->foreign('created_by')->references('id')->on('users')->onDelete('CASCADE')->onUpdate('cascade');
+			$table->foreign('updated_by')->references('id')->on('users')->onDelete('CASCADE')->onUpdate('cascade');
+			$table->foreign('deleted_by')->references('id')->on('users')->onDelete('CASCADE')->onUpdate('cascade');
 		});
 	}
 
