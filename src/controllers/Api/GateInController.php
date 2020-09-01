@@ -8,6 +8,7 @@ use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Config;
 use App\Employee;
 use App\FinancialYear;
+use App\FloatingGatePass;
 use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
@@ -544,6 +545,15 @@ class GateInController extends Controller {
 				if ($job_order->customer->mobile_no) {
 					$msg = sendSMSNotification($job_order->customer->mobile_no, $message);
 				}
+			}
+
+			//Check Floating GatePass
+			$floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->count();
+
+			$gate_in_data['floating_message'] = 0;
+
+			if ($floating_gate_pass) {
+				$gate_in_data['floating_message'] = 'This Vehicle is already waiting for float work!';
 			}
 
 			return response()->json([
