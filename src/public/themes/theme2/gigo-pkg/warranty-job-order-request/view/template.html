@@ -47,6 +47,9 @@
                 <div class="tab-pane-footer">
                     <div class="row">
                         <div class="col-md-12">
+                            <a ng-if="warranty_job_order_request.failure_photo" download target="_blank" href="./storage/app/public/wjor/{{warranty_job_order_request.failure_photo.name}}" class="btn btn-red">
+                                Failure Report
+                            </a>
                             <a target="_blank" href="./storage/app/public/wjor-pdfs/{{warranty_job_order_request.number}}.pdf" ng-if="warranty_job_order_request.status.id != '9100'" class="btn btn-red">
                                 PDF
                             </a>

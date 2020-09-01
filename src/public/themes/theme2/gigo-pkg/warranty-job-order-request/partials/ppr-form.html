@@ -625,7 +625,7 @@
                                             City
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.customer_address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-input-id="city_ac">
+                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.customer_address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-input-id="city_ac" md-selected-item-change="$ctrl.citySelected(warranty_job_order_request.customer_address.city)">
                                             <!-- md-autofocus  -->
                                             <md-item-template>
                                                 <span>
@@ -1063,6 +1063,46 @@
                                         <input type="hidden" name="terrain_at_failure_id" value="{{warranty_job_order_request.terrain_at_failure.id}}">
                                     </div><!-- Feild -->
                                 </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Failure Type
+                                            <sup class="mandatory"></sup>
+                                        </label>
+                                        <md-select ng-model="warranty_job_order_request.failure_type" placeholder="Select Failure Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchFailureType" type="search" placeholder="Search for a Failure Type.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="failure_type" ng-repeat="failure_type in extras.failure_types | filter:searchFailureType">
+                                                    {{failure_type.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" name="failure_type_id" value="{{warranty_job_order_request.failure_type.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3" ng-show="warranty_job_order_request.failure_type">
+                                    <div class="form-group">
+                                        <label>Failure Report</label>
+                                        <div class="file-upload-wrapper" data-text="Enter Click to upload">
+                                            <input type="file" name="failure_report_file" class="file-upload-field" placeholder="Enter Click to upload" />
+                                        </div><!-- File -->
+                                    </div><!-- Field -->
+                                </li><!-- Column -->
+                                <li class="view-col-3" ng-show="warranty_job_order_request.failure_photo">
+                                    <div class="form-group">
+                                        <span class="view-col-label">
+                                            Failure Report Attachment
+                                        </span>
+                                        <span class="view-data-list-value">
+                                            <a href="./storage/app/public/wjor/{{warranty_job_order_request.failure_photo.name}}" download>
+                                                <!-- {{warranty_job_order_request.failure_photo.name}} -->
+                                                Download Failure Report
+                                            </a>
+                                        </span>
+                                    </div><!-- Field -->
+                                </li><!-- Column -->
                                 <li class="view-col-3">
                                     <div class="form-group">
                                         <label>

@@ -160,6 +160,9 @@ class WarrantyJobOrderRequest extends BaseModel {
 		return $this->belongsTo('App\User', 'authorization_by');
 	}
 
+	public function failureType() {
+		return $this->belongsTo('App\FailureType', 'failure_type_id');
+	}
 	public function serviceTypes() {
 		return $this->belongsToMany('App\ServiceType', 'wjor_service_type', 'wjor_id', 'service_type_id');
 	}
@@ -188,6 +191,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 	public function photos() {
 		return $this->hasMany('App\Attachment', 'entity_id')->where('attachment_of_id', 9120);
+	}
+
+	public function failure_photo() {
+		return $this->hasOne('App\Attachment', 'entity_id')->where('attachment_of_id', 9122);
 	}
 
 	public function approvalAttachments() {
@@ -254,10 +261,12 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'wjorParts.taxes',
 				'wjorParts.part',
 				'photos',
+				'failure_photo',
 				'approvalAttachments',
 				'splitOrderType',
 				'requestType',
 				'authorizationBy',
+				'failureType',
 			];
 		}
 
@@ -662,6 +671,33 @@ class WarrantyJobOrderRequest extends BaseModel {
 			//SAVE ATTACHMENTS
 			$attachement_path = storage_path('app/public/wjor/');
 			Storage::makeDirectory($attachement_path, 0777);
+			if (isset($input['failure_report_file'])) {
+
+				$value = rand(1, 100);
+				$image = $input['failure_report_file'];
+
+				$file_name_with_extension = $image->getClientOriginalName();
+				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+				$extension = $image->getClientOriginalExtension();
+				// dd($file_name, $extension);
+				//ISSUE : file name should be stored
+				$name = $record->id . '_' . $file_name . '_failure_report_' . rand(10, 1000) . '.' . $extension;
+
+				$image->move($attachement_path, $name);
+				// $attachement = new Attachment;
+
+				$attachement = Attachment::firstOrNew([
+					'attachment_of_id' => 9122,
+					'attachment_type_id' => 244,
+					'entity_id' => $record->id,
+				]);
+				$attachement->attachment_of_id = 9122;
+				$attachement->attachment_type_id = 244;
+				$attachement->entity_id = $record->id;
+				$attachement->name = $name;
+				$attachement->path = null;
+				$attachement->save();
+			}
 			if (isset($input['photos'])) {
 				foreach ($input['photos'] as $key => $photo) {
 					$value = rand(1, 100);

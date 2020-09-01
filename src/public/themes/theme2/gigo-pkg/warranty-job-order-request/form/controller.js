@@ -234,6 +234,7 @@ app.component('warrantyJobOrderRequestForm', {
                     if ($scope.warranty_job_order_request.photos.length == 0) {
                         $("#file-1").addClass("required");
                     }
+                    $scope.warranty_job_order_request.photos1 = [];
                     $rootScope.loading = false;
                 });
         };
@@ -399,7 +400,7 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.addPhoto = function() {
-            $scope.warranty_job_order_request.photos.push($scope.warranty_job_order_request.photos.length + 1);
+            $scope.warranty_job_order_request.photos1.push($scope.warranty_job_order_request.photos1.length + 1);
         }
 
         $scope.outletChanged = function(outlet) {
@@ -919,6 +920,15 @@ app.component('warrantyJobOrderRequestForm', {
                     required: true,
                     minlength: 5,
                 },
+                'failure_report_file': {
+                    required: function() {
+                        if (($scope.updating == false) || ($scope.updating == true && $scope.warranty_job_order_request.failure_photo == null)) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
                 /*'photos[]': {
                     required: true,
                 },*/
@@ -976,12 +986,16 @@ app.component('warrantyJobOrderRequestForm', {
         });
 
         self.searchCity = function(query) {
+            if ($scope.warranty_job_order_request.customer_address.state) {
+                $state_id = $scope.warranty_job_order_request.customer_address.state.id;
+            }
             if (query) {
                 return new Promise(function(resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getCitySearchList'], {
                                 key: query,
+                                state: $state_id
                             }
                         )
                         .then(function(response) {
@@ -993,6 +1007,13 @@ app.component('warrantyJobOrderRequestForm', {
                 return [];
             }
         }
+        self.citySelected = function(city) {
+            if (city.state != undefined) {
+                $scope.warranty_job_order_request.customer_address.state = city.state;
+                $scope.$apply();
+            }
+        }
+
         $scope.aggregateChange = function(aggregate) {
             // console.log(aggregate.id);
             $.ajax({

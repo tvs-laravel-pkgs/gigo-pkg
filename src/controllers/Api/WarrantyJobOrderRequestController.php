@@ -7,6 +7,7 @@ use Abs\GigoPkg\Notifications\WarrantyJobOrderRequest as WjorNotification;
 use App\Aggregate;
 use App\BharatStage;
 use App\Country;
+use App\FailureType;
 use App\Http\Controllers\Controller;
 use App\Outlet;
 use App\SplitOrderType;
@@ -220,7 +221,7 @@ class WarrantyJobOrderRequestController extends Controller {
 	}
 
 	public function pdf() {
-		$warranty_job_order_request = WarrantyJobOrderRequest::find(20);
+		$warranty_job_order_request = WarrantyJobOrderRequest::find(18);
 		$warranty_job_order_request->load($this->model::relationships('read'));
 		$warranty_job_order_request->loadBusiness('ALSERV');
 		// dd($warranty_job_order_request);
@@ -346,6 +347,7 @@ class WarrantyJobOrderRequestController extends Controller {
 			$bharat_stages = BharatStage::where('company_id', Auth::user()->company_id)->get();
 			$split_order_types = SplitOrderType::where('company_id', Auth::user()->company_id)->where('claim_category_id', 11112)->get();
 			$aggregates = Aggregate::all();
+			$failure_types = FailureType::where('company_id', Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Failure Type']);
 			// $aggregates = Aggregate::where('company_id', Auth::user()->company_id)->get();
 			return response()->json([
 				'success' => true,
@@ -358,6 +360,7 @@ class WarrantyJobOrderRequestController extends Controller {
 					'bharat_stages' => $bharat_stages,
 					'split_order_types' => $split_order_types,
 					'aggregates' => $aggregates,
+					'failure_types' => $failure_types,
 				],
 			]);
 
