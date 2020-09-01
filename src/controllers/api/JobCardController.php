@@ -4104,7 +4104,7 @@ class JobCardController extends Controller {
 				],
 				'work_order_no' => [
 					'required',
-					'string',
+					'unique:gate_pass_details,work_order_no,' . $request->gate_pass_id . ',id',
 				],
 				'work_order_description' => [
 					'required',
@@ -4208,7 +4208,7 @@ class JobCardController extends Controller {
 				$validator_1 = Validator::make($generateNumber, [
 					'number' => [
 						'required',
-						'unique:gate_passes,number,' . $gate_pass->id . ',id,company_id,' . Auth::user()->company_id,
+						'unique:gate_passes,number,' . $gate_pass->id . ',id,company_id,' . Auth::user()->company_id . ',type_id,8281',
 					],
 				], $error_messages_1);
 
