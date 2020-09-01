@@ -179,6 +179,9 @@
                                                                             <sup class="mandatory">
                                                                                 *
                                                                             </sup>
+                                                                            <small class="float-right text-grey" ng-if="job_order.vehicle.last_job_order && job_order.vehicle.last_job_order.hr_reading">
+                                                                                LR : {{job_order.vehicle.last_job_order.hr_reading}}
+                                                                            </small>
                                                                         </label>
                                                                         <input type="text" class="form-control" placeholder="Enter HR Reading" autocomplete="off" ng-model="job_order.hr_reading" name="hr_reading" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
                                                                     </div><!-- Feild -->

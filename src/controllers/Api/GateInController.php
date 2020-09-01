@@ -2,6 +2,7 @@
 
 namespace Abs\GigoPkg\Api;
 
+use Abs\AmcPkg\AmcPolicy;
 use Abs\GigoPkg\ModelType;
 use Abs\GigoPkg\TradePlateNumber;
 use Abs\SerialNumberPkg\SerialNumberGroup;
@@ -11,6 +12,7 @@ use App\FinancialYear;
 use App\FloatingGatePass;
 use App\GateLog;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\WpoSoapController;
 use App\JobOrder;
 use App\Outlet;
 use App\Vehicle;
@@ -27,8 +29,9 @@ use Yajra\Datatables\Datatables;
 class GateInController extends Controller {
 	public $successStatus = 200;
 
-	public function __construct() {
+	public function __construct(WpoSoapController $getSoap = null) {
 		$this->data['theme'] = config('custom.theme');
+		$this->getSoap = $getSoap;
 	}
 
 	public function getFormData() {
@@ -516,22 +519,49 @@ class GateInController extends Controller {
 				}
 			}
 
-			DB::commit();
-
-			$gate_in_data['number'] = $gate_log->number;
-			$gate_in_data['registration_number'] = $regis_number;
-
 			if ($regis_number != '-') {
 				$number = $regis_number;
+				$soap_number = str_replace('-', '', $number);
 			} else {
 				if ($vehicle->chassis_number) {
 					$gate_in_data['registration_number'] = $vehicle->chassis_number;
 					$number = $vehicle->chassis_number;
+					$soap_number = $vehicle->chassis_number;
 				} else {
 					$gate_in_data['registration_number'] = $vehicle->engine_number;
 					$number = $vehicle->engine_number;
+					$soap_number = $vehicle->engine_number;
 				}
 			}
+
+			$membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
+
+			if ($membership_data && $membership_data['success'] == 'true') {
+				// dump($membership_data);
+
+				// dump(date('d-m-Y', strtotime($membership_data['start_date'])));
+				// dump(date('d-m-Y', strtotime($membership_data['end_date'])));
+
+				$amc_policy = AmcPolicy::firstOrNew(['company_id' => Auth::user()->company_id, 'name' => $membership_data['membership_type']]);
+
+				if ($amc_policy->exists) {
+					$amc_policy->updated_by_id = Auth::user()->id;
+					$amc_policy->updated_at = Carbon::now();
+				} else {
+					$amc_policy->created_by_id = Auth::user()->id;
+					$amc_policy->created_at = Carbon::now();
+				}
+
+				$amc_policy->save();
+
+				// dd($amc_policy);
+			}
+
+			// dd();
+			DB::commit();
+
+			$gate_in_data['number'] = $gate_log->number;
+			$gate_in_data['registration_number'] = $regis_number;
 
 			$message = 'Dear Customer, Greetings! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A');
 
