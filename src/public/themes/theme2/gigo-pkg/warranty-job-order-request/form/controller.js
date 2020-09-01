@@ -402,6 +402,9 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.addPhoto = function() {
             $scope.warranty_job_order_request.photos1.push($scope.warranty_job_order_request.photos1.length + 1);
         }
+        $scope.removeUploader = function(key) {
+            $scope.warranty_job_order_request.photos1.splice(key, 1);
+        }
 
         $scope.outletChanged = function(outlet) {
             if (!outlet) {
