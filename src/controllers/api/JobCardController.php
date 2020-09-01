@@ -1760,6 +1760,16 @@ class JobCardController extends Controller {
 				]);
 			}
 
+			//Check Floating Gatepass
+			$floating_gate_pass = FloatingGatePass::where('job_card_id', $request->id)->whereIn('status_id', [11161, 11162])->count();
+			if ($floating_gate_pass > 0) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Flaoting GatePass not completed!'],
+				]);
+			}
+
 			$job_card = JobCard::find($request->id);
 			$job_card->status_id = 8227; //Waiting for Parts Confirmation
 			$job_card->updated_by = Auth::user()->id;
