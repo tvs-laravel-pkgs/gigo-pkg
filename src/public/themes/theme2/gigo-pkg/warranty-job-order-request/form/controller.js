@@ -108,6 +108,7 @@ app.component('warrantyJobOrderRequestForm', {
                     } else {
                         self.is_registered = 1;
                         $scope.warranty_job_order_request = $localstorage.getObject('ppr');
+
                         if (!$scope.warranty_job_order_request) {
                             $scope.warranty_job_order_request = {
                                 wjor_repair_orders: [],
@@ -129,6 +130,9 @@ app.component('warrantyJobOrderRequestForm', {
                                 attachments: [],
                                 bharat_stages: [],
                             };
+                        } else {
+
+                            $scope.countryChanged(true);
                         }
 
 
