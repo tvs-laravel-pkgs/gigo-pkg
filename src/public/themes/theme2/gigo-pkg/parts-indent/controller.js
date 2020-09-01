@@ -493,7 +493,8 @@ app.component('partsIndentPartsView', {
                     $scope.indent_part_logs = res.indent_part_logs;
                     $scope.issued_parts_list = res.issued_parts_list;
                     $scope.labours = res.labours;
-                    $scope.floating_part_logs = res.floating_part_logs;
+                    $scope.floating_part_issue_logs = res.floating_part_issue_logs;
+                    $scope.floating_part_return_logs = res.floating_part_return_logs;
                     $scope.floating_parts = res.floating_parts;
 
                     if (res.job_order.job_card) {
