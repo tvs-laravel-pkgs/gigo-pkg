@@ -207,7 +207,7 @@ input[type=number] {
                                                             {{log.remarks}}
                                                         </td>
                                                         <td>
-                                                            <a ng-if="log.transaction_type == 'Issue' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227" href=".#!/part-indent/issue-part/form/{{job_order.id}}/{{log.job_order_part_increment_id}}" class="btn img-btn btn-delete">
+                                                            <a ng-if="log.transaction_type == 'Regular Part Issued' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227" href=".#!/part-indent/issue-part/form/{{job_order.id}}/{{log.job_order_part_increment_id}}" class="btn img-btn btn-delete">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </a>
                                                             <button ng-if="log.transaction_type == 'Return' && job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227" type="button" class="btn img-btn btn-delete" ng-click="showReturnPartForm(index,log)">
@@ -281,7 +281,7 @@ input[type=number] {
                                                             -
                                                         </td>
                                                     </tr>
-                                                    <tr ng-if="indent_part_logs.length == 0 && floating_part_logs.length == 0">
+                                                    <tr ng-if="indent_part_logs.length == 0 && floating_part_issue_logs.length == 0">
                                                         <td colspan="9" class="text-center">No Logs Found</td>
                                                     </tr>
                                                 </tbody>

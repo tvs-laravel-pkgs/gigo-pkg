@@ -1766,7 +1766,7 @@ class JobCardController extends Controller {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
-					'errors' => ['Flaoting GatePass not completed!'],
+					'errors' => ['Floating Parts are not returned!'],
 				]);
 			}
 

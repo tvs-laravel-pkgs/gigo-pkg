@@ -13,8 +13,8 @@
                     <a href="#!/job-card/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>Floating Works</b></h1>
-                    <p class="subtitle">Job Card / Floating Works</p>
+                    <h1 class="title"><b>Floating Parts Details</b></h1>
+                    <p class="subtitle">Job Card / Floating Parts Details</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -33,7 +33,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h5 class="title-red">
-                                            Floating Works
+                                            Floating Parts
                                         </h5>
                                         <hr class="hr-15"><!-- Separater -->
                                         <div class="table-responsive">
@@ -99,12 +99,15 @@
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/add-hover.svg" alt="View" />
                                                             </button></td>
                                                     </tr>
+                                                    <tr ng-if="job_card.floating_parts.length == 0">
+                                                        <td colspan="9" class="text-center">No Parts Found</td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                             <div class="mb-20"></div><!-- Spacing -->
                                             <div class="col-md-12" ng-if="job_card.floating_part_confirmation_status > 0">
                                                 <div class="text-center pt-40">
-                                                    <a class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Ready for Floating Gate Pass</a>
+                                                    <a class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Issue Floating Gate Pass</a>
                                                 </div>
                                             </div>
                                         </div><!-- Table Responsive -->
@@ -135,7 +138,7 @@
             </div>
             <div class="modal-body">
                 <h5 id="repair_code"></h5>
-                <p>Are you sure? Do you confirm floating GatePass?</p>
+                <p>Are you sure? Do you confirm floating parts are fixed in the vehicle and Issued the Gate Pass?</p>
                 <button class="btn btn-rose" data-dismiss="modal" aria-label="Close">No</button>
                 <button class="btn btn-success confirm_gatepass" aria-label="Close" ng-click="saveFloatingGatePass()">Yes</button>
             </div>

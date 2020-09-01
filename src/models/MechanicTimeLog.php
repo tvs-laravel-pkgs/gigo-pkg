@@ -30,11 +30,11 @@ class MechanicTimeLog extends Model {
 	}
 
 	public function getWorkStartTimeAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
+		return empty($value) ? '' : date('d-m-Y h:iA', strtotime($value));
 	}
 
 	public function getWorkEndTimeAttribute($value) {
-		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
+		return empty($value) ? '' : date('d-m-Y h:iA', strtotime($value));
 	}
 
 	public function status() {

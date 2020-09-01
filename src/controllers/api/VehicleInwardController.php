@@ -1369,6 +1369,16 @@ class VehicleInwardController extends Controller {
 					]);
 				}
 
+				if ($request->floating_stock_id) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Cannot Update Issued Floating Part',
+						],
+					]);
+				}
+
 				$part = Part::with(['partType', 'partStock'])->find($request->part_id);
 
 				if (!$part) {
@@ -1565,6 +1575,16 @@ class VehicleInwardController extends Controller {
 						'success' => false,
 						'error' => 'Validation Error',
 						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				if ($request->job_order_issued_part_id) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Cannot Update Issued Part',
+						],
 					]);
 				}
 
