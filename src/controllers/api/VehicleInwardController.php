@@ -272,6 +272,8 @@ class VehicleInwardController extends Controller {
 				'leftSideAttachment',
 				'rightSideAttachment',
 				'otherVehicleAttachment',
+				'amcMember',
+				'amcMember.amcPolicy',
 			])
 				->select([
 					'job_orders.*',
@@ -3275,6 +3277,8 @@ class VehicleInwardController extends Controller {
 				'warrentyPolicyAttachment',
 				'EWPAttachment',
 				'AMCAttachment',
+				'amcMember',
+				'amcMember.amcPolicy',
 			])
 				->select([
 					'job_orders.*',

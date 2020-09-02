@@ -367,6 +367,10 @@ class JobOrder extends BaseModel {
 		return $this->hasOne('Abs\GigoPkg\GigoInvoice', 'entity_id', 'id')->where('invoice_of_id', 7427);
 	}
 
+	public function amcMember() {
+		return $this->belongsTo('App\AmcMember', 'service_policy_id');
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {

@@ -3,6 +3,7 @@
 namespace Abs\GigoPkg\Api;
 
 use Abs\AmcPkg\AmcPolicy;
+use Abs\GigoPkg\AmcMember;
 use Abs\GigoPkg\ModelType;
 use Abs\GigoPkg\TradePlateNumber;
 use Abs\SerialNumberPkg\SerialNumberGroup;
@@ -536,13 +537,11 @@ class GateInController extends Controller {
 
 			$membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
 
+			$membership_message = '';
 			if ($membership_data && $membership_data['success'] == 'true') {
 				// dump($membership_data);
 
-				// dump(date('d-m-Y', strtotime($membership_data['start_date'])));
-				// dump(date('d-m-Y', strtotime($membership_data['end_date'])));
-
-				$amc_policy = AmcPolicy::firstOrNew(['company_id' => Auth::user()->company_id, 'name' => $membership_data['membership_type']]);
+				$amc_policy = AmcPolicy::firstOrNew(['company_id' => Auth::user()->company_id, 'name' => $membership_data['membership_name'], 'type' => $membership_data['membership_type']]);
 
 				if ($amc_policy->exists) {
 					$amc_policy->updated_by_id = Auth::user()->id;
@@ -554,16 +553,34 @@ class GateInController extends Controller {
 
 				$amc_policy->save();
 
-				// dd($amc_policy);
+				$amc_member = AmcMember::firstOrNew(['company_id' => Auth::user()->company_id, 'entity_type_id' => 11180, 'vehicle_id' => $vehicle->id, 'policy_id' => $amc_policy->id, 'number' => $membership_data['membership_number']]);
+
+				if ($amc_member->exists) {
+					$amc_member->updated_by_id = Auth::user()->id;
+					$amc_member->updated_at = Carbon::now();
+				} else {
+					$amc_member->created_by_id = Auth::user()->id;
+					$amc_member->created_at = Carbon::now();
+				}
+
+				$amc_member->start_date = date('Y-m-d', strtotime($membership_data['start_date']));
+				$amc_member->expiry_date = date('Y-m-d', strtotime($membership_data['end_date']));
+
+				$amc_member->save();
+
+				$job_order->service_policy_id = $amc_member->id;
+				$job_order->save();
+
+				$membership_message = '. TVS Membership Number is ' . $membership_data['membership_number'];
+
 			}
 
-			// dd();
 			DB::commit();
 
 			$gate_in_data['number'] = $gate_log->number;
 			$gate_in_data['registration_number'] = $regis_number;
 
-			$message = 'Dear Customer, Greetings! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A');
+			$message = 'Greetings from TVS & Sons! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . $membership_message;
 
 			//Send SMS to Driver
 			if ($request->driver_mobile_number) {
@@ -578,7 +595,7 @@ class GateInController extends Controller {
 			}
 
 			//Check Floating GatePass
-			$floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->count();
+			$floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->where('job_orders.vehicle_id', $vehicle->id)->count();
 
 			$gate_in_data['floating_message'] = 0;
 

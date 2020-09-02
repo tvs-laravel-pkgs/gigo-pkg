@@ -20,14 +20,24 @@ class AmcMember extends Model {
 		"number",
 		"expiry_date",
 		"company_id",
+		"entity_type_id",
+		"start_date",
 	];
 
-	public function getDateOfJoinAttribute($value) {
+	public function getStartDateAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
+	public function getExpiryDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+
+	public function amcPolicy() {
+		return $this->belongsTo('App\AmcPolicy', 'policy_id');
 	}
 
 	public static function createFromObject($record_data) {

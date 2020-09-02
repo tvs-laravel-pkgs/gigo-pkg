@@ -2174,6 +2174,8 @@ class JobCardController extends Controller {
 			'jobOrder.warrentyPolicyAttachment',
 			'jobOrder.EWPAttachment',
 			'jobOrder.AMCAttachment',
+			'jobOrder.amcMember',
+			'jobOrder.amcMember.amcPolicy',
 		])
 			->select([
 				'job_cards.*',
