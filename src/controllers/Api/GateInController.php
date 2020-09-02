@@ -248,14 +248,14 @@ class GateInController extends Controller {
 						// 'min:10',
 						'max:17',
 						// 'string',
-						// 'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+						'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
 					],
 					'engine_number' => [
 						'required_if:gatein_entry_type_id,==,2',
 						// 'min:10',
 						'max:64',
 						// 'string',
-						// 'unique:vehicles,engine_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+						'unique:vehicles,engine_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
 					],
 				]);
 
@@ -324,32 +324,6 @@ class GateInController extends Controller {
 				}
 			}
 
-			$job_order = new JobOrder;
-			$job_order->company_id = Auth::user()->company_id;
-			$job_order->number = rand();
-			$job_order->fill($request->all());
-			$job_order->vehicle_id = $vehicle->id;
-			$job_order->gatein_trade_plate_number_id = $request->plate_number ? $request->plate_number : NULL;
-			$job_order->outlet_id = Auth::user()->employee->outlet_id;
-			$job_order->status_id = 8460; //Ready for Inward
-			$job_order->save();
-			$job_order->number = 'JO-' . $job_order->id;
-			if ($vehicle->currentOwner) {
-				$job_order->customer_id = $vehicle->currentOwner->customer_id;
-			}
-			$job_order->save();
-
-			//NEW GATE IN ENTRY
-			$gate_log = new GateLog;
-			$gate_log->fill($request->all());
-			$gate_log->company_id = Auth::user()->company_id;
-			$gate_log->job_order_id = $job_order->id;
-			$gate_log->created_by_id = Auth::user()->id;
-			$gate_log->gate_in_date = Carbon::now();
-			$gate_log->status_id = 8120; //GATE IN COMPLETED
-			$gate_log->outlet_id = Auth::user()->employee->outlet_id;
-			$gate_log->save();
-
 			if (date('m') > 3) {
 				$year = date('Y') + 1;
 			} else {
@@ -370,6 +344,94 @@ class GateInController extends Controller {
 			}
 			//GET BRANCH/OUTLET
 			$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+
+			//Check Floating GatePass
+			$floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->where('job_orders.vehicle_id', $vehicle->id)->select('job_orders.id as job_order_id', 'job_orders.outlet_id')->first();
+
+			$request['vehicle_id'] = $vehicle->id;
+
+			$generate_number_status = 0;
+			if ($floating_gate_pass && $floating_gate_pass->job_order_id) {
+				$job_order = JobOrder::find($floating_gate_pass->job_order_id);
+
+				if ($job_order && ($job_order->outlet_id != Auth::user()->employee->outlet_id)) {
+					$job_order = new JobOrder;
+					$job_order->company_id = Auth::user()->company_id;
+					$job_order->number = rand();
+					$job_order->vehicle_id = $vehicle->id;
+					$job_order->outlet_id = Auth::user()->employee->outlet_id;
+					if ($vehicle->currentOwner) {
+						$job_order->customer_id = $vehicle->currentOwner->customer_id;
+					}
+					$job_order->save();
+					$generate_number_status = 1;
+				}
+			} else {
+				$job_order = new JobOrder;
+				$job_order->company_id = Auth::user()->company_id;
+				$job_order->number = rand();
+				$job_order->vehicle_id = $vehicle->id;
+				$job_order->outlet_id = Auth::user()->employee->outlet_id;
+				if ($vehicle->currentOwner) {
+					$job_order->customer_id = $vehicle->currentOwner->customer_id;
+				}
+				$job_order->save();
+
+				$generate_number_status = 1;
+			}
+
+			if ($generate_number_status == 1) {
+				//GENERATE JOB ORDER NUMBER
+				$generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
+				if (!$generateJONumber['success']) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'No Job Order Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+						],
+					]);
+				}
+
+				$error_messages_2 = [
+					'number.required' => 'Serial number is required',
+					'number.unique' => 'Serial number is already taken',
+				];
+
+				$validator_2 = Validator::make($generateJONumber, [
+					'number' => [
+						'required',
+						'unique:job_orders,number,' . $job_order->id . ',id,company_id,' . Auth::user()->company_id,
+					],
+				], $error_messages_2);
+
+				if ($validator_2->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator_2->errors()->all(),
+					]);
+				}
+
+				$job_order->number = $generateJONumber['number'];
+				$job_order->save();
+			}
+
+			$job_order->fill($request->all());
+			$job_order->gatein_trade_plate_number_id = $request->plate_number ? $request->plate_number : NULL;
+			$job_order->status_id = 8460; //Ready for Inward
+			$job_order->save();
+
+			//NEW GATE IN ENTRY
+			$gate_log = new GateLog;
+			$gate_log->fill($request->all());
+			$gate_log->company_id = Auth::user()->company_id;
+			$gate_log->job_order_id = $job_order->id;
+			$gate_log->created_by_id = Auth::user()->id;
+			$gate_log->gate_in_date = Carbon::now();
+			$gate_log->status_id = 8120; //GATE IN COMPLETED
+			$gate_log->outlet_id = Auth::user()->employee->outlet_id;
+			$gate_log->save();
 
 			//GENERATE GATE IN VEHICLE NUMBER
 			$generateNumber = SerialNumberGroup::generateNumber(20, $financial_year->id, $branch->state_id, $branch->id);
@@ -404,40 +466,6 @@ class GateInController extends Controller {
 			}
 			$gate_log->number = $generateNumber['number'];
 			$gate_log->save();
-
-			//GENERATE JOB ORDER NUMBER
-			$generateJONumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
-			if (!$generateJONumber['success']) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'No Job Order Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
-					],
-				]);
-			}
-
-			$error_messages_2 = [
-				'number.required' => 'Serial number is required',
-				'number.unique' => 'Serial number is already taken',
-			];
-
-			$validator_2 = Validator::make($generateJONumber, [
-				'number' => [
-					'required',
-					'unique:job_orders,number,' . $job_order->id . ',id,company_id,' . Auth::user()->company_id,
-				],
-			], $error_messages_2);
-
-			if ($validator_2->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator_2->errors()->all(),
-				]);
-			}
-			$job_order->number = $generateJONumber['number'];
-			$job_order->save();
 
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/gate_in/attachments/');
@@ -503,7 +531,9 @@ class GateInController extends Controller {
 				}
 			}
 
-			$job_order->vehicleInventoryItem()->sync([]);
+			// $job_order->vehicleInventoryItem()->sync([]);
+			//Remove already gatelog inventories
+			$inventories = DB::table('job_order_vehicle_inventory_item')->where('gate_log_id', $gate_log->id)->delete();
 
 			if ($request->vehicle_inventory_items) {
 				foreach ($request->vehicle_inventory_items as $key => $vehicle_inventory_item) {
@@ -514,6 +544,7 @@ class GateInController extends Controller {
 								[
 									'is_available' => 1,
 									'remarks' => $vehicle_inventory_item['remarks'],
+									'gate_log_id' => $gate_log->id,
 								]
 							);
 					}

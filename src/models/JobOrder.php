@@ -188,7 +188,7 @@ class JobOrder extends BaseModel {
 	}
 
 	public function vehicleInventoryItem() {
-		return $this->belongsToMany('App\VehicleInventoryItem', 'job_order_vehicle_inventory_item', 'job_order_id', 'vehicle_inventory_item_id')->withPivot(['is_available', 'remarks']);
+		return $this->belongsToMany('App\VehicleInventoryItem', 'job_order_vehicle_inventory_item', 'job_order_id', 'vehicle_inventory_item_id')->withPivot(['is_available', 'remarks', 'gate_log_id']);
 	}
 
 	public function inwardProcessChecks() {
