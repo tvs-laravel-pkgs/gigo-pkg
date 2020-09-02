@@ -6,9 +6,11 @@ use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use App\Company;
 use App\FieldType;
+use App\GateLog;
 use App\JobOrder;
 use App\SerialNumberGroup;
 use Auth;
+use DB;
 
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -233,15 +235,34 @@ class VehicleInventoryItem extends BaseModel {
 
 		$job_order = JobOrder::find($job_order_id);
 		if ($job_order) {
-			$vehicle_inventory_items = $job_order->vehicleInventoryItem()->orderBy('id')->get()->toArray();
 
-			if (count($vehicle_inventory_items) > 0) {
-				foreach ($vehicle_inventory_items as $value) {
-					if (isset($list[$value['id']])) {
-						$list[$value['id']]->checked = true;
-						$list[$value['id']]->is_available = 1;
-						if (isset($value['pivot']['remarks'])) {
-							$list[$value['id']]->remarks = $value['pivot']['remarks'];
+			$gate_log = GateLog::where('job_order_id', $job_order_id)->orderBy('id', 'DESC')->first();
+
+			if ($gate_log) {
+				$vehicle_inventory_items = DB::table('job_order_vehicle_inventory_item')->where('job_order_id', $job_order_id)->where('gate_log_id', $gate_log->id)->orderBy('vehicle_inventory_item_id')->get();
+
+				if (count($vehicle_inventory_items) > 0) {
+					foreach ($vehicle_inventory_items as $value) {
+						if (isset($list[$value->vehicle_inventory_item_id])) {
+							$list[$value->vehicle_inventory_item_id]->checked = true;
+							$list[$value->vehicle_inventory_item_id]->is_available = 1;
+							if (isset($value->vehicle_inventory_item_id)) {
+								$list[$value->vehicle_inventory_item_id]->remarks = $value->remarks;
+							}
+						}
+					}
+				}
+			} else {
+				$vehicle_inventory_items = $job_order->vehicleInventoryItem()->orderBy('id')->get()->toArray();
+
+				if (count($vehicle_inventory_items) > 0) {
+					foreach ($vehicle_inventory_items as $value) {
+						if (isset($list[$value['id']])) {
+							$list[$value['id']]->checked = true;
+							$list[$value['id']]->is_available = 1;
+							if (isset($value['pivot']['remarks'])) {
+								$list[$value['id']]->remarks = $value['pivot']['remarks'];
+							}
 						}
 					}
 				}

@@ -3211,23 +3211,15 @@ class VehicleInwardController extends Controller {
 
 			DB::beginTransaction();
 
-			$job_order->vehicleInventoryItem()->sync([]);
-			// if (isset($request->vehicle_inventory_items) && count($request->vehicle_inventory_items) > 0) {
-			//dd($request->vehicle_inventory_items);
-			// $job_order->vehicleInventoryItem()->detach();
-			// //Inserting Inventory Items
-			// foreach ($request->vehicle_inventory_items as $key => $vehicle_inventory_item) {
-			// 	$job_order->vehicleInventoryItem()
-			// 		->attach(
-			// 			$vehicle_inventory_item['inventory_item_id'],
-			// 			[
-			// 				'is_available' => $vehicle_inventory_item['is_available'],
-			// 				'remarks' => $vehicle_inventory_item['remarks'],
-			// 			]
-			// 		);
-			// }
+			$gate_log = GateLog::where('job_order_id', $job_order->id)->orderBy('id', 'DESC')->first();
+			if ($gate_log) {
+				$inventories = DB::table('job_order_vehicle_inventory_item')->where('gate_log_id', $gate_log->id)->delete();
+				$gate_log_id = $gate_log->id;
+			} else {
+				$gate_log_id = null;
+				$job_order->vehicleInventoryItem()->sync([]);
+			}
 
-			// }
 			if ($request->vehicle_inventory_items) {
 				foreach ($request->vehicle_inventory_items as $key => $vehicle_inventory_item) {
 					if (isset($vehicle_inventory_item['inventory_item_id']) && $vehicle_inventory_item['is_available'] == 1) {
@@ -3237,6 +3229,7 @@ class VehicleInwardController extends Controller {
 								[
 									'is_available' => 1,
 									'remarks' => $vehicle_inventory_item['remarks'],
+									'gate_log_id' => $gate_log_id,
 								]
 							);
 					}
