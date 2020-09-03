@@ -1456,14 +1456,14 @@ app.component('inwardVehicleOrderDetailForm', {
                             return false;
                         },
                     },
-                    'cre_user_id': {
-                        required: function(element) {
-                            if (self.appointment_status == '1') {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
+                    // 'cre_user_id': {
+                    //     required: function(element) {
+                    //         if (self.appointment_status == '1') {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    // },
                     'call_date': {
                         required: function(element) {
                             if (self.appointment_status == '1') {

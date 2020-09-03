@@ -2465,9 +2465,9 @@ class VehicleInwardController extends Controller {
 					'min:10',
 					'max:10',
 				],
-				'cre_name' => [
-					'required_if:is_appointment,==,1',
-				],
+				// 'cre_name' => [
+				// 	'required_if:is_appointment,==,1',
+				// ],
 				'call_date' => [
 					'required_if:is_appointment,==,1',
 				],
