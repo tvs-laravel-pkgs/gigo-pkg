@@ -1213,8 +1213,11 @@
                                                                     Memberships
                                                                 </b>
                                                             </p>
-                                                            <p class="font-md">
+                                                            <p class="font-md" ng-if="job_order.amc_member">
                                                                 <b>{{job_order.amc_member.amc_policy.name}}</b>-<b>{{job_order.amc_member.amc_policy.type}}</b> Eligible Upto <b>{{job_order.amc_member.expiry_date}}</b>
+                                                            </p>
+                                                            <p class="font-md" ng-if="!job_order.amc_member">
+                                                                -
                                                             </p>
                                                         </div>
                                                     </div>
