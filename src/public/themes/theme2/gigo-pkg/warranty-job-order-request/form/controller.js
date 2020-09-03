@@ -827,9 +827,9 @@ app.component('warrantyJobOrderRequestForm', {
                 'fault_id': {
                     required: true,
                 },
-                'supplier_id': {
+                /*'supplier_id': {
                     required: true,
-                },
+                },*/
                 'primary_segment_id': {
                     required: true,
                 },

@@ -808,7 +808,7 @@
                                     <div class="form-group">
                                         <label>
                                             Supplier code
-                                            <sup class="mandatory">*</sup>
+                                            <sup class="mandatory"></sup>
                                         </label>
                                         <md-autocomplete md-selected-item="warranty_job_order_request.supplier" md-search-text="supplierSearchKey" md-items="supplier in searchPartSuppliers(supplierSearchKey)" md-item-text="supplier.code +' /  '+supplier.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. Kumar Auto Eng." md-input-id="parts_supplier_ac">
                                             <md-item-template>
@@ -1082,7 +1082,8 @@
                                         <input type="hidden" name="failure_type_id" value="{{warranty_job_order_request.failure_type.id}}">
                                     </div><!-- Feild -->
                                 </li>
-                                <li class="view-col-3" ng-show="warranty_job_order_request.failure_type">
+                                <li class="view-col-3">
+                                    <!-- ng-show="warranty_job_order_request.failure_type" -->
                                     <div class="form-group">
                                         <label>Failure Report</label>
                                         <div class="file-upload-wrapper" data-text="Enter Click to upload">
@@ -1090,7 +1091,7 @@
                                         </div><!-- File -->
                                     </div><!-- Field -->
                                 </li><!-- Column -->
-                                <li class="view-col-3" ng-show="warranty_job_order_request.failure_photo">
+                                <li class="view-col-3" ng-if="warranty_job_order_request.failure_photo">
                                     <div class="form-group">
                                         <span class="view-col-label">
                                             Failure Report Attachment
