@@ -1786,7 +1786,7 @@ class VehicleInwardController extends Controller {
 			$job_order->save();
 
 			//UPDATE GATE LOG STATUS
-			$job_order->gateLog()->update(['status_id' => 8121]);
+			$job_order->gateLog()->update(['status_id' => 8121, 'service_advisor_id' => $r->service_advisor_id]);
 
 			//ENABLE ESTIMATE STATUS
 			$inward_process_check = $job_order->inwardProcessChecks()->where('is_form_filled', 0)->first();
@@ -2123,16 +2123,6 @@ class VehicleInwardController extends Controller {
 					'required',
 					'integer',
 					'exists:job_orders,id',
-				],
-
-				'warranty_expiry_attachment' => [
-					// "required_if:warrany_status,==,1",
-					'mimes:jpeg,jpg,png',
-				],
-
-				'membership_attachment.*' => [
-					'nullable',
-					'mimes:jpeg,jpg,png',
 				],
 			]);
 
@@ -2475,9 +2465,8 @@ class VehicleInwardController extends Controller {
 					'min:10',
 					'max:10',
 				],
-				'cre_user_id' => [
+				'cre_name' => [
 					'required_if:is_appointment,==,1',
-					'exists:users,id',
 				],
 				'call_date' => [
 					'required_if:is_appointment,==,1',
@@ -2619,11 +2608,11 @@ class VehicleInwardController extends Controller {
 
 			if ($request->is_appointment == 1) {
 				$job_order->is_appointment = 1;
-				$job_order->cre_user_id = $request->cre_user_id;
+				$job_order->cre_name = $request->cre_name;
 				$job_order->call_date = date('Y-m-d', strtotime($request->call_date));
 			} else {
 				$job_order->is_appointment = 0;
-				$job_order->cre_user_id = NULL;
+				$job_order->cre_name = NULL;
 				$job_order->call_date = NULL;
 			}
 

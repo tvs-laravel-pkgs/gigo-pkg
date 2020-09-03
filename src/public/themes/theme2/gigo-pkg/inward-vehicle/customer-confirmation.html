@@ -181,7 +181,10 @@
                                 <span class="three-box-label" ng-if="!$ctrl.job_order.vehicle.registration_number">
                                     Vehicle Chassis Number
                                 </span>
-                                <span class="three-box-value">
+                                <span class="three-box-value" ng-if="$ctrl.job_order.vehicle.registration_number">
+                                    {{$ctrl.job_order.vehicle.registration_number}}
+                                </span>
+                                <span class="three-box-value" ng-if="!$ctrl.job_order.vehicle.registration_number">
                                     {{$ctrl.job_order.vehicle.chassis_number}}
                                 </span>
                             </div>

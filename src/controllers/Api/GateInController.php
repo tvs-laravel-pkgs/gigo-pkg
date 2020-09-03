@@ -419,6 +419,7 @@ class GateInController extends Controller {
 
 			$job_order->fill($request->all());
 			$job_order->gatein_trade_plate_number_id = $request->plate_number ? $request->plate_number : NULL;
+			$job_order->service_advisor_id = NULL;
 			$job_order->status_id = 8460; //Ready for Inward
 			$job_order->save();
 
@@ -507,27 +508,29 @@ class GateInController extends Controller {
 				saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 			}
 
-			//INWARD PROCESS CHECK
-			$inward_mandatory_tabs = Config::getDropDownList([
-				'config_type_id' => 122,
-				'orderBy' => 'id',
-				'add_default' => false,
-			]);
-			$job_order->inwardProcessChecks()->sync([]);
-			if (!empty($inward_mandatory_tabs)) {
-				foreach ($inward_mandatory_tabs as $key => $inward_mandatory_tab) {
-					//VEHICLE DETAILS TAB
-					if ($inward_mandatory_tab->id == 8700) {
-						$is_form_filled = $vehicle_form_filled;
-					} elseif ($inward_mandatory_tab->id == 8701) {
-						//CUSTOMER DETAILS TAB
-						$is_form_filled = $customer_form_filled;
-					} else {
-						$is_form_filled = 0;
+			if ($generate_number_status == 1) {
+				//INWARD PROCESS CHECK
+				$inward_mandatory_tabs = Config::getDropDownList([
+					'config_type_id' => 122,
+					'orderBy' => 'id',
+					'add_default' => false,
+				]);
+				$job_order->inwardProcessChecks()->sync([]);
+				if (!empty($inward_mandatory_tabs)) {
+					foreach ($inward_mandatory_tabs as $key => $inward_mandatory_tab) {
+						//VEHICLE DETAILS TAB
+						if ($inward_mandatory_tab->id == 8700) {
+							$is_form_filled = $vehicle_form_filled;
+						} elseif ($inward_mandatory_tab->id == 8701) {
+							//CUSTOMER DETAILS TAB
+							$is_form_filled = $customer_form_filled;
+						} else {
+							$is_form_filled = 0;
+						}
+						$job_order->inwardProcessChecks()->attach($inward_mandatory_tab->id, [
+							'is_form_filled' => $is_form_filled,
+						]);
 					}
-					$job_order->inwardProcessChecks()->attach($inward_mandatory_tab->id, [
-						'is_form_filled' => $is_form_filled,
-					]);
 				}
 			}
 

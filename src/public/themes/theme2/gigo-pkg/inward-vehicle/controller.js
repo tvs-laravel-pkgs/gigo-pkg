@@ -1170,38 +1170,38 @@ app.component('inwardVehiclePhotos', {
             var v = jQuery(form_id).validate({
                 ignore: '',
                 rules: {
-                    'front_side_image': {
-                        required: function(element) {
-                            if (!$scope.job_order.front_side_attachment) {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
-                    'back_side_image': {
-                        required: function(element) {
-                            if (!$scope.job_order.back_side_attachment) {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
-                    'left_side_image': {
-                        required: function(element) {
-                            if (!$scope.job_order.left_side_attachment) {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
-                    'right_side_image': {
-                        required: function(element) {
-                            if (!$scope.job_order.right_side_attachment) {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
+                    // 'front_side_image': {
+                    //     required: function(element) {
+                    //         if (!$scope.job_order.front_side_attachment) {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    // },
+                    // 'back_side_image': {
+                    //     required: function(element) {
+                    //         if (!$scope.job_order.back_side_attachment) {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    // },
+                    // 'left_side_image': {
+                    //     required: function(element) {
+                    //         if (!$scope.job_order.left_side_attachment) {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    // },
+                    // 'right_side_image': {
+                    //     required: function(element) {
+                    //         if (!$scope.job_order.right_side_attachment) {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    // },
                 },
                 errorPlacement: function(error, element) {
                     if (element.attr('name') == 'front_side_image') {

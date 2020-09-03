@@ -204,7 +204,7 @@ class JobOrder extends BaseModel {
 	}
 
 	public function gateLog() {
-		return $this->hasOne('App\GateLog', 'job_order_id');
+		return $this->hasOne('App\GateLog', 'job_order_id')->orderBy('id', 'DESC')->limit(1);
 	}
 
 	public function vehicle() {
