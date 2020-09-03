@@ -1376,7 +1376,7 @@ class VehicleInwardController extends Controller {
 						'success' => false,
 						'error' => 'Validation Error',
 						'errors' => [
-							'Cannot Update Issued Floating Part',
+							'Cannot Update Issued Floating Part into Regular Part.',
 						],
 					]);
 				}
@@ -1585,7 +1585,7 @@ class VehicleInwardController extends Controller {
 						'success' => false,
 						'error' => 'Validation Error',
 						'errors' => [
-							'Cannot Update Issued Part',
+							'Cannot Update Issued Regular Part into Floating Part',
 						],
 					]);
 				}
@@ -5553,7 +5553,7 @@ class VehicleInwardController extends Controller {
 			$otp->expired_at = $expired_time;
 			$otp->save();
 
-			$message = 'OTP is ' . $otp_no . ' for Job Card Approve On Behalf of Customer. Please enter OTP to verify your Job Card Approval';
+			$message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please give OTP to Our Service Advisor to verify your Job Order Estimate';
 
 			$msg = sendSMSNotification($customer_mobile, $message);
 
@@ -5702,7 +5702,16 @@ class VehicleInwardController extends Controller {
 			DB::beginTransaction();
 
 			$customer_mobile = $job_order->contact_number;
-			$vehicle_no = $job_order->vehicle->registration_number;
+			if ($job_order->vehicle->registration_number) {
+				$vehicle_no = $job_order->vehicle->registration_number;
+				$number = ' Vehicle Reg Number';
+			} elseif ($job_order->vehicle->chassis_number) {
+				$vehicle_no = $job_order->vehicle->chassis_number;
+				$number = ' Vehicle Chassis Number';
+			} else {
+				$vehicle_no = $job_order->vehicle->engine_number;
+				$number = ' Vehicle Engine Number';
+			}
 
 			if (!$customer_mobile) {
 				return response()->json([
@@ -5723,7 +5732,7 @@ class VehicleInwardController extends Controller {
 
 			$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-			$message = 'Dear Customer,Kindly click below link to approve for TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no;
+			$message = 'Dear Customer,Kindly click below link to approve for TVS job order ' . $short_url . $number . ' : ' . $vehicle_no;
 
 			$msg = sendSMSNotification($customer_mobile, $message);
 

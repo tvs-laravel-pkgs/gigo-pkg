@@ -3064,13 +3064,23 @@ class JobCardController extends Controller {
 
 			if ($request->type == 2) {
 
-				$vehicle_no = $job_order->vehicle->registration_number;
+				// $vehicle_no = $job_order->vehicle->registration_number;
+				if ($job_order->vehicle->registration_number) {
+					$vehicle_no = $job_order->vehicle->registration_number;
+					$number = ' Vehicle Reg Number';
+				} elseif ($job_order->vehicle->chassis_number) {
+					$vehicle_no = $job_order->vehicle->chassis_number;
+					$number = ' Vehicle Chassis Number';
+				} else {
+					$vehicle_no = $job_order->vehicle->engine_number;
+					$number = ' Vehicle Engine Number';
+				}
 
 				$url = url('/') . '/vehicle-inward/estimate/customer/view/' . $request->job_order_id . '/' . $job_order->otp_no;
 
 				$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
 
-				$message = 'Dear Customer,Kindly click below link to approve for revised TVS job order ' . $short_url . ' Vehicle Reg Number : ' . $vehicle_no;
+				$message = 'Dear Customer,Kindly click below link to approve for Revised TVS job order ' . $short_url . $number . ' : ' . $vehicle_no;
 
 				$msg = sendSMSNotification($customer_mobile, $message);
 
@@ -3111,7 +3121,7 @@ class JobCardController extends Controller {
 
 				DB::commit();
 
-				$message = 'OTP is ' . $otp_no . ' for Revised Job Card Approve On Behalf of Customer. Please enter OTP to verify your Revised Job Card Approval';
+				$message = 'OTP is ' . $otp_no . ' for Revised Job Order Estimation. Please give OTP to Our Floor Supervisor to verify your Revised Job Order Estimate';
 
 				$msg = sendSMSNotification($customer_mobile, $message);
 

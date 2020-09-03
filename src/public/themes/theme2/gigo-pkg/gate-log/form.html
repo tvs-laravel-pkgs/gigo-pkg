@@ -360,7 +360,7 @@
                         {{gate_log.registration_number}}
                     </span>
                 </p>
-                <br>
+                <br ng-if="gate_log.floating_message !=0">
                 <p class="info data" ng-if="gate_log.floating_message !=0">{{gate_log.floating_message}}</p>
                 <div class="mt-30 mb-30">
                     <button ng-click="reloadPage()" type="button" class="btn btn-success btn-square btn-block"><b>Done</b></button>

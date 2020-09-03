@@ -175,11 +175,14 @@
                         </li>
                         <li class="wid-100">
                             <div class="three-box-content text-center">
-                                <span class="three-box-label">
+                                <span class="three-box-label" ng-if="$ctrl.job_order.vehicle.registration_number">
                                     Vehicle Registration Number
                                 </span>
+                                <span class="three-box-label" ng-if="!$ctrl.job_order.vehicle.registration_number">
+                                    Vehicle Chassis Number
+                                </span>
                                 <span class="three-box-value">
-                                    {{$ctrl.job_order.vehicle.registration_number}}
+                                    {{$ctrl.job_order.vehicle.chassis_number}}
                                 </span>
                             </div>
                         </li>

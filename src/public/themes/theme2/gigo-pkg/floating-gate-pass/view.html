@@ -189,7 +189,8 @@
                 <h6 class="title"><b>Gate Out Success</b></h6>
                 <p class="info data">Vehicle successfully Gate Out</p>
                 <p class="info">JobCard No : {{$ctrl.floating_gate_pass.job_card_number}}</span></p>
-                <p class="info">Reg No : {{$ctrl.floating_gate_pass.job_order.vehicle ? $ctrl.floating_gate_pass.job_order.vehicle.registration_number : '--'}}</p>
+                <p class="info" ng-if="$ctrl.floating_gate_pass.job_order.vehicle.registration_number">Reg No : {{$ctrl.floating_gate_pass.job_order.vehicle ? $ctrl.floating_gate_pass.job_order.vehicle.registration_number : '--'}}</p>
+                <p class="info" ng-if="!$ctrl.floating_gate_pass.job_order.vehicle.registration_number">Chassis No : {{$ctrl.floating_gate_pass.job_order.vehicle ? $ctrl.floating_gate_pass.job_order.vehicle.chassis_number : '--'}}</p>
                 <div class="mt-30 mb-30">
                     <a href="javascript:;" class="btn btn-success btn-square btn-block" ng-click="reloadPage(1)"><b>Done</b></a>
                 </div><!-- Button -->

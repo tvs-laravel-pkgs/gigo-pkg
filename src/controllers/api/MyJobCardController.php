@@ -391,23 +391,23 @@ class MyJobCardController extends Controller {
 				}
 
 				//GET SERVICE ADVISER MOBILE NUMBER
-				$service_adviser_mobile = $job_order->serviceAdviser ? $job_order->serviceAdviser->contact_number : '';
+				// $service_adviser_mobile = $job_order->serviceAdviser ? $job_order->serviceAdviser->contact_number : '';
 				//GET FLOOR SUPERVISER MOBILE NUMBER
-				$floor_superviser_mobile = $job_order->floorAdviser ? $job_order->floorAdviser->contact_number : '';
+				// $floor_superviser_mobile = $job_order->floorAdviser ? $job_order->floorAdviser->contact_number : '';
 
-				$message = 'Labour Exceed the actual hours!';
+				// $message = 'Labour Exceed the actual hours!';
 
 				//EXTRA TIME TO COMPLETE WORK SMS SEND TO SUPERVISER AND FLOOR ADVISER
-				if ($actual_hrs && $total_duration) {
-					if (strtotime($total_duration) > strtotime($actual_hrs)) {
-						if ($service_adviser_mobile) {
-							$msg = sendSMSNotification($service_adviser_mobile, $message);
-						}
-						if ($floor_superviser_mobile) {
-							$msg = sendSMSNotification($floor_superviser_mobile, $message);
-						}
-					}
-				}
+				// if ($actual_hrs && $total_duration) {
+				// 	if (strtotime($total_duration) > strtotime($actual_hrs)) {
+				// 		if ($service_adviser_mobile) {
+				// 			$msg = sendSMSNotification($service_adviser_mobile, $message);
+				// 		}
+				// 		if ($floor_superviser_mobile) {
+				// 			$msg = sendSMSNotification($floor_superviser_mobile, $message);
+				// 		}
+				// 	}
+				// }
 
 				DB::commit();
 
