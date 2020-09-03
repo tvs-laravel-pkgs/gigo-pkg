@@ -5334,7 +5334,8 @@ class VehicleInwardController extends Controller {
 				$job_order->min_estimated_amount = $job_order->total_estimate_amount;
 				$job_order->estimated_amount = $job_order->total_estimate_amount;
 			} else {
-				$job_order->min_estimated_amount = $job_order->estimated_amount;
+				$job_order->min_estimated_amount = $job_order->total_estimate_amount;
+				$job_order->estimated_amount = $job_order->total_estimate_amount;
 			}
 
 			//ENABLE ESTIMATE STATUS
@@ -5454,6 +5455,29 @@ class VehicleInwardController extends Controller {
 			$job_order->save();
 			// INWARD PROCESS CHECK - ESTIMATE
 			$job_order->inwardProcessChecks()->where('tab_id', 8706)->update(['is_form_filled' => 1]);
+
+			//Check Floating GatePass
+			$floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->where('job_orders.id', $request->job_order_id)->count();
+
+			if (!$floating_gate_pass) {
+				//check Advance Amount alreay avail or not
+				if (!$job_order->advance_amount) {
+					$advance_amount_eligible = Entity::where('entity_type_id', 34)->select('name')->first();
+					if ($advance_amount_eligible) {
+						if ($advance_amount_eligible->name <= $request->estimated_amount) {
+							$job_order->advance_amount = $advance_amount_eligible->name;
+							$job_order->advance_paid_amount = 0;
+							$job_order->advance_amount_status_id = 10031;
+							$job_order->save();
+						} else {
+							$job_order->advance_amount = NULL;
+							$job_order->advance_paid_amount = NULL;
+							$job_order->advance_amount_status_id = NULL;
+							$job_order->save();
+						}
+					}
+				}
+			}
 
 			DB::commit();
 
@@ -6209,9 +6233,7 @@ class VehicleInwardController extends Controller {
 			//Check Floating GatePass
 			$floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->where('job_orders.id', $request->job_order_id)->count();
 
-			if ($floating_gate_pass > 0) {
-
-			} else {
+			if (!$floating_gate_pass) {
 				//UPDATE JOB ORDER REPAIR ORDER STATUS UPDATE
 				//issue: readability
 				$job_order_repair_order_status_update = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)
