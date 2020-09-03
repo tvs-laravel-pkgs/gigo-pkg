@@ -5542,7 +5542,7 @@ class VehicleInwardController extends Controller {
 			$otp->expired_at = $expired_time;
 			$otp->save();
 
-			$message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please give OTP to Our Service Advisor to verify your Job Order Estimate';
+			$message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate';
 
 			$msg = sendSMSNotification($customer_mobile, $message);
 
