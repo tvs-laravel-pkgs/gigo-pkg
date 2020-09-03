@@ -237,7 +237,7 @@ class GateInController extends Controller {
 					$customer_form_filled = 0;
 					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
 				}
-				$vehicle->registration_number = $request->registration_number;
+				$vehicle->registration_number = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
 				$vehicle->updated_by_id = Auth::user()->id;
 				$vehicle->save();
 			} else {
@@ -302,7 +302,7 @@ class GateInController extends Controller {
 					$vehicle->updated_by_id = Auth::user()->id;
 				}
 
-				// $request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+				$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
 
 				$vehicle->fill($request->all());
 				$vehicle->save();
