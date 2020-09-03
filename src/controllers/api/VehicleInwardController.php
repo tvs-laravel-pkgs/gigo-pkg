@@ -6205,26 +6205,34 @@ class VehicleInwardController extends Controller {
 					saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 				}
 			}
-			//UPDATE JOB ORDER REPAIR ORDER STATUS UPDATE
-			//issue: readability
-			$job_order_repair_order_status_update = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)
-				->update([
-					'status_id' => 8181, //MACHANIC NOT ASSIGNED
-					'updated_by_id' => Auth::user()->id,
-					'updated_at' => Carbon::now(),
-				]);
 
-			//UPDATE JOB ORDER PARTS STATUS UPDATE
-			//issue: readability
-			$job_order_parts_status_update = JobOrderPart::where('job_order_id', $request->job_order_id)
-				->update([
-					'status_id' => 8201, //NOT ISSUED
-					'updated_by_id' => Auth::user()->id,
-					'updated_at' => Carbon::now(),
-				]);
+			//Check Floating GatePass
+			$floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->where('job_orders.id', $request->job_order_id)->count();
 
-			// //UPDATE GATE LOG STATUS
-			// $gate_log = GateLog::where('id', $request->gate_log_id)->update(['status_id', 8122, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //VEHICLE INWARD COMPLETED
+			if ($floating_gate_pass > 0) {
+
+			} else {
+				//UPDATE JOB ORDER REPAIR ORDER STATUS UPDATE
+				//issue: readability
+				$job_order_repair_order_status_update = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)
+					->update([
+						'status_id' => 8181, //MACHANIC NOT ASSIGNED
+						'updated_by_id' => Auth::user()->id,
+						'updated_at' => Carbon::now(),
+					]);
+
+				//UPDATE JOB ORDER PARTS STATUS UPDATE
+				//issue: readability
+				$job_order_parts_status_update = JobOrderPart::where('job_order_id', $request->job_order_id)
+					->update([
+						'status_id' => 8201, //NOT ISSUED
+						'updated_by_id' => Auth::user()->id,
+						'updated_at' => Carbon::now(),
+					]);
+
+				// //UPDATE GATE LOG STATUS
+				// $gate_log = GateLog::where('id', $request->gate_log_id)->update(['status_id', 8122, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //VEHICLE INWARD COMPLETED
+			}
 
 			//GET TOTAL AMOUNT IN PARTS AND LABOUR
 			$request['id'] = $request->job_order_id; // ID ADDED FOR BELOW FUNCTION TO FIND BASED ON ID

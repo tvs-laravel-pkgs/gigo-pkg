@@ -119,7 +119,7 @@ input[type=number] {
                                                             <a ng-if="job_order.job_card && (job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226 && job_order.job_card.status_id != 8227) " href=".#!/part-indent/issue-part/form/{{job_order.id}}" class="btn btn-md type2 btn-green btn-square">
                                                                 Issue Part
                                                             </a>
-                                                            <button ng-if="job_order.job_card && indent_part_logs.length > 0 && floating_part_issue_logs.length > 0 && (job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226)" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showReturnPartForm(false)">
+                                                            <button ng-if="job_order.job_card && (indent_part_logs.length > 0 || floating_part_issue_logs.length > 0) && (job_order.job_card.status_id != 8224 && job_order.job_card.status_id != 8225 && job_order.job_card.status_id != 8226)" type="button" class="btn btn-md type2 btn-green btn-square" ng-click="showReturnPartForm(false)">
                                                                 Return Part
                                                             </button>
                                                         </td>
