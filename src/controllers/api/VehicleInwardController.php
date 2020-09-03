@@ -6284,77 +6284,95 @@ class VehicleInwardController extends Controller {
 				'updated_at' => Carbon::now(),
 			]);
 
-			if (date('m') > 3) {
-				$year = date('Y') + 1;
+			//Check Floating GatePass
+			$floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->where('job_orders.id', $job_order->id)->count();
+
+			if ($floating_gate_pass > 0) {
+
+				$job_order->status_id = 8470;
+				$job_order->save();
+
+				DB::commit();
+
+				return response()->json([
+					'success' => true,
+					'message' => 'JobCard Updated Successfully! This Vehicle is already waiting for complete the floating work!',
+				]);
+
 			} else {
-				$year = date('Y');
-			}
-			//GET FINANCIAL YEAR ID
-			$financial_year = FinancialYear::where('from', $year)
-				->where('company_id', Auth::user()->company_id)
-				->first();
-			if (!$financial_year) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Fiancial Year Not Found',
+
+				if (date('m') > 3) {
+					$year = date('Y') + 1;
+				} else {
+					$year = date('Y');
+				}
+				//GET FINANCIAL YEAR ID
+				$financial_year = FinancialYear::where('from', $year)
+					->where('company_id', Auth::user()->company_id)
+					->first();
+				if (!$financial_year) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'Fiancial Year Not Found',
+						],
+					]);
+				}
+				//GET BRANCH/OUTLET
+				$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+
+				//GENERATE GATE IN VEHICLE NUMBER
+				$generateNumber = SerialNumberGroup::generateNumber(23, $financial_year->id, $branch->state_id, $branch->id);
+				if (!$generateNumber['success']) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => [
+							'No Job Card Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
+						],
+					]);
+				}
+
+				$error_messages_1 = [
+					'number.required' => 'Serial number is required',
+					'number.unique' => 'Serial number is already taken',
+				];
+
+				$validator_1 = Validator::make($generateNumber, [
+					'number' => [
+						'required',
+						'unique:job_cards,local_job_card_number,' . $job_order->id . ',job_order_id,company_id,' . Auth::user()->company_id,
 					],
-				]);
-			}
-			//GET BRANCH/OUTLET
-			$branch = Outlet::where('id', Auth::user()->employee->outlet_id)->first();
+				], $error_messages_1);
 
-			//GENERATE GATE IN VEHICLE NUMBER
-			$generateNumber = SerialNumberGroup::generateNumber(23, $financial_year->id, $branch->state_id, $branch->id);
-			if (!$generateNumber['success']) {
+				if ($validator_1->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator_1->errors()->all(),
+					]);
+				}
+
+				//JOB Card SAVE
+				$job_card = JobCard::firstOrNew([
+					'job_order_id' => $job_order->id,
+				]);
+				$job_card->local_job_card_number = $generateNumber['number'];
+				$job_card->date = date('Y-m-d');
+				$job_card->outlet_id = $job_order->outlet_id;
+				$job_card->company_id = Auth::user()->company_id;
+				$job_card->created_by = Auth::user()->id;
+				$job_card->created_at = Carbon::now();
+				$job_card->save();
+
+				DB::commit();
+
 				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'No Job Card Serial number found for FY : ' . $financial_year->from . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
-					],
+					'success' => true,
+					'message' => 'JOB Initiated Successfully',
 				]);
 			}
-
-			$error_messages_1 = [
-				'number.required' => 'Serial number is required',
-				'number.unique' => 'Serial number is already taken',
-			];
-
-			$validator_1 = Validator::make($generateNumber, [
-				'number' => [
-					'required',
-					'unique:job_cards,local_job_card_number,' . $job_order->id . ',job_order_id,company_id,' . Auth::user()->company_id,
-				],
-			], $error_messages_1);
-
-			if ($validator_1->fails()) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => $validator_1->errors()->all(),
-				]);
-			}
-
-			//JOB Card SAVE
-			$job_card = JobCard::firstOrNew([
-				'job_order_id' => $job_order->id,
-			]);
-			$job_card->local_job_card_number = $generateNumber['number'];
-			$job_card->date = date('Y-m-d');
-			$job_card->outlet_id = $job_order->outlet_id;
-			$job_card->company_id = Auth::user()->company_id;
-			$job_card->created_by = Auth::user()->id;
-			$job_card->created_at = Carbon::now();
-			$job_card->save();
-
-			DB::commit();
-
-			return response()->json([
-				'success' => true,
-				'message' => 'JOB Initiated Successfully',
-			]);
 		} catch (\Exception $e) {
 			return response()->json([
 				'success' => false,
