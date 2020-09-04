@@ -156,7 +156,7 @@ app.component('warrantyJobOrderRequestTableList', {
                 })
                 .then(function() {
                     $rootScope.loading = true;
-                    WarrantyJobOrderRequestSvc.sendToApproval($scope.warranty_job_order_request)
+                    /*WarrantyJobOrderRequestSvc.sendToApproval($scope.warranty_job_order_request)
                         .then(function(response) {
                             $rootScope.loading = false;
                             if (!response.data.success) {
@@ -169,6 +169,29 @@ app.component('warrantyJobOrderRequestTableList', {
                         }).catch(function(error) {
                             console.log(error);
                             // showErrorNoty(error.data.error);
+                        });*/
+                    $(".pace").removeClass('pace-inactive').addClass('pace-active');
+                    $.ajax({
+                            url: base_url + '/api/warranty-job-order-request/send-to-approval',
+                            method: "POST",
+                            data: { id: id },
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                        })
+                        .done(function(res) {
+                            $(".pace").removeClass('pace-active').addClass('pace-inactive');
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            showNoty('success', 'Warranty job order request initiated successfully');
+                            $location.path('/warranty-job-order-request/table-list');
+                            $scope.$apply();
+                        })
+                        .fail(function(xhr) {
+                            $(".pace").removeClass('pace-active').addClass('pace-inactive');
+                            custom_noty('error', 'Something went wrong at server');
                         });
                 });
         }
