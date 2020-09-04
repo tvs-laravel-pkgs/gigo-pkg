@@ -937,7 +937,7 @@ app.component('warrantyJobOrderRequestForm', {
                 },
                 'failure_report_file': {
                     required: function() {
-                        if (($scope.updating == false) || ($scope.updating == true && $scope.warranty_job_order_request.failure_photo == null)) {
+                        if ($("#failure_type_id").val() != '' && ($scope.updating == false) || ($scope.updating == true && $scope.warranty_job_order_request.failure_photo == null)) {
                             return true;
                         } else {
                             return false;
@@ -1026,7 +1026,7 @@ app.component('warrantyJobOrderRequestForm', {
         self.citySelected = function(city) {
             if (city != undefined) {
                 $scope.warranty_job_order_request.customer_address.state = city.state;
-                $scope.$apply();
+                // $scope.$apply();
             }
         }
 
