@@ -201,6 +201,27 @@ app.component('gateLogForm', {
         // $("input:text:visible:first").focus();
         HelperService.isLoggedIn()
         $('.image_uploadify').imageuploadify();
+        
+        /* Bootstrap single File Input */
+        $(".bootstrap-single-file-input").fileinput({
+            theme: 'fas',
+            overwriteInitial: true,
+            maxFileSize: 5000,
+            showUpload: false,
+            browseOnZoneClick: true,
+            removeFromPreviewOnError: true,
+            initialPreviewShowDelete: true,
+            deleteUrl: '',
+            showCaption: false,
+            showCancel: false,
+            showBrowse: false,
+            showRemove: false,
+            allowedFileTypes: ['image'],
+            slugCallback: function(filename) {
+                return filename.replace('(', '_').replace(']', '_');
+            }
+        });
+
         self.hasPermission = HelperService.hasPermission;
         if (!self.hasPermission('add-gate-log') && !self.hasPermission('edit-gate-log')) {
             window.location = "#!/permission-denied";

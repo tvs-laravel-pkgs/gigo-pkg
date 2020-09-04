@@ -310,6 +310,18 @@ class GateInController extends Controller {
 				$request->vehicle_id = $vehicle->id;
 			}
 
+			//Check Floating GatePass
+			$floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11161)->where('job_orders.vehicle_id', $vehicle->id)->first();
+			if ($floating_gate_pass) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Floating Parts Gate Out not completed on this Vehicle!',
+					],
+				]);
+			}
+
 			//CHECK VEHICLE PREVIOUS JOBCARD STATUS
 			$previous_job_order = JobOrder::where('vehicle_id', $vehicle->id)->orderBy('id', 'DESC')->first();
 			if ($previous_job_order) {

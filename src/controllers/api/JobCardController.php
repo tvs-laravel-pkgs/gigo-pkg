@@ -1761,7 +1761,7 @@ class JobCardController extends Controller {
 			}
 
 			//Check Floating Gatepass
-			$floating_gate_pass = FloatingGatePass::where('job_card_id', $request->id)->whereIn('status_id', [11161, 11162])->count();
+			$floating_gate_pass = FloatingGatePass::where('job_card_id', $request->id)->whereIn('status_id', [11160, 11161, 11162])->count();
 			if ($floating_gate_pass > 0) {
 				return response()->json([
 					'success' => false,

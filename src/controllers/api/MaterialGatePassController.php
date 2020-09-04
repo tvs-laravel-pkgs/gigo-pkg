@@ -262,7 +262,7 @@ class MaterialGatePassController extends Controller {
 						$material_inard_log->gass_pass_item_id = $gate_pass_item_detail->id;
 						$material_inard_log->qty = $gate_pass_item['return_qty'];
 						$material_inard_log->created_by_id = Auth::user()->id;
-						$material_inard_log->created_at = date('Y-m-d');
+						$material_inard_log->created_at = Carbon::now();
 						$material_inard_log->save();
 					}
 
@@ -383,7 +383,7 @@ class MaterialGatePassController extends Controller {
 				]);
 			}
 
-			$message = 'OTP is ' . $otp . ' for material gate out. Please enter OTP to verify your material gate out';
+			$message = 'OTP is ' . $otp . ' for Material Gate Pass. Please show this SMS to Our Security to verify your Material gate Pass';
 
 			if ($gate_pass_detail->vendor_contact_no) {
 				$msg = sendSMSNotification($gate_pass_detail->vendor_contact_no, $message);
