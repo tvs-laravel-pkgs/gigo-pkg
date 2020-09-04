@@ -1057,10 +1057,13 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.countryChanged = function(onload = null) {
+            console.log($scope.extras.default_country);
             // console.log($scope.warranty_job_order_request.customer_address);
             // $country_id = (onload) ? $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country.id : $scope.warranty_job_order_request.customer_address.country.id;
             if (onload != null) {
                 $country_id = $scope.extras.default_country.id;
+            } else {
+                $country_id = $scope.warranty_job_order_request.customer_address.country.id;
             }
             $.ajax({
                     url: base_url + '/api/state/get-drop-down-List',
@@ -1080,13 +1083,12 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.extras.state_list = res.state_list;
                         setTimeout(function() {
                             pageLoaded = 1;
-                            if ($scope.warranty_job_order_request.customer_address == undefined) {
-                                $scope.warranty_job_order_request.customer_address = [];
-                            }
-                            $scope.warranty_job_order_request.customer_address.country = $scope.extras.default_country;
-                            $scope.$apply();
-
                         }, 4000);
+                        if ($scope.warranty_job_order_request.customer_address == undefined) {
+                            $scope.warranty_job_order_request.customer_address = [];
+                        }
+                        $scope.warranty_job_order_request.customer_address.country = $scope.extras.default_country;
+                        // $scope.$apply();
                     }, 2000);
 
                     //ADD NEW OWNER TYPE
