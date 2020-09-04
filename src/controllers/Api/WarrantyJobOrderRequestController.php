@@ -99,7 +99,7 @@ class WarrantyJobOrderRequestController extends Controller {
 		}
 
 		// dump($request->all());
-
+		$list_data->whereNotIn('warranty_job_order_requests.status_id', [9104]);
 		$list_data->orderBy('warranty_job_order_requests.status_id', 'ASC');
 		$list_data->orderBy('warranty_job_order_requests.id', 'DESC');
 
@@ -340,6 +340,11 @@ class WarrantyJobOrderRequestController extends Controller {
 		return response()->json($this->data);*/
 
 	}
+	public function saveTempData(Request $request) {
+		// dd($request->all());
+		$result = WarrantyJobOrderRequest::saveTempData($request->all());
+		return response()->json($result);
+	}
 	public function getFormData() {
 		try {
 			$employee_outlets = Auth::user()->employee->employee_outlets;
@@ -349,10 +354,12 @@ class WarrantyJobOrderRequestController extends Controller {
 			$aggregates = Aggregate::all();
 			$failure_types = FailureType::where('company_id', Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Failure Type']);
 			// $aggregates = Aggregate::where('company_id', Auth::user()->company_id)->get();
+			$temp_data = WarrantyJobOrderRequest::where('status_id', 9104)->first();
 			return response()->json([
 				'success' => true,
 				'extras' => [
 					'country_list' => Country::getDropDownList(),
+					'default_country' => Country::where('name', 'India')->first(),
 					'state_list' => [], //State::getDropDownList(),
 					'city_list' => [], //City::getDropDownList(),
 					'models' => $models,
@@ -361,6 +368,7 @@ class WarrantyJobOrderRequestController extends Controller {
 					'split_order_types' => $split_order_types,
 					'aggregates' => $aggregates,
 					'failure_types' => $failure_types,
+					'temp_data' => $temp_data,
 				],
 			]);
 

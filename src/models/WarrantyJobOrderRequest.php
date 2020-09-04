@@ -658,6 +658,13 @@ class WarrantyJobOrderRequest extends BaseModel {
 			}
 			$record->serviceTypes()->sync($service_type_ids);
 
+			if (!isset($input['wjor_repair_orders']) || !isset($input['wjor_parts'])) {
+				return [
+					'success' => false,
+					'error' => 'One Part Or Labour atleast should be selected.',
+				];
+			}
+
 			if (isset($input['wjor_repair_orders'])) {
 				$wjorRepair_orders = json_decode($input['wjor_repair_orders']);
 				$record->syncRepairOrders($wjorRepair_orders);
