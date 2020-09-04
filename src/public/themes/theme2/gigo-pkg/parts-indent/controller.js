@@ -1263,6 +1263,7 @@ app.component('partsIndentIssuePartForm', {
                         } else {
                             $scope.issued_mode_id = 8481;
                         }
+                        $scope.disabled = 1;
                         $scope.$apply();
                     })
                     .fail(function(xhr) {

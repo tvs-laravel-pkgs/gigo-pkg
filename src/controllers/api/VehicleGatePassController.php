@@ -259,12 +259,14 @@ class VehicleGatePassController extends Controller {
 			} else {
 				if ($gate_log->jobOrder->vehicle->chassis_number) {
 					$number = $gate_log->jobOrder->vehicle->chassis_number;
+					$gate_out_data['registration_number'] = $gate_log->jobOrder->vehicle->chassis_number;
 				} else {
 					$number = $gate_log->jobOrder->vehicle->engine_number;
+					$gate_out_data['registration_number'] = $gate_log->jobOrder->vehicle->engine_number;
 				}
 			}
 
-			$message = 'Dear Customer, Greetings! Your vehicle ' . $number . ' has successfully Gate out from TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A');
+			$message = 'Greetings from TVS & Sons! Your vehicle ' . $number . ' has successfully Gate out from TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A');
 
 			//Send SMS to Driver
 			if ($gate_log->jobOrder->driver_mobile_number) {
