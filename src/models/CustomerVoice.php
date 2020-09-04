@@ -65,6 +65,7 @@ class CustomerVoice extends BaseModel {
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
 			'ROT Code' => $record_data->rot_code,
+			'Lv Main Type' => $record_data->lv_main_type,
 		];
 		return static::saveFromExcelArray($record);
 	}
@@ -101,6 +102,12 @@ class CustomerVoice extends BaseModel {
 				];
 			}
 
+			//LV Main Type
+			$lv_main_type = LvMainType::where('name', $record_data['Lv Main Type'])->where('company_id', $company->id)->select('id')->first();
+
+			//Repair Order
+			$repair_order = RepairOrder::where('code', $record_data['ROT Code'])->where('company_id', $company->id)->select('id')->first();
+
 			$record = Self::firstOrNew([
 				'company_id' => $company->id,
 				'code' => $record_data['Code'],
@@ -110,6 +117,12 @@ class CustomerVoice extends BaseModel {
 				return $result;
 			}
 			$record->created_by_id = $created_by_id;
+			if ($lv_main_type) {
+				$record->lv_main_type_id = $lv_main_type->id;
+			}
+			if ($repair_order) {
+				$record->repair_order_id = $repair_order->id;
+			}
 			$record->save();
 			return [
 				'success' => true,
