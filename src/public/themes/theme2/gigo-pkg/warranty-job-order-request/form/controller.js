@@ -96,6 +96,7 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.customer = $scope.warranty_job_order_request.job_order.customer;
                         $scope.customerChanged($scope.customer);
                         self.country = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country;
+                        self.state = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.state;
                         $scope.countryChanged(true);
                         // $scope.soldDateChange($scope.warranty_job_order_request.job_order.vehicle.sold_date);
                         $scope.aggregateChange($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate);
@@ -1025,6 +1026,7 @@ app.component('warrantyJobOrderRequestForm', {
         }
         self.citySelected = function(city) {
             if (city != undefined) {
+                self.state = $scope.warranty_job_order_request.customer_address.state;
                 $scope.warranty_job_order_request.customer_address.state = city.state;
                 // $scope.$apply();
             }
@@ -1057,7 +1059,6 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.countryChanged = function(onload = null) {
-            console.log($scope.extras.default_country);
             // console.log($scope.warranty_job_order_request.customer_address);
             // $country_id = (onload) ? $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country.id : $scope.warranty_job_order_request.customer_address.country.id;
             if (onload != null) {
@@ -1088,6 +1089,13 @@ app.component('warrantyJobOrderRequestForm', {
                             $scope.warranty_job_order_request.customer_address = [];
                         }
                         $scope.warranty_job_order_request.customer_address.country = $scope.extras.default_country;
+                        if (!onload) {
+                            $scope.warranty_job_order_request.customer_address.state = self.state;
+                            setTimeout(function() {
+                                $(".address_line2").focus().blur();
+                            }, 2000);
+                        }
+                        // console.log($scope.warranty_job_order_request.customer_address.state);
                         // $scope.$apply();
                     }, 2000);
 
