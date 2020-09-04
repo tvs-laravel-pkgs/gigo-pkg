@@ -2080,6 +2080,7 @@ class VehicleInwardController extends Controller {
 				'leftSideAttachment',
 				'rightSideAttachment',
 				'otherVehicleAttachment',
+				'status',
 			])
 				->select([
 					'job_orders.*',
