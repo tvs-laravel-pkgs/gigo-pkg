@@ -2465,9 +2465,9 @@ class VehicleInwardController extends Controller {
 					'min:10',
 					'max:10',
 				],
-				'cre_name' => [
-					'required_if:is_appointment,==,1',
-				],
+				// 'cre_name' => [
+				// 	'required_if:is_appointment,==,1',
+				// ],
 				'call_date' => [
 					'required_if:is_appointment,==,1',
 				],
@@ -5334,7 +5334,8 @@ class VehicleInwardController extends Controller {
 				$job_order->min_estimated_amount = $job_order->total_estimate_amount;
 				$job_order->estimated_amount = $job_order->total_estimate_amount;
 			} else {
-				$job_order->min_estimated_amount = $job_order->estimated_amount;
+				$job_order->min_estimated_amount = $job_order->total_estimate_amount;
+				$job_order->estimated_amount = $job_order->total_estimate_amount;
 			}
 
 			//ENABLE ESTIMATE STATUS
@@ -5455,6 +5456,29 @@ class VehicleInwardController extends Controller {
 			// INWARD PROCESS CHECK - ESTIMATE
 			$job_order->inwardProcessChecks()->where('tab_id', 8706)->update(['is_form_filled' => 1]);
 
+			//Check Floating GatePass
+			$floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->where('job_orders.id', $request->job_order_id)->count();
+
+			if (!$floating_gate_pass) {
+				//check Advance Amount alreay avail or not
+				if (!$job_order->advance_amount) {
+					$advance_amount_eligible = Entity::where('entity_type_id', 34)->select('name')->first();
+					if ($advance_amount_eligible) {
+						if ($advance_amount_eligible->name <= $request->estimated_amount) {
+							$job_order->advance_amount = $advance_amount_eligible->name;
+							$job_order->advance_paid_amount = 0;
+							$job_order->advance_amount_status_id = 10031;
+							$job_order->save();
+						} else {
+							$job_order->advance_amount = NULL;
+							$job_order->advance_paid_amount = NULL;
+							$job_order->advance_amount_status_id = NULL;
+							$job_order->save();
+						}
+					}
+				}
+			}
+
 			DB::commit();
 
 			return response()->json([
@@ -5542,7 +5566,7 @@ class VehicleInwardController extends Controller {
 			$otp->expired_at = $expired_time;
 			$otp->save();
 
-			$message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please give OTP to Our Service Advisor to verify your Job Order Estimate';
+			$message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate';
 
 			$msg = sendSMSNotification($customer_mobile, $message);
 
@@ -6205,26 +6229,32 @@ class VehicleInwardController extends Controller {
 					saveAttachment($attachment_path, $attachment, $entity_id, $attachment_of_id, $attachment_type_id);
 				}
 			}
-			//UPDATE JOB ORDER REPAIR ORDER STATUS UPDATE
-			//issue: readability
-			$job_order_repair_order_status_update = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)
-				->update([
-					'status_id' => 8181, //MACHANIC NOT ASSIGNED
-					'updated_by_id' => Auth::user()->id,
-					'updated_at' => Carbon::now(),
-				]);
 
-			//UPDATE JOB ORDER PARTS STATUS UPDATE
-			//issue: readability
-			$job_order_parts_status_update = JobOrderPart::where('job_order_id', $request->job_order_id)
-				->update([
-					'status_id' => 8201, //NOT ISSUED
-					'updated_by_id' => Auth::user()->id,
-					'updated_at' => Carbon::now(),
-				]);
+			//Check Floating GatePass
+			$floating_gate_pass = FloatingGatePass::join('job_cards', 'job_cards.id', 'floating_stock_logs.job_card_id')->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')->where('floating_stock_logs.status_id', 11162)->where('job_orders.id', $request->job_order_id)->count();
 
-			// //UPDATE GATE LOG STATUS
-			// $gate_log = GateLog::where('id', $request->gate_log_id)->update(['status_id', 8122, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //VEHICLE INWARD COMPLETED
+			if (!$floating_gate_pass) {
+				//UPDATE JOB ORDER REPAIR ORDER STATUS UPDATE
+				//issue: readability
+				$job_order_repair_order_status_update = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)
+					->update([
+						'status_id' => 8181, //MACHANIC NOT ASSIGNED
+						'updated_by_id' => Auth::user()->id,
+						'updated_at' => Carbon::now(),
+					]);
+
+				//UPDATE JOB ORDER PARTS STATUS UPDATE
+				//issue: readability
+				$job_order_parts_status_update = JobOrderPart::where('job_order_id', $request->job_order_id)
+					->update([
+						'status_id' => 8201, //NOT ISSUED
+						'updated_by_id' => Auth::user()->id,
+						'updated_at' => Carbon::now(),
+					]);
+
+				// //UPDATE GATE LOG STATUS
+				// $gate_log = GateLog::where('id', $request->gate_log_id)->update(['status_id', 8122, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]); //VEHICLE INWARD COMPLETED
+			}
 
 			//GET TOTAL AMOUNT IN PARTS AND LABOUR
 			$request['id'] = $request->job_order_id; // ID ADDED FOR BELOW FUNCTION TO FIND BASED ON ID

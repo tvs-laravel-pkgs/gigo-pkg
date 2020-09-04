@@ -3121,7 +3121,7 @@ class JobCardController extends Controller {
 
 				DB::commit();
 
-				$message = 'OTP is ' . $otp_no . ' for Revised Job Order Estimation. Please give OTP to Our Floor Supervisor to verify your Revised Job Order Estimate';
+				$message = 'OTP is ' . $otp_no . ' for Revised Job Order Estimation. Please show this SMS to Our Floor Supervisor to verify your Revised Job Order Estimate';
 
 				$msg = sendSMSNotification($customer_mobile, $message);
 
