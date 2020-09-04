@@ -130,10 +130,9 @@ app.component('warrantyJobOrderRequestForm', {
                                 attachments: [],
                                 bharat_stages: [],
                             };
-                        } else {
-
-                            $scope.countryChanged(true);
                         }
+
+                        $scope.countryChanged(true);
 
 
                         //for quick test
@@ -427,7 +426,7 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.stateChanged = function() {
             if (pageLoaded == 1) {
-                $scope.warranty_job_order_request.customer_address.city = null;
+                // $scope.warranty_job_order_request.customer_address.city = null;
                 $scope.requestTypeChanges();
             }
         }
@@ -783,6 +782,15 @@ app.component('warrantyJobOrderRequestForm', {
             }
             return false;
         }
+        $scope.checkLabourPart = function() {
+            if ($scope.warranty_job_order_request.wjor_parts.length > 0 || $scope.warranty_job_order_request.wjor_repair_orders.length > 0) {
+                $isValidFailedAt = true;
+            } else {
+                custom_noty('error', 'One Part Or Labour atleast should be selected.');
+                $isValidFailedAt = false;
+            }
+        }
+
 
         // Main Form Submit -------------------------------------
 
@@ -948,6 +956,7 @@ app.component('warrantyJobOrderRequestForm', {
             },
             submitHandler: function(form) {
                 $scope.failedAtKeyup();
+                $scope.checkLabourPart();
                 if ($isValidFailedAt == true) {
                     let formData = new FormData($(form_id1)[0]);
                     $('.submit').button('loading');
@@ -993,16 +1002,16 @@ app.component('warrantyJobOrderRequestForm', {
         });
 
         self.searchCity = function(query) {
-            if ($scope.warranty_job_order_request.customer_address.state) {
+            /*if ($scope.warranty_job_order_request.customer_address.state) {
                 $state_id = $scope.warranty_job_order_request.customer_address.state.id;
-            }
+            }*/
             if (query) {
                 return new Promise(function(resolve, reject) {
                     $http
                         .post(
                             laravel_routes['getCitySearchList'], {
-                                key: query,
-                                state: $state_id
+                                key: query
+                                // state: $state_id
                             }
                         )
                         .then(function(response) {
@@ -1015,7 +1024,7 @@ app.component('warrantyJobOrderRequestForm', {
             }
         }
         self.citySelected = function(city) {
-            if (city.state != undefined) {
+            if (city != undefined) {
                 $scope.warranty_job_order_request.customer_address.state = city.state;
                 $scope.$apply();
             }
@@ -1048,8 +1057,11 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.countryChanged = function(onload = null) {
-            console.log($scope.warranty_job_order_request.customer_address);
-            $country_id = (onload) ? $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country.id : $scope.warranty_job_order_request.customer_address.country.id;
+            // console.log($scope.warranty_job_order_request.customer_address);
+            // $country_id = (onload) ? $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country.id : $scope.warranty_job_order_request.customer_address.country.id;
+            if (onload != null) {
+                $country_id = $scope.extras.default_country.id;
+            }
             $.ajax({
                     url: base_url + '/api/state/get-drop-down-List',
                     method: "POST",
@@ -1068,6 +1080,12 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.extras.state_list = res.state_list;
                         setTimeout(function() {
                             pageLoaded = 1;
+                            if ($scope.warranty_job_order_request.customer_address == undefined) {
+                                $scope.warranty_job_order_request.customer_address = [];
+                            }
+                            $scope.warranty_job_order_request.customer_address.country = $scope.extras.default_country;
+                            $scope.$apply();
+
                         }, 4000);
                     }, 2000);
 
