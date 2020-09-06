@@ -133,6 +133,7 @@
                                             <label for="amc">
                                                 AMC<span class="rd-focused"></span>
                                             </label>
+                                            <input type="hidden" id="requestTypeOnload" value="{{$ctrl.requestTypeOnload}}">
                                         </div>
                                     </div><!-- Feild -->
                                 </li>
@@ -162,7 +163,7 @@
                                             Job card number
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input placeholder="Job card number" required type="text" class="form-control" autocomplete="off" ng-model="warranty_job_order_request.job_order.job_card.job_card_number" name="job_card_number" maxlength="32" />
+                                        <input placeholder="Job card number" required type="text" class="form-control job_card_number" autocomplete="off" ng-model="warranty_job_order_request.job_order.job_card.job_card_number" name="job_card_number" maxlength="32" />
                                         <input type="hidden" name="form_type" value="{{form_type}}">
                                     </div><!-- Feild -->
                                 </li>

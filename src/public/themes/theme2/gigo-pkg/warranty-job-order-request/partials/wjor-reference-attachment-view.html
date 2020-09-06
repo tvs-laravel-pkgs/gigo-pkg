@@ -3,12 +3,12 @@
         <div class="col-md-12">
             <h5 class="color-primary mb-10">
                 <b>
-                    Attachments
+                    Reference Attachments
                 </b>
             </h5>
             <hr class="hr-15"><!-- Separater -->
             <div class="row">
-                <div class="col-xs-6 col-md-3" ng-repeat="(key, photo) in warranty_job_order_request.photos">
+                <div class="col-xs-6 col-md-3" ng-repeat="(key, photo) in warranty_job_order_request.reference_attachments">
                     <a ng-if="photo.name.substr(photo.name.length - 3)=='jpg' || photo.name.substr(photo.name.length - 3)=='jpeg' || photo.name.substr(photo.name.length - 3)=='png' || photo.name.substr(photo.name.length - 3)=='bmp'" href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
                         <img ng-src="./storage/app/public/wjor/{{photo.name}}" />
                     </a>

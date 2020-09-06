@@ -1,0 +1,63 @@
+<div class="tab-pane-wrap">
+    <div class="row">
+        <div class="col-md-12">
+            <h5 class="color-primary mb-10">
+                <b>
+                    Reference Attachments
+                </b>
+            </h5>
+            <hr class="hr-15"><!-- Separater -->
+            <div class="row">
+                <!-- ng-repeat="(key,value) in warranty_job_order_request.photos1" -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="grey-box-attachment-wrap">
+                            <div class="grey-box-attachment-feild">
+                                <div class="file-loading">
+                                    <input multiple class="attachments" type="file" name="reference_attachment[]" angular-bfi="bfiConfig1" watch-options="true">
+                                </div><!-- File Loading -->
+                            </div><!-- Grey Box Attachment Feild -->
+                            <div class="grey-box-attachment-feild">
+                                <div class="feild-btn-wrap">
+                                    <input maxlength="255" type="text" name="reference_attachment_description[]" class="form-control" placeholder="Enter Description" />
+                                    <!-- <div class="feild-wrap">
+                                    </div>
+                                    <div class="btn-wrap">
+                                        <button type="button" class="btn-img">
+                                            <img ng-click="removeUploader(key)" class="img-responsive" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                        </button>
+                                    </div> -->
+                                </div>
+                            </div><!-- Grey Box Attachment Feild -->
+                        </div><!-- Grey Box Attachment Wrap -->
+                    </div><!-- Feild -->
+                </div><!-- Column -->
+            </div><!-- Row -->
+            <!-- <button type="button" class="addPhotoBtn btn btn-md type2 btn-green btn-square" ng-click="addPhoto()">
+                Add Photo
+            </button> -->
+        </div><!-- Column -->
+    </div><!-- Row -->
+</div><!-- Tab Pane Wrap -->
+<div class="tab-pane-wrap" ng-if="warranty_job_order_request.id != null">
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <h5 class="color-primary mb-10">
+                <b>Attachments</b>
+            </h5>
+            <hr class="hr-15"> -->
+            <!-- Separater -->
+            <div class="row">
+                <div class="col-xs-6 col-md-3" ng-repeat="(key, photo) in warranty_job_order_request.reference_attachments">
+                    <a ng-if="photo.name.substr(photo.name.length - 3)=='jpg' || photo.name.substr(photo.name.length - 3)=='jpeg' || photo.name.substr(photo.name.length - 3)=='png' || photo.name.substr(photo.name.length - 3)=='bmp'" href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
+                        <img ng-src="./storage/app/public/wjor/{{photo.name}}" />
+                    </a>
+                    <a ng-if="photo.name.substr(photo.name.length - 3)!='jpg' || photo.name.substr(photo.name.length - 3)!='jpeg' || photo.name.substr(photo.name.length - 3)!='png' || photo.name.substr(photo.name.length - 3)!='bmp'" href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
+                        {{photo.name}}
+                    </a>
+                    <p>{{photo.path}}</p>
+                </div>
+            </div>
+        </div><!-- Column -->
+    </div><!-- Row -->
+</div><!-- Tab Pane Wrap -->

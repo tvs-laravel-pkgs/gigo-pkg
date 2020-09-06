@@ -83,11 +83,13 @@ class WarrantyJobOrderRequestController extends Controller {
 				$list_data->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
 			}
 		*/
-		if (Entrust::can('own-outlet-warranty-job-order-request')) {
-			$list_data->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
-		} else if (Entrust::can('mapped-outlets-warranty-job-order-request')) {
+		if (Entrust::can('all-outlet-warranty-job-order-request')) {
+
+		} elseif (Entrust::can('mapped-outlets-warranty-job-order-request')) {
 			$list_data->leftJoin('employee_outlet', 'employee_outlet.outlet_id', 'outlets.id')
 				->where('employee_outlet.employee_id', Auth::user()->employee->id);
+		} elseif (Entrust::can('own-outlet-warranty-job-order-request')) {
+			$list_data->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
 		}
 
 		if (Entrust::can('verify-only-warranty-job-order-request')) {

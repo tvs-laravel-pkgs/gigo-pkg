@@ -201,6 +201,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 		return $this->hasMany('App\Attachment', 'entity_id')->where('attachment_of_id', 9121);
 	}
 
+	public function referenceAttachments() {
+		return $this->hasMany('App\Attachment', 'entity_id')->where('attachment_of_id', 9123);
+	}
+
 	public function splitOrderType() {
 		return $this->belongsTo('App\SplitOrderType', 'split_order_type_id');
 	}
@@ -263,6 +267,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'photos',
 				'failure_photo',
 				'approvalAttachments',
+				'referenceAttachments',
 				'splitOrderType',
 				'requestType',
 				'authorizationBy',
@@ -469,11 +474,12 @@ class WarrantyJobOrderRequest extends BaseModel {
 				];
 
 			}
+			$registration_number = str_replace("-", "", $input['registration_number']);
 			$vehicle->chassis_number = $input['chassis_number'];
 			$vehicle->model_id = $input['model_id'];
 			$vehicle->bharat_stage_id = $input['bharat_stage_id'];
 			if ($input['vehicle_search_type'] == 'false') {
-				$vehicle->registration_number = $input['registration_number'];
+				$vehicle->registration_number = $registration_number;
 				$vehicle->is_registered = $vehicle->registration_number ? 1 : 0;
 			}
 			if ($sold_date) {
@@ -483,6 +489,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$vehicle->is_sold = 0;
 				$vehicle->sold_date = null;
 			}
+			$vehicle->registration_number = $registration_number;
 			$vehicle->created_by_id = Auth::id();
 			$vehicle->save();
 
@@ -705,6 +712,28 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$attachement->path = null;
 				$attachement->save();
 			}
+			if (isset($input['reference_attachment'])) {
+				foreach ($input['reference_attachment'] as $key => $photo) {
+					$value = rand(1, 100);
+					$image = $photo;
+
+					$file_name_with_extension = $image->getClientOriginalName();
+					$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+					$extension = $image->getClientOriginalExtension();
+					// dd($file_name, $extension);
+					//ISSUE : file name should be stored
+					$name = $record->id . '_' . $file_name . '_' . rand(10, 1000) . '.' . $extension;
+
+					$photo->move($attachement_path, $name);
+					$attachement = new Attachment;
+					$attachement->attachment_of_id = 9123;
+					$attachement->attachment_type_id = 244;
+					$attachement->entity_id = $record->id;
+					$attachement->name = $name;
+					$attachement->path = $input['reference_attachment_description'][$key];
+					$attachement->save();
+				}
+			}
 			if (isset($input['photos'])) {
 				foreach ($input['photos'] as $key => $photo) {
 					$value = rand(1, 100);
@@ -742,6 +771,354 @@ class WarrantyJobOrderRequest extends BaseModel {
 			]);
 		}
 
+	}
+
+	public static function saveTempData($input) {
+		try {
+			DB::beginTransaction();
+			$owner = Auth::user();
+
+			$customer_id = null;
+			$customer = null;
+			if ($input['customer_id'] != null) {
+				$customer = json_decode($input['customer_id']);
+				$customer_id = $customer;
+			}
+
+			$input['customer_code'] = ($input['customer_code']) ? $input['customer_code'] : 'RANDCUSTOMER';
+			$input['customer_name'] = ($input['customer_name']) ? $input['customer_name'] : 'RANDCUSTOMER';
+			$input['address_line1'] = ($input['address_line1']) ? $input['address_line1'] : '';
+
+			if ($input['customer_search_type'] == 'true') {
+				$customer = Customer::findOrNew($input['customer_id']);
+			} else {
+				$customer = Customer::firstOrNew([
+					'company_id' => Auth::user()->company_id,
+					'code' => $input['customer_code'],
+				]);
+			}
+			if ($customer != null) {
+				$customer->name = $input['customer_name'];
+				$customer->code = $input['customer_code'];
+				$customer->company_id = Auth::user()->company_id;
+				$customer->mobile_no = $input['customer_mobile_no'];
+				$customer->email = $input['email'];
+				$customer->gst_number = $input['gst_number'];
+				$customer->pan_number = $input['pan_number'];
+				$customer->address = $input['address_line1'] . ' ' . $input['address_line2'];
+				$customer->zipcode = $input['zipcode'];
+				$customer->city = $input['city_name'];
+				$customer->city_id = $input['city_id'];
+				$customer->state_id = $input['state_id'];
+				$customer->updated_by_id = Auth::id();
+				$customer->save();
+
+				$customer_id = $customer->id;
+
+				$input['pincode'] = $input['zipcode'];
+
+				$customer->saveAddress($input);
+			}
+
+			$sold_date = null;
+			$vehicle_id = null;
+
+			$chassis_number = ($input['chassis_number']) ? $input['chassis_number'] : null;
+			$engine_number = ($input['engine_number']) ? $input['engine_number'] : null;
+			$registration_number = ($input['registration_number']) ? $input['registration_number'] : null;
+
+			if ($input['sold_date']) {
+				$sold_date = date('Y-m-d', strtotime($input['sold_date']));
+			}
+
+			if ($input['vehicle_search_type'] == 'true') {
+				$vehicle_id = $input['vehicle_id'];
+				if ($vehicle_id != null) {
+					$vehicle = Vehicle::find($input['vehicle_id']);
+				} else {
+					$vehicle = null;
+				}
+			} else {
+				if ($chassis_number != null) {
+					$vehicle = Vehicle::where([
+						'company_id' => Auth::user()->company_id,
+						'chassis_number' => $chassis_number,
+					])->first();
+				} elseif ($engine_number != null) {
+					$vehicle = Vehicle::where([
+						'company_id' => Auth::user()->company_id,
+						'engine_number' => $engine_number,
+					])->first();
+				} elseif ($registration_number != null) {
+					$vehicle = Vehicle::where([
+						'company_id' => Auth::user()->company_id,
+						'registration_number' => $registration_number,
+					])->first();
+				} else {
+					$vehicle = null;
+				}
+			}
+			if ($vehicle != null) {
+
+				$vehicle->chassis_number = $input['chassis_number'];
+				$vehicle->model_id = $input['model_id'];
+				$vehicle->bharat_stage_id = $input['bharat_stage_id'];
+				if ($input['vehicle_search_type'] == 'false') {
+					$vehicle->registration_number = $input['registration_number'];
+					$vehicle->is_registered = $vehicle->registration_number ? 1 : 0;
+				}
+				if ($sold_date) {
+					$vehicle->is_sold = 1;
+					$vehicle->sold_date = $sold_date;
+				} else {
+					$vehicle->is_sold = 0;
+					$vehicle->sold_date = null;
+				}
+				$vehicle->created_by_id = Auth::id();
+				$vehicle->save();
+
+				$input['vehicle_id'] = $vehicle->id;
+			}
+
+			if ($vehicle && $customer) {
+				$vehicle_owner = VehicleOwner::where([
+					'vehicle_id' => $vehicle->id,
+					'customer_id' => $customer->id,
+				])->first();
+				$vehicle_ownership_latest = VehicleOwner::where([
+					'vehicle_id' => $vehicle->id,
+				])->orderBy('ownership_id', 'desc')->first();
+				$ownership_id = 8160;
+				if ($vehicle_ownership_latest != null && $vehicle_ownership_latest->ownership_id == 8164) {
+					return [
+						'success' => false,
+						'error' => 'Vehicle Owner Cannot be added, Please choose different Customer.',
+					];
+				} else if ($vehicle_ownership_latest != null && $vehicle_ownership_latest->ownership_id < 8164) {
+					$ownership_id = $vehicle_ownership_latest->ownership_id + 1;
+				}
+
+				if ($vehicle_owner == null) {
+					//NEW OWNER
+					$vehicle_owner = new VehicleOwner;
+					$vehicle_owner->vehicle_id = $vehicle->id;
+					$vehicle_owner->from_date = Carbon::now();
+					$vehicle_owner->created_by_id = Auth::id();
+					$vehicle_owner->ownership_id = $ownership_id; //8160;
+				} else {
+					$vehicle_owner->updated_by_id = Auth::id();
+					$vehicle_owner->updated_at = Carbon::now();
+				}
+
+				$vehicle_owner->customer_id = $customer->id;
+				$vehicle_owner->save();
+			}
+
+			$job_card_number = 'XYZ123JOBCARDNO'; // $input['job_card_number'];
+			$job_card = JobCard::where('job_card_number', $job_card_number)->first();
+
+			$result = FinancialYear::getCurrentFinancialYear();
+			if (!$result['success']) {
+				return response()->json($result);
+			}
+			$financial_year = $result['financial_year'];
+			if ($input['outlet_id'] == null) {
+				$input['outlet_id'] = Outlet::first()->id;
+			}
+			$branch = Outlet::find($input['outlet_id']);
+
+			$jobOrderNumber = SerialNumberGroup::generateNumber(21, $financial_year->id, $branch->state_id, $branch->id);
+			if (!$jobOrderNumber['success']) {
+				return [
+					'success' => false,
+					'error' => 'No serial number configured for Job Order. FY : ' . $financial_year->code . ' Outlet : ' . $branch->code,
+				];
+			}
+
+			$input['reading_type_id'] = (!isset($input['reading_type_id'])) ? 8040 : $input['reading_type_id'];
+
+			if (!$job_card) {
+				$job_order = new JobOrder;
+				$job_order->company_id = $owner->company_id;
+				$job_order->number = $jobOrderNumber['number'];
+				$job_order->vehicle_id = $input['vehicle_id'];
+				$job_order->outlet_id = $input['outlet_id'];
+				$job_order->type_id = 4;
+				$job_order->km_reading_type_id = $input['reading_type_id'];
+				$job_order->km_reading = $input['failed_at'];
+				$job_order->hr_reading = $input['failed_at'];
+				$job_order->quote_type_id = 2;
+				$job_order->customer_id = $customer_id;
+				$job_order->save();
+
+				$job_card = new JobCard;
+				$job_card->company_id = $owner->company_id;
+				$job_card->dms_job_card_number = $job_card_number;
+				$job_card->job_card_number = $job_card_number;
+				$job_card->date = date('Y-m-d');
+				$job_card->outlet_id = $input['outlet_id'];
+				$job_card->created_by = Auth::id();
+				$job_card->job_order_id = $job_order->id;
+				$job_card->save();
+
+				$job_order_id = $job_order->id;
+			} else {
+				if ($job_card->job_order_id == null) {
+					$job_order = new JobOrder;
+					$job_order->company_id = $owner->company_id;
+					$job_order->number = $jobOrderNumber['number'];
+					$job_order->vehicle_id = $input['vehicle_id'];
+					$job_order->outlet_id = $input['outlet_id'];
+					$job_order->type_id = 4;
+					$job_order->quote_type_id = 2;
+					$job_order->km_reading_type_id = $input['reading_type_id'];
+					$job_order->km_reading = $input['failed_at'];
+					$job_order->hr_reading = $input['failed_at'];
+					$job_order->quote_type_id = 2;
+					$job_order->customer_id = $customer_id;
+					$job_order->save();
+					$job_order_id = $job_order->id;
+
+					$job_card = JobCard::find($job_card->id);
+					$job_card->job_order_id = $job_order_id;
+					$job_card->save();
+				} else {
+					$job_order = JobOrder::find($job_card->job_order_id);
+					$job_order->company_id = $owner->company_id;
+					$job_order->number = $jobOrderNumber['number'];
+					$job_order->vehicle_id = $input['vehicle_id'];
+					$job_order->outlet_id = $input['outlet_id'];
+					$job_order->type_id = 4;
+					$job_order->quote_type_id = 2;
+					$job_order->km_reading_type_id = $input['reading_type_id'];
+					$job_order->km_reading = $input['failed_at'];
+					$job_order->hr_reading = $input['failed_at'];
+					$job_order->quote_type_id = 2;
+					$job_order->customer_id = $customer_id;
+					$job_order->save();
+
+					$job_order_id = $job_card->job_order_id;
+				}
+			}
+
+			$record = WarrantyJobOrderRequest::where('status_id', 9104)->first();
+			if (!$record) {
+				$record = new WarrantyJobOrderRequest;
+			}
+			$record->company_id = $owner->company_id;
+			$record->created_by_id = Auth::id();
+			$pprNumber = SerialNumberGroup::generateNumber(30, $financial_year->id, $branch->state_id, $branch->id);
+			if (!$pprNumber['success']) {
+				return [
+					'success' => false,
+					'error' => 'No serial number configured for PPR . FY : ' . $financial_year->code . ' Outlet : ' . $branch->code,
+				];
+			}
+			$record->number = $pprNumber['number'];
+
+			$record->job_order_id = $job_order_id;
+			if (!isset($input['total_part_cushioning_charge'])) {
+				$input['total_part_cushioning_charge'] = 0;
+			}
+			if (!isset($input['total_part_amount'])) {
+				$input['total_part_amount'] = 0;
+			}
+			$input['total_part_cushioning_charge'] = ($input['total_part_cushioning_charge'] != null) ? $input['total_part_cushioning_charge'] : 0;
+			$input['total_part_amount'] = ($input['total_part_amount'] != null) ? $input['total_part_amount'] : 0;
+			$input['failure_date'] = ($input['failure_date'] == null) ? Carbon::now() : $input['failure_date'];
+			$input['unit_serial_number'] = ($input['unit_serial_number'] == null) ? '123' : $input['unit_serial_number'];
+
+			$record->fill($input);
+			$record->status_id = 9104; //Temporary Save
+			$record->save();
+
+			$service_types = json_decode($input['service_type_ids']);
+			$service_type_ids = [];
+			if ($service_types) {
+				if (count($service_types) > 0) {
+					foreach ($service_types as $service_type) {
+						$service_type_ids[] = $service_type->id;
+					}
+				}
+			}
+			$record->serviceTypes()->sync($service_type_ids);
+
+			if (isset($input['wjor_repair_orders'])) {
+				$wjorRepair_orders = json_decode($input['wjor_repair_orders']);
+				$record->syncRepairOrders($wjorRepair_orders);
+			}
+
+			if (isset($input['wjor_parts'])) {
+				$wjorPartsInput = json_decode($input['wjor_parts']);
+				$record->syncParts($wjorPartsInput);
+			}
+
+			//SAVE ATTACHMENTS
+			$attachement_path = storage_path('app/public/wjor/');
+			Storage::makeDirectory($attachement_path, 0777);
+			if (isset($input['failure_report_file'])) {
+
+				$value = rand(1, 100);
+				$image = $input['failure_report_file'];
+
+				$file_name_with_extension = $image->getClientOriginalName();
+				$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+				$extension = $image->getClientOriginalExtension();
+				// dd($file_name, $extension);
+				//ISSUE : file name should be stored
+				$name = $record->id . '_' . $file_name . '_failure_report_' . rand(10, 1000) . '.' . $extension;
+
+				$image->move($attachement_path, $name);
+				// $attachement = new Attachment;
+
+				$attachement = Attachment::firstOrNew([
+					'attachment_of_id' => 9122,
+					'attachment_type_id' => 244,
+					'entity_id' => $record->id,
+				]);
+				$attachement->attachment_of_id = 9122;
+				$attachement->attachment_type_id = 244;
+				$attachement->entity_id = $record->id;
+				$attachement->name = $name;
+				$attachement->path = null;
+				$attachement->save();
+			}
+			if (isset($input['photos'])) {
+				foreach ($input['photos'] as $key => $photo) {
+					$value = rand(1, 100);
+					$image = $photo;
+
+					$file_name_with_extension = $image->getClientOriginalName();
+					$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+					$extension = $image->getClientOriginalExtension();
+					// dd($file_name, $extension);
+					//ISSUE : file name should be stored
+					$name = $record->id . '_' . $file_name . '_' . rand(10, 1000) . '.' . $extension;
+
+					$photo->move($attachement_path, $name);
+					$attachement = new Attachment;
+					$attachement->attachment_of_id = 9120;
+					$attachement->attachment_type_id = 244;
+					$attachement->entity_id = $record->id;
+					$attachement->name = $name;
+					$attachement->path = $input['attachment_descriptions'][$key];
+					$attachement->save();
+				}
+			}
+			DB::commit();
+
+			return [
+				'success' => true,
+				'message' => 'Temporary Data Saved',
+				'warranty_job_order_request' => $record,
+			];
+		} catch (Exception $e) {
+			DB::rollBack();
+			return response()->json([
+				'success' => false,
+				'error' => $e->getMessage(),
+			]);
+		}
 	}
 
 	public function syncRepairOrders($wjor_repair_orders) {

@@ -106,6 +106,7 @@ app.component('warrantyJobOrderRequestForm', {
                             $scope.calculateCushionCharges();
                         }, 2000);
                         $scope.calculateTotals();
+                        self.requestTypeOnload = $scope.warranty_job_order_request.request_type_id;
                     } else {
                         self.is_registered = 1;
                         $scope.warranty_job_order_request = $localstorage.getObject('ppr');
@@ -202,9 +203,9 @@ app.component('warrantyJobOrderRequestForm', {
                         if (self.hasPermission('own-outlet-warranty-job-order-request')) {
                             $scope.warranty_job_order_request.job_order.outlet = $scope.user.employee.outlet;
                         }
+                        $scope.warranty_job_order_request.request_type_id = 9180;
                     }
                     $scope.customer = $scope.warranty_job_order_request.job_order.customer;
-                    $scope.warranty_job_order_request.request_type_id = 9180;
 
                     $scope.bfiConfig = {
                         theme: 'fas',
@@ -226,7 +227,33 @@ app.component('warrantyJobOrderRequestForm', {
                         //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
                         //     "<img src='/images/jellyfish.jpg' class='file-preview-image' alt='Jelly Fish' title='Jelly Fish'>",
                         // ],
-                        allowedFileTypes: ['image'],
+                        allowedFileTypes: ['image', 'video'],
+                        slugCallback: function(filename) {
+                            return filename.replace('(', '_').replace(']', '_');
+                        }
+                    };
+
+                    $scope.bfiConfig1 = {
+                        theme: 'fas',
+                        overwriteInitial: true,
+                        // minFileCount: 1,
+                        // maxFileSize: 2048,
+                        // required: true,
+                        showUpload: false,
+                        browseOnZoneClick: true,
+                        removeFromPreviewOnError: true,
+                        initialPreviewShowDelete: true,
+                        deleteUrl: '',
+                        showCaption: false,
+                        showCancel: false,
+                        showBrowse: false,
+                        showRemove: false,
+                        // maxFilesNum: 10,
+                        // initialPreview: [
+                        //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
+                        //     "<img src='/images/jellyfish.jpg' class='file-preview-image' alt='Jelly Fish' title='Jelly Fish'>",
+                        // ],
+                        // allowedFileTypes: ['image', 'pdf'],
                         slugCallback: function(filename) {
                             return filename.replace('(', '_').replace(']', '_');
                         }
@@ -390,6 +417,8 @@ app.component('warrantyJobOrderRequestForm', {
                         OutletSvc.business_outlet({ filter: { outlet: $scope.warranty_job_order_request.job_order.outlet.id } })
                             .then(function(response) {
                                 $scope.business_data = response.data.business_outlet;
+                            }).catch(function(err) {
+                                $scope.business_data = null;
                             });
                     });
             });
@@ -405,9 +434,11 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.addPhoto = function() {
             $scope.warranty_job_order_request.photos1.push($scope.warranty_job_order_request.photos1.length + 1);
+            // $(".addPhotoBtn").hide();
         }
         $scope.removeUploader = function(key) {
             $scope.warranty_job_order_request.photos1.splice(key, 1);
+            // $(".addPhotoBtn").show();
         }
 
         $scope.outletChanged = function(outlet) {
@@ -485,9 +516,9 @@ app.component('warrantyJobOrderRequestForm', {
             console.log($scope.warranty_job_order_request.request_type_id, $scope.business_data);
             $scope.wjor_repair_order.qty = 1;
             if ($scope.warranty_job_order_request.request_type_id == 9181) {
-                $scope.wjor_repair_order.rate = ($scope.business_data) ? $scope.business_data.ewp_claim_rate_per_hour : 0;
+                $scope.wjor_repair_order.rate = ($scope.business_data != null) ? $scope.business_data.ewp_claim_rate_per_hour : 0;
             } else {
-                $scope.wjor_repair_order.rate = ($scope.business_data) ? $scope.business_data.warranty_claim_rate_per_hour : 0;
+                $scope.wjor_repair_order.rate = ($scope.business_data != null) ? $scope.business_data.warranty_claim_rate_per_hour : 0;
             }
             $scope.wjor_repair_order.rate = ($scope.wjor_repair_order.rate == null) ? 0 : $scope.wjor_repair_order.rate;
             $scope.wjor_repair_order.rate = $scope.wjor_repair_order.rate * parseFloat($scope.wjor_repair_order.repair_order.hours);
@@ -696,6 +727,7 @@ app.component('warrantyJobOrderRequestForm', {
             $cushioning_charges = ($cushion_percentage / 100) * parseFloat($scope.warranty_job_order_request.part_total);
             $scope.warranty_job_order_request.total_part_cushioning_charge = $cushioning_charges;
             $scope.warranty_job_order_request.total_part_amount = parseFloat($cushioning_charges) + parseFloat($scope.warranty_job_order_request.part_total);
+            console.log($scope.warranty_job_order_request.part_total, $cushioning_charges);
             if (partcal == null) {
                 $scope.calculatePartAmount();
             }
@@ -706,8 +738,127 @@ app.component('warrantyJobOrderRequestForm', {
             HelperService.calculateTaxAndTotal($scope.wjor_part, $scope.isSameState(), true);
             $scope.calculateTotals();
         }
+        /*
+                $scope.wjor_repair_order.qty = 1;
+                if ($scope.warranty_job_order_request.request_type_id == 9181) {
+                    $scope.wjor_repair_order.rate = ($scope.business_data) ? $scope.business_data.ewp_claim_rate_per_hour : 0;
+                } else {
+                    $scope.wjor_repair_order.rate = ($scope.business_data) ? $scope.business_data.warranty_claim_rate_per_hour : 0;
+                }
+                $scope.wjor_repair_order.rate = ($scope.wjor_repair_order.rate == null) ? 0 : $scope.wjor_repair_order.rate;
+                $scope.wjor_repair_order.rate = $scope.wjor_repair_order.rate * parseFloat($scope.wjor_repair_order.repair_order.hours);
+                // $scope.wjor_repair_order.rate = repair_order.claim_amount;
+                $scope.wjor_repair_order.rate = $scope.wjor_repair_order.rate.toFixed(2);
+                $scope.wjor_repair_order.tax_code = repair_order.tax_code;
+                HelperService.calculateTaxAndTotal($scope.wjor_repair_order, $scope.isSameState());
+
+                console.log($scope.wjor_repair_order);
+        */
+        $scope.getBusinessOutletData = function() {
+            OutletSvc.business_outlet({ filter: { outlet: $scope.warranty_job_order_request.job_order.outlet.id } })
+                .then(function(response) {
+                    $scope.business_data = response.data.business_outlet;
+                }).catch(function(err) {
+                    $scope.business_data = null;
+                });
+        }
+
+        $scope.reCalculateTotals = function() {
+            console.log('reCalculateTotals');
+            $(".pace").removeClass('pace-inactive').addClass('pace-active');
+            /* Recalculating Repair Orders */
+            $scope.getBusinessOutletData();
+            var repair_order_rate = 0;
+            var request_type_id = $scope.warranty_job_order_request.request_type_id;
+            setTimeout(function() {
+                if (request_type_id == 9181) {
+                    repair_order_rate = ($scope.business_data != null) ? $scope.business_data.ewp_claim_rate_per_hour : 0;
+                } else {
+                    repair_order_rate = ($scope.business_data != null) ? $scope.business_data.warranty_claim_rate_per_hour : 0;
+                }
+                repair_order_rate = (repair_order_rate == null) ? 0 : repair_order_rate;
+                if ($scope.warranty_job_order_request.wjor_repair_orders.length > 0) {
+                    angular.forEach($scope.warranty_job_order_request.wjor_repair_orders, function(value, key) {
+                        $scope.warranty_job_order_request.wjor_repair_orders[key].qty = 1;
+                        $scope.warranty_job_order_request.wjor_repair_orders[key].rate = repair_order_rate * parseFloat(value.repair_order.hours);
+                        $scope.warranty_job_order_request.wjor_repair_orders[key].rate = $scope.warranty_job_order_request.wjor_repair_orders[key].rate.toFixed(2);
+                        $scope.warranty_job_order_request.wjor_repair_orders[key].tax_code = value.tax_code;
+                        HelperService.calculateTaxAndTotal($scope.warranty_job_order_request.wjor_repair_orders[key], $scope.isSameState());
+                    });
+                    // $scope.calculateTotals();
+                    // $(".pace").removeClass('pace-active').addClass('pace-inactive');
+                }
+
+            }, 1000);
+            /* Recalculating Repair Orders End */
+
+            /* Recalculating Parts Start*/
+            $requestTypeOnload = $("#requestTypeOnload").val();
+            if ($scope.warranty_job_order_request.wjor_parts.length > 0) {
+                angular.forEach($scope.warranty_job_order_request.wjor_parts, function(value, key) {
+                    // console.log(value);
+                    $scope.warranty_job_order_request.wjor_parts[key].part.tax_code = value.tax_code;
+                    $scope.warranty_job_order_request.wjor_parts[key].tax_code = value.tax_code;
+                    $scope.warranty_job_order_request.wjor_parts[key].mrp = value.mrp;
+                    // $scope.warranty_job_order_request.wjor_parts[key].purchase_type = value.purchase_type.id;
+                    // $scope.warranty_job_order_request.wjor_parts[key].net_amount = value.net_amount;
+                    // $scope.warranty_job_order_request.wjor_parts[key].rate = value.net_amount;
+                    if (value.handling_charge_percentage == undefined) {
+                        value.handling_charge_percentage = 0;
+                    }
+                    if (value.tax_code == undefined) {
+                        value.tax_code = null;
+                    }
+                    if ($requestTypeOnload == 9181 && request_type_id != 9181) {
+                        PartSvc.read(value.part.id)
+                            .then(function(response) {
+                                if ($scope.warranty_job_order_request.wjor_parts[key].tax_code == null) {
+                                    $scope.warranty_job_order_request.wjor_parts[key].tax_code = [];
+                                }
+                                $scope.warranty_job_order_request.wjor_parts[key].tax_code = response.data.part.tax_code;
+                                console.log($scope.warranty_job_order_request.wjor_parts[key]);
+                            });
+                    }
+                    // console.log(value.handling_charge_percentage);
+                    $scope.warranty_job_order_request.wjor_parts[key].handling_charge_percentage = value.handling_charge_percentage;
+
+                    if (request_type_id == 9181) {
+                        // EWP Request Type
+                        $scope.warranty_job_order_request.wjor_parts[key].pre_tax_code = value.tax_code;
+                        $scope.warranty_job_order_request.wjor_parts[key].tax_code = null;
+                        $scope.warranty_job_order_request.wjor_parts[key].prev_handling_charge_percentage = value.handling_charge_percentage;
+                        $scope.warranty_job_order_request.wjor_parts[key].handling_charge_percentage = 0;
+                    } else {
+                        $scope.warranty_job_order_request.wjor_parts[key].tax_code = $scope.warranty_job_order_request.wjor_parts[key].pre_tax_code;
+                        $scope.warranty_job_order_request.wjor_parts[key].handling_charge_percentage = $scope.warranty_job_order_request.wjor_parts[key].prev_handling_charge_percentage;
+                    }
+                    setTimeout(function() {
+
+                        $handling_charge = parseFloat($scope.warranty_job_order_request.wjor_parts[key].net_amount) * (parseFloat($scope.warranty_job_order_request.wjor_parts[key].handling_charge_percentage) / 100);
+                        if (isNaN($handling_charge)) {
+                            $handling_charge = 0;
+                        }
+                        $scope.warranty_job_order_request.wjor_parts[key].handling_charge = $handling_charge.toFixed(2);
+                        console.log($handling_charge);
+                        HelperService.calculateTaxAndTotal($scope.warranty_job_order_request.wjor_parts[key], $scope.isSameState(), true);
+                    }, 1000);
+
+                });
+            }
+            /* Recalculating Parts End */
+            setTimeout(function() {
+                $scope.calculateTotals();
+                setTimeout(function() {
+
+                    $scope.calculateCushionCharges();
+                }, 500);
+                $(".pace").removeClass('pace-active').addClass('pace-inactive');
+            }, 5000);
+
+        }
 
         $scope.requestTypeChanges = function() {
+            /*
             $scope.warranty_job_order_request.wjor_repair_orders = [];
             $scope.warranty_job_order_request.wjor_parts = [];
             $scope.warranty_job_order_request.total_part_cushioning_percentage = 0;
@@ -715,6 +866,8 @@ app.component('warrantyJobOrderRequestForm', {
             $scope.warranty_job_order_request.total_part_amount = 0;
             // $scope.calculatePartAmount();
             $scope.calculateTotals();
+            */
+            $scope.reCalculateTotals();
         }
 
         var form_id3 = '#part-form';
@@ -792,6 +945,16 @@ app.component('warrantyJobOrderRequestForm', {
             }
         }
 
+        /* 
+        var attachment_description_html = '<input maxlength="255" type="text" name="attachment_descriptions[]" class="form-control" placeholder="Enter Description" />';
+        $(document).on("change", ".attachments", function() {
+            var files = $(this)[0].files;
+            $length = files.length - 1;
+            for (var i = 1; i <= $length; i++) {
+                $(".feild-wrap").append(attachment_description_html);
+            }
+        });
+        */
 
         // Main Form Submit -------------------------------------
 
@@ -1029,6 +1192,7 @@ app.component('warrantyJobOrderRequestForm', {
                 self.state = $scope.warranty_job_order_request.customer_address.state;
                 $scope.warranty_job_order_request.customer_address.state = city.state;
                 // $scope.$apply();
+                $scope.reCalculateTotals();
             }
         }
 
@@ -1092,8 +1256,9 @@ app.component('warrantyJobOrderRequestForm', {
                         if (!onload) {
                             $scope.warranty_job_order_request.customer_address.state = self.state;
                             setTimeout(function() {
-                                $(".address_line2").focus().blur();
-                            }, 2000);
+                                $(".job_card_number").focus().blur();
+                                console.log("blur");
+                            }, 1000);
                         }
                         // console.log($scope.warranty_job_order_request.customer_address.state);
                         // $scope.$apply();

@@ -54,6 +54,14 @@ app.directive('wjorAttachmentForm', function() {
 });
 //------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------
+app.directive('wjorReferenceAttachmentForm', function() {
+    return {
+        templateUrl: warrantyJobOrderRequestReferenceAttachmentForm,
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
 app.directive('wjorApprovalAttachmentForm', function() {
     return {
         templateUrl: gigo_pkg_url +
@@ -90,6 +98,14 @@ app.directive('wjorEstimateViewPart', function() {
 app.directive('wjorAttachmentView', function() {
     return {
         templateUrl: wjorAttachmentView,
+        controller: function() {}
+    }
+});
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+app.directive('wjorReferenceAttachmentView', function() {
+    return {
+        templateUrl: wjorReferenceAttachmentView,
         controller: function() {}
     }
 });
