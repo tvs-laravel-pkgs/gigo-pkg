@@ -905,11 +905,11 @@ app.component('warrantyJobOrderRequestForm', {
             setTimeout(function() {
                 $scope.calculateTotals();
                 setTimeout(function() {
-
+                    console.log('calculate_cushion');
                     $scope.calculateCushionCharges();
-                }, 500);
-                $(".pace").removeClass('pace-active').addClass('pace-inactive');
-            }, 6000);
+                    $(".pace").removeClass('pace-active').addClass('pace-inactive');
+                }, 1500);
+            }, 7000);
 
         }
 

@@ -45,7 +45,7 @@
                             <div class="tab-pane-footer">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <button type="button" ng-click="saveTempData()" class="btn btn-red">
+                                        <button ng-if="warranty_job_order_request.id == ''" type="button" ng-click="saveTempData()" class="btn btn-red">
                                             Save Temp Data
                                         </button>
                                         <button type="submit" ng-click="action='save-and-close'" class="btn btn-red submit">
