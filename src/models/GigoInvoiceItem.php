@@ -1,10 +1,9 @@
 <?php
 
-namespace App;
+namespace Abs\GigoPkg;
 
-use Illuminate\Database\Eloquent\Model;
+use App\BaseModel;
 
-class GigoInvoiceItem extends Model
-{
-    //
+class GigoInvoiceItem extends BaseModel {
+	//
 }
