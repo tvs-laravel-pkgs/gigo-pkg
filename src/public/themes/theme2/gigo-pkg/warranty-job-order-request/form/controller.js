@@ -1332,6 +1332,7 @@ app.component('warrantyJobOrderRequestForm', {
                             setTimeout(function() {
                                 $(".job_card_number").focus().blur();
                                 console.log("blur");
+                                $scope.warranty_job_order_request.photos1 = [];
                             }, 1000);
                         }
                         // console.log($scope.warranty_job_order_request.customer_address.state);
