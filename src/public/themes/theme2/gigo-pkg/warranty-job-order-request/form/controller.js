@@ -1043,9 +1043,10 @@ app.component('warrantyJobOrderRequestForm', {
                     required: true,
                 },
                 'sold_date': {
-                    required: function() {
+                    required: true,
+                    /*required: function() {
                         return $scope.warranty_job_order_request.job_order.vehicle.is_sold;
-                    },
+                    },*/
                 },
                 'failure_date': {
                     required: true,
