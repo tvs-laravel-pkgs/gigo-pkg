@@ -727,9 +727,9 @@ app.component('warrantyJobOrderRequestForm', {
                                     }*/
                                 }
                                 // $scope.wjor_part.mrp = res.stock_data.mrp;
-                                console.log($scope.wjor_part.part);
 
                             }
+                            console.log($scope.wjor_part.part);
                             $scope.calculatePartAmount();
                             $scope.calculateHandlingCharge();
                             $rootScope.loading = false;
