@@ -726,6 +726,7 @@ app.component('warrantyJobOrderRequestForm', {
                                     }*/
                                 }
                                 // $scope.wjor_part.mrp = res.stock_data.mrp;
+                                console.log($scope.wjor_part.part);
 
                             }
                             $scope.calculatePartAmount();
@@ -845,7 +846,7 @@ app.component('warrantyJobOrderRequestForm', {
                     // $(".pace").removeClass('pace-active').addClass('pace-inactive');
                 }
 
-            }, 1000);
+            }, 2000);
             /* Recalculating Repair Orders End */
 
             /* Recalculating Parts Start*/
@@ -888,6 +889,7 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.warranty_job_order_request.wjor_parts[key].tax_code = $scope.warranty_job_order_request.wjor_parts[key].pre_tax_code;
                         $scope.warranty_job_order_request.wjor_parts[key].handling_charge_percentage = $scope.warranty_job_order_request.wjor_parts[key].prev_handling_charge_percentage;
                     }
+                    console.log($scope.warranty_job_order_request.wjor_parts[key], 'part');
                     setTimeout(function() {
 
                         $handling_charge = parseFloat($scope.warranty_job_order_request.wjor_parts[key].net_amount) * (parseFloat($scope.warranty_job_order_request.wjor_parts[key].handling_charge_percentage) / 100);
@@ -1248,7 +1250,7 @@ app.component('warrantyJobOrderRequestForm', {
                 self.state = $scope.warranty_job_order_request.customer_address.state;
                 $scope.warranty_job_order_request.customer_address.state = city.state;
                 // $scope.$apply();
-                $scope.reCalculateTotals();
+                // $scope.reCalculateTotals();
             }
         }
 
