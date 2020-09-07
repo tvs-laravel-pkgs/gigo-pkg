@@ -845,7 +845,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				if ($vehicle_id != null) {
 					$vehicle = Vehicle::find($input['vehicle_id']);
 				} else {
-					$vehicle = null;
+					$vehicle = new Vehicle;
 				}
 			} else {
 				if ($chassis_number != null) {
@@ -864,9 +864,10 @@ class WarrantyJobOrderRequest extends BaseModel {
 						'registration_number' => $registration_number,
 					]);
 				} else {
-					$vehicle = null;
+					$vehicle = new Vehicle;
 				}
 			}
+
 			if ($vehicle != null) {
 
 				$vehicle->chassis_number = $input['chassis_number'];

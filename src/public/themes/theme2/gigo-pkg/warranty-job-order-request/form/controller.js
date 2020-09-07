@@ -918,6 +918,7 @@ app.component('warrantyJobOrderRequestForm', {
                     console.log('calculate_cushion');
                     $scope.calculateCushionCharges();
                     $(".pace").removeClass('pace-active').addClass('pace-inactive');
+                    $scope.$apply();
                 }, 1500);
             }, 7000);
 
