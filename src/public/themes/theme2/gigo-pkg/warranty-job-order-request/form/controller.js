@@ -120,6 +120,7 @@ app.component('warrantyJobOrderRequestForm', {
                     $scope.options.terrains = responses.terrain_options.data.options;
                     $scope.temp_data = responses.temp_data.data.request;
                     console.log($scope.temp_data, 'temp_data');
+                    console.log($scope.updating, 'updating');
                     if ($scope.temp_data != null) {
                         $scope.warranty_job_order_request = $scope.temp_data;
                         if ($scope.warranty_job_order_request.job_order.customer) {
@@ -175,7 +176,9 @@ app.component('warrantyJobOrderRequestForm', {
                                     part_total: 0,
                                     attachments: [],
                                     job_order: {
-                                        vehicle: {},
+                                        vehicle: {
+                                            'sold_date': true
+                                        },
                                         customer: {},
                                         outlet: {},
                                     },
@@ -249,8 +252,10 @@ app.component('warrantyJobOrderRequestForm', {
                             //     },
                             //     photos: [],
                             // };
+                            if ($scope.warranty_job_order_request.job_order.vehicle == null) {
+                                $scope.warranty_job_order_request.job_order.vehicle = {};
+                            }
                             $scope.warranty_job_order_request.job_order.vehicle.is_sold = true;
-                            console.log($scope.warranty_job_order_request.job_order.vehicle.is_sold);
                             $scope.warranty_job_order_request.total_part_cushioning_percentage = 0;
                             if (self.hasPermission('own-outlet-warranty-job-order-request')) {
                                 $scope.warranty_job_order_request.job_order.outlet = $scope.user.employee.outlet;
