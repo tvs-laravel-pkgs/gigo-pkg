@@ -311,7 +311,7 @@ app.component('warrantyJobOrderRequestForm', {
                         //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
                         //     "<img src='/images/jellyfish.jpg' class='file-preview-image' alt='Jelly Fish' title='Jelly Fish'>",
                         // ],
-                        // allowedFileTypes: ['image', 'pdf'],
+                        allowedFileTypes: ['image', 'pdf'],
                         slugCallback: function(filename) {
                             return filename.replace('(', '_').replace(']', '_');
                         }
