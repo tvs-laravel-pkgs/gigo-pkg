@@ -59,6 +59,8 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.page = 'form';
         $scope.customer_search_type = true;
         $scope.vehicle_search_type = true;
+        $scope.warranty_job_order_request = {};
+        $scope.warranty_job_order_request.photos1 = [];
 
         $scope.init = function() {
             $rootScope.loading = true;
@@ -311,7 +313,7 @@ app.component('warrantyJobOrderRequestForm', {
                         //     "<img src='/images/desert.jpg' class='file-preview-image' alt='Desert' title='Desert'>",
                         //     "<img src='/images/jellyfish.jpg' class='file-preview-image' alt='Jelly Fish' title='Jelly Fish'>",
                         // ],
-                        allowedFileTypes: ['image', 'pdf'],
+                        // allowedFileTypes: ['image', 'pdf'],
                         slugCallback: function(filename) {
                             return filename.replace('(', '_').replace(']', '_');
                         }
@@ -328,7 +330,6 @@ app.component('warrantyJobOrderRequestForm', {
                     $rootScope.loading = false;
                 });
         };
-        $scope.photos1 = [];
         $scope.init();
 
         setTimeout(function() {
@@ -493,11 +494,11 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.addPhoto = function() {
-            $scope.photos1.push($scope.photos1.length + 1);
+            $scope.warranty_job_order_request.photos1.push($scope.warranty_job_order_request.photos1.length + 1);
             // $(".addPhotoBtn").hide();
         }
         $scope.removeUploader = function(key) {
-            $scope.photos1.splice(key, 1);
+            $scope.warranty_job_order_request.photos1.splice(key, 1);
             // $(".addPhotoBtn").show();
         }
 
@@ -1043,10 +1044,9 @@ app.component('warrantyJobOrderRequestForm', {
                     required: true,
                 },
                 'sold_date': {
-                    required: true,
-                    /*required: function() {
+                    required: function() {
                         return $scope.warranty_job_order_request.job_order.vehicle.is_sold;
-                    },*/
+                    },
                 },
                 'failure_date': {
                     required: true,
@@ -1329,10 +1329,7 @@ app.component('warrantyJobOrderRequestForm', {
                             setTimeout(function() {
                                 $(".job_card_number").focus().blur();
                                 console.log("blur");
-                                setTimeout(function() {
-                                    $(".job_card_number").focus().blur();
-                                }, 2000);
-                            }, 2000);
+                            }, 1000);
                         }
                         // console.log($scope.warranty_job_order_request.customer_address.state);
                         // $scope.$apply();
