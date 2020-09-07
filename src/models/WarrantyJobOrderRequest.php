@@ -757,7 +757,9 @@ class WarrantyJobOrderRequest extends BaseModel {
 				}
 			}
 
-			WarrantyJobOrderRequest::where('status_id', 6104)->forceDelete();
+			if (!$input['id']) {
+				WarrantyJobOrderRequest::where('status_id', 6104)->forceDelete();
+			}
 			DB::commit();
 
 			return [
