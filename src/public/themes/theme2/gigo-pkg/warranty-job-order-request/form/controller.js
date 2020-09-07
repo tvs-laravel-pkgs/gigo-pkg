@@ -866,16 +866,16 @@ app.component('warrantyJobOrderRequestForm', {
                     if (value.tax_code == undefined) {
                         value.tax_code = null;
                     }
-                    if ($requestTypeOnload == 9181 && request_type_id != 9181) {
-                        PartSvc.read(value.part.id)
-                            .then(function(response) {
-                                if ($scope.warranty_job_order_request.wjor_parts[key].tax_code == null) {
-                                    $scope.warranty_job_order_request.wjor_parts[key].tax_code = [];
-                                }
-                                $scope.warranty_job_order_request.wjor_parts[key].tax_code = response.data.part.tax_code;
-                                console.log($scope.warranty_job_order_request.wjor_parts[key]);
-                            });
-                    }
+                    // if ($requestTypeOnload == 9181 && request_type_id != 9181) {
+                    PartSvc.read(value.part.id)
+                        .then(function(response) {
+                            if ($scope.warranty_job_order_request.wjor_parts[key].tax_code == null) {
+                                $scope.warranty_job_order_request.wjor_parts[key].tax_code = [];
+                            }
+                            $scope.warranty_job_order_request.wjor_parts[key].tax_code = response.data.part.tax_code;
+                            console.log($scope.warranty_job_order_request.wjor_parts[key]);
+                        });
+                    // }
                     // console.log(value.handling_charge_percentage);
                     $scope.warranty_job_order_request.wjor_parts[key].handling_charge_percentage = value.handling_charge_percentage;
 
@@ -897,7 +897,7 @@ app.component('warrantyJobOrderRequestForm', {
                             $handling_charge = 0;
                         }
                         $scope.warranty_job_order_request.wjor_parts[key].handling_charge = $handling_charge.toFixed(2);
-                        console.log($handling_charge);
+                        console.log('calc hanling charge', $handling_charge);
                         HelperService.calculateTaxAndTotal($scope.warranty_job_order_request.wjor_parts[key], $scope.isSameState(), true);
                     }, 3000);
 
@@ -1250,7 +1250,9 @@ app.component('warrantyJobOrderRequestForm', {
                 self.state = $scope.warranty_job_order_request.customer_address.state;
                 $scope.warranty_job_order_request.customer_address.state = city.state;
                 // $scope.$apply();
-                // $scope.reCalculateTotals();
+                if (pageLoaded == 1) {
+                    $scope.reCalculateTotals();
+                }
             }
         }
 
