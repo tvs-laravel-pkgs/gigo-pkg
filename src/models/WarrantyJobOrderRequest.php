@@ -885,6 +885,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 					$vehicle->sold_date = null;
 				}
 				$vehicle->created_by_id = Auth::id();
+				$vehicle->company_id = Auth::user()->company_id;
 				$vehicle->save();
 
 				$input['vehicle_id'] = $vehicle->id;
