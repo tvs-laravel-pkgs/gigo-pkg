@@ -694,6 +694,7 @@ app.component('warrantyJobOrderRequestForm', {
 
                             } else {
                                 $scope.wjor_part.part.mrp = res.stock_data.mrp;
+                                console.log($scope.warranty_job_order_request.request_type_id);
                                 if ($scope.warranty_job_order_request.request_type_id == 9181) {
                                     // EWP Request Type
                                     $scope.wjor_part.rate = res.stock_data.mrp;
@@ -866,16 +867,16 @@ app.component('warrantyJobOrderRequestForm', {
                     if (value.tax_code == undefined) {
                         value.tax_code = null;
                     }
-                    // if ($requestTypeOnload == 9181 && request_type_id != 9181) {
+                    /*if ($requestTypeOnload == 9181 && request_type_id != 9181) {
                     PartSvc.read(value.part.id)
                         .then(function(response) {
                             if ($scope.warranty_job_order_request.wjor_parts[key].tax_code == null) {
                                 $scope.warranty_job_order_request.wjor_parts[key].tax_code = [];
                             }
                             $scope.warranty_job_order_request.wjor_parts[key].tax_code = response.data.part.tax_code;
-                            console.log($scope.warranty_job_order_request.wjor_parts[key]);
+                            // console.log($scope.warranty_job_order_request.wjor_parts[key]);
                         });
-                    // }
+                    }*/
                     // console.log(value.handling_charge_percentage);
                     $scope.warranty_job_order_request.wjor_parts[key].handling_charge_percentage = value.handling_charge_percentage;
 
@@ -925,7 +926,9 @@ app.component('warrantyJobOrderRequestForm', {
             // $scope.calculatePartAmount();
             $scope.calculateTotals();
             */
-            $scope.reCalculateTotals();
+            if ($scope.warranty_job_order_request.wjor_parts.length > 0 || $scope.warranty_job_order_request.wjor_repair_orders.length > 0) {
+                $scope.reCalculateTotals();
+            }
         }
 
         var form_id3 = '#part-form';
