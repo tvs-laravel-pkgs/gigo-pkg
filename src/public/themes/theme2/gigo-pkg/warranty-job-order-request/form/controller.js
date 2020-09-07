@@ -46,6 +46,7 @@ app.component('warrantyJobOrderRequestForm', {
                     }
                     showNoty('success', res.message);
                     $location.path('/warranty-job-order-request/table-list');
+                    $scope.$apply();
                 })
                 .fail(function(xhr) {
                     $rootScope.loading = false;
