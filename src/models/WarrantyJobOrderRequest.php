@@ -1047,11 +1047,9 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 			$service_types = json_decode($input['service_type_ids']);
 			$service_type_ids = [];
-			if ($service_types) {
-				if (count($service_types) > 0) {
-					foreach ($service_types as $service_type) {
-						$service_type_ids[] = $service_type->id;
-					}
+			if (count($service_types) > 0) {
+				foreach ($service_types as $service_type) {
+					$service_type_ids[] = $service_type->id;
 				}
 			}
 			$record->serviceTypes()->sync($service_type_ids);
@@ -1191,6 +1189,9 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$purchase_type = $wjorPartInput->purchase_type->id;
 			} else {
 				$purchase_type = $wjorPartInput->purchase_type;
+			}
+			if (!isset($wjorPartInput->handling_charge_percentage)) {
+				$wjorPartInput->handling_charge_percentage = 0;
 			}
 			$wjorPart->wjor_id = $this->id;
 			$wjorPart->part_id = $wjorPartInput->part->id;

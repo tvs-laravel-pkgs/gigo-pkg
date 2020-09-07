@@ -123,8 +123,9 @@ app.component('warrantyJobOrderRequestForm', {
                     $scope.temp_data = responses.temp_data.data.request;
                     console.log($scope.temp_data, 'temp_data');
                     console.log($scope.updating, 'updating');
-                    if ($scope.temp_data != null && typeof($routeParams.request_id) == undefined) {
+                    if ($scope.temp_data != null && typeof($routeParams.request_id) == 'undefined') {
                         $scope.warranty_job_order_request = $scope.temp_data;
+                        console.log($scope.warranty_job_order_request);
                         if ($scope.warranty_job_order_request.job_order.customer) {
                             $scope.customer = $scope.warranty_job_order_request.job_order.customer;
                             $scope.customerChanged($scope.customer);
@@ -134,7 +135,7 @@ app.component('warrantyJobOrderRequestForm', {
                             self.state = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.state;
                             $scope.countryChanged(true);
                         }
-                        if ($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate != undefined) {
+                        if ($scope.warranty_job_order_request.complaint != undefined) {
                             $scope.aggregateChange($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate);
                             $scope.warranty_job_order_request.aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate.aggregate;
                             $scope.warranty_job_order_request.sub_aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate;
