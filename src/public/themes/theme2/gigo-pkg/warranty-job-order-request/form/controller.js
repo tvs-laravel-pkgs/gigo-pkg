@@ -328,7 +328,7 @@ app.component('warrantyJobOrderRequestForm', {
                     $rootScope.loading = false;
                 });
         };
-        $scope.warranty_job_order_request.photos1 = [];
+        $scope.photos1 = [];
         $scope.init();
 
         setTimeout(function() {
@@ -493,11 +493,11 @@ app.component('warrantyJobOrderRequestForm', {
         }
 
         $scope.addPhoto = function() {
-            $scope.warranty_job_order_request.photos1.push($scope.warranty_job_order_request.photos1.length + 1);
+            $scope.photos1.push($scope.photos1.length + 1);
             // $(".addPhotoBtn").hide();
         }
         $scope.removeUploader = function(key) {
-            $scope.warranty_job_order_request.photos1.splice(key, 1);
+            $scope.photos1.splice(key, 1);
             // $(".addPhotoBtn").show();
         }
 
