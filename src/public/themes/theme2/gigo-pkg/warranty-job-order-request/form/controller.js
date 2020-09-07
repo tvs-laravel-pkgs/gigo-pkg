@@ -141,6 +141,11 @@ app.component('warrantyJobOrderRequestForm', {
                         }, 2000);
                         $scope.calculateTotals();
                         self.requestTypeOnload = $scope.warranty_job_order_request.request_type_id;
+                        if ($scope.warranty_job_order_request.job_order.vehicle) {
+                            $scope.warranty_job_order_request.job_order.vehicle.is_sold = true;
+                        } else {
+                            $scope.warranty_job_order_request.job_order.vehicle.is_sold = false;
+                        }
                     } else {
                         if ($scope.updating) {
                             $scope.warranty_job_order_request = responses.warranty_job_order_request_read.data.warranty_job_order_request;
@@ -251,6 +256,8 @@ app.component('warrantyJobOrderRequestForm', {
                             // };
                             if ($scope.warranty_job_order_request.job_order.vehicle) {
                                 $scope.warranty_job_order_request.job_order.vehicle.is_sold = true;
+                            } else {
+                                $scope.warranty_job_order_request.job_order.vehicle.is_sold = false;
                             }
                             $scope.warranty_job_order_request.total_part_cushioning_percentage = 0;
                             if (self.hasPermission('own-outlet-warranty-job-order-request')) {
