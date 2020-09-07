@@ -1329,7 +1329,10 @@ app.component('warrantyJobOrderRequestForm', {
                             setTimeout(function() {
                                 $(".job_card_number").focus().blur();
                                 console.log("blur");
-                            }, 1000);
+                                setTimeout(function() {
+                                    $(".job_card_number").focus().blur();
+                                }, 2000);
+                            }, 2000);
                         }
                         // console.log($scope.warranty_job_order_request.customer_address.state);
                         // $scope.$apply();
