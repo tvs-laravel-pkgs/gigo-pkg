@@ -258,7 +258,6 @@ app.component('warrantyJobOrderRequestForm', {
                             }
                             $scope.warranty_job_order_request.request_type_id = 9180;
                         }
-                        $scope.warranty_job_order_request.photos1 = [];
                     }
                     $scope.customer = $scope.warranty_job_order_request.job_order.customer;
 
@@ -324,6 +323,7 @@ app.component('warrantyJobOrderRequestForm', {
                         }
                     }
                     */
+                    $scope.warranty_job_order_request.photos1 = [];
                     $rootScope.loading = false;
                 });
         };
@@ -872,16 +872,16 @@ app.component('warrantyJobOrderRequestForm', {
                     if (value.tax_code == undefined) {
                         value.tax_code = null;
                     }
-                    /*if ($requestTypeOnload == 9181 && request_type_id != 9181) { */
-                    PartSvc.read(value.part.id)
-                        .then(function(response) {
-                            if ($scope.warranty_job_order_request.wjor_parts[key].tax_code == null) {
-                                $scope.warranty_job_order_request.wjor_parts[key].tax_code = [];
-                            }
-                            $scope.warranty_job_order_request.wjor_parts[key].tax_code = response.data.part.tax_code;
-                            // console.log($scope.warranty_job_order_request.wjor_parts[key]);
-                        });
-                    /* }*/
+                    if ($requestTypeOnload == 9181 && request_type_id != 9181) {
+                        PartSvc.read(value.part.id)
+                            .then(function(response) {
+                                if ($scope.warranty_job_order_request.wjor_parts[key].tax_code == null) {
+                                    $scope.warranty_job_order_request.wjor_parts[key].tax_code = [];
+                                }
+                                $scope.warranty_job_order_request.wjor_parts[key].tax_code = response.data.part.tax_code;
+                                // console.log($scope.warranty_job_order_request.wjor_parts[key]);
+                            });
+                    }
                     // console.log(value.handling_charge_percentage);
                     $scope.warranty_job_order_request.wjor_parts[key].handling_charge_percentage = value.handling_charge_percentage;
 
