@@ -17,8 +17,12 @@ class AddTotalTaxAmountToGigoInvoices extends Migration {
 		Schema::table('gigo_invoice_items', function (Blueprint $table) {
 			$table->unsignedInteger('grn_item_id')->nullable()->after('entity_id');
 			$table->unsignedInteger('so_id')->nullable()->after('grn_item_id');
+			 if (Schema::hasTable('grn_items')) {
 			$table->foreign('grn_item_id')->references('id')->on('grn_items')->onDelete('CASCADE')->onUpdate('cascade');
+			});
+		 	if (Schema::hasTable('sale_orders')) {
 			$table->foreign('so_id')->references('id')->on('sale_orders')->onDelete('CASCADE')->onUpdate('cascade');
+			});
 		});
 	}
 
@@ -32,8 +36,12 @@ class AddTotalTaxAmountToGigoInvoices extends Migration {
 			$table->dropColumn('total_tax_amount');
 		});
 		Schema::table('gigo_invoice_items', function (Blueprint $table) {
+		    if (Schema::hasTable('grn_items')) {
 			$table->dropForeign('gigo_invoice_items_grn_item_id_foreign');
+			});
+			if (Schema::hasTable('sale_orders')) {
 			$table->dropForeign('gigo_invoice_items_so_id_foreign');
+			});
 			$table->dropColumn('grn_item_id');
 			$table->dropColumn('so_id');
 		});
