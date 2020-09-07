@@ -5,6 +5,7 @@ app.component('warrantyJobOrderRequestForm', {
     controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc, VehicleSvc, OutletSvc, CustomerSvc, ComplaintGroupSvc, $localstorage) {
         //FormFocus
         formFocus();
+        $localstorage.remove('ppr');
 
         $rootScope.loading = true;
         var pageLoaded = 0;
@@ -59,8 +60,6 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.page = 'form';
         $scope.customer_search_type = true;
         $scope.vehicle_search_type = true;
-        $scope.warranty_job_order_request = {};
-        $scope.warranty_job_order_request.photos1 = [];
 
         $scope.init = function() {
             $rootScope.loading = true;
@@ -123,7 +122,7 @@ app.component('warrantyJobOrderRequestForm', {
                     $scope.temp_data = responses.temp_data.data.request;
                     console.log($scope.temp_data, 'temp_data');
                     console.log($scope.updating, 'updating');
-                    if ($scope.temp_data != null) {
+                    if ($scope.temp_data != null && typeof($routeParams.request_id) == undefined) {
                         $scope.warranty_job_order_request = $scope.temp_data;
                         if ($scope.warranty_job_order_request.job_order.customer) {
                             $scope.customer = $scope.warranty_job_order_request.job_order.customer;
@@ -164,31 +163,28 @@ app.component('warrantyJobOrderRequestForm', {
                         } else {
                             self.is_registered = 1;
                             // $scope.warranty_job_order_request = $localstorage.getObject('ppr');
-
-                            if (!$scope.warranty_job_order_request) {
-                                $scope.warranty_job_order_request = {
-                                    wjor_repair_orders: [],
-                                    wjor_parts: [],
-                                    has_warranty: 1,
-                                    has_amc: 0,
-                                    load_carried_type_id: 9041,
-                                    reading_type_id: 8041,
-                                    has_goodwill: 1,
-                                    repair_order_total: 0,
-                                    part_total: 0,
-                                    attachments: [],
-                                    job_order: {
-                                        vehicle: {
-                                            'sold_date': true
-                                        },
-                                        customer: {},
-                                        outlet: {},
-                                    },
-                                    photos: [],
-                                    attachments: [],
-                                    bharat_stages: [],
-                                };
-                            }
+                            // if (!$scope.warranty_job_order_request) {
+                            $scope.warranty_job_order_request = {
+                                wjor_repair_orders: [],
+                                wjor_parts: [],
+                                has_warranty: 1,
+                                has_amc: 0,
+                                load_carried_type_id: 9041,
+                                reading_type_id: 8041,
+                                has_goodwill: 1,
+                                repair_order_total: 0,
+                                part_total: 0,
+                                attachments: [],
+                                job_order: {
+                                    vehicle: {},
+                                    customer: {},
+                                    outlet: {},
+                                },
+                                photos: [],
+                                attachments: [],
+                                bharat_stages: [],
+                            };
+                            // }
 
                             $scope.countryChanged(true);
 
@@ -254,9 +250,7 @@ app.component('warrantyJobOrderRequestForm', {
                             //     },
                             //     photos: [],
                             // };
-                            if ($scope.warranty_job_order_request.job_order.vehicle == null) {
-                                $scope.warranty_job_order_request.job_order.vehicle = {};
-                            }
+
                             $scope.warranty_job_order_request.job_order.vehicle.is_sold = true;
                             $scope.warranty_job_order_request.total_part_cushioning_percentage = 0;
                             if (self.hasPermission('own-outlet-warranty-job-order-request')) {
@@ -264,6 +258,7 @@ app.component('warrantyJobOrderRequestForm', {
                             }
                             $scope.warranty_job_order_request.request_type_id = 9180;
                         }
+                        $scope.warranty_job_order_request.photos1 = [];
                     }
                     $scope.customer = $scope.warranty_job_order_request.job_order.customer;
 
@@ -322,11 +317,13 @@ app.component('warrantyJobOrderRequestForm', {
                     // $("#file-1").fileinput(config);
                     // $("#file-2").fileinput(config);
 
+                    /*
                     if ($scope.warranty_job_order_request.photos) {
                         if ($scope.warranty_job_order_request.photos.length == 0) {
                             $("#file-1").addClass("required");
                         }
                     }
+                    */
                     $rootScope.loading = false;
                 });
         };
@@ -875,7 +872,7 @@ app.component('warrantyJobOrderRequestForm', {
                     if (value.tax_code == undefined) {
                         value.tax_code = null;
                     }
-                    /*if ($requestTypeOnload == 9181 && request_type_id != 9181) {
+                    /*if ($requestTypeOnload == 9181 && request_type_id != 9181) { */
                     PartSvc.read(value.part.id)
                         .then(function(response) {
                             if ($scope.warranty_job_order_request.wjor_parts[key].tax_code == null) {
@@ -884,7 +881,7 @@ app.component('warrantyJobOrderRequestForm', {
                             $scope.warranty_job_order_request.wjor_parts[key].tax_code = response.data.part.tax_code;
                             // console.log($scope.warranty_job_order_request.wjor_parts[key]);
                         });
-                    }*/
+                    /* }*/
                     // console.log(value.handling_charge_percentage);
                     $scope.warranty_job_order_request.wjor_parts[key].handling_charge_percentage = value.handling_charge_percentage;
 
@@ -1329,6 +1326,7 @@ app.component('warrantyJobOrderRequestForm', {
                             setTimeout(function() {
                                 $(".job_card_number").focus().blur();
                                 console.log("blur");
+                                $scope.requestTypeChanges();
                             }, 1000);
                         }
                         // console.log($scope.warranty_job_order_request.customer_address.state);
