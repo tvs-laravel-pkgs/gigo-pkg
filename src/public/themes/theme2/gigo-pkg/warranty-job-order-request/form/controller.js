@@ -897,7 +897,7 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.warranty_job_order_request.wjor_parts[key].handling_charge = $handling_charge.toFixed(2);
                         console.log($handling_charge);
                         HelperService.calculateTaxAndTotal($scope.warranty_job_order_request.wjor_parts[key], $scope.isSameState(), true);
-                    }, 2000);
+                    }, 3000);
 
                 });
             }
