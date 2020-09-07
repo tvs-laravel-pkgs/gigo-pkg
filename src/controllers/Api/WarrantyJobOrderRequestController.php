@@ -347,6 +347,28 @@ class WarrantyJobOrderRequestController extends Controller {
 		$result = WarrantyJobOrderRequest::saveTempData($request->all());
 		return response()->json($result);
 	}
+	public function getTempData() {
+		try {
+			$temp_data = WarrantyJobOrderRequest::where('status_id', 9104)->first();
+			if ($temp_data) {
+				$temp_data = $temp_data->load($this->model::relationships('read'));
+			}
+
+			return response()->json([
+				'success' => true,
+				'request' => $temp_data,
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
 	public function getFormData() {
 		try {
 			$employee_outlets = Auth::user()->employee->employee_outlets;
@@ -356,7 +378,9 @@ class WarrantyJobOrderRequestController extends Controller {
 			$aggregates = Aggregate::all();
 			$failure_types = FailureType::where('company_id', Auth::user()->company_id)->get()->prepend(['id' => '', 'name' => 'Select Failure Type']);
 			// $aggregates = Aggregate::where('company_id', Auth::user()->company_id)->get();
-			$temp_data = WarrantyJobOrderRequest::where('status_id', 9104)->first();
+			// $temp_data = WarrantyJobOrderRequest::where('status_id', 9104)->first();
+			// $temp_data = $temp_data->load($this->model::relationships('read'));
+
 			return response()->json([
 				'success' => true,
 				'extras' => [
@@ -370,7 +394,7 @@ class WarrantyJobOrderRequestController extends Controller {
 					'split_order_types' => $split_order_types,
 					'aggregates' => $aggregates,
 					'failure_types' => $failure_types,
-					'temp_data' => $temp_data,
+					// 'temp_data' => $temp_data,
 				],
 			]);
 

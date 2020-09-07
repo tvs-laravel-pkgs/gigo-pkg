@@ -97,6 +97,8 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 			Route::post('reject', $controller . 'Controller@reject');
 			Route::get('list', $controller . 'Controller@list');
 			Route::post('get-form-data', $controller . 'Controller@getFormData');
+			Route::post('get-temp-data', $controller . 'Controller@getTempData');
+			Route::post('save-temp-data', $controller . 'Controller@saveTempData');
 		});
 
 		Route::group(['prefix' => 'vehicle-primary-application'], function () {

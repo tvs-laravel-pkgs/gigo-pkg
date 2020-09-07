@@ -52,7 +52,7 @@
                     <a ng-if="photo.name.substr(photo.name.length - 3)=='jpg' || photo.name.substr(photo.name.length - 3)=='jpeg' || photo.name.substr(photo.name.length - 3)=='png' || photo.name.substr(photo.name.length - 3)=='bmp'" href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
                         <img ng-src="./storage/app/public/wjor/{{photo.name}}" />
                     </a>
-                    <a ng-if="photo.name.substr(photo.name.length - 3)!='jpg' || photo.name.substr(photo.name.length - 3)!='jpeg' || photo.name.substr(photo.name.length - 3)!='png' || photo.name.substr(photo.name.length - 3)!='bmp'" href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
+                    <a ng-if="photo.name.substr(photo.name.length - 3)!='jpg' && photo.name.substr(photo.name.length - 3)!='jpeg' && photo.name.substr(photo.name.length - 3)!='png' && photo.name.substr(photo.name.length - 3)!='bmp'" href="./storage/app/public/wjor/{{photo.name}}" target="_blank" class="thumbnail">
                         {{photo.name}}
                     </a>
                     <p>{{photo.path}}</p>

@@ -20,8 +20,36 @@ app.component('warrantyJobOrderRequestForm', {
             return;
         }
         $scope.saveTempData = function() {
-            $localstorage.setObject('ppr', $scope.warranty_job_order_request);
-            $location.path('/warranty-job-order-request/table-list');
+            // $localstorage.setObject('ppr', $scope.warranty_job_order_request);
+            $rootScope.loading = true;
+            var form_id1 = '#form';
+            let formData = new FormData($(form_id1)[0]);
+
+            // $scope.form_type = 'manual';
+            $.ajax({
+                    url: base_url + '/api/warranty-job-order-request/save-temp-data',
+                    method: "POST",
+                    data: formData,
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                    },
+                    processData: false,
+                    contentType: false,
+                })
+                .done(function(res) {
+                    console.log(res);
+                    $rootScope.loading = false;
+                    if (!res.success) {
+                        showErrorNoty(res);
+                        return;
+                    }
+                    showNoty('success', res.message);
+                    $location.path('/warranty-job-order-request/table-list');
+                })
+                .fail(function(xhr) {
+                    $rootScope.loading = false;
+                    custom_noty('error', 'Something went wrong at server');
+                });
         };
 
         $scope.user = HelperService.getLoggedUser();
@@ -71,6 +99,7 @@ app.component('warrantyJobOrderRequestForm', {
                 road_condition_options: ConfigSvc.options({ filter: { configType: 301 } }),
                 load_range_options: ConfigSvc.options({ filter: { configType: 303 } }),
                 terrain_options: ConfigSvc.options({ filter: { configType: 304 } }),
+                temp_data: WarrantyJobOrderRequestSvc.getTempData(),
             };
 
             if (typeof($routeParams.request_id) != 'undefined') {
@@ -79,7 +108,6 @@ app.component('warrantyJobOrderRequestForm', {
             } else {
                 $scope.updating = false;
             }
-
             $scope.options = {};
             $q.all(promises)
                 .then(function(responses) {
@@ -90,120 +118,146 @@ app.component('warrantyJobOrderRequestForm', {
                     $scope.options.road_conditions = responses.road_condition_options.data.options;
                     $scope.options.load_ranges = responses.load_range_options.data.options;
                     $scope.options.terrains = responses.terrain_options.data.options;
-
-                    if ($scope.updating) {
-                        $scope.warranty_job_order_request = responses.warranty_job_order_request_read.data.warranty_job_order_request;
-                        $scope.customer = $scope.warranty_job_order_request.job_order.customer;
-                        $scope.customerChanged($scope.customer);
-                        self.country = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country;
-                        self.state = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.state;
-                        $scope.countryChanged(true);
-                        // $scope.soldDateChange($scope.warranty_job_order_request.job_order.vehicle.sold_date);
-                        $scope.aggregateChange($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate);
-                        $scope.warranty_job_order_request.aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate.aggregate;
-                        $scope.warranty_job_order_request.sub_aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate;
+                    $scope.temp_data = responses.temp_data.data.request;
+                    console.log($scope.temp_data, 'temp_data');
+                    if ($scope.temp_data != null) {
+                        $scope.warranty_job_order_request = $scope.temp_data;
+                        if ($scope.warranty_job_order_request.job_order.customer) {
+                            $scope.customer = $scope.warranty_job_order_request.job_order.customer;
+                            $scope.customerChanged($scope.customer);
+                        }
+                        if ($scope.warranty_job_order_request.job_order.vehicle) {
+                            self.country = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country;
+                            self.state = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.state;
+                            $scope.countryChanged(true);
+                        }
+                        if ($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate != undefined) {
+                            $scope.aggregateChange($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate);
+                            $scope.warranty_job_order_request.aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate.aggregate;
+                            $scope.warranty_job_order_request.sub_aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate;
+                        }
                         setTimeout(function() {
                             $scope.calculateCushionCharges();
                         }, 2000);
                         $scope.calculateTotals();
                         self.requestTypeOnload = $scope.warranty_job_order_request.request_type_id;
                     } else {
-                        self.is_registered = 1;
-                        $scope.warranty_job_order_request = $localstorage.getObject('ppr');
+                        if ($scope.updating) {
+                            $scope.warranty_job_order_request = responses.warranty_job_order_request_read.data.warranty_job_order_request;
+                            $scope.customer = $scope.warranty_job_order_request.job_order.customer;
+                            $scope.customerChanged($scope.customer);
+                            self.country = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country;
+                            self.state = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.state;
+                            $scope.countryChanged(true);
+                            // $scope.soldDateChange($scope.warranty_job_order_request.job_order.vehicle.sold_date);
+                            $scope.aggregateChange($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate);
+                            $scope.warranty_job_order_request.aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate.aggregate;
+                            $scope.warranty_job_order_request.sub_aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate;
+                            setTimeout(function() {
+                                $scope.calculateCushionCharges();
+                            }, 2000);
+                            $scope.calculateTotals();
+                            self.requestTypeOnload = $scope.warranty_job_order_request.request_type_id;
+                        } else {
+                            self.is_registered = 1;
+                            // $scope.warranty_job_order_request = $localstorage.getObject('ppr');
 
-                        if (!$scope.warranty_job_order_request) {
-                            $scope.warranty_job_order_request = {
-                                wjor_repair_orders: [],
-                                wjor_parts: [],
-                                has_warranty: 1,
-                                has_amc: 0,
-                                load_carried_type_id: 9041,
-                                reading_type_id: 8041,
-                                has_goodwill: 1,
-                                repair_order_total: 0,
-                                part_total: 0,
-                                attachments: [],
-                                job_order: {
-                                    vehicle: {},
-                                    customer: {},
-                                    outlet: {},
-                                },
-                                photos: [],
-                                attachments: [],
-                                bharat_stages: [],
-                            };
+                            if (!$scope.warranty_job_order_request) {
+                                $scope.warranty_job_order_request = {
+                                    wjor_repair_orders: [],
+                                    wjor_parts: [],
+                                    has_warranty: 1,
+                                    has_amc: 0,
+                                    load_carried_type_id: 9041,
+                                    reading_type_id: 8041,
+                                    has_goodwill: 1,
+                                    repair_order_total: 0,
+                                    part_total: 0,
+                                    attachments: [],
+                                    job_order: {
+                                        vehicle: {},
+                                        customer: {},
+                                        outlet: {},
+                                    },
+                                    photos: [],
+                                    attachments: [],
+                                    bharat_stages: [],
+                                };
+                            }
+
+                            $scope.countryChanged(true);
+
+
+                            //for quick test
+                            // $scope.warranty_job_order_request = {
+                            //     wjor_repair_orders: [],
+                            //     wjor_parts: [],
+                            //     failure_date: '01-06-2020',
+                            //     has_warranty: 1,
+                            //     has_amc: 0,
+                            //     unit_serial_number: 'UNIT0001',
+                            //     service_types: [],
+                            //     // complaint: {
+                            //     //     id: 1
+                            //     // },
+                            //     // fault: {
+                            //     //     id: 2
+                            //     // },
+                            //     // supplier: {
+                            //     //     id: 1
+                            //     // },
+                            //     primary_segment: {
+                            //         id: 1
+                            //     },
+                            //     secondary_segment: {
+                            //         id: 1
+                            //     },
+                            //     operating_condition: {
+                            //         id: 9002,
+                            //     },
+                            //     normal_road_condition: {
+                            //         id: 9020,
+                            //     },
+                            //     failure_road_condition: {
+                            //         id: 9020,
+                            //     },
+                            //     load_range: {
+                            //         id: 9062,
+                            //     },
+                            //     terrain_at_failure: {
+                            //         id: 9081,
+                            //     },
+                            //     load_carried_type_id: 9041,
+                            //     reading_type_id: 8041,
+                            //     has_goodwill: 1,
+                            //     load_at_failure: 100,
+                            //     runs_per_day: 1000,
+                            //     last_lube_changed: 800,
+                            //     load_carried: 1200,
+                            //     failed_at: 1200,
+                            //     complaint_reported: 'Engine Noise',
+                            //     failure_observed: 'Engine screw is missing',
+                            //     investigation_findings: 'Engine screw is missing',
+                            //     cause_of_failure: 'Engine screw is missing',
+                            //     repair_order_total: 0,
+                            //     part_total: 0,
+                            //     attachments: [],
+                            //     job_order: {
+                            //         vehicle: [],
+                            //         customer: [],
+                            //         // outlet: {},
+                            //     },
+                            //     photos: [],
+                            // };
+                            if ($scope.warranty_job_order_request.job_order.vehicle) {
+                                $scope.warranty_job_order_request.job_order.vehicle.is_sold = true;
+                            }
+                            $scope.warranty_job_order_request.total_part_cushioning_percentage = 0;
+                            if (self.hasPermission('own-outlet-warranty-job-order-request')) {
+                                $scope.warranty_job_order_request.job_order.outlet = $scope.user.employee.outlet;
+                            }
+                            $scope.warranty_job_order_request.request_type_id = 9180;
                         }
-
-                        $scope.countryChanged(true);
-
-
-                        //for quick test
-                        // $scope.warranty_job_order_request = {
-                        //     wjor_repair_orders: [],
-                        //     wjor_parts: [],
-                        //     failure_date: '01-06-2020',
-                        //     has_warranty: 1,
-                        //     has_amc: 0,
-                        //     unit_serial_number: 'UNIT0001',
-                        //     service_types: [],
-                        //     // complaint: {
-                        //     //     id: 1
-                        //     // },
-                        //     // fault: {
-                        //     //     id: 2
-                        //     // },
-                        //     // supplier: {
-                        //     //     id: 1
-                        //     // },
-                        //     primary_segment: {
-                        //         id: 1
-                        //     },
-                        //     secondary_segment: {
-                        //         id: 1
-                        //     },
-                        //     operating_condition: {
-                        //         id: 9002,
-                        //     },
-                        //     normal_road_condition: {
-                        //         id: 9020,
-                        //     },
-                        //     failure_road_condition: {
-                        //         id: 9020,
-                        //     },
-                        //     load_range: {
-                        //         id: 9062,
-                        //     },
-                        //     terrain_at_failure: {
-                        //         id: 9081,
-                        //     },
-                        //     load_carried_type_id: 9041,
-                        //     reading_type_id: 8041,
-                        //     has_goodwill: 1,
-                        //     load_at_failure: 100,
-                        //     runs_per_day: 1000,
-                        //     last_lube_changed: 800,
-                        //     load_carried: 1200,
-                        //     failed_at: 1200,
-                        //     complaint_reported: 'Engine Noise',
-                        //     failure_observed: 'Engine screw is missing',
-                        //     investigation_findings: 'Engine screw is missing',
-                        //     cause_of_failure: 'Engine screw is missing',
-                        //     repair_order_total: 0,
-                        //     part_total: 0,
-                        //     attachments: [],
-                        //     job_order: {
-                        //         vehicle: [],
-                        //         customer: [],
-                        //         // outlet: {},
-                        //     },
-                        //     photos: [],
-                        // };
-                        $scope.warranty_job_order_request.job_order.vehicle.is_sold = true;
-                        $scope.warranty_job_order_request.total_part_cushioning_percentage = 0;
-                        if (self.hasPermission('own-outlet-warranty-job-order-request')) {
-                            $scope.warranty_job_order_request.job_order.outlet = $scope.user.employee.outlet;
-                        }
-                        $scope.warranty_job_order_request.request_type_id = 9180;
                     }
                     $scope.customer = $scope.warranty_job_order_request.job_order.customer;
 
@@ -262,8 +316,10 @@ app.component('warrantyJobOrderRequestForm', {
                     // $("#file-1").fileinput(config);
                     // $("#file-2").fileinput(config);
 
-                    if ($scope.warranty_job_order_request.photos.length == 0) {
-                        $("#file-1").addClass("required");
+                    if ($scope.warranty_job_order_request.photos) {
+                        if ($scope.warranty_job_order_request.photos.length == 0) {
+                            $("#file-1").addClass("required");
+                        }
                     }
                     $scope.warranty_job_order_request.photos1 = [];
                     $rootScope.loading = false;
@@ -841,7 +897,7 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.warranty_job_order_request.wjor_parts[key].handling_charge = $handling_charge.toFixed(2);
                         console.log($handling_charge);
                         HelperService.calculateTaxAndTotal($scope.warranty_job_order_request.wjor_parts[key], $scope.isSameState(), true);
-                    }, 1000);
+                    }, 2000);
 
                 });
             }
@@ -851,9 +907,9 @@ app.component('warrantyJobOrderRequestForm', {
                 setTimeout(function() {
 
                     $scope.calculateCushionCharges();
-                }, 500);
+                }, 1000);
                 $(".pace").removeClass('pace-active').addClass('pace-inactive');
-            }, 5000);
+            }, 6500);
 
         }
 

@@ -756,6 +756,8 @@ class WarrantyJobOrderRequest extends BaseModel {
 					$attachement->save();
 				}
 			}
+
+			WarrantyJobOrderRequest::where('status_id', 6104)->forceDelete();
 			DB::commit();
 
 			return [
@@ -790,7 +792,14 @@ class WarrantyJobOrderRequest extends BaseModel {
 			$input['address_line1'] = ($input['address_line1']) ? $input['address_line1'] : '';
 
 			if ($input['customer_search_type'] == 'true') {
-				$customer = Customer::findOrNew($input['customer_id']);
+				if ($input['customer_id'] != null) {
+					$customer = Customer::findOrNew($input['customer_id']);
+				} else {
+					$customer = Customer::firstOrNew([
+						'company_id' => Auth::user()->company_id,
+						'code' => $input['customer_code'],
+					]);
+				}
 			} else {
 				$customer = Customer::firstOrNew([
 					'company_id' => Auth::user()->company_id,
@@ -840,20 +849,20 @@ class WarrantyJobOrderRequest extends BaseModel {
 				}
 			} else {
 				if ($chassis_number != null) {
-					$vehicle = Vehicle::where([
+					$vehicle = Vehicle::firstOrNew([
 						'company_id' => Auth::user()->company_id,
 						'chassis_number' => $chassis_number,
-					])->first();
+					]);
 				} elseif ($engine_number != null) {
-					$vehicle = Vehicle::where([
+					$vehicle = Vehicle::firstOrNew([
 						'company_id' => Auth::user()->company_id,
 						'engine_number' => $engine_number,
-					])->first();
+					]);
 				} elseif ($registration_number != null) {
-					$vehicle = Vehicle::where([
+					$vehicle = Vehicle::firstOrNew([
 						'company_id' => Auth::user()->company_id,
 						'registration_number' => $registration_number,
-					])->first();
+					]);
 				} else {
 					$vehicle = null;
 				}
@@ -1082,6 +1091,28 @@ class WarrantyJobOrderRequest extends BaseModel {
 				$attachement->name = $name;
 				$attachement->path = null;
 				$attachement->save();
+			}
+			if (isset($input['reference_attachment'])) {
+				foreach ($input['reference_attachment'] as $key => $photo) {
+					$value = rand(1, 100);
+					$image = $photo;
+
+					$file_name_with_extension = $image->getClientOriginalName();
+					$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+					$extension = $image->getClientOriginalExtension();
+					// dd($file_name, $extension);
+					//ISSUE : file name should be stored
+					$name = $record->id . '_' . $file_name . '_' . rand(10, 1000) . '.' . $extension;
+
+					$photo->move($attachement_path, $name);
+					$attachement = new Attachment;
+					$attachement->attachment_of_id = 9123;
+					$attachement->attachment_type_id = 244;
+					$attachement->entity_id = $record->id;
+					$attachement->name = $name;
+					$attachement->path = $input['reference_attachment_description'][$key];
+					$attachement->save();
+				}
 			}
 			if (isset($input['photos'])) {
 				foreach ($input['photos'] as $key => $photo) {
