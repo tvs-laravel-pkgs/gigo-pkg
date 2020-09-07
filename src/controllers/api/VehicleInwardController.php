@@ -3694,7 +3694,7 @@ class VehicleInwardController extends Controller {
 				$part_details[$key]['part_id'] = $value->part_id;
 				$part_details[$key]['code'] = $value->part->code;
 				$part_details[$key]['name'] = $value->part->name;
-				$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
+				$part_details[$key]['type'] = $value->part->partType ? $value->part->partType->name : '-';
 				$part_details[$key]['rate'] = $value->rate;
 				$part_details[$key]['qty'] = $value->qty;
 				$part_details[$key]['amount'] = $value->amount;

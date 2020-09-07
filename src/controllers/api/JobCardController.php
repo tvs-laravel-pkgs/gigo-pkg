@@ -80,6 +80,7 @@ class JobCardController extends Controller {
 				'job_orders.id as job_order_id',
 				'job_cards.created_at',
 				'job_cards.status_id',
+				'bays.name as bay_name',
 				'vehicles.registration_number',
 				'models.model_name as vehicle_model',
 				'customers.name as customer_name',
@@ -91,6 +92,7 @@ class JobCardController extends Controller {
 
 			])
 				->join('job_orders', 'job_orders.id', 'job_cards.job_order_id')
+				->leftJoin('bays', 'bays.id', 'job_cards.bay_id')
 				->leftJoin('gate_passes', 'gate_passes.job_card_id', 'job_cards.id')
 				->leftJoin('vehicles', 'job_orders.vehicle_id', 'vehicles.id')
 				->leftJoin('models', 'models.id', 'vehicles.model_id')
@@ -2855,7 +2857,7 @@ class JobCardController extends Controller {
 				$part_details[$key]['part_id'] = $value->part_id;
 				$part_details[$key]['code'] = $value->part->code;
 				$part_details[$key]['name'] = $value->part->name;
-				$part_details[$key]['type'] = $value->part->taxCode ? $value->part->taxCode->code : '-';
+				$part_details[$key]['type'] = $value->part->partType ? $value->part->partType->name : '-';
 				$part_details[$key]['rate'] = $value->rate;
 				$part_details[$key]['qty'] = $value->qty;
 				$part_details[$key]['amount'] = $value->amount;

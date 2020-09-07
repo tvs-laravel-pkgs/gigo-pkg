@@ -455,13 +455,21 @@
                                                                         <td class="text-center">Right Side</td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.front_side_attachment.name}}" alt="Vehicle Image" /></td>
+                                                                        <td class="text-center"><img class="img-responsive" ng-if="job_order.front_side_attachment" src="storage/app/public/gigo/job_order/attachments/{{job_order.front_side_attachment.name}}" alt="Vehicle Image" />
+                                                                            <span ng-if="!job_order.front_side_attachment">-</span>
+                                                                        </td>
                                                                         <td></td>
-                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.back_side_attachment.name}}" alt="Vehicle Image" /></td>
+                                                                        <td class="text-center"><img class="img-responsive" ng-if="job_order.back_side_attachment" src="storage/app/public/gigo/job_order/attachments/{{job_order.back_side_attachment.name}}" alt="Vehicle Image" />
+                                                                            <span ng-if="!job_order.back_side_attachment">-</span>
+                                                                        </td>
                                                                         <td>&nbsp;&nbsp;</td>
-                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.left_side_attachment.name}}" alt="Vehicle Image" /></td>
+                                                                        <td class="text-center"><img class="img-responsive" ng-if="job_order.left_side_attachment" src="storage/app/public/gigo/job_order/attachments/{{job_order.left_side_attachment.name}}" alt="Vehicle Image" />
+                                                                            <span ng-if="!job_order.left_side_attachment">-</span>
+                                                                        </td>
                                                                         <td></td>
-                                                                        <td><img class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{job_order.right_side_attachment.name}}" alt="Vehicle Image" /></td>
+                                                                        <td class="text-center"><img class="img-responsive" ng-if="job_order.right_side_attachment" src="storage/app/public/gigo/job_order/attachments/{{job_order.right_side_attachment.name}}" alt="Vehicle Image" />
+                                                                            <span ng-if="!job_order.right_side_attachment">-</span>
+                                                                        </td>
                                                                     </tr>
                                                                 </tbody>
                                                             </table>
@@ -480,10 +488,13 @@
                                                                 <tbody>
                                                                     <tr>
                                                                         <td>
-                                                                            <div class="gatein-img-list">
+                                                                            <div class="gatein-img-list" ng-if="job_order.other_vehicle_attachment.length > 0">
                                                                                 <div class="gatein-img-list-item attach-photo-view" ng-repeat="(key,other_vehicle_attachment) in job_order.other_vehicle_attachment">
                                                                                     <img title="{{other_vehicle_attachment.name}}" class="img-responsive" src="storage/app/public/gigo/job_order/attachments/{{other_vehicle_attachment.name}}" alt="Vehicle Image">
                                                                                 </div>
+                                                                            </div>
+                                                                            <div class="gatein-img-list" ng-if="job_order.other_vehicle_attachment.length == 0">
+                                                                                -
                                                                             </div>
                                                                         </td>
                                                                     </tr>
@@ -650,7 +661,7 @@
                                                                     </li>
                                                                     <li class="view-col-3" ng-if="job_order.is_appointment == 1">
                                                                         <span class="view-col-label">
-                                                                            CRE
+                                                                            CRE Name
                                                                         </span>
                                                                         <span class="view-col-value">
                                                                             <b>
