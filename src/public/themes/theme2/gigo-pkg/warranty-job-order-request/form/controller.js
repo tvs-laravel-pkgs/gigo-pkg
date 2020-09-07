@@ -907,9 +907,9 @@ app.component('warrantyJobOrderRequestForm', {
                 setTimeout(function() {
 
                     $scope.calculateCushionCharges();
-                }, 1000);
+                }, 500);
                 $(".pace").removeClass('pace-active').addClass('pace-inactive');
-            }, 6500);
+            }, 6000);
 
         }
 
