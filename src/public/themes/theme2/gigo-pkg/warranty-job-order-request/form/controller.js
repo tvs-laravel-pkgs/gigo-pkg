@@ -150,12 +150,12 @@ app.component('warrantyJobOrderRequestForm', {
                             $scope.customerChanged($scope.customer);
                             self.country = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country;
                             self.state = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.state;
-                            $scope.countryChanged(true);
                             // $scope.soldDateChange($scope.warranty_job_order_request.job_order.vehicle.sold_date);
                             $scope.aggregateChange($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate);
                             $scope.warranty_job_order_request.aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate.aggregate;
                             $scope.warranty_job_order_request.sub_aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate;
                             setTimeout(function() {
+                                $scope.countryChanged(true);
                                 $scope.calculateCushionCharges();
                             }, 2000);
                             $scope.calculateTotals();
@@ -186,7 +186,9 @@ app.component('warrantyJobOrderRequestForm', {
                             };
                             // }
 
-                            $scope.countryChanged(true);
+                            setTimeout(function() {
+                                $scope.countryChanged(true);
+                            }, 2000);
 
 
                             //for quick test
@@ -1259,7 +1261,7 @@ app.component('warrantyJobOrderRequestForm', {
                 $scope.warranty_job_order_request.customer_address.state = city.state;
                 // $scope.$apply();
                 if (pageLoaded == 1) {
-                    $scope.reCalculateTotals();
+                    $scope.requestTypeChanges();
                 }
             }
         }
@@ -1326,7 +1328,6 @@ app.component('warrantyJobOrderRequestForm', {
                             setTimeout(function() {
                                 $(".job_card_number").focus().blur();
                                 console.log("blur");
-                                $scope.requestTypeChanges();
                             }, 1000);
                         }
                         // console.log($scope.warranty_job_order_request.customer_address.state);
