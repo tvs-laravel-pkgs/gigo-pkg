@@ -325,10 +325,10 @@ app.component('warrantyJobOrderRequestForm', {
                             $("#file-1").addClass("required");
                         }
                     }
-                    $scope.warranty_job_order_request.photos1 = [];
                     $rootScope.loading = false;
                 });
         };
+        $scope.warranty_job_order_request.photos1 = [];
         $scope.init();
 
         setTimeout(function() {
@@ -933,9 +933,9 @@ app.component('warrantyJobOrderRequestForm', {
             // $scope.calculatePartAmount();
             $scope.calculateTotals();
             */
-            if ($scope.warranty_job_order_request.wjor_parts.length > 0 || $scope.warranty_job_order_request.wjor_repair_orders.length > 0) {
-                $scope.reCalculateTotals();
-            }
+            // if ($scope.warranty_job_order_request.wjor_parts.length > 0 || $scope.warranty_job_order_request.wjor_repair_orders.length > 0) {
+            $scope.reCalculateTotals();
+            // }
         }
 
         var form_id3 = '#part-form';
