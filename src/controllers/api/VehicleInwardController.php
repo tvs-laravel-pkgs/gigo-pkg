@@ -3670,6 +3670,7 @@ class VehicleInwardController extends Controller {
 				$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$labour_details[$key]['repair_order'] = $value->repairOrder;
+				$labour_details[$key]['status_id'] = $value->status_id;
 				$labour_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
@@ -3703,6 +3704,7 @@ class VehicleInwardController extends Controller {
 				$part_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$part_details[$key]['part'] = $value->part;
+				$part_details[$key]['status_id'] = $value->status_id;
 				$part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
 				$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
 

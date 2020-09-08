@@ -1562,7 +1562,7 @@
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471 && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">Edit</a>
+                                            <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471) && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">Edit</a>
                                         </div><!-- Column -->
                                         <div class="col-md-12" ng-if="!job_order.service_type_id">
                                             <h5 class="color-primary mb-10"><b>Scheduled Maintenance Not Available</b></h5>
@@ -1734,7 +1734,7 @@
                                                 </div>
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
-                                            <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471 && $ctrl.hasPermission('inward-job-card-tab-other-labour-parts-edit')">Edit</a>
+                                            <a href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8471) && $ctrl.hasPermission('inward-job-card-tab-other-labour-parts-edit')">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">
@@ -1810,7 +1810,7 @@
                                                                         </li>
                                                                     </ul>
                                                                     <div class="text-center">
-                                                                        <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">
+                                                                        <a href=".#!/inward-vehicle/scheduled-maintenance/form/{{job_order_id}}" class="btn-link color-secondary-dark font-sm" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463) && $ctrl.hasPermission('inward-job-card-tab-scheduled-maintenance-edit')">
                                                                             Edit
                                                                         </a>
                                                                     </div>
@@ -1979,7 +1979,7 @@
                                                     </li>
                                                 </ul>
                                             </div><!-- View Data -->
-                                            <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8469 && $ctrl.hasPermission('inward-job-card-tab-estimate-edit')">Edit</a>
+                                            <a href=".#!/inward-vehicle/estimate/{{job_order_id}}" class="btn btn-secondary-dark btn-md btn-square" ng-if="(job_order.status_id == 8460 || job_order.status_id == 8463 || job_order.status_id == 8469) && $ctrl.hasPermission('inward-job-card-tab-estimate-edit')">Edit</a>
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
                                             <div class="row">

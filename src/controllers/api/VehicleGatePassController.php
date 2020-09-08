@@ -2,10 +2,17 @@
 
 namespace Abs\GigoPkg\Api;
 
+use Abs\SerialNumberPkg\SerialNumberGroup;
 use App\Bay;
+use App\FinancialYear;
 use App\GateLog;
 use App\GatePass;
 use App\Http\Controllers\Controller;
+use App\Outlet;
+use App\ShortUrl;
+use App\Survey;
+use App\SurveyAnswer;
+use App\SurveyType;
 use App\Vehicle;
 use Auth;
 use Carbon\Carbon;
@@ -248,6 +255,177 @@ class VehicleGatePassController extends Controller {
 					'updated_by_id' => Auth::user()->id,
 					'updated_at' => Carbon::now(),
 				]);
+
+			//Check Survey
+			$survey_types = SurveyType::with([
+				'surveyField',
+			])
+				->where('company_id', Auth::user()->company_id)
+				->where('survey_trigger_event_id', 11221)
+				->get();
+
+			if ($survey_types) {
+				foreach ($survey_types as $key => $survey_type) {
+					// dd($survey_type);
+					if ($survey_type->surveyField) {
+						//Driver
+						if ($survey_type->attendee_type_id == 11200) {
+							if ($gate_log->jobOrder->driver_mobile_number) {
+
+								//Save Surveys
+								$survey = Survey::firstOrNew([
+									'survey_of_id' => 11260,
+									'survey_for_id' => $gate_log->job_order_id,
+									'survey_type_id' => $survey_type->id,
+									'status_id' => 11240,
+									'company_id' => Auth::user()->company_id,
+								]);
+
+								if ($survey->exists) {
+									$survey->updated_by_id = Auth::user()->id;
+									$survey->updated_at = Carbon::now();
+								} else {
+
+									if (date('m') > 3) {
+										$year = date('Y') + 1;
+									} else {
+										$year = date('Y');
+									}
+									//GET FINANCIAL YEAR ID
+									$financial_year = FinancialYear::where('from', $year)
+										->where('company_id', Auth::user()->company_id)
+										->first();
+
+									if (!$financial_year) {
+										return response()->json([
+											'success' => false,
+											'error' => 'Validation Error',
+											'errors' => [
+												'Fiancial Year Not Found',
+											],
+										]);
+									}
+									//GET BRANCH/OUTLET
+									$branch = Outlet::where('id', $gate_log->jobOrder->outlet_id)->first();
+
+									//GENERATE GATE IN VEHICLE NUMBER
+									$generateNumber = SerialNumberGroup::generateNumber(112);
+									if (!$generateNumber['success']) {
+										return response()->json([
+											'success' => false,
+											'error' => 'Validation Error',
+											'errors' => [
+												'No Floating Gatepass number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+											],
+										]);
+									}
+
+									$survey->number = $generateNumber['number'];
+									$survey->created_by_id = Auth::user()->id;
+									$survey->created_at = Carbon::now();
+								}
+
+								$survey->save();
+
+								//Save Surevey Questions
+								foreach ($survey_type->surveyField as $keys => $survey_field) {
+									$survey_question = SurveyAnswer::firstOrNew([
+										'survey_id' => $survey->id,
+										'survey_type_field_id' => $survey_field->id,
+									]);
+									$survey_question->answer = NULL;
+									$survey_question->save();
+								}
+
+								$url = url('/') . '/feedback/' . $survey->id;
+
+								$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+								$message = 'Greetings from TVS & Sons! Thank you for having your vehicle serviced from TVS & Sons.Kindly click on this link to give Service Feedback: ' . $short_url;
+
+								$msg = sendSMSNotification($gate_log->jobOrder->driver_mobile_number, $message);
+							}
+						}
+						//Cusotmer
+						else {
+							if ($gate_log->jobOrder->customer) {
+								//Save Surveys
+								$survey = Survey::firstOrNew([
+									'survey_of_id' => 11260,
+									'survey_for_id' => $gate_log->job_order_id,
+									'survey_type_id' => $survey_type->id,
+									'status_id' => 11240,
+									'company_id' => Auth::user()->company_id,
+								]);
+
+								if ($survey->exists) {
+									$survey->updated_by_id = Auth::user()->id;
+									$survey->updated_at = Carbon::now();
+								} else {
+
+									if (date('m') > 3) {
+										$year = date('Y') + 1;
+									} else {
+										$year = date('Y');
+									}
+									//GET FINANCIAL YEAR ID
+									$financial_year = FinancialYear::where('from', $year)
+										->where('company_id', Auth::user()->company_id)
+										->first();
+
+									if (!$financial_year) {
+										return response()->json([
+											'success' => false,
+											'error' => 'Validation Error',
+											'errors' => [
+												'Fiancial Year Not Found',
+											],
+										]);
+									}
+									//GET BRANCH/OUTLET
+									$branch = Outlet::where('id', $gate_log->jobOrder->outlet_id)->first();
+
+									//GENERATE GATE IN VEHICLE NUMBER
+									$generateNumber = SerialNumberGroup::generateNumber(112);
+									if (!$generateNumber['success']) {
+										return response()->json([
+											'success' => false,
+											'error' => 'Validation Error',
+											'errors' => [
+												'No Floating Gatepass number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+											],
+										]);
+									}
+
+									$survey->created_by_id = Auth::user()->id;
+									$survey->created_at = Carbon::now();
+								}
+
+								$survey->number = $generateNumber['number'];
+								$survey->save();
+
+								//Save Surevey Questions
+								foreach ($survey_type->surveyField as $keys => $survey_field) {
+									$survey_question = SurveyAnswer::firstOrNew([
+										'survey_id' => $survey->id,
+										'survey_type_field_id' => $survey_field->id,
+									]);
+									$survey_question->answer = NULL;
+									$survey_question->save();
+								}
+
+								$url = url('/') . '/feedback/' . $survey->id;
+
+								$short_url = ShortUrl::createShortLink($url, $maxlength = "7");
+
+								$message = 'Greetings from TVS & Sons! Thank you for having your vehicle serviced from TVS & Sons.Kindly click on this link to give Service Feedback: ' . $short_url;
+
+								$msg = sendSMSNotification($gate_log->jobOrder->driver_mobile_number, $message);
+							}
+						}
+					}
+				}
+			}
 
 			DB::commit();
 
