@@ -1729,7 +1729,7 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 <script type='text/javascript'>
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
-	    //Road Test Gate Pass
+	    //Floating Gate Pass
 	    when('/floating-gate-pass/table-list', {
 	        template: '<floating-gate-pass-table-list></floating-gate-pass-table-list>',
 	        title: 'Floating Gate Pass - Table List',
@@ -1749,4 +1749,28 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
     var floating_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/floating-gate-pass/view.html')}}";
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/floating-gate-pass/controller.js')}}'></script>
+
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    //Survey Type
+	    when('/survey-type/list', {
+	        template: '<survey-type-list></survey-type-list>',
+	        title: 'Survey Types',
+	    }).
+	    when('/survey-type/add', {
+	        template: '<survey-type-form></survey-type-form>',
+	        title: 'Add Survey Type',
+	    }).
+	    when('/survey-type/edit/:id', {
+	        template: '<survey-type-form></survey-type-form>',
+	        title: 'Edit Survey Type',
+	    });
+	}]);
+
+	//Survey Type
+    var survey_type_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/survey-type/list.html')}}';
+    var survey_type_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/survey-type/form.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/survey-type/controller.js')}}'></script>
 

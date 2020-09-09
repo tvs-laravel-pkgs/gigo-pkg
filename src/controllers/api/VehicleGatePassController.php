@@ -305,17 +305,15 @@ class VehicleGatePassController extends Controller {
 											],
 										]);
 									}
-									//GET BRANCH/OUTLET
-									$branch = Outlet::where('id', $gate_log->jobOrder->outlet_id)->first();
 
-									//GENERATE GATE IN VEHICLE NUMBER
+									//GENERATE SURVEY NUMBER
 									$generateNumber = SerialNumberGroup::generateNumber(112);
 									if (!$generateNumber['success']) {
 										return response()->json([
 											'success' => false,
 											'error' => 'Validation Error',
 											'errors' => [
-												'No Floating Gatepass number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+												'No Survey Number found for FY : ' . $financial_year->year,
 											],
 										]);
 									}
@@ -382,17 +380,15 @@ class VehicleGatePassController extends Controller {
 											],
 										]);
 									}
-									//GET BRANCH/OUTLET
-									$branch = Outlet::where('id', $gate_log->jobOrder->outlet_id)->first();
 
-									//GENERATE GATE IN VEHICLE NUMBER
+									//GENERATE SURVEY NUMBER
 									$generateNumber = SerialNumberGroup::generateNumber(112);
 									if (!$generateNumber['success']) {
 										return response()->json([
 											'success' => false,
 											'error' => 'Validation Error',
 											'errors' => [
-												'No Floating Gatepass number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+												'No Survey Number found for FY : ' . $financial_year->year,
 											],
 										]);
 									}

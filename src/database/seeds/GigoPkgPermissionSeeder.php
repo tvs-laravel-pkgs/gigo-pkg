@@ -1933,6 +1933,32 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'view-all-outlet-floating-gate-pass',
 				'display_name' => 'View All Outlet',
 			],
+
+			//Survey
+			[
+				'display_order' => 100,
+				'parent' => 'gigo-masters',
+				'name' => 'survey-types',
+				'display_name' => 'Survey Types',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'survey-types',
+				'name' => 'add-survey-type',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'survey-types',
+				'name' => 'edit-survey-type',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'survey-types',
+				'name' => 'delete-survey-type',
+				'display_name' => 'Delete',
+			],
 		];
 		Permission::createFromArrays($permissions);
 	}

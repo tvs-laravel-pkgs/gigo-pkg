@@ -1197,7 +1197,7 @@ app.config(['$routeProvider', function($routeProvider) {
 
 app.config(['$routeProvider', function($routeProvider) {
     $routeProvider.
-    //Road Test Gate Pass
+    //Floating Gate Pass
     when('/floating-gate-pass/table-list', {
         template: '<floating-gate-pass-table-list></floating-gate-pass-table-list>',
         title: 'Floating Gate Pass - Table List',
@@ -1209,5 +1209,23 @@ app.config(['$routeProvider', function($routeProvider) {
     when('/floating-gate-pass/view/:id', {
         template: '<floating-gate-pass-view></floating-gate-pass-view>',
         title: 'View Floating Gate Pass',
+    });
+}]);
+
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //Survey
+    when('/survey-type/list', {
+        template: '<survey-type-list></survey-type-list>',
+        title: 'Survey Types',
+    }).
+    when('/survey-type/add', {
+        template: '<survey-type-form></survey-type-form>',
+        title: 'Add Survey Type',
+    }).
+    when('/survey-type/edit/:id', {
+        template: '<survey-type-form></survey-type-form>',
+        title: 'Edit Survey Type',
     });
 }]);

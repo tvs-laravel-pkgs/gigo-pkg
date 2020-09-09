@@ -201,6 +201,13 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/trade-plate-number/delete', 'TradePlateNumberController@deleteTradePlateNumber')->name('deleteTradePlateNumber');
 	Route::get('/trade-plate-number/get-filter-data', 'TradePlateNumberController@getTradePlateNumberFilter')->name('getTradePlateNumberFilter');
 
+	//Survey
+	Route::get('/survey-type/get-list', 'SurveyTypeController@getSurveyTypeList')->name('getSurveyTypeList');
+	Route::get('/survey-type/get-form-data', 'SurveyTypeController@getSurveyTypeFormData')->name('getSurveyTypeFormData');
+	Route::post('/survey-type/save', 'SurveyTypeController@saveSurveyType')->name('saveSurveyType');
+	Route::get('/survey-type/delete', 'SurveyTypeController@deleteSurveyType')->name('deleteSurveyType');
+	Route::get('/survey-type/get-filter-data', 'SurveyTypeController@getSurveyTypeFilter')->name('getSurveyTypeFilter');
+
 	//Gate Pass
 	Route::get('/gate-pass/get-list', 'GatePassController@getGatePassList')->name('getGatePassList');
 	Route::get('/gate-pass/get-form-data', 'GatePassController@getGatePassFormData')->name('getGatePassFormData');

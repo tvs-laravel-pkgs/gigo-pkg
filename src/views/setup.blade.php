@@ -325,8 +325,6 @@
 
 
 <script type='text/javascript'>
-
-
 	//Bays
     var bay_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/bay/list.html')}}';
     var bay_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/bay/form.html')}}';
@@ -337,7 +335,6 @@
 
 
 <script type='text/javascript'>
-
 	//Campaigns
     var campaigns_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/campaign/list.html')}}';
     var campaigns_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/campaign/form.html')}}';
@@ -346,7 +343,6 @@
 
 
 <script type='text/javascript'>
-
 	//Estimation Types
     var estimation_type_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/estimation-type/list.html')}}';
     var estimation_type_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/estimation-type/form.html')}}';
@@ -373,6 +369,12 @@
     var floating_gate_pass_table_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/floating-gate-pass/list.html')}}";
     var floating_gate_pass_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/floating-gate-pass/card-list.html')}}";
     var floating_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/floating-gate-pass/view.html')}}";
+</script>
+
+<script type='text/javascript'>
+    //Survey Type
+    var survey_type_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/survey-type/list.html')}}';
+    var survey_type_form_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/survey-type/form.html')}}';
 </script>
 
 <script type='text/javascript'>

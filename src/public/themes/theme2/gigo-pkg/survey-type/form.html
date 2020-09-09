@@ -1,0 +1,178 @@
+<!-- Content Wrap -->
+<div class="content-wrap cndn-wrap">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-inner">
+            <div class="page-header-content-left">
+                <div class="page-header-content button-block">
+                    <a href="#!/survey-type/list" type="button" class="btn-back btn-img">
+                        <img class="img-responsive my-tooltip" src="./public/theme/img/content/previous.svg" alt="Back" ng-shortcut="'meta+shift+left'" ng-shortcut-click data-title="ctrl+shift+left" />
+                    </a>
+                </div><!-- Page Header Content -->
+                <div class="page-header-content title-block">
+                    <h1 class="title"><b>{{$ctrl.action}} Survey Type</b></h1>
+                    <p class="subtitle">
+                        Masters /
+                        <a href="#!/survey-type/list">
+                            Survey Types
+                        </a> /
+                        {{$ctrl.action}}
+                    </p>
+                </div><!-- Page Header Content -->
+            </div><!-- Page Header Content Left -->
+        </div><!-- Page Header Inner -->
+    </div><!-- Page Header -->
+    <!-- Page Main Content -->
+    <div class="page-main-content form-content type2">
+        <form id="survey_type_form" autocomplete="off">
+            <input type="hidden" name="id" value="{{$ctrl.survey_type.id}}">
+            <div class="page-tab-form pb-70">
+                <div class="tab-form-wrap">
+                    <div class="tab-form-header">
+                        <div class="tab-header">
+                            <!-- Filters -->
+                            <div class="isotope-filters animated" data-animation="fadeInLeft" data-animation-delay="300">
+                                <ul class="nav nav-pills cndn-tabs">
+                                    <li class="active">
+                                        <a class="filter active" data-target="#general-information" data-toggle="tab" aria-expanded="true">
+                                            General Info
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="filter" data-target="#question-tab" data-toggle="tab" aria-expanded="true">
+                                            Questions
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div><!-- Filters -->
+                        </div><!-- Tab Header -->
+                    </div><!-- Tab Form Header -->
+                    <div class="tab-form-body">
+                        <div class="tab-content">
+                            <!-- TAB PANEL -->
+                            <div class="tab-pane fade in active" id="general-information" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Name
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <input type="text" class="form-control required" ng-model="$ctrl.survey_type.name" name="name" placeholder="Enter name" autofocus />
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Attendee Type<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.survey_type.attendee_type_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Attendee Type">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Attendee Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="attende_type.id" ng-repeat="attende_type in $ctrl.extras.attendee_type | filter:searchTerm">{{attende_type.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control type-sm required" name="attendee_type_id" id="attendee_type_id" value="{{$ctrl.survey_type.attendee_type_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- column -->
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Survey Event<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.survey_type.survey_trigger_event_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Event Type">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search for a Event Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="event_list.id" ng-repeat="event_list in $ctrl.extras.event_list | filter:searchTerm">{{event_list.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control type-sm required" name="survey_trigger_event_id" id="survey_trigger_event_id" value="{{$ctrl.survey_type.survey_trigger_event_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- column -->
+                                        <div class="col-md-4">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Purpose
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <textarea class="form-control required" name="purpose" placeholder="Enter Purpose">{{$ctrl.survey_type.purpose}}</textarea>
+                                            </div><!-- Feild -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-4">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Active Status
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <div class="tab-switch">
+                                                    <md-switch ng-model="$ctrl.switch_value" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
+                                                        {{ $ctrl.switch_value }}
+                                                    </md-switch>
+                                                    <input type="hidden" name="status" value="{{$ctrl.switch_value}}">
+                                                </div>
+                                            </div><!-- Form Group -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade in" id="question-tab" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-form">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="text-center">Questions</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="(index, survey_type_field) in $ctrl.survey_type.survey_field">
+                                                            <td>
+                                                                <md-select ng-model="survey_type_field.id" placeholder="Select Question" md-on-close="clearSearchTL()" data-md-container-class="selectdemoSelectHeader">
+                                                                    <md-select-header class="demo-select-header">
+                                                                        <input ng-model="searchTL" type="search" placeholder="Search Questions" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                                    </md-select-header>
+                                                                    <md-optgroup>
+                                                                        <md-option ng-value="category.id" ng-repeat="category in $ctrl.extras.field_list | filter:searchTL">{{category.name}}</md-option>
+                                                                    </md-optgroup>
+                                                                </md-select>
+                                                                <input type="hidden" id="" class="required" name="questions[{{index}}][field_id]" value="{{survey_type_field.id}}">
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-delete" ng-click="$ctrl.removeQuestion(index)">
+                                                                    <img class="img-responsive" src="./public/theme/img/table/cndn/delete.svg" alt="Delete" />
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <td colspan="6">
+                                                                <button type="button" class="btn btn-primary-light btn-square" ng-click="$ctrl.addNewQuestion()">+ Add More</button>
+                                                            </td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div><!-- Table Responsive -->
+                                        </div><!-- Column -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div><!-- Tabe Pane -->
+                            <div class="tab-pane-footer">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <a href="#!/survey-type/list" class="btn btn-secondary btn-prev my-tooltip">Cancel</a>
+                                        <button type="submit" class="btn btn-primary submit my-tooltip" ng-shortcut="'meta+shift+s'" ng-shortcut-click data-title="ctrl+shift+s">Submit</button>
+                                    </div>
+                                </div>
+                            </div><!-- Tab Footer -->
+                        </div><!-- Tab Content -->
+                    </div><!-- Tab Form Body -->
+                </div><!-- Tab Form Wrap -->
+            </div><!-- Page Form -->
+        </form>
+    </div><!-- Page Main Content -->
+</div><!-- Content Wrap -->
