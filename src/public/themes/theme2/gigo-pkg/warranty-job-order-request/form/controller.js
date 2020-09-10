@@ -170,9 +170,6 @@ app.component('warrantyJobOrderRequestForm', {
                         self.is_registered = 1;
                         $scope.warranty_job_order_request = $localstorage.getObject('ppr');
                         console.log($scope.warranty_job_order_request);
-                        if ($scope.warranty_job_order_request.aggregate != null) {
-                            $scope.aggregateChange($scope.warranty_job_order_request.aggregate);
-                        }
                         if (!$scope.warranty_job_order_request) {
                             $scope.warranty_job_order_request = {
                                 wjor_repair_orders: [],
@@ -196,11 +193,14 @@ app.component('warrantyJobOrderRequestForm', {
 
                             };
 
-                            setTimeout(function() {
-                                $scope.countryChanged(true);
-                            }, 2000);
 
                         }
+                        setTimeout(function() {
+                            if ($scope.warranty_job_order_request.aggregate != null) {
+                                $scope.aggregateChange($scope.warranty_job_order_request.aggregate);
+                            }
+                            $scope.countryChanged(true);
+                        }, 2000);
 
                         //for quick test
                         // $scope.warranty_job_order_request = {
@@ -279,7 +279,9 @@ app.component('warrantyJobOrderRequestForm', {
                             $scope.warranty_job_order_request.vehicle_search_type = true;
                         }
                         // console.log($scope.warranty_job_order_request.customer_search_type, $scope.warranty_job_order_request.vehicle_search_type);
-                        $scope.warranty_job_order_request.request_type_id = 9180;
+                        if ($scope.warranty_job_order_request.request_type_id == undefined) {
+                            $scope.warranty_job_order_request.request_type_id = 9180;
+                        }
                     }
                     /*}*/
                     $scope.customer = $scope.warranty_job_order_request.job_order.customer;
@@ -1281,6 +1283,7 @@ app.component('warrantyJobOrderRequestForm', {
             if (city != undefined) {
                 self.state = $scope.warranty_job_order_request.customer_address.state;
                 $scope.warranty_job_order_request.customer_address.state = city.state;
+                console.log($scope.warranty_job_order_request.customer_address.state);
                 // $scope.$apply();
                 if (pageLoaded == 1) {
                     $scope.requestTypeChanges();
@@ -1290,6 +1293,7 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.aggregateChange = function(aggregate) {
             // console.log(aggregate.id);
+            $(".pace").removeClass('pace-inactive').addClass('pace-active');
             $.ajax({
                     url: base_url + '/api/aggregates/get-sub-aggregates-list',
                     method: "POST",
@@ -1305,11 +1309,13 @@ app.component('warrantyJobOrderRequestForm', {
                     // console.log(res.options);
                     setTimeout(function() {
                         $scope.extras.sub_aggregates = res.options;
+                        $(".pace").removeClass('inactive').addClass('pace-inactive');
                     }, 2000);
 
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
+                    $(".pace").removeClass('inactive').addClass('pace-inactive');
                     custom_noty('error', 'Something went wrong at server');
                 });
         }

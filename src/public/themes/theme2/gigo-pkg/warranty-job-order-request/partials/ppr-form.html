@@ -585,20 +585,24 @@
                                 <li class="view-col-3" ng-if="form_type=='manual'">
                                     <div class="form-group">
                                         <label>
-                                            Country
+                                            City
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-select ng-model="warranty_job_order_request.customer_address.country" placeholder="Select Country" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged()">
-                                            <md-select-header class="demo-select-header">
-                                                <input ng-model="searchCountry" type="search" placeholder="Search for a country.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                            </md-select-header>
-                                            <md-optgroup>
-                                                <md-option ng-value="country" ng-repeat="country in extras.country_list | filter:searchCountry">
-                                                    {{country.name}}
-                                                </md-option>
-                                            </md-optgroup>
-                                        </md-select>
-                                        <input required type="hidden" name="country_id" value="{{warranty_job_order_request.customer_address.country.id}}">
+                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.customer_address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-input-id="city_ac" md-selected-item-change="$ctrl.citySelected(warranty_job_order_request.customer_address.city)">
+                                            <!-- md-autofocus  -->
+                                            <md-item-template>
+                                                <span>
+                                                    {{option.name}}
+                                                </span>
+                                            </md-item-template>
+                                            <md-not-found>
+                                                No City matching "{{$ctrl.citySearchText}}" were found.
+                                            </md-not-found>
+                                        </md-autocomplete>
+                                        <!-- <input required type="hidden" id="city_id" name="city_id" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.id}}">
+                                        <input type="hidden" id="city_name" name="city_name" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.name}}"> -->
+                                        <input required type="hidden" id="city_id" name="city_id" value="{{warranty_job_order_request.customer_address.city.id}}">
+                                        <input type="hidden" id="city_name" name="city_name" value="{{warranty_job_order_request.customer_address.city.name}}">
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-if="form_type=='manual'">
@@ -623,24 +627,20 @@
                                 <li class="view-col-3" ng-if="form_type=='manual'">
                                     <div class="form-group">
                                         <label>
-                                            City
+                                            Country
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-items="option in $ctrl.searchCity($ctrl.citySearchText)" md-selected-item="warranty_job_order_request.customer_address.city" md-search-text="$ctrl.citySearchText" md-item-text="option.name" md-min-length="3" placeholder="City Name" md-input-id="city_ac" md-selected-item-change="$ctrl.citySelected(warranty_job_order_request.customer_address.city)">
-                                            <!-- md-autofocus  -->
-                                            <md-item-template>
-                                                <span>
-                                                    {{option.name}}
-                                                </span>
-                                            </md-item-template>
-                                            <md-not-found>
-                                                No City matching "{{$ctrl.citySearchText}}" were found.
-                                            </md-not-found>
-                                        </md-autocomplete>
-                                        <!-- <input required type="hidden" id="city_id" name="city_id" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.id}}">
-                                        <input type="hidden" id="city_name" name="city_name" value="{{warranty_job_order_request.job_order.vehicle.current_owner.customer.address.city.name}}"> -->
-                                        <input required type="hidden" id="city_id" name="city_id" value="{{warranty_job_order_request.customer_address.city.id}}">
-                                        <input type="hidden" id="city_name" name="city_name" value="{{warranty_job_order_request.customer_address.city.name}}">
+                                        <md-select ng-model="warranty_job_order_request.customer_address.country" placeholder="Select Country" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="countryChanged()">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchCountry" type="search" placeholder="Search for a country.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="country" ng-repeat="country in extras.country_list | filter:searchCountry">
+                                                    {{country.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input required type="hidden" name="country_id" value="{{warranty_job_order_request.customer_address.country.id}}">
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-if="form_type=='manual'">
