@@ -2,7 +2,7 @@ angular.module('app').requires.push('angularBootstrapFileinput');
 
 app.component('warrantyJobOrderRequestForm', {
     templateUrl: warrantyJobOrderRequestForm,
-    controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc, VehicleSvc, OutletSvc, CustomerSvc, ComplaintGroupSvc, $localstorage) {
+    controller: function($http, $location, HelperService, RepairOrderSvc, PartSvc, WarrantyJobOrderRequestSvc, ServiceTypeSvc, ConfigSvc, PartSupplierSvc, VehicleSecondaryApplicationSvc, VehiclePrimaryApplicationSvc, ComplaintSvc, FaultSvc, JobOrderSvc, $scope, $routeParams, $rootScope, $element, $mdSelect, $q, RequestSvc, VehicleSvc, OutletSvc, CustomerSvc, ComplaintGroupSvc, $localstorage, $ngBootbox) {
         //FormFocus
         formFocus();
         // $localstorage.remove('ppr');
@@ -15,13 +15,33 @@ app.component('warrantyJobOrderRequestForm', {
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
-
+        self.is_temp_saved = true;
         if (!HelperService.isLoggedIn()) {
             $location.path('/login');
             return;
         }
+        $scope.$on('$locationChangeStart', function(event, next, current) {
+
+            if (self.is_temp_saved == false) {
+                event.preventDefault();
+                $ngBootbox.confirm({
+                        message: 'Are you sure you want to leave page without saving?',
+                        title: 'Confirm',
+                        size: "small",
+                        className: 'text-center',
+                    })
+                    .then(function() {
+                        console.log(next.replace(base_url + '/#!/', ""));
+                        $target = next.replace(base_url + '/#!/', "");
+                        $location.path($target);
+                        self.is_temp_saved = true;
+                    });
+            }
+        });
+
         $scope.saveTempData = function() {
             $localstorage.setObject('ppr', $scope.warranty_job_order_request);
+            self.is_temp_saved = true;
             showNoty('success', 'Draft Saved');
             $location.path('/warranty-job-order-request/table-list');
 
@@ -168,6 +188,7 @@ app.component('warrantyJobOrderRequestForm', {
                         self.requestTypeOnload = $scope.warranty_job_order_request.request_type_id;
                     } else {
                         self.is_registered = 1;
+                        self.is_temp_saved = false;
                         $scope.warranty_job_order_request = $localstorage.getObject('ppr');
                         console.log($scope.warranty_job_order_request);
                         if (!$scope.warranty_job_order_request) {
@@ -1238,6 +1259,7 @@ app.component('warrantyJobOrderRequestForm', {
                             showNoty('success', 'Warranty job order request saved successfully');
                             if ($routeParams.request_id == undefined) {
                                 $localstorage.remove('ppr');
+                                self.is_temp_saved = true;
                             }
 
                             $location.path('/warranty-job-order-request/table-list');
