@@ -47,7 +47,7 @@
                                                         <span id="eror_customer_photo"></span>
                                                     </div>
                                                     <div class="col-md-6">
-                                                        <img ng-if="job_order.customer_approval_attachment.length > 0" src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_approval_attachment[0].name}}" id="customer_pic" height="360" width="100%">
+                                                        <img ng-if="job_order.customer_approval_attachment.length > 0" src="{{base_url}}/storage/app/public/gigo/job_order/{{job_order.customer_approval_attachment[0].name}}" id="customer_pic" height="360" width="100%">
                                                         <canvas ng-show="$ctrl.screenShot" id="canvas" class="canvs-img" width="400" height="360"></canvas>
                                                     </div>
                                                 </div>
@@ -78,7 +78,7 @@
                                                         <span id="eror_customer_sign"></span>
                                                     </div>
                                                     <div class="col-md-6" ng-if="job_order.customer_e_sign.length > 0">
-                                                        <img src="{{base_url}}/storage/app/public/gigo/job_order/customer-confirmation/{{job_order.customer_e_sign[0].name}}" id="customer_pic" height="150" width="100%">
+                                                        <img src="{{base_url}}/storage/app/public/gigo/job_order/{{job_order.customer_e_sign[0].name}}" id="customer_pic" height="150" width="100%">
                                                     </div>
                                                     <br>
                                                 </div>

@@ -6123,6 +6123,9 @@ class VehicleInwardController extends Controller {
 	public function saveCustomerConfirmation(Request $request) {
 		// dd($request->all());
 		try {
+			$attachment_path = storage_path('app/public/gigo/job_order/');
+			Storage::makeDirectory($attachment_path, 0777);
+
 			if ($request->web == 'website') {
 				$validator = Validator::make($request->all(), [
 					'job_order_id' => [
@@ -6163,9 +6166,6 @@ class VehicleInwardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
-
-			$attachment_path = storage_path('app/public/gigo/job_order/customer-confirmation/');
-			Storage::makeDirectory($attachment_path, 0777);
 
 			DB::beginTransaction();
 
