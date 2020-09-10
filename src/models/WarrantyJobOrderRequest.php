@@ -658,9 +658,11 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 			$service_types = json_decode($input['service_type_ids']);
 			$service_type_ids = [];
-			if (count($service_types) > 0) {
-				foreach ($service_types as $service_type) {
-					$service_type_ids[] = $service_type->id;
+			if ($service_types != null) {
+				if (count($service_types) > 0) {
+					foreach ($service_types as $service_type) {
+						$service_type_ids[] = $service_type->id;
+					}
 				}
 			}
 			$record->serviceTypes()->sync($service_type_ids);
@@ -758,7 +760,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 			}
 
 			if (!$input['id']) {
-				WarrantyJobOrderRequest::where('status_id', 6104)->forceDelete();
+				WarrantyJobOrderRequest::where('status_id', 9104)->where('created_by_id', Auth::id())->forceDelete();
 			}
 			DB::commit();
 
@@ -1014,7 +1016,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				}
 			}
 
-			$record = WarrantyJobOrderRequest::where('status_id', 9104)->first();
+			$record = WarrantyJobOrderRequest::where('status_id', 9104)->where('created_by_id', Auth::id())->first();
 			if (!$record) {
 				$record = new WarrantyJobOrderRequest;
 			}
@@ -1047,9 +1049,11 @@ class WarrantyJobOrderRequest extends BaseModel {
 
 			$service_types = json_decode($input['service_type_ids']);
 			$service_type_ids = [];
-			if (count($service_types) > 0) {
-				foreach ($service_types as $service_type) {
-					$service_type_ids[] = $service_type->id;
+			if ($service_types != null) {
+				if (count($service_types) > 0) {
+					foreach ($service_types as $service_type) {
+						$service_type_ids[] = $service_type->id;
+					}
 				}
 			}
 			$record->serviceTypes()->sync($service_type_ids);

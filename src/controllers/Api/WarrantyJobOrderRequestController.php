@@ -349,7 +349,7 @@ class WarrantyJobOrderRequestController extends Controller {
 	}
 	public function getTempData() {
 		try {
-			$temp_data = WarrantyJobOrderRequest::where('status_id', 9104)->first();
+			$temp_data = WarrantyJobOrderRequest::where('status_id', 9104)->where('created_by_id', Auth::id())->first();
 			if ($temp_data) {
 				$temp_data = $temp_data->load($this->model::relationships('read'));
 			}
