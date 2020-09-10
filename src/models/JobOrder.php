@@ -96,6 +96,10 @@ class JobOrder extends BaseModel {
 		return $this->attributes['registration_number'] = $registration_number;
 	}
 
+	public function getCreatedAtAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
+	}
+
 	public function getDriverLicenseExpiryDateAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
@@ -113,6 +117,10 @@ class JobOrder extends BaseModel {
 	}
 
 	public function getEstimatedDeliveryDateAttribute($date) {
+		return empty($date) ? '' : date('d-m-Y h:i A ', strtotime($date));
+	}
+
+	public function getEstimationApprovedAtAttribute($date) {
 		return empty($date) ? '' : date('d-m-Y h:i A ', strtotime($date));
 	}
 

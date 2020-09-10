@@ -32,4 +32,8 @@ class Survey extends BaseModel {
 		return $this->belongsToMany('Abs\AttributePkg\Field', 'survey_answers', 'survey_id', 'survey_type_field_id')->withPivot(['answer']);
 	}
 
+	public function getCreatedAtAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
+	}
+
 }

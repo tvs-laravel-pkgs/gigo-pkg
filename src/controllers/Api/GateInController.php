@@ -16,6 +16,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\WpoSoapController;
 use App\JobOrder;
 use App\Outlet;
+use App\ShortUrl;
 use App\Vehicle;
 use App\VehicleInventoryItem;
 use Auth;
@@ -119,6 +120,7 @@ class GateInController extends Controller {
 			} else {
 				$regis_number = '-';
 			}
+
 			//REMOVE - INBETWEEN REGISTRATION NUMBER
 			$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
 
@@ -210,7 +212,6 @@ class GateInController extends Controller {
 			}
 
 			if ($request->search_type == 1 && $request->vehicle_id) {
-
 				//Check Validation
 				$vehicle_validator = Validator::make($request->all(), [
 					'registration_number' => [
@@ -241,30 +242,63 @@ class GateInController extends Controller {
 				$vehicle->updated_by_id = Auth::user()->id;
 				$vehicle->save();
 			} else {
-				//VEHICLE DETAIL VALIDATION
-				$validator1 = Validator::make($request->all(), [
-					'chassis_number' => [
-						'required_if:gatein_entry_type_id,==,1',
-						// 'min:10',
-						'max:17',
-						// 'string',
-						'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-					],
-					'engine_number' => [
-						'required_if:gatein_entry_type_id,==,2',
-						// 'min:10',
-						'max:64',
-						// 'string',
-						'unique:vehicles,engine_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-					],
-				]);
 
-				if ($validator1->fails()) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => $validator1->errors()->all(),
+				$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+
+				//VEHICLE DETAIL VALIDATION
+				if ($request->registration_number) {
+					$validator1 = Validator::make($request->all(), [
+						'registration_number' => [
+							'required',
+							'unique:vehicles,registration_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+						],
 					]);
+
+					if ($validator1->fails()) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => $validator1->errors()->all(),
+						]);
+					}
+				}
+
+				if ($request->chassis_number) {
+					$validator1 = Validator::make($request->all(), [
+						'chassis_number' => [
+							'required',
+							// 'min:10',
+							'max:17',
+							'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+						],
+					]);
+
+					if ($validator1->fails()) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => $validator1->errors()->all(),
+						]);
+					}
+				}
+
+				if ($request->engine_number) {
+					$validator1 = Validator::make($request->all(), [
+						'engine_number' => [
+							'required',
+							// 'min:10',
+							'max:64',
+							'unique:vehicles,engine_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+						],
+					]);
+
+					if ($validator1->fails()) {
+						return response()->json([
+							'success' => false,
+							'error' => 'Validation Error',
+							'errors' => $validator1->errors()->all(),
+						]);
+					}
 				}
 
 				// $request->registration_number = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
@@ -621,6 +655,12 @@ class GateInController extends Controller {
 
 			}
 
+			$url = url('/') . '/vehicle/track/' . $job_order->id;
+
+			$short_url = ShortUrl::createShortLink($url, $maxlength = "8");
+
+			$tracking_message = 'Greetings from TVS & Sons! Kindly click on this link to track vehicle service status: ' . $short_url;
+
 			DB::commit();
 
 			$gate_in_data['number'] = $gate_log->number;
@@ -630,13 +670,19 @@ class GateInController extends Controller {
 
 			//Send SMS to Driver
 			if ($request->driver_mobile_number) {
+				//Gatein Message
 				$msg = sendSMSNotification($request->driver_mobile_number, $message);
+				//Tracking Message
+				$msg = sendSMSNotification($request->driver_mobile_number, $tracking_message);
 			}
 
 			//Send SMS to Customer
 			if ($job_order->customer) {
 				if ($job_order->customer->mobile_no) {
+					//Gatein Message
 					$msg = sendSMSNotification($job_order->customer->mobile_no, $message);
+					//Tracking Message
+					$msg = sendSMSNotification($job_order->customer->mobile_no, $tracking_message);
 				}
 			}
 

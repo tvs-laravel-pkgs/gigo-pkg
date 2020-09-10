@@ -26,4 +26,8 @@ class GigoInvoice extends BaseModel {
 		'created_by_id',
 		'created_at',
 	];
+
+	public function getCreatedAtAttribute($date) {
+		return empty($date) ? '' : date('d-m-Y h:i A ', strtotime($date));
+	}
 }

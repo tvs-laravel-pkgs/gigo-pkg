@@ -1776,6 +1776,7 @@ class JobCardController extends Controller {
 			$job_card->status_id = 8227; //Waiting for Parts Confirmation
 			$job_card->updated_by = Auth::user()->id;
 			$job_card->updated_at = Carbon::now();
+			$job_card->work_completed_at = Carbon::now();
 			$job_card->save();
 
 			DB::commit();
