@@ -158,6 +158,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function getCitySearchList(Request $r) {
+		City::deleteCityWithoutState();
 		return City::searchCity($r);
 	}
 
