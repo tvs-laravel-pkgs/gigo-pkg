@@ -113,7 +113,7 @@
                                                                     <div class="col-md-4 col-lg-3" ng-show="$ctrl.search_type == 1">
                                                                         <div class="form-group">
                                                                             <label>
-                                                                                Vehicle
+                                                                                Search by Reg/Chassis/Engine No
                                                                             </label>
                                                                             <md-autocomplete md-items="option in $ctrl.searchVehicle(option.vehicle_search)" md-selected-item="vehicle.name" md-selected-item-change="getSelectedVehicle(index,vehicle.name)" md-search-text="option.vehicle_search" md-item-text="$ctrl.getVehicle(option)" md-min-length="4" md-input-minlength="4" md-input-maxlength="17" placeholder="Search by Reg,Chassis,Engine No" class="customer_group_id">
                                                                                 <md-item-template>
@@ -202,7 +202,7 @@
                                                                                 Engine Number
                                                                                 <sup class="mandatory">*</sup>
                                                                             </label>
-                                                                            <input type="text" class="form-control engine_number" minlength="10" maxlength="64" placeholder="Enter Engine Number" autocomplete="off" id="engine_number" name="engine_number" />
+                                                                            <input type="text" class="form-control engine_number" minlength="10" maxlength="20" placeholder="Enter Engine Number" autocomplete="off" id="engine_number" name="engine_number" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
                                                                     <div class="col-md-4 col-lg-3" ng-if="$ctrl.search_type == 1">
@@ -220,7 +220,7 @@
                                                                                 Engine Number
                                                                                 <sup class="mandatory">*</sup>
                                                                             </label>
-                                                                            <input type="text" class="form-control engine_number" minlength="10" maxlength="64" placeholder="Enter Engine Number" autocomplete="off" id="engine_number" name="engine_number" />
+                                                                            <input type="text" class="form-control engine_number" minlength="10" maxlength="20" placeholder="Enter Engine Number" autocomplete="off" id="engine_number" name="engine_number" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
                                                                     <!--<div class="col-md-4 col-lg-3">
@@ -391,7 +391,7 @@
                         {{gate_log.number}}
                     </span>
                 </p>
-                <p class="info">Reg No :
+                <p class="info">{{gate_log.label}} :
                     <span id="registration_number">
                         {{gate_log.registration_number}}
                     </span>

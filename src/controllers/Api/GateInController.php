@@ -211,24 +211,65 @@ class GateInController extends Controller {
 				]);
 			}
 
-			if ($request->search_type == 1 && $request->vehicle_id) {
-				//Check Validation
-				$vehicle_validator = Validator::make($request->all(), [
+			$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+
+			//VEHICLE DETAIL VALIDATION
+			if ($request->registration_number) {
+				$validator1 = Validator::make($request->all(), [
 					'registration_number' => [
 						'required',
-						'max:13',
 						'unique:vehicles,registration_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
 					],
 				]);
 
-				if ($vehicle_validator->fails()) {
+				if ($validator1->fails()) {
 					return response()->json([
 						'success' => false,
 						'error' => 'Validation Error',
-						'errors' => $vehicle_validator->errors()->all(),
+						'errors' => $validator1->errors()->all(),
 					]);
 				}
+			}
 
+			if ($request->chassis_number) {
+				$validator1 = Validator::make($request->all(), [
+					'chassis_number' => [
+						'required',
+						// 'min:10',
+						'max:17',
+						'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+					],
+				]);
+
+				if ($validator1->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator1->errors()->all(),
+					]);
+				}
+			}
+
+			if ($request->engine_number) {
+				$validator1 = Validator::make($request->all(), [
+					'engine_number' => [
+						'required',
+						// 'min:10',
+						'max:64',
+						'unique:vehicles,engine_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+					],
+				]);
+
+				if ($validator1->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator1->errors()->all(),
+					]);
+				}
+			}
+
+			if ($request->search_type == 1 && $request->vehicle_id) {
 				$vehicle = Vehicle::find($request->vehicle_id);
 				$vehicle_form_filled = 1;
 				if ($vehicle->currentOwner) {
@@ -239,70 +280,12 @@ class GateInController extends Controller {
 					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
 				}
 				$vehicle->registration_number = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+				$vehicle->chassis_number = $request->chassis_number;
+				$vehicle->engine_number = $request->engine_number;
 				$vehicle->updated_by_id = Auth::user()->id;
 				$vehicle->save();
 			} else {
-
 				$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
-
-				//VEHICLE DETAIL VALIDATION
-				if ($request->registration_number) {
-					$validator1 = Validator::make($request->all(), [
-						'registration_number' => [
-							'required',
-							'unique:vehicles,registration_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-						],
-					]);
-
-					if ($validator1->fails()) {
-						return response()->json([
-							'success' => false,
-							'error' => 'Validation Error',
-							'errors' => $validator1->errors()->all(),
-						]);
-					}
-				}
-
-				if ($request->chassis_number) {
-					$validator1 = Validator::make($request->all(), [
-						'chassis_number' => [
-							'required',
-							// 'min:10',
-							'max:17',
-							'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-						],
-					]);
-
-					if ($validator1->fails()) {
-						return response()->json([
-							'success' => false,
-							'error' => 'Validation Error',
-							'errors' => $validator1->errors()->all(),
-						]);
-					}
-				}
-
-				if ($request->engine_number) {
-					$validator1 = Validator::make($request->all(), [
-						'engine_number' => [
-							'required',
-							// 'min:10',
-							'max:64',
-							'unique:vehicles,engine_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-						],
-					]);
-
-					if ($validator1->fails()) {
-						return response()->json([
-							'success' => false,
-							'error' => 'Validation Error',
-							'errors' => $validator1->errors()->all(),
-						]);
-					}
-				}
-
-				// $request->registration_number = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
-
 				if ($request->chassis_number) {
 					$vehicle = Vehicle::firstOrNew([
 						'company_id' => Auth::user()->company_id,
@@ -603,14 +586,18 @@ class GateInController extends Controller {
 			if ($regis_number != '-') {
 				$number = $regis_number;
 				$soap_number = str_replace('-', '', $number);
+				$gate_in_data['registration_number'] = $regis_number;
+				$gate_in_data['label'] = 'Reg No';
 			} else {
 				if ($vehicle->chassis_number) {
 					$gate_in_data['registration_number'] = $vehicle->chassis_number;
 					$number = $vehicle->chassis_number;
 					$soap_number = $vehicle->chassis_number;
+					$gate_in_data['label'] = 'Chassis No';
 				} else {
 					$gate_in_data['registration_number'] = $vehicle->engine_number;
 					$number = $vehicle->engine_number;
+					$gate_in_data['label'] = 'Engine No';
 					$soap_number = $vehicle->engine_number;
 				}
 			}
@@ -664,7 +651,7 @@ class GateInController extends Controller {
 			DB::commit();
 
 			$gate_in_data['number'] = $gate_log->number;
-			$gate_in_data['registration_number'] = $regis_number;
+			// $gate_in_data['registration_number'] = $regis_number;
 
 			$message = 'Greetings from TVS & Sons! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . $membership_message;
 
