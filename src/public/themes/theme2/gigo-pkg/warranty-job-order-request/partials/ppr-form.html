@@ -296,18 +296,18 @@
                                             <sup class="mandatory">*</sup>
                                         </label>
                                         <div class="common-radio-button type-4">
-                                            <input type="radio" id="vehicle_search_type_yes" name="vehicle_search_type" ng-model="vehicle_search_type" ng-value="true">
+                                            <input type="radio" id="vehicle_search_type_yes" name="vehicle_search_type" ng-model="warranty_job_order_request.vehicle_search_type" ng-value="true">
                                             <label for="vehicle_search_type_yes">
                                                 Existing<span class="rd-focused"></span>
                                             </label>
-                                            <input type="radio" id="vehicle_search_type_no" name="vehicle_search_type" ng-model="vehicle_search_type" ng-value="false">
+                                            <input type="radio" id="vehicle_search_type_no" name="vehicle_search_type" ng-model="warranty_job_order_request.vehicle_search_type" ng-value="false">
                                             <label for="vehicle_search_type_no">
                                                 New<span class="rd-focused"></span>
                                             </label>
                                         </div>
                                     </div><!-- Feild -->
                                 </li>
-                                <li class="view-col-3" ng-if="form_type == 'manual' && vehicle_search_type==true">
+                                <li class="view-col-3" ng-if="form_type == 'manual' && warranty_job_order_request.vehicle_search_type==true">
                                     <div class="form-group">
                                         <label>
                                             Search vehicle
@@ -483,18 +483,18 @@
                                             <sup class="mandatory">*</sup>
                                         </label>
                                         <div class="common-radio-button type-4">
-                                            <input type="radio" id="customer_search_type_yes" name="customer_search_type" ng-model="customer_search_type" ng-value="true">
+                                            <input type="radio" id="customer_search_type_yes" name="customer_search_type" ng-model="warranty_job_order_request.customer_search_type" ng-value="true">
                                             <label for="customer_search_type_yes">
                                                 Existing<span class="rd-focused"></span>
                                             </label>
-                                            <input type="radio" id="customer_search_type_no" name="customer_search_type" ng-model="customer_search_type" ng-value="false">
+                                            <input type="radio" id="customer_search_type_no" name="customer_search_type" ng-model="warranty_job_order_request.customer_search_type" ng-value="false">
                                             <label for="customer_search_type_no">
                                                 New<span class="rd-focused"></span>
                                             </label>
                                         </div>
                                     </div><!-- Feild -->
                                 </li>
-                                <li class="view-col-3" ng-if="form_type=='manual' && customer_search_type == true ">
+                                <li class="view-col-3" ng-if="form_type=='manual' && warranty_job_order_request.customer_search_type == true ">
                                     <div class="form-group">
                                         <label>
                                             Search customer
