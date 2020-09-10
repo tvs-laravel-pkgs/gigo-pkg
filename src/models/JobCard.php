@@ -70,6 +70,10 @@ class JobCard extends BaseModel {
 		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
 	}
 
+	public function getWorkCompletedAtAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y h:i A', strtotime($value));
+	}
+
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
