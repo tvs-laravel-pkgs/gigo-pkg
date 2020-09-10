@@ -10,7 +10,7 @@
         <div class="page-tab-form-top-left-info">
             <span class="page-tab-form-top-left-info-content">
                 <b>
-                    {{job_order.vehicle.registration_number}}
+                    {{job_order.vehicle.registration_number ? job_order.vehicle.registration_number : job_order.vehicle.chassis_number}}
                 </b>
                 <span ng-if="job_order.vehicle.model.model_number">
                     | {{job_order.vehicle.model.model_number}}

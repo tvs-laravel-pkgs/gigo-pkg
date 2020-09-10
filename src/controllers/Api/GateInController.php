@@ -447,7 +447,7 @@ class GateInController extends Controller {
 			}
 
 			$job_order->fill($request->all());
-			$job_order->gatein_trade_plate_number_id = $request->plate_number ? $request->plate_number : NULL;
+			$job_order->gatein_trade_plate_number_id = $request->trade_plate_number ? $request->trade_plate_number : NULL;
 			$job_order->service_advisor_id = NULL;
 			$job_order->status_id = 8460; //Ready for Inward
 			$job_order->save();

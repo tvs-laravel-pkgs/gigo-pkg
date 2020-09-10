@@ -102,6 +102,8 @@ class VehicleInwardController extends Controller {
 					'job_orders.id',
 					DB::raw('IF(vehicles.is_registered = 1,"Registered Vehicle","Un-Registered Vehicle") as registration_type'),
 					'vehicles.registration_number',
+					'vehicles.chassis_number',
+					'vehicles.engine_number',
 					'models.model_number',
 					'gate_logs.number',
 					'job_orders.status_id',
@@ -274,6 +276,7 @@ class VehicleInwardController extends Controller {
 				'otherVehicleAttachment',
 				'amcMember',
 				'amcMember.amcPolicy',
+				'GateInTradePlateNumber',
 			])
 				->select([
 					'job_orders.*',

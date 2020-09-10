@@ -13,7 +13,7 @@
                    JC No : {{job_card.job_card_number}} |
                 </b>
                 <span>
-                    {{job_card.job_order.vehicle.registration_number}} | {{job_card.job_order.vehicle.model.model_number}}
+                    {{job_card.job_order.vehicle.registration_number ? job_card.job_order.vehicle.registration_number : job_card.job_order.vehicle.chassis_number}} | {{job_card.job_order.vehicle.model.model_number}}
                 </span>
                 <span>
                     | {{job_card.job_order.driver_name}}
