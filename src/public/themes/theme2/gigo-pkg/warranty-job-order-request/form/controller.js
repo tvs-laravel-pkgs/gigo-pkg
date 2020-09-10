@@ -62,8 +62,8 @@ app.component('warrantyJobOrderRequestForm', {
         self.hasPermission = HelperService.hasPermission;
 
         $scope.page = 'form';
-        $scope.customer_search_type = true;
-        $scope.vehicle_search_type = true;
+        // $scope.customer_search_type = true;
+        // $scope.vehicle_search_type = true;
 
         $scope.init = function() {
             $rootScope.loading = true;
@@ -193,6 +193,7 @@ app.component('warrantyJobOrderRequestForm', {
                                 photos: [],
                                 attachments: [],
                                 bharat_stages: [],
+
                             };
 
                             setTimeout(function() {
@@ -271,6 +272,13 @@ app.component('warrantyJobOrderRequestForm', {
                         if (self.hasPermission('own-outlet-warranty-job-order-request')) {
                             $scope.warranty_job_order_request.job_order.outlet = $scope.user.employee.outlet;
                         }
+                        if ($scope.warranty_job_order_request.customer_search_type == undefined) {
+                            $scope.warranty_job_order_request.customer_search_type = true;
+                        }
+                        if ($scope.warranty_job_order_request.vehicle_search_type == undefined) {
+                            $scope.warranty_job_order_request.vehicle_search_type = true;
+                        }
+                        // console.log($scope.warranty_job_order_request.customer_search_type, $scope.warranty_job_order_request.vehicle_search_type);
                         $scope.warranty_job_order_request.request_type_id = 9180;
                     }
                     /*}*/
