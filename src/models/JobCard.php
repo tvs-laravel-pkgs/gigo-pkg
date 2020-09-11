@@ -12,6 +12,7 @@ use App\JobOrderReturnedPart;
 use App\SplitOrderType;
 use Auth;
 use DB;
+use File;
 use Illuminate\Database\Eloquent\Model;
 use PDF;
 use Storage;
@@ -449,6 +450,11 @@ class JobCard extends BaseModel {
 
 		$pdf = PDF::loadView('pdf-gigo/revised-estimate-pdf', $data)->setPaper('a4', 'portrait');
 
+		$img_path = $save_path . '/' . $name;
+		if (File::exists($img_path)) {
+			File::delete($img_path);
+		}
+
 		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return true;
@@ -606,6 +612,11 @@ class JobCard extends BaseModel {
 		$name = $job_card->id . '_labour_invoice.pdf';
 
 		$pdf = PDF::loadView('pdf-gigo/bill-detail-labour-pdf', $data)->setPaper('a4', 'portrait');
+
+		$img_path = $save_path . '/' . $name;
+		if (File::exists($img_path)) {
+			File::delete($img_path);
+		}
 
 		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
@@ -772,6 +783,11 @@ class JobCard extends BaseModel {
 
 		$pdf = PDF::loadView('pdf-gigo/bill-detail-part-pdf', $data)->setPaper('a4', 'portrait');
 
+		$img_path = $save_path . '/' . $name;
+		if (File::exists($img_path)) {
+			File::delete($img_path);
+		}
+
 		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return true;
@@ -823,6 +839,11 @@ class JobCard extends BaseModel {
 		$name = $job_card->jobOrder->id . '_gatepass.pdf';
 
 		$pdf = PDF::loadView('pdf-gigo/job-card-gate-pass-pdf', $data)->setPaper('a4', 'portrait');
+
+		$img_path = $save_path . '/' . $name;
+		if (File::exists($img_path)) {
+			File::delete($img_path);
+		}
 
 		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
@@ -889,6 +910,11 @@ class JobCard extends BaseModel {
 		$name = $covering_letter->jobOrder->id . '_covering_letter.pdf';
 
 		$pdf = PDF::loadView('pdf-gigo/covering-letter-pdf', $data)->setPaper('a4', 'portrait');
+
+		$img_path = $save_path . '/' . $name;
+		if (File::exists($img_path)) {
+			File::delete($img_path);
+		}
 
 		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 

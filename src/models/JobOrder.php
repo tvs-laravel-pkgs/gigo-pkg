@@ -11,6 +11,7 @@ use App\Config;
 use App\JobOrderEstimate;
 use App\SplitOrderType;
 use DB;
+use File;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use PDF;
 use Storage;
@@ -494,6 +495,11 @@ class JobOrder extends BaseModel {
 
 		$pdf = PDF::loadView('pdf-gigo/estimation-gate-pass', $data)->setPaper('a4', 'portrait');
 
+		$img_path = $save_path . '/' . $name;
+		if (File::exists($img_path)) {
+			File::delete($img_path);
+		}
+
 		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return true;
@@ -739,6 +745,11 @@ class JobOrder extends BaseModel {
 
 		$pdf = PDF::loadView('pdf-gigo/estimate-pdf', $data)->setPaper('a4', 'portrait');
 
+		$img_path = $save_path . '/' . $name;
+		if (File::exists($img_path)) {
+			File::delete($img_path);
+		}
+
 		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
 		return true;
@@ -804,6 +815,11 @@ class JobOrder extends BaseModel {
 		// dd($data);
 
 		$pdf = PDF::loadView('pdf-gigo/job-order-covering-letter-pdf', $data)->setPaper('a4', 'portrait');
+
+		$img_path = $save_path . '/' . $name;
+		if (File::exists($img_path)) {
+			File::delete($img_path);
+		}
 
 		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
 
