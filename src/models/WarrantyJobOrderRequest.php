@@ -1225,13 +1225,15 @@ class WarrantyJobOrderRequest extends BaseModel {
 			dump(url('storage/app/wjor/' . $photo->name));
 		}*/
 		// File::delete(storage_path('app/public/wjor-pdfs/' . $this->number . '.pdf'));
-		$pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
-			->loadView('pdf-gigo/wjor', [
-				'wjor' => $this,
-				'company' => $this->company,
-				'outlet' => $this->jobOrder->outlet,
-				'title' => 'Product Performance Report',
-			]);
+
+		// setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])
+		// 	->
+		$pdf = PDF::loadView('pdf-gigo/wjor', [
+			'wjor' => $this,
+			'company' => $this->company,
+			'outlet' => $this->jobOrder->outlet,
+			'title' => 'Product Performance Report',
+		]);
 		$path = storage_path('app/public/wjor-pdfs/');
 		if (!file_exists($path)) {
 			File::makeDirectory($path, $mode = 0777, true, true);
