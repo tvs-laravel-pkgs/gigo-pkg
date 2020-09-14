@@ -6519,6 +6519,59 @@ class VehicleInwardController extends Controller {
 		}
 	}
 
+	public function getRepairOrderSearchList(Request $request) {
+		// dd($request->all());
+		$key = $request->key;
+		$list = [];
+
+		if ($key) {
+			$list = RepairOrder::with([
+				'repairOrderType',
+				'uom',
+				'taxCode',
+				'skillLevel',
+			])
+				->where(function ($q) use ($key) {
+					$q->where('repair_orders.code', 'like', $key . '%')
+						->orWhere('repair_orders.name', 'like', '%' . $key . '%')
+					;
+				})
+				->orderBy('repair_orders.name')
+				->get();
+		}
+
+		return response()->json($list);
+	}
+
+	public function getCustomerVoiceSearchList(Request $request) {
+		// dd($request->all());
+		$key = $request->key;
+		$list = [];
+
+		if ($key) {
+			$list = Part::select(
+				'parts.id',
+				'parts.name',
+				'parts.code',
+				'part_stocks.stock',
+				'part_stocks.mrp'
+			)
+				->leftJoin('part_stocks', function ($join) {
+					$join->on('part_stocks.part_id', 'parts.id')
+						->where('outlet_id', Auth::user()->employee->outlet_id);
+				})
+				->where(function ($q) use ($key) {
+					$q->where('parts.code', 'like', $key . '%')
+						->orWhere('parts.name', 'like', '%' . $key . '%')
+					;
+				})
+				->orderBy('parts.name')
+				->get();
+		}
+
+		return response()->json($list);
+	}
+
 	public function getPartsSearchList(Request $request) {
 		// dd($request->all());
 		$key = $request->key;
