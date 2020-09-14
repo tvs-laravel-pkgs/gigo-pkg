@@ -180,6 +180,9 @@ app.component('warrantyJobOrderRequestForm', {
                         $scope.aggregateChange($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate);
                         $scope.warranty_job_order_request.aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate.aggregate;
                         $scope.warranty_job_order_request.sub_aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate;
+                        $scope.warranty_job_order_request.customer_search_type = true;
+                        $scope.warranty_job_order_request.vehicle_search_type = true;
+
                         setTimeout(function() {
                             $scope.countryChanged(true);
                             $scope.calculateCushionCharges();
@@ -1214,13 +1217,24 @@ app.component('warrantyJobOrderRequestForm', {
                 },
                 'failure_report_file': {
                     required: function() {
-                        if ($("#failure_type_id").val() != '' && ($scope.updating == false) || ($scope.updating == true && $scope.warranty_job_order_request.failure_photo == null)) {
+                        /*if ($("#failure_type_id").val() != '' && ($scope.updating == false) || ($scope.updating == true && $scope.warranty_job_order_request.failure_photo == null)) {
                             return true;
                         } else {
+                            return false;
+                        }*/
+                        var failure_type_val = $("#failure_type_id").val();
+                        console.log(failure_type_val);
+                        if (failure_type_val == '') {
+                            return false;
+                        } else {
+                            if (($scope.updating == false && $scope.warranty_job_order_request.failure_type.id != undefined) || ($scope.updating == true && $scope.warranty_job_order_request.failure_type.id != undefined && $scope.warranty_job_order_request.failure_photo == null)) {
+                                return true;
+                            }
                             return false;
                         }
                     }
                 }
+
                 /*'photos[]': {
                     required: true,
                 },*/
@@ -1232,6 +1246,8 @@ app.component('warrantyJobOrderRequestForm', {
                 custom_noty('error', 'You have errors, Please check all tabs');
             },
             submitHandler: function(form) {
+                // alert($scope.warranty_job_order_request.failure_type);
+                // return false;
                 $scope.failedAtKeyup();
                 $scope.checkLabourPart();
                 if ($isValidFailedAt == true) {
