@@ -34,6 +34,8 @@ class GateInController extends Controller {
 	public function __construct(WpoSoapController $getSoap = null) {
 		$this->data['theme'] = config('custom.theme');
 		$this->getSoap = $getSoap;
+		$this->success_code = 200;
+		$this->permission_denied_code = 401;
 	}
 
 	public function getFormData() {
@@ -47,7 +49,7 @@ class GateInController extends Controller {
 					'default_text' => 'Select Reading type',
 				]),
 				'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id = NULL, $params),
-				'trade_plate_number_list' => TradePlateNumber::get(),
+				'trade_plate_number_list' => TradePlateNumber::join('outlets', 'outlets.id', 'trade_plate_numbers.outlet_id')->select('trade_plate_numbers.id', DB::RAW('CONCAT(outlets.code," / ",trade_plate_numbers.trade_plate_number) as trade_plate_number'))->get(),
 			];
 			return response()->json([
 				'success' => true,
@@ -731,6 +733,8 @@ class GateInController extends Controller {
 			]);
 		}
 	}
+
+	//Table List
 	public function getGateLogList(Request $request) {
 		$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
 		array_push($outlet_ids, Auth::user()->employee->outlet_id);
@@ -753,6 +757,8 @@ class GateInController extends Controller {
 			'gate_logs.gate_in_date',
 			'gate_logs.status_id',
 			'vehicles.registration_number',
+			'vehicles.engine_number',
+			'vehicles.chassis_number',
 			'models.model_name',
 			'outlets.code as outlet',
 			'regions.name as region', 'states.name as state',
@@ -849,6 +855,112 @@ class GateInController extends Controller {
 			})
 			->get();
 		return response()->json($list);
+	}
+
+	//Card List
+	public function getGateInList(Request $request) {
+		try {
+			$outlet_ids = Auth::user()->employee->outlets->pluck('id')->toArray();
+			array_push($outlet_ids, Auth::user()->employee->outlet_id);
+
+			if ($request->date_range) {
+				$date_range = explode(' to ', $request->date_range);
+				$start_date = date('Y-m-d', strtotime($date_range[0]));
+				$start_date = $start_date . ' 00:00:00';
+
+				$end_date = date('Y-m-d', strtotime($date_range[1]));
+				$end_date = $end_date . ' 23:59:59';
+			} else {
+				$start_date = date('Y-m-01 00:00:00');
+				$end_date = date('Y-m-t 23:59:59');
+			}
+
+			$vehicle_gate_pass_list = GateLog::select([
+				'gate_logs.id as gate_log_id',
+				'gate_logs.number',
+				'gate_logs.gate_in_date',
+				'gate_logs.status_id',
+				'vehicles.registration_number',
+				'vehicles.engine_number',
+				'vehicles.chassis_number',
+				'models.model_name',
+				'outlets.code as outlet',
+				'regions.name as region', 'states.name as state',
+				'configs.name as status',
+			])
+				->leftjoin('job_orders', 'job_orders.id', 'gate_logs.job_order_id')
+				->leftjoin('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
+				->leftjoin('models', 'models.id', 'vehicles.model_id')
+				->leftjoin('outlets', 'outlets.id', 'job_orders.outlet_id')
+				->leftjoin('regions', 'regions.id', 'outlets.region_id')
+				->leftjoin('states', 'states.id', 'outlets.state_id')
+				->join('configs', 'configs.id', 'gate_logs.status_id')
+
+				->where(function ($query) use ($request) {
+					if (!empty($request->model_id)) {
+						$query->where('vehicles.model_id', $request->model_id);
+					}
+				})
+
+				->where(function ($query) use ($request) {
+					if (!empty($request->outlet_id)) {
+						$query->where('job_orders.outlet_id', $request->outlet_id);
+					}
+				})
+
+				->where(function ($query) use ($start_date, $end_date) {
+					$query->whereDate('gate_logs.created_at', '>=', $start_date)
+						->whereDate('gate_logs.created_at', '<=', $end_date);
+				})
+
+				->where(function ($query) use ($request) {
+					if (!empty($request->search_key)) {
+						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('models.model_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('gate_logs.job_card_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('status.name', 'LIKE', '%' . $request->search_key . '%')
+						;
+					}
+				});
+
+			if (!Entrust::can('overall-outlet-gatelog')) {
+				if (Entrust::can('mapped-outlet-gatelog')) {
+					$vehicle_gate_pass_list->whereIn('job_orders.outlet_id', $outlet_ids);
+				} elseif (Entrust::can('own-outlet-gatelog')) {
+					$vehicle_gate_pass_list->where('job_orders.outlet_id', Auth::user()->employee->outlet_id);
+				} else {
+					$vehicle_gate_pass_list->where('gate_logs.created_by_id', Auth::user()->id);
+				}
+			}
+
+			$vehicle_gate_pass_list->orderBy('gate_logs.id', 'DESC');
+
+			$total_records = $vehicle_gate_pass_list->get()->count();
+
+			if ($request->offset) {
+				$vehicle_gate_pass_list->offset($request->offset);
+			}
+			if ($request->limit) {
+				$vehicle_gate_pass_list->limit($request->limit);
+			}
+
+			$vehicle_gate_pass_list = $vehicle_gate_pass_list->get();
+
+			return response()->json([
+				'success' => true,
+				'vehicle_gate_pass_list' => $vehicle_gate_pass_list,
+				'total_records' => $total_records,
+			]);
+
+		} catch (\Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Network Down!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
 	}
 
 }
