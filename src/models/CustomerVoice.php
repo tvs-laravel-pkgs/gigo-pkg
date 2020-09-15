@@ -2,6 +2,7 @@
 
 namespace Abs\GigoPkg;
 
+use Abs\GigoPkg\CustomerVoiceRot;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
 use App\Company;
@@ -57,6 +58,10 @@ class CustomerVoice extends BaseModel {
 		return $this->belongsTo('App\RepairOrder');
 	}
 
+	public function repairOrders() {
+		return $this->belongsToMany('App\RepairOrder', 'customer_voice_repair_orders', 'customer_voice_id', 'repair_order_id');
+	}
+
 	// Static Operations --------------------------------------------------------------
 
 	public static function saveFromObject($record_data) {
@@ -105,25 +110,38 @@ class CustomerVoice extends BaseModel {
 			//LV Main Type
 			$lv_main_type = LvMainType::where('name', $record_data['Lv Main Type'])->where('company_id', $company->id)->select('id')->first();
 
-			//Repair Order
-			$repair_order = RepairOrder::where('code', $record_data['ROT Code'])->where('company_id', $company->id)->select('id')->first();
+			$lv_main_type_id = NULL;
+			if ($lv_main_type) {
+				$lv_main_type_id = $lv_main_type->id;
+			}
 
 			$record = Self::firstOrNew([
 				'company_id' => $company->id,
 				'code' => $record_data['Code'],
+				'name' => $record_data['Name'],
+				'lv_main_type_id' => $lv_main_type_id,
 			]);
+
 			$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
 			if (!$result['success']) {
 				return $result;
 			}
 			$record->created_by_id = $created_by_id;
-			if ($lv_main_type) {
-				$record->lv_main_type_id = $lv_main_type->id;
-			}
-			if ($repair_order) {
-				$record->repair_order_id = $repair_order->id;
-			}
 			$record->save();
+
+			//Repair Order
+			$repair_order = RepairOrder::where('code', $record_data['ROT Code'])->where('company_id', $company->id)->select('id')->first();
+
+			//Save ROTs
+			if ($repair_order) {
+				//Check Rot already added or not
+				$voc_rot = CustomerVoiceRot::firstOrNew([
+					'customer_voice_id' => $record->id,
+					'repair_order_id' => $repair_order->id,
+				]);
+				$voc_rot->save();
+			}
+
 			return [
 				'success' => true,
 			];

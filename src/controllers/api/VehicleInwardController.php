@@ -4473,89 +4473,93 @@ class VehicleInwardController extends Controller {
 
 				$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->first();
 
-				//Estimate Order ID
-				$estimate_id = JobOrderEstimate::where('job_order_id', $job_order->id)->where('status_id', 10071)->first();
-				if ($estimate_id) {
-					$estimate_order_id = $estimate_id->id;
-				} else {
-					if (date('m') > 3) {
-						$year = date('Y') + 1;
-					} else {
-						$year = date('Y');
-					}
-					//GET FINANCIAL YEAR ID
-					$financial_year = FinancialYear::where('from', $year)
-						->where('company_id', Auth::user()->company_id)
-						->first();
-					if (!$financial_year) {
-						return response()->json([
-							'success' => false,
-							'error' => 'Validation Error',
-							'errors' => [
-								'Fiancial Year Not Found',
-							],
-						]);
-					}
-					//GET BRANCH/OUTLET
-					$branch = Outlet::where('id', $job_order->outlet_id)->first();
+				// //Estimate Order ID
+				// $estimate_id = JobOrderEstimate::where('job_order_id', $job_order->id)->where('status_id', 10071)->first();
+				// if ($estimate_id) {
+				// 	$estimate_order_id = $estimate_id->id;
+				// } else {
+				// 	if (date('m') > 3) {
+				// 		$year = date('Y') + 1;
+				// 	} else {
+				// 		$year = date('Y');
+				// 	}
+				// 	//GET FINANCIAL YEAR ID
+				// 	$financial_year = FinancialYear::where('from', $year)
+				// 		->where('company_id', Auth::user()->company_id)
+				// 		->first();
+				// 	if (!$financial_year) {
+				// 		return response()->json([
+				// 			'success' => false,
+				// 			'error' => 'Validation Error',
+				// 			'errors' => [
+				// 				'Fiancial Year Not Found',
+				// 			],
+				// 		]);
+				// 	}
+				// 	//GET BRANCH/OUTLET
+				// 	$branch = Outlet::where('id', $job_order->outlet_id)->first();
 
-					//GENERATE GATE IN VEHICLE NUMBER
-					$generateNumber = SerialNumberGroup::generateNumber(104, $financial_year->id, $branch->state_id, $branch->id);
-					if (!$generateNumber['success']) {
-						return response()->json([
-							'success' => false,
-							'error' => 'Validation Error',
-							'errors' => [
-								'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
-							],
-						]);
-					}
+				// 	//GENERATE GATE IN VEHICLE NUMBER
+				// 	$generateNumber = SerialNumberGroup::generateNumber(104, $financial_year->id, $branch->state_id, $branch->id);
+				// 	if (!$generateNumber['success']) {
+				// 		return response()->json([
+				// 			'success' => false,
+				// 			'error' => 'Validation Error',
+				// 			'errors' => [
+				// 				'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+				// 			],
+				// 		]);
+				// 	}
 
-					$estimate = new JobOrderEstimate;
-					$estimate->job_order_id = $job_order->id;
-					$estimate->number = $generateNumber['number'];
-					$estimate->status_id = 10071;
-					$estimate->created_by_id = Auth::user()->id;
-					$estimate->created_at = Carbon::now();
-					$estimate->save();
+				// 	$estimate = new JobOrderEstimate;
+				// 	$estimate->job_order_id = $job_order->id;
+				// 	$estimate->number = $generateNumber['number'];
+				// 	$estimate->status_id = 10071;
+				// 	$estimate->created_by_id = Auth::user()->id;
+				// 	$estimate->created_at = Carbon::now();
+				// 	$estimate->save();
 
-					$estimate_order_id = $estimate->id;
-				}
+				// 	$estimate_order_id = $estimate->id;
+				// }
 
 				foreach ($request->customer_voices as $key => $voice) {
-					$customer_voice = CustomerVoice::with(['repair_order'])
-						->where('id', $voice['id'])
-						->first();
+					// $customer_voice = CustomerVoice::with(['repair_order'])
+					// 	->where('id', $voice['id'])
+					// 	->first();
 
-					if ($customer_voice->repair_order_id) {
+					// if ($customer_voice->repair_order_id) {
 
-						$skip_job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('repair_order_id', $customer_voice->repair_order->id)
-							->first();
+					// 	$skip_job_repair_order = JobOrderRepairOrder::where('job_order_id', $request->job_order_id)->where('repair_order_id', $customer_voice->repair_order->id)
+					// 		->first();
 
-						$job_order->customerVoices()->attach($voice['id'], [
-							'details' => isset($voice['details']) ? $voice['details'] : NULL,
-						]);
+					// 	$job_order->customerVoices()->attach($voice['id'], [
+					// 		'details' => isset($voice['details']) ? $voice['details'] : NULL,
+					// 	]);
 
-						if ($skip_job_repair_order) {
-							continue;
-						} else {
-							$job_repair_order = new JobOrderRepairOrder;
-							$job_repair_order->job_order_id = $request->job_order_id;
-							$job_repair_order->repair_order_id = $customer_voice->repair_order->id;
-							$job_repair_order->is_recommended_by_oem = 0;
-							$job_repair_order->is_customer_approved = 0;
-							$job_repair_order->estimate_order_id = $estimate_order_id;
-							$job_repair_order->split_order_type_id = $customer_paid_type->id;
-							$job_repair_order->qty = $customer_voice->repair_order->hours;
-							$job_repair_order->amount = $customer_voice->repair_order->amount;
-							$job_repair_order->status_id = 8180;
-							$job_repair_order->save();
-						}
-					} else {
-						$job_order->customerVoices()->attach($voice['id'], [
-							'details' => isset($voice['details']) ? $voice['details'] : NULL,
-						]);
-					}
+					// 	if ($skip_job_repair_order) {
+					// 		continue;
+					// 	} else {
+					// 		$job_repair_order = new JobOrderRepairOrder;
+					// 		$job_repair_order->job_order_id = $request->job_order_id;
+					// 		$job_repair_order->repair_order_id = $customer_voice->repair_order->id;
+					// 		$job_repair_order->is_recommended_by_oem = 0;
+					// 		$job_repair_order->is_customer_approved = 0;
+					// 		$job_repair_order->estimate_order_id = $estimate_order_id;
+					// 		$job_repair_order->split_order_type_id = $customer_paid_type->id;
+					// 		$job_repair_order->qty = $customer_voice->repair_order->hours;
+					// 		$job_repair_order->amount = $customer_voice->repair_order->amount;
+					// 		$job_repair_order->status_id = 8180;
+					// 		$job_repair_order->save();
+					// 	}
+					// } else {
+					// 	$job_order->customerVoices()->attach($voice['id'], [
+					// 		'details' => isset($voice['details']) ? $voice['details'] : NULL,
+					// 	]);
+					// }
+
+					$job_order->customerVoices()->attach($voice['id'], [
+						'details' => isset($voice['details']) ? $voice['details'] : NULL,
+					]);
 				}
 			}
 
