@@ -166,6 +166,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('gate-in-entry/create', 'GateInController@createGateInEntry');
 		Route::post('gatelog/vehicle/search', 'GateInController@getVehicleSearchList');
 
+		// GATE IN CARD LIST
+		Route::post('gate-in-entry/card-list', 'GateInController@getGateInList');
+
 		//PART SEARCH
 		Route::post('vehicle-inward/part/search', 'VehicleInwardController@getPartsSearchList');
 

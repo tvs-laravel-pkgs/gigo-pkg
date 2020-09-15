@@ -32,6 +32,8 @@ class FloatingGatePassController extends Controller {
 				// 'configs.name as status',
 				'job_cards.id as job_card_id',
 				'vehicles.registration_number',
+				'vehicles.engine_number',
+				'vehicles.chassis_number',
 				'models.model_name as model',
 				'job_orders.driver_name',
 				'job_orders.driver_mobile_number',

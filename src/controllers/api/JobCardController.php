@@ -766,6 +766,7 @@ class JobCardController extends Controller {
 				'jobOrder.roadTestPreferedBy',
 				'jobOrder.roadTestPreferedBy.employee',
 				'outlet',
+				'bay',
 			])
 				->find($r->id);
 
@@ -903,6 +904,7 @@ class JobCardController extends Controller {
 			$job_card = JobCard::with([
 				'status',
 				'jobOrder',
+				'bay',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
 			])->find($r->id);
@@ -1023,6 +1025,7 @@ class JobCardController extends Controller {
 			//JOB CARD
 			$job_card = JobCard::with([
 				'status',
+				'bay',
 				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
@@ -2637,6 +2640,7 @@ class JobCardController extends Controller {
 			'jobOrder.vehicle.model',
 			'jobOrder.vehicle.status',
 			'status',
+			'bay',
 		])->find($request->id);
 
 		if (!$job_card) {
@@ -2685,7 +2689,9 @@ class JobCardController extends Controller {
 			'jobOrder.serviceType',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
-			'status'])->find($request->id);
+			'status',
+			'bay',
+		])->find($request->id);
 		if (!$job_card) {
 			return response()->json([
 				'success' => false,
@@ -2726,6 +2732,7 @@ class JobCardController extends Controller {
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'status',
+			'bay',
 			'jobOrder.jobOrderRepairOrders' => function ($query) {
 				$query->where('is_recommended_by_oem', 0);
 			},
@@ -3344,6 +3351,7 @@ class JobCardController extends Controller {
 			'status',
 			'jobOrder',
 			'jobOrder.vehicle',
+			'bay',
 			'jobOrder.vehicle.model',
 		])->find($request->id);
 
@@ -3375,6 +3383,7 @@ class JobCardController extends Controller {
 		// dd($request->all());
 		$job_card = JobCard::with([
 			'jobOrder',
+			'bay',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'jobOrder.jobOrderParts',
@@ -3563,6 +3572,7 @@ class JobCardController extends Controller {
 	public function getReturnablePartsFormdata(Request $request) {
 		$job_card = JobCard::with([
 			'jobOrder',
+			'bay',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
 			'status',
@@ -3770,6 +3780,7 @@ class JobCardController extends Controller {
 		try {
 			$job_card_time_log = JobCard::with([
 				'status',
+				'bay',
 				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
@@ -3980,6 +3991,7 @@ class JobCardController extends Controller {
 		try {
 			$view_metrial_gate_pass = JobCard::with([
 				'status',
+				'bay',
 				'jobOrder',
 				'jobOrder.type',
 				'jobOrder.vehicle',
@@ -4047,6 +4059,7 @@ class JobCardController extends Controller {
 		try {
 			$job_card = JobCard::with([
 				'status',
+				'bay',
 				'jobOrder',
 				'jobOrder.type',
 				'jobOrder.vehicle',
@@ -4345,6 +4358,7 @@ class JobCardController extends Controller {
 		try {
 			$job_card = JobCard::with([
 				'jobOrder',
+				'bay',
 				'jobOrder.serviceType',
 				'jobOrder.type',
 				'jobOrder.vehicle',
@@ -4612,6 +4626,7 @@ class JobCardController extends Controller {
 		try {
 			$job_card = JobCard::with([
 				'jobOrder',
+				'bay',
 				'jobOrder.serviceType',
 				'jobOrder.type',
 				'jobOrder.vehicle',
@@ -4905,6 +4920,7 @@ class JobCardController extends Controller {
 		try {
 			$job_card = JobCard::with([
 				'status',
+				'bay',
 				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',

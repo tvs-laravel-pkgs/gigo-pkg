@@ -33,6 +33,8 @@ class RoadTestGatePassController extends Controller {
 				'road_test_gate_pass.status_id',
 				'configs.name as status',
 				'vehicles.registration_number',
+				'vehicles.engine_number',
+				'vehicles.chassis_number',
 				'models.model_name as model',
 				'trade_plate_numbers.trade_plate_number',
 				DB::raw('DATE_FORMAT(road_test_gate_pass.created_at,"%d/%m/%Y, %h:%s %p") as date_and_time'),

@@ -30,6 +30,8 @@ class VehicleGatePassController extends Controller {
 				'job_orders.driver_name',
 				'job_orders.driver_mobile_number',
 				'vehicles.registration_number',
+				'vehicles.engine_number',
+				'vehicles.chassis_number',
 				'models.model_name',
 				'job_orders.number as job_card_number',
 				'gate_passes.number as gate_pass_no',
