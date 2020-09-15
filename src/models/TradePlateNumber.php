@@ -24,4 +24,8 @@ class TradePlateNumber extends BaseModel {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
 
+	public function outlet() {
+		return $this->belongsTo('App\Outlet', 'outlet_id');
+	}
+
 }
