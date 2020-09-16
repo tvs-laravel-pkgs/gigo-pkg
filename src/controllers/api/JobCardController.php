@@ -2777,6 +2777,7 @@ class JobCardController extends Controller {
 			'job_card' => $job_card,
 			'send_approval_status' => $send_approval_status,
 			'labours' => $result['labours'],
+			'osl_work' => $result['osl_work'],
 		]);
 
 		// return response()->json([
@@ -2844,6 +2845,7 @@ class JobCardController extends Controller {
 				$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$labour_details[$key]['status_id'] = $value->status_id;
 				$labour_details[$key]['repair_order'] = $value->repairOrder;
+				$labour_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$labour_amount += $value->amount;
@@ -2877,6 +2879,7 @@ class JobCardController extends Controller {
 				$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$part_details[$key]['status_id'] = $value->status_id;
 				$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
+				$part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$part_amount += $value->amount;
@@ -2889,6 +2892,9 @@ class JobCardController extends Controller {
 			}
 		}
 
+		//Check OSL Work
+		$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_order->id)->count();
+
 		$total_amount = $part_amount + $labour_amount;
 		// dd($labour_details);
 		$result['job_order'] = $job_order;
@@ -2897,6 +2903,7 @@ class JobCardController extends Controller {
 		$result['labour_amount'] = $labour_amount;
 		$result['part_amount'] = $part_amount;
 		$result['total_amount'] = $total_amount;
+		$result['osl_work'] = $osl_work;
 		$result['labours'] = $labours;
 
 		return $result;
@@ -2923,18 +2930,24 @@ class JobCardController extends Controller {
 					]);
 				}
 
-				$job_order_repair_order = JobOrderRepairOrder::find($request->labour_parts_id);
-				if ($request->removal_reason_id == 10022) {
-					$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
-					$job_order_repair_order->removal_reason = $request->removal_reason;
-				} else {
-					$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
-					$job_order_repair_order->removal_reason = NULL;
-				}
-				$job_order_repair_order->updated_by_id = Auth::user()->id;
-				$job_order_repair_order->updated_at = Carbon::now();
-				$job_order_repair_order->save();
+				//Check OSL Work or not
+				$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('job_order_repair_orders.id', $request->labour_parts_id)->where('repair_orders.code', 'OSL001')->first();
 
+				if ($osl_work) {
+					$job_order_repair_order = JobOrderRepairOrder::where('id', $request->labour_parts_id)->forceDelete();
+				} else {
+					$job_order_repair_order = JobOrderRepairOrder::find($request->labour_parts_id);
+					if ($request->removal_reason_id == 10022) {
+						$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
+						$job_order_repair_order->removal_reason = $request->removal_reason;
+					} else {
+						$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
+						$job_order_repair_order->removal_reason = NULL;
+					}
+					$job_order_repair_order->updated_by_id = Auth::user()->id;
+					$job_order_repair_order->updated_at = Carbon::now();
+					$job_order_repair_order->save();
+				}
 			} else {
 				$validator = Validator::make($request->all(), [
 					'labour_parts_id' => [

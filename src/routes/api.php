@@ -296,6 +296,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//GET CITY BASED STATE
 		Route::get('get-city/state-id/{state_id}', 'VehicleInwardController@getcity');
 
+		//OSL WORK SAVE
+		Route::post('vehicle-inward/osl-work/save', 'VehicleInwardController@saveOSLWork');
+
 		//Update Job Card
 		Route::post('vehicle-inward/update-jc/get-form-data', 'JobCardController@getUpdateJcFormData');
 		Route::post('vehicle-inward/job-card/save', 'JobCardController@saveJobCard');
