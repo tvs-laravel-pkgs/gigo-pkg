@@ -1885,6 +1885,7 @@ app.component('jobCardPayableLabourPartsForm', {
                             });
 
                         $('.submit_osl').button('reset');
+                        self.osl_work_need = 0;
                     }
                 });
             } else {

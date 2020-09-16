@@ -3414,6 +3414,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                                 contentType: false,
                             })
                             .done(function(res) {
+                                self.osl_work_need = 0;
                                 if (!res.success) {
                                     $rootScope.loading = false;
                                     showErrorNoty(res);
@@ -3432,6 +3433,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                             });
 
                         $('.submit_osl').button('reset');
+                        self.osl_work_need = 0;
                     }
                 });
             } else {
