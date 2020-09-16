@@ -26,4 +26,8 @@ class GatePassDetail extends Model {
 	public function vendor() {
 		return $this->belongsTo('App\Vendor', 'vendor_id');
 	}
+
+	public function jobOrderRepairOrder() {
+		return $this->belongsTo('App\JobOrderRepairOrder', 'job_order_repair_order_id');
+	}
 }

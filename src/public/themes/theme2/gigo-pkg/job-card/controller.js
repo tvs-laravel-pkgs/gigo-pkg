@@ -1025,6 +1025,62 @@ app.component('jobCardMaterialGatepassForm', {
         }
         $scope.fetchData();
 
+        $scope.showOSLUpdateForm = function(index, gate_passes) {
+            $('.gate_pass_detail_id').val(gate_passes.id);
+            $('.gate_pass_id').val(gate_passes.gate_pass_id);
+            $('.repair_order_id').val(gate_passes.job_order_repair_order_id);
+            $('#osl_confirmation_modal').modal('show');
+        }
+
+        $scope.saveBillDetail = function() {
+            var form_id = '#osl_bill_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'invoice_number': {
+                        required: true,
+                    },
+                    'invoice_date': {
+                        required: true,
+                    },
+                    'invoice_amount': {
+                        required: true,
+                    },
+                    'gate_pass_detail_id': {
+                        required: true,
+                    },
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $('.save_bill_detail').button('loading');
+                    $.ajax({
+                            url: base_url + '/api/material-gatepass/update/bill',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            if (!res.success) {
+                                $('.save_bill_detail').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            $('.save_bill_detail').button('reset');
+                            custom_noty('success', res.message);
+                            $('#osl_confirmation_modal').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            $scope.fetchData();
+                        })
+                        .fail(function(xhr) {
+                            $('.submit').button('reset');
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
         $scope.carouselLiChange = function(gatepass_id, index) {
             $('#carousel_parent_' + gatepass_id + " .carousel_li").removeClass('active');
             $('#carousel_parent_' + gatepass_id + " .carousel_inner_item").removeClass('active');
@@ -1088,6 +1144,7 @@ app.component('jobCardMaterialOutwardForm', {
                         $scope.gate_pass.gate_pass_detail.vendor_type_id = 121;
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
+                    $scope.labour_details = res.labour_details;
                     $scope.$apply();
 
                     i = $scope.gate_pass.gate_pass_items ? $scope.gate_pass.gate_pass_items.length : 0;
@@ -1204,6 +1261,9 @@ app.component('jobCardMaterialOutwardForm', {
                         required: true,
                     },
                     'work_order_description': {
+                        required: true,
+                    },
+                    'job_order_repair_order_id': {
                         required: true,
                     },
                 },

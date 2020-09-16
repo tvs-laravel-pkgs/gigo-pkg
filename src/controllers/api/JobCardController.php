@@ -1758,7 +1758,7 @@ class JobCardController extends Controller {
 			DB::beginTransaction();
 
 			//Check All material items returned or not
-			$material = GatePass::where('job_card_id', $request->id)->whereIn('status_id', [8300, 8301])->count();
+			$material = GatePass::where('job_card_id', $request->id)->whereIn('status_id', [8300, 8301, 8302, 8303])->count();
 			if ($material > 0) {
 				return response()->json([
 					'success' => false,
@@ -4018,6 +4018,8 @@ class JobCardController extends Controller {
 				'gatePasses.gatePassDetail.vendorType',
 				'gatePasses.gatePassDetail.vendor',
 				'gatePasses.gatePassDetail.vendor.primaryAddress',
+				'gatePasses.gatePassDetail.jobOrderRepairOrder',
+				'gatePasses.gatePassDetail.jobOrderRepairOrder.repairOrder',
 				'gatePasses.gatePassItems',
 				'gatePasses.gatePassItems.attachment',
 			])
@@ -4077,6 +4079,10 @@ class JobCardController extends Controller {
 				'jobOrder.type',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
+				'jobOrder.jobOrderRepairOrders' => function ($q) {
+					$q->whereNull('removal_reason_id');
+				},
+				'jobOrder.jobOrderRepairOrders.repairOrder',
 			])
 				->find($request->id);
 
@@ -4089,6 +4095,16 @@ class JobCardController extends Controller {
 					],
 				]);
 
+			}
+
+			$labour_details = array();
+			$labour_details[0]['id'] = '';
+			$labour_details[0]['name'] = 'Select Repair Order';
+			if ($job_card->jobOrder->jobOrderRepairOrders) {
+				foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $value) {
+					$labour_details[$key + 1]['id'] = $value->id;
+					$labour_details[$key + 1]['name'] = $value->repairOrder->code . ' - ' . $value->repairOrder->name;
+				}
 			}
 
 			if (isset($request->gate_pass_id)) {
@@ -4121,6 +4137,7 @@ class JobCardController extends Controller {
 				'success' => true,
 				'gate_pass' => $gate_pass,
 				'job_card' => $job_card,
+				'labour_details' => $labour_details,
 				'attachement_path' => url('storage/app/public/gigo/material_gate_pass/attachments/'),
 			]);
 
@@ -4157,7 +4174,7 @@ class JobCardController extends Controller {
 				],
 				'work_order_no' => [
 					'required',
-					'unique:gate_pass_details,work_order_no,' . $request->gate_pass_id . ',id',
+					'unique:gate_pass_details,work_order_no,' . $request->gate_pass_id . ',gate_pass_id',
 				],
 				'work_order_description' => [
 					'required',
@@ -4195,6 +4212,11 @@ class JobCardController extends Controller {
 					'min:3',
 					'max:191',
 				],
+				'job_order_repair_order_id' => [
+					'required',
+					'integer',
+					'exists:job_order_repair_orders,id',
+				],
 			]);
 
 			if ($validator->fails()) {
@@ -4204,6 +4226,15 @@ class JobCardController extends Controller {
 					'errors' => $validator->errors()->all(),
 				]);
 			}
+
+			if (!$request->item_details) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Please add atleast one item!'],
+				]);
+			}
+
 			DB::beginTransaction();
 
 			$job_card = JobCard::with(['jobOrder'])->find($request->job_card_id);
@@ -4285,6 +4316,7 @@ class JobCardController extends Controller {
 			$gate_pass_detail->work_order_no = $request->work_order_no;
 			$gate_pass_detail->vendor_contact_no = $request->vendor_contact_no;
 			$gate_pass_detail->work_order_description = $request->work_order_description;
+			$gate_pass_detail->job_order_repair_order_id = $request->job_order_repair_order_id;
 			$gate_pass_detail->created_by_id = Auth::user()->id;
 			$gate_pass_detail->save();
 
@@ -4353,6 +4385,120 @@ class JobCardController extends Controller {
 			return response()->json([
 				'success' => true,
 				'message' => 'Material Gate Pass Item Saved Successfully!!',
+			]);
+
+		} catch (Exception $e) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Server Error!',
+				'errors' => [
+					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
+				],
+			]);
+		}
+	}
+
+	public function saveMaterialGatePassBill(Request $request) {
+		// dd($request->all());
+		try {
+			$validator = Validator::make($request->all(), [
+				'job_card_id' => [
+					'required',
+					'integer',
+					'exists:job_cards,id',
+				],
+				'invoice_number' => [
+					'required',
+				],
+				'invoice_date' => [
+					'required',
+				],
+				'invoice_amount' => [
+					'required',
+				],
+				'gate_pass_detail_id' => [
+					'required',
+					'integer',
+					'exists:gate_pass_details,id',
+				],
+				'gate_pass_id' => [
+					'required',
+					'integer',
+					'exists:gate_passes,id',
+				],
+				'repair_order_id' => [
+					'required',
+					'integer',
+					'exists:job_order_repair_orders,id',
+				],
+			]);
+
+			if ($validator->fails()) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => $validator->errors()->all(),
+				]);
+			}
+
+			DB::beginTransaction();
+
+			$job_card = JobCard::with(['jobOrder'])->find($request->job_card_id);
+
+			$gate_pass = GatePass::find($request->gate_pass_id);
+
+			if (!$gate_pass) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Material Gate Pass Not Found',
+					],
+				]);
+			}
+
+			$gate_pass->status_id = 8304; //OSL Work Completed
+			$gate_pass->updated_by_id = Auth::user()->id;
+			$gate_pass->updated_at = Carbon::now();
+			$gate_pass->save();
+
+			$gate_pass_detail = GatePassDetail::find($request->gate_pass_detail_id);
+
+			if (!$gate_pass_detail) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'Material Gate Pass Detail Not Found',
+					],
+				]);
+			}
+
+			$gate_pass_detail->invoice_number = $request->invoice_number;
+			$gate_pass_detail->invoice_date = date('Y-m-d', strtotime($request->invoice_date));
+			$gate_pass_detail->invoice_amount = $request->invoice_amount;
+			$gate_pass_detail->updated_by_id = Auth::user()->id;
+			$gate_pass_detail->updated_at = Carbon::now();
+			$gate_pass_detail->save();
+
+			// //Check Repair Order id is OSL ROT or Not
+			// $osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_card->jobOrder->id)->where('job_order_repair_orders.id', $request->repair_order_id)->first();
+
+			// if ($osl_work) {
+
+			// }
+
+			// //Check OSL ROT and Update Invoice amount
+
+			// dd($job_card->jobOrder->id);
+
+			// $osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_card->jobOrder->id)->count();
+
+			DB::commit();
+
+			return response()->json([
+				'success' => true,
+				'message' => 'Material Gate Pass Bill Detail Saved Successfully!!',
 			]);
 
 		} catch (Exception $e) {

@@ -131,10 +131,26 @@
                                                                 <input type="text" ng-model="gate_pass.gate_pass_detail.work_order_no" name="work_order_no" value="{{gate_pass.gate_pass_detail.work_order_no}}" class="form-control requried" placeholder="Enter No" autocomplete="off" />
                                                             </div><!-- Feild -->
                                                         </div><!-- Column -->
-                                                        <div class="col-md-12">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Repair Order<sup class="mandatory">*</sup></label>
+                                                                <md-select ng-model="gate_pass.gate_pass_detail.job_order_repair_order_id" placeholder="Select Repair Order" data-md-container-class="selectdemoSelectHeader">
+                                                                    <md-select-header class="demo-select-header">
+                                                                        <input ng-model="searchRepairOrder" type="search" placeholder="Search for a Repair Order.." class="demo-header-searchbox md-text">
+                                                                    </md-select-header>
+                                                                    <md-optgroup>
+                                                                        <md-option ng-value="option.id" ng-repeat="option in labour_details | filter:searchRepairOrder">
+                                                                            {{option.name}}
+                                                                        </md-option>
+                                                                    </md-optgroup>
+                                                                </md-select>
+                                                                <input type="hidden" name="job_order_repair_order_id" value="{{gate_pass.gate_pass_detail.job_order_repair_order_id}}">
+                                                            </div><!-- Feild -->
+                                                        </div><!-- Column -->
+                                                        <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label>Work Order Description <sup class="mandatory">*</sup></label>
-                                                                <textarea class="form-control requried" rows="5" name="work_order_description" placeholder="Enter Description">{{gate_pass.gate_pass_detail.work_order_description}}</textarea>
+                                                                <textarea class="form-control requried" rows="4" name="work_order_description" placeholder="Enter Description">{{gate_pass.gate_pass_detail.work_order_description}}</textarea>
                                                             </div><!-- Feild -->
                                                         </div><!-- Column -->
                                                     </div><!-- Row -->
@@ -154,6 +170,8 @@
                                                         </div>
                                                     </div>
                                                 </div><!-- Column -->
+                                                <div class="col-md-6">
+                                                </div>
                                             </div><!-- Row -->
                                         </div><!-- Column -->
                                         <div class="tab-pane-footer">
@@ -215,7 +233,7 @@
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label>Quantity <sup class="mandatory">*</sup></label>
-                                                            <input type="text" ng-model="gate_pass_item.qty" class="form-control required" placeholder="Enter Quantity" autocomplete="off" value="" name="item_details[{{index}}][qty]" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
+                                                            <input type="text" ng-model="gate_pass_item.qty" maxlength="2" class="form-control required" placeholder="Enter Quantity" autocomplete="off" value="" name="item_details[{{index}}][qty]" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" />
                                                         </div><!-- Feild -->
                                                     </div><!-- Column -->
                                                     <div class="col-md-6">

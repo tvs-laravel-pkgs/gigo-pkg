@@ -27,4 +27,8 @@ class GatePassItem extends Model {
 	public function attachment() {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 231)->where('attachment_type_id', 238);
 	}
+
+	public function getQtyAttribute($value) {
+		return empty($value) ? '' : round($value);
+	}
 }

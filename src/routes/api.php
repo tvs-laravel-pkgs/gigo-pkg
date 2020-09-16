@@ -359,6 +359,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		Route::post('material-gatepass/view', 'JobCardController@viewMeterialGatePass');
 		Route::post('material-gatepass/get-form-data', 'JobCardController@getMeterialGatePassData');
 		Route::post('material-gatepass/save', 'JobCardController@saveMaterialGatePass');
+		Route::post('material-gatepass/update/bill', 'JobCardController@saveMaterialGatePassBill');
 
 		//VIEW JOB CARD
 		Route::get('view-job-card/{id}', 'JobCardController@viewJobCard');

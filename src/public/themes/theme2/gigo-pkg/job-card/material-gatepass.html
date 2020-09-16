@@ -70,6 +70,10 @@
                                                         <div class="mgpass-address-left-wrap">
                                                             <ul class="view-row mb-no border-none">
                                                                 <li class="view-col-4">
+                                                                    <span class="view-col-label">Repair Order</span>
+                                                                    <span class="view-col-value">{{gate_passes.gate_pass_detail.job_order_repair_order ? gate_passes.gate_pass_detail.job_order_repair_order.repair_order.code : '-'}} / {{gate_passes.gate_pass_detail.job_order_repair_order ? gate_passes.gate_pass_detail.job_order_repair_order.repair_order.name : '-'}}</span>
+                                                                </li>
+                                                                <li class="view-col-4">
                                                                     <span class="view-col-label">Work Order No</span>
                                                                     <span class="view-col-value">{{gate_passes.gate_pass_detail.work_order_no}}</span>
                                                                 </li>
@@ -84,6 +88,7 @@
                                                             </ul>
                                                         </div>
                                                         <a ng-if="gate_passes.status_id == 8300 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227)" href="#!/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
+                                                        <a ng-if="gate_passes.status_id == 8302" ng-click="showOSLUpdateForm(index,gate_passes.gate_pass_detail)" class="btn btn-md type2 btn-secondary-dark btn-square">Update Bill Details</a>
                                                     </div><!-- Column -->
                                                     <div class="col-lg-4" ng-if="gate_passes.gate_pass_items.length > 0">
                                                         <div id="myCarousel" class="carousel mgpass-carousel slide" data-ride="carousel">
@@ -153,5 +158,69 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<div class="modal fade filter" id="osl_confirmation_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="osl_bill_form" autocomplete="off">
+            <input type="hidden" name="job_card_id" value="{{job_card.id}}">
+            <input type="hidden" name="gate_pass_detail_id" class="gate_pass_detail_id">
+            <input type="hidden" name="gate_pass_id" class="gate_pass_id">
+            <input type="hidden" name="repair_order_id" class="repair_order_id">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h5 class="modal-title" id="myModalLabel">
+                        Update Bill Details
+                    </h5>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Invoice Number </label>
+                                    <input type="text" name="invoice_number" maxlength="15" class="form-control required" placeholder="Invoice Number" autocomplete="off" />
+                                </div><!-- Feild -->
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Invoice Date
+                                        <sup class="mandatory">
+                                            *
+                                        </sup>
+                                    </label>
+                                    <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
+                                        <input type="text" class="form-control required" placeholder="Select Date" name="invoice_date" />
+                                        <div class="input-group-addon">
+                                            <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                        </div>
+                                    </div><!-- Input Group -->
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Invoice Amount</label>
+                                    <input type="text" name="invoice_amount" class="form-control required" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Invoice Amount" autocomplete="off" />
+                                </div><!-- Feild -->
+                            </div>
+                        </div><!-- Row -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" ng-click="saveBillDetail()" class="btn btn-bordered save_bill_detail">Submit</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
 <!-- Drag & Drop File Upload Plugins -->
 <script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
