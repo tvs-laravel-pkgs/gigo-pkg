@@ -3454,7 +3454,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			if ($request->amc_status == 1 && $request->warrany_status == 1) {
-				if (strtotime($request->amc_starting_date) > strtotime($request->amc_ending_date)) {
+				if (strtotime($request->amc_starting_date) >= strtotime($request->amc_ending_date)) {
 					return response()->json([
 						'success' => false,
 						'error' => 'Validation Error',
