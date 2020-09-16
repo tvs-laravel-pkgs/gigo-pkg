@@ -2606,6 +2606,9 @@ class VehicleInwardController extends Controller {
 						}
 					}
 				}
+
+				$job_order->is_customer_approved = 0;
+				$job_order->is_customer_agreed = 0;
 			}
 
 			$job_order->fill($request->all());
@@ -2713,6 +2716,9 @@ class VehicleInwardController extends Controller {
 
 			//Estimate Order ID
 			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->is_customer_approved = 0;
+			$job_order->is_customer_agreed = 0;
+			$job_order->save();
 
 			if (!$job_order) {
 				return response()->json([
@@ -2968,6 +2974,9 @@ class VehicleInwardController extends Controller {
 
 			//Estimate Order ID
 			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->is_customer_approved = 0;
+			$job_order->is_customer_agreed = 0;
+			$job_order->save();
 
 			if (!$job_order) {
 				return response()->json([
