@@ -4481,18 +4481,48 @@ class JobCardController extends Controller {
 			$gate_pass_detail->updated_at = Carbon::now();
 			$gate_pass_detail->save();
 
-			// //Check Repair Order id is OSL ROT or Not
-			// $osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_card->jobOrder->id)->where('job_order_repair_orders.id', $request->repair_order_id)->first();
+			//Internal Vendor
+			if ($gate_pass_detail->vendor_type_id == 121) {
+				$internal_amount = ($request->invoice_amount * 50) / 100;
+				$total_amount = $request->invoice_amount + $internal_amount;
+			} else {
+				//External Vendor
+				$internal_amount = ($request->invoice_amount * 25) / 100;
+				$total_amount = $request->invoice_amount + $internal_amount;
+			}
 
-			// if ($osl_work) {
+			$gate_pass_detail->total_amount = $total_amount;
+			$gate_pass_detail->save();
 
-			// }
+			//Check Repair Order id is OSL ROT or Not
+			$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_card->jobOrder->id)->where('job_order_repair_orders.id', $request->repair_order_id)->first();
 
-			// //Check OSL ROT and Update Invoice amount
+			if ($osl_work) {
+				//Check Other Gate Passes
+				$osl_gate_pass = GatePass::join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->where('gate_passes.job_card_id', $job_card->id)->where('gate_passes.type_id', 8281)->where('gate_pass_details.job_order_repair_order_id', $request->repair_order_id)->whereIn('gate_passes.status_id', [8300, 8301, 8302, 8303])->where('gate_pass_details.id', '!=', $request->gate_pass_detail_id)->count();
 
-			// dd($job_card->jobOrder->id);
+				if (!$osl_gate_pass) {
+					//Get Total Invoice Sum
+					$osl_invoice_sum = GatePass::join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->where('gate_passes.job_card_id', $job_card->id)->where('gate_passes.type_id', 8281)->where('gate_pass_details.job_order_repair_order_id', $request->repair_order_id)->sum('total_amount');
 
-			// $osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_card->jobOrder->id)->count();
+					//Update JobOrder Repair Order
+					$job_order_repair_order = JobOrderRepairOrder::find($request->repair_order_id);
+					if ($job_order_repair_order) {
+						if ($job_order_repair_order->amount >= $osl_invoice_sum) {
+							$job_order_repair_order->amount = $osl_invoice_sum;
+							$job_order_repair_order->save();
+						} else {
+							return response()->json([
+								'success' => false,
+								'error' => 'Validation Error',
+								'errors' => [
+									'Total OSL Invoice Amount not be exceed in Customer Approved amount',
+								],
+							]);
+						}
+					}
+				}
+			}
 
 			DB::commit();
 
