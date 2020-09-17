@@ -186,7 +186,8 @@ app.component('warrantyJobOrderRequestTableList', {
                                 return;
                             }
                             showNoty('success', 'Warranty job order request initiated successfully');
-                            $location.path('/warranty-job-order-request/table-list');
+                            $('#warranty_job_order_request_list').dataTable().fnFilter();
+                            // $location.path('/warranty-job-order-request/table-list');
                             $scope.$apply();
                         })
                         .fail(function(xhr) {
