@@ -223,7 +223,7 @@ class WarrantyJobOrderRequestController extends Controller {
 	}
 
 	public function pdf() {
-		$warranty_job_order_request = WarrantyJobOrderRequest::find(18);
+		$warranty_job_order_request = WarrantyJobOrderRequest::find(36);
 		$warranty_job_order_request->load($this->model::relationships('read'));
 		$warranty_job_order_request->loadBusiness('ALSERV');
 		// dd($warranty_job_order_request);
