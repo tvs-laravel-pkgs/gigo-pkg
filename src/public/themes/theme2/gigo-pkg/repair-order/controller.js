@@ -248,6 +248,9 @@ app.component('repairOrderForm', {
                 'category_id': {
                     required: true,
                 },
+                'is_editable': {
+                    required: true,
+                },
                 'claim_amount': {
                     required: false,
                     number: true,

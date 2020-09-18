@@ -26,6 +26,7 @@ class RepairOrder extends BaseModel {
 		'code',
 		'alt_code',
 		'name',
+		'is_editable',
 		'category_id',
 		'skill_level_id',
 		'hours',
@@ -292,6 +293,7 @@ class RepairOrder extends BaseModel {
 			'Alt Code' => $record_data->alt_code,
 			'UOM Short Name' => $record_data->uom_short_name,
 			'Tax Code' => $record_data->tax_code,
+			'Is Editable' => $record_data->is_editable,
 		];
 		return static::saveFromExcelArray($record);
 	}
@@ -357,6 +359,13 @@ class RepairOrder extends BaseModel {
 		if (!$result['success']) {
 			return $result;
 		}
+
+		if ($record_data['Is Editable'] == 'Yes') {
+			$record->is_editable = 1;
+		} else {
+			$record->is_editable = 0;
+		}
+
 		$record->amount = $amount;
 		$record->created_by_id = $created_by_id;
 		$record->save();

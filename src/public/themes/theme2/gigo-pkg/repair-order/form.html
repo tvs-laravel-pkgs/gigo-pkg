@@ -182,6 +182,21 @@
                                         </div>-->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
+                                                <label>Is Editable?<sup class="mandatory">*</sup></label>
+                                                <md-select ng-model="$ctrl.repair_order.is_editable" placeholder="Select Type" md-on-close="clearSearchRejectedReason()" data-md-container-class="selectdemoSelectHeader">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input type="search" placeholder="Search Type" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="0">No</md-option>
+                                                        <md-option ng-value="1">Yes</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" id="is_editable" class="" name="is_editable" value="{{$ctrl.repair_order.is_editable}}">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
                                                 <label>
                                                     Active Status
                                                     <sup class="mandatory">*</sup>
