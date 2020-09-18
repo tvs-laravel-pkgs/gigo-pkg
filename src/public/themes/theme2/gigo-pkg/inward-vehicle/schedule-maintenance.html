@@ -368,7 +368,8 @@
                             <ul class="view-row mb-no pad-tb-none">
                                 <li class="view-col-4">
                                     <span class="view-col-label">ROT Description</span>
-                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.name}}</span>
+                                    <span class="view-data-list-value" ng-if="schedule_maintainance_ro.repair_order.is_editable == 0">{{schedule_maintainance_ro.repair_order.name}}</span>
+                                    <input class="form-control" ng-if="schedule_maintainance_ro.repair_order.is_editable == 1" ng-model="schedule_maintainance_ro.repair_order.name" type="text" name="repair_order_description" value="{{schedule_maintainance_ro.repair_order.name}}">
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">Category</span>
@@ -383,8 +384,9 @@
                                     <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.hours}}</span>
                                 </li>
                                 <li class="view-col-4">
-                                    <span class="view-col-label">Amount</span>
-                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.amount | currency}}</span>
+                                    <span class="view-col-label">Amount per Hour</span>
+                                    <span class="view-data-list-value" ng-if="schedule_maintainance_ro.repair_order.is_editable == 0">{{schedule_maintainance_ro.repair_order.amount | currency}}</span>
+                                    <input class="form-control required" ng-if="schedule_maintainance_ro.repair_order.is_editable == 1" ng-model="schedule_maintainance_ro.repair_order.amount" type="text" name="repair_order_amount" value="{{schedule_maintainance_ro.repair_order.amount}}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="7">
                                 </li>
                             </ul>
                         </div><!-- View Data -->

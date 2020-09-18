@@ -3017,6 +3017,11 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     RepairOrderSvc.read(labour.labour_id)
                         .then(function(response) {
                             $scope.schedule_maintainance_ro.repair_order = response.data.repair_order;
+
+                            if (labour.repair_order.is_editable == 1) {
+                                $scope.schedule_maintainance_ro.repair_order.amount = labour.amount;
+                            }
+
                         });
                 }
                 $scope.schedule_maintainance_ro.repair_order = labour;
@@ -3303,7 +3308,6 @@ app.component('inwardVehiclePayableLabourPartForm', {
 
         $scope.job_order_id = $routeParams.job_order_id;
 
-        self.osl_work_need = 0;
         //FETCH DATA
         $scope.fetchData = function() {
             $rootScope.loading = true;
@@ -3380,69 +3384,6 @@ app.component('inwardVehiclePayableLabourPartForm', {
             //     }
             // });
         }
-
-        $scope.saveOSLWorkForm = function() {
-            var form_id = '#osl_work_confirmation';
-            if (self.osl_work_need == 1) {
-                var v = jQuery(form_id).validate({
-                    ignore: '',
-                    rules: {
-                        'job_order_id': {
-                            required: true,
-                        },
-                        'osl_work': {
-                            required: true,
-                        },
-                        'labour_value': {
-                            required: function(element) {
-                                if (self.osl_work_need == 1) {
-                                    return true;
-                                }
-                                return false;
-                            },
-                        },
-                    },
-                    submitHandler: function(form) {
-                        let formData = new FormData($(form_id)[0]);
-                        $rootScope.loading = true;
-                        $('.submit_osl').button('loading');
-                        $.ajax({
-                                url: base_url + '/api/vehicle-inward/osl-work/save',
-                                method: "POST",
-                                data: formData,
-                                processData: false,
-                                contentType: false,
-                            })
-                            .done(function(res) {
-                                self.osl_work_need = 0;
-                                if (!res.success) {
-                                    $rootScope.loading = false;
-                                    showErrorNoty(res);
-                                    return;
-                                }
-                                $('#osl_confirmation_modal').modal('hide');
-                                $('body').removeClass('modal-open');
-                                $('.modal-backdrop').remove();
-                                $scope.fetchData();
-                                custom_noty('success', res.message);
-                            })
-                            .fail(function(xhr) {
-                                $rootScope.loading = false;
-                                $scope.button_action(id, 2);
-                                custom_noty('error', 'Something went wrong at server');
-                            });
-
-                        $('.submit_osl').button('reset');
-                        self.osl_work_need = 0;
-                    }
-                });
-            } else {
-                $('#osl_confirmation_modal').modal('hide');
-                $('body').removeClass('modal-open');
-                $('.modal-backdrop').remove();
-            }
-        }
-
 
         $scope.selectingRepairOrder = function(val) {
             if (val) {
@@ -3638,13 +3579,17 @@ app.component('inwardVehiclePayableLabourPartForm', {
                             $scope.schedule_maintainance_ro.split_order_type = response.data.split_order_type;
                         });
                 }
+                $scope.schedule_maintainance_ro.repair_order = labour;
                 if (labour.category == undefined) {
                     RepairOrderSvc.read(labour.labour_id)
                         .then(function(response) {
                             $scope.schedule_maintainance_ro.repair_order = response.data.repair_order;
+
+                            if (labour.repair_order.is_editable == 1) {
+                                $scope.schedule_maintainance_ro.repair_order.amount = labour.amount;
+                            }
                         });
                 }
-                $scope.schedule_maintainance_ro.repair_order = labour;
             }
 
             $scope.labour_index = labour_index;

@@ -249,10 +249,9 @@
                                             </div><!-- Table Transparent Wrap -->
                                             <div class="mb-20"></div><!-- Spacing -->
                                             <hr>
-                                            <div class="col-md-12">
+                                            <div class="col-md-12" ng-if="job_order.status_id != 8472 && !job_order.part_intent_confirmed_date && total_labour_count > 0">
                                                 <div class="text-center pt-40">
-                                                    <a ng-if="job_order.status_id != 8472 && !job_order.part_intent_confirmed_date && total_labour_count > 0" class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Send to Module Store to Add Parts</a>
-                                                    <a ng-if="job_order.status_id != 8472 && osl_work == 0" class="btn btn-grey part_request" data-toggle="modal" data-target="#osl_confirmation_modal">OSL Work</a>
+                                                    <a class="btn btn-red part_request" data-toggle="modal" data-target="#confirmation_modal">Send to Module Store to Add Parts</a>
                                                 </div>
                                                 <div class="mb-20"></div><!-- Spacing -->
                                             </div>
@@ -292,68 +291,6 @@
         </div>
     </div>
 </div>
-<!-- Modal -->
-<div class="modal filter fade" id="osl_confirmation_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-sm finance-view-modal" role="document">
-        <form id="osl_work_confirmation" autocomplete="off">
-            <input type="hidden" name="job_order_id" id="job_order_id" value="{{job_order.id}}">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                    <h4 class="modal-title">OSL Work Confirmation</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <h4></h4>
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label>
-                                                Are you Sure? Do you confirm OSL works are needed in this Job Order? If yes means provide the OSL Work Labour Value<br>
-                                                Note: This labour value cannot be updated after submit.
-                                        </div><!-- Feild -->
-                                    </div><!-- Column -->
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label class="text-center">
-                                                OSL Work Need?
-                                                <sup class="mandatory">*</sup></label>
-                                            <div class="common-radio-button type-4 text-center">
-                                                <input type="radio" name="osl_work" id="no" ng-model="$ctrl.osl_work_need" ng-value="0" value="0" ng-checked="$ctrl.osl_work_need">
-                                                <label for="no">
-                                                    No
-                                                </label>
-                                                <input type="radio" ng-model="$ctrl.osl_work_need" id="yes" name="osl_work" ng-value="1" value="1">
-                                                <label for="yes">
-                                                    Yes
-                                                </label>
-                                            </div>
-                                            <div id="errorDeleteReasonRequired"></div>
-                                        </div><!-- Feild -->
-                                    </div><!-- Column -->
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                            <div class="col-md-12" ng-if="$ctrl.osl_work_need == '1'">
-                                <div class="form-group text-center">
-                                    <label>Labour Value <sup class="mandatory">*</sup></label>
-                                    <input type="text" class="form-control required" maxlength="6" name="labour_value" onkeypress="return event.charCode >= 48 && event.charCode <= 57">
-                                </div><!-- Feild -->
-                            </div><!-- Column -->
-                        </div><!-- Row -->
-                    </div><!-- Container -->
-                </div><!-- Modal Body -->
-                <div class="modal-footer">
-                    <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">
-                        Cancel
-                    </button>
-                    <button class="btn btn-red submit_osl" ng-click="saveOSLWorkForm()">Submit</button>
-                </div><!-- Modal Footer -->
-            </div><!-- Modal Content -->
-        </form>
-    </div><!-- Modal Dialog -->
-</div><!-- Modal Content -->
 <!-- Modal -->
 <div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm finance-view-modal" role="document">
@@ -468,7 +405,8 @@
                             <ul class="view-row mb-no pad-tb-none">
                                 <li class="view-col-4">
                                     <span class="view-col-label">ROT Description</span>
-                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.name}}</span>
+                                    <span class="view-data-list-value" ng-if="schedule_maintainance_ro.repair_order.is_editable == 0">{{schedule_maintainance_ro.repair_order.name}}</span>
+                                    <input class="form-control" ng-if="schedule_maintainance_ro.repair_order.is_editable == 1" ng-model="schedule_maintainance_ro.repair_order.name" type="text" name="repair_order_description" value="{{schedule_maintainance_ro.repair_order.name}}">
                                 </li>
                                 <li class="view-col-4">
                                     <span class="view-col-label">Category</span>
@@ -483,8 +421,9 @@
                                     <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.hours}}</span>
                                 </li>
                                 <li class="view-col-4">
-                                    <span class="view-col-label">Amount</span>
-                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.amount | currency}}</span>
+                                    <span class="view-col-label">Amount per Hour</span>
+                                    <span class="view-data-list-value" ng-if="schedule_maintainance_ro.repair_order.is_editable == 0">{{schedule_maintainance_ro.repair_order.amount | currency}}</span>
+                                    <input class="form-control required" ng-if="schedule_maintainance_ro.repair_order.is_editable == 1" ng-model="schedule_maintainance_ro.repair_order.amount" type="text" name="repair_order_amount" value="{{schedule_maintainance_ro.repair_order.amount}}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="7">
                                 </li>
                             </ul>
                         </div><!-- View Data -->

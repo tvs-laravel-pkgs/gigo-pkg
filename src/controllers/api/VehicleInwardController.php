@@ -2573,7 +2573,7 @@ class VehicleInwardController extends Controller {
 								$repair_order->is_customer_approved = 0;
 								$repair_order->split_order_type_id = $rvalue->pivot->split_order_type_id;
 								$repair_order->qty = $rvalue->hours;
-								$repair_order->amount = $rvalue->amount;
+								$repair_order->amount = $rvalue->hours * $rvalue->amount;
 								$repair_order->is_free_service = $value->is_free;
 								$repair_order->status_id = 8180; //Customer Approval Pending
 								$repair_order->estimate_order_id = $estimate_order_id;
@@ -3052,6 +3052,11 @@ class VehicleInwardController extends Controller {
 			}
 			DB::beginTransaction();
 
+			if ($request->repair_order_description) {
+				$repair_order->name = $request->repair_order_description;
+				$repair_order->save();
+			}
+
 			if (!empty($request->job_order_repair_order_id)) {
 				$job_order_repair_order = JobOrderRepairOrder::find($request->job_order_repair_order_id);
 			} else {
@@ -3064,7 +3069,11 @@ class VehicleInwardController extends Controller {
 			$job_order_repair_order->repair_order_id = $request->rot_id;
 			$job_order_repair_order->qty = $repair_order->hours;
 			$job_order_repair_order->split_order_type_id = $request->split_order_type_id;
-			$job_order_repair_order->amount = $repair_order->amount;
+			if ($request->repair_order_description) {
+				$job_order_repair_order->amount = $request->repair_order_amount;
+			} else {
+				$job_order_repair_order->amount = $repair_order->hours * $repair_order->amount;
+			}
 			$job_order_repair_order->is_free_service = 0;
 			if ($request->type == 'scheduled') {
 				$job_order_repair_order->is_recommended_by_oem = 1;
@@ -3689,6 +3698,12 @@ class VehicleInwardController extends Controller {
 				$labour_details[$key]['name'] = $value->repairOrder->name;
 				$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
 				$labour_details[$key]['qty'] = $value->qty;
+				if ($value->repairOrder->is_editable == 1) {
+					$labour_details[$key]['rate'] = $value->amount;
+				} else {
+					$labour_details[$key]['rate'] = $value->repairOrder->amount;
+				}
+
 				$labour_details[$key]['amount'] = $value->amount;
 				$labour_details[$key]['is_free_service'] = $value->is_free_service;
 				$labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
