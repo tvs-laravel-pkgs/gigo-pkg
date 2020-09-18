@@ -66,6 +66,9 @@
                                                             <th class="text-right">
                                                                 Hours
                                                             </th>
+                                                            <th class="text-right">
+                                                                Rate
+                                                            </th>
                                                             <th class="wid-180 white-space text-right">
                                                                 Labour Value
                                                             </th>
@@ -86,6 +89,9 @@
                                                             </td>
                                                             <td class="text-right">
                                                                 {{labour_details.qty}}
+                                                            </td>
+                                                            <td class="text-right">
+                                                                {{labour_details.rate | number:2}}
                                                             </td>
                                                             <td class="wid-180 white-space text-right">
                                                                 {{labour_details.amount | number:2}}
@@ -111,7 +117,7 @@
                                                                     Add Labour
                                                                 </button>
                                                             </td>
-                                                            <td colspan="4" class="text-right">
+                                                            <td colspan="5" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>

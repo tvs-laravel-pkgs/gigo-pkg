@@ -64,6 +64,9 @@
                                                             <th class="text-right">
                                                                 Hours
                                                             </th>
+                                                            <th class="text-right">
+                                                                Rate
+                                                            </th>
                                                             <th class="wid-180 white-space text-right">
                                                                 Labour Value
                                                             </th>
@@ -91,6 +94,9 @@
                                                             <td class="text-right">
                                                                 {{labour_details.qty}}
                                                             </td>
+                                                            <td class="text-right">
+                                                                {{labour_details.rate | number:2}}
+                                                            </td>
                                                             <td class="wid-180 white-space text-right">
                                                                 {{labour_details.amount | number:2}}
                                                             </td>
@@ -109,7 +115,7 @@
                                                                     Add Labour
                                                                 </button>
                                                             </td>
-                                                            <td colspan="5" class="text-right">
+                                                            <td colspan="6" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
@@ -384,7 +390,7 @@
                                     <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.hours}}</span>
                                 </li>
                                 <li class="view-col-4">
-                                    <span class="view-col-label">Amount per Hour</span>
+                                    <span class="view-col-label">Amount (per Hour)</span>
                                     <span class="view-data-list-value" ng-if="schedule_maintainance_ro.repair_order.is_editable == 0">{{schedule_maintainance_ro.repair_order.amount | currency}}</span>
                                     <input class="form-control required" ng-if="schedule_maintainance_ro.repair_order.is_editable == 1" ng-model="schedule_maintainance_ro.repair_order.amount" type="text" name="repair_order_amount" value="{{schedule_maintainance_ro.repair_order.amount}}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="7">
                                 </li>
