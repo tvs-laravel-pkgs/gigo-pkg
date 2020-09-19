@@ -317,7 +317,7 @@
 </div><!-- Modal -->
 <div class="modal fade filter" id="labour_form_modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
-        <form id="labour_form">
+        <form id="labour_form" autocomplete="off">
             <input type="hidden" name="job_order_id" value="{{job_order.id}}">
             <input type="hidden" name="job_order_repair_order_id" value="{{repair_order_id}}">
             <input type="hidden" name="type" value="scheduled">
@@ -390,7 +390,7 @@
                                     <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.hours}}</span>
                                 </li>
                                 <li class="view-col-4">
-                                    <span class="view-col-label">Amount (per Hour)</span>
+                                    <span class="view-col-label">Amount {{schedule_maintainance_ro.repair_order.is_editable == 0 ? '(per Hour)' : ''}}</span>
                                     <span class="view-data-list-value" ng-if="schedule_maintainance_ro.repair_order.is_editable == 0">{{schedule_maintainance_ro.repair_order.amount | currency}}</span>
                                     <input class="form-control required" ng-if="schedule_maintainance_ro.repair_order.is_editable == 1" ng-model="schedule_maintainance_ro.repair_order.amount" type="text" name="repair_order_amount" value="{{schedule_maintainance_ro.repair_order.amount}}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="7">
                                 </li>
@@ -416,7 +416,7 @@
 </div><!-- Modal -->
 <div class="modal fade filter" id="part_form_modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
-        <form id="part_form">
+        <form id="part_form" autocomplete="off">
             <input type="hidden" name="job_order_id" value="{{job_order.id}}">
             <input type="hidden" name="job_order_part_id" value="{{job_order_part_id}}">
             <input type="hidden" name="type" value="scheduled">

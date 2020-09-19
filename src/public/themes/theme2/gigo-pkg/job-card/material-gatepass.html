@@ -8,8 +8,8 @@
                     <a href="#!/job-card/table-list" type="button" class="btn-back btn-img"><img class="img-responsive" src="./public/theme/img/content/previous.svg" alt="Back" /></a>
                 </div><!-- Page Header Content -->
                 <div class="page-header-content title-block">
-                    <h1 class="title"><b>Material Gate Pass</b></h1>
-                    <p class="subtitle">Job Card / Material Gate Pass</p>
+                    <h1 class="title"><b>OSL Works</b></h1>
+                    <p class="subtitle">Job Card /OSL Works</p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
         </div><!-- Page Header Inner -->
@@ -28,7 +28,7 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <h5 class="title-red">
-                                            Material gatepass
+                                            OSL Works
                                         </h5>
                                         <div class="row" ng-repeat="(key, gate_passes) in job_card.gate_passes" ng-if="job_card.gate_passes.length > 0">
                                             <div class="mgatepass-wrap border" id="carousel_parent_{{gate_passes.id}}">
@@ -71,7 +71,12 @@
                                                             <ul class="view-row mb-no border-none">
                                                                 <li class="view-col-4">
                                                                     <span class="view-col-label">Repair Order</span>
-                                                                    <span class="view-col-value">{{gate_passes.gate_pass_detail.job_order_repair_order ? gate_passes.gate_pass_detail.job_order_repair_order.repair_order.code : '-'}} / {{gate_passes.gate_pass_detail.job_order_repair_order ? gate_passes.gate_pass_detail.job_order_repair_order.repair_order.name : '-'}}</span>
+                                                                    <span class="view-col-value">
+                                                                        <span ng-repeat="(keys, repair_order) in gate_passes.repair_orders">
+                                                                           <b> {{repair_order.code}} </b> / {{repair_order.name}}
+                                                                            <br>
+                                                                        </span>
+                                                                    </span>
                                                                 </li>
                                                                 <li class="view-col-4">
                                                                     <span class="view-col-label">Work Order No</span>
@@ -138,7 +143,7 @@
                                             </div>
                                         </div>
                                         <div class="text-center pt-40" ng-if="job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227">
-                                            <a href="#!/job-card/material-outward/{{job_card.id}}" class="btn btn-red">Add {{job_card.gate_passes.length > 0 ? 'Another' : ''}} Material Gate Pass</a>
+                                            <a href="#!/job-card/material-outward/{{job_card.id}}" class="btn btn-red">Add {{job_card.gate_passes.length > 0 ? 'Another' : ''}} OSL Work</a>
                                         </div>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
@@ -177,7 +182,9 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Invoice Number </label>
+                                    <label>Invoice Number <sup class="mandatory">
+                                            *
+                                        </sup> </label>
                                     <input type="text" name="invoice_number" maxlength="15" class="form-control required" placeholder="Invoice Number" autocomplete="off" />
                                 </div><!-- Feild -->
                             </div>
@@ -199,7 +206,9 @@
                             </div><!-- Column -->
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Invoice Amount</label>
+                                    <label>Invoice Amount<sup class="mandatory">
+                                            *
+                                        </sup></label>
                                     <input type="text" name="invoice_amount" class="form-control required" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Invoice Amount" autocomplete="off" />
                                 </div><!-- Feild -->
                             </div>

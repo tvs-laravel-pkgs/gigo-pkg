@@ -3762,16 +3762,12 @@ class VehicleInwardController extends Controller {
 
 		$total_amount = $part_amount + $labour_amount;
 
-		//Check OSL Work
-		$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_order->id)->count();
-
 		$result['job_order'] = $job_order;
 		$result['labour_details'] = $labour_details;
 		$result['part_details'] = $part_details;
 		$result['labour_amount'] = $labour_amount;
 		$result['part_amount'] = $part_amount;
 		$result['total_amount'] = $total_amount;
-		$result['osl_work'] = $osl_work;
 		$result['labours'] = $labours;
 
 		return $result;
@@ -4003,7 +3999,6 @@ class VehicleInwardController extends Controller {
 				'labour_total_amount' => $result['labour_amount'],
 				'parts_total_amount' => $result['part_amount'],
 				'labours' => $result['labours'],
-				'osl_work' => $result['osl_work'],
 			]);
 
 		} catch (\Exception $e) {
@@ -6499,23 +6494,18 @@ class VehicleInwardController extends Controller {
 					]);
 				}
 
-				//Check OSL Work or not
-				$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('job_order_repair_orders.id', $request->labour_parts_id)->where('repair_orders.code', 'OSL001')->first();
-				if ($osl_work) {
-					$job_order_repair_order = JobOrderRepairOrder::where('id', $request->labour_parts_id)->forceDelete();
+				$job_order_repair_order = JobOrderRepairOrder::find($request->labour_parts_id);
+				if ($request->removal_reason_id == 10022) {
+					$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
+					$job_order_repair_order->removal_reason = $request->removal_reason;
 				} else {
-					$job_order_repair_order = JobOrderRepairOrder::find($request->labour_parts_id);
-					if ($request->removal_reason_id == 10022) {
-						$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
-						$job_order_repair_order->removal_reason = $request->removal_reason;
-					} else {
-						$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
-						$job_order_repair_order->removal_reason = NULL;
-					}
-					$job_order_repair_order->updated_by_id = Auth::user()->id;
-					$job_order_repair_order->updated_at = Carbon::now();
-					$job_order_repair_order->save();
+					$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
+					$job_order_repair_order->removal_reason = NULL;
 				}
+				$job_order_repair_order->updated_by_id = Auth::user()->id;
+				$job_order_repair_order->updated_at = Carbon::now();
+				$job_order_repair_order->save();
+
 			} else {
 				$validator = Validator::make($request->all(), [
 					'labour_parts_id' => [
@@ -6558,142 +6548,6 @@ class VehicleInwardController extends Controller {
 					'message' => 'Part Deleted Successfully',
 				]);
 			}
-
-		} catch (\Exception $e) {
-			return response()->json([
-				'success' => false,
-				'error' => 'Server Error!',
-				'errors' => [
-					'Error : ' . $e->getMessage() . '. Line : ' . $e->getLine() . '. File : ' . $e->getFile(),
-				],
-			]);
-		}
-	}
-
-	public function saveOSLWork(Request $request) {
-		// dd($request->all());
-		try {
-			DB::beginTransaction();
-			if ($request->osl_work == '1') {
-				$validator = Validator::make($request->all(), [
-					'job_order_id' => [
-						'required',
-						'integer',
-						'exists:job_orders,id',
-					],
-				]);
-
-				if ($validator->fails()) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => $validator->errors()->all(),
-					]);
-				}
-
-				$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->select('id')->first();
-
-				//Estimate Order ID
-				$job_order = JobOrder::find($request->job_order_id);
-
-				if (!$job_order) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => [
-							'Job Order Not Found!',
-						],
-					]);
-				}
-
-				$job_order->is_customer_approved = 0;
-				$job_order->is_customer_agreed = 0;
-				$job_order->save();
-
-				$estimate_id = JobOrderEstimate::where('job_order_id', $job_order->id)->where('status_id', 10071)->first();
-				if ($estimate_id) {
-					$estimate_order_id = $estimate_id->id;
-				} else {
-					if (date('m') > 3) {
-						$year = date('Y') + 1;
-					} else {
-						$year = date('Y');
-					}
-					//GET FINANCIAL YEAR ID
-					$financial_year = FinancialYear::where('from', $year)
-						->where('company_id', Auth::user()->company_id)
-						->first();
-					if (!$financial_year) {
-						return response()->json([
-							'success' => false,
-							'error' => 'Validation Error',
-							'errors' => [
-								'Fiancial Year Not Found',
-							],
-						]);
-					}
-					//GET BRANCH/OUTLET
-					$branch = Outlet::where('id', $job_order->outlet_id)->first();
-
-					//GENERATE GATE IN VEHICLE NUMBER
-					$generateNumber = SerialNumberGroup::generateNumber(104, $financial_year->id, $branch->state_id, $branch->id);
-					if (!$generateNumber['success']) {
-						return response()->json([
-							'success' => false,
-							'error' => 'Validation Error',
-							'errors' => [
-								'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
-							],
-						]);
-					}
-
-					$estimate = new JobOrderEstimate;
-					$estimate->job_order_id = $job_order->id;
-					$estimate->number = $generateNumber['number'];
-					$estimate->status_id = 10071;
-					$estimate->created_by_id = Auth::user()->id;
-					$estimate->created_at = Carbon::now();
-					$estimate->save();
-
-					$estimate_order_id = $estimate->id;
-				}
-
-				$repair_order = RepairOrder::where('code', 'OSL001')->where('company_id', Auth::user()->company_id)->first();
-
-				if (!$repair_order) {
-					$repair_order = new RepairOrder;
-					$repair_order->company_id = Auth::user()->company_id;
-					$repair_order->code = 'OSL001';
-					$repair_order->name = 'Outside Labour Work';
-					$repair_order->hours = '0';
-					$repair_order->amount = '0';
-					$repair_order->tax_code_id = NULL;
-					$repair_order->created_by_id = Auth::user()->id;
-					$repair_order->created_at = Carbon::now();
-					$repair_order->save();
-				}
-
-				$job_order_repair_order = JobOrderRepairOrder::firstOrNew(['job_order_id' => $request->job_order_id, 'repair_order_id' => $repair_order->id]);
-
-				$job_order_repair_order->is_recommended_by_oem = 0;
-				$job_order_repair_order->is_fixed_schedule = 1;
-				$job_order_repair_order->is_customer_approved = 0;
-				$job_order_repair_order->split_order_type_id = $customer_paid_type ? $customer_paid_type->id : NULL;
-				$job_order_repair_order->qty = 1;
-				$job_order_repair_order->amount = $request->labour_value;
-				$job_order_repair_order->is_free_service = 0;
-				$job_order_repair_order->status_id = 8180; //Customer Approval Pending
-				$job_order_repair_order->estimate_order_id = $estimate_order_id;
-				$job_order_repair_order->created_by_id = Auth::user()->id;
-				$job_order_repair_order->save();
-			}
-
-			DB::commit();
-
-			return response()->json([
-				'success' => true,
-				'message' => 'OSL Work Added Successfully',
-			]);
 
 		} catch (\Exception $e) {
 			return response()->json([

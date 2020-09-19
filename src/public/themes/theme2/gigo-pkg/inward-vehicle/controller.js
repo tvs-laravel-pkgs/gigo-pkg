@@ -3333,7 +3333,6 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $scope.total_labour_count = res.total_labour_count;
                     $scope.extras = res.extras;
                     $scope.labours = res.labours;
-                    $scope.osl_work = res.osl_work;
                     self.repair_order_ids = [];
                     $scope.$apply();
                 })

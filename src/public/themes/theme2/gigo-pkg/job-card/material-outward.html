@@ -10,11 +10,11 @@
                 <div class="page-header-content title-block">
                     <h1 class="title">
                         <b>
-                            Material Outward
+                            OSL Work
                         </b>
                     </h1>
                     <p class="subtitle">
-                        Job card / Material Outward
+                        Job card / OSL Works
                     </p>
                 </div><!-- Page Header Content -->
             </div><!-- Page Header Content Left -->
@@ -73,7 +73,7 @@
                         </div><!-- Filters -->
                     </div><!-- Tab Header -->
                 </div><!-- Tab Form Header -->
-                <form id="material_gatepass">
+                <form id="material_gatepass" autocomplete="off">
                     <div class="tab-form-body side-tab-open">
                         <div class="tab-content">
                             <!-- TAB PANEL -->
@@ -119,6 +119,7 @@
                                                         </div><!-- Column -->
                                                         <input type="hidden" name="job_card_id" value="{{job_card_id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
                                                         <input type="hidden" name="gate_pass_id" value="{{gate_pass.id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
+                                                        <input type="hidden" name="osl_work_order_id" value="{{gate_pass.osl_work_order_id}}" class="form-control" placeholder="Enter Vendor Code" autocomplete="off" />
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label>Vendor Contact No <sup class="mandatory">*</sup></label>
@@ -134,7 +135,7 @@
                                                         <div class="col-md-6">
                                                             <div class="form-group">
                                                                 <label>Repair Order<sup class="mandatory">*</sup></label>
-                                                                <md-select ng-model="gate_pass.gate_pass_detail.job_order_repair_order_id" placeholder="Select Repair Order" data-md-container-class="selectdemoSelectHeader">
+                                                                <md-select multiple ng-model="selected_job_order_repair_order_ids" placeholder="Select Repair Order" data-md-container-class="selectdemoSelectHeader">
                                                                     <md-select-header class="demo-select-header">
                                                                         <input ng-model="searchRepairOrder" type="search" placeholder="Search for a Repair Order.." class="demo-header-searchbox md-text">
                                                                     </md-select-header>
@@ -144,7 +145,7 @@
                                                                         </md-option>
                                                                     </md-optgroup>
                                                                 </md-select>
-                                                                <input type="hidden" name="job_order_repair_order_id" value="{{gate_pass.gate_pass_detail.job_order_repair_order_id}}">
+                                                                <input type="hidden" name="job_order_repair_order_id" value="{{selected_job_order_repair_order_ids}}">
                                                             </div><!-- Feild -->
                                                         </div><!-- Column -->
                                                         <div class="col-md-6">

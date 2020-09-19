@@ -32,6 +32,7 @@ use App\JobOrderEstimate;
 use App\JobOrderIssuedPart;
 use App\JobOrderPart;
 use App\JobOrderReturnedPart;
+use App\OSLWorkOrder;
 use App\Otp;
 use App\Outlet;
 use App\SplitOrderType;
@@ -1022,6 +1023,13 @@ class JobCardController extends Controller {
 	public function LabourAssignmentFormData(Request $r) {
 		// dd($r->all());
 		try {
+
+			$osl_work_ids = JobOrderRepairOrder::join('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')->join('job_cards', 'job_cards.job_order_id', 'job_order_repair_orders.job_order_id')->where('repair_orders.is_editable', 1)->where('job_cards.id', $r->id)->pluck('job_order_repair_orders.id')->toArray();
+
+			if (!$osl_work_ids) {
+				$osl_work_ids = [];
+			}
+
 			//JOB CARD
 			$job_card = JobCard::with([
 				'status',
@@ -1029,8 +1037,8 @@ class JobCardController extends Controller {
 				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.model',
-				'jobOrder.jobOrderRepairOrders' => function ($q) {
-					$q->whereNull('removal_reason_id');
+				'jobOrder.jobOrderRepairOrders' => function ($q) use ($osl_work_ids) {
+					$q->whereNull('removal_reason_id')->whereNotIn('id', $osl_work_ids);
 				},
 				'jobOrder.jobOrderRepairOrders.status',
 				'jobOrder.jobOrderRepairOrders.repairOrder',
@@ -1671,7 +1679,16 @@ class JobCardController extends Controller {
 			}
 
 			if ($request->status_id == 8187) {
-				$total_count = JobOrderRepairOrder::where('job_order_id', $job_order_repair_order->job_order_id)->whereNull('removal_reason_id')->where('status_id', '!=', 8187)->count();
+
+				//Check OSL Work
+				$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_order_repair_order->job_order_id)->select('job_order_repair_orders.id')->first();
+
+				if ($osl_work) {
+					$total_count = JobOrderRepairOrder::where('job_order_id', $job_order_repair_order->job_order_id)->whereNull('removal_reason_id')->where('status_id', '!=', 8187)->where('id', '!=', $osl_work->id)->count();
+				} else {
+					$total_count = JobOrderRepairOrder::where('job_order_id', $job_order_repair_order->job_order_id)->whereNull('removal_reason_id')->where('status_id', '!=', 8187)->count();
+				}
+
 				if ($total_count == 0) {
 					$job_card = JobCard::where('id', $request->job_card_id)
 						->update([
@@ -2777,7 +2794,6 @@ class JobCardController extends Controller {
 			'job_card' => $job_card,
 			'send_approval_status' => $send_approval_status,
 			'labours' => $result['labours'],
-			'osl_work' => $result['osl_work'],
 		]);
 
 		// return response()->json([
@@ -2838,6 +2854,11 @@ class JobCardController extends Controller {
 				$labour_details[$key]['name'] = $value->repairOrder->name;
 				$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
 				$labour_details[$key]['qty'] = $value->qty;
+				if ($value->repairOrder->is_editable == 1) {
+					$labour_details[$key]['rate'] = $value->amount;
+				} else {
+					$labour_details[$key]['rate'] = $value->repairOrder->amount;
+				}
 				$labour_details[$key]['amount'] = $value->amount;
 				$labour_details[$key]['is_free_service'] = $value->is_free_service;
 				$labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
@@ -2892,9 +2913,6 @@ class JobCardController extends Controller {
 			}
 		}
 
-		//Check OSL Work
-		$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_order->id)->count();
-
 		$total_amount = $part_amount + $labour_amount;
 		// dd($labour_details);
 		$result['job_order'] = $job_order;
@@ -2903,7 +2921,6 @@ class JobCardController extends Controller {
 		$result['labour_amount'] = $labour_amount;
 		$result['part_amount'] = $part_amount;
 		$result['total_amount'] = $total_amount;
-		$result['osl_work'] = $osl_work;
 		$result['labours'] = $labours;
 
 		return $result;
@@ -2930,24 +2947,18 @@ class JobCardController extends Controller {
 					]);
 				}
 
-				//Check OSL Work or not
-				$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('job_order_repair_orders.id', $request->labour_parts_id)->where('repair_orders.code', 'OSL001')->first();
-
-				if ($osl_work) {
-					$job_order_repair_order = JobOrderRepairOrder::where('id', $request->labour_parts_id)->forceDelete();
+				$job_order_repair_order = JobOrderRepairOrder::find($request->labour_parts_id);
+				if ($request->removal_reason_id == 10022) {
+					$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
+					$job_order_repair_order->removal_reason = $request->removal_reason;
 				} else {
-					$job_order_repair_order = JobOrderRepairOrder::find($request->labour_parts_id);
-					if ($request->removal_reason_id == 10022) {
-						$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
-						$job_order_repair_order->removal_reason = $request->removal_reason;
-					} else {
-						$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
-						$job_order_repair_order->removal_reason = NULL;
-					}
-					$job_order_repair_order->updated_by_id = Auth::user()->id;
-					$job_order_repair_order->updated_at = Carbon::now();
-					$job_order_repair_order->save();
+					$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
+					$job_order_repair_order->removal_reason = NULL;
 				}
+				$job_order_repair_order->updated_by_id = Auth::user()->id;
+				$job_order_repair_order->updated_at = Carbon::now();
+				$job_order_repair_order->save();
+
 			} else {
 				$validator = Validator::make($request->all(), [
 					'labour_parts_id' => [
@@ -4018,8 +4029,6 @@ class JobCardController extends Controller {
 				'gatePasses.gatePassDetail.vendorType',
 				'gatePasses.gatePassDetail.vendor',
 				'gatePasses.gatePassDetail.vendor.primaryAddress',
-				'gatePasses.gatePassDetail.jobOrderRepairOrder',
-				'gatePasses.gatePassDetail.jobOrderRepairOrder.repairOrder',
 				'gatePasses.gatePassItems',
 				'gatePasses.gatePassItems.attachment',
 			])
@@ -4030,6 +4039,14 @@ class JobCardController extends Controller {
 					'success' => false,
 					'error' => 'Job Card Not found!',
 				]);
+			}
+
+			//Repair Orders
+			if ($view_metrial_gate_pass->gatePasses) {
+				foreach ($view_metrial_gate_pass->gatePasses as $key => $value) {
+					$repair_orders = JobOrderRepairOrder::join('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')->where('job_order_repair_orders.osl_work_order_id', $value->entity_id)->select('repair_orders.code', 'repair_orders.name')->get()->toArray();
+					$value->repair_orders = $repair_orders;
+				}
 			}
 
 			$job_order = JobOrder::with([
@@ -4097,24 +4114,24 @@ class JobCardController extends Controller {
 
 			}
 
-			$labour_details = array();
-			$labour_details[0]['id'] = '';
-			$labour_details[0]['name'] = 'Select Repair Order';
-			if ($job_card->jobOrder->jobOrderRepairOrders) {
-				foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $value) {
-					$labour_details[$key + 1]['id'] = $value->id;
-					$labour_details[$key + 1]['name'] = $value->repairOrder->code . ' - ' . $value->repairOrder->name;
-				}
-			}
-
 			if (isset($request->gate_pass_id)) {
 				$gate_pass = GatePass::with([
 					'gatePassDetail',
 					'gatePassDetail.vendorType',
 					'gatePassDetail.vendor',
 					'gatePassDetail.vendor.primaryAddress',
+					'gatePassItems',
 					'gatePassItems.attachment',
 				])
+					->select([
+						'gate_passes.*',
+						'osl_work_orders.id as osl_work_order_id',
+					])
+
+					->leftJoin('osl_work_orders', function ($join) {
+						$join->on('osl_work_orders.id', 'gate_passes.entity_id')
+							->where('gate_passes.gate_pass_of_id', 11282);
+					})
 					->find($request->gate_pass_id);
 
 				if (!$gate_pass) {
@@ -4126,17 +4143,39 @@ class JobCardController extends Controller {
 						],
 					]);
 				}
+
+				//Repair Orders
+				if ($gate_pass && $gate_pass->osl_work_order_id) {
+					$selected_job_order_repair_order_ids = JobOrderRepairOrder::where('osl_work_order_id', $gate_pass->osl_work_order_id)->pluck('id')->toArray();
+				} else {
+					$selected_job_order_repair_order_ids = [];
+				}
+
 			} else {
 				$gate_pass = new GatePass();
 				$gate_pass->gate_pass_detail = new GatePassDetail();
 				$gate_pass->gate_pass_detail->vendor = new Vendor();
 				$gate_pass->gate_pass_items = new GatePassItem();
+				$selected_job_order_repair_order_ids = [];
+			}
+
+			$labour_details = array();
+			if ($job_card->jobOrder->jobOrderRepairOrders) {
+				foreach ($job_card->jobOrder->jobOrderRepairOrders as $key => $value) {
+					if ((in_array($value->id, $selected_job_order_repair_order_ids)) || ($value->osl_work_order_id == NULL)) {
+						$labours = array();
+						$labours['id'] = $value->id;
+						$labours['name'] = $value->repairOrder->code . ' - ' . $value->repairOrder->name;
+						$labour_details[] = $labours;
+					}
+				}
 			}
 
 			return response()->json([
 				'success' => true,
 				'gate_pass' => $gate_pass,
 				'job_card' => $job_card,
+				'job_order_repair_order_ids' => $selected_job_order_repair_order_ids,
 				'labour_details' => $labour_details,
 				'attachement_path' => url('storage/app/public/gigo/material_gate_pass/attachments/'),
 			]);
@@ -4175,6 +4214,7 @@ class JobCardController extends Controller {
 				'work_order_no' => [
 					'required',
 					'unique:gate_pass_details,work_order_no,' . $request->gate_pass_id . ',gate_pass_id',
+					'unique:osl_work_orders,number,' . $request->osl_work_order_id . ',id',
 				],
 				'work_order_description' => [
 					'required',
@@ -4214,8 +4254,6 @@ class JobCardController extends Controller {
 				],
 				'job_order_repair_order_id' => [
 					'required',
-					'integer',
-					'exists:job_order_repair_orders,id',
 				],
 			]);
 
@@ -4235,9 +4273,35 @@ class JobCardController extends Controller {
 				]);
 			}
 
+			if ($request->job_order_repair_order_id) {
+				$job_order_repair_order_ids = json_decode($request->job_order_repair_order_id);
+				if (count($job_order_repair_order_ids) == 0) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => ['Please Select Repair Order!'],
+					]);
+				}
+			} else {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Please Select Repair Order!'],
+				]);
+			}
+
 			DB::beginTransaction();
 
 			$job_card = JobCard::with(['jobOrder'])->find($request->job_card_id);
+
+			if (!$job_card) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => ['Job Card not found!'],
+				]);
+			}
+
 			$gate_pass = GatePass::firstOrNew([
 				'id' => $request->gate_pass_id,
 			]);
@@ -4307,6 +4371,38 @@ class JobCardController extends Controller {
 				$gate_pass->save();
 			}
 
+			//SAVE OSL WORK
+			$osl_work_order = OSLWorkOrder::firstOrNew([
+				'id' => $request->osl_work_order_id,
+				'company_id' => Auth::user()->company_id,
+			]);
+			$osl_work_order->vendor_id = $request->vendor_id;
+			$osl_work_order->job_card_id = $job_card->id;
+			$osl_work_order->number = $request->work_order_no;
+			$osl_work_order->vendor_contact_no = $request->vendor_contact_no;
+			$osl_work_order->work_order_description = $request->work_order_description;
+			$osl_work_order->created_by_id = Auth::user()->id;
+			$osl_work_order->created_at = Carbon::now();
+			$osl_work_order->save();
+
+			$gate_pass->gate_pass_of_id = 11282;
+			$gate_pass->entity_id = $osl_work_order->id;
+			$gate_pass->save();
+
+			//Remove Old Updated Repair Orders
+			$job_order_repair_order = JobOrderRepairOrder::where('osl_work_order_id', $request->osl_work_order_id)->update(['is_work_order' => 0, 'osl_work_order_id' => NULL]);
+
+			//Update Repair Orders
+			foreach ($job_order_repair_order_ids as $key => $job_order_repair_order_id) {
+				$job_order_repair_order = JobOrderRepairOrder::find($job_order_repair_order_id);
+				if ($job_order_repair_order) {
+					$job_order_repair_order->is_work_order = 1;
+					$job_order_repair_order->osl_work_order_id = $osl_work_order->id;
+					$job_order_repair_order->save();
+				}
+
+			}
+
 			//SAVE GATE PASS DETAIL
 			$gate_pass_detail = GatePassDetail::firstOrNew([
 				'gate_pass_id' => $gate_pass->id,
@@ -4316,7 +4412,7 @@ class JobCardController extends Controller {
 			$gate_pass_detail->work_order_no = $request->work_order_no;
 			$gate_pass_detail->vendor_contact_no = $request->vendor_contact_no;
 			$gate_pass_detail->work_order_description = $request->work_order_description;
-			$gate_pass_detail->job_order_repair_order_id = $request->job_order_repair_order_id;
+			// $gate_pass_detail->job_order_repair_order_id = $request->job_order_repair_order_id;
 			$gate_pass_detail->created_by_id = Auth::user()->id;
 			$gate_pass_detail->save();
 
@@ -4495,18 +4591,19 @@ class JobCardController extends Controller {
 			$gate_pass_detail->save();
 
 			//Check Repair Order id is OSL ROT or Not
-			$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_card->jobOrder->id)->where('job_order_repair_orders.id', $request->repair_order_id)->first();
+			$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_card->jobOrder->id)->where('job_order_repair_orders.id', $request->repair_order_id)->select('job_order_repair_orders.id')->first();
 
 			if ($osl_work) {
 				//Check Other Gate Passes
 				$osl_gate_pass = GatePass::join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->where('gate_passes.job_card_id', $job_card->id)->where('gate_passes.type_id', 8281)->where('gate_pass_details.job_order_repair_order_id', $request->repair_order_id)->whereIn('gate_passes.status_id', [8300, 8301, 8302, 8303])->where('gate_pass_details.id', '!=', $request->gate_pass_detail_id)->count();
 
+				// dd($osl_gate_pass);
 				if (!$osl_gate_pass) {
 					//Get Total Invoice Sum
 					$osl_invoice_sum = GatePass::join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->where('gate_passes.job_card_id', $job_card->id)->where('gate_passes.type_id', 8281)->where('gate_pass_details.job_order_repair_order_id', $request->repair_order_id)->sum('total_amount');
 
 					//Update JobOrder Repair Order
-					$job_order_repair_order = JobOrderRepairOrder::find($request->repair_order_id);
+					$job_order_repair_order = JobOrderRepairOrder::find($osl_work->id);
 					if ($job_order_repair_order) {
 						if ($job_order_repair_order->amount >= $osl_invoice_sum) {
 							$job_order_repair_order->amount = $osl_invoice_sum;
