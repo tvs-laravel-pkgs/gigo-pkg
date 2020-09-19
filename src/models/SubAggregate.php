@@ -14,22 +14,13 @@ class SubAggregate extends BaseModel {
 	use SoftDeletes;
 	protected $table = 'sub_aggregates';
 	public $timestamps = true;
-	protected $fillable =
-		["name", "aggregate_id", "code"];
+	protected $fillable = [
+		"name",
+		"aggregate_id",
+		"code"
+	];
 
 	protected static $excelColumnRules = [
-		'Aggregate' => [
-			'table_column_name' => 'aggregate_id',
-			'rules' => [
-				'required' => [
-				],
-				'fk' => [
-					'class' => 'App\Aggregate',
-					'foreign_table_column' => 'code',
-					// 'check_with_company' => true,
-				],
-			],
-		],
 		'Name' => [
 			'table_column_name' => 'name',
 			'rules' => [
