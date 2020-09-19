@@ -187,17 +187,31 @@ class Complaint extends BaseModel {
 			}
 		*/
 
-		if (empty($record_data['Sub Aggregate Name'])) {
-			$errors[] = 'Sub Aggregate is empty';
+		if (empty($record_data['Aggregate Name'])) {
+			$errors[] = 'Aggregate is empty';
 		} else {
-			$sub_aggregate = SubAggregate::where([
-				// 'company_id' => $admin->company_id,
-				'name' => $record_data['Sub Aggregate Name'],
+			$aggregate = Aggregate::where([
+				//'company_id' => $admin->company_id,
+				'name' => $record_data['Aggregate Name'],
 			])->first();
-			if ($sub_aggregate == null) {
-				$errors[] = 'Sub Aggregate not found : ' . $record_data['Sub Aggregate Name'];
+			if (!$aggregate) {
+				$errors[] = 'Aggregate not found : ' . $record_data['Aggregate Name'];
+			}else{
+				if (empty($record_data['Sub Aggregate Name'])) {
+					$errors[] = 'Sub Aggregate is empty';
+				} else {
+					$sub_aggregate = SubAggregate::where([
+						'aggregate_id' => $aggregate->id,
+						'name' => $record_data['Sub Aggregate Name'],
+					])->first();
+					if ($sub_aggregate == null) {
+						$errors[] = 'Sub Aggregate not found : ' . $record_data['Sub Aggregate Name'];
+					}
+				}
+
 			}
 		}
+
 
 		if (count($errors) > 0) {
 			return [
@@ -208,7 +222,6 @@ class Complaint extends BaseModel {
 
 		$record = self::firstOrNew([
 			'company_id' => $company->id,
-			// 'group_id' => $group->id,
 			'sub_aggregate_id' => $sub_aggregate->id,
 			'code' => $record_data['Code'],
 		]);
@@ -232,12 +245,9 @@ class Complaint extends BaseModel {
 
 		$record = [
 			'Company Code' => $record_data->company_code,
-			// 'Group Code' => $record_data->group_code,
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
-			//'Hours' => $record_data->hours,
-			//'KMs' => $record_data->kms,
-			//'Months' => $record_data->months,
+			'Aggregate Name' => $record_data->aggregate_name,
 			'Sub Aggregate Name' => $record_data->sub_aggregate_name,
 		];
 		return static::saveFromExcelArray($record);
