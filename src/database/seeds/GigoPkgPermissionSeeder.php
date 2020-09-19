@@ -1959,6 +1959,58 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'delete-survey-type',
 				'display_name' => 'Delete',
 			],
+
+			//Aggregates
+			[
+				'display_order' => 100,
+				'parent' => 'gigo-masters',
+				'name' => 'aggregates',
+				'display_name' => 'Aggregates',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'aggregates',
+				'name' => 'add-aggregate',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'aggregates',
+				'name' => 'edit-aggregate',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'aggregates',
+				'name' => 'delete-aggregate',
+				'display_name' => 'Delete',
+			],
+
+			//Sub Aggregates
+			[
+				'display_order' => 100,
+				'parent' => 'gigo-masters',
+				'name' => 'sub-aggregates',
+				'display_name' => 'Sub Aggregates',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'sub-aggregates',
+				'name' => 'add-sub-aggregate',
+				'display_name' => 'Add',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'sub-aggregates',
+				'name' => 'edit-sub-aggregate',
+				'display_name' => 'Edit',
+			],
+			[
+				'display_order' => 3,
+				'parent' => 'sub-aggregates',
+				'name' => 'delete-sub-aggregate',
+				'display_name' => 'Delete',
+			],
 		];
 		Permission::createFromArrays($permissions);
 	}
