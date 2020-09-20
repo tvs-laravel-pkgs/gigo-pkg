@@ -1681,10 +1681,10 @@ class JobCardController extends Controller {
 			if ($request->status_id == 8187) {
 
 				//Check OSL Work
-				$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_order_repair_order->job_order_id)->select('job_order_repair_orders.id')->first();
+				$osl_work_id = JobOrderRepairOrder::join('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')->where('repair_orders.is_editable', 1)->where('job_order_repair_orders.job_order_id', $job_order_repair_order->job_order_id)->pluck('job_order_repair_orders.id')->toArray();
 
-				if ($osl_work) {
-					$total_count = JobOrderRepairOrder::where('job_order_id', $job_order_repair_order->job_order_id)->whereNull('removal_reason_id')->where('status_id', '!=', 8187)->where('id', '!=', $osl_work->id)->count();
+				if (count($osl_work_id) > 0) {
+					$total_count = JobOrderRepairOrder::where('job_order_id', $job_order_repair_order->job_order_id)->whereNull('removal_reason_id')->where('status_id', '!=', 8187)->whereNotIn('id', $osl_work_id)->count();
 				} else {
 					$total_count = JobOrderRepairOrder::where('job_order_id', $job_order_repair_order->job_order_id)->whereNull('removal_reason_id')->where('status_id', '!=', 8187)->count();
 				}
@@ -4044,7 +4044,7 @@ class JobCardController extends Controller {
 			//Repair Orders
 			if ($view_metrial_gate_pass->gatePasses) {
 				foreach ($view_metrial_gate_pass->gatePasses as $key => $value) {
-					$repair_orders = JobOrderRepairOrder::join('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')->where('job_order_repair_orders.osl_work_order_id', $value->entity_id)->select('repair_orders.code', 'repair_orders.name')->get()->toArray();
+					$repair_orders = JobOrderRepairOrder::join('repair_orders', 'repair_orders.id', 'job_order_repair_orders.repair_order_id')->where('job_order_repair_orders.osl_work_order_id', $value->entity_id)->select('repair_orders.code', 'repair_orders.name', 'repair_orders.is_editable', 'job_order_repair_orders.id', 'job_order_repair_orders.amount')->get()->toArray();
 					$value->repair_orders = $repair_orders;
 				}
 			}
@@ -4512,20 +4512,15 @@ class JobCardController extends Controller {
 				'invoice_amount' => [
 					'required',
 				],
-				'gate_pass_detail_id' => [
-					'required',
-					'integer',
-					'exists:gate_pass_details,id',
-				],
 				'gate_pass_id' => [
 					'required',
 					'integer',
 					'exists:gate_passes,id',
 				],
-				'repair_order_id' => [
+				'work_order_id' => [
 					'required',
 					'integer',
-					'exists:job_order_repair_orders,id',
+					'exists:osl_work_orders,id',
 				],
 			]);
 
@@ -4548,7 +4543,7 @@ class JobCardController extends Controller {
 					'success' => false,
 					'error' => 'Validation Error',
 					'errors' => [
-						'Material Gate Pass Not Found',
+						'OSL Work Order Not Found',
 					],
 				]);
 			}
@@ -4558,74 +4553,66 @@ class JobCardController extends Controller {
 			$gate_pass->updated_at = Carbon::now();
 			$gate_pass->save();
 
-			$gate_pass_detail = GatePassDetail::find($request->gate_pass_detail_id);
+			$osl_work_order = OSLWorkOrder::with(['vendor'])->find($request->work_order_id);
 
-			if (!$gate_pass_detail) {
+			if (!$osl_work_order) {
 				return response()->json([
 					'success' => false,
 					'error' => 'Validation Error',
 					'errors' => [
-						'Material Gate Pass Detail Not Found',
+						'OSL Work Order Not Found',
 					],
 				]);
 			}
 
-			$gate_pass_detail->invoice_number = $request->invoice_number;
-			$gate_pass_detail->invoice_date = date('Y-m-d', strtotime($request->invoice_date));
-			$gate_pass_detail->invoice_amount = $request->invoice_amount;
-			$gate_pass_detail->updated_by_id = Auth::user()->id;
-			$gate_pass_detail->updated_at = Carbon::now();
-			$gate_pass_detail->save();
+			$osl_work_order->invoice_number = $request->invoice_number;
+			$osl_work_order->invoice_date = date('Y-m-d', strtotime($request->invoice_date));
+			$osl_work_order->invoice_amount = $request->invoice_amount;
+			$osl_work_order->updated_by_id = Auth::user()->id;
+			$osl_work_order->updated_at = Carbon::now();
+			$osl_work_order->save();
 
-			//Internal Vendor
-			if ($gate_pass_detail->vendor_type_id == 121) {
-				$internal_amount = ($request->invoice_amount * 50) / 100;
-				$total_amount = $request->invoice_amount + $internal_amount;
-			} else {
-				//External Vendor
-				$internal_amount = ($request->invoice_amount * 25) / 100;
-				$total_amount = $request->invoice_amount + $internal_amount;
-			}
-
-			$gate_pass_detail->total_amount = $total_amount;
-			$gate_pass_detail->save();
-
-			//Check Repair Order id is OSL ROT or Not
-			$osl_work = RepairOrder::join('job_order_repair_orders', 'job_order_repair_orders.repair_order_id', 'repair_orders.id')->where('repair_orders.code', 'OSL001')->where('job_order_repair_orders.job_order_id', $job_card->jobOrder->id)->where('job_order_repair_orders.id', $request->repair_order_id)->select('job_order_repair_orders.id')->first();
-
-			if ($osl_work) {
-				//Check Other Gate Passes
-				$osl_gate_pass = GatePass::join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->where('gate_passes.job_card_id', $job_card->id)->where('gate_passes.type_id', 8281)->where('gate_pass_details.job_order_repair_order_id', $request->repair_order_id)->whereIn('gate_passes.status_id', [8300, 8301, 8302, 8303])->where('gate_pass_details.id', '!=', $request->gate_pass_detail_id)->count();
-
-				// dd($osl_gate_pass);
-				if (!$osl_gate_pass) {
-					//Get Total Invoice Sum
-					$osl_invoice_sum = GatePass::join('gate_pass_details', 'gate_pass_details.gate_pass_id', 'gate_passes.id')->where('gate_passes.job_card_id', $job_card->id)->where('gate_passes.type_id', 8281)->where('gate_pass_details.job_order_repair_order_id', $request->repair_order_id)->sum('total_amount');
-
-					//Update JobOrder Repair Order
-					$job_order_repair_order = JobOrderRepairOrder::find($osl_work->id);
-					if ($job_order_repair_order) {
-						if ($job_order_repair_order->amount >= $osl_invoice_sum) {
-							$job_order_repair_order->amount = $osl_invoice_sum;
-							$job_order_repair_order->save();
+			$total_invoice_amount = 0;
+			if ($request->gate_pass_repair_order) {
+				foreach ($request->gate_pass_repair_order as $key => $gate_pass_repair_order) {
+					if (isset($gate_pass_repair_order['osl_amount'])) {
+						//Internal Vendor
+						if ($osl_work_order->vendor && $osl_work_order->vendor->type_id == 121) {
+							$internal_amount = ($gate_pass_repair_order['osl_amount'] * 50) / 100;
+							$total_amount = $gate_pass_repair_order['osl_amount'] + $internal_amount;
 						} else {
-							return response()->json([
-								'success' => false,
-								'error' => 'Validation Error',
-								'errors' => [
-									'Total OSL Invoice Amount not be exceed in Customer Approved amount',
-								],
-							]);
+							//External Vendor
+							$external_amount = ($gate_pass_repair_order['osl_amount'] * 25) / 100;
+							$total_amount = $gate_pass_repair_order['osl_amount'] + $external_amount;
 						}
+
+						//Update Job Order Repair Order amount
+						$job_order_repair_order = JobOrderRepairOrder::find($gate_pass_repair_order['job_order_repair_id']);
+						if ($job_order_repair_order) {
+							$job_order_repair_order->amount = $total_amount;
+							$job_order_repair_order->save();
+						}
+
+						$total_invoice_amount += $gate_pass_repair_order['osl_amount'];
 					}
 				}
+			}
+
+			if ($total_invoice_amount > $request->invoice_amount) {
+				return response()->json([
+					'success' => false,
+					'error' => 'Validation Error',
+					'errors' => [
+						'OSL Invoice amount should be equal to OSL Repair Order Bill amount',
+					],
+				]);
 			}
 
 			DB::commit();
 
 			return response()->json([
 				'success' => true,
-				'message' => 'Material Gate Pass Bill Detail Saved Successfully!!',
+				'message' => 'OSL Work Order Bill Detail Saved Successfully!!',
 			]);
 
 		} catch (Exception $e) {

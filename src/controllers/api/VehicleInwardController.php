@@ -366,6 +366,11 @@ class VehicleInwardController extends Controller {
 						$schedule_labour_details[$key]['name'] = $value->repairOrder->name;
 						$schedule_labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
 						$schedule_labour_details[$key]['qty'] = $value->qty;
+						if ($value->repairOrder->is_editable == 1) {
+							$schedule_labour_details[$key]['rate'] = $value->amount;
+						} else {
+							$schedule_labour_details[$key]['rate'] = $value->repairOrder->amount;
+						}
 						$schedule_labour_details[$key]['amount'] = $value->amount;
 						$schedule_labour_details[$key]['is_free_service'] = $value->is_free_service;
 						$schedule_labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
@@ -400,6 +405,11 @@ class VehicleInwardController extends Controller {
 						$additional_labour_details[$key]['name'] = $value->repairOrder->name;
 						$additional_labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
 						$additional_labour_details[$key]['qty'] = $value->qty;
+						if ($value->repairOrder->is_editable == 1) {
+							$additional_labour_details[$key]['rate'] = $value->amount;
+						} else {
+							$additional_labour_details[$key]['rate'] = $value->repairOrder->amount;
+						}
 						$additional_labour_details[$key]['amount'] = $value->amount;
 						$additional_labour_details[$key]['is_free_service'] = $value->is_free_service;
 						$additional_labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
@@ -2988,6 +2998,7 @@ class VehicleInwardController extends Controller {
 
 			$job_order->is_customer_approved = 0;
 			$job_order->is_customer_agreed = 0;
+			$job_order->status_id = 8463;
 			$job_order->save();
 
 			$estimate_id = JobOrderEstimate::where('job_order_id', $job_order->id)->where('status_id', 10071)->first();

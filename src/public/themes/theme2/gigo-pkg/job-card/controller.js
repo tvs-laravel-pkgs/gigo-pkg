@@ -1025,10 +1025,19 @@ app.component('jobCardMaterialGatepassForm', {
         }
         $scope.fetchData();
 
+
+        setTimeout(function() {
+            $('.image_uploadify').imageuploadify();
+        }, 1000);
+
         $scope.showOSLUpdateForm = function(index, gate_passes) {
-            $('.gate_pass_detail_id').val(gate_passes.id);
-            $('.gate_pass_id').val(gate_passes.gate_pass_id);
-            $('.repair_order_id').val(gate_passes.job_order_repair_order_id);
+            $('#osl_bill_form')[0].reset();
+            console.log(gate_passes);
+            $scope.gate_pass_repair_orders = gate_passes.repair_orders;
+            // $('.gate_pass_detail_id').val(gate_passes.id);
+            $('.gate_pass_id').val(gate_passes.id);
+            $('.work_order_id').val(gate_passes.entity_id);
+            // $('.repair_order_id').val(gate_passes.job_order_repair_order_id);
             $('#osl_confirmation_modal').modal('show');
         }
 

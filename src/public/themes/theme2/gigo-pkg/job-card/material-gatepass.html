@@ -1,3 +1,16 @@
+<style>
+    /* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+</style>
 <!-- Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
@@ -73,7 +86,7 @@
                                                                     <span class="view-col-label">Repair Order</span>
                                                                     <span class="view-col-value">
                                                                         <span ng-repeat="(keys, repair_order) in gate_passes.repair_orders">
-                                                                           <b> {{repair_order.code}} </b> / {{repair_order.name}}
+                                                                            <b> {{repair_order.code}} </b> / {{repair_order.name}}
                                                                             <br>
                                                                         </span>
                                                                     </span>
@@ -93,7 +106,7 @@
                                                             </ul>
                                                         </div>
                                                         <a ng-if="gate_passes.status_id == 8300 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227)" href="#!/job-card/material-outward/{{job_card.id}}/{{gate_passes.id}}" class="btn btn-md type2 btn-secondary-dark btn-square">Edit</a>
-                                                        <a ng-if="gate_passes.status_id == 8302" ng-click="showOSLUpdateForm(index,gate_passes.gate_pass_detail)" class="btn btn-md type2 btn-secondary-dark btn-square">Update Bill Details</a>
+                                                        <a ng-if="gate_passes.status_id == 8302" ng-click="showOSLUpdateForm(index,gate_passes)" class="btn btn-md type2 btn-secondary-dark btn-square">Update OSL Bill Details</a>
                                                     </div><!-- Column -->
                                                     <div class="col-lg-4" ng-if="gate_passes.gate_pass_items.length > 0">
                                                         <div id="myCarousel" class="carousel mgpass-carousel slide" data-ride="carousel">
@@ -167,18 +180,43 @@
     <div class="modal-dialog" role="document">
         <form id="osl_bill_form" autocomplete="off">
             <input type="hidden" name="job_card_id" value="{{job_card.id}}">
-            <input type="hidden" name="gate_pass_detail_id" class="gate_pass_detail_id">
             <input type="hidden" name="gate_pass_id" class="gate_pass_id">
-            <input type="hidden" name="repair_order_id" class="repair_order_id">
+            <input type="hidden" name="work_order_id" class="work_order_id">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
                     <h5 class="modal-title" id="myModalLabel">
-                        Update Bill Details
+                        Update OSL Bill Details
                     </h5>
                 </div><!-- Modal Header -->
                 <div class="modal-body">
                     <div class="modal-form">
+                        <div class="row" ng-if="gate_pass_repair_orders.length > 0">
+                            <div class="col-sm-12">
+                                <h5 class="color-primary mb-10"><b>Repair Order Details</b></h5>
+                                <div class="table-responsive">
+                                    <table class="table table-dark-grey">
+                                        <thead>
+                                            <tr>
+                                                <th>ROT Code</th>
+                                                <th>ROT Name</th>
+                                                <th>OSL Bill Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="(index,gate_pass_repair_order) in gate_pass_repair_orders">
+                                                <input type="hidden" name="gate_pass_repair_order[{{index}}][job_order_repair_id]" value="{{gate_pass_repair_order.id}}">
+                                                <td>{{gate_pass_repair_order.code}}</td>
+                                                <td>{{gate_pass_repair_order.name}}</td>
+                                                <td><input type="number" step="0.01" min="1" max="{{gate_pass_repair_order.amount}}" class="form-control required" ng-if="gate_pass_repair_order.is_editable == 0" value="{{gate_pass_repair_order.amount}}" disabled name="gate_pass_repair_order[{{index}}][osl_amount]">
+                                                    <input type="number" step="0.01" min="1" max="{{gate_pass_repair_order.amount}}" class="form-control required" ng-if="gate_pass_repair_order.is_editable == 1" value="" name="gate_pass_repair_order[{{index}}][osl_amount]">
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div><!-- Table Responsive -->
+                            </div><!-- Column -->
+                        </div>
+                        <h5 class="color-primary mb-10"><b>Bill Details</b></h5>
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -197,7 +235,7 @@
                                         </sup>
                                     </label>
                                     <div class="input-group date" data-provide="datepicker" data-date-end-date="0d">
-                                        <input type="text" class="form-control required" placeholder="Select Date" name="invoice_date" />
+                                        <input type="text" class="form-control required" readonly placeholder="Select Date" name="invoice_date" />
                                         <div class="input-group-addon">
                                             <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                         </div>
@@ -211,6 +249,23 @@
                                         </sup></label>
                                     <input type="text" name="invoice_amount" class="form-control required" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Invoice Amount" autocomplete="off" />
                                 </div><!-- Feild -->
+                            </div>
+                            <div class="col-md-8">
+                                <div class="light-box">
+                                    <h6 class=""><b>Attachments</b></h6>
+                                    <div class="img-upload-preview">
+                                        <input type="file" class="image_uploadify material_image_{{index}}" accept="image/*,application/pdf" name="osl_work_order_attachment" multiple>
+                                        <div class="imageuploadify">
+                                            <div class="imageuploadify-images-list">
+                                                <!-- <div class="imageuploadify-container attach_{{indexx}}" style="margin-left: 4px; margin-right: 4px;" ng-repeat="(indexx, attach) in gate_pass_item.attachment">
+                                                    <button type="button" class="btn btn-danger glyphicon glyphicon-remove" ng-click="remove_attachment(attach.id,indexx)">
+                                                    </button>
+                                                    <img src="./storage/app/public/gigo/material_gate_pass/attachments/{{attach.name}}">
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                    </div><!-- Image Upload Preview -->
+                                </div><!-- Light Box -->
                             </div>
                         </div><!-- Row -->
                     </div><!-- Modal Form -->
@@ -227,9 +282,9 @@
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Modal Footer -->
-            </div><!-- Modal Content -->
         </form>
-    </div><!-- Modal Dialog -->
+    </div><!-- Modal Content -->
+</div><!-- Modal Dialog -->
 </div><!-- Modal -->
 <!-- Drag & Drop File Upload Plugins -->
-<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>
+<script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>

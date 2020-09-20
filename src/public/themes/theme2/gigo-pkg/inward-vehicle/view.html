@@ -1417,6 +1417,9 @@
                                                             <th class="text-right">
                                                                 Hours
                                                             </th>
+                                                             <th class="text-right">
+                                                                Rate
+                                                            </th>
                                                             <th class="wid-180 white-space text-right">
                                                                 Labour Value
                                                             </th>
@@ -1442,12 +1445,15 @@
                                                             <td class="text-right">
                                                                 {{labour_details.qty}}
                                                             </td>
+                                                            <td class="text-right">
+                                                                {{labour_details.rate | number:2}}
+                                                            </td>
                                                             <td class="wid-180 white-space text-right">
                                                                 {{labour_details.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td colspan="6" class="text-right">
+                                                            <td colspan="7" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
@@ -1604,6 +1610,9 @@
                                                             <th class="text-right">
                                                                 Hours
                                                             </th>
+                                                            <th class="text-right">
+                                                                Rate
+                                                            </th>
                                                             <th class="wid-180 white-space text-right">
                                                                 Labour Value
                                                             </th>
@@ -1623,12 +1632,15 @@
                                                             <td class="text-right">
                                                                 {{labour_detail.qty}}
                                                             </td>
+                                                            <td class="text-right">
+                                                                {{labour_detail.rate | number:2}}
+                                                            </td>
                                                             <td class="wid-180 white-space text-right">
                                                                 {{labour_detail.amount | number:2}}
                                                             </td>
                                                         </tr>
                                                         <tr class="ptb-9">
-                                                            <td colspan="5" class="text-right">
+                                                            <td colspan="6" class="text-right">
                                                                 <b>
                                                                     Total Labour
                                                                 </b>
