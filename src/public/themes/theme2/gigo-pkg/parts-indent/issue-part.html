@@ -114,7 +114,8 @@ input[type=number] {
                                                 <div class="col-md-4" ng-if="$ctrl.part_type == 1">
                                                     <div class="input-text form-group">
                                                         <label>Issue Mode <sup class="mandatory">*</sup></label>
-                                                        <md-select ng-model="issued_mode_id" placeholder="Select Issue Mode" data-md-container-class="selectdemoSelectHeader" ng-disabled="disabled == 1">
+                                                        <!-- <md-select ng-model="issued_mode_id" placeholder="Select Issue Mode" data-md-container-class="selectdemoSelectHeader" ng-disabled="disabled == 1"> -->
+                                                        <md-select ng-model="$ctrl.issued_mode_id" placeholder="Select Issue Mode" data-md-container-class="selectdemoSelectHeader">
                                                             <md-select-header class="demo-select-header">
                                                                 <input ng-model="searchIssueMode" type="search" placeholder="Search Issue Mode.." class="demo-header-searchbox md-text">
                                                             </md-select-header>
@@ -124,7 +125,7 @@ input[type=number] {
                                                                 </md-option>
                                                             </md-optgroup>
                                                         </md-select>
-                                                        <input type="hidden" name="issued_mode_id" class="required" value="{{issued_mode_id}}">
+                                                        <input type="hidden" name="issued_mode_id" class="required" value="{{$ctrl.issued_mode_id}}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
@@ -141,6 +142,12 @@ input[type=number] {
                                                             </md-optgroup>
                                                         </md-select>
                                                         <input type="hidden" name="issued_to_id" value="{{issued_part.issued_to.id}}">
+                                                    </div><!-- Form Group -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="$ctrl.part_type == 1 && $ctrl.mrp == 1 && $ctrl.issued_mode_id == 8480">
+                                                    <div class="input-text form-group">
+                                                        <label>MRP<sup class="mandatory">*</sup></label>
+                                                        <input type="number" name="part_mrp" min="1" step="0.01" class="form-control" placeholder="Enter MRP" autocomplete="off" />
                                                     </div><!-- Form Group -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
@@ -204,7 +211,7 @@ input[type=number] {
                                     </div><!-- Row -->
                                 </div><!-- Column -->
                             </div><!-- Row -->
-                            <div class="row" ng-if='issued_mode_id == 8481 && $ctrl.part_type == 1'>
+                            <div class="row" ng-if='$ctrl.issued_mode_id == 8481 && $ctrl.part_type == 1'>
                                 <div class="col-md-12">
                                     <h5 class="color-primary mb-10">
                                         <b>

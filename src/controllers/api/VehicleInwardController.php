@@ -1413,12 +1413,12 @@ class VehicleInwardController extends Controller {
 
 				if ($request->issued_mode_id == 8480) {
 					$pias_available_qty = $request->available_qty;
-					if (intval($request->issued_qty) > intval($pias_available_qty)) {
-						return response()->json([
-							'success' => false,
-							'message' => 'Issue Quantity should not exceed Available Quantity',
-						]);
-					}
+					// if (intval($request->issued_qty) > intval($pias_available_qty)) {
+					// 	return response()->json([
+					// 		'success' => false,
+					// 		'message' => 'Issue Quantity should not exceed Available Quantity',
+					// 	]);
+					// }
 
 					$pending_qty = $job_order_part_qty->qty - ($issued_qty->issued_qty + $returned_qty->returned_qty);
 					if (empty($request->job_order_issued_part_id)) {
@@ -1560,6 +1560,13 @@ class VehicleInwardController extends Controller {
 
 					$job_order_isssued_part->fill($request->all());
 					$job_order_isssued_part->save();
+
+					if ($request->part_mrp) {
+						$job_order_part = JobOrderPart::find($request->job_order_part_id);
+						$job_order_part->rate = $request->part_mrp;
+						$job_order_part->amount = $request->part_mrp * $job_order_part->qty;
+						$job_order_part->save();
+					}
 
 					DB::commit();
 

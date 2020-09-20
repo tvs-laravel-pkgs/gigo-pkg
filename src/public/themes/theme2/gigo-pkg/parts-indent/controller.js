@@ -1082,8 +1082,11 @@ app.component('partsIndentIssuePartForm', {
                             });
                         $scope.issued_to = res.issue_to_user;
                         $scope.issued_part.issued_qty = parseFloat($scope.issued_part.issued_qty);
-                        $scope.issued_mode_id = res.issue_data.issued_mode_id;
+                        self.issued_mode_id = res.issue_data.issued_mode_id;
+                    } else {
+                        self.issued_mode_id = '';
                     }
+                    self.mrp = 0;
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1248,8 +1251,8 @@ app.component('partsIndentIssuePartForm', {
                         }
                         $scope.part = res.part;
                         if ($scope.part) {
-                            console.log($scope.part.part_type.name);
-                            if ($scope.part.part_type.name == 'Lubricants') {
+                            console.log($scope.part.part_type);
+                            if ($scope.part.part_type && $scope.part.part_type.name == 'Lubricants') {
                                 custom_noty('error', 'Mentioned Lubricant item cannot issued multiple times.Kindly issue only one time!');
                             }
                         }
@@ -1259,11 +1262,14 @@ app.component('partsIndentIssuePartForm', {
                         $scope.total_balance_qty = res.total_balance_qty;
 
                         if ($scope.available_quantity >= 1) {
-                            $scope.issued_mode_id = 8480;
+                            // $scope.issued_mode_id = 8480;
+                            self.mrp = 0;
                         } else {
-                            $scope.issued_mode_id = 8481;
+                            // $scope.issued_mode_id = 8481;
+                            self.mrp = 1;
                         }
-                        $scope.disabled = 1;
+                        // $scope.disabled = 1;
+
                         $scope.$apply();
                     })
                     .fail(function(xhr) {
