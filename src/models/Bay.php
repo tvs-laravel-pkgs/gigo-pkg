@@ -80,6 +80,7 @@ class Bay extends BaseModel {
 			'Short Name' => $record_data->short_name,
 			'Status Name' => $record_data->status_name,
 			'Job Order Number' => $record_data->job_order_number,
+			'Area Type' => $record_data->area_type,
 		];
 		return static::saveFromExcelArray($record);
 	}
@@ -137,6 +138,20 @@ class Bay extends BaseModel {
 				}
 			}
 
+			if (empty($record_data['Area Type'])) {
+				$errors[] = 'Area Type is empty';
+			} else {
+				$area_type = Config::where([
+					'config_type_id' => 120,
+					'name' => $record_data['Area Type'],
+				])->first();
+				if (!$area_type) {
+					$errors[] = 'Invalid Area Type : ' . $record_data['Area Type'];
+				} else {
+					$area_type_id = $area_type->id;
+				}
+			}
+
 			$job_order_id = null;
 			if (!empty($record_data['Job Order Number'])) {
 				$job_order = JobOrder::where([
@@ -169,6 +184,7 @@ class Bay extends BaseModel {
 			$record->outlet_id = $outlet_id;
 			$record->job_order_id = $job_order_id;
 			$record->status_id = $status_id;
+			$record->area_type_id = $area_type_id;
 			// $record->company_id = $company->id;
 			$record->created_by_id = $created_by_id;
 			$record->save();
