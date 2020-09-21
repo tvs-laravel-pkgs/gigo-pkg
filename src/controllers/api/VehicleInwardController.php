@@ -4426,7 +4426,7 @@ class VehicleInwardController extends Controller {
 			}
 			$job_order['previous_customer_voice_ids'] = array_unique($previous_customer_voice_ids);
 
-			$customer_voice_list = $job_order->vehicle->model->customerVoices->toArray();
+			$customer_voice_list = $job_order->vehicle->model ? $job_order->vehicle->model->customerVoices->toArray() : [];
 			$customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
 
 			if ($customer_voice_other) {

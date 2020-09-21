@@ -276,6 +276,10 @@ class VehicleInventoryItem extends BaseModel {
 			// ]);
 		}
 
+		if (count($list) == 0) {
+			$list = null;
+		}
+
 		return $list;
 	}
 
