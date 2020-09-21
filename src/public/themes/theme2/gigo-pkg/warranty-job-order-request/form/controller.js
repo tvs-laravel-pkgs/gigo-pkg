@@ -177,7 +177,7 @@ app.component('warrantyJobOrderRequestForm', {
                         self.country = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.country;
                         self.state = $scope.warranty_job_order_request.job_order.vehicle.current_owner.customer.address.state;
                         // $scope.soldDateChange($scope.warranty_job_order_request.job_order.vehicle.sold_date);
-                        $scope.aggregateChange($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate);
+                        $scope.aggregateChange($scope.warranty_job_order_request.complaint.sub_aggregate.aggregate, true);
                         $scope.warranty_job_order_request.aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate.aggregate;
                         $scope.warranty_job_order_request.sub_aggregate = $scope.warranty_job_order_request.complaint.sub_aggregate;
                         $scope.warranty_job_order_request.customer_search_type = true;
@@ -221,7 +221,7 @@ app.component('warrantyJobOrderRequestForm', {
                         }
                         setTimeout(function() {
                             if ($scope.warranty_job_order_request.aggregate != null) {
-                                $scope.aggregateChange($scope.warranty_job_order_request.aggregate);
+                                $scope.aggregateChange($scope.warranty_job_order_request.aggregate, true);
                             }
                             $scope.countryChanged(true);
                         }, 2000);
@@ -1329,8 +1329,12 @@ app.component('warrantyJobOrderRequestForm', {
             }
         }
 
-        $scope.aggregateChange = function(aggregate) {
+        $scope.aggregateChange = function(aggregate, onload = null) {
             // console.log(aggregate.id);
+            if (onload == null) {
+                $scope.warranty_job_order_request.sub_aggregate = null;
+                $scope.warranty_job_order_request.complaint = null;
+            }
             $(".pace").removeClass('pace-inactive').addClass('pace-active');
             $.ajax({
                     url: base_url + '/api/aggregates/get-sub-aggregates-list',
