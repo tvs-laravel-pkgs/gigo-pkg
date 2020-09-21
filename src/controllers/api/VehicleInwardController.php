@@ -3716,8 +3716,10 @@ class VehicleInwardController extends Controller {
 				$labour_details[$key]['name'] = $value->repairOrder->name;
 				$labour_details[$key]['type'] = $value->repairOrder->repairOrderType ? $value->repairOrder->repairOrderType->short_name : '-';
 				$labour_details[$key]['qty'] = $value->qty;
+				$repair_order = $value->repairOrder;
 				if ($value->repairOrder->is_editable == 1) {
 					$labour_details[$key]['rate'] = $value->amount;
+					$repair_order->amount = $value->amount;
 				} else {
 					$labour_details[$key]['rate'] = $value->repairOrder->amount;
 				}
@@ -3727,7 +3729,7 @@ class VehicleInwardController extends Controller {
 				$labour_details[$key]['split_order_type'] = $value->splitOrderType ? $value->splitOrderType->code . "|" . $value->splitOrderType->name : '-';
 				$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
-				$labour_details[$key]['repair_order'] = $value->repairOrder;
+				$labour_details[$key]['repair_order'] = $repair_order;
 				$labour_details[$key]['status_id'] = $value->status_id;
 				$labour_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
