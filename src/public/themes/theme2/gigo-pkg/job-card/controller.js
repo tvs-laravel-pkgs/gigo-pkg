@@ -617,6 +617,12 @@ app.component('jobCardBayForm', {
             console.log(bay);
 
         }
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
         //Save Form Data 
         $scope.saveBay = function() {
             var form_id = '#bay_form';
@@ -720,6 +726,11 @@ app.component('jobCardReturnableItemList', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -861,6 +872,11 @@ app.component('jobCardReturnableItemForm', {
         setTimeout(function() {
             $('.image_uploadify').imageuploadify();
         }, 1000);
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -967,6 +983,11 @@ app.component('jobCardReturnablePartForm', {
                 }
             });
         }
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
     }
 });
@@ -1089,6 +1110,11 @@ app.component('jobCardMaterialGatepassForm', {
                 }
             });
         }
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
         $scope.carouselLiChange = function(gatepass_id, index) {
             $('#carousel_parent_' + gatepass_id + " .carousel_li").removeClass('active');
@@ -1334,6 +1360,11 @@ app.component('jobCardMaterialOutwardForm', {
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
     }
 });
 
@@ -1381,6 +1412,11 @@ app.component('jobCardRoadTestObservationForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -1428,6 +1464,11 @@ app.component('jobCardExpertDiagnosisForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -1478,6 +1519,11 @@ app.component('jobCardVehicleInspectionForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -1567,6 +1613,11 @@ app.component('jobCardPdf', {
 
         $scope.job_card_id = $routeParams.job_card_id;
         //Covering Letter
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -1631,6 +1682,11 @@ app.component('jobCardDmsChecklistForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -1791,6 +1847,11 @@ app.component('jobCardPartIndentForm', {
             });
         }
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
     }
 });
 
@@ -1844,6 +1905,11 @@ app.component('jobCardScheduleMaintenanceForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -2219,6 +2285,7 @@ app.component('jobCardPayableLabourPartsForm', {
                 $(".submit").removeAttr("disabled");
             }
         }
+        
         /* Dropdown Arrow Function */
         arrowDropdown();
 
@@ -2491,6 +2558,11 @@ app.component('jobCardPayableLabourPartsForm', {
                 }
             });
         }
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -2671,6 +2743,10 @@ app.component('jobcardPayableLabourForm', {
         /* Dropdown Arrow Function */
         arrowDropdown();
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -2873,6 +2949,11 @@ app.component('jobcardPayablePartForm', {
 
         /* Dropdown Arrow Function */
         arrowDropdown();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -2992,6 +3073,11 @@ app.component('jobCardFloatingForm', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -3272,6 +3358,11 @@ app.component('jobCardScheduleForm', {
                     custom_noty('error', 'Something went wrong at server');
                 });
         }
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -3388,6 +3479,11 @@ app.component('jobCardLabourReview', {
                 }
             });
         }
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -3546,6 +3642,11 @@ app.component('jobCardBillDetailView', {
         }
 
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -3593,6 +3694,11 @@ app.component('jobCardBayView', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -3638,6 +3744,11 @@ app.component('jobCardOrderView', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -3862,6 +3973,11 @@ app.component('jobCardSplitOrder', {
                 }
             });
         }
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 //---------------------------------------------------------------------------------------------
@@ -3957,6 +4073,11 @@ app.component('jobCardUpdateBillDetail', {
                 }
             });
         }
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -4005,6 +4126,11 @@ app.component('jobCardEstimateForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -4054,6 +4180,11 @@ app.component('jobCardEstimateStatusForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -4103,6 +4234,11 @@ app.component('jobCardGateinDetailForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -4150,6 +4286,11 @@ app.component('jobCardVehicleDetailView', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -4197,6 +4338,11 @@ app.component('jobCardCustomerDetailView', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -4249,6 +4395,11 @@ app.component('jobCardOrderDetailView', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -4297,6 +4448,11 @@ app.component('jobCardInventoryView', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 
@@ -4345,6 +4501,11 @@ app.component('jobCardCaptureVocView', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
     }
 });
 

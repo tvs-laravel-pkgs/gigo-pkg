@@ -493,6 +493,11 @@ app.component('inwardVehicleView', {
         /* Dropdown Arrow Function */
         arrowDropdown();
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
         //Save Form Data 
         var form_id = '#inward_vehicle_form';
         var v = jQuery(form_id).validate({
@@ -611,6 +616,11 @@ app.component('inwardVehicleVehicleDetail', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
         $(document).on('keyup', ".registration_number", function() {
             if ($(this).val().length == 2) {
@@ -866,6 +876,11 @@ app.component('inwardVehicleCustomerDetail', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
@@ -1164,6 +1179,11 @@ app.component('inwardVehiclePhotos', {
 
         $scope.fetchData();
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
         //Save Form Data 
         $scope.saveVehicleAttachments = function(id) {
             var form_id = '#vehicle_attachment_form';
@@ -1366,6 +1386,11 @@ app.component('inwardVehicleOrderDetailForm', {
         /* Profile Upload */
         setTimeout(function() {
             profileImgUpload();
+        }, 1000);
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
         }, 1000);
 
         $scope.checkLicenseExpiryDate = function(date) {
@@ -1689,6 +1714,11 @@ app.component('inwardVehicleInventoryDetailForm', {
         /* Dropdown Arrow Function */
         arrowDropdown();
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
         /* Image Uploadify Funtion */
         $('.image_uploadify').imageuploadify();
 
@@ -1782,6 +1812,11 @@ app.component('inwardVehicleVocDetailForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
         // $('.voc_remark_details_0').hide();
         $scope.onSelectedVoc = function(id, index) {
@@ -1967,6 +2002,11 @@ app.component('inwardVehicleRoadTestDetailForm', {
         }
         $scope.fetchData();
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
         //Save Form Data 
         $scope.saveRoadTestDetailForm = function(id) {
             var form_id = '#road_test_form';
@@ -2127,6 +2167,11 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
         }
         $scope.fetchData();
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
         //Save Form Data 
         $scope.saveExportDiagonis = function(id) {
             var form_id = '#form';
@@ -2262,6 +2307,11 @@ app.component('inwardVehicleInspectionDetailForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
         //Save Form Data 
         $scope.saveInspectionReport = function(id) {
@@ -2431,6 +2481,11 @@ app.component('inwardVehicleDmsCheckListForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
         self.checkbox = function() {
             if ($("#check_verify").prop('checked')) {
@@ -2680,6 +2735,11 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
         self.checkbox = function() {
             if ($("#check_verify").prop('checked')) {
@@ -3343,6 +3403,11 @@ app.component('inwardVehiclePayableLabourPartForm', {
         }
         $scope.fetchData();
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
         //Save Form Data 
         $scope.savePayableForm = function(id) {
             // var form_id = '#payable_form';
@@ -3878,6 +3943,10 @@ app.component('inwardVehiclePayableAddPartForm', {
         }
         $scope.fetchData();
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
         //GET PART LIST
         self.searchPart = function(query) {
@@ -4089,6 +4158,11 @@ app.component('inwardVehiclePayableAddLabourForm', {
         }
         $scope.fetchData();
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
         //GET JOB ORDER ROT FORM DATA
         $scope.getJobOrderRotFormData = function(job_order_repair_order_id) {
             $.ajax({
@@ -4286,6 +4360,11 @@ app.component('inwardVehicleEstimateForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
         self.checkbox = function(id) {
             if (id == 1) {
@@ -4613,6 +4692,11 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
         }
         $scope.fetchData();
 
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
+
         $(document).on("wheel", "input[type=number]", function(e) {
             $(this).blur();
         });
@@ -4763,6 +4847,11 @@ app.component('inwardVehicleCustomerConfirmationForm', {
         }
 
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
         self.video = false;
         self.screenShot = false;
@@ -4993,6 +5082,11 @@ app.component('inwardVehicleUpdatejcForm', {
                 });
         }
         $scope.fetchData();
+
+        //Scrollable Tabs
+        setTimeout(function() {
+            scrollableTabs();
+        }, 1000);
 
         $('.btn-nxt').on("click", function() {
             $('.cndn-tabs li.active').next().children('a').trigger("click");
