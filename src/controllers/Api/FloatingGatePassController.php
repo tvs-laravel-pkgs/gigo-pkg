@@ -79,6 +79,7 @@ class FloatingGatePassController extends Controller {
 						$query->where('floating_stock_logs.status_id', $request->status_id);
 					}
 				})
+				->where('floating_stock_logs.company_id', Auth::user()->company_id)
 				->groupBy('floating_stock_logs.job_card_id')
 				->orderBy('floating_stock_logs.created_at', 'DESC')
 			;

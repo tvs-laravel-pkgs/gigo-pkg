@@ -101,6 +101,7 @@ class VehicleGatePassController extends Controller {
 					}
 				})
 			//->where('job_cards.outlet_id', Auth::user()->employee->outlet_id)
+				->where('gate_passes.company_id', Auth::user()->company_id)
 				->where('gate_passes.type_id', 8280) // Vehicle Gate Pass
 				->orderBy('gate_passes.status_id', 'ASC')
 				->orderBy('gate_passes.created_at', 'DESC')

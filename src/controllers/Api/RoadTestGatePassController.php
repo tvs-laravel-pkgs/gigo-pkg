@@ -72,6 +72,7 @@ class RoadTestGatePassController extends Controller {
 						$query->where('road_test_gate_pass.status_id', $request->status_id);
 					}
 				})
+				->where('road_test_gate_pass.company_id', Auth::user()->company_id)
 				->orderBy('road_test_gate_pass.id', 'DESC')
 			;
 

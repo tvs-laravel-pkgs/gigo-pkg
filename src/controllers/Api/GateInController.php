@@ -771,7 +771,7 @@ class GateInController extends Controller {
 			->leftjoin('regions', 'regions.id', 'outlets.region_id')
 			->leftjoin('states', 'states.id', 'outlets.state_id')
 			->join('configs', 'configs.id', 'gate_logs.status_id')
-
+			->where('gate_logs.company_id', Auth::user()->company_id)
 			->where(function ($query) use ($request) {
 				if (!empty($request->model_id)) {
 					$query->where('vehicles.model_id', $request->model_id);
