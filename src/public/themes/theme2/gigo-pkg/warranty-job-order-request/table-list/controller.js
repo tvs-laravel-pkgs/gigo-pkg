@@ -88,7 +88,6 @@ app.component('warrantyJobOrderRequestTableList', {
                     "next": '<i class="icon ion-ios-arrow-forward"></i>',
                     "previous": '<i class="icon ion-ios-arrow-back"></i>'
                 },
-                "order": []
             },
             pageLength: 10,
             processing: true,

@@ -121,8 +121,8 @@ class WarrantyJobOrderRequestController extends Controller {
 
 		// dump($request->all());
 		$list_data->whereNotIn('warranty_job_order_requests.status_id', [9104]);
-		$list_data->orderBy('warranty_job_order_requests.status_id', 'ASC');
-		$list_data->orderBy('warranty_job_order_requests.id', 'DESC');
+		// $list_data->orderBy('warranty_job_order_requests.status_id', 'ASC');
+		// $list_data->orderBy('warranty_job_order_requests.id', 'DESC');
 
 		return Datatables::of($list_data)
 			->rawColumns(['action'])
