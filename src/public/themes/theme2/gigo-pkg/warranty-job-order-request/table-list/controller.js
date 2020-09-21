@@ -60,6 +60,9 @@ app.component('warrantyJobOrderRequestTableList', {
         $('.daterange').on('apply.daterangepicker', function(ev, picker) {
             $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
         });
+        $('.daterange').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
 
         var initialParams = function() {
             // if (angular.isDefined($localStorage.wjorIndexParams)) {
