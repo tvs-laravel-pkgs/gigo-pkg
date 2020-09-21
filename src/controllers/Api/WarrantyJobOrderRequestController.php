@@ -59,17 +59,36 @@ class WarrantyJobOrderRequestController extends Controller {
 
 		// dd($list_data->get()->toArray());
 		if ($request->request_date != null) {
-			$date = date('Y-m-d', strtotime($request->request_date));
-			$list_data->whereDate('warranty_job_order_requests.created_at', $date);
+			// dd($request->request_date);
+			$exploded_date = explode(' to ', $request->request_date);
+			$from_date = date('Y-m-d', strtotime($exploded_date[0]));
+			$to_date = date('Y-m-d', strtotime($exploded_date[1]));
+			// $date = date('Y-m-d', strtotime($request->request_date));
+			// $list_data->whereDate('warranty_job_order_requests.created_at', $date);
+			$list_data->whereBetween('warranty_job_order_requests.created_at', [$from_date, $to_date]);
 		}
 		if ($request->reg_no != null) {
 			$list_data->where('vehicles.registration_number', 'like', '%' . $request->reg_no . '%');
 		}
-		if ($request->customer_id != null) {
+		if (substr($request->customer_id, -2) != "%>" && $request->customer_id != null) {
 			$list_data->where('customers.id', $request->customer_id);
 		}
-		if ($request->model_id != null) {
+		if (substr($request->model_id, -2) != "%>" && $request->model_id != null) {
 			$list_data->where('mod.id', $request->model_id);
+		}
+
+		if ($request->statusIds != null) {
+			$status_id = json_decode($request->statusIds);
+			if ($status_id) {
+				$list_data->where('warranty_job_order_requests.status_id', $status_id->id);
+			}
+		}
+		if ($request->outletIds != null) {
+			$outlet_ids = json_decode($request->outletIds);
+			if ($outlet_ids) {
+				$outlet_ids = array_column($outlet_ids, 'id');
+				$list_data->whereIn('job_orders.outlet_id', $outlet_ids);
+			}
 		}
 		if ($request->job_card_no != null) {
 			$list_data->where('job_cards.job_card_number', 'like', '%' . $request->job_card_no . '%');

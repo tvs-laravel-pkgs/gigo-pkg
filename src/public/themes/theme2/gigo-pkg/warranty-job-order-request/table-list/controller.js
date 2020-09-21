@@ -1,6 +1,6 @@
 app.component('warrantyJobOrderRequestTableList', {
     templateUrl: warrantyJobOrderRequestTableList,
-    controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect, ConfigSvc) {
+    controller: function($http, $location, $ngBootbox, HelperService, WarrantyJobOrderRequestSvc, $scope, JobOrderSvc, $routeParams, $rootScope, $element, $mdSelect, ConfigSvc, OutletSvc) {
         $rootScope.loading = true;
         $('#search').focus();
         var self = this;
@@ -38,6 +38,29 @@ app.component('warrantyJobOrderRequestTableList', {
                 $scope.options.status_options = response.data.options;
             });
 
+        OutletSvc.options()
+            .then(function(response) {
+                $scope.options.outlet_options = response.data.options;
+            });
+
+        $('.modal').bind('click', function(event) {
+            if ($('.md-select-menu-container').hasClass('md-active')) {
+                $mdSelect.hide();
+            }
+        });
+
+        $('.daterange').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear',
+                format: "DD-MM-YYYY"
+            }
+        });
+
+        $('.daterange').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('DD-MM-YYYY') + ' to ' + picker.endDate.format('DD-MM-YYYY'));
+        });
+
         var initialParams = function() {
             // if (angular.isDefined($localStorage.wjorIndexParams)) {
             //     return angular.extend({}, defaultParams(), $localStorage.wjorIndexParams);
@@ -65,6 +88,7 @@ app.component('warrantyJobOrderRequestTableList', {
                     "next": '<i class="icon ion-ios-arrow-forward"></i>',
                     "previous": '<i class="icon ion-ios-arrow-back"></i>'
                 },
+                "order": []
             },
             pageLength: 10,
             processing: true,
@@ -97,10 +121,11 @@ app.component('warrantyJobOrderRequestTableList', {
                     // d = $scope.filters;
                     d.request_date = $("#request_date").val();
                     d.reg_no = $("#reg_no").val();
-                    // d.customer_id = $("#customer_id").val();
-                    // d.model_id = $("#model_id").val();
+                    d.customer_id = $("#customer_id").val();
+                    d.model_id = $("#model_id").val();
                     d.job_card_no = $("#job_card_no").val();
                     d.statusIds = $("#status_id").val();
+                    d.outletIds = $("#outlet_ids").val();
                     // console.log($scope.filters);
                 },
             },

@@ -75,13 +75,22 @@
                 <div class="modal-form">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label>Date</label>
                                 <div class="input-group date" data-provide="datepicker">
                                     <input type="text" id="request_date" class="form-control" placeholder="Select Date" ng-model="filters.date" id="date" />
                                     <div class="input-group-addon">
                                         <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
                                     </div>
+                                </div>
+                            </div> -->
+                            <div class="form-group">
+                                <label>Date</label>
+                                <div class="input-group date">
+                                    <input ng-model="filters.date" id="request_date" class="form-control daterange" placeholder="Select a Date Range">
+                                    <span class="input-group-addon">
+                                        <img class="img-responsive" src="./public/theme/img/content/calender-gray-icon.svg" alt="Calendar Image" />
+                                    </span>
                                 </div><!-- Input Group -->
                             </div><!-- Feild -->
                         </div><!-- Column -->
@@ -96,7 +105,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Customer</label>
-                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCustomer(filters.customerSearchText)" md-selected-item="filters.customer" md-search-text="customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
+                                <md-autocomplete class="type-sm" md-items="option in $ctrl.searchCustomer(customerSearchText)" md-selected-item="filters.customer" md-search-text="customerSearchText" md-item-text="option.name" md-min-length="3" placeholder="Customer Name" md-autofocus>
                                     <md-item-template>
                                         <span>
                                             {{option.name}} / {{option.code}}
@@ -151,13 +160,31 @@
                                 <input type="hidden" name="status_id" id="status_id" value="{{ filter.statuses }}">
                             </div><!-- Field -->
                         </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Outlet
+                                </label>
+                                <md-select multiple ng-model="filter.outlets" placeholder="Select Outlet" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="searchOutletKey" type="search" placeholder="Search for a Outlet.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="outlet" ng-repeat="outlet in options.outlet_options | filter:searchOutletKey">
+                                            {{outlet.name}}
+                                        </md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" name="outlet_ids" id="outlet_ids" value="{{ filter.outlets }}">
+                            </div><!-- Field -->
+                        </div>
                     </div><!-- Row -->
                 </div><!-- Modal Form -->
             </div><!-- Modal Body -->
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.date='';$ctrl.reg_no='';$ctrl.job_card_no='';$ctrl.customerSearchText='';$ctrl.vehicleModelSearchText='';$ctrl.status_selected='';$ctrl.quote_type_id='';$ctrl.service_type_id='';$ctrl.job_order_type_id=''; " ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
+                        <button type="button" class="reset-link" ng-click="reset_filter();filters.date='';filters.reg_no='';filters.job_card_no='';customerSearchText='';vehicleModelSearchText='';filter.statuses=''; filter.outlets='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">
                             Reset Filter
                         </button>
                     </div><!-- Column -->
