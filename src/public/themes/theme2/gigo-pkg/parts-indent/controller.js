@@ -225,7 +225,7 @@ app.component('partsIndentVehicleView', {
                     if (res.job_order.job_card) {
                         if (res.job_order.job_card.status_id == '8227') {
                             $scope.status = "Waiting for Parts Confirmation";
-                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226') {
+                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226' || res.job_order.job_card.status_id == '8228') {
                             $scope.status = "JobCard Completed";
                         } else {
                             $scope.status = "JobCard Inprogress";
@@ -306,7 +306,7 @@ app.component('partsIndentCustomerView', {
                     if (res.job_order.job_card) {
                         if (res.job_order.job_card.status_id == '8227') {
                             $scope.status = "Waiting for Parts Confirmation";
-                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226') {
+                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226' || res.job_order.job_card.status_id == '8228') {
                             $scope.status = "JobCard Completed";
                         } else {
                             $scope.status = "JobCard Inprogress";
@@ -397,7 +397,7 @@ app.component('partsIndentRepairOrderView', {
                     if (res.job_order.job_card) {
                         if (res.job_order.job_card.status_id == '8227') {
                             $scope.status = "Waiting for Parts Confirmation";
-                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226') {
+                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226' || res.job_order.job_card.status_id == '8228') {
                             $scope.status = "JobCard Completed";
                         } else {
                             $scope.status = "JobCard Inprogress";
@@ -500,7 +500,7 @@ app.component('partsIndentPartsView', {
                     if (res.job_order.job_card) {
                         if (res.job_order.job_card.status_id == '8227') {
                             $scope.status = "Waiting for Parts Confirmation";
-                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226') {
+                        } else if (res.job_order.job_card.status_id == '8224' || res.job_order.job_card.status_id == '8225' || res.job_order.job_card.status_id == '8226' || res.job_order.job_card.status_id == '8228') {
                             $scope.status = "JobCard Completed";
                         } else {
                             $scope.status = "JobCard Inprogress";
