@@ -303,30 +303,6 @@ class MyJobCardController extends Controller {
 			//ACTUAL HOURS TO COMPLETE WORK
 			$actual_hrs = JobOrderRepairOrder::where('id', $request->job_repair_order_id)->pluck('qty')->first();
 
-			//Total Working hours of mechanic
-			$mechanic_time_log = MechanicTimeLog::select('start_date_time', 'end_date_time')->where('repair_order_mechanic_id', $repair_order_mechanic->id)->get()->toArray();
-
-			//EMPLOYEE TAKE TIME TO COMPLETE WORK
-			if ($mechanic_time_log) {
-				foreach ($mechanic_time_log as $key => $repair_order_mechanic_time_log) {
-					$time1 = strtotime($repair_order_mechanic_time_log['start_date_time']);
-					$time2 = strtotime($repair_order_mechanic_time_log['end_date_time']);
-					if ($time2 < $time1) {
-						$time2 += 86400;
-					}
-					$duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
-				}
-				$total_duration = sum_mechanic_duration($duration);
-				$format_change = explode(':', $total_duration);
-
-				$hour = $format_change[0] . 'h';
-				$minutes = $format_change[1] . 'm';
-				// $seconds = $format_change[2] . 's';
-				// $total_hours = $hour . ' ' . $minutes . ' ' . $seconds;
-				$total_hours = $hour . ' ' . $minutes;
-				unset($duration);
-			}
-
 			if ($request->type == 1) {
 
 				DB::beginTransaction();
@@ -345,6 +321,30 @@ class MyJobCardController extends Controller {
 
 				//Mechanic End Time
 				$work_end_date_time = MechanicTimeLog::where('repair_order_mechanic_id', $repair_order_mechanic->id)->orderby('id', 'DESC')->select('end_date_time as work_end_time')->first();
+
+				//Total Working hours of mechanic
+				$mechanic_time_log = MechanicTimeLog::select('start_date_time', 'end_date_time')->where('repair_order_mechanic_id', $repair_order_mechanic->id)->get()->toArray();
+
+				//EMPLOYEE TAKE TIME TO COMPLETE WORK
+				if ($mechanic_time_log) {
+					foreach ($mechanic_time_log as $key => $repair_order_mechanic_time_log) {
+						$time1 = strtotime($repair_order_mechanic_time_log['start_date_time']);
+						$time2 = strtotime($repair_order_mechanic_time_log['end_date_time']);
+						if ($time2 < $time1) {
+							$time2 += 86400;
+						}
+						$duration[] = date("H:i:s", strtotime("00:00") + ($time2 - $time1));
+					}
+					$total_duration = sum_mechanic_duration($duration);
+					$format_change = explode(':', $total_duration);
+
+					$hour = $format_change[0] . 'h';
+					$minutes = $format_change[1] . 'm';
+					// $seconds = $format_change[2] . 's';
+					// $total_hours = $hour . ' ' . $minutes . ' ' . $seconds;
+					$total_hours = $hour . ' ' . $minutes;
+					unset($duration);
+				}
 
 				$work_logs['message'] = "Work Log Saved Successfully";
 				$work_logs['work_start_date_time'] = $work_start_date_time->work_start_time;

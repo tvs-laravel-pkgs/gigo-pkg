@@ -593,6 +593,7 @@ app.component('myJobcardView', {
                     },
                 }).done(function(res) {
                     $scope.work_log = res.work_logs;
+                    $("#finish_work").modal('show');
                     console.log(res);
                     $scope.$apply();
                 })
