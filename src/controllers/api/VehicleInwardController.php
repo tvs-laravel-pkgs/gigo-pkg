@@ -305,10 +305,15 @@ class VehicleInwardController extends Controller {
 
 			if ($job_order->vehicle->currentOwner) {
 				//Check which tax applicable for customer
-				if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
-					$tax_type = 1160; //Within State
+				$state_id = $job_order->vehicle->currentOwner->customer->primaryAddress ? $job_order->vehicle->currentOwner->customer->primaryAddress->state_id : '';
+				if ($state_id) {
+					if ($job_order->outlet->state_id == $state_id) {
+						$tax_type = 1160; //Within State
+					} else {
+						$tax_type = 1161; //Inter State
+					}
 				} else {
-					$tax_type = 1161; //Inter State
+					$tax_type = 1160; //Within State
 				}
 			} else {
 				$tax_type = 1160; //Within State

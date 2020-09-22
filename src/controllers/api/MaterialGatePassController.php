@@ -444,7 +444,7 @@ class MaterialGatePassController extends Controller {
 			if (!$gate_pass) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Gate pass OTP is worng. Please try again.',
+					'error' => 'Gate pass OTP is wrong. Please try again.',
 				]);
 			}
 

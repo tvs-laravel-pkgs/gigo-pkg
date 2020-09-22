@@ -1062,6 +1062,10 @@ app.component('jobCardMaterialGatepassForm', {
             $('#osl_confirmation_modal').modal('show');
         }
 
+        $(document).on("wheel", "input[type=number]", function(e) {
+            $(this).blur();
+        });
+
         $scope.saveBillDetail = function() {
             var form_id = '#osl_bill_form';
             var v = jQuery(form_id).validate({
@@ -2285,7 +2289,7 @@ app.component('jobCardPayableLabourPartsForm', {
                 $(".submit").removeAttr("disabled");
             }
         }
-        
+
         /* Dropdown Arrow Function */
         arrowDropdown();
 
