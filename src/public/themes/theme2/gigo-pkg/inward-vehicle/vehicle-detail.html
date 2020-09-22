@@ -75,7 +75,7 @@
                                                         </span>
                                                         <span class="view-col-value">
                                                             <b>
-                                                                {{job_order.vehicle.model.model_name}}
+                                                                {{job_order.vehicle.model.model_name}} /{{job_order.vehicle.model.model_number}}
                                                             </b>
                                                         </span>
                                                     </li>
@@ -170,7 +170,7 @@
                                                         <md-autocomplete md-items="option in $ctrl.searchVehicleModel($ctrl.modelSearchText)" md-selected-item="job_order.vehicle.model" md-selected-item-change="selectedVehicleModel(job_order.vehicle.model.id)" md-search-text="$ctrl.modelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
                                                             <md-item-template>
                                                                 <span>
-                                                                    {{option.model_name}}
+                                                                    {{option.model_name}} /  {{option.number}}
                                                                 </span>
                                                             </md-item-template>
                                                             <md-not-found>
