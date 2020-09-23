@@ -10,6 +10,7 @@ use App\Company;
 use App\Config;
 use App\JobOrderEstimate;
 use App\SplitOrderType;
+use Auth;
 use DB;
 use File;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -446,6 +447,95 @@ class JobOrder extends BaseModel {
 			$list->prepend(['id' => '', 'name' => $default_text]);
 		}
 		return $list;
+	}
+
+	public static function generateEstimateInspectionPDF($job_order_id) {
+		$job_order = JobOrder::with([
+			'type',
+			'quoteType',
+			'serviceType',
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
+			'outlet',
+			'gateLog',
+			'gatePass',
+			'vehicle.currentOwner.customer',
+			'vehicle.currentOwner.customer.primaryAddress',
+			'vehicle.currentOwner.customer.primaryAddress.country',
+			'vehicle.currentOwner.customer.primaryAddress.state',
+			'vehicle.currentOwner.customer.primaryAddress.city',
+			'jobOrderRepairOrders.repairOrder',
+			'jobOrderRepairOrders.repairOrder.repairOrderType',
+			'vehicleInspectionItems',
+			'floorAdviser',
+			'serviceAdviser',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d-%m-%Y") as jobdate'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_order_id);
+
+		$params['field_type_id'] = [11, 12];
+		$company_id = $job_order->company_id;
+		$data['extras'] = [
+			'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_order_id, $params, '', '', $company_id),
+		];
+
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$data['date'] = date('d-m-Y h:i A');
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		// dd($job_order->vehicleInspectionItems);
+
+		$vehicle_inspection_item_groups = array();
+		if (count($job_order->vehicleInspectionItems) > 0) {
+			$vehicle_inspection_item_group = VehicleInspectionItemGroup::where('company_id', Auth::user()->company_id)->select('id', 'name')->get();
+
+			foreach ($vehicle_inspection_item_group as $key => $value) {
+				$item_group = array();
+				$item_group['id'] = $value->id;
+				$item_group['name'] = $value->name;
+
+				$inspection_items = VehicleInspectionItem::where('group_id', $value->id)->get()->keyBy('id');
+
+				$vehicle_inspections = $job_order->vehicleInspectionItems()->orderBy('vehicle_inspection_item_id')->get()->toArray();
+
+				if (count($vehicle_inspections) > 0) {
+					foreach ($vehicle_inspections as $value) {
+						if (isset($inspection_items[$value['id']])) {
+							$inspection_items[$value['id']]->status_id = $value['pivot']['status_id'];
+						}
+					}
+				}
+				$item_group['vehicle_inspection_items'] = $inspection_items;
+
+				$vehicle_inspection_item_groups[] = $item_group;
+			}
+		}
+
+		$job_order->vehicle_inspection_items = $vehicle_inspection_item_groups;
+		$data['gate_pass'] = $job_order;
+
+		$name = $job_order_id . '_inward_inspection.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/inward-inspection', $data)->setPaper('a4', 'portrait');
+
+		$img_path = $save_path . '/' . $name;
+		if (File::exists($img_path)) {
+			File::delete($img_path);
+		}
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
+
+		return true;
 	}
 
 	public static function generateEstimateGatePassPDF($job_order_id) {
