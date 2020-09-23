@@ -70,7 +70,7 @@ app.component('partsIndentList', {
                 { data: 'state_name', name: 'states.name', searchable: true },
                 { data: 'region_name', name: 'regions.name', searchable: true },
                 { data: 'outlet_name', name: 'outlets.code', searchable: true },
-                { data: 'status', name: 'configs.name', searchable: true },
+                { data: 'status', searchable: false },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)
