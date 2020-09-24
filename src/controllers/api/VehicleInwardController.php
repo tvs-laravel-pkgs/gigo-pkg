@@ -606,6 +606,32 @@ class VehicleInwardController extends Controller {
 			];
 
 			$inventory_params['field_type_id'] = [11, 12];
+
+			//PDF
+			//Check Covering Letter PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_order->id . '_covering_letter.pdf');
+			if (file_exists($directoryPath)) {
+				$job_order->covering_letter_pdf = url('storage/app/public/gigo/pdf/' . $job_order->id . '_covering_letter.pdf');
+			} else {
+				$job_order->covering_letter_pdf = '';
+			}
+
+			//Check GatePass PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_order->id . '_gatepass.pdf');
+			if (file_exists($directoryPath)) {
+				$job_order->gate_pass_pdf = url('storage/app/public/gigo/pdf/' . $job_order->id . '_gatepass.pdf');
+			} else {
+				$job_order->gate_pass_pdf = '';
+			}
+
+			//Check Estimate PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_order->id . '_estimate.pdf');
+			if (file_exists($directoryPath)) {
+				$job_order->estimate_pdf = url('storage/app/public/gigo/pdf/' . $job_order->id . '_estimate.pdf');
+			} else {
+				$job_order->estimate_pdf = '';
+			}
+
 			//Job card details need to get future
 			return response()->json([
 				'success' => true,
@@ -1930,6 +1956,7 @@ class VehicleInwardController extends Controller {
 	}
 
 	public function saveCustomerDetail(Request $request) {
+		// dd($request->all());
 		try {
 
 			DB::beginTransaction();
@@ -1959,6 +1986,7 @@ class VehicleInwardController extends Controller {
 
 			$error_messages = [
 				'ownership_type_id.unique' => "Ownership ID is already taken",
+				'code.unique' => "Cusotmer Code is already taken",
 			];
 
 			$validator = Validator::make($request->all(), [
@@ -1972,7 +2000,7 @@ class VehicleInwardController extends Controller {
 					'required',
 					'min:3',
 					'max:255',
-					'unique:customers,code,' . $request->id,
+					'unique:customers,code,' . $request->customer_id . ',id',
 				],
 				'name' => [
 					'required',
@@ -1990,7 +2018,7 @@ class VehicleInwardController extends Controller {
 					'nullable',
 					'string',
 					'max:255',
-					'unique:customers,email,' . $request->id,
+					'unique:customers,email,' . $request->customer_id . ',id',
 				],
 				'address_line1' => [
 					'required',
@@ -2042,6 +2070,29 @@ class VehicleInwardController extends Controller {
 					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
+			}
+
+			if ($request->email) {
+				$error_messages = [
+					'email.unique' => "Cusotmer Email is already taken",
+				];
+
+				$validator = Validator::make($request->all(), [
+					'email' => [
+						'nullable',
+						'string',
+						'max:255',
+						'unique:customers,email,' . $request->customer_id . ',id',
+					],
+				], $error_messages);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
 			}
 
 			$customer = Customer::saveCustomer($request->all());
@@ -6478,6 +6529,15 @@ class VehicleInwardController extends Controller {
 				$job_card->company_id = Auth::user()->company_id;
 
 				$job_card->save();
+
+				//Generate Inspection PDF
+				$generate_estimate_inspection_pdf = JobOrder::generateEstimateInspectionPDF($job_order->id);
+
+				//Generate Estimation PDF
+				$generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);
+
+				//Generate Revised Estimation PDF
+				$generate_revised_estimate_pdf = JobOrder::generateRevisedEstimatePDF($request->job_order_id);
 
 				DB::commit();
 

@@ -137,6 +137,11 @@
                                             Estimation Status
                                         </a>
                                     </li>
+                                    <li ng-if="$ctrl.hasPermission('inward-job-card-tab-pdf') && (job_order.status_id == 8461 || job_order.status_id == 8468 || job_order.status_id == 8470)">
+                                        <a data-target="#inward_pdf" data-toggle="tab" aria-expanded="true" class="filter">
+                                            PDF
+                                        </a>
+                                    </li>
                                 </ul>
                             </div><!-- Filters -->
                         </div><!-- Tab Header -->
@@ -1417,7 +1422,7 @@
                                                             <th class="text-right">
                                                                 Hours
                                                             </th>
-                                                             <th class="text-right">
+                                                            <th class="text-right">
                                                                 Rate
                                                             </th>
                                                             <th class="wid-180 white-space text-right">
@@ -2078,6 +2083,70 @@
                                     </div><!-- Row -->
                                 </div><!-- Tab Pane Wrap -->
                             </div><!-- Tabe Pane -->
+                            <div class="tab-pane fade" id="inward_pdf" data-animation="fadeInUp" data-animation-delay="300">
+                                <div class="tab-pane-wrap">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>PDF</b></h5>
+                                            <hr class="hr-15"><!-- Separater -->
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <ul class="checklist-form-ul">
+                                                        <li ng-if="job_order.status_id == 8470 && job_order.is_customer_agreed != 1 && job_order.is_customer_approved != 1">
+                                                            <div class="checklist-item-wrap pad-big">
+                                                                <div class="checklist-item-value">
+                                                                    Covering Letter
+                                                                </div>
+                                                                <div class="checklist-item-value-sm" ng-if="covering_letter_pdf">
+                                                                    <a target="_blank" href="{{covering_letter_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li ng-if="job_order.status_id == 8470 && job_order.is_customer_agreed != 1 && job_order.is_customer_approved != 1">
+                                                            <div class="checklist-item-wrap pad-big">
+                                                                <div class="checklist-item-value">
+                                                                    Gatepass
+                                                                </div>
+                                                                <div class="checklist-item-value-sm" ng-if="gate_pass_pdf">
+                                                                    <a target="_blank" href="{{gate_pass_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                            <div class="checklist-item-wrap pad-big">
+                                                                <div class="checklist-item-value">
+                                                                    Estimate
+                                                                </div>
+                                                                <div class="checklist-item-value-sm" ng-if="estimate_pdf">
+                                                                    <a target="_blank" href="{{estimate_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                            <div class="checklist-item-wrap pad-big">
+                                                                <div class="checklist-item-value">
+                                                                    Revised Estimate
+                                                                </div>
+                                                                <div class="checklist-item-value-sm" ng-if="!revised_estimate_pdf">
+                                                                    <a target="_blank" href="{{revised_estimate_url}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a href=".#!/inward-vehicle/update-jc/form/{{job_order.id}}" class="btn btn-red" ng-if="job_order.status_id == 8461">Initiate Job card</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </div><!-- Row -->
+                                </div><!-- Tab Pane Wrap -->
+                            </div>
                         </div><!-- Tab Content -->
                     </div><!-- Tab Form Body -->
                 </div><!-- Tab Form Wrap -->

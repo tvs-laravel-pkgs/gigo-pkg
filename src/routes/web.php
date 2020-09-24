@@ -315,6 +315,7 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/pdf/gatepass/{id}', 'PDFController@gatePass')->name('gatePass');
 	Route::get('/pdf/covering-letter/{id}', 'PDFController@coveringletter')->name('coveringletter');
 	Route::get('/pdf/estimate/{id}', 'PDFController@estimate')->name('estimate');
+	Route::get('/pdf/job-order/revised-estimate/{id}', 'PDFController@revisedEstimateJobOrder')->name('revisedEstimateJobOrder');
 	Route::get('/pdf/insurance-estimate/{id}', 'PDFController@InsuranceEstimate')->name('InsuranceEstimate');
 	Route::get('/pdf/revised-estimate/{id}', 'PDFController@RevisedEstimate')->name('RevisedEstimate');
 	Route::get('/pdf/job-card/{id}', 'PDFController@JobCardPDF')->name('JobCardPDF');
