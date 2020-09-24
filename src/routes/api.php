@@ -175,6 +175,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//VOC SEARCH
 		Route::post('vehicle-inward/customer/voice/search', 'VehicleInwardController@getCustomerVoiceSearchList');
 
+		//Customer SEARCH
+		Route::post('vehicle-inward/customer/search', 'VehicleInwardController@getCustomerSearchList');
+
 		//REPAIR ORDER SEARCH
 		Route::post('vehicle-inward/repair-order/search', 'VehicleInwardController@getRepairOrderSearchList');
 
