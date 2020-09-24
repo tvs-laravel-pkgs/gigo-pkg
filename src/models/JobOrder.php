@@ -612,6 +612,10 @@ class JobOrder extends BaseModel {
 			'jobOrderParts.part.taxCode',
 			'jobOrderParts.part.taxCode.taxes',
 			'jobOrderParts.customerVoice',
+			'roadTestDoneBy',
+			'roadTestPreferedBy',
+			'roadTestPreferedBy.employee',
+			'serviceAdviser',
 		])
 			->find($job_order_id);
 
@@ -631,25 +635,17 @@ class JobOrder extends BaseModel {
 		//Count Tax Type
 		$taxes = Tax::get();
 
-		//GET SEPERATE TAXEX
-		$seperate_tax = array();
-		for ($i = 0; $i < count($taxes); $i++) {
-			$seperate_tax[$i] = 0.00;
-		}
-
 		$tax_percentage = 0;
 		$labour_details = array();
+
+		$i = 1;
 		if ($job_order->jobOrderRepairOrders) {
-			$i = 1;
-			$total_labour_qty = 0;
-			$total_labour_mrp = 0;
-			$total_labour_price = 0;
-			$total_labour_tax = 0;
 			foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
 				$total_amount = 0;
+				$labour_details[$key]['sno'] = $i;
 				$labour_details[$key]['name'] = $labour->repairOrder->code . ' / ' . $labour->repairOrder->name;
-				$labour_details[$key]['split_order_type'] = $labour->splitOrderType ? $labour->splitOrderType->code . "|" . $labour->splitOrderType->name : '-';
-				$labour_details[$key]['voc'] = $labour->customerVoice ? $labour->customerVoice->name . ' / ' . $labour->customerVoice->name : '';
+				$labour_details[$key]['split_order_type'] = $labour->splitOrderType ? $labour->splitOrderType->code . " / " . $labour->splitOrderType->name : '-';
+				$labour_details[$key]['voc'] = $labour->customerVoice ? $labour->customerVoice->name . ' / ' . $labour->customerVoice->name : '-';
 
 				$tax_amount = 0;
 				$tax_values = array();
@@ -668,7 +664,8 @@ class JobOrder extends BaseModel {
 				$total_amount = $tax_amount + $labour->amount;
 				$total_amount = number_format((float) $total_amount, 2, '.', '');
 				$labour_amount += $total_amount;
-				$labour_details[$key]['total_amount'] = $total_amount;
+				$labour_details[$key]['total_amount'] = number_format($total_amount, 2);
+				$i++;
 			}
 		}
 
@@ -676,10 +673,11 @@ class JobOrder extends BaseModel {
 		if ($job_order->jobOrderParts) {
 			foreach ($job_order->jobOrderParts as $key => $parts) {
 				$total_amount = 0;
+				$part_details[$key]['sno'] = $i;
 				$part_details[$key]['name'] = $parts->part->code . ' / ' . $parts->part->name;
 
-				$part_details[$key]['split_order_type'] = $parts->splitOrderType ? $parts->splitOrderType->code . "|" . $parts->splitOrderType->name : '-';
-				$part_details[$key]['voc'] = $parts->customerVoice ? $parts->customerVoice->name . ' / ' . $parts->customerVoice->name : '';
+				$part_details[$key]['split_order_type'] = $parts->splitOrderType ? $parts->splitOrderType->code . " / " . $parts->splitOrderType->name : '-';
+				$part_details[$key]['voc'] = $parts->customerVoice ? $parts->customerVoice->name . ' / ' . $parts->customerVoice->name : '-';
 
 				$tax_amount = 0;
 				$tax_values = array();
@@ -700,59 +698,31 @@ class JobOrder extends BaseModel {
 				$total_amount = $tax_amount + $parts->amount;
 				$total_amount = number_format((float) $total_amount, 2, '.', '');
 				$parts_amount += $total_amount;
-				$part_details[$key]['total_amount'] = $total_amount;
+				$part_details[$key]['total_amount'] = number_format($total_amount, 2);
+				$i++;
 			}
 		}
 
-		dd($part_details);
-
-		foreach ($seperate_tax as $key => $s_tax) {
-			$seperate_tax[$key] = convert_number_to_words($s_tax);
-		}
-		$data['seperate_taxes'] = $seperate_tax;
-
-		$total_taxable_amount = $total_labour_tax + $total_parts_tax;
-		$data['tax_percentage'] = convert_number_to_words($tax_percentage);
-		$data['total_taxable_amount'] = convert_number_to_words($total_taxable_amount);
-
 		$total_amount = $parts_amount + $labour_amount;
-		$data['taxes'] = $taxes;
-		$data['estimate_date'] = $estimate_order->created_at;
+		$total_amount = round($total_amount);
+
 		$data['part_details'] = $part_details;
 		$data['labour_details'] = $labour_details;
-		$data['total_labour_qty'] = $total_labour_qty;
-		$data['total_labour_mrp'] = $total_labour_mrp;
-		$data['total_labour_price'] = $total_labour_price;
-		$data['total_labour_tax'] = $total_labour_tax;
-
-		$data['total_parts_qty'] = $total_parts_qty;
-		$data['total_parts_mrp'] = $total_parts_mrp;
-		$data['total_parts_price'] = $total_parts_price;
-		$data['total_parts_tax'] = $total_parts_tax;
-		$data['parts_total_amount'] = number_format($parts_amount, 2);
-		$data['labour_total_amount'] = number_format($labour_amount, 2);
-		//FOR ROUND OFF
-		if ($total_amount <= round($total_amount)) {
-			$round_off = round($total_amount) - $total_amount;
-		} else {
-			$round_off = round($total_amount) - $total_amount;
-		}
-		// dd(number_format($round_off));
-		$data['round_total_amount'] = number_format($round_off, 2);
-		$data['total_amount'] = number_format(round($total_amount), 2);
 
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
 			Storage::disk('public')->makeDirectory('gigo/pdf/');
 		}
 
-		$data['title'] = 'Revised Estimate';
+		$data['title'] = 'Manual Job Order';
+		$data['job_order'] = $job_order;
+		$data['total_amount'] = number_format($total_amount, 2);
 
 		$save_path = storage_path('app/public/gigo/pdf');
 		Storage::makeDirectory($save_path, 0777);
 
-		$name = $job_order->id . '_revised_estimate.pdf';
+		$name = $job_order->id . '_manual_job_order.pdf';
 
-		$pdf = PDF::loadView('pdf-gigo/estimate-pdf', $data)->setPaper('a4', 'portrait');
+		$pdf = PDF::loadView('pdf-gigo/manual-joborder', $data)->setPaper('a4', 'landscape');
 
 		$img_path = $save_path . '/' . $name;
 		if (File::exists($img_path)) {

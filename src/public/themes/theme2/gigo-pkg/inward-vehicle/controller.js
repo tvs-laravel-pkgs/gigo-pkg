@@ -473,6 +473,9 @@ app.component('inwardVehicleView', {
                     $scope.estimate_pdf = res.job_order.estimate_pdf;
                     $scope.covering_letter_pdf = res.job_order.covering_letter_pdf;
                     $scope.gate_pass_pdf = res.job_order.gate_pass_pdf;
+                    $scope.inventory_pdf = res.job_order.inventory_pdf;
+                    $scope.inspection_pdf = res.job_order.inspection_pdf;
+                    $scope.manual_job_order_pdf = res.job_order.manual_job_order_pdf;
                     $scope.revised_estimate_url = base_url + '/gigo-pkg/pdf/job-order/revised-estimate/' + $scope.job_order.id;
 
                     $scope.$apply();

@@ -2134,6 +2134,36 @@
                                                                 </div>
                                                             </div>
                                                         </li>
+                                                        <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                            <div class="checklist-item-wrap pad-big">
+                                                                <div class="checklist-item-value">
+                                                                    Inspection 
+                                                                </div>
+                                                                <div class="checklist-item-value-sm" ng-if="inspection_pdf">
+                                                                    <a target="_blank" href="{{inspection_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                            <div class="checklist-item-wrap pad-big">
+                                                                <div class="checklist-item-value">
+                                                                    Inventory
+                                                                </div>
+                                                                <div class="checklist-item-value-sm" ng-if="inventory_pdf">
+                                                                    <a target="_blank" href="{{inventory_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li ng-if="job_order.status_id == 8461 ||  job_order.status_id == 8470 || job_order.status_id == 8468 ">
+                                                            <div class="checklist-item-wrap pad-big">
+                                                                <div class="checklist-item-value">
+                                                                    Manual Job Order
+                                                                </div>
+                                                                <div class="checklist-item-value-sm" ng-if="manual_job_order_pdf">
+                                                                    <a target="_blank" href="{{manual_job_order_pdf}}" class="btn btn-secondary-dark btn-square btn-block" href="#">PDF</a>
+                                                                </div>
+                                                            </div>
+                                                        </li>
                                                     </ul>
                                                 </div><!-- Column -->
                                             </div><!-- Row -->

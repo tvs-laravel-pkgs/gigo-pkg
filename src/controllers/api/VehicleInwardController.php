@@ -632,6 +632,30 @@ class VehicleInwardController extends Controller {
 				$job_order->estimate_pdf = '';
 			}
 
+			//Check Inventory PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_order->id . '_inward_inventory.pdf');
+			if (file_exists($directoryPath)) {
+				$job_order->inventory_pdf = url('storage/app/public/gigo/pdf/' . $job_order->id . '_inward_inventory.pdf');
+			} else {
+				$job_order->inventory_pdf = '';
+			}
+
+			//Check Inspection PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_order->id . '_inward_inspection.pdf');
+			if (file_exists($directoryPath)) {
+				$job_order->inspection_pdf = url('storage/app/public/gigo/pdf/' . $job_order->id . '_inward_inspection.pdf');
+			} else {
+				$job_order->inspection_pdf = '';
+			}
+
+			//Check Manual JO PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_order->id . '_manual_job_order.pdf');
+			if (file_exists($directoryPath)) {
+				$job_order->manual_job_order_pdf = url('storage/app/public/gigo/pdf/' . $job_order->id . '_manual_job_order.pdf');
+			} else {
+				$job_order->manual_job_order_pdf = '';
+			}
+
 			//Check Revised Estimate available or not
 			$total_estimate = JobOrderEstimate::where('job_order_id', $job_order->id)->count();
 
@@ -4483,17 +4507,19 @@ class VehicleInwardController extends Controller {
 			}
 			$job_order['previous_customer_voice_ids'] = array_unique($previous_customer_voice_ids);
 
-			$customer_voice_list = $job_order->vehicle->model ? $job_order->vehicle->model->customerVoices->toArray() : [];
-			$customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
+			// $customer_voice_list = $job_order->vehicle->model ? $job_order->vehicle->model->customerVoices->toArray() : [];
+			// $customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
 
-			if ($customer_voice_other) {
-				//GET CUSTOMER VOICE OTHERS ID OF OTH
-				$customer_voice_other_id = $customer_voice_other[0]['id'];
-				$job_order['OTH_ID'] = $customer_voice_other_id;
+			// if ($customer_voice_other) {
+			// 	//GET CUSTOMER VOICE OTHERS ID OF OTH
+			// 	$customer_voice_other_id = $customer_voice_other[0]['id'];
+			// 	$job_order['OTH_ID'] = $customer_voice_other_id;
 
-				$customer_voice_list_merge = array_merge($customer_voice_list, $customer_voice_other);
-				$customer_voice_list = collect($customer_voice_list_merge);
-			}
+			// 	$customer_voice_list_merge = array_merge($customer_voice_list, $customer_voice_other);
+			// 	$customer_voice_list = collect($customer_voice_list_merge);
+			// }
+
+			$customer_voice_list = CustomerVoice::get();
 
 			$extras = [
 				'customer_voice_list' => $customer_voice_list,
@@ -6568,23 +6594,21 @@ class VehicleInwardController extends Controller {
 
 				$job_card->save();
 
-				// //Generate Inspection PDF
-				// $generate_estimate_inspection_pdf = JobOrder::generateManualJoPDF($job_order->id);
+				//Generate Inspection PDF
+				$generate_estimate_inspection_pdf = JobOrder::generateManualJoPDF($job_order->id);
 
-				// dd(11);
-				// //Generate Inspection PDF
-				// $generate_inventory_pdf = JobOrder::generateInventoryPDF($job_order->id);
+				//Generate Inspection PDF
+				$generate_inventory_pdf = JobOrder::generateInventoryPDF($job_order->id);
 
-				// //Generate Inspection PDF
-				// $generate_estimate_inspection_pdf = JobOrder::generateInspectionPDF($job_order->id);
+				//Generate Inspection PDF
+				$generate_estimate_inspection_pdf = JobOrder::generateInspectionPDF($job_order->id);
 
-				// //Generate Estimation PDF
-				// $generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);
+				//Generate Estimation PDF
+				$generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);
 
-				// //Generate Inventory PDF
-				// $generate_estimate_pdf = JobOrder::generateInventoryPDF($request->job_order_id);
+				//Generate Inventory PDF
+				$generate_estimate_pdf = JobOrder::generateInventoryPDF($request->job_order_id);
 
-				// dd();
 				DB::commit();
 
 				return response()->json([
