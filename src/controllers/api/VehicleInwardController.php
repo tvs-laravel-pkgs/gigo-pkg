@@ -2947,6 +2947,11 @@ class VehicleInwardController extends Controller {
 
 				DB::commit();
 
+				return response()->json([
+					'success' => true,
+					'message' => 'Job Card Updated Successfully!!',
+				]);
+
 			} else {
 				$job_order = JobOrder::find($request->id);
 
@@ -2980,12 +2985,11 @@ class VehicleInwardController extends Controller {
 
 				DB::commit();
 
+				return response()->json([
+					'success' => true,
+					'message' => 'Job Order Updated Successfully!!',
+				]);
 			}
-
-			return response()->json([
-				'success' => true,
-				'message' => 'Request Sent successfully!!',
-			]);
 
 		} catch (Exception $e) {
 			return response()->json([
@@ -3470,14 +3474,14 @@ class VehicleInwardController extends Controller {
 				// 	"required_if:warrany_status,==,1",
 				// 	'date_format:"d-m-Y',
 				// ],
-				'amc_starting_date' => [
-					"required_if:amc_status,==,1",
-					'date_format:"d-m-Y',
-				],
-				'amc_ending_date' => [
-					"required_if:amc_status,==,1",
-					'date_format:"d-m-Y',
-				],
+				// 'amc_starting_date' => [
+				// 	"required_if:amc_status,==,1",
+				// 	'date_format:"d-m-Y',
+				// ],
+				// 'amc_ending_date' => [
+				// 	"required_if:amc_status,==,1",
+				// 	'date_format:"d-m-Y',
+				// ],
 				'warranty_expiry_attachment' => [
 					// "required_if:warrany_status,==,1",
 					'mimes:jpeg,jpg,png',
@@ -3498,12 +3502,12 @@ class VehicleInwardController extends Controller {
 					// 'nullable',
 					'numeric',
 				],
-				'starting_km' => [
-					"required_if:amc_status,==,1",
-				],
-				'ending_km' => [
-					"required_if:amc_status,==,1",
-				],
+				// 'starting_km' => [
+				// 	"required_if:amc_status,==,1",
+				// ],
+				// 'ending_km' => [
+				// 	"required_if:amc_status,==,1",
+				// ],
 			]);
 
 			if ($validator->fails()) {
@@ -3542,21 +3546,21 @@ class VehicleInwardController extends Controller {
 			}
 
 			if ($request->amc_status == 1 && $request->warrany_status == 1) {
-				if (strtotime($request->amc_starting_date) >= strtotime($request->amc_ending_date)) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => [
-							'AMC Ending Date should be greater than AMC Starting Date',
-						],
-					]);
-				}
+				// if (strtotime($request->amc_starting_date) >= strtotime($request->amc_ending_date)) {
+				// 	return response()->json([
+				// 		'success' => false,
+				// 		'error' => 'Validation Error',
+				// 		'errors' => [
+				// 			'AMC Ending Date should be greater than AMC Starting Date',
+				// 		],
+				// 	]);
+				// }
 
 				$job_order->amc_status = 1;
-				$job_order->starting_km = $request->starting_km;
-				$job_order->ending_km = $request->ending_km;
-				$job_order->amc_starting_date = date('Y-m-d', strtotime($request->amc_starting_date));
-				$job_order->amc_ending_date = date('Y-m-d', strtotime($request->amc_ending_date));
+				// $job_order->starting_km = $request->starting_km;
+				// $job_order->ending_km = $request->ending_km;
+				// $job_order->amc_starting_date = date('Y-m-d', strtotime($request->amc_starting_date));
+				// $job_order->amc_ending_date = date('Y-m-d', strtotime($request->amc_ending_date));
 			} else {
 
 				if ($request->warrany_status == 1) {
@@ -3564,10 +3568,10 @@ class VehicleInwardController extends Controller {
 				} else {
 					$job_order->amc_status = NULL;
 				}
-				$job_order->amc_starting_date = NULL;
-				$job_order->amc_ending_date = NULL;
-				$job_order->starting_km = NULL;
-				$job_order->ending_km = NULL;
+				// $job_order->amc_starting_date = NULL;
+				// $job_order->amc_ending_date = NULL;
+				// $job_order->starting_km = NULL;
+				// $job_order->ending_km = NULL;
 
 				$attachment = Attachment::where('id', $request->job_order_id)->where('attachment_of_id', 227)->where('attachment_type_id', 256)->forceDelete();
 			}
@@ -6322,6 +6326,9 @@ class VehicleInwardController extends Controller {
 					$customer_sign = str_replace('data:image/png;base64,', '', $request->customer_e_sign);
 					$customer_sign = str_replace(' ', '+', $customer_sign);
 
+					$user_images_des = storage_path('app/public/gigo/job_order/');
+					File::makeDirectory($user_images_des, $mode = 0777, true, true);
+
 					$filename = "webcam_customer_sign_" . strtotime("now") . ".png";
 
 					File::put($attachment_path . $filename, base64_decode($customer_sign));
@@ -6385,6 +6392,40 @@ class VehicleInwardController extends Controller {
 
 			DB::commit();
 
+			if ($request->web == 'website') {
+
+				$attachment_path = storage_path('app/public/gigo/job_order/');
+				Storage::makeDirectory($attachment_path, 0777);
+
+				$uploads_directory = storage_path('app/public/gigo/job_order/');
+
+				$upload_filename = $uploads_directory . $filename;
+
+				$new_filename = "webcam_customer_sign_" . strtotime("now") . $request->job_order_id . 'ESign.jpg';
+
+				$converted_filename = $uploads_directory . $new_filename;
+
+				$new_pic = imagecreatefrompng($upload_filename);
+
+				// Create a new true color image with the same size
+				$w = imagesx($new_pic);
+				$h = imagesy($new_pic);
+				$white = imagecreatetruecolor($w, $h);
+
+				// Fill the new image with white background
+				$bg = imagecolorallocate($white, 255, 255, 255);
+				imagefill($white, 0, 0, $bg);
+
+				// Copy original transparent image onto the new image
+				imagecopy($white, $new_pic, 0, 0, 0, 0, $w, $h);
+
+				$new_pic = $white;
+
+				imagejpeg($new_pic, $converted_filename);
+				imagedestroy($new_pic);
+
+				$attachment = Attachment::where('attachment_of_id', 227)->where('attachment_type_id', 253)->where('entity_id', $request->job_order_id)->update(['name' => $new_filename]);
+			}
 			return response()->json([
 				'success' => true,
 				'message' => 'Vehicle Inwarded Successfully',
@@ -6527,15 +6568,23 @@ class VehicleInwardController extends Controller {
 
 				$job_card->save();
 
-				//Generate Inspection PDF
-				$generate_estimate_inspection_pdf = JobOrder::generateEstimateInspectionPDF($job_order->id);
+				// //Generate Inspection PDF
+				// $generate_estimate_inspection_pdf = JobOrder::generateManualJoPDF($job_order->id);
 
-				//Generate Estimation PDF
-				$generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);
+				// dd(11);
+				// //Generate Inspection PDF
+				// $generate_inventory_pdf = JobOrder::generateInventoryPDF($job_order->id);
 
-				//Generate Revised Estimation PDF
-				$generate_revised_estimate_pdf = JobOrder::generateRevisedEstimatePDF($request->job_order_id);
+				// //Generate Inspection PDF
+				// $generate_estimate_inspection_pdf = JobOrder::generateInspectionPDF($job_order->id);
 
+				// //Generate Estimation PDF
+				// $generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);
+
+				// //Generate Inventory PDF
+				// $generate_estimate_pdf = JobOrder::generateInventoryPDF($request->job_order_id);
+
+				// dd();
 				DB::commit();
 
 				return response()->json([

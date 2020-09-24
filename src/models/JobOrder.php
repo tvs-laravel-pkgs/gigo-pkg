@@ -449,14 +449,10 @@ class JobOrder extends BaseModel {
 		return $list;
 	}
 
-	public static function generateEstimateInspectionPDF($job_order_id) {
+	public static function generateInventoryPDF($job_order_id) {
 		$job_order = JobOrder::with([
-			'type',
-			'quoteType',
-			'serviceType',
 			'vehicle',
 			'vehicle.model',
-			'vehicle.status',
 			'outlet',
 			'gateLog',
 			'gatePass',
@@ -465,17 +461,10 @@ class JobOrder extends BaseModel {
 			'vehicle.currentOwner.customer.primaryAddress.country',
 			'vehicle.currentOwner.customer.primaryAddress.state',
 			'vehicle.currentOwner.customer.primaryAddress.city',
-			'jobOrderRepairOrders.repairOrder',
-			'jobOrderRepairOrders.repairOrder.repairOrderType',
-			'vehicleInspectionItems',
-			'floorAdviser',
 			'serviceAdviser',
+			'customerESign',
 		])
-			->select([
-				'job_orders.*',
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%d-%m-%Y") as jobdate'),
-				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
-			])
+
 			->find($job_order_id);
 
 		$params['field_type_id'] = [11, 12];
@@ -490,10 +479,65 @@ class JobOrder extends BaseModel {
 
 		$data['date'] = date('d-m-Y h:i A');
 
+		if ($job_order->customerESign) {
+			$job_order->esign_img = 'app/public/gigo/job_order/' . $job_order->customerESign[0]->name;
+		} else {
+			$job_order->esign_img = '';
+		}
+
 		$save_path = storage_path('app/public/gigo/pdf');
 		Storage::makeDirectory($save_path, 0777);
 
-		// dd($job_order->vehicleInspectionItems);
+		$data['gate_pass'] = $job_order;
+
+		$name = $job_order_id . '_inward_inventory.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/inward-inventory', $data)->setPaper('a4', 'portrait');
+
+		$img_path = $save_path . '/' . $name;
+		if (File::exists($img_path)) {
+			File::delete($img_path);
+		}
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
+
+		return true;
+	}
+
+	public static function generateInspectionPDF($job_order_id) {
+		$job_order = JobOrder::with([
+			'vehicle',
+			'vehicle.model',
+			'vehicle.status',
+			'outlet',
+			'gateLog',
+			'vehicle.currentOwner.customer',
+			'vehicle.currentOwner.customer.primaryAddress',
+			'vehicle.currentOwner.customer.primaryAddress.country',
+			'vehicle.currentOwner.customer.primaryAddress.state',
+			'vehicle.currentOwner.customer.primaryAddress.city',
+			'vehicleInspectionItems',
+			'floorAdviser',
+			'serviceAdviser',
+			'customerESign',
+		])
+			->select([
+				'job_orders.*',
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%d-%m-%Y") as jobdate'),
+				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
+			])
+			->find($job_order_id);
+
+		$company_id = $job_order->company_id;
+
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$data['date'] = date('d-m-Y h:i A');
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
 
 		$vehicle_inspection_item_groups = array();
 		if (count($job_order->vehicleInspectionItems) > 0) {
@@ -522,7 +566,16 @@ class JobOrder extends BaseModel {
 		}
 
 		$job_order->vehicle_inspection_items = $vehicle_inspection_item_groups;
+
+		if ($job_order->customerESign) {
+			$job_order->esign_img = 'app/public/gigo/job_order/' . $job_order->customerESign[0]->name;
+		} else {
+			$job_order->esign_img = '';
+		}
+
 		$data['gate_pass'] = $job_order;
+
+		$data['date'] = date('d-m-Y');
 
 		$name = $job_order_id . '_inward_inspection.pdf';
 
@@ -594,6 +647,7 @@ class JobOrder extends BaseModel {
 
 		return true;
 	}
+
 	public static function generateEstimatePDF($job_order_id) {
 
 		$estimate_order = JobOrderEstimate::select('job_order_estimates.id', 'job_order_estimates.created_at')->where('job_order_estimates.job_order_id', $job_order_id)->orderBy('job_order_estimates.id', 'ASC')->first();

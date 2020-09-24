@@ -1794,8 +1794,16 @@ class JobCardController extends Controller {
 				]);
 			}
 
-			$job_card = JobCard::find($request->id);
-			$job_card->status_id = 8227; //Waiting for Parts Confirmation
+			$job_card = JobCard::with(['jobOrder'])->find($request->id);
+
+			//Check Parts Requsted or not
+			$job_order_parts = JobOrderPart::where('job_order_id', $job_card->jobOrder->id)->whereNull('removal_reason_id')->count();
+			if ($job_order_parts > 0) {
+				$job_card->status_id = 8227; //Waiting for Parts Confirmation
+			} else {
+				$job_card->status_id = 8224; //Ready for Billing
+			}
+
 			$job_card->updated_by = Auth::user()->id;
 			$job_card->updated_at = Carbon::now();
 			$job_card->work_completed_at = Carbon::now();
@@ -2794,6 +2802,7 @@ class JobCardController extends Controller {
 			'job_card' => $job_card,
 			'send_approval_status' => $send_approval_status,
 			'labours' => $result['labours'],
+			'customer_voices' => $result['customer_voices'],
 		]);
 
 		// return response()->json([
@@ -2867,6 +2876,8 @@ class JobCardController extends Controller {
 				$labour_details[$key]['status_id'] = $value->status_id;
 				$labour_details[$key]['repair_order'] = $value->repairOrder;
 				$labour_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+				$labour_details[$key]['customer_voice'] = $value->customerVoice;
+				$labour_details[$key]['customer_voice_id'] = $value->customer_voice_id;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$labour_amount += $value->amount;
@@ -2901,6 +2912,8 @@ class JobCardController extends Controller {
 				$part_details[$key]['status_id'] = $value->status_id;
 				$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
 				$part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
+				$part_details[$key]['customer_voice'] = $value->customerVoice;
+				$part_details[$key]['customer_voice_id'] = $value->customer_voice_id;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
 					if ($value->is_free_service != 1 && $value->removal_reason_id == null) {
 						$part_amount += $value->amount;
@@ -2913,6 +2926,12 @@ class JobCardController extends Controller {
 			}
 		}
 
+		$customer_voices = array();
+		foreach ($job_order->customerVoices as $key => $customerVoices) {
+			$customer_voices[$key]['id'] = $customerVoices->id;
+			$customer_voices[$key]['name'] = $customerVoices->code . ' / ' . $customerVoices->name;
+		}
+
 		$total_amount = $part_amount + $labour_amount;
 		// dd($labour_details);
 		$result['job_order'] = $job_order;
@@ -2922,6 +2941,7 @@ class JobCardController extends Controller {
 		$result['part_amount'] = $part_amount;
 		$result['total_amount'] = $total_amount;
 		$result['labours'] = $labours;
+		$result['customer_voices'] = $customer_voices;
 
 		return $result;
 	}
