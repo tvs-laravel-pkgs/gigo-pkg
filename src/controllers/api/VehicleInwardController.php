@@ -1991,7 +1991,7 @@ class VehicleInwardController extends Controller {
 
 			$error_messages = [
 				'ownership_type_id.unique' => "Ownership ID is already taken",
-				'code.unique' => "Cusotmer Code is already taken",
+				// 'code.unique' => "Cusotmer Code is already taken",
 			];
 
 			$validator = Validator::make($request->all(), [
@@ -2001,12 +2001,12 @@ class VehicleInwardController extends Controller {
 					'exists:configs,id',
 					'unique:vehicle_owners,ownership_id,' . $request->id . ',customer_id,vehicle_id,' . $vehicle->id,
 				],
-				'code' => [
-					'required',
-					'min:3',
-					'max:255',
-					'unique:customers,code,' . $request->customer_id . ',id',
-				],
+				// 'code' => [
+				// 	'required',
+				// 	'min:3',
+				// 	'max:255',
+				// 	'unique:customers,code,' . $request->customer_id . ',id',
+				// ],
 				'name' => [
 					'required',
 					'min:3',
@@ -2023,7 +2023,7 @@ class VehicleInwardController extends Controller {
 					'nullable',
 					'string',
 					'max:255',
-					'unique:customers,email,' . $request->customer_id . ',id',
+					// 'unique:customers,email,' . $request->customer_id . ',id',
 				],
 				'address_line1' => [
 					'required',
@@ -2075,29 +2075,6 @@ class VehicleInwardController extends Controller {
 					'error' => 'Validation Error',
 					'errors' => $validator->errors()->all(),
 				]);
-			}
-
-			if ($request->email) {
-				$error_messages = [
-					'email.unique' => "Cusotmer Email is already taken",
-				];
-
-				$validator = Validator::make($request->all(), [
-					'email' => [
-						'nullable',
-						'string',
-						'max:255',
-						'unique:customers,email,' . $request->customer_id . ',id',
-					],
-				], $error_messages);
-
-				if ($validator->fails()) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => $validator->errors()->all(),
-					]);
-				}
 			}
 
 			$customer = Customer::saveCustomer($request->all());
