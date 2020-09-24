@@ -2531,26 +2531,26 @@ class VehicleInwardController extends Controller {
 				'call_date' => [
 					'required_if:is_appointment,==,1',
 				],
-				'driver_license_expiry_date' => [
-					'required',
-					'date',
-				],
-				'insurance_expiry_date' => [
-					'required',
-					'date',
-				],
-				'driving_license_image' => [
-					'nullable',
-					'mimes:jpeg,jpg,png',
-				],
-				'insurance_image' => [
-					'nullable',
-					'mimes:jpeg,jpg,png',
-				],
-				'rc_book_image' => [
-					'nullable',
-					'mimes:jpeg,jpg,png',
-				],
+				// 'driver_license_expiry_date' => [
+				// 	'required',
+				// 	'date',
+				// ],
+				// 'insurance_expiry_date' => [
+				// 	'required',
+				// 	'date',
+				// ],
+				// 'driving_license_image' => [
+				// 	'nullable',
+				// 	'mimes:jpeg,jpg,png',
+				// ],
+				// 'insurance_image' => [
+				// 	'nullable',
+				// 	'mimes:jpeg,jpg,png',
+				// ],
+				// 'rc_book_image' => [
+				// 	'nullable',
+				// 	'mimes:jpeg,jpg,png',
+				// ],
 			], $error_messages);
 
 			if ($validator->fails()) {

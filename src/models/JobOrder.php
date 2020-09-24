@@ -591,6 +591,179 @@ class JobOrder extends BaseModel {
 		return true;
 	}
 
+	public static function generateManualJoPDF($job_order_id) {
+
+		$job_order = JobOrder::with([
+			'outlet',
+			'vehicle.currentOwner.customer',
+			'jobOrderRepairOrders' => function ($q) {
+				$q->whereNull('removal_reason_id');
+			},
+			'jobOrderRepairOrders.repairOrder',
+			'jobOrderRepairOrders.repairOrder.repairOrderType',
+			'jobOrderRepairOrders.customerVoice',
+			'floorAdviser',
+			'serviceAdviser',
+			'roadTestPreferedBy.employee',
+			'jobOrderParts' => function ($q) {
+				$q->whereNull('removal_reason_id');
+			},
+			'jobOrderParts.part',
+			'jobOrderParts.part.taxCode',
+			'jobOrderParts.part.taxCode.taxes',
+			'jobOrderParts.customerVoice',
+		])
+			->find($job_order_id);
+
+		$parts_amount = 0;
+		$labour_amount = 0;
+		$total_amount = 0;
+
+		//Check which tax applicable for customer
+		if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+			$tax_type = 1160; //Within State
+		} else {
+			$tax_type = 1161; //Inter State
+		}
+
+		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+
+		//Count Tax Type
+		$taxes = Tax::get();
+
+		//GET SEPERATE TAXEX
+		$seperate_tax = array();
+		for ($i = 0; $i < count($taxes); $i++) {
+			$seperate_tax[$i] = 0.00;
+		}
+
+		$tax_percentage = 0;
+		$labour_details = array();
+		if ($job_order->jobOrderRepairOrders) {
+			$i = 1;
+			$total_labour_qty = 0;
+			$total_labour_mrp = 0;
+			$total_labour_price = 0;
+			$total_labour_tax = 0;
+			foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
+				$total_amount = 0;
+				$labour_details[$key]['name'] = $labour->repairOrder->code . ' / ' . $labour->repairOrder->name;
+				$labour_details[$key]['split_order_type'] = $labour->splitOrderType ? $labour->splitOrderType->code . "|" . $labour->splitOrderType->name : '-';
+				$labour_details[$key]['voc'] = $labour->customerVoice ? $labour->customerVoice->name . ' / ' . $labour->customerVoice->name : '';
+
+				$tax_amount = 0;
+				$tax_values = array();
+				if ($labour->repairOrder->taxCode) {
+					foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+						$percentage_value = 0;
+						if ($value->type_id == $tax_type) {
+							$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+							$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+						}
+						$tax_values[$tax_key] = $percentage_value;
+						$tax_amount += $percentage_value;
+					}
+				}
+
+				$total_amount = $tax_amount + $labour->amount;
+				$total_amount = number_format((float) $total_amount, 2, '.', '');
+				$labour_amount += $total_amount;
+				$labour_details[$key]['total_amount'] = $total_amount;
+			}
+		}
+
+		$part_details = array();
+		if ($job_order->jobOrderParts) {
+			foreach ($job_order->jobOrderParts as $key => $parts) {
+				$total_amount = 0;
+				$part_details[$key]['name'] = $parts->part->code . ' / ' . $parts->part->name;
+
+				$part_details[$key]['split_order_type'] = $parts->splitOrderType ? $parts->splitOrderType->code . "|" . $parts->splitOrderType->name : '-';
+				$part_details[$key]['voc'] = $parts->customerVoice ? $parts->customerVoice->name . ' / ' . $parts->customerVoice->name : '';
+
+				$tax_amount = 0;
+				$tax_values = array();
+				if ($parts->part->taxCode) {
+					if (count($parts->part->taxCode->taxes) > 0) {
+						foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+							$percentage_value = 0;
+							if ($value->type_id == $tax_type) {
+								$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+								$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+							}
+							$tax_values[$tax_key] = $percentage_value;
+							$tax_amount += $percentage_value;
+						}
+					}
+				}
+
+				$total_amount = $tax_amount + $parts->amount;
+				$total_amount = number_format((float) $total_amount, 2, '.', '');
+				$parts_amount += $total_amount;
+				$part_details[$key]['total_amount'] = $total_amount;
+			}
+		}
+
+		dd($part_details);
+
+		foreach ($seperate_tax as $key => $s_tax) {
+			$seperate_tax[$key] = convert_number_to_words($s_tax);
+		}
+		$data['seperate_taxes'] = $seperate_tax;
+
+		$total_taxable_amount = $total_labour_tax + $total_parts_tax;
+		$data['tax_percentage'] = convert_number_to_words($tax_percentage);
+		$data['total_taxable_amount'] = convert_number_to_words($total_taxable_amount);
+
+		$total_amount = $parts_amount + $labour_amount;
+		$data['taxes'] = $taxes;
+		$data['estimate_date'] = $estimate_order->created_at;
+		$data['part_details'] = $part_details;
+		$data['labour_details'] = $labour_details;
+		$data['total_labour_qty'] = $total_labour_qty;
+		$data['total_labour_mrp'] = $total_labour_mrp;
+		$data['total_labour_price'] = $total_labour_price;
+		$data['total_labour_tax'] = $total_labour_tax;
+
+		$data['total_parts_qty'] = $total_parts_qty;
+		$data['total_parts_mrp'] = $total_parts_mrp;
+		$data['total_parts_price'] = $total_parts_price;
+		$data['total_parts_tax'] = $total_parts_tax;
+		$data['parts_total_amount'] = number_format($parts_amount, 2);
+		$data['labour_total_amount'] = number_format($labour_amount, 2);
+		//FOR ROUND OFF
+		if ($total_amount <= round($total_amount)) {
+			$round_off = round($total_amount) - $total_amount;
+		} else {
+			$round_off = round($total_amount) - $total_amount;
+		}
+		// dd(number_format($round_off));
+		$data['round_total_amount'] = number_format($round_off, 2);
+		$data['total_amount'] = number_format(round($total_amount), 2);
+
+		if (!Storage::disk('public')->has('gigo/pdf/')) {
+			Storage::disk('public')->makeDirectory('gigo/pdf/');
+		}
+
+		$data['title'] = 'Revised Estimate';
+
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
+		$name = $job_order->id . '_revised_estimate.pdf';
+
+		$pdf = PDF::loadView('pdf-gigo/estimate-pdf', $data)->setPaper('a4', 'portrait');
+
+		$img_path = $save_path . '/' . $name;
+		if (File::exists($img_path)) {
+			File::delete($img_path);
+		}
+
+		$pdf->save(storage_path('app/public/gigo/pdf/' . $name));
+
+		return true;
+	}
+
 	public static function generateEstimateGatePassPDF($job_order_id) {
 		$data['gate_pass'] = $job_order = JobOrder::with([
 			'type',
