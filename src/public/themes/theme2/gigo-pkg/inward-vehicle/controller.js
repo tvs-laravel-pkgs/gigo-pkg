@@ -469,6 +469,7 @@ app.component('inwardVehicleView', {
                     }
 
                     //PDF
+                    $scope.total_estimate = res.job_order.total_estimate;
                     $scope.estimate_pdf = res.job_order.estimate_pdf;
                     $scope.covering_letter_pdf = res.job_order.covering_letter_pdf;
                     $scope.gate_pass_pdf = res.job_order.gate_pass_pdf;

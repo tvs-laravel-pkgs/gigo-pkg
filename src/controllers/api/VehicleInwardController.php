@@ -632,6 +632,11 @@ class VehicleInwardController extends Controller {
 				$job_order->estimate_pdf = '';
 			}
 
+			//Check Revised Estimate available or not
+			$total_estimate = JobOrderEstimate::where('job_order_id', $job_order->id)->count();
+
+			$job_order->total_estimate = $total_estimate;
+
 			//Job card details need to get future
 			return response()->json([
 				'success' => true,
