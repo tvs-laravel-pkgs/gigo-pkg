@@ -41,6 +41,11 @@ class JobOrderPart extends Model {
 		)
 			->groupBy('job_order_part_id');
 	}
+
+	public function customerVoice() {
+		return $this->belongsTo('App\CustomerVoice', 'customer_voice_id');
+	}
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];

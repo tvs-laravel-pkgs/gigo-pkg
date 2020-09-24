@@ -34,6 +34,7 @@ class JobOrderRepairOrder extends Model {
 	public function splitOrderType() {
 		return $this->belongsTo('App\SplitOrderType', 'split_order_type_id');
 	}
+
 	public function repairOrderMechanic() {
 		return $this->belongsTo('App\RepairOrderMechanic', 'job_order_repair_order_id');
 	}
@@ -44,6 +45,10 @@ class JobOrderRepairOrder extends Model {
 
 	public function labourReviewAttachment() {
 		return $this->hasMany('App\Attachment', 'entity_id', 'id')->where('attachment_of_id', 227)->where('attachment_type_id', 10096);
+	}
+
+	public function customerVoice() {
+		return $this->belongsTo('App\CustomerVoice', 'customer_voice_id');
 	}
 
 	public static function createFromObject($record_data) {

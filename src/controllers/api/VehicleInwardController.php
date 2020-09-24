@@ -2872,6 +2872,7 @@ class VehicleInwardController extends Controller {
 			$job_order_part->is_free_service = 0;
 			$job_order_part->qty = $request_qty;
 			$job_order_part->is_oem_recommended = $is_oem_recommended;
+			$job_order_part->customer_voice_id = $request->customer_voice_id;
 			$job_order_part->split_order_type_id = $request->split_order_type_id;
 			$job_order_part->amount = $request_qty * $part_mrp;
 			$job_order_part->status_id = 8200; //Customer Approval Pending
@@ -3122,6 +3123,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order_repair_order->job_order_id = $request->job_order_id;
+			$job_order_repair_order->customer_voice_id = $request->customer_voice_id;
 			$job_order_repair_order->repair_order_id = $request->rot_id;
 			$job_order_repair_order->qty = $repair_order->hours;
 			$job_order_repair_order->split_order_type_id = $request->split_order_type_id;
@@ -3740,6 +3742,12 @@ class VehicleInwardController extends Controller {
 
 		$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
+		$customer_voices = array();
+		foreach ($job_order->customerVoices as $key => $customerVoices) {
+			$customer_voices[$key]['id'] = $customerVoices->id;
+			$customer_voices[$key]['name'] = $customerVoices->code . ' / ' . $customerVoices->name;
+		}
+
 		$labour_amount = 0;
 		$part_amount = 0;
 
@@ -3768,6 +3776,8 @@ class VehicleInwardController extends Controller {
 				$labour_details[$key]['removal_reason_id'] = $value->removal_reason_id;
 				$labour_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$labour_details[$key]['repair_order'] = $repair_order;
+				$labour_details[$key]['customer_voice'] = $value->customerVoice;
+				$labour_details[$key]['customer_voice_id'] = $value->customer_voice_id;
 				$labour_details[$key]['status_id'] = $value->status_id;
 				$labour_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
 				if (in_array($value->split_order_type_id, $customer_paid_type) || !$value->split_order_type_id) {
@@ -3803,6 +3813,8 @@ class VehicleInwardController extends Controller {
 				$part_details[$key]['split_order_type_id'] = $value->split_order_type_id;
 				$part_details[$key]['part'] = $value->part;
 				$part_details[$key]['status_id'] = $value->status_id;
+				$part_details[$key]['customer_voice'] = $value->customerVoice;
+				$part_details[$key]['customer_voice_id'] = $value->customer_voice_id;
 				$part_details[$key]['is_fixed_schedule'] = $value->is_fixed_schedule;
 				$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
 
@@ -3827,6 +3839,7 @@ class VehicleInwardController extends Controller {
 		$result['part_amount'] = $part_amount;
 		$result['total_amount'] = $total_amount;
 		$result['labours'] = $labours;
+		$result['customer_voices'] = $customer_voices;
 
 		return $result;
 	}
@@ -3878,6 +3891,7 @@ class VehicleInwardController extends Controller {
 				'labour_amount' => $result['labour_amount'],
 				'parts_rate' => $result['part_amount'],
 				'labours' => $result['labours'],
+				'customer_voices' => $result['customer_voices'],
 			]);
 
 		} catch (\Exception $e) {
@@ -4057,6 +4071,7 @@ class VehicleInwardController extends Controller {
 				'labour_total_amount' => $result['labour_amount'],
 				'parts_total_amount' => $result['part_amount'],
 				'labours' => $result['labours'],
+				'customer_voices' => $result['customer_voices'],
 			]);
 
 		} catch (\Exception $e) {
