@@ -476,6 +476,11 @@ app.component('inwardVehicleView', {
                     $scope.revised_estimate_url = base_url + '/gigo-pkg/pdf/job-order/revised-estimate/' + $scope.job_order.id;
 
                     $scope.$apply();
+
+                    //Scrollable Tabs
+                    setTimeout(function() {
+                        scrollableTabs();
+                    }, 1000);
                 })
                 .fail(function(xhr) {
                     custom_noty('error', 'Something went wrong at server');
@@ -499,11 +504,6 @@ app.component('inwardVehicleView', {
 
         /* Dropdown Arrow Function */
         arrowDropdown();
-
-        //Scrollable Tabs
-        setTimeout(function() {
-            scrollableTabs();
-        }, 1000);
 
         //Save Form Data 
         var form_id = '#inward_vehicle_form';
