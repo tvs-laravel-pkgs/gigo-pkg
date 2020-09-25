@@ -841,7 +841,13 @@ class GateInController extends Controller {
 	public function getVehicleSearchList(Request $request) {
 		// dd($request->all());
 		$key = $request->key;
-		$list = Vehicle::select(
+		$list = Vehicle::with(['kmReadingType'])->select(
+			'driver_name',
+			'driver_mobile_number',
+			'service_contact_number',
+			'km_reading_type_id',
+			'km_reading',
+			'hr_reading',
 			'engine_number',
 			'chassis_number',
 			'registration_number',
