@@ -314,7 +314,7 @@
                                                                     <div class="input-text form-group">
                                                                         <ul class="gatein-img-list">
                                                                             <li class="gatein-img-list-item driver-licence-img">
-                                                                                <label>Driver License <sup class="mandatory">*</sup></label>
+                                                                                <label>Driver License</label>
                                                                                 <div class="avatar-upload type-2">
                                                                                     <div class="avatar-edit" ng-class="{'in': job_order.driver_license_attachment != NULL}">
                                                                                         <input type="file" class="profile-img-upload" name="driving_license_image" id="driving_license_image" accept=".png, .jpg, .jpeg, .svg" />
@@ -333,7 +333,7 @@
                                                                                 </div><!-- Avatar Upload -->
                                                                             </li>
                                                                             <li class="gatein-img-list-item insurance-img">
-                                                                                <label>Insurance <sup class="mandatory">*</sup></label>
+                                                                                <label>Insurance </label>
                                                                                 <div class="avatar-upload type-2">
                                                                                     <div class="avatar-edit" ng-class="{'in': job_order.insurance_attachment != NULL}">
                                                                                         <input type="file" class="profile-img-upload" name="insurance_image" id="insurance_image" accept=".png, .jpg, .jpeg, .svg" />
@@ -352,7 +352,7 @@
                                                                                 </div><!-- Avatar Upload -->
                                                                             </li>
                                                                             <li class="gatein-img-list-item rc-book-img">
-                                                                                <label>RC Book <sup class="mandatory">*</sup></label>
+                                                                                <label>RC Book </label>
                                                                                 <div class="avatar-upload type-2">
                                                                                     <div class="avatar-edit" ng-class="{'in': job_order.rc_book_attachment != NULL}">
                                                                                         <input type="file" class="profile-img-upload" name="rc_book_image" id="rc_book_image" accept=".png, .jpg, .jpeg, .svg" />
@@ -378,9 +378,7 @@
                                                                     <div class="form-group">
                                                                         <label>
                                                                             License Expiry Date
-                                                                            <sup class="mandatory">
-                                                                                *
-                                                                            </sup>
+                                                                            
                                                                         </label>
                                                                         <div class="input-group date" data-date-start-view="2" data-provide="datepicker">
                                                                             <input type="text" class="form-control" placeholder="Select Licence Expiry Date" ng-model="job_order.driver_license_expiry_date" name="driver_license_expiry_date" ng-change="checkLicenseExpiryDate(job_order.driver_license_expiry_date)" />
@@ -395,9 +393,7 @@
                                                                     <div class="form-group">
                                                                         <label>
                                                                             Insurance Expiry Date
-                                                                            <sup class="mandatory">
-                                                                                *
-                                                                            </sup>
+                                                                            
                                                                         </label>
                                                                         <div class="input-group date" data-date-start-view="2" data-provide="datepicker">
                                                                             <input type="text" class="form-control" placeholder="Select Insurance Expiry Date" ng-model="job_order.insurance_expiry_date" ng-change="checkInsuranceExpiryDate(job_order.insurance_expiry_date)" name="insurance_expiry_date" />

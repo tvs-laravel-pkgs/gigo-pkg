@@ -1468,30 +1468,30 @@ app.component('inwardVehicleOrderDetailForm', {
                         minlength: 10,
                         maxlength: 10,
                     },
-                    'driving_license_image': {
-                        required: function(element) {
-                            if (!$scope.job_order.driver_license_attachment) {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
-                    'insurance_image': {
-                        required: function(element) {
-                            if (!$scope.job_order.insurance_attachment) {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
-                    'rc_book_image': {
-                        required: function(element) {
-                            if (!$scope.job_order.rc_book_attachment) {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
+                    // 'driving_license_image': {
+                    //     required: function(element) {
+                    //         if (!$scope.job_order.driver_license_attachment) {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    // },
+                    // 'insurance_image': {
+                    //     required: function(element) {
+                    //         if (!$scope.job_order.insurance_attachment) {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    // },
+                    // 'rc_book_image': {
+                    //     required: function(element) {
+                    //         if (!$scope.job_order.rc_book_attachment) {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    // },
                     // 'cre_user_id': {
                     //     required: function(element) {
                     //         if (self.appointment_status == '1') {
@@ -1508,12 +1508,12 @@ app.component('inwardVehicleOrderDetailForm', {
                             return false;
                         },
                     },
-                    'driver_license_expiry_date': {
-                        required: true,
-                    },
-                    'insurance_expiry_date': {
-                        required: true,
-                    },
+                    // 'driver_license_expiry_date': {
+                    //     required: true,
+                    // },
+                    // 'insurance_expiry_date': {
+                    //     required: true,
+                    // },
                 },
                 errorPlacement: function(error, element) {
                     if (element.attr('name') == 'driving_license_image') {
@@ -2563,39 +2563,39 @@ app.component('inwardVehicleDmsCheckListForm', {
                     // 'membership_attachment': {
                     //     required: true,
                     // },
-                    'amc_starting_date': {
-                        required: function(element) {
-                            if (self.amc_status == '1') {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
-                    'amc_ending_date': {
-                        required: function(element) {
-                            if (self.amc_status == '1') {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
-                    'starting_km': {
-                        required: function(element) {
-                            if (self.amc_status == '1') {
-                                return true;
-                            }
-                            return false;
-                        },
-                    },
-                    'ending_km': {
-                        required: function(element) {
-                            if (self.amc_status == '1') {
-                                return true;
-                            }
-                            return false;
-                        },
-                        greaterThan: "#starting_km"
-                    },
+                    // 'amc_starting_date': {
+                    //     required: function(element) {
+                    //         if (self.amc_status == '1') {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    // },
+                    // 'amc_ending_date': {
+                    //     required: function(element) {
+                    //         if (self.amc_status == '1') {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    // },
+                    // 'starting_km': {
+                    //     required: function(element) {
+                    //         if (self.amc_status == '1') {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    // },
+                    // 'ending_km': {
+                    //     required: function(element) {
+                    //         if (self.amc_status == '1') {
+                    //             return true;
+                    //         }
+                    //         return false;
+                    //     },
+                    //     greaterThan: "#starting_km"
+                    // },
                 },
                 messages: {
 
@@ -2737,6 +2737,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                     $scope.labour_amount = res.labour_amount;
                     $scope.parts_rate = res.parts_rate;
                     $scope.labours = res.labours;
+                    $scope.customer_voices = res.customer_voices;
                     $scope.$apply();
 
                     self.repair_order_ids = [];
@@ -3069,9 +3070,11 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
         $scope.showLabourForm = function(labour_index, labour = null) {
             $scope.schedule_maintainance_ro = [];
             $scope.repair_order_id = '';
+            self.labour_customer_voice_id = '';
             if (labour_index === false) {
                 // $scope.labour_details = {};
             } else {
+                self.labour_customer_voice_id = labour.customer_voice_id;
                 if (labour.split_order_type_id != null) {
                     $scope.repair_order_id = labour.id;
                     if (labour.split_order_type_id == undefined) {
@@ -3107,6 +3110,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             // console.log(part);
             $scope.part_mrp = 0;
             $scope.part_id = '';
+            self.part_customer_voice_id = '';
             self.repair_order_ids = [];
             $scope.job_order.repair_order = [];
             $scope.schedule_maintainance_part = [];
@@ -3114,6 +3118,7 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             if (part_index === false) {
                 // $scope.part_details = {};
             } else {
+                self.part_customer_voice_id = part.customer_voice_id;
                 $scope.part_mrp = part.rate;
                 $scope.part_id = part.part_id;
 
@@ -3404,6 +3409,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $scope.total_labour_count = res.total_labour_count;
                     $scope.extras = res.extras;
                     $scope.labours = res.labours;
+                    $scope.customer_voices = res.customer_voices;
                     self.repair_order_ids = [];
                     $scope.$apply();
                 })
@@ -3637,11 +3643,13 @@ app.component('inwardVehiclePayableLabourPartForm', {
         $scope.showLabourForm = function(labour_index, labour = null) {
             $scope.schedule_maintainance_ro = [];
             $scope.repair_order_id = '';
+            self.labour_customer_voice_id = '';
             if (labour_index === false) {
                 // $scope.labour_details = {};
             } else {
                 // console.log(labour);
                 // return false;
+                self.labour_customer_voice_id = labour.customer_voice_id;
                 if (labour.split_order_type_id != null) {
                     $scope.repair_order_id = labour.id;
                     if (labour.split_order_type_id == undefined) {
@@ -3676,12 +3684,14 @@ app.component('inwardVehiclePayableLabourPartForm', {
             $scope.part_mrp = 0;
             $scope.part_id = '';
             self.repair_order_ids = [];
+            self.part_customer_voice_id = '';
             $scope.job_order.repair_order = [];
             $scope.schedule_maintainance_part = [];
             $scope.job_order_part_id = '';
             if (part_index === false) {
                 // $scope.part_details = {};
             } else {
+                self.part_customer_voice_id = part.customer_voice_id;
                 $scope.part_mrp = part.rate;
                 $scope.part_id = part.part_id;
 

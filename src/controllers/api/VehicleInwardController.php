@@ -3771,9 +3771,11 @@ class VehicleInwardController extends Controller {
 		$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
 		$customer_voices = array();
+		$customer_voices[0]['id'] = '';
+		$customer_voices[0]['name'] = 'Select Customer Voice';
 		foreach ($job_order->customerVoices as $key => $customerVoices) {
-			$customer_voices[$key]['id'] = $customerVoices->id;
-			$customer_voices[$key]['name'] = $customerVoices->code . ' / ' . $customerVoices->name;
+			$customer_voices[$key + 1]['id'] = $customerVoices->id;
+			$customer_voices[$key + 1]['name'] = $customerVoices->code . ' / ' . $customerVoices->name;
 		}
 
 		$labour_amount = 0;

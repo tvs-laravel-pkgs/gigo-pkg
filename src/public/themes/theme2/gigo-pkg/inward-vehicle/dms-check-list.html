@@ -60,7 +60,7 @@
                                                         </div>
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="$ctrl.amc_status && $ctrl.warrany_status">
+                                                <div class="col-md-3 ng-hide" ng-if="$ctrl.amc_status && $ctrl.warrany_status">
                                                     <div class="form-group">
                                                         <label>
                                                             AMC Starting Date
@@ -76,7 +76,7 @@
                                                         </div><!-- Input Group -->
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="$ctrl.amc_status && $ctrl.warrany_status">
+                                                <div class="col-md-3 ng-hide" ng-if="$ctrl.amc_status && $ctrl.warrany_status">
                                                     <div class="form-group">
                                                         <label>
                                                             AMC Ending Date
@@ -118,7 +118,7 @@
                                                     </div>
                                                     <!--Field-->
                                                 </div>
-                                                <div class="col-md-3" ng-if="$ctrl.amc_status && $ctrl.warrany_status">
+                                                <div class="col-md-3 ng-hide" ng-if="$ctrl.amc_status && $ctrl.warrany_status">
                                                     <div class="form-group">
                                                         <label>
                                                             Starting KM
@@ -127,7 +127,7 @@
                                                         <input type="text" class="form-control" maxlength="6" id="starting_km" placeholder="Enter Starting KM" autocomplete="off" ng-model="job_order.starting_km" name="starting_km" />
                                                     </div><!-- Feild -->
                                                 </div><!-- Column -->
-                                                <div class="col-md-3" ng-if="$ctrl.amc_status && $ctrl.warrany_status">
+                                                <div class="col-md-3 ng-hide" ng-if="$ctrl.amc_status && $ctrl.warrany_status">
                                                     <div class="form-group">
                                                         <label>
                                                             Ending KM
