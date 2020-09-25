@@ -6600,10 +6600,10 @@ class VehicleInwardController extends Controller {
 
 				$job_card->save();
 
-				//Generate Inspection PDF
+				//Generate Manual JO PDF
 				$generate_estimate_inspection_pdf = JobOrder::generateManualJoPDF($job_order->id);
 
-				//Generate Inspection PDF
+				//Generate Inventory PDF
 				$generate_inventory_pdf = JobOrder::generateInventoryPDF($job_order->id);
 
 				//Generate Inspection PDF
@@ -6611,9 +6611,6 @@ class VehicleInwardController extends Controller {
 
 				//Generate Estimation PDF
 				$generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);
-
-				//Generate Inventory PDF
-				$generate_estimate_pdf = JobOrder::generateInventoryPDF($request->job_order_id);
 
 				DB::commit();
 

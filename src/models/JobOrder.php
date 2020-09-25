@@ -828,6 +828,7 @@ class JobOrder extends BaseModel {
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 			])
 			->find($job_order_id);
+
 		$parts_amount = 0;
 		$labour_amount = 0;
 		$total_amount = 0;
