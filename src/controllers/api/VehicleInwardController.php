@@ -2652,7 +2652,7 @@ class VehicleInwardController extends Controller {
 								$repair_order->is_customer_approved = 0;
 								$repair_order->split_order_type_id = $rvalue->pivot->split_order_type_id;
 								$repair_order->qty = $rvalue->hours;
-								$repair_order->amount = $rvalue->hours * $rvalue->amount;
+								$repair_order->amount = $rvalue->amount;
 								$repair_order->is_free_service = $value->is_free;
 								$repair_order->status_id = 8180; //Customer Approval Pending
 								$repair_order->estimate_order_id = $estimate_order_id;
@@ -3158,7 +3158,7 @@ class VehicleInwardController extends Controller {
 			if ($request->repair_order_description) {
 				$job_order_repair_order->amount = $request->repair_order_amount;
 			} else {
-				$job_order_repair_order->amount = $repair_order->hours * $repair_order->amount;
+				$job_order_repair_order->amount = $repair_order->amount;
 			}
 			$job_order_repair_order->is_free_service = 0;
 			if ($request->type == 'scheduled') {
