@@ -302,9 +302,9 @@ app.component('materialGatePassTableList', {
         }
         self.user = $scope.user = HelperService.getLoggedUser();
         self.search_key = '';
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
-        // $('.page-main-content.list-page-content').css("overflow-y", "auto");
+        // var table_scroll;
+        // table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#material_gate_pass_list').dataTable({
             "dom": cndn_dom_structure,
             "language": {

@@ -1718,7 +1718,7 @@ class VehicleInwardController extends Controller {
 							'success' => false,
 							'error' => 'Validation Error',
 							'errors' => [
-								'No Floating Gatepass number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+								'No Floating Gatepass number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $outlet->code,
 							],
 						]);
 					}
@@ -2625,7 +2625,7 @@ class VehicleInwardController extends Controller {
 								'success' => false,
 								'error' => 'Validation Error',
 								'errors' => [
-									'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+									'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $outlet->code,
 								],
 							]);
 						}
@@ -2842,7 +2842,7 @@ class VehicleInwardController extends Controller {
 						'success' => false,
 						'error' => 'Validation Error',
 						'errors' => [
-							'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+							'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $outlet->code,
 						],
 					]);
 				}
@@ -3107,7 +3107,7 @@ class VehicleInwardController extends Controller {
 						'success' => false,
 						'error' => 'Validation Error',
 						'errors' => [
-							'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+							'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
 						],
 					]);
 				}
@@ -4646,7 +4646,7 @@ class VehicleInwardController extends Controller {
 				// 			'success' => false,
 				// 			'error' => 'Validation Error',
 				// 			'errors' => [
-				// 				'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $outlet->code . ', Outlet : ' . $outlet->code,
+				// 				'No Estimate Reference number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $outlet->code,
 				// 			],
 				// 		]);
 				// 	}
@@ -4942,7 +4942,7 @@ class VehicleInwardController extends Controller {
 									'success' => false,
 									'error' => 'Validation Error',
 									'errors' => [
-										'No Road Test Gate Pass number found for FY : ' . $financial_year->year . ', State : ' . $branch->code . ', Outlet : ' . $branch->code,
+										'No Road Test Gate Pass number found for FY : ' . $financial_year->year . ', State : ' . $branch->state->code . ', Outlet : ' . $branch->code,
 									],
 								]);
 							}
@@ -5331,11 +5331,15 @@ class VehicleInwardController extends Controller {
 				]);
 			}
 
-			//Check which tax applicable for customer
-			if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
-				$tax_type = 1160; //Within State
+			if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+				//Check which tax applicable for customer
+				if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+					$tax_type = 1160; //Within State
+				} else {
+					$tax_type = 1161; //Inter State
+				}
 			} else {
-				$tax_type = 1161; //Inter State
+				$tax_type = 1160; //Within State
 			}
 
 			//Count Tax Type

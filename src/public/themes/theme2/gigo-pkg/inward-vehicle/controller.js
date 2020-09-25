@@ -222,8 +222,9 @@ app.component('inwardVehicleTableList', {
         self.search_key = '';
         self.user = $scope.user = HelperService.getLoggedUser();
 
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        // var table_scroll;
+        // table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#inward_vehicles_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {

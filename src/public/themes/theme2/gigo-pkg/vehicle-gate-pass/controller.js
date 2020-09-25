@@ -243,8 +243,8 @@ app.component('vehicleGatePassTableList', {
 
         self.user = $scope.user = HelperService.getLoggedUser();
         self.search_key = '';
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        // var table_scroll;
+        // table_scroll = $('.page-main-content.list-page-content').height() - 37;
 
         //LIST
         $('.page-main-content.list-page-content').css("overflow-y", "auto");

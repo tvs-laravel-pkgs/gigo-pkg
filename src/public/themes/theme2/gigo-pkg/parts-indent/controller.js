@@ -12,9 +12,10 @@ app.component('partsIndentList', {
         //     return false;
         // }
         self.add_permission = self.hasPermission('parts-indent');
-        var table_scroll;
+        // var table_scroll;
         self.search_key = '';
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        // table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#parts_indent_table').DataTable({
             "dom": cndn_dom_structure,
             "language": {

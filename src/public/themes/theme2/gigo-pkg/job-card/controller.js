@@ -15,8 +15,9 @@ app.component('jobCardTableList', {
         self.add_permission = self.hasPermission('add-job-card');
         self.user = $scope.user = HelperService.getLoggedUser();
         self.search_key = '';
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        // var table_scroll;
+        // table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#job_cards_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {

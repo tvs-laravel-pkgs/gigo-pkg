@@ -101,8 +101,9 @@ app.component('myJobcardTableList', {
 
         self.user = $scope.user = HelperService.getLoggedUser();
         self.search_key = '';
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        // var table_scroll;
+        // table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#myjob_table_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {

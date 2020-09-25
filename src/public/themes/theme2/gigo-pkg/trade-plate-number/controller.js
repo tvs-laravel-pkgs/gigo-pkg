@@ -12,8 +12,9 @@ app.component('tradePlateNumberList', {
             return false;
         }
         self.add_permission = self.hasPermission('trade-plate-numbers');
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        // var table_scroll;
+        // table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#trade_plate_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
