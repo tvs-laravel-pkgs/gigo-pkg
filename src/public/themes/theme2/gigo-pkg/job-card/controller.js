@@ -1964,6 +1964,7 @@ app.component('jobCardPayableLabourPartsForm', {
                     $scope.job_card = res.job_card;
                     $scope.send_approval_status = res.send_approval_status;
                     $scope.labours = res.labours;
+                    $scope.customer_voices = res.customer_voices;
                     self.repair_order_ids = [];
                     $scope.$apply();
                 })
@@ -2167,11 +2168,13 @@ app.component('jobCardPayableLabourPartsForm', {
         $scope.showLabourForm = function(labour_index, labour = null) {
             $scope.schedule_maintainance_ro = [];
             $scope.repair_order_id = '';
+            self.labour_customer_voice_id = '';
             if (labour_index === false) {
                 // $scope.labour_details = {};
             } else {
                 // console.log(labour);
                 // return false;
+                self.labour_customer_voice_id = labour.customer_voice_id;
                 if (labour.split_order_type_id != null) {
                     $scope.repair_order_id = labour.id;
                     if (labour.split_order_type_id == undefined) {
@@ -2206,9 +2209,11 @@ app.component('jobCardPayableLabourPartsForm', {
             $scope.job_order_part_id = '';
             $scope.part_mrp = 0;
             $scope.part_id = '';
+            self.part_customer_voice_id = '';
             if (part_index === false) {
                 // $scope.part_details = {};
             } else {
+                self.part_customer_voice_id = part.customer_voice_id;
                 $scope.part_mrp = part.rate;
                 $scope.part_id = part.part_id;
 

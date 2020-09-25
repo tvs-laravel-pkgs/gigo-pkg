@@ -57,12 +57,12 @@ class PDFController extends Controller {
 			'inventory_type_list' => VehicleInventoryItem::getInventoryList($this->data['gate_pass']->jobOrder->id, $params),
 		];
 
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
 			Storage::disk('public')->makeDirectory('gigo/pdf/');
 		}
-
-		$save_path = storage_path('app/public/gigo/pdf');
-		Storage::makeDirectory($save_path, 0777);
 
 		$name = $gatepass->jobOrder->id . '_gatepass.pdf';
 
@@ -122,12 +122,12 @@ class PDFController extends Controller {
 
 		$this->data['gigo_invoices'] = $gigo_invoice;
 
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
 			Storage::disk('public')->makeDirectory('gigo/pdf/');
 		}
-
-		$save_path = storage_path('app/public/gigo/pdf');
-		Storage::makeDirectory($save_path, 0777);
 
 		$name = $job_card->jobOrder->id . '_covering_letter.pdf';
 
@@ -367,14 +367,14 @@ class PDFController extends Controller {
 		$this->data['round_total_amount'] = number_format($round_off, 2);
 		$this->data['total_amount'] = number_format(round($total_amount), 2);
 
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
 			Storage::disk('public')->makeDirectory('gigo/pdf/');
 		}
 
 		$this->data['title'] = 'Estimate';
-
-		$save_path = storage_path('app/public/gigo/pdf');
-		Storage::makeDirectory($save_path, 0777);
 
 		$name = $job_order->id . '_estimate.pdf';
 
@@ -610,14 +610,14 @@ class PDFController extends Controller {
 		$this->data['round_total_amount'] = number_format($round_off, 2);
 		$this->data['total_amount'] = number_format(round($total_amount), 2);
 
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
 			Storage::disk('public')->makeDirectory('gigo/pdf/');
 		}
 
 		$this->data['title'] = 'Revised Estimate';
-
-		$save_path = storage_path('app/public/gigo/pdf');
-		Storage::makeDirectory($save_path, 0777);
 
 		$name = $job_order->id . '_revised_estimate.pdf';
 
@@ -1095,12 +1095,12 @@ class PDFController extends Controller {
 		$this->data['round_total_amount'] = number_format($round_off, 2);
 		$this->data['total_amount'] = number_format(round($total_amount), 2);
 
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
 			Storage::disk('public')->makeDirectory('gigo/pdf/');
 		}
-
-		$save_path = storage_path('app/public/gigo/pdf');
-		Storage::makeDirectory($save_path, 0777);
 
 		$name = $job_card->jobOrder->id . '_revised_estimate.pdf';
 
@@ -1978,7 +1978,7 @@ class PDFController extends Controller {
 					$labour_details[$key]['amount'] = $labour->amount;
 					$labour_details[$key]['rate'] = $labour->repairOrder->amount;
 					$labour_details[$key]['is_free_service'] = $labour->is_free_service;
-					$labour_details[$key]['type'] = $labour->repairOrder->repairOrderType->name;
+					$labour_details[$key]['type'] = $labour->repairOrder->repairOrderType ? $labour->repairOrder->repairOrderType->name : '';
 					$tax_amount = 0;
 					// $tax_percentage = 0;
 					$labour_total_cgst = 0;
@@ -2049,7 +2049,7 @@ class PDFController extends Controller {
 					$part_details[$key]['rate'] = $parts->rate;
 					$part_details[$key]['amount'] = $parts->amount;
 					$part_details[$key]['is_free_service'] = $parts->is_free_service;
-					$part_details[$key]['uom'] = $parts->part->uom->code;
+					$part_details[$key]['uom'] = $parts->part->uom ? $parts->part->uom->code : '';
 					$tax_amount = 0;
 					// $tax_percentage = 0;
 					$tax_values = array();
@@ -2662,12 +2662,12 @@ class PDFController extends Controller {
 		$this->data['labour_round_total_amount'] = round($labour_amount);
 		$this->data['labour_total_amount'] = number_format($labour_amount, 2);
 
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
 			Storage::disk('public')->makeDirectory('gigo/pdf/');
 		}
-
-		$save_path = storage_path('app/public/gigo/pdf');
-		Storage::makeDirectory($save_path, 0777);
 
 		$name = $job_card->id . '_labour_invoice.pdf';
 
@@ -2834,12 +2834,12 @@ class PDFController extends Controller {
 		$this->data['parts_round_total_amount'] = round($parts_amount);
 		$this->data['parts_total_amount'] = number_format($parts_amount, 2);
 
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
 			Storage::disk('public')->makeDirectory('gigo/pdf/');
 		}
-
-		$save_path = storage_path('app/public/gigo/pdf');
-		Storage::makeDirectory($save_path, 0777);
 
 		$name = $job_card->id . '_part_invoice.pdf';
 

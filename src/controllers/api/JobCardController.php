@@ -2927,13 +2927,15 @@ class JobCardController extends Controller {
 		}
 
 		$customer_voices = array();
+		$customer_voices[0]['id'] = '';
+		$customer_voices[0]['name'] = 'Select Customer Voice';
 		foreach ($job_order->customerVoices as $key => $customerVoices) {
-			$customer_voices[$key]['id'] = $customerVoices->id;
-			$customer_voices[$key]['name'] = $customerVoices->code . ' / ' . $customerVoices->name;
+			$customer_voices[$key + 1]['id'] = $customerVoices->id;
+			$customer_voices[$key + 1]['name'] = $customerVoices->code . ' / ' . $customerVoices->name;
 		}
 
 		$total_amount = $part_amount + $labour_amount;
-		// dd($labour_details);
+
 		$result['job_order'] = $job_order;
 		$result['labour_details'] = $labour_details;
 		$result['part_details'] = $part_details;

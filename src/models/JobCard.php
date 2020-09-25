@@ -439,12 +439,12 @@ class JobCard extends BaseModel {
 		$data['round_total_amount'] = number_format($round_off, 2);
 		$data['total_amount'] = number_format(round($total_amount), 2);
 
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
 			Storage::disk('public')->makeDirectory('gigo/pdf/');
 		}
-
-		$save_path = storage_path('app/public/gigo/pdf');
-		Storage::makeDirectory($save_path, 0777);
 
 		$name = $job_card->jobOrder->id . '_revised_estimate.pdf';
 
@@ -827,14 +827,14 @@ class JobCard extends BaseModel {
 			'inventory_type_list' => VehicleInventoryItem::getInventoryList($job_card->jobOrder->id, $params, '', '', $company_id),
 		];
 
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
 			Storage::disk('public')->makeDirectory('gigo/pdf/');
 		}
 
 		$data['date'] = date('d-m-Y');
-
-		$save_path = storage_path('app/public/gigo/pdf');
-		Storage::makeDirectory($save_path, 0777);
 
 		$name = $job_card->jobOrder->id . '_gatepass.pdf';
 
@@ -900,12 +900,12 @@ class JobCard extends BaseModel {
 
 		$data['gigo_invoices'] = $gigo_invoice;
 
+		$save_path = storage_path('app/public/gigo/pdf');
+		Storage::makeDirectory($save_path, 0777);
+
 		if (!Storage::disk('public')->has('gigo/pdf/')) {
 			Storage::disk('public')->makeDirectory('gigo/pdf/');
 		}
-
-		$save_path = storage_path('app/public/gigo/pdf');
-		Storage::makeDirectory($save_path, 0777);
 
 		$name = $covering_letter->jobOrder->id . '_covering_letter.pdf';
 

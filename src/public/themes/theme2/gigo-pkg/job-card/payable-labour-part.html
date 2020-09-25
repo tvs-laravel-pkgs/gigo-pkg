@@ -376,7 +376,7 @@
                 <div class="modal-body">
                     <div class="modal-form">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label>
                                         ROT Code
@@ -395,7 +395,7 @@
                                     <input type="hidden" class="required" name="rot_id" value="{{schedule_maintainance_ro.repair_order.id}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label>
                                         Split Order Type
@@ -412,6 +412,22 @@
                                         </md-optgroup>
                                     </md-select>
                                     <input type="hidden" class="required" name="split_order_type_id" value="{{schedule_maintainance_ro.split_order_type.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Customer Voice
+                                    </label>
+                                    <md-select ng-model="$ctrl.labour_customer_voice_id" placeholder="Select Cusotmer Voice" md-on-close="clearSearchRejectedReason()" data-md-container-class="selectdemoSelectHeader">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchCusotmerVoice" type="search" placeholder="Search Cusotmer Voice.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="customer_voice.id" ng-repeat="customer_voice in customer_voices | filter:searchCusotmerVoice">{{customer_voice.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="customer_voice_id" value="{{$ctrl.labour_customer_voice_id}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
                         </div><!-- Row -->
@@ -435,7 +451,7 @@
                                     <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.hours}}</span>
                                 </li>
                                 <li class="view-col-4">
-                                    <span class="view-col-label">Amount {{schedule_maintainance_ro.repair_order.is_editable == 0 ? '(per Hour)' : ''}}</span>
+                                    <span class="view-col-label">Amount</span>
                                     <span class="view-data-list-value" ng-if="schedule_maintainance_ro.repair_order.is_editable == 0">{{schedule_maintainance_ro.repair_order.amount | currency}}</span>
                                     <input class="form-control required" ng-if="schedule_maintainance_ro.repair_order.is_editable == 1" ng-model="schedule_maintainance_ro.repair_order.amount" type="text" name="repair_order_amount" value="{{schedule_maintainance_ro.repair_order.amount}}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="7">
                                 </li>
@@ -533,6 +549,22 @@
                                         </md-optgroup>
                                     </md-select>
                                     <input type="hidden" name="split_order_type_id" value="{{schedule_maintainance_part.split_order_type.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Customer Voice
+                                    </label>
+                                    <md-select ng-model="$ctrl.part_customer_voice_id" placeholder="Select Cusotmer Voice" md-on-close="clearSearchRejectedReason()" data-md-container-class="selectdemoSelectHeader">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchCusotmerVoice" type="search" placeholder="Search Cusotmer Voice.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="customer_voice.id" ng-repeat="customer_voice in customer_voices | filter:searchCusotmerVoice">{{customer_voice.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="customer_voice_id" value="{{$ctrl.part_customer_voice_id}}">
                                 </div><!-- Field -->
                             </div><!-- Column -->
                             <div class="col-md-4">
