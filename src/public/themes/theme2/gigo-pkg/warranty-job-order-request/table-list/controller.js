@@ -145,6 +145,7 @@ app.component('warrantyJobOrderRequestTableList', {
                 { data: 'mod_name', name: 'mod.model_name' },
                 { data: 'registration_number', name: 'vehicles.registration_number' },
                 { data: 'chassis_number', name: 'vehicles.chassis_number' },
+                { data: 'bharat_stage', name: 'bharat_stages.name' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
                 $('#table_infos').html(total)

@@ -46,12 +46,14 @@ class WarrantyJobOrderRequestController extends Controller {
 			DB::raw('CONCAT(users.name," / ",users.username) as requested_by'),
 			'warranty_job_order_requests.status_id',
 			'configs.name as status',
+			'bharat_stages.name as bharat_stage',
 		])
 			->leftJoin('job_orders', 'job_orders.id', 'warranty_job_order_requests.job_order_id')
 			->leftJoin('job_cards', 'job_cards.job_order_id', 'job_orders.id')
 			->leftJoin('outlets', 'outlets.id', 'job_orders.outlet_id')
 			->leftJoin('customers', 'customers.id', 'job_orders.customer_id')
 			->leftJoin('vehicles', 'vehicles.id', 'job_orders.vehicle_id')
+			->leftJoin('bharat_stages', 'bharat_stages.id', 'vehicles.bharat_stage_id')
 			->leftJoin('models as mod', 'mod.id', 'vehicles.model_id')
 			->leftJoin('configs', 'configs.id', 'warranty_job_order_requests.status_id')
 			->leftJoin('users', 'users.id', 'warranty_job_order_requests.created_by_id')

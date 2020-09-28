@@ -1,4 +1,4 @@
-Content Wrap -->
+<!--Content Wrap -->
 <div class="content-wrap cndn-wrap">
     <!-- Page Header -->
     <div class="page-header">
@@ -93,6 +93,20 @@ Content Wrap -->
                                                 <input type="text" class="form-control" ng-model="$ctrl.service_type.display_order" name="display_order" placeholder="Enter Display Order" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
                                             </div><!-- Feild -->
                                         </div>
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
+                                                    Is Free
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <div class="tab-switch">
+                                                    <md-switch ng-model="$ctrl.is_free" aria-label="Switch 1" ng-true-value="'Inactive'" ng-false-value="'Active'" class="md-warn">
+                                                        {{ $ctrl.is_free }}
+                                                    </md-switch>
+                                                    <input type="hidden" name="is_free" value="{{$ctrl.is_free}}">
+                                                </div>
+                                            </div><!-- Form Group -->
+                                        </div><!-- Column -->
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>

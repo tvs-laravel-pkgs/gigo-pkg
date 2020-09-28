@@ -535,9 +535,10 @@
                                     <div class="form-group">
                                         <label>
                                             Mobile Number
-                                            <sup class="mandatory">*</sup>
+                                            <sup class="mandatory"></sup>
                                         </label>
-                                        <input required placeholder="Mobile Number" class="form-control" type="text" id="customer_mobile_no" name="customer_mobile_no" ng-model="warranty_job_order_request.job_order.customer.mobile_no" minlength="10" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" autocomplete="off">
+                                        <!-- required -->
+                                        <input placeholder="Mobile Number" class="form-control" type="text" id="customer_mobile_no" name="customer_mobile_no" ng-model="warranty_job_order_request.job_order.customer.mobile_no" minlength="10" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" autocomplete="off">
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3" ng-if="form_type=='manual'">
@@ -674,7 +675,7 @@
                                         </label>
                                         <md-select multiple ng-model="warranty_job_order_request.service_types" placeholder="Select compled free services" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
                                             <md-select-header class="demo-select-header">
-                                                <input ng-model="searchServiceTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                                <input ng-model="searchServiceTypeKey" type="search" placeholder="Search for a Service Type.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                             </md-select-header>
                                             <md-optgroup>
                                                 <md-option ng-value="service_type" ng-repeat="service_type in options.service_types | filter:searchServiceTypeKey">
@@ -738,7 +739,7 @@
                                             Sub Aggregate
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-select ng-model="warranty_job_order_request.sub_aggregate" placeholder="Select Sub Aggregate" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select ng-model="warranty_job_order_request.sub_aggregate" placeholder="Select Sub Aggregate" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="subAggregateChange()">
                                             <md-select-header class="demo-select-header">
                                                 <input ng-model="searchAggregate" type="search" placeholder="Search for a Sub Aggregate.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                             </md-select-header>
@@ -757,7 +758,7 @@
                                             Complaint code
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-autocomplete md-selected-item="warranty_job_order_request.complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code+' / '+complaint.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. 01C4" md-input-id="complaint_ac">
+                                        <md-autocomplete md-no-cache="true" md-selected-item="warranty_job_order_request.complaint" md-search-text="complaintSearchKey" md-items="complaint in searchCompaints(complaintSearchKey)" md-item-text="complaint.code+' / '+complaint.name" md-min-length="3" md-escape-options="clear" placeholder="Ex. 01C4" md-input-id="complaint_ac">
                                             <md-item-template>
                                                 <span>
                                                     {{complaint.code+' / '+complaint.name}}
@@ -1067,47 +1068,6 @@
                                 <li class="view-col-3">
                                     <div class="form-group">
                                         <label>
-                                            Failure Type
-                                            <sup class="mandatory"></sup>
-                                        </label>
-                                        <md-select ng-model="warranty_job_order_request.failure_type" placeholder="Select Failure Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
-                                            <md-select-header class="demo-select-header">
-                                                <input ng-model="searchFailureType" type="search" placeholder="Search for a Failure Type.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
-                                            </md-select-header>
-                                            <md-optgroup>
-                                                <md-option ng-value="failure_type" ng-repeat="failure_type in extras.failure_types | filter:searchFailureType">
-                                                    {{failure_type.name}}
-                                                </md-option>
-                                            </md-optgroup>
-                                        </md-select>
-                                        <input type="hidden" id="failure_type_id" name="failure_type_id" value="{{warranty_job_order_request.failure_type.id}}">
-                                    </div><!-- Feild -->
-                                </li>
-                                <li class="view-col-3">
-                                    <!-- ng-show="warranty_job_order_request.failure_type" -->
-                                    <div class="form-group">
-                                        <label>Failure Report</label>
-                                        <div class="file-upload-wrapper" data-text="Enter Click to upload">
-                                            <input type="file" name="failure_report_file" class="file-upload-field" placeholder="Enter Click to upload" />
-                                        </div><!-- File -->
-                                    </div><!-- Field -->
-                                </li><!-- Column -->
-                                <li class="view-col-3" ng-if="warranty_job_order_request.failure_photo">
-                                    <div class="form-group">
-                                        <span class="view-col-label">
-                                            Failure Report Attachment
-                                        </span>
-                                        <span class="view-data-list-value">
-                                            <a href="./storage/app/public/wjor/{{warranty_job_order_request.failure_photo.name}}" download>
-                                                <!-- {{warranty_job_order_request.failure_photo.name}} -->
-                                                Download Failure Report
-                                            </a>
-                                        </span>
-                                    </div><!-- Field -->
-                                </li><!-- Column -->
-                                <li class="view-col-3">
-                                    <div class="form-group">
-                                        <label>
                                             KM / HRS flag
                                             <sup class="mandatory">*</sup>
                                         </label>
@@ -1136,7 +1096,7 @@
                                             </span>
                                             <sup class="mandatory"></sup>
                                         </label>
-                                        <input id="last_lube_changed" type="text" class="form-control" autocomplete="off" name="last_lube_changed" ng-model="warranty_job_order_request.last_lube_changed" maxlength="6" />
+                                        <input oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" id="last_lube_changed" type="text" class="form-control" autocomplete="off" name="last_lube_changed" ng-model="warranty_job_order_request.last_lube_changed" maxlength="6" />
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3">
@@ -1160,7 +1120,7 @@
                                             run per day
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <input type="text" class="form-control" autocomplete="off" name="runs_per_day" ng-model="warranty_job_order_request.runs_per_day" maxlength="4" />
+                                        <input type="text" class="form-control myLessThan" autocomplete="off" name="runs_per_day" ng-model="warranty_job_order_request.runs_per_day" maxlength="4" />
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3">
@@ -1178,6 +1138,65 @@
                                         <input ng-blur="failedAtKeyup()" id="failed_at" type="text" class="form-control" autocomplete="off" name="failed_at" ng-model="warranty_job_order_request.failed_at" maxlength="6" />
                                     </div><!-- Feild -->
                                 </li>
+                                <li class="view-col-3">
+                                    <div class="form-group">
+                                        <label>
+                                            Is Analysis Report Required
+                                            <sup class="mandatory"></sup>
+                                        </label>
+                                        <div class="common-radio-button type-4">
+                                            <input type="radio" id="radio_yes" ng-model="warranty_job_order_request.is_analysis_report_required" ng-value="true">
+                                            <label for="radio_yes">
+                                                Yes<span class="rd-focused"></span>
+                                            </label>
+                                            <input type="radio" id="radio_no" ng-model="warranty_job_order_request.is_analysis_report_required" ng-value="false">
+                                            <label for="radio_no">
+                                                No<span class="rd-focused"></span>
+                                            </label>
+                                        </div>
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3" ng-show="warranty_job_order_request.is_analysis_report_required">
+                                    <div class="form-group">
+                                        <label>
+                                            Failure Type
+                                            <sup class="mandatory"></sup>
+                                        </label>
+                                        <md-select ng-model="warranty_job_order_request.failure_type" placeholder="Select Failure Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                            <md-select-header class="demo-select-header">
+                                                <input ng-model="searchFailureType" type="search" placeholder="Search for a Failure Type.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                            </md-select-header>
+                                            <md-optgroup>
+                                                <md-option ng-value="failure_type" ng-repeat="failure_type in extras.failure_types | filter:searchFailureType">
+                                                    {{failure_type.name}}
+                                                </md-option>
+                                            </md-optgroup>
+                                        </md-select>
+                                        <input type="hidden" id="failure_type_id" name="failure_type_id" value="{{warranty_job_order_request.failure_type.id}}">
+                                    </div><!-- Feild -->
+                                </li>
+                                <li class="view-col-3" ng-show="warranty_job_order_request.is_analysis_report_required">
+                                    <!-- ng-show="warranty_job_order_request.failure_type" -->
+                                    <div class="form-group">
+                                        <label>Failure Report</label>
+                                        <div class="file-upload-wrapper" data-text="Enter Click to upload">
+                                            <input type="file" name="failure_report_file" class="file-upload-field" placeholder="Enter Click to upload" />
+                                        </div><!-- File -->
+                                    </div><!-- Field -->
+                                </li><!-- Column -->
+                                <li class="view-col-3" ng-show="warranty_job_order_request.is_analysis_report_required" ng-if="warranty_job_order_request.failure_photo">
+                                    <div class="form-group">
+                                        <span class="view-col-label">
+                                            Failure Report Attachment
+                                        </span>
+                                        <span class="view-data-list-value">
+                                            <a href="./storage/app/public/wjor/{{warranty_job_order_request.failure_photo.name}}" download>
+                                                <!-- {{warranty_job_order_request.failure_photo.name}} -->
+                                                Download Failure Report
+                                            </a>
+                                        </span>
+                                    </div><!-- Field -->
+                                </li><!-- Column -->
                             </ul>
                         </div>
                     </div>
@@ -1213,19 +1232,19 @@
                                 <li class="view-col-12">
                                     <div class="form-group">
                                         <label>
-                                            Investigation findings
+                                            Cause of failure
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <textarea class="form-control" autocomplete="off" name="investigation_findings" ng-model="warranty_job_order_request.investigation_findings"></textarea>
+                                        <textarea class="form-control" autocomplete="off" name="cause_of_failure" ng-model="warranty_job_order_request.cause_of_failure"></textarea>
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-12">
                                     <div class="form-group">
                                         <label>
-                                            Cause of failure
+                                            Investigation findings
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <textarea class="form-control" autocomplete="off" name="cause_of_failure" ng-model="warranty_job_order_request.cause_of_failure"></textarea>
+                                        <textarea class="form-control" autocomplete="off" name="investigation_findings" ng-model="warranty_job_order_request.investigation_findings"></textarea>
                                     </div><!-- Feild -->
                                 </li>
                             </ul>

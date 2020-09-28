@@ -34,6 +34,14 @@ class ServiceType extends BaseModel {
 				],
 			],
 		],
+		'Is Free' => [
+			'table_column_name' => 'is_free',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+
 	];
 
 	public function serviceTypeLabours() {
@@ -42,6 +50,10 @@ class ServiceType extends BaseModel {
 
 	public function serviceTypeParts() {
 		return $this->belongsToMany('Abs\PartPkg\Part', 'part_service_type', 'service_type_id', 'part_id')->withPivot(['quantity', 'amount', 'is_free_service']);
+	}
+
+	public function scopeFilterIsFree($query, $is_free) {
+		$query->where('is_free', $is_free);
 	}
 
 	/*public static function createFromObject($record_data) {
@@ -104,6 +116,7 @@ class ServiceType extends BaseModel {
 			'Company Code' => $record_data->company_code,
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
+			'Is Free' => $record_data->is_free,
 		];
 		return static::saveFromExcelArray($record);
 	}
@@ -176,7 +189,7 @@ class ServiceType extends BaseModel {
 			if (!$result['success']) {
 				return $result;
 			}
-
+			$record->is_free = ($record_data['Is Free'] == 'yes') ? 1 : 0;
 			$record->company_id = $company->id;
 			$record->created_by_id = $created_by_id;
 			$record->save();

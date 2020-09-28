@@ -211,6 +211,9 @@ class WarrantyJobOrderRequest extends BaseModel {
 	public function requestType() {
 		return $this->belongsTo('App\Config', 'request_type_id');
 	}
+	public function requestedBy() {
+		return $this->belongsTo('App\User', 'created_by_id');
+	}
 
 	public static function relationships($action = '') {
 		if ($action == 'index') {
@@ -272,6 +275,7 @@ class WarrantyJobOrderRequest extends BaseModel {
 				'requestType',
 				'authorizationBy',
 				'failureType',
+				'requestedBy.employee',
 			];
 		}
 
