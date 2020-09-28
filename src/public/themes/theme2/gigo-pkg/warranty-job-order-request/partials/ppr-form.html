@@ -739,7 +739,7 @@
                                             Sub Aggregate
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <md-select ng-model="warranty_job_order_request.sub_aggregate" placeholder="Select Sub Aggregate" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select ng-model="warranty_job_order_request.sub_aggregate" placeholder="Select Sub Aggregate" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }" ng-change="subAggregateChange()">
                                             <md-select-header class="demo-select-header">
                                                 <input ng-model="searchAggregate" type="search" placeholder="Search for a Sub Aggregate.." class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
                                             </md-select-header>

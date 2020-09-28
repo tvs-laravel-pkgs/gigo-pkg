@@ -1368,6 +1368,9 @@ app.component('warrantyJobOrderRequestForm', {
             }
         }
 
+        $scope.subAggregateChange = function() {
+            $scope.warranty_job_order_request.complaint = null;
+        }
         $scope.aggregateChange = function(aggregate, onload = null) {
             // console.log(aggregate.id);
             if (onload == null) {
