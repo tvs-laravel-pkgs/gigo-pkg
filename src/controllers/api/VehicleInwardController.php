@@ -2862,6 +2862,8 @@ class VehicleInwardController extends Controller {
 				$estimate_order_id = $estimate->id;
 			}
 
+			$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+
 			DB::beginTransaction();
 
 			if ($request->type == 'scheduled') {
@@ -2895,7 +2897,7 @@ class VehicleInwardController extends Controller {
 			$part_mrp = $request->mrp ? $request->mrp : 0;
 			$job_order_part->job_order_id = $request->job_order_id;
 			$job_order_part->part_id = $request->part_id;
-			$job_order_part->is_customer_approved = 0;
+
 			$job_order_part->rate = $part_mrp;
 			$job_order_part->is_free_service = 0;
 			$job_order_part->qty = $request_qty;
@@ -2903,7 +2905,14 @@ class VehicleInwardController extends Controller {
 			$job_order_part->customer_voice_id = $request->customer_voice_id;
 			$job_order_part->split_order_type_id = $request->split_order_type_id;
 			$job_order_part->amount = $request_qty * $part_mrp;
-			$job_order_part->status_id = 8200; //Customer Approval Pending
+
+			if (in_array($request->split_order_type_id, $customer_paid_type)) {
+				$job_order_part->status_id = 8200; //Customer Approval Pending
+				$job_order_part->is_customer_approved = 0;
+			} else {
+				$job_order_part->is_customer_approved = 1;
+				$job_order_part->status_id = 8201; //Not Issued
+			}
 
 			$job_order_part->save();
 
@@ -3064,6 +3073,8 @@ class VehicleInwardController extends Controller {
 			//Estimate Order ID
 			$job_order = JobOrder::find($request->job_order_id);
 
+			$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+
 			if (!$job_order) {
 				return response()->json([
 					'success' => false,
@@ -3170,7 +3181,15 @@ class VehicleInwardController extends Controller {
 			} else {
 				$job_order_repair_order->is_recommended_by_oem = 0;
 			}
-			$job_order_repair_order->status_id = 8180; //Customer Approval Pending
+
+			if (in_array($request->split_order_type_id, $customer_paid_type)) {
+				$job_order_repair_order->status_id = 8180; //Customer Approval Pending
+				$job_order_repair_order->is_customer_approved = 0;
+			} else {
+				$job_order_repair_order->is_customer_approved = 1;
+				$job_order_repair_order->status_id = 8181; //Mechanic Not Assigned
+			}
+
 			$job_order_repair_order->created_by_id = Auth::user()->id;
 			$job_order_repair_order->save();
 
