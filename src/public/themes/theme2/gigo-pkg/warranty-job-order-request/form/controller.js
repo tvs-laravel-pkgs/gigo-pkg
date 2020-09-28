@@ -394,6 +394,57 @@ app.component('warrantyJobOrderRequestForm', {
         $scope.init();
 
         setTimeout(function() {
+
+            var toolbarOptions = [
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'align': [] }],
+                [{ 'color': [] }, { 'background': [] }], // dropdown with defaults from theme
+            ];
+
+            /*var cause_of_failure_quill = new Quill('#editor2', {
+                modules: {
+                    toolbar: toolbarOptions
+                },
+                theme: 'snow',
+            });
+            cause_of_failure_quill.on('text-change', function() {
+                if (pageLoaded == 1) {
+                    // $data = cause_of_failure_quill.getContents();
+                    $data = cause_of_failure_quill.root.innerHTML;
+                    $("#causeOfFailure").val($data);
+                }
+            });*/
+            var investigation_findings_quill = new Quill('#editor1', {
+                modules: {
+                    toolbar: toolbarOptions
+                },
+                theme: 'snow',
+            });
+            investigation_findings_quill.on('text-change', function() {
+                if (pageLoaded == 1) {
+                    $data = investigation_findings_quill.root.innerHTML; //investigation_findings_quill.getContents();
+                    console.log(investigation_findings_quill.root.innerHTML);
+                    $("#investigationFindings").val($data);
+                }
+            });
+            setTimeout(function() {
+
+                if ($scope.warranty_job_order_request.investigation_findings != undefined) {
+                    var delta = investigation_findings_quill.clipboard.convert($scope.warranty_job_order_request.investigation_findings);
+                    investigation_findings_quill.setContents(delta, 'silent');
+
+                    // investigation_findings_quill.setContents([
+                    //     { insert: $scope.warranty_job_order_request.investigation_findings }
+                    // ]);
+                }
+                /*if ($scope.warranty_job_order_request.cause_of_failure != undefined) {
+                    var delta = cause_of_failure_quill.clipboard.convert($scope.warranty_job_order_request.cause_of_failure);
+                    cause_of_failure_quill.setContents(delta, 'silent');
+                }*/
+            }, 3000);
+
             $('div[data-provide="datepicker"]').bootstrapDP({
                 format: "dd-mm-yyyy",
                 autoclose: "true",
@@ -462,11 +513,10 @@ app.component('warrantyJobOrderRequestForm', {
 
         $scope.searchOutlet = function(query) {
             var params = {};
-            if (self.hasPermission('own-outlet-warranty-job-order-request')) {
+            if (self.hasPermission('all-outlet-warranty-job-order-request')) {
                 params = {
                     filter: {
                         search: query,
-                        IdIn: [$scope.user.employee.outlet_id]
                     },
                 };
             } else if (self.hasPermission('mapped-outlets-warranty-job-order-request')) {
@@ -475,6 +525,13 @@ app.component('warrantyJobOrderRequestForm', {
                     filter: {
                         search: query,
                         IdIn: $scope.employee_outlets
+                    },
+                };
+            } else if (self.hasPermission('own-outlet-warranty-job-order-request')) {
+                params = {
+                    filter: {
+                        search: query,
+                        IdIn: [$scope.user.employee.outlet_id]
                     },
                 };
             } else {

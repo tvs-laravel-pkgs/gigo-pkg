@@ -1236,6 +1236,8 @@
                                             <sup class="mandatory">*</sup>
                                         </label>
                                         <textarea class="form-control" autocomplete="off" name="cause_of_failure" ng-model="warranty_job_order_request.cause_of_failure"></textarea>
+                                        <!-- <div id="editor2"></div>
+                                        <input type="hidden" name="cause_of_failure" id="causeOfFailure" value="{{warranty_job_order_request.cause_of_failure}}"> -->
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-12">
@@ -1244,7 +1246,9 @@
                                             Investigation findings
                                             <sup class="mandatory">*</sup>
                                         </label>
-                                        <textarea class="form-control" autocomplete="off" name="investigation_findings" ng-model="warranty_job_order_request.investigation_findings"></textarea>
+                                        <!-- <textarea class="form-control" autocomplete="off" name="investigation_findings" ng-model="warranty_job_order_request.investigation_findings"></textarea> -->
+                                        <div id="editor1"></div>
+                                        <input type="hidden" id="investigationFindings" name="investigation_findings" value="{{warranty_job_order_request.investigation_findings}}">
                                     </div><!-- Feild -->
                                 </li>
                             </ul>

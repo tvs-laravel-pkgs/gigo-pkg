@@ -67,7 +67,7 @@ class WarrantyJobOrderRequestController extends Controller {
 			$to_date = date('Y-m-d', strtotime($exploded_date[1]));
 			// $date = date('Y-m-d', strtotime($request->request_date));
 			// $list_data->whereDate('warranty_job_order_requests.created_at', $date);
-			$list_data->whereBetween('warranty_job_order_requests.created_at', [$from_date, $to_date]);
+			$list_data->whereBetween('warranty_job_order_requests.created_at', [$from_date . " 00:00:00", $to_date . " 23:59:59"]);
 		}
 		if ($request->reg_no != null) {
 			$list_data->where('vehicles.registration_number', 'like', '%' . $request->reg_no . '%');
