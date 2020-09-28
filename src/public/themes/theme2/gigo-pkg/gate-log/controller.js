@@ -234,7 +234,7 @@ app.component('gateLogForm', {
         self.gate_log = {};
         self.is_registered = 1;
         self.search_type = 1;
-
+        $scope.reading_type_status = 2;
 
         //for md-select search
         $element.find('input').on('keydown', function(ev) {
@@ -309,6 +309,7 @@ app.component('gateLogForm', {
 
         self.getVehicle = function(item) {
             if (item) {
+                console.log(item);
                 var registration_number = item.registration_number;
                 var engine_number = item.engine_number;
                 var chassis_number = item.chassis_number;
@@ -316,6 +317,15 @@ app.component('gateLogForm', {
                 $('.chassis_number').val(chassis_number);
                 $('.engine_number').val(engine_number);
                 $('#registration_number').val(registration_number);
+                $('.driver_name').val(item.driver_name);
+                $('.driver_mobile_number').val(item.driver_mobile_number);
+                $('.km_reading').val(item.km_reading);
+                $('.hr_reading').val(item.hr_reading);
+
+                if (item.km_reading_type_id) {
+                    self.reading_type_id = item.km_reading_type_id;
+                    $scope.reading_type_status = 1;
+                }
 
                 if (registration_number) {
                     return item.registration_number;
@@ -333,8 +343,14 @@ app.component('gateLogForm', {
             if (!vehicle_detail) {
                 $('.chassis_number').val('');
                 $('.engine_number').val('');
+                $('.driver_name').val('');
+                $('.driver_mobile_number').val('');
+                $('.hr_reading').val('');
+                $('.km_reading').val('');
                 $('#registration_number').val('');
                 $("#registration_number").prop("readonly", true);
+                self.reading_type_id = '';
+                $scope.reading_type_status = 2;
             } else {
                 if (!vehicle_detail.registration_number) {
                     $("#registration_number").prop("readonly", false);
@@ -345,7 +361,7 @@ app.component('gateLogForm', {
                 if (!vehicle_detail.chassis_number) {
                     $(".chassis_number").prop("readonly", false);
                 }
-                $scope.$apply();
+                // $scope.$apply();
             }
         }
 
@@ -365,6 +381,7 @@ app.component('gateLogForm', {
                 $(".engine_number").val('');
                 $("#vehicle_id").val('');
                 $('.vehicleSearchBox').val('');
+                $scope.reading_type_status = 2;
             }
         }
         $scope.showDiv = function(id) {

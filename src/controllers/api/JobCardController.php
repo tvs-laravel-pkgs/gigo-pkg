@@ -36,6 +36,7 @@ use App\OSLWorkOrder;
 use App\Otp;
 use App\Outlet;
 use App\SplitOrderType;
+use App\User;
 use App\VehicleInspectionItem;
 use App\VehicleInspectionItemGroup;
 use App\VehicleInventoryItem;
@@ -2190,9 +2191,15 @@ class JobCardController extends Controller {
 				'errors' => ['Job Card Not Found!'],
 			]);
 		}
+
+		$extras = [
+			'user_list' => User::getUserEmployeeList(['road_test' => false]),
+		];
+
 		return response()->json([
 			'success' => true,
 			'job_card' => $job_card,
+			'extras' => $extras,
 		]);
 	}
 

@@ -66,11 +66,6 @@
                         Estimate
                     </a>
                 </li> -->
-                <li ng-class="{active:active_tab == 'dms-checklist'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-service-package-details-view')">
-                    <a class="filter" href=".#!/job-card/dms-checklist/{{job_card_id}}">
-                        Service Package Details
-                    </a>
-                </li>
                 <li ng-class="{active:active_tab == 'vehicle-inspection'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-inspection-report-view')">
                     <a class="filter" href=".#!/job-card/vehicle-inspection/{{job_card_id}}">
                         Vehicle Inspection Report
@@ -79,6 +74,11 @@
                 <li ng-class="{active:active_tab == 'expert-diagnosis'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-expert-diagnosis-report-view')">
                     <a class="filter" href=".#!/job-card/expert-diagnosis/{{job_card_id}}">
                         Expert Diagnosis
+                    </a>
+                </li>
+                <li ng-class="{active:active_tab == 'dms-checklist'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-service-package-details-view')">
+                    <a class="filter" href=".#!/job-card/dms-checklist/{{job_card_id}}">
+                        Service Package Details
                     </a>
                 </li>
                 <li ng-class="{active:active_tab == 'road-test'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-road-test-view')">

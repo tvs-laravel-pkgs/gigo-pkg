@@ -38,7 +38,7 @@
                         Road Test
                     </a>
                 </li>
-                <li ng-if="$ctrl.hasPermission('inward-job-card-tab-expert-diagnosis-report-edit')" ng-class="{active:active_tab == 'expert-diagnosis-detail'}">
+                <!-- <li ng-if="$ctrl.hasPermission('inward-job-card-tab-expert-diagnosis-report-edit')" ng-class="{active:active_tab == 'expert-diagnosis-detail'}">
                     <a href=".#!/inward-vehicle/expert-diagnosis-detail/form/{{job_order_id}}" class="filter">
                         Expert Diagnosis
                     </a>
@@ -47,7 +47,7 @@
                     <a href=".#!/inward-vehicle/inspection-detail/form/{{job_order_id}}" class="filter">
                         Vehicle Inspection Report
                     </a>
-                </li>
+                </li> -->
                 <li ng-if="$ctrl.hasPermission('inward-job-card-tab-service-package-details-edit')" ng-class="{active:active_tab == 'dms-checklist'}">
                     <a href=".#!/inward-vehicle/dms-checklist/form/{{job_order_id}}" class="filter">
                         Service Package Details

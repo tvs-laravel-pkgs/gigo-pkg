@@ -31,6 +31,69 @@
                         <div class="tab-pane fade in active" id="expert_diagnosis_details" data-animation="fadeInUp" data-animation-delay="300">
                             <div class="tab-pane-wrap">
                                 <div class="row">
+                                    <form id="form" autocomplete="off">
+                                        <div class="col-md-12">
+                                            <h5 class="color-primary mb-10"><b>Expert Diagnosis</b></h5>
+                                            <hr class="hr-15">
+                                            <input type="hidden" name="job_order_id" value="{{job_card.job_order.id}}">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <label>
+                                                            Expert Diagnosis Required ?
+                                                        </label>
+                                                        <div class="common-radio-button type-4">
+                                                            <input type="radio" id="sold" name="is_expert_diagnosis_required" ng-model="$ctrl.expert_diagnosis_status" ng-value="1">
+                                                            <label for="sold">Yes</label>
+                                                            <input type="radio" id="not_sold" name="is_expert_diagnosis_required" ng-model="$ctrl.expert_diagnosis_status" ng-value="0">
+                                                            <label for="not_sold">No</label>
+                                                        </div>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-6" ng-if="$ctrl.expert_diagnosis_status">
+                                                    <div class="form-group">
+                                                        <label>Expert Diagnosis Outcome <sup class="mandatory">*</sup></label>
+                                                        <textarea class="form-control" name="expert_diagnosis_report" rows="4" placeholder="Enter Expert Diagnosis Report">{{job_card.job_order.expert_diagnosis_report}}</textarea>
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                                <div class="col-md-4" ng-if="$ctrl.expert_diagnosis_status">
+                                                    <div class="form-group">
+                                                        <label>Diagnosed by <sup class="mandatory">*</sup></label>
+                                                        <md-select ng-model="job_card.job_order.expert_diagnosis_report_by_id" placeholder="Select Diagnosis" md-on-close="clearSearchDriver()" data-md-container-class="selectdemoSelectHeader">
+                                                            <md-select-header class="demo-select-header">
+                                                                <input ng-model="searchModel" type="search" placeholder="Search for a Expert Diagnosis.." class="demo-header-searchbox md-text">
+                                                            </md-select-header>
+                                                            <md-optgroup>
+                                                                <md-option ng-value="model.id" ng-repeat="model in extras.user_list | filter:searchModel">
+                                                                    {{model.name}}
+                                                                </md-option>
+                                                            </md-optgroup>
+                                                        </md-select>
+                                                        <input type="hidden" name="expert_diagnosis_report_by_id" value="{{job_card.job_order.expert_diagnosis_report_by_id}}">
+                                                    </div><!-- Feild -->
+                                                </div><!-- Column -->
+                                            </div><!-- Row -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <button type="submit" ng-click="saveExportDiagonis(1)" class="btn btn-red submit">
+                                                        Save & Close
+                                                    </button>
+                                                    <a href=".#!/job-card/vehicle-inspection/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">
+                                                        Previous
+                                                    </a>
+                                                    <button ng-click="saveExportDiagonis(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                        Next
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                    </form>
+                                </div><!-- Row -->
+                            </div><!-- Tab Pane Wrap -->
+                            <div class="tab-pane-wrap ng-hide">
+                                <div class="row">
                                     <div class="col-md-12">
                                         <h5 class="color-primary mb-10"><b>Expert Diagnosis</b></h5>
                                         <div class="view-details mb-no">

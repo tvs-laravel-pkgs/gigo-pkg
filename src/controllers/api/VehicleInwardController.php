@@ -47,6 +47,7 @@ use App\SplitOrderType;
 use App\State;
 use App\TradePlateNumber;
 use App\User;
+use App\Vehicle;
 use App\VehicleInspectionItem;
 use App\VehicleInspectionItemGroup;
 use App\VehicleInventoryItem;
@@ -2707,6 +2708,9 @@ class VehicleInwardController extends Controller {
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
 
+			//save Driver name & mobile number in vehicle table
+			$vehicle = Vehicle::where('id', $job_order->vehicle_id)->update(['driver_name' => $request->driver_name, 'driver_mobile_number' => $request->driver_mobile_number, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
+
 			//CREATE DIRECTORY TO STORAGE PATH
 			$attachment_path = storage_path('app/public/gigo/job_order/attachments/');
 			Storage::makeDirectory($attachment_path, 0777);
@@ -4509,19 +4513,19 @@ class VehicleInwardController extends Controller {
 			}
 			$job_order['previous_customer_voice_ids'] = array_unique($previous_customer_voice_ids);
 
-			// $customer_voice_list = $job_order->vehicle->model ? $job_order->vehicle->model->customerVoices->toArray() : [];
-			// $customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
+			$customer_voice_list = $job_order->vehicle->model ? $job_order->vehicle->model->customerVoices->toArray() : [];
+			$customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
 
-			// if ($customer_voice_other) {
-			// 	//GET CUSTOMER VOICE OTHERS ID OF OTH
-			// 	$customer_voice_other_id = $customer_voice_other[0]['id'];
-			// 	$job_order['OTH_ID'] = $customer_voice_other_id;
+			if ($customer_voice_other) {
+				//GET CUSTOMER VOICE OTHERS ID OF OTH
+				$customer_voice_other_id = $customer_voice_other[0]['id'];
+				$job_order['OTH_ID'] = $customer_voice_other_id;
 
-			// 	$customer_voice_list_merge = array_merge($customer_voice_list, $customer_voice_other);
-			// 	$customer_voice_list = collect($customer_voice_list_merge);
-			// }
+				$customer_voice_list_merge = array_merge($customer_voice_list, $customer_voice_other);
+				$customer_voice_list = collect($customer_voice_list_merge);
+			}
 
-			$customer_voice_list = CustomerVoice::get();
+			// $customer_voice_list = CustomerVoice::get();
 
 			$extras = [
 				'customer_voice_list' => $customer_voice_list,

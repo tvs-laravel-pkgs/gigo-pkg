@@ -1460,8 +1460,16 @@ app.component('jobCardExpertDiagnosisForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    $scope.job_card_id = $routeParams.job_card_id;
+                    // $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_card = res.job_card;
+                    $scope.extras = res.extras;
+
+                    if ($scope.job_card.job_order.expert_diagnosis_report) {
+                        self.expert_diagnosis_status = 1;
+                    } else {
+                        self.expert_diagnosis_status = 0;
+                    }
+
                     $scope.$apply();
                 })
                 .fail(function(xhr) {
@@ -1469,6 +1477,81 @@ app.component('jobCardExpertDiagnosisForm', {
                 });
         }
         $scope.fetchData();
+
+        //Save Form Data 
+        $scope.saveExportDiagonis = function(id) {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'expert_diagnosis_report': {
+                        required: true,
+                    },
+                    'expert_diagnosis_report_by_id': {
+                        required: true,
+                    },
+                },
+                messages: {
+
+                },
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $scope.button_action(id, 1);
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/expert-diagnosis-report/save',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            $scope.button_action(id, 2);
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            if (id == 1) {
+                                $location.path('/job-card/table-list');
+                                $scope.$apply();
+                            } else {
+                                $location.path('/job-card/dms-checklist/' + $scope.job_card_id);
+                                $scope.$apply();
+                            }
+                        })
+                        .fail(function(xhr) {
+                            $scope.button_action(id, 2);
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        $scope.button_action = function(id, type) {
+            if (type == 1) {
+                if (id == 1) {
+                    $('.submit').button('loading');
+                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-prev').bind('click', false);
+                } else {
+                    $('.btn-nxt').button('loading');
+                    $('.submit').attr("disabled", "disabled");
+                    $('.btn-prev').bind('click', false);
+                }
+            } else {
+                $('.submit').button('reset');
+                $('.btn-nxt').button('reset');
+                $('.btn-prev').unbind('click', false);
+                $(".btn-nxt").removeAttr("disabled");
+                $(".submit").removeAttr("disabled");
+            }
+        }
 
         //Scrollable Tabs
         setTimeout(function() {
@@ -1512,7 +1595,7 @@ app.component('jobCardVehicleInspectionForm', {
                         showErrorNoty(res);
                         return;
                     }
-                    $scope.job_card_id = $routeParams.job_card_id;
+                    // $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_order = res.job_order;
                     $scope.extras = res.extras;
                     $scope.vehicle_inspection_item_groups = res.vehicle_inspection_item_groups;
@@ -1524,6 +1607,72 @@ app.component('jobCardVehicleInspectionForm', {
                 });
         }
         $scope.fetchData();
+
+        //Save Form Data 
+        $scope.saveInspectionReport = function(id) {
+            var form_id = '#form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {},
+                messages: {},
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $scope.button_action(id, 1);
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/vehicle-inspection/save',
+                            method: "POST",
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('Authorization', 'Bearer ' + $scope.user.token);
+                            },
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            $scope.button_action(id, 2);
+                            if (!res.success) {
+                                showErrorNoty(res);
+                                return;
+                            }
+                            custom_noty('success', res.message);
+                            if (id == 1) {
+                                $location.path('/job-card/table-list');
+                                $scope.$apply();
+                            } else {
+                                $location.path('/job-card/expert-diagnosis/' + $scope.job_card_id);
+                                $scope.$apply();
+                            }
+                        })
+                        .fail(function(xhr) {
+                            $scope.button_action(id, 2);
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        $scope.button_action = function(id, type) {
+            if (type == 1) {
+                if (id == 1) {
+                    $('.submit').button('loading');
+                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-prev').bind('click', false);
+                } else {
+                    $('.btn-nxt').button('loading');
+                    $('.submit').attr("disabled", "disabled");
+                    $('.btn-prev').bind('click', false);
+                }
+            } else {
+                $('.submit').button('reset');
+                $('.btn-nxt').button('reset');
+                $('.btn-prev').unbind('click', false);
+                $(".btn-nxt").removeAttr("disabled");
+                $(".submit").removeAttr("disabled");
+            }
+        }
 
         //Scrollable Tabs
         setTimeout(function() {

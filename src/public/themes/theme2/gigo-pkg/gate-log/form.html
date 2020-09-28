@@ -240,33 +240,33 @@
                                                                                     *
                                                                                 </sup>
                                                                             </label>
-                                                                            <md-select ng-model="$ctrl.reading_type" placeholder="Select Reading Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                                                            <md-select ng-model="$ctrl.reading_type_id" placeholder="Select Reading Type" data-md-container-class="selectdemoSelectHeader" ng-disabled="reading_type_status == 1">
                                                                                 <md-select-header class="demo-select-header">
                                                                                     <input ng-model="searchReadingType" type="search" placeholder="Search for a Reading Type.." class="demo-header-searchbox md-text">
                                                                                 </md-select-header>
                                                                                 <md-optgroup>
-                                                                                    <md-option ng-value="option" ng-repeat="option in extras.reading_type_list | filter:searchReadingType">
+                                                                                    <md-option ng-value="option.id" ng-repeat="option in extras.reading_type_list | filter:searchReadingType">
                                                                                         {{option.name}}
                                                                                     </md-option>
                                                                                 </md-optgroup>
                                                                             </md-select>
-                                                                            <input type="hidden" name="km_reading_type_id" value="{{$ctrl.reading_type.id}}" class="required">
+                                                                            <input type="hidden" name="km_reading_type_id" value="{{$ctrl.reading_type_id}}" class="required">
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.reading_type.id == 8040">
+                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.reading_type_id == 8040">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 KM Reading
                                                                                 <sup class="mandatory">*</sup></label>
-                                                                            <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="6" placeholder="Enter KM Reading" value="" autocomplete="off" name="km_reading" />
+                                                                            <input type="text" class="form-control km_reading" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="6" placeholder="Enter KM Reading" value="" autocomplete="off" name="km_reading" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
-                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.reading_type.id == 8041">
+                                                                    <div class="col-md-4 col-lg-3" ng-if="$ctrl.reading_type_id == 8041">
                                                                         <div class="form-group">
                                                                             <label>
                                                                                 HR Reading
                                                                                 <sup class="mandatory">*</sup></label>
-                                                                            <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="4" placeholder="Enter HR Reading" value="" autocomplete="off" name="hr_reading" />
+                                                                            <input type="text" class="form-control hr_reading" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" maxlength="4" placeholder="Enter HR Reading" value="" autocomplete="off" name="hr_reading" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
                                                                     <div class="col-md-4 col-lg-3">
@@ -274,7 +274,7 @@
                                                                             <label>
                                                                                 Driver Name
                                                                             </label>
-                                                                            <input type="text" class="form-control" placeholder="Enter Driver Name" value="" autocomplete="off" name="driver_name" />
+                                                                            <input type="text" class="form-control driver_name" placeholder="Enter Driver Name" value="" autocomplete="off" id="driver_name" name="driver_name" />
                                                                         </div><!-- Feild -->
                                                                     </div><!-- Column -->
                                                                     <div class="col-md-4 col-lg-3">
@@ -282,7 +282,7 @@
                                                                             <label>
                                                                                 Driver Mobile
                                                                             </label>
-                                                                            <input type="text" class="form-control" minlength="10" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Driver Name" value="" autocomplete="off" name="driver_mobile_number" />
+                                                                            <input type="text" class="form-control driver_mobile_number" minlength="10" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" placeholder="Enter Driver Name" value="" autocomplete="off" name="driver_mobile_number" id="driver_mobile_number" />
                                                                         </div><!-- Form Group -->
                                                                     </div><!-- Column -->
                                                                     <div class="col-md-4 col-lg-3">

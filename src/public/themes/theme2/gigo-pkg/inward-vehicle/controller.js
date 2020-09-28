@@ -2084,7 +2084,8 @@ app.component('inwardVehicleRoadTestDetailForm', {
                                 $location.path('/inward-vehicle/table-list');
                                 $scope.$apply();
                             } else {
-                                $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order_id);
+                                // $location.path('/inward-vehicle/expert-diagnosis-detail/form/' + $scope.job_order_id);
+                                $location.path('/inward-vehicle/dms-checklist/form/' + $scope.job_order_id);
                                 $scope.$apply();
                             }
                         })

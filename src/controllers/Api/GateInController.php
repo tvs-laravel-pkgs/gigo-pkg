@@ -15,6 +15,7 @@ use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WpoSoapController;
 use App\JobOrder;
+// use App\Jobs\Notification;
 use App\Outlet;
 use App\ShortUrl;
 use App\Vehicle;
@@ -661,8 +662,11 @@ class GateInController extends Controller {
 			if ($request->driver_mobile_number) {
 				//Gatein Message
 				$msg = sendSMSNotification($request->driver_mobile_number, $message);
+				// Notification::dispatch($request->driver_mobile_number, $message);
+
 				//Tracking Message
 				$msg = sendSMSNotification($request->driver_mobile_number, $tracking_message);
+				// Notification::dispatch($request->driver_mobile_number, $tracking_message);
 			}
 
 			//Send SMS to Customer
@@ -670,8 +674,11 @@ class GateInController extends Controller {
 				if ($job_order->customer->mobile_no) {
 					//Gatein Message
 					$msg = sendSMSNotification($job_order->customer->mobile_no, $message);
+					// Notification::dispatch($job_order->customer->mobile_no, $message);
+
 					//Tracking Message
 					$msg = sendSMSNotification($job_order->customer->mobile_no, $tracking_message);
+					// Notification::dispatch($job_order->customer->mobile_no, $tracking_message);
 				}
 			}
 
@@ -683,6 +690,10 @@ class GateInController extends Controller {
 			if ($floating_gate_pass) {
 				$gate_in_data['floating_message'] = 'This Vehicle is already waiting for float work!';
 			}
+
+			$title = 'Inward List';
+			$message = 'Gatein Completed! Waiting for inward';
+			sendPushNotification($title, $message, $redirection_id = 1, $vehicle_data = NULL, $outlet_id = Auth::user()->employee->outlet_id);
 
 			return response()->json([
 				'success' => true,
