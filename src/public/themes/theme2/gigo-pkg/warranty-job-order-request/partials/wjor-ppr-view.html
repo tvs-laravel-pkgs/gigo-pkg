@@ -128,6 +128,15 @@
                         -
                     </span>
                 </li>
+                <li class="view-col-3">
+                    <span class="view-col-label">
+                        Created By
+                    </span>
+                    <span class="view-col-value">
+                        {{warranty_job_order_request.requested_by.employee.code}} /
+                        {{warranty_job_order_request.requested_by.name}}
+                    </span>
+                </li>
             </ul>
             <div class="panel-group" id="accordion">
                 <div class="panel panel-default type-3">
@@ -298,6 +307,14 @@
                                     </span>
                                     <span class="view-col-value">
                                         {{warranty_job_order_request.secondary_segment.name}}
+                                    </span>
+                                </li>
+                                <li class="view-col-3">
+                                    <span class="view-col-label">
+                                        Claim Amount
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.estimate_total | currency}}
                                     </span>
                                 </li>
                                 <li class="view-col-3" style="overflow:scroll;">
@@ -481,18 +498,18 @@
                                 </li>
                                 <li class="view-col-12">
                                     <span class="view-col-label">
-                                        Investigation findings
-                                    </span>
-                                    <span class="view-col-value">
-                                        {{warranty_job_order_request.investigation_findings}}
-                                    </span>
-                                </li>
-                                <li class="view-col-12">
-                                    <span class="view-col-label">
                                         Cause of failure
                                     </span>
                                     <span class="view-col-value">
                                         {{warranty_job_order_request.cause_of_failure}}
+                                    </span>
+                                </li>
+                                <li class="view-col-12">
+                                    <span class="view-col-label">
+                                        Investigation findings
+                                    </span>
+                                    <span class="view-col-value">
+                                        {{warranty_job_order_request.investigation_findings}}
                                     </span>
                                 </li>
                             </ul>

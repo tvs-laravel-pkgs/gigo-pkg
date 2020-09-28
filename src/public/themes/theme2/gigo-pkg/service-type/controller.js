@@ -172,8 +172,14 @@ app.component('serviceTypeForm', {
                 } else {
                     self.switch_value = 'Active';
                 }
+                if (self.service_type.is_free == 0) {
+                    self.is_free = 'Inactive';
+                } else {
+                    self.is_free = 'Active';
+                }
             } else {
                 self.switch_value = 'Active';
+                self.is_free = 'Active';
             }
         });
 

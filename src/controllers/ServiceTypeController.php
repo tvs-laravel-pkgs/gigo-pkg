@@ -185,6 +185,11 @@ class ServiceTypeController extends Controller {
 				$service_type->deleted_by_id = NULL;
 				$service_type->deleted_at = NULL;
 			}
+			if ($request->is_free == 'Inactive') {
+				$service_type->is_free = 0;
+			} else {
+				$service_type->is_free = 1;
+			}
 			$service_type->save();
 
 			// $service_type->serviceTypeLabours()->sync([]);
