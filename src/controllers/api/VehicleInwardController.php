@@ -2111,14 +2111,14 @@ class VehicleInwardController extends Controller {
 				// $vehicle_owner->created_by_id = Auth::id();
 				$vehicle_owner->vehicle_id = $vehicle->id;
 				$vehicle_owner->from_date = Carbon::now();
-				$vehicle_owner->created_by_id = Auth::id();
+				$vehicle_owner->created_by_id = Auth::user()->id;
 			} else {
 				//NEW OWNER
-				$vehicle_owner = VehicleOwner::where([
+				$vehicle_owner = VehicleOwner::firstOrNew([
 					'vehicle_id' => $vehicle->id,
 					'customer_id' => $customer->id,
-				])->first();
-				$vehicle_owner->updated_by_id = Auth::id();
+				]);
+				$vehicle_owner->updated_by_id = Auth::user()->id;
 				$vehicle_owner->updated_at = Carbon::now();
 			}
 

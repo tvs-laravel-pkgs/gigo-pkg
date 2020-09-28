@@ -412,16 +412,20 @@ class JobCardController extends Controller {
 			DB::beginTransaction();
 
 			//JOB Card SAVE
-			$job_card = JobCard::firstOrNew([
-				'job_order_id' => $request->job_order_id,
-			]);
-			$job_card->job_card_number = $request->job_card_number;
-			$job_card->date = date('Y-m-d', strtotime($request->job_card_date));
-			$job_card->outlet_id = $job_order->outlet_id;
-			$job_card->status_id = 8220; //Floor Supervisor not Assigned
-			$job_card->company_id = Auth::user()->company_id;
-			$job_card->created_by = Auth::user()->id;
-			$job_card->save();
+			$job_card = JobCard::where('job_order_id', $request->job_order_id)->first();
+			if ($job_card) {
+				if ($job_card->status_id == 8220) {
+					$job_card->job_card_number = $request->job_card_number;
+					$job_card->date = date('Y-m-d', strtotime($request->job_card_date));
+					$job_card->outlet_id = $job_order->outlet_id;
+					$job_card->status_id = 8220; //Floor Supervisor not Assigned
+					$job_card->company_id = Auth::user()->company_id;
+					$job_card->created_by = Auth::user()->id;
+				} else {
+					$job_card->updated_by = Auth::user()->id;
+				}
+				$job_card->save();
+			}
 
 			//Update Job Order status
 			JobOrder::where('id', $request->job_order_id)->update(['status_id' => 8470, 'updated_by_id' => Auth::user()->id, 'updated_at' => Carbon::now()]);
