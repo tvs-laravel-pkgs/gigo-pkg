@@ -41,6 +41,11 @@ class ServiceType extends BaseModel {
 				],
 			],
 		],
+		'Display Order' => [
+			'table_column_name' => 'display_order',
+			'rules' => [
+			],
+		],
 
 	];
 
@@ -117,6 +122,7 @@ class ServiceType extends BaseModel {
 			'Code' => $record_data->code,
 			'Name' => $record_data->name,
 			'Is Free' => $record_data->is_free,
+			'Display Order' => $record_data->display_order,
 		];
 		return static::saveFromExcelArray($record);
 	}
@@ -130,6 +136,12 @@ class ServiceType extends BaseModel {
 					'success' => false,
 					'errors' => ['Invalid Company : ' . $record_data['Company Code']],
 				];
+			}
+			// dd($record_data);
+			if (!isset($record_data['Display Order'])) {
+				$display_order = 99;
+			} else {
+				$display_order = intval($record_data['Display Order']);
 			}
 
 			if (!isset($record_data['created_by_id'])) {
@@ -189,6 +201,7 @@ class ServiceType extends BaseModel {
 			if (!$result['success']) {
 				return $result;
 			}
+			$record->display_order = $display_order;
 			$record->is_free = ($record_data['Is Free'] == 'yes') ? 1 : 0;
 			$record->company_id = $company->id;
 			$record->created_by_id = $created_by_id;

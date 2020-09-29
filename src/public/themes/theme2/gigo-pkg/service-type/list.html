@@ -5,10 +5,9 @@
                 <div class="page-header-content title-block">
                     <h1 class="title type-2">Service Types<span id="table_infos" class="badge badge-secondary"></span></h1>
                 </div><!-- Page Header Content -->
-                 <div class="page-header-content reset-block">
+                <div class="page-header-content reset-block">
                     <div class="reset-wrap">
-                        <button class="btn-reset reset-tooltip refresh_table my-tooltip"
-                        ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
+                        <button class="btn-reset reset-tooltip refresh_table my-tooltip" ng-shortcut="'meta+shift+r'" ng-shortcut-click data-title="ctrl+shift+r">
                             <img class="img-responsive" src="./public/theme/img/content/reset.svg" alt="Reset" />
                         </button>
                     </div>
@@ -51,6 +50,7 @@
                                 <th>Actions</th>
                                 <th>Code</th>
                                 <th>Name</th>
+                                <th>Is Free</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
@@ -96,13 +96,27 @@
                                 <input type="hidden" class="form-control type-sm" name="status" id="status" value="">
                             </div><!-- Field -->
                         </div><!-- Column -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Free Status</label>
+                                <md-select ng-model="$ctrl.free" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Select Free Status">
+                                    <md-select-header class="demo-select-header">
+                                        <input ng-model="isFreeSearch" type="search" placeholder="Search Status" class="demo-header-searchbox md-text">
+                                    </md-select-header>
+                                    <md-optgroup>
+                                        <md-option ng-value="free.id" ng-repeat="free in $ctrl.extras.is_free | filter:isFreeSearch">{{free.name}}</md-option>
+                                    </md-optgroup>
+                                </md-select>
+                                <input type="hidden" class="form-control type-sm" name="is_free" id="is_free" value="">
+                            </div><!-- Field -->
+                        </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Modal Form -->
             </div><!-- Modal Body -->
             <div class="modal-footer">
                 <div class="row">
                     <div class="col-md-6">
-                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.status='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
+                        <button type="button" class="reset-link" ng-click="reset_filter();$ctrl.to_account='';$ctrl.from_account='';$ctrl.journal='';$ctrl.status='';$ctrl.free='';" ng-shortcut="'meta+shift+t'" ng-shortcut-click data-title="ctrl+shift+t">Reset Filter</button>
                     </div><!-- Column -->
                     <div class="col-md-6 text-right">
                         <button type="button" class="btn btn-primary btn-md" ng-click="applyFilter()">Apply</button>

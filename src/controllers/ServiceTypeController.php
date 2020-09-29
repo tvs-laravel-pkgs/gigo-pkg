@@ -26,6 +26,11 @@ class ServiceTypeController extends Controller {
 				['id' => '1', 'name' => 'Active'],
 				['id' => '0', 'name' => 'Inactive'],
 			],
+			'is_free' => [
+				['id' => '', 'name' => 'Select Free Status'],
+				['id' => '1', 'name' => 'Yes'],
+				['id' => '0', 'name' => 'No'],
+			],
 		];
 		return response()->json($this->data);
 	}
@@ -37,6 +42,7 @@ class ServiceTypeController extends Controller {
 				'service_types.id',
 				'service_types.name',
 				'service_types.code',
+				DB::raw('IF(service_types.is_free = 1,"Yes","No") as "is_free"'),
 				DB::raw('IF(service_types.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->orderBy('service_types.id')
@@ -58,6 +64,12 @@ class ServiceTypeController extends Controller {
 					$query->whereNotNull('service_types.deleted_at');
 				}
 			})
+			->where(function ($query) use ($request) {
+				if ($request->is_free != null) {
+					$query->where('service_types.is_free', $request->is_free);
+				}
+			})
+
 		;
 
 		return Datatables::of($service_types)
@@ -185,7 +197,7 @@ class ServiceTypeController extends Controller {
 				$service_type->deleted_by_id = NULL;
 				$service_type->deleted_at = NULL;
 			}
-			if ($request->is_free == 'Inactive') {
+			if ($request->is_free == 'No') {
 				$service_type->is_free = 0;
 			} else {
 				$service_type->is_free = 1;

@@ -50,6 +50,7 @@ app.component('serviceTypeList', {
                     d.short_name = $("#short_name").val();
                     d.name = $("#name").val();
                     d.status = $("#status").val();
+                    d.is_free = $("#is_free").val();
                 },
             },
 
@@ -57,6 +58,7 @@ app.component('serviceTypeList', {
                 { data: 'action', class: 'action', name: 'action', searchable: false },
                 { data: 'code', name: 'service_types.code', searchable: true },
                 { data: 'name', name: 'service_types.name', searchable: true },
+                { data: 'is_free', name: 'is_free' },
                 { data: 'status', name: '' },
             ],
             "infoCallback": function(settings, start, end, max, total, pre) {
@@ -118,6 +120,7 @@ app.component('serviceTypeList', {
             $scope.searchTerm1 = '';
             $scope.searchTerm2 = '';
             $scope.searchTerm3 = '';
+            $scope.isFreeSearch = '';
         };
         /* Modal Md Select Hide */
         $('.modal').bind('click', function(event) {
@@ -128,6 +131,7 @@ app.component('serviceTypeList', {
 
         $scope.applyFilter = function() {
             $('#status').val(self.status);
+            $('#is_free').val(self.free);
             dataTables.fnFilter();
             $('#service-type-filter-modal').modal('hide');
         }
@@ -135,9 +139,11 @@ app.component('serviceTypeList', {
             $("#short_name").val('');
             $("#name").val('');
             $("#status").val('');
+            $("#is_free").val('');
             dataTables.fnFilter();
             $('#service-type-filter-modal').modal('hide');
         }
+
         $rootScope.loading = false;
     }
 });
@@ -173,13 +179,13 @@ app.component('serviceTypeForm', {
                     self.switch_value = 'Active';
                 }
                 if (self.service_type.is_free == 0) {
-                    self.is_free = 'Inactive';
+                    self.is_free = 'No';
                 } else {
-                    self.is_free = 'Active';
+                    self.is_free = 'Yes';
                 }
             } else {
                 self.switch_value = 'Active';
-                self.is_free = 'Active';
+                self.is_free = 'Yes';
             }
         });
 
