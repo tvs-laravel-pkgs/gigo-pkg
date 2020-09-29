@@ -6,7 +6,7 @@ app.component('warrantyJobOrderRequestForm', {
         //FormFocus
         formFocus();
         // $localstorage.remove('ppr');
-
+        $scope.remarksForNotChangingLube = true;
         $rootScope.loading = true;
         var pageLoaded = 0;
         $('#search').focus();
@@ -40,6 +40,7 @@ app.component('warrantyJobOrderRequestForm', {
         });
 
         $scope.saveTempData = function() {
+            $scope.warranty_job_order_request.investigation_findings = $("#investigationFindings").val();
             $localstorage.setObject('ppr', $scope.warranty_job_order_request);
             self.is_temp_saved = true;
             showNoty('success', 'Draft Saved');
@@ -195,12 +196,18 @@ app.component('warrantyJobOrderRequestForm', {
                         setTimeout(function() {
                             $scope.countryChanged(true);
                             $scope.calculateCushionCharges();
+                            if ($scope.warranty_job_order_request.failure_type) {
+                                $scope.warranty_job_order_request.is_analysis_report_required = true;
+                            }
+                            $lubeChange = $scope.warranty_job_order_request.last_lube_changed;
+                            if ($lubeChange == undefined || $lubeChange == null) {
+                                $scope.remarksForNotChangingLube = false;
+                            } else {
+                                $scope.remarksForNotChangingLube = true;
+                            }
                         }, 2000);
                         $scope.calculateTotals();
                         self.requestTypeOnload = $scope.warranty_job_order_request.request_type_id;
-                        if ($scope.warranty_job_order_request.failure_type) {
-                            $scope.warranty_job_order_request.is_analysis_report_required = true;
-                        }
                     } else {
                         self.is_registered = 1;
                         self.is_temp_saved = false;
@@ -320,6 +327,12 @@ app.component('warrantyJobOrderRequestForm', {
                         // console.log($scope.warranty_job_order_request.customer_search_type, $scope.warranty_job_order_request.vehicle_search_type);
                         if ($scope.warranty_job_order_request.request_type_id == undefined) {
                             $scope.warranty_job_order_request.request_type_id = 9180;
+                        }
+                        $lubeChange = $scope.warranty_job_order_request.last_lube_changed;
+                        if ($lubeChange == undefined) {
+                            $scope.remarksForNotChangingLube = false;
+                        } else {
+                            $scope.remarksForNotChangingLube = true;
                         }
                     }
                     /*}*/
@@ -1549,5 +1562,14 @@ app.component('warrantyJobOrderRequestForm', {
                 }
             }
         });
+
+        $scope.lastLubeChange = function() {
+            if ($scope.warranty_job_order_request.last_lube_changed != '') {
+                $scope.remarksForNotChangingLube = true;
+                $scope.warranty_job_order_request.remarks_for_not_changing_lube = '';
+            } else {
+                $scope.remarksForNotChangingLube = false;
+            }
+        }
     }
 });

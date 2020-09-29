@@ -1096,11 +1096,11 @@
                                             </span>
                                             <sup class="mandatory"></sup>
                                         </label>
-                                        <input oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" id="last_lube_changed" type="text" class="form-control" autocomplete="off" name="last_lube_changed" ng-model="warranty_job_order_request.last_lube_changed" maxlength="6" />
+                                        <input ng-keyup="lastLubeChange()" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" id="last_lube_changed" type="text" class="form-control" autocomplete="off" name="last_lube_changed" ng-model="warranty_job_order_request.last_lube_changed" maxlength="6" />
                                     </div><!-- Feild -->
                                 </li>
                                 <li class="view-col-3">
-                                    <div class="form-group">
+                                    <div class="form-group" ng-hide="remarksForNotChangingLube">
                                         <label>
                                             Remarks for not changing Lube
                                             <sup class="mandatory"></sup>
