@@ -1513,6 +1513,10 @@ app.component('warrantyJobOrderRequestForm', {
                                 $(".job_card_number").focus().blur();
                                 console.log("blur");
                                 $scope.warranty_job_order_request.photos1 = [];
+                                console.log($scope.warranty_job_order_request.failure_type);
+                                if ($scope.warranty_job_order_request.failure_type) {
+                                    $scope.warranty_job_order_request.is_analysis_report_required = true;
+                                }
                                 /*$scope.warranty_job_order_request.is_analysis_report_required = false;
                                 if ($scope.warranty_job_order_request.failure_type && typeof($routeParams.request_id) != 'undefined') {
                                     $scope.warranty_job_order_request.is_analysis_report_required = true;
