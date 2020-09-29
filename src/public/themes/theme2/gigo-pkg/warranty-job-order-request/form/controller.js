@@ -198,6 +198,8 @@ app.component('warrantyJobOrderRequestForm', {
                             $scope.calculateCushionCharges();
                             if ($scope.warranty_job_order_request.failure_type) {
                                 $scope.warranty_job_order_request.is_analysis_report_required = true;
+                            } else {
+                                $scope.warranty_job_order_request.is_analysis_report_required = true;
                             }
                             $lubeChange = $scope.warranty_job_order_request.last_lube_changed;
                             if ($lubeChange == undefined || $lubeChange == null) {
@@ -1516,6 +1518,8 @@ app.component('warrantyJobOrderRequestForm', {
                                 console.log($scope.warranty_job_order_request.failure_type);
                                 if ($scope.warranty_job_order_request.failure_type) {
                                     $scope.warranty_job_order_request.is_analysis_report_required = true;
+                                } else {
+                                    $scope.warranty_job_order_request.is_analysis_report_required = false;
                                 }
                                 /*$scope.warranty_job_order_request.is_analysis_report_required = false;
                                 if ($scope.warranty_job_order_request.failure_type && typeof($routeParams.request_id) != 'undefined') {
