@@ -15,7 +15,7 @@ use App\GateLog;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WpoSoapController;
 use App\JobOrder;
-// use App\Jobs\Notification;
+use App\Jobs\Notification;
 use App\Outlet;
 use App\ShortUrl;
 use App\Vehicle;
@@ -661,34 +661,34 @@ class GateInController extends Controller {
 			//Send SMS to Driver
 			if ($request->driver_mobile_number) {
 				//Gatein Message
-				$msg = sendSMSNotification($request->driver_mobile_number, $message);
+				// $msg = sendSMSNotification($request->driver_mobile_number, $message);
 				// Notification::dispatch($request->driver_mobile_number, $message);
-				// $notifications['notification_type'] = 'SMS';
-				// $notifications['data'] = ['mobile_no' => $request->driver_mobile_number, 'message' => $message];
+				$notifications['notification_type'] = 'SMS';
+				$notifications['data'] = ['mobile_no' => $request->driver_mobile_number, 'message' => $message];
 
-				// Notification::dispatch($notifications)->delay(Carbon::now()->addSeconds(10));
+				Notification::dispatch($notifications);
 
 				//Tracking Message
 				$msg = sendSMSNotification($request->driver_mobile_number, $tracking_message);
-				// $notifications['notification_type'] = 'SMS';
-				// $notifications['data'] = ['mobile_no' => $request->driver_mobile_number, 'message' => $tracking_message];
-				// Notification::dispatch($notifications)->delay(Carbon::now()->addSeconds(20));
+				$notifications['notification_type'] = 'SMS';
+				$notifications['data'] = ['mobile_no' => $request->driver_mobile_number, 'message' => $tracking_message];
+				Notification::dispatch($notifications);
 			}
 
 			//Send SMS to Customer
 			if ($job_order->customer) {
 				if ($job_order->customer->mobile_no) {
 					//Gatein Message
-					$msg = sendSMSNotification($job_order->customer->mobile_no, $message);
-					// $notifications['notification_type'] = 'SMS';
-					// $notifications['data'] = ['mobile_no' => $job_order->customer->mobile_no, 'message' => $message];
-					// Notification::dispatch($notifications)->delay(Carbon::now()->addSeconds(10));
+					// $msg = sendSMSNotification($job_order->customer->mobile_no, $message);
+					$notifications['notification_type'] = 'SMS';
+					$notifications['data'] = ['mobile_no' => $job_order->customer->mobile_no, 'message' => $message];
+					Notification::dispatch($notifications);
 
 					//Tracking Message
-					$msg = sendSMSNotification($job_order->customer->mobile_no, $tracking_message);
-					// $notifications['notification_type'] = 'SMS';
-					// $notifications['data'] = ['mobile_no' => $job_order->customer->mobile_no, 'message' => $tracking_message];
-					// Notification::dispatch($notifications)->delay(Carbon::now()->addSeconds(20));
+					// $msg = sendSMSNotification($job_order->customer->mobile_no, $tracking_message);
+					$notifications['notification_type'] = 'SMS';
+					$notifications['data'] = ['mobile_no' => $job_order->customer->mobile_no, 'message' => $tracking_message];
+					Notification::dispatch($notifications);
 				}
 			}
 
@@ -704,12 +704,12 @@ class GateInController extends Controller {
 			$title = 'Inward List';
 			$message = 'Gatein Completed! Waiting for inward';
 
-			sendPushNotification($title, $message, $redirection_id = 1, $vehicle_data = NULL, $outlet_id = Auth::user()->employee->outlet_id);
+			// sendPushNotification($title, $message, $redirection_id = 1, $vehicle_data = NULL, $outlet_id = Auth::user()->employee->outlet_id);
 
-			// $notifications['notification_type'] = 'PUSH';
-			// $notifications['data'] = ['title' => 'Inward List', 'message' => 'Gatein Completed! Waiting for inward', 'redirection_id' => 1, 'vehicle_data' => NULL, 'outlet_id' => Auth::user()->employee->outlet_id];
+			$notifications['notification_type'] = 'PUSH';
+			$notifications['data'] = ['title' => 'Inward List', 'message' => 'Gatein Completed! Waiting for inward', 'redirection_id' => 1, 'vehicle_data' => NULL, 'outlet_id' => Auth::user()->employee->outlet_id];
 
-			// Notification::dispatch($notifications)->delay(Carbon::now()->addSeconds(90));
+			Notification::dispatch($notifications);
 
 			return response()->json([
 				'success' => true,
