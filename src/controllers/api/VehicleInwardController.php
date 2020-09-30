@@ -6768,27 +6768,38 @@ class VehicleInwardController extends Controller {
 	public function getCustomerVoiceSearchList(Request $request) {
 		// dd($request->all());
 		$key = $request->key;
+		$model_id = $request->model_id;
 		$list = [];
 
-		if ($key) {
-			$list = Part::select(
-				'parts.id',
-				'parts.name',
-				'parts.code',
-				'part_stocks.stock',
-				'part_stocks.mrp'
+		if ($key && $model_id) {
+
+			$list = CustomerVoice::select(
+				'customer_voices.id',
+				'customer_voices.name',
+				'customer_voices.code'
 			)
-				->leftJoin('part_stocks', function ($join) {
-					$join->on('part_stocks.part_id', 'parts.id')
-						->where('outlet_id', Auth::user()->employee->outlet_id);
-				})
+				->join('lv_main_types', 'lv_main_types.id', 'customer_voices.lv_main_type_id')
+				->join('models', 'models.lv_main_type_id', 'lv_main_types.id')
+				->where('models.id', $model_id)
 				->where(function ($q) use ($key) {
-					$q->where('parts.code', 'like', $key . '%')
-						->orWhere('parts.name', 'like', '%' . $key . '%')
+					$q->where('customer_voices.code', 'like', $key . '%')
+						->orWhere('customer_voices.name', 'like', '%' . $key . '%')
 					;
 				})
-				->orderBy('parts.name')
-				->get();
+				->orderBy('customer_voices.name')
+				->get()->toArray();
+
+			$customer_voice_other = CustomerVoice::where('code', 'OTH')->get()->toArray();
+
+			if ($customer_voice_other) {
+
+				//GET CUSTOMER VOICE OTHERS ID OF OTH
+				$customer_voice_other_id = $customer_voice_other[0]['id'];
+				$job_order['OTH_ID'] = $customer_voice_other_id;
+
+				$customer_voice_list_merge = array_merge($list, $customer_voice_other);
+				$list = collect($customer_voice_list_merge);
+			}
 		}
 
 		return response()->json($list);
