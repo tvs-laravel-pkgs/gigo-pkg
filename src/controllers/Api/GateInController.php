@@ -696,7 +696,7 @@ class GateInController extends Controller {
 				Notification::dispatch($notifications);
 
 				//Tracking Message
-				$msg = sendSMSNotification($request->driver_mobile_number, $tracking_message);
+				// $msg = sendSMSNotification($request->driver_mobile_number, $tracking_message);
 				$notifications['notification_type'] = 'SMS';
 				$notifications['data'] = ['mobile_no' => $request->driver_mobile_number, 'message' => $tracking_message];
 				Notification::dispatch($notifications);
