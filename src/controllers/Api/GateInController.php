@@ -214,65 +214,66 @@ class GateInController extends Controller {
 				]);
 			}
 
-			$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+			// $request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
 
-			//VEHICLE DETAIL VALIDATION
-			if ($request->registration_number) {
-				$validator1 = Validator::make($request->all(), [
-					'registration_number' => [
-						'required',
-						'unique:vehicles,registration_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-					],
-				]);
+			// //VEHICLE DETAIL VALIDATION
+			// if ($request->registration_number) {
+			// 	$validator1 = Validator::make($request->all(), [
+			// 		'registration_number' => [
+			// 			'required',
+			// 			'unique:vehicles,registration_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+			// 		],
+			// 	]);
 
-				if ($validator1->fails()) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => $validator1->errors()->all(),
-					]);
-				}
-			}
+			// 	if ($validator1->fails()) {
+			// 		return response()->json([
+			// 			'success' => false,
+			// 			'error' => 'Validation Error',
+			// 			'errors' => $validator1->errors()->all(),
+			// 		]);
+			// 	}
+			// }
 
-			if ($request->chassis_number) {
-				$validator1 = Validator::make($request->all(), [
-					'chassis_number' => [
-						'required',
-						// 'min:10',
-						'max:17',
-						'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-					],
-				]);
+			// if ($request->chassis_number) {
+			// 	$validator1 = Validator::make($request->all(), [
+			// 		'chassis_number' => [
+			// 			'required',
+			// 			// 'min:10',
+			// 			'max:17',
+			// 			'unique:vehicles,chassis_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+			// 		],
+			// 	]);
 
-				if ($validator1->fails()) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => $validator1->errors()->all(),
-					]);
-				}
-			}
+			// 	if ($validator1->fails()) {
+			// 		return response()->json([
+			// 			'success' => false,
+			// 			'error' => 'Validation Error',
+			// 			'errors' => $validator1->errors()->all(),
+			// 		]);
+			// 	}
+			// }
 
-			if ($request->engine_number) {
-				$validator1 = Validator::make($request->all(), [
-					'engine_number' => [
-						'required',
-						// 'min:10',
-						'max:64',
-						'unique:vehicles,engine_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
-					],
-				]);
+			// if ($request->engine_number) {
+			// 	$validator1 = Validator::make($request->all(), [
+			// 		'engine_number' => [
+			// 			'required',
+			// 			// 'min:10',
+			// 			'max:64',
+			// 			'unique:vehicles,engine_number,' . $request->vehicle_id . ',id,company_id,' . Auth::user()->company_id,
+			// 		],
+			// 	]);
 
-				if ($validator1->fails()) {
-					return response()->json([
-						'success' => false,
-						'error' => 'Validation Error',
-						'errors' => $validator1->errors()->all(),
-					]);
-				}
-			}
+			// 	if ($validator1->fails()) {
+			// 		return response()->json([
+			// 			'success' => false,
+			// 			'error' => 'Validation Error',
+			// 			'errors' => $validator1->errors()->all(),
+			// 		]);
+			// 	}
+			// }
 
 			if ($request->search_type == 1 && $request->vehicle_id) {
+				//Exisiting
 				$vehicle = Vehicle::find($request->vehicle_id);
 				$vehicle_form_filled = 1;
 				if ($vehicle->currentOwner) {
@@ -290,19 +291,46 @@ class GateInController extends Controller {
 				$vehicle->updated_by_id = Auth::user()->id;
 				$vehicle->save();
 			} else {
-				$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
-				if ($request->chassis_number) {
-					$vehicle = Vehicle::firstOrNew([
+
+				$registration_number = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+				//New
+				if ($registration_number) {
+					$vehicle = Vehicle::where([
 						'company_id' => Auth::user()->company_id,
-						'registration_number' => $request->registration_number,
-						'chassis_number' => $request->chassis_number,
-					]);
+						'registration_number' => $registration_number,
+					])->first();
+
+					if (!$vehicle) {
+						//Chassis Number
+						if ($request->chassis_number) {
+							$vehicle = Vehicle::firstOrNew([
+								'company_id' => Auth::user()->company_id,
+								'chassis_number' => $request->chassis_number,
+							]);
+						}
+						//Engine Number
+						else {
+							$vehicle = Vehicle::firstOrNew([
+								'company_id' => Auth::user()->company_id,
+								'engine_number' => $request->engine_number,
+							]);
+						}
+					}
 				} else {
-					$vehicle = Vehicle::firstOrNew([
-						'company_id' => Auth::user()->company_id,
-						'registration_number' => $request->registration_number,
-						'engine_number' => $request->engine_number,
-					]);
+					//Chassis Number
+					if ($request->chassis_number) {
+						$vehicle = Vehicle::firstOrNew([
+							'company_id' => Auth::user()->company_id,
+							'chassis_number' => $request->chassis_number,
+						]);
+					}
+					//Engine Number
+					else {
+						$vehicle = Vehicle::firstOrNew([
+							'company_id' => Auth::user()->company_id,
+							'engine_number' => $request->engine_number,
+						]);
+					}
 				}
 
 				//NEW
@@ -324,9 +352,8 @@ class GateInController extends Controller {
 					$vehicle->updated_by_id = Auth::user()->id;
 				}
 
-				$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
-
 				$vehicle->fill($request->all());
+				$vehicle->registration_number = $registration_number;
 				$vehicle->save();
 				$request->vehicle_id = $vehicle->id;
 			}
