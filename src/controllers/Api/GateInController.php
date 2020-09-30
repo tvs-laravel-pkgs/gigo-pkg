@@ -285,6 +285,8 @@ class GateInController extends Controller {
 				$vehicle->registration_number = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
 				$vehicle->chassis_number = $request->chassis_number;
 				$vehicle->engine_number = $request->engine_number;
+				$vehicle->driver_name = $request->driver_name;
+				$vehicle->driver_mobile_number = $request->driver_mobile_number;
 				$vehicle->updated_by_id = Auth::user()->id;
 				$vehicle->save();
 			} else {
@@ -326,7 +328,6 @@ class GateInController extends Controller {
 
 				$vehicle->fill($request->all());
 				$vehicle->save();
-
 				$request->vehicle_id = $vehicle->id;
 			}
 
@@ -654,7 +655,6 @@ class GateInController extends Controller {
 			DB::commit();
 
 			$gate_in_data['number'] = $gate_log->number;
-			// $gate_in_data['registration_number'] = $regis_number;
 
 			$message = 'Greetings from TVS & Sons! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . $membership_message;
 
@@ -663,10 +663,16 @@ class GateInController extends Controller {
 				//Gatein Message
 				$msg = sendSMSNotification($request->driver_mobile_number, $message);
 				// Notification::dispatch($request->driver_mobile_number, $message);
+				// $notifications['notification_type'] = 'SMS';
+				// $notifications['data'] = ['mobile_no' => $request->driver_mobile_number, 'message' => $message];
+
+				// Notification::dispatch($notifications)->delay(Carbon::now()->addSeconds(10));
 
 				//Tracking Message
 				$msg = sendSMSNotification($request->driver_mobile_number, $tracking_message);
-				// Notification::dispatch($request->driver_mobile_number, $tracking_message);
+				// $notifications['notification_type'] = 'SMS';
+				// $notifications['data'] = ['mobile_no' => $request->driver_mobile_number, 'message' => $tracking_message];
+				// Notification::dispatch($notifications)->delay(Carbon::now()->addSeconds(20));
 			}
 
 			//Send SMS to Customer
@@ -674,11 +680,15 @@ class GateInController extends Controller {
 				if ($job_order->customer->mobile_no) {
 					//Gatein Message
 					$msg = sendSMSNotification($job_order->customer->mobile_no, $message);
-					// Notification::dispatch($job_order->customer->mobile_no, $message);
+					// $notifications['notification_type'] = 'SMS';
+					// $notifications['data'] = ['mobile_no' => $job_order->customer->mobile_no, 'message' => $message];
+					// Notification::dispatch($notifications)->delay(Carbon::now()->addSeconds(10));
 
 					//Tracking Message
 					$msg = sendSMSNotification($job_order->customer->mobile_no, $tracking_message);
-					// Notification::dispatch($job_order->customer->mobile_no, $tracking_message);
+					// $notifications['notification_type'] = 'SMS';
+					// $notifications['data'] = ['mobile_no' => $job_order->customer->mobile_no, 'message' => $tracking_message];
+					// Notification::dispatch($notifications)->delay(Carbon::now()->addSeconds(20));
 				}
 			}
 
@@ -693,7 +703,13 @@ class GateInController extends Controller {
 
 			$title = 'Inward List';
 			$message = 'Gatein Completed! Waiting for inward';
+
 			sendPushNotification($title, $message, $redirection_id = 1, $vehicle_data = NULL, $outlet_id = Auth::user()->employee->outlet_id);
+
+			// $notifications['notification_type'] = 'PUSH';
+			// $notifications['data'] = ['title' => 'Inward List', 'message' => 'Gatein Completed! Waiting for inward', 'redirection_id' => 1, 'vehicle_data' => NULL, 'outlet_id' => Auth::user()->employee->outlet_id];
+
+			// Notification::dispatch($notifications)->delay(Carbon::now()->addSeconds(90));
 
 			return response()->json([
 				'success' => true,
