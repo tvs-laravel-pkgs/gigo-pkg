@@ -414,15 +414,15 @@ class JobCardController extends Controller {
 			//JOB Card SAVE
 			$job_card = JobCard::where('job_order_id', $request->job_order_id)->first();
 			if ($job_card) {
-				if ($job_card->status_id == 8220) {
+				if ($job_card->status_id == 8221) {
+					$job_card->updated_by = Auth::user()->id;
+				} else {
 					$job_card->job_card_number = $request->job_card_number;
 					$job_card->date = date('Y-m-d', strtotime($request->job_card_date));
 					$job_card->outlet_id = $job_order->outlet_id;
 					$job_card->status_id = 8220; //Floor Supervisor not Assigned
 					$job_card->company_id = Auth::user()->company_id;
 					$job_card->created_by = Auth::user()->id;
-				} else {
-					$job_card->updated_by = Auth::user()->id;
 				}
 				$job_card->save();
 			}
