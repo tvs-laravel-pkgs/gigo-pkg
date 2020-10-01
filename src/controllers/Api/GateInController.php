@@ -686,7 +686,7 @@ class GateInController extends Controller {
 			$message = 'Greetings from TVS & Sons! Your vehicle ' . $number . ' has arrived in TVS Service Center - ' . Auth::user()->employee->outlet->ax_name . ' at ' . date('d-m-Y h:i A') . $membership_message;
 
 			//Send SMS to Driver
-			if ($request->driver_mobile_number) {
+			if (preg_match('/^\d{10}$/', $request->driver_mobile_number)) {
 				//Gatein Message
 				// $msg = sendSMSNotification($request->driver_mobile_number, $message);
 				// Notification::dispatch($request->driver_mobile_number, $message);
@@ -704,7 +704,7 @@ class GateInController extends Controller {
 
 			//Send SMS to Customer
 			if ($job_order->customer) {
-				if ($job_order->customer->mobile_no) {
+				if (preg_match('/^\d{10}$/', $job_order->customer->mobile_no)) {
 					//Gatein Message
 					// $msg = sendSMSNotification($job_order->customer->mobile_no, $message);
 					$notifications['notification_type'] = 'SMS';
