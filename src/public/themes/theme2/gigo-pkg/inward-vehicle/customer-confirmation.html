@@ -67,19 +67,21 @@
                                                 <div id="signArea">
                                                     <div class="photo-sign-caption">Customer E Sign</div>
                                                     <br>
-                                                    <div ng-class="{'col-md-6':job_order.customer_e_sign.length > 0 ,'col-md-12':job_order.customer_e_sign.length == 0}">
-                                                        <div class="sig sigWrapper" style="height:auto;">
-                                                            <div class="typed"></div>
-                                                            <!-- <canvas class="sign-pad" id="sign-pad" width="300" height="100"></canvas> -->
-                                                            <canvas id="signature" class="canvs-sign" width="300" height="150" style="border: 1px solid #ddd;"></canvas>
-                                                            <input type="hidden" name="customer_e_sign" value="" id="customer_sign">
+                                                    <dvi class="row">
+                                                        <div ng-class="{'col-md-6':job_order.customer_e_sign.length > 0 ,'col-md-12':job_order.customer_e_sign.length == 0}">
+                                                            <div class="sig sigWrapper" style="height:auto;">
+                                                                <div class="typed"></div>
+                                                                <!-- <canvas class="sign-pad" id="sign-pad" width="300" height="100"></canvas> -->
+                                                                <canvas id="signature" class="canvs-sign" width="300" height="150" style="border: 1px solid #ddd;"></canvas>
+                                                                <input type="hidden" name="customer_e_sign" value="" id="customer_sign">
+                                                            </div>
+                                                            <button id="clear-signature">Clear</button>
+                                                            <span id="eror_customer_sign"></span>
                                                         </div>
-                                                        <button id="clear-signature">Clear</button>
-                                                        <span id="eror_customer_sign"></span>
-                                                    </div>
-                                                    <div class="col-md-6" ng-if="job_order.customer_e_sign.length > 0">
-                                                        <img src="{{base_url}}/storage/app/public/gigo/job_order/{{job_order.customer_e_sign[0].name}}" id="customer_pic" height="150" width="100%">
-                                                    </div>
+                                                        <div class="col-md-6" ng-if="job_order.customer_e_sign.length > 0">
+                                                            <img src="{{base_url}}/storage/app/public/gigo/job_order/{{job_order.customer_e_sign[0].name}}" id="customer_pic" height="150" width="100%">
+                                                        </div>
+                                                    </dvi>
                                                     <br>
                                                 </div>
                                             </div>
