@@ -729,12 +729,12 @@ class GateInController extends Controller {
 			}
 
 			$title = 'Inward List';
-			$message = 'Gatein Completed! Waiting for inward';
+			$message = 'Vehicle Gate In Completed! Waiting for Vehicle inward';
 
 			// sendPushNotification($title, $message, $redirection_id = 1, $vehicle_data = NULL, $outlet_id = Auth::user()->employee->outlet_id);
 
 			$notifications['notification_type'] = 'PUSH';
-			$notifications['data'] = ['title' => 'Inward List', 'message' => 'Gatein Completed! Waiting for inward', 'redirection_id' => 1, 'vehicle_data' => NULL, 'outlet_id' => Auth::user()->employee->outlet_id];
+			$notifications['data'] = ['title' => $title, 'message' => $message, 'redirection_id' => 1, 'vehicle_data' => NULL, 'outlet_id' => Auth::user()->employee->outlet_id];
 
 			Notification::dispatch($notifications);
 
