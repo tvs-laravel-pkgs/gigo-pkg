@@ -32,6 +32,7 @@ use App\JobOrderEstimate;
 use App\JobOrderIssuedPart;
 use App\JobOrderPart;
 use App\JobOrderReturnedPart;
+use App\Jobs\Notification;
 use App\OSLWorkOrder;
 use App\Otp;
 use App\Outlet;
@@ -371,6 +372,7 @@ class JobCardController extends Controller {
 	}
 
 	public function saveJobCard(Request $request) {
+		// dd($request->all());
 		try {
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -413,6 +415,7 @@ class JobCardController extends Controller {
 
 			//JOB Card SAVE
 			$job_card = JobCard::where('job_order_id', $request->job_order_id)->first();
+
 			if ($job_card) {
 				if ($job_card->status_id == 8221) {
 					$job_card->updated_by = Auth::user()->id;
@@ -464,6 +467,15 @@ class JobCardController extends Controller {
 			}
 
 			DB::commit();
+
+			//PUSH NOTIFCATION
+			$title = 'JobCard List';
+			$message = 'Vehicle Inward Completed! Waiting for Bay Allocation';
+
+			$notifications['notification_type'] = 'PUSH';
+			$notifications['data'] = ['title' => $title, 'message' => $message, 'redirection_id' => 2, 'vehicle_data' => NULL, 'outlet_id' => $job_card->outlet_id];
+
+			Notification::dispatch($notifications);
 
 			return response()->json([
 				'success' => true,
