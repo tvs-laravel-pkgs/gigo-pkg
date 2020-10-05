@@ -213,7 +213,7 @@
                                 <md-autocomplete md-items="option in $ctrl.searchVehicleModel($ctrl.vehicleModelSearchText)" md-selected-item="$ctrl.vehicle_model" md-selected-item-change="selectedVehicleModel($ctrl.vehicle_model.id)" md-search-text="$ctrl.vehicleModelSearchText" md-item-text="option.model_name" md-min-length="3" placeholder="Vehicle Model Name" md-autofocus>
                                     <md-item-template>
                                         <span>
-                                            {{option.model_name}}
+                                            {{option.model_name}} / {{option.number}}
                                         </span>
                                     </md-item-template>
                                     <md-not-found>

@@ -36,6 +36,9 @@ use App\Jobs\Notification;
 use App\OSLWorkOrder;
 use App\Otp;
 use App\Outlet;
+use App\QuoteType;
+use App\ServiceOrderType;
+use App\ServiceType;
 use App\SplitOrderType;
 use App\User;
 use App\VehicleInspectionItem;
@@ -113,6 +116,8 @@ class JobCardController extends Controller {
 				->where(function ($query) use ($request) {
 					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('vehicles.chassis_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('vehicles.engine_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('models.model_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('job_cards.job_card_number', 'LIKE', '%' . $request->search_key . '%')
@@ -193,9 +198,23 @@ class JobCardController extends Controller {
 
 			$job_cards = $job_card_list->get();
 
+			$params = [
+				'config_type_id' => 42,
+				'add_default' => true,
+				'default_text' => "Select Status",
+			];
+
+			$extras = [
+				'job_order_type_list' => ServiceOrderType::getDropDownList(),
+				'service_type_list' => ServiceType::getDropDownList(),
+				'quote_type_list' => QuoteType::getDropDownList(),
+				'status_list' => Config::getDropDownList($params),
+			];
+
 			return response()->json([
 				'success' => true,
 				'job_card_list' => $job_cards,
+				'extras' => $extras,
 				'total_records' => $total_records,
 			]);
 		} catch (\Exception $e) {

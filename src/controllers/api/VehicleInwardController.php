@@ -121,7 +121,8 @@ class VehicleInwardController extends Controller {
 					if (!empty($request->search_key)) {
 						$query->where('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('customers.name', 'LIKE', '%' . $request->search_key . '%')
-							->orWhere('vehicles.registration_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('vehicles.chassis_number', 'LIKE', '%' . $request->search_key . '%')
+							->orWhere('vehicles.engine_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('models.model_number', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('amc_policies.name', 'LIKE', '%' . $request->search_key . '%')
 							->orWhere('gate_logs.number', 'LIKE', '%' . $request->search_key . '%')
@@ -206,9 +207,24 @@ class VehicleInwardController extends Controller {
 
 			$gate_logs = $vehicle_inward_list_get->get();
 
+			$params = [
+				'config_type_id' => 49,
+				'add_default' => true,
+				'default_text' => "Select Status",
+			];
+			$extras = [
+				'registration_type_list' => [
+					['id' => '', 'name' => 'Select Registration Type'],
+					['id' => '1', 'name' => 'Registered Vehicle'],
+					['id' => '0', 'name' => 'Un-Registered Vehicle'],
+				],
+				'status_list' => Config::getDropDownList($params),
+			];
+
 			return response()->json([
 				'success' => true,
 				'gate_logs' => $gate_logs,
+				'extras' => $extras,
 				'total_records' => $total_records,
 			]);
 		} catch (\Exception $e) {
