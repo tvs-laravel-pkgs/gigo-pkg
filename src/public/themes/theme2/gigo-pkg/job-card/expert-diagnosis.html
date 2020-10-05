@@ -32,7 +32,7 @@
                             <div class="tab-pane-wrap">
                                 <div class="row">
                                     <form id="form" autocomplete="off">
-                                        <div class="col-md-12">
+                                        <div class="col-md-12" ng-if="job_card.status_id == 8221 || job_card.status_id == 8222 || job_card.status_id == 8223">
                                             <h5 class="color-primary mb-10"><b>Expert Diagnosis</b></h5>
                                             <hr class="hr-15">
                                             <input type="hidden" name="job_order_id" value="{{job_card.job_order.id}}">
@@ -74,7 +74,50 @@
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
                                         </div><!-- Column -->
-                                        <div class="tab-pane-footer">
+                                        <div class="col-md-12" ng-if="job_card.status_id != 8221 && job_card.status_id != 8222 && job_card.status_id != 8223">
+                                            <h5 class="color-primary mb-10"><b>Expert Diagnosis</b></h5>
+                                            <div class="view-details mb-no">
+                                                <ul class="view-row pb-none">
+                                                    <li class="view-col-4" ng-if="!job_card.job_order.expert_diagnosis_report_by">
+                                                        <span class="view-col-label">
+                                                            Expert Diagnosis
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                Not Required
+                                                            </b></span>
+                                                    </li>
+                                                    <li class="view-col-4" ng-if="job_card.job_order.expert_diagnosis_report_by">
+                                                        <span class="view-col-label">
+                                                            Done by
+                                                        </span>
+                                                        <span class="view-data-list-value">
+                                                            <b>
+                                                                {{job_card.job_order.expert_diagnosis_report_by.name}}
+                                                            </b></span>
+                                                    </li>
+                                                    <li class="view-col-8" ng-if="job_card.job_order.expert_diagnosis_report_by">
+                                                        <span class="view-col-label">
+                                                            Expert Diagnosis Outcome
+                                                        </span>
+                                                        <span class="view-col-value">
+                                                            <b>
+                                                                {{job_card.job_order.expert_diagnosis_report}}
+                                                            </b>
+                                                        </span>
+                                                    </li>
+                                                </ul>
+                                            </div><!-- View Data -->
+                                        </div><!-- Column -->
+                                        <div class="tab-pane-footer" ng-if="job_card.status_id != 8221 && job_card.status_id != 8222 && job_card.status_id != 8223">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a href=".#!/job-card/vehicle-inspection/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">Previous</a>
+                                                    <a href=".#!/job-card/road-test-observation/{{job_card_id}}" class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a>
+                                                </div>
+                                            </div>
+                                        </div><!-- Tab Footer -->
+                                        <div class="tab-pane-footer" ng-if="job_card.status_id == 8221 || job_card.status_id == 8222 || job_card.status_id == 8223">
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <button type="submit" ng-click="saveExportDiagonis(1)" class="btn btn-red submit">
