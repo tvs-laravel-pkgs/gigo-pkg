@@ -178,6 +178,9 @@ Route::group(['namespace' => 'App\Http\Controllers\Api', 'middleware' => ['auth:
 		//Customer SEARCH
 		Route::post('vehicle-inward/customer/search', 'VehicleInwardController@getCustomerSearchList');
 
+		//Vehicle Modal SEARCH
+		Route::post('vehicle-inward/vehicle/model/search', 'VehicleInwardController@getVehicleModelSearchList');
+
 		//REPAIR ORDER SEARCH
 		Route::post('vehicle-inward/repair-order/search', 'VehicleInwardController@getRepairOrderSearchList');
 

@@ -6850,8 +6850,14 @@ class VehicleInwardController extends Controller {
 		return response()->json($list);
 	}
 
+	//Customer Search
 	public function getCustomerSearchList(Request $request) {
 		return Customer::searchCustomer($request);
+	}
+
+	//Vehicle Model Search
+	public function getVehicleModelSearchList(Request $request) {
+		return VehicleModel::searchVehicleModel($request);
 	}
 
 	//GATE IN DETAIL
