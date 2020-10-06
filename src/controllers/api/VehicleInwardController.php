@@ -2974,6 +2974,8 @@ class VehicleInwardController extends Controller {
 					// $job_order_part->is_customer_approved = 1;
 					// $job_order_part->status_id = 8201; //Not Issued
 					JobOrderPart::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8200)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_at' => Carbon::now()]);
+
+					JobOrderRepairOrder::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8180)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_at' => Carbon::now()]);
 				}
 			}
 
@@ -3244,6 +3246,8 @@ class VehicleInwardController extends Controller {
 				} else {
 					// $job_order_repair_order->is_customer_approved = 1;
 					// $job_order_repair_order->status_id = 8181; //Mechanic Not Assigned
+					JobOrderPart::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8200)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8201, 'updated_at' => Carbon::now()]);
+
 					JobOrderRepairOrder::where('job_order_id', $job_order->id)->where('is_customer_approved', 0)->where('status_id', 8180)->whereNull('removal_reason_id')->update(['is_customer_approved' => 1, 'status_id' => 8181, 'updated_at' => Carbon::now()]);
 				}
 
