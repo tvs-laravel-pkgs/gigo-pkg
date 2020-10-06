@@ -4269,7 +4269,7 @@ class VehicleInwardController extends Controller {
 			$total_labour_count = JobOrderRepairOrder::where('job_order_id', $r->id)->whereNull('removal_reason_id')->count();
 
 			//Check Custoemr Approval Need or not
-			$total_invoice_amount = $this->getApprovedLabourPartsAmount($job_card->job_order_id);
+			$total_invoice_amount = $this->getApprovedLabourPartsAmount($job_order->id);
 
 			$send_approval_status = 0;
 			if ($total_invoice_amount) {
