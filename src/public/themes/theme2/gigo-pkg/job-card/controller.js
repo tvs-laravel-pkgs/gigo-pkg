@@ -2015,7 +2015,7 @@ app.component('jobCardPartIndentForm', {
 app.component('jobCardScheduleMaintenanceForm', {
     templateUrl: job_card_schedule_maintendance_template_url,
     controller: function($http, $location, HelperService, $scope, $routeParams, $rootScope, $element, $q, RepairOrderSvc, SplitOrderTypeSvc, PartSvc, $mdSelect) {
-        
+
         $element.find('input').on('keydown', function(ev) {
             ev.stopPropagation();
         });
@@ -2115,14 +2115,14 @@ app.component('jobCardScheduleMaintenanceForm', {
                 self.part_customer_voice_id = part.customer_voice_id;
                 $scope.part_mrp = part.rate;
                 $scope.part_id = part.part_id;
+                $scope.job_order_part_id = part.id;
 
-                angular.forEach(part.repair_order, function(part, key) {
-                    self.repair_order_ids.push(part.id)
+                angular.forEach(part.repair_order, function(rep_order, key) {
+                    self.repair_order_ids.push(rep_order.id)
                 });
                 $scope.repair_orders = part.repair_order;
                 console.log($scope.repair_orders);
                 if (part.split_order_type_id != null) {
-                    $scope.job_order_part_id = part.id;
                     if (part.split_order_type_id == undefined) {
                         $split_id = part.pivot.split_order_type_id;
                     } else {
@@ -2557,6 +2557,7 @@ app.component('jobCardPayableLabourPartsForm', {
                     $scope.send_approval_status = res.send_approval_status;
                     $scope.labours = res.labours;
                     $scope.customer_voices = res.customer_voices;
+                    $scope.revised_estimate_amount = res.revised_estimate_amount;
                     self.repair_order_ids = [];
                     $scope.$apply();
                 })
@@ -2808,14 +2809,14 @@ app.component('jobCardPayableLabourPartsForm', {
                 self.part_customer_voice_id = part.customer_voice_id;
                 $scope.part_mrp = part.rate;
                 $scope.part_id = part.part_id;
+                $scope.job_order_part_id = part.id;
 
-                angular.forEach(part.repair_order, function(part, key) {
-                    self.repair_order_ids.push(part.id)
+                angular.forEach(part.repair_order, function(rep_order, key) {
+                    self.repair_order_ids.push(rep_order.id)
                 });
                 $scope.repair_orders = part.repair_order;
                 console.log($scope.repair_orders);
                 if (part.split_order_type_id != null) {
-                    $scope.job_order_part_id = part.id;
                     if (part.split_order_type_id == undefined) {
                         $split_id = part.pivot.split_order_type_id;
                     } else {

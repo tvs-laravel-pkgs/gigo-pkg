@@ -3122,14 +3122,14 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
                 self.part_customer_voice_id = part.customer_voice_id;
                 $scope.part_mrp = part.rate;
                 $scope.part_id = part.part_id;
+                $scope.job_order_part_id = part.id;
 
-                angular.forEach(part.repair_order, function(part, key) {
-                    self.repair_order_ids.push(part.id)
+                angular.forEach(part.repair_order, function(rep_order, key) {
+                    self.repair_order_ids.push(rep_order.id)
                 });
 
                 $scope.repair_orders = part.repair_order;
                 if (part.split_order_type_id != null) {
-                    $scope.job_order_part_id = part.id;
                     if (part.split_order_type_id == undefined) {
                         $split_id = part.pivot.split_order_type_id;
                     } else {
@@ -3411,6 +3411,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $scope.extras = res.extras;
                     $scope.labours = res.labours;
                     $scope.customer_voices = res.customer_voices;
+                    $scope.revised_estimate_amount = res.revised_estimate_amount;
                     self.repair_order_ids = [];
                     $scope.$apply();
                 })
@@ -3682,6 +3683,7 @@ app.component('inwardVehiclePayableLabourPartForm', {
         }
         $scope.showPartForm = function(part_index, part = null) {
             // console.log(part.qty);
+            // console.log(part);
             $scope.part_mrp = 0;
             $scope.part_id = '';
             self.repair_order_ids = [];
@@ -3695,13 +3697,13 @@ app.component('inwardVehiclePayableLabourPartForm', {
                 self.part_customer_voice_id = part.customer_voice_id;
                 $scope.part_mrp = part.rate;
                 $scope.part_id = part.part_id;
+                $scope.job_order_part_id = part.id;
 
-                angular.forEach(part.repair_order, function(part, key) {
-                    self.repair_order_ids.push(part.id)
+                angular.forEach(part.repair_order, function(rep_order, key) {
+                    self.repair_order_ids.push(rep_order.id)
                 });
                 $scope.repair_orders = part.repair_order;
                 if (part.split_order_type_id != null) {
-                    $scope.job_order_part_id = part.id;
                     if (part.split_order_type_id == undefined) {
                         $split_id = part.pivot.split_order_type_id;
                     } else {

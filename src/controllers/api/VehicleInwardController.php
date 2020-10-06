@@ -920,6 +920,7 @@ class VehicleInwardController extends Controller {
 						$part_details[$key]['repair_order'] = $value->part->repair_order_parts;
 
 						$part_details[$key]['remarks'] = $returned_qty->remarks;
+						$part_details[$key]['status_id'] = $value->status_id;
 						$part_details[$key]['job_order_returned_part_id'] = $returned_qty->job_order_returned_part_id;
 						$part_details[$key]['user_id'] = Auth::user()->id;
 
@@ -2900,7 +2901,7 @@ class VehicleInwardController extends Controller {
 				$job_order_part->updated_at = Carbon::now();
 			} else {
 				//Check Request parts are already requested or not.
-				$job_order_part = JobOrderPart::where('job_order_id', $request->job_order_id)->where('part_id', $request->part_id)->where('split_order_type_id', $request->split_order_type_id)->where('is_free_service', 0)->where('status_id', 8200)->where('is_oem_recommended', $is_oem_recommended)->where('is_fixed_schedule', 0)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->first();
+				$job_order_part = JobOrderPart::where('job_order_id', $request->job_order_id)->where('part_id', $request->part_id)->where('is_free_service', 0)->where('status_id', 8200)->where('is_oem_recommended', $is_oem_recommended)->where('is_fixed_schedule', 0)->where('is_customer_approved', 0)->whereNull('removal_reason_id')->first();
 				if ($job_order_part) {
 					$request_qty = $job_order_part->qty + $request->qty;
 					$job_order_part->updated_by_id = Auth::user()->id;
@@ -2925,7 +2926,7 @@ class VehicleInwardController extends Controller {
 			$job_order_part->split_order_type_id = $request->split_order_type_id;
 			$job_order_part->amount = $request_qty * $part_mrp;
 
-			if (in_array($request->split_order_type_id, $customer_paid_type)) {
+			if (!$request->split_order_type_id || in_array($request->split_order_type_id, $customer_paid_type)) {
 				$job_order_part->status_id = 8200; //Customer Approval Pending
 				$job_order_part->is_customer_approved = 0;
 			} else {
@@ -3358,9 +3359,9 @@ class VehicleInwardController extends Controller {
 		$total_billing_amount = round($total_billing_amount);
 
 		if ($total_billing_amount > $job_order->estimated_amount) {
-			return true;
+			return $total_billing_amount;
 		} else {
-			return false;
+			return '0';
 		}
 	}
 
@@ -4267,6 +4268,14 @@ class VehicleInwardController extends Controller {
 
 			$total_labour_count = JobOrderRepairOrder::where('job_order_id', $r->id)->whereNull('removal_reason_id')->count();
 
+			//Check Custoemr Approval Need or not
+			$total_invoice_amount = $this->getApprovedLabourPartsAmount($job_card->job_order_id);
+
+			$send_approval_status = 0;
+			if ($total_invoice_amount) {
+				$send_approval_status = 1;
+			}
+
 			return response()->json([
 				'success' => true,
 				'job_order' => $result['job_order'],
@@ -4277,6 +4286,7 @@ class VehicleInwardController extends Controller {
 				'labour_total_amount' => $result['labour_amount'],
 				'parts_total_amount' => $result['part_amount'],
 				'labours' => $result['labours'],
+				'revised_estimate_amount' => $total_invoice_amount,
 				'customer_voices' => $result['customer_voices'],
 			]);
 
@@ -5985,6 +5995,9 @@ class VehicleInwardController extends Controller {
 			$job_order_status_update = JobOrder::find($request->job_order_id);
 			$job_order_status_update->status_id = 8474; //Estimation approved onbehalf of customer
 			$job_order_status_update->is_customer_approved = 1;
+			if ($request->revised_estimate_amount) {
+				$job_order_status_update->estimated_amount = $request->revised_estimate_amount;
+			}
 			$job_order_status_update->estimation_approved_at = Carbon::now();
 			$job_order_status_update->updated_at = Carbon::now();
 			$job_order_status_update->save();

@@ -346,6 +346,7 @@
                         <input type="text" autofocus name="otp_no" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
                         <input type="hidden" name="job_order_id" id="job_order_id" value="{{job_order.id}}" />
                         <input type="hidden" name="verify_otp" id="id" value="1" />
+                        <input type="hidden" name="revised_estimate_amount" value="{{revised_estimate_amount}}" />
                     </div><!-- Feild -->
                     <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm" ng-click="saveOTP()">SUBMIT</button>
                     <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>

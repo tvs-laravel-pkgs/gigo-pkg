@@ -2850,6 +2850,7 @@ class JobCardController extends Controller {
 			'labour_total_amount' => $result['labour_amount'],
 			'parts_total_amount' => $result['part_amount'],
 			'job_card' => $job_card,
+			'revised_estimate_amount' => $total_invoice_amount,
 			'send_approval_status' => $send_approval_status,
 			'labours' => $result['labours'],
 			'customer_voices' => $result['customer_voices'],
@@ -2963,9 +2964,9 @@ class JobCardController extends Controller {
 		$total_billing_amount = round($total_billing_amount);
 
 		if ($total_billing_amount > $job_order->estimated_amount) {
-			return true;
+			return $total_billing_amount;
 		} else {
-			return false;
+			return '0';
 		}
 	}
 
@@ -3428,6 +3429,9 @@ class JobCardController extends Controller {
 			//UPDATE JOB ORDER STATUS
 			$job_order_status_update = JobOrder::find($request->job_order_id);
 			$job_order_status_update->is_customer_approved = 1;
+			if ($request->revised_estimate_amount) {
+				$job_order_status_update->estimated_amount = $request->revised_estimate_amount;
+			}
 			$job_order_status_update->updated_at = Carbon::now();
 			$job_order_status_update->save();
 
