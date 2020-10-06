@@ -623,11 +623,15 @@ class JobOrder extends BaseModel {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
@@ -833,11 +837,15 @@ class JobOrder extends BaseModel {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
@@ -1086,11 +1094,15 @@ class JobOrder extends BaseModel {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();

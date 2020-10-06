@@ -64,9 +64,6 @@
                                                         <th class="text-right">
                                                             Hours
                                                         </th>
-                                                        <th class="text-right">
-                                                            Rate
-                                                        </th>
                                                         <th class="wid-180 white-space text-right">
                                                             Labour Value
                                                         </th>
@@ -88,9 +85,6 @@
                                                         <td class="text-right">
                                                             {{labour_details.qty}}
                                                         </td>
-                                                        <td class="text-right">
-                                                            {{labour_details.rate | number:2}}
-                                                        </td>
                                                         <td class="wid-180 white-space text-right">
                                                             {{labour_details.amount | number:2}}
                                                         </td>
@@ -110,7 +104,7 @@
                                                                 Add Labour
                                                             </button>
                                                         </td>
-                                                        <td colspan="5" class="text-right">
+                                                        <td colspan="4" class="text-right">
                                                             <b>
                                                                 Total Labour
                                                             </b>
@@ -184,10 +178,10 @@
                                                             {{part_details.amount | number:2}}
                                                         </td>
                                                         <td class="wid-100" ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
-                                                            <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete" ng-if="part_details.status_id == 8200 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228)">
+                                                            <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete" ng-if="(part_details.status_id == 8200 || part_details.status_id == 8201) && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228)">
                                                                 <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
                                                             </button>
-                                                            <button class="btn img-btn btn-delete" ng-if="part_details.status_id == 8200 && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228)">
+                                                            <button class="btn img-btn btn-delete" ng-if="(part_details.status_id == 8200 || part_details.status_id == 8201) && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228)">
                                                                 <img class="img-responsive radius-50" ng-click="removePayablePart(index,part_details.id,'parts')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
                                                             </button>
                                                         </td>
@@ -241,7 +235,7 @@
                                         </div><!-- Table Transparent Wrap -->
                                         <div class="mb-20"></div><!-- Spacing -->
                                         <hr>
-                                        <div class="col-md-12">
+                                        <div class="col-md-12" ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-edit')">
                                             <div class="text-center pt-40">
                                                 <a ng-if="send_approval_status == 1" class="btn btn-red job_completed" ng-click="sendConfirm(1)">Approve on behalf of Customer</a>
                                                 <a ng-if="send_approval_status == 1" class="btn btn-red job_completed" ng-click="sendConfirm(2)">Send to Customer for Approval</a>

@@ -273,11 +273,15 @@ class JobCardController extends Controller {
 				]);
 			}
 
-			//Check which tax applicable for customer
-			if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
-				$tax_type = 1160; //Within State
+			if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+				//Check which tax applicable for customer
+				if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+					$tax_type = 1160; //Within State
+				} else {
+					$tax_type = 1161; //Inter State
+				}
 			} else {
-				$tax_type = 1161; //Inter State
+				$tax_type = 1160; //Within State
 			}
 
 			//Count Tax Type
@@ -775,6 +779,7 @@ class JobCardController extends Controller {
 
 			$job_card = JobCard::with([
 				'status',
+				'outlet',
 				'jobOrder',
 				'jobOrder.vehicle',
 				'jobOrder.vehicle.currentOwner.customer',
@@ -819,11 +824,15 @@ class JobCardController extends Controller {
 			$labour_amount = 0;
 			$total_amount = 0;
 
-			//Check which tax applicable for customer
-			if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-				$tax_type = 1160; //Within State
+			if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+				//Check which tax applicable for customer
+				if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+					$tax_type = 1160; //Within State
+				} else {
+					$tax_type = 1161; //Inter State
+				}
 			} else {
-				$tax_type = 1161; //Inter State
+				$tax_type = 1160; //Within State
 			}
 
 			//Count Tax Type
@@ -1300,7 +1309,7 @@ class JobCardController extends Controller {
 
 			$employee_details = Employee::select([
 				'users.id',
-				DB::RAW('CONCAT(users.ecode, " / ",users.name) as user_name'),
+				DB::RAW('CONCAT(employees.code, " / ",users.name) as user_name'),
 				'users.ecode as user_code',
 				'outlets.code as outlet_code',
 				'deputed_outlet.code as deputed_outlet_code',
@@ -2824,12 +2833,11 @@ class JobCardController extends Controller {
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
-		//Check Newly added Part or Labour
-		$labour_count = JobOrderRepairOrder::where('job_order_id', $job_card->job_order_id)->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id')->where('status_id', 8180)->count();
-		$part_count = JobOrderPart::where('job_order_id', $job_card->job_order_id)->whereIn('split_order_type_id', $customer_paid_type_id)->whereNull('removal_reason_id')->where('status_id', 8200)->count();
+		//Check Custoemr Approval Need or not
+		$total_invoice_amount = $this->getApprovedLabourPartsAmount($job_card->job_order_id);
 
 		$send_approval_status = 0;
-		if ($labour_count > 0 || $part_count > 0) {
+		if ($total_invoice_amount) {
 			$send_approval_status = 1;
 		}
 
@@ -2857,6 +2865,108 @@ class JobCardController extends Controller {
 		// 	'send_approval_status' => $send_approval_status,
 		// ]);
 
+	}
+
+	public function getApprovedLabourPartsAmount($job_order_id) {
+		// dd($job_order_id);
+
+		$customer_paid_type = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+
+		$job_order = JobOrder::with([
+			'outlet',
+			'vehicle',
+			'vehicle.currentOwner.customer',
+			'vehicle.currentOwner.customer.primaryAddress',
+			'jobOrderRepairOrders' => function ($q) {
+				$q->whereNull('removal_reason_id');
+			},
+			'jobOrderRepairOrders.repairOrder',
+			'jobOrderRepairOrders.repairOrder.taxCode',
+			'jobOrderRepairOrders.repairOrder.taxCode.taxes',
+			'jobOrderParts' => function ($q) {
+				$q->whereNull('removal_reason_id');
+			},
+			'jobOrderParts.part',
+			'jobOrderParts.part.taxCode',
+			'jobOrderParts.part.taxCode.taxes',
+		])
+			->find($job_order_id);
+
+		if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
+		} else {
+			$tax_type = 1160; //Within State
+		}
+
+		$taxes = Tax::get();
+
+		$parts_amount = 0;
+		$labour_amount = 0;
+		$total_billing_amount = 0;
+
+		if ($job_order->jobOrderRepairOrders) {
+			foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
+				if ($labour->is_free_service != 1 && (in_array($labour->split_order_type_id, $customer_paid_type) || !$labour->split_order_type_id)) {
+					$total_amount = 0;
+					$tax_amount = 0;
+					if ($labour->repairOrder->taxCode) {
+						foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+							$percentage_value = 0;
+							if ($value->type_id == $tax_type) {
+								$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+								$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+							}
+							$tax_amount += $percentage_value;
+						}
+					}
+
+					$total_amount = $tax_amount + $labour->amount;
+					$total_amount = number_format((float) $total_amount, 2, '.', '');
+					$labour_amount += $total_amount;
+				}
+			}
+		}
+
+		if ($job_order->jobOrderParts) {
+			foreach ($job_order->jobOrderParts as $key => $parts) {
+				if ($parts->is_free_service != 1 && (in_array($parts->split_order_type_id, $customer_paid_type) || !$parts->split_order_type_id)) {
+					$total_amount = 0;
+
+					$tax_amount = 0;
+					if ($parts->part->taxCode) {
+						if (count($parts->part->taxCode->taxes) > 0) {
+							foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_amount += $percentage_value;
+							}
+						}
+					}
+
+					$total_amount = $tax_amount + $parts->amount;
+					$total_amount = number_format((float) $total_amount, 2, '.', '');
+					$parts_amount += $total_amount;
+				}
+			}
+		}
+
+		$total_billing_amount = $parts_amount + $labour_amount;
+
+		$total_billing_amount = round($total_billing_amount);
+
+		if ($total_billing_amount > $job_order->estimated_amount) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public function getLabourPartsData($params) {
@@ -3011,17 +3121,21 @@ class JobCardController extends Controller {
 					]);
 				}
 
-				$job_order_repair_order = JobOrderRepairOrder::find($request->labour_parts_id);
 				if ($request->removal_reason_id == 10022) {
-					$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
-					$job_order_repair_order->removal_reason = $request->removal_reason;
+					$job_order_repair_order = JobOrderRepairOrder::find($request->labour_parts_id);
+					if ($request->removal_reason_id == 10022) {
+						$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
+						$job_order_repair_order->removal_reason = $request->removal_reason;
+					} else {
+						$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
+						$job_order_repair_order->removal_reason = NULL;
+					}
+					$job_order_repair_order->updated_by_id = Auth::user()->id;
+					$job_order_repair_order->updated_at = Carbon::now();
+					$job_order_repair_order->save();
 				} else {
-					$job_order_repair_order->removal_reason_id = $request->removal_reason_id;
-					$job_order_repair_order->removal_reason = NULL;
+					$job_order_repair_order = JobOrderRepairOrder::where('id', $request->labour_parts_id)->forceDelete();
 				}
-				$job_order_repair_order->updated_by_id = Auth::user()->id;
-				$job_order_repair_order->updated_at = Carbon::now();
-				$job_order_repair_order->save();
 
 			} else {
 				$validator = Validator::make($request->all(), [
@@ -3040,17 +3154,21 @@ class JobCardController extends Controller {
 					]);
 				}
 
-				$job_order_parts = JobOrderPart::find($request->labour_parts_id);
 				if ($request->removal_reason_id == 10022) {
-					$job_order_parts->removal_reason_id = $request->removal_reason_id;
-					$job_order_parts->removal_reason = $request->removal_reason;
+					$job_order_parts = JobOrderPart::find($request->labour_parts_id);
+					if ($request->removal_reason_id == 10022) {
+						$job_order_parts->removal_reason_id = $request->removal_reason_id;
+						$job_order_parts->removal_reason = $request->removal_reason;
+					} else {
+						$job_order_parts->removal_reason_id = $request->removal_reason_id;
+						$job_order_parts->removal_reason = NULL;
+					}
+					$job_order_parts->updated_by_id = Auth::user()->id;
+					$job_order_parts->updated_at = Carbon::now();
+					$job_order_parts->save();
 				} else {
-					$job_order_parts->removal_reason_id = $request->removal_reason_id;
-					$job_order_parts->removal_reason = NULL;
+					$job_order_parts = JobOrderPart::where('id', $request->labour_parts_id)->forceDelete();
 				}
-				$job_order_parts->updated_by_id = Auth::user()->id;
-				$job_order_parts->updated_at = Carbon::now();
-				$job_order_parts->save();
 			}
 
 			DB::commit();
@@ -4654,6 +4772,7 @@ class JobCardController extends Controller {
 						$job_order_repair_order = JobOrderRepairOrder::find($gate_pass_repair_order['job_order_repair_id']);
 						if ($job_order_repair_order) {
 							$job_order_repair_order->amount = $total_amount;
+							$job_order_repair_order->status_id = 8187; //Work Completed
 							$job_order_repair_order->save();
 						}
 
@@ -4696,6 +4815,7 @@ class JobCardController extends Controller {
 			$job_card = JobCard::with([
 				'jobOrder',
 				'bay',
+				'outlet',
 				'jobOrder.serviceType',
 				'jobOrder.type',
 				'jobOrder.vehicle',
@@ -4733,13 +4853,16 @@ class JobCardController extends Controller {
 
 			//dd($job_card->jobOrder->vehicle->currentOwner);
 
-			//Check which tax applicable for customer
-			if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-				$tax_type = 1160; //Within State
+			if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+				//Check which tax applicable for customer
+				if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+					$tax_type = 1160; //Within State
+				} else {
+					$tax_type = 1161; //Inter State
+				}
 			} else {
-				$tax_type = 1161; //Inter State
+				$tax_type = 1160; //Within State
 			}
-
 			//Count Tax Type
 			$taxes = Tax::get();
 
@@ -4964,6 +5087,7 @@ class JobCardController extends Controller {
 			$job_card = JobCard::with([
 				'jobOrder',
 				'bay',
+				'outlet',
 				'jobOrder.serviceType',
 				'jobOrder.type',
 				'jobOrder.vehicle',
@@ -4996,11 +5120,15 @@ class JobCardController extends Controller {
 
 			$job_card['creation_date'] = date('d/m/Y', strtotime($job_card->created_at));
 
-			//Check which tax applicable for customer
-			if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-				$tax_type = 1160; //Within State
+			if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+				//Check which tax applicable for customer
+				if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+					$tax_type = 1160; //Within State
+				} else {
+					$tax_type = 1161; //Inter State
+				}
 			} else {
-				$tax_type = 1161; //Inter State
+				$tax_type = 1160; //Within State
 			}
 
 			//Count Tax Type

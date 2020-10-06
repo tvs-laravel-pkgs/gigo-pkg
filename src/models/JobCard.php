@@ -216,6 +216,7 @@ class JobCard extends BaseModel {
 		$data['revised_estimate'] = $job_card = JobCard::with([
 			'gatePasses',
 			'jobOrder',
+			'outlet',
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
@@ -249,11 +250,15 @@ class JobCard extends BaseModel {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
@@ -465,6 +470,7 @@ class JobCard extends BaseModel {
 		$split_order_type_ids = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
 		$data['job_card'] = $job_card = JobCard::with([
+			'outlet',
 			'jobOrder',
 			'jobOrder.outlet',
 			'jobOrder.serviceType',
@@ -495,11 +501,15 @@ class JobCard extends BaseModel {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		//Count Tax Type
@@ -628,6 +638,7 @@ class JobCard extends BaseModel {
 		$split_order_type_ids = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
 		$data['job_card'] = $job_card = JobCard::with([
+			'outlet',
 			'jobOrder',
 			'jobOrder.outlet',
 			'jobOrder.serviceType',
@@ -656,11 +667,15 @@ class JobCard extends BaseModel {
 		$parts_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		//Count Tax Type

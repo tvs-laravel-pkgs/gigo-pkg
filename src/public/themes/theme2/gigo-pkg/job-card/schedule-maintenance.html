@@ -70,6 +70,7 @@
                                                         <th class="wid-180 white-space text-right">
                                                             Labour Value
                                                         </th>
+                                                        <th class="wid-100"></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -95,9 +96,17 @@
                                                         <td class="wid-180 white-space text-right">
                                                             {{labour_details.amount | number:2}}
                                                         </td>
+                                                        <td class="wid-100" ng-class="labour_details.removal_reason_id == 10022 ? 'my-disable' : ''">
+                                                            <button type="button" ng-click="showLabourForm(index,labour_details)" class="btn img-btn btn-delete" ng-if="(labour_details.status_id == 8180 || labour_details.status_id == 8181) && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228)">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                            </button>
+                                                            <button class="btn img-btn btn-delete" ng-click="removePayableLabour(index,labour_details.id,'labour')" ng-if="(labour_details.status_id == 8180 || labour_details.status_id == 8181) && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228)">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                            </button>
+                                                        </td>
                                                     </tr>
                                                     <tr>
-                                                        <td colspan="6" class="text-right">
+                                                        <td colspan="7" class="text-right">
                                                             <b>
                                                                 Total Labour
                                                             </b>
@@ -141,6 +150,7 @@
                                                         <th class="wid-180 white-space text-right">
                                                             Amount
                                                         </th>
+                                                        <th class="wid-100"></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -172,9 +182,17 @@
                                                         <td class="wid-180 white-space text-right">
                                                             {{part_details.amount | number:2}}
                                                         </td>
+                                                        <td class="wid-100" ng-class="part_details.removal_reason_id == 10022 ? 'my-disable' : ''">
+                                                            <button type="button" ng-click="showPartForm(index,part_details)" class="btn img-btn btn-delete" ng-if="(part_details.status_id == 8200 || part_details.status_id == 8201) && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228)">
+                                                                <img class="img-responsive radius-50" src="./public/theme/img/table/cndn/edit-blue.svg" alt="Edit" />
+                                                            </button>
+                                                            <button class="btn img-btn btn-delete" ng-if="(part_details.status_id == 8200 || part_details.status_id == 8201) && (job_card.status_id != 8224 && job_card.status_id != 8225 && job_card.status_id != 8226 && job_card.status_id != 8227 && job_card.status_id != 8228)">
+                                                                <img class="img-responsive radius-50" ng-click="removePayablePart(index,part_details.id,'parts')" src="./public/theme/img/content/delete-active.svg" alt="Delete" />
+                                                            </button>
+                                                        </td>
                                                     </tr>
                                                     <tr>
-                                                        <td colspan="7" class="text-right">
+                                                        <td colspan="8" class="text-right">
                                                             <b>
                                                                 Total Parts
                                                             </b>
@@ -229,3 +247,316 @@
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
+<!-- Modal -->
+<div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm finance-view-modal" role="document">
+        <form id="labour_parts_remove">
+            <input type="hidden" name="labour_parts_id" id="labour_parts_id" value="">
+            <input type="hidden" name="payable_type" id="payable_type" value="">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h4 class="modal-title">Delete Request</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>
+                                                Delete Reason
+                                                <sup class="mandatory">*</sup></label>
+                                            <div class="common-radio-button type-4">
+                                                <input type="radio" id="worngly_entered" name="removal_reason_id" ng-model="delete_reason" ng-value="10021" value="10021" ng-checked="delete_reason">
+                                                <label for="worngly_entered">
+                                                    Added By Mistake
+                                                </label>
+                                                <input type="radio" ng-model="delete_reason" id="customer_delete" name="removal_reason_id" ng-value="10022" value="10022">
+                                                <label for="customer_delete">
+                                                    Customer Denied
+                                                </label>
+                                            </div>
+                                            <div id="errorDeleteReasonRequired"></div>
+                                        </div><!-- Feild -->
+                                    </div><!-- Column -->
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                            <div class="col-md-12" ng-if="delete_reason == '10022'">
+                                <div class="form-group">
+                                    <label>Remarks <sup class="mandatory">*</sup></label>
+                                    <textarea class="form-control" rows="5" id="removal_reason" name="removal_reason"></textarea>
+                                </div><!-- Feild -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                    </div><!-- Container -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <button class="btn btn-grey" data-dismiss="modal" aria-label="Close">
+                        Cancel
+                    </button>
+                    <button class="btn btn-red submit" ng-click="saveLabourPartDeleteForm()">Submit</button>
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal Content -->
+<div class="modal fade filter" id="labour_form_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="labour_form" autocomplete="off">
+            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <input type="hidden" name="job_order_repair_order_id" value="{{repair_order_id}}">
+            <input type="hidden" name="type" value="scheduled">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h5 class="modal-title" id="myModalLabel">
+                        {{modal_action}} Labour
+                    </h5>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        ROT Code
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <md-autocomplete md-selected-item="schedule_maintainance_ro.repair_order" md-search-text="repairOrderSearchKey" md-items="repair_order in searchRepairOrders(repairOrderSearchKey)" md-item-text="repair_order.code" md-min-length="3" md-escape-options="clear" placeholder="Ex. ABS100" md-selected-item-change="repairOrderSelected(schedule_maintainance_ro.repair_order)" md-input-id="repairOrderAutoCompleteId">
+                                        <md-item-template>
+                                            <span>
+                                                {{repair_order.code}} / {{repair_order.name}}
+                                            </span>
+                                        </md-item-template>
+                                        <md-not-found>
+                                            No records matching "{{repairOrderSearchKey}}" were found.
+                                        </md-not-found>
+                                    </md-autocomplete>
+                                    <input type="hidden" class="required" name="rot_id" value="{{schedule_maintainance_ro.repair_order.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Split Order Type
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <md-select ng-model="schedule_maintainance_ro.split_order_type" placeholder="Select Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                                {{split_order_type.name}} / {{split_order_type.code}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" class="required" name="split_order_type_id" value="{{schedule_maintainance_ro.split_order_type.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Customer Voice
+                                    </label>
+                                    <md-select ng-model="$ctrl.labour_customer_voice_id" placeholder="Select Cusotmer Voice" md-on-close="clearSearchRejectedReason()" data-md-container-class="selectdemoSelectHeader">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchCusotmerVoice" type="search" placeholder="Search Cusotmer Voice.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="customer_voice.id" ng-repeat="customer_voice in customer_voices | filter:searchCusotmerVoice">{{customer_voice.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="customer_voice_id" value="{{$ctrl.labour_customer_voice_id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                        </div><!-- Row -->
+                        <div class="view-details mb-no" ng-if="schedule_maintainance_ro.repair_order">
+                            <ul class="view-row mb-no pad-tb-none">
+                                <li class="view-col-4">
+                                    <span class="view-col-label">ROT Description</span>
+                                    <span class="view-data-list-value" ng-if="schedule_maintainance_ro.repair_order.is_editable == 0">{{schedule_maintainance_ro.repair_order.name}}</span>
+                                    <input class="form-control" ng-if="schedule_maintainance_ro.repair_order.is_editable == 1" ng-model="schedule_maintainance_ro.repair_order.name" type="text" name="repair_order_description" value="{{schedule_maintainance_ro.repair_order.name}}">
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Category</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.category.name}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Skill Level</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.skill_level.short_name}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Hours</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_ro.repair_order.hours}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Amount</span>
+                                    <span class="view-data-list-value" ng-if="schedule_maintainance_ro.repair_order.is_editable == 0">{{schedule_maintainance_ro.repair_order.amount | currency}}</span>
+                                    <input class="form-control required" ng-if="schedule_maintainance_ro.repair_order.is_editable == 1" ng-model="schedule_maintainance_ro.repair_order.amount" type="text" name="repair_order_amount" value="{{schedule_maintainance_ro.repair_order.amount}}" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="7">
+                                </li>
+                            </ul>
+                        </div><!-- View Data -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" ng-click="saveLabour()" class="btn btn-bordered save_labour">Submit</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<div class="modal fade filter" id="part_form_modal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <form id="part_form" autocomplete="off">
+            <input type="hidden" name="job_order_id" value="{{job_order.id}}">
+            <input type="hidden" name="job_order_part_id" value="{{job_order_part_id}}">
+            <input type="hidden" name="type" value="scheduled">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
+                    <h5 class="modal-title" id="myModalLabel">
+                        {{modal_action}} Part
+                    </h5>
+                </div><!-- Modal Header -->
+                <div class="modal-body">
+                    <div class="modal-form">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Repair Orders
+                                    </label>
+                                    <md-select multiple ng-model="$ctrl.repair_order_ids" placeholder="Select Repair Order" md-on-close="clearSearchRejectedReason()" data-md-container-class="selectdemoSelectHeader">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchRepairOrder" type="search" placeholder="Search Repair Order.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="category.id" ng-repeat="category in labours | filter:searchRepairOrder">{{category.code}} / {{category.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="repair_orders" value="{{$ctrl.repair_order_ids}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Part Code
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <md-autocomplete md-selected-item="schedule_maintainance_part.part" md-search-text="partSearchKey" md-items="part in searchParts(partSearchKey)" md-item-text="part.code" md-min-length="4" md-escape-options="clear" placeholder="Ex. F0831610(L)" md-selected-item-change="console.log(1);partSelected(part)" md-input-id="partAutoCompleteId">
+                                        <md-item-template>
+                                            <span>
+                                                {{part.code}} / {{part.name}}
+                                            </span>
+                                        </md-item-template>
+                                        <md-not-found>
+                                            No records matching "{{partSearchKey}}" were found.
+                                        </md-not-found>
+                                    </md-autocomplete>
+                                    <input type="hidden" name="part_id" value="{{schedule_maintainance_part.part.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Available Quantity </label>
+                                    <input type="text" ng-model="available_quantity" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Available Quantity" autocomplete="off" readonly />
+                                </div><!-- Feild -->
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Split Order Type
+                                        <span class="mandatory">*</span>
+                                    </label>
+                                    <md-select ng-model="schedule_maintainance_part.split_order_type" placeholder="Split Order Type" data-md-container-class="selectdemoSelectHeader" ng-model-options="{trackBy: '$value.id' }">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchSplitOrderTypeKey" type="search" placeholder="Search.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="split_order_type" ng-repeat="split_order_type in options.split_order_types | filter:searchSplitOrderTypeKey">
+                                                {{split_order_type.name}} / {{split_order_type.code}}
+                                            </md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="split_order_type_id" value="{{schedule_maintainance_part.split_order_type.id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>
+                                        Customer Voice
+                                    </label>
+                                    <md-select ng-model="$ctrl.part_customer_voice_id" placeholder="Select Cusotmer Voice" md-on-close="clearSearchRejectedReason()" data-md-container-class="selectdemoSelectHeader">
+                                        <md-select-header class="demo-select-header">
+                                            <input ng-model="searchCusotmerVoice" type="search" placeholder="Search Cusotmer Voice.." class="demo-header-searchbox md-text">
+                                        </md-select-header>
+                                        <md-optgroup>
+                                            <md-option ng-value="customer_voice.id" ng-repeat="customer_voice in customer_voices | filter:searchCusotmerVoice">{{customer_voice.name}}</md-option>
+                                        </md-optgroup>
+                                    </md-select>
+                                    <input type="hidden" name="customer_voice_id" value="{{$ctrl.part_customer_voice_id}}">
+                                </div><!-- Field -->
+                            </div><!-- Column -->
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Quantity <sup class="mandatory">*</sup></label>
+                                    <input type="text" name="qty" ng-model="schedule_maintainance_part.part.qty" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" ng-keyup="calculatePartAmount()" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                                </div><!-- Feild -->
+                            </div>
+                        </div><!-- Row -->
+                        <div class="view-details mb-no" ng-if="schedule_maintainance_part.part">
+                            <ul class="view-row mb-no pad-tb-none">
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Part Description</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_part.part.name}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">MRP</span>
+                                    <!-- <span class="view-data-list-value">{{schedule_maintainance_part.part.mrp | currency}}</span> -->
+                                    <input class="form-control" ng-if="available_quantity == 0" ng-model="schedule_maintainance_part.part.mrp" type="text" name="mrp" value="{{schedule_maintainance_part.part.mrp}}" ng-keyup="calculatePartAmount()" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+                                    <span ng-if="available_quantity != 0" class="view-data-list-value">{{schedule_maintainance_part.part.mrp | currency}}
+                                        <input type="hidden" name="mrp" value="{{schedule_maintainance_part.part.mrp}}">
+                                    </span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">UOM</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_part.part.uom.code}}</span>
+                                </li>
+                                <li class="view-col-4">
+                                    <span class="view-col-label">Amount</span>
+                                    <span class="view-data-list-value">{{schedule_maintainance_part.part.total_amount | currency}}</span>
+                                </li>
+                            </ul>
+                        </div><!-- View Data -->
+                    </div><!-- Modal Form -->
+                </div><!-- Modal Body -->
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                        </div><!-- Column -->
+                        <div class="col-md-6 text-right">
+                            <button type="button" data-dismiss="modal" class="btn btn-primary btn-bordered cancel_modal_btn">
+                                Cancel
+                            </button>
+                            <button type="submit" ng-click="savePart()" class="btn btn-bordered save_part">Submit</button>
+                        </div><!-- Column -->
+                    </div><!-- Row -->
+                </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
+        </form>
+    </div><!-- Modal Dialog -->
+</div><!-- Modal -->
+<!-- Modal -->
+<script src="./public/theme/js/imageuploadify-gatein.min.js"></script>

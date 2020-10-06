@@ -178,11 +178,15 @@ class PDFController extends Controller {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
@@ -421,11 +425,15 @@ class PDFController extends Controller {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
@@ -633,6 +641,7 @@ class PDFController extends Controller {
 		$this->data['insurance_estimate'] = $job_card = JobCard::with([
 			'gatePasses',
 			'jobOrder',
+			'outlet',
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
@@ -667,11 +676,15 @@ class PDFController extends Controller {
 		$total_amount = 0;
 		$tax_percentage = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
@@ -871,6 +884,7 @@ class PDFController extends Controller {
 
 		$this->data['revised_estimate'] = $job_card = JobCard::with([
 			'gatePasses',
+			'outlet',
 			'jobOrder',
 			'jobOrder.type',
 			'jobOrder.vehicle',
@@ -905,11 +919,15 @@ class PDFController extends Controller {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
@@ -1116,6 +1134,7 @@ class PDFController extends Controller {
 		$this->data['job_card'] = $job_card = JobCard::with([
 			'gatePasses',
 			'jobOrder',
+			'outlet',
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
@@ -1156,13 +1175,16 @@ class PDFController extends Controller {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
-
 		//Count Tax Type
 		$taxes = Tax::get();
 
@@ -1497,6 +1519,7 @@ class PDFController extends Controller {
 		$this->data['tax_invoice'] = $job_card = JobCard::with([
 			'gatePasses',
 			'jobOrder',
+			'outlet',
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
@@ -1534,11 +1557,15 @@ class PDFController extends Controller {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		//Count Tax Type
@@ -1663,6 +1690,7 @@ class PDFController extends Controller {
 		$this->data['service_proforma'] = $job_card = JobCard::with([
 			'gatePasses',
 			'jobOrder',
+			'outlet',
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
@@ -1702,11 +1730,15 @@ class PDFController extends Controller {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		//Count Tax Type
@@ -1901,6 +1933,7 @@ class PDFController extends Controller {
 		$this->data['service_proforma_cumulative'] = $job_card = JobCard::with([
 			'gatePasses',
 			'jobOrder',
+			'outlet',
 			'jobOrder.type',
 			'jobOrder.vehicle',
 			'jobOrder.vehicle.model',
@@ -1942,11 +1975,15 @@ class PDFController extends Controller {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
 
 		//Count Tax Type
@@ -2148,6 +2185,7 @@ class PDFController extends Controller {
 		// dd($id, $split_order_type_id);
 		$split_order = SplitOrderType::find($split_order_type_id);
 		$this->data['job_card'] = $job_card = JobCard::with([
+			'outlet',
 			'jobOrder',
 			'jobOrder.outlet',
 			'jobOrder.serviceType',
@@ -2184,12 +2222,17 @@ class PDFController extends Controller {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
+
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
 		//Count Tax Type
@@ -2521,6 +2564,7 @@ class PDFController extends Controller {
 		// dd($split_order_type_ids);
 
 		$this->data['job_card'] = $job_card = JobCard::with([
+			'outlet',
 			'jobOrder',
 			'jobOrder.outlet',
 			'jobOrder.serviceType',
@@ -2551,12 +2595,17 @@ class PDFController extends Controller {
 		$labour_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
+
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
 		//Count Tax Type
@@ -2687,6 +2736,7 @@ class PDFController extends Controller {
 
 		$this->data['job_card'] = $job_card = JobCard::with([
 			'jobOrder',
+			'outlet',
 			'jobOrder.outlet',
 			'jobOrder.serviceType',
 			'jobOrder.type',
@@ -2715,12 +2765,17 @@ class PDFController extends Controller {
 		$parts_amount = 0;
 		$total_amount = 0;
 
-		//Check which tax applicable for customer
-		if ($job_card->jobOrder->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
-			$tax_type = 1160; //Within State
+		if ($job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_card->outlet->state_id == $job_card->jobOrder->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
 		} else {
-			$tax_type = 1161; //Inter State
+			$tax_type = 1160; //Within State
 		}
+
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
 		//Count Tax Type
