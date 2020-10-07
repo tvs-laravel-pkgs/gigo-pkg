@@ -4795,6 +4795,33 @@ class JobCardController extends Controller {
 				]);
 			}
 
+			//Save Attcahments
+			$attachment_removal_ids = json_decode($request->attachment_removal_ids);
+			if (!empty($attachment_removal_ids)) {
+				Attachment::whereIn('id', $attachment_removal_ids)->forceDelete();
+			}
+
+			if (!empty($request->osl_work_order_attachments)) {
+				foreach ($request->osl_work_order_attachments as $key => $osl_work_order_attachment) {
+					$value = rand(1, 100);
+					$image = $osl_work_order_attachment;
+
+					$file_name_with_extension = $image->getClientOriginalName();
+					$file_name = pathinfo($file_name_with_extension, PATHINFO_FILENAME);
+					$extension = $image->getClientOriginalExtension();
+					$time_stamp = date('Y_m_d_h_i_s');
+					$name = $gate_pass->id . '_' . $time_stamp . '_' . rand(10, 1000) . '_osl_bill.' . $extension;
+
+					$osl_work_order_attachment->move(storage_path('app/public/gigo/material_gate_pass/attachments/'), $name);
+					$attachement = new Attachment;
+					$attachement->attachment_of_id = 231; //Material Gate Pass
+					$attachement->attachment_type_id = 10097; //OSL Bill
+					$attachement->entity_id = $gate_pass->id;
+					$attachement->name = $name;
+					$attachement->save();
+				}
+			}
+
 			DB::commit();
 
 			return response()->json([

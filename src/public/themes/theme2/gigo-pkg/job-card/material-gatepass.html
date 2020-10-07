@@ -254,7 +254,7 @@ input[type=number] {
                                 <div class="light-box">
                                     <h6 class=""><b>Attachments</b></h6>
                                     <div class="img-upload-preview">
-                                        <input type="file" class="image_uploadify material_image_{{index}}" accept="image/*,application/pdf" name="osl_work_order_attachment" multiple>
+                                        <input type="file" class="image_uploadify material_image_{{index}}" accept="image/*,application/pdf" name="osl_work_order_attachments[]" multiple>
                                         <div class="imageuploadify">
                                             <div class="imageuploadify-images-list">
                                                 <!-- <div class="imageuploadify-container attach_{{indexx}}" style="margin-left: 4px; margin-right: 4px;" ng-repeat="(indexx, attach) in gate_pass_item.attachment">
@@ -282,9 +282,9 @@ input[type=number] {
                         </div><!-- Column -->
                     </div><!-- Row -->
                 </div><!-- Modal Footer -->
+            </div><!-- Modal Content -->
         </form>
-    </div><!-- Modal Content -->
-</div><!-- Modal Dialog -->
+    </div><!-- Modal Dialog -->
 </div><!-- Modal -->
 <!-- Drag & Drop File Upload Plugins -->
 <script src="./public/theme/js/imageuploadify-mgatepass.min.js"></script>
