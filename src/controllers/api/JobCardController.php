@@ -539,6 +539,7 @@ class JobCardController extends Controller {
 				'status',
 				'jobOrder',
 			])
+				->orderBy('display_order')
 				->where('outlet_id', $job_card->outlet_id)
 				->get();
 			foreach ($bay_list as $key => $bay) {

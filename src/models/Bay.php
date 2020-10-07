@@ -17,7 +17,7 @@ class Bay extends BaseModel {
 	protected $table = 'bays';
 	public $timestamps = true;
 	protected $fillable =
-		["id", "short_name", "outlet_id", "name", "status_id", "job_order_id", "area_type_id"]
+		["id", "short_name", "outlet_id", "name", "status_id", "job_order_id", "area_type_id", "display_order"]
 	;
 
 	protected static $excelColumnRules = [
@@ -81,6 +81,7 @@ class Bay extends BaseModel {
 			'Status Name' => $record_data->status_name,
 			'Job Order Number' => $record_data->job_order_number,
 			'Area Type' => $record_data->area_type,
+			'Display Order' => $record_data->display_order,
 		];
 		return static::saveFromExcelArray($record);
 	}
@@ -164,6 +165,22 @@ class Bay extends BaseModel {
 					$job_order_id = $job_order->id;
 				}
 			}
+
+			if (!empty($record_data['Display Order'])) {
+				$record = Self::where([
+					'outlet_id' => $outlet->id,
+					'display_order' => $record_data['Display Order'],
+				])->first();
+
+				if ($record) {
+					if ($record->short_name != $record_data['Short Name']) {
+						$errors[] = 'Display Order already added : ' . $record_data['Display Order'];
+					}
+				}
+			} else {
+				$errors[] = 'Invalid Display Order : ' . $record_data['Display Order'];
+			}
+
 			if (count($errors) > 0) {
 				return [
 					'success' => false,
@@ -185,6 +202,7 @@ class Bay extends BaseModel {
 			$record->job_order_id = $job_order_id;
 			$record->status_id = $status_id;
 			$record->area_type_id = $area_type_id;
+			$record->display_order = $record_data['Display Order'];
 			// $record->company_id = $company->id;
 			$record->created_by_id = $created_by_id;
 			$record->save();
