@@ -1736,6 +1736,8 @@ app.component('jobCardPdf', {
 
                     $scope.gate_pass_url = base_url + '/gigo-pkg/pdf/gatepass/' + $scope.job_card.id;
                     $scope.gate_pass_pdf = res.job_card.gate_pass_pdf;
+                    
+                    $scope.vehicle_inspection_pdf = res.job_card.inspection_pdf;
 
                     $scope.$apply();
                 })

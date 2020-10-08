@@ -1521,7 +1521,7 @@ class VehicleInwardController extends Controller {
 						if ($part->partType->name == 'Lubricants' && (($issued_qty->issued_qty) > 0)) {
 							return response()->json([
 								'success' => false,
-								'error' => 'Mentioned Lubricant item cannot add multiple times!',
+								'error' => 'This Lubricant item is already issued. So it cannot be issued multiple times!',
 							]);
 						}
 					}
@@ -2968,14 +2968,17 @@ class VehicleInwardController extends Controller {
 
 			DB::commit();
 
-			if (in_array($request->split_order_type_id, $customer_paid_type) && $job_order->jobCard) {
+			// if (in_array($request->split_order_type_id, $customer_paid_type) && $job_order->jobCard) {
+			if ($job_order->jobCard) {
 
 				$total_invoice_amount = $this->getApprovedLabourPartsAmount($job_order->id);
 
 				if ($total_invoice_amount) {
-					$job_order_part->status_id = 8200; //Customer Approval Pending
-					$job_order_part->is_customer_approved = 0;
-					$job_order_part->save();
+					if (in_array($request->split_order_type_id, $customer_paid_type)) {
+						$job_order_part->status_id = 8200; //Customer Approval Pending
+						$job_order_part->is_customer_approved = 0;
+						$job_order_part->save();
+					}
 				} else {
 					// $job_order_part->is_customer_approved = 1;
 					// $job_order_part->status_id = 8201; //Not Issued
@@ -3241,14 +3244,17 @@ class VehicleInwardController extends Controller {
 
 			DB::commit();
 
-			if (in_array($request->split_order_type_id, $customer_paid_type) && $job_order->jobCard) {
+			// if (in_array($request->split_order_type_id, $customer_paid_type) && $job_order->jobCard) {
+			if ($job_order->jobCard) {
 
 				$total_invoice_amount = $this->getApprovedLabourPartsAmount($job_order->id);
 
 				if ($total_invoice_amount) {
-					$job_order_repair_order->status_id = 8180; //Customer Approval Pending
-					$job_order_repair_order->is_customer_approved = 0;
-					$job_order_repair_order->save();
+					if (in_array($request->split_order_type_id, $customer_paid_type)) {
+						$job_order_repair_order->status_id = 8180; //Customer Approval Pending
+						$job_order_repair_order->is_customer_approved = 0;
+						$job_order_repair_order->save();
+					}
 				} else {
 					// $job_order_repair_order->is_customer_approved = 1;
 					// $job_order_repair_order->status_id = 8181; //Mechanic Not Assigned
@@ -5294,7 +5300,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order->is_expert_diagnosis_required = $request->is_expert_diagnosis_required;
-			$job_order->status_id = 8463;
+			// $job_order->status_id = 8463;
 			$job_order->updated_by_id = Auth::user()->id;
 			$job_order->updated_at = Carbon::now();
 			$job_order->save();
@@ -5436,7 +5442,7 @@ class VehicleInwardController extends Controller {
 			}
 
 			$job_order = jobOrder::find($request->job_order_id);
-			$job_order->status_id = 8463;
+			// $job_order->status_id = 8463;
 			$job_order->save();
 			// if ($request->vehicle_inspection_groups) {
 			// 	$job_order->vehicleInspectionItems()->sync([]);
@@ -6815,8 +6821,8 @@ class VehicleInwardController extends Controller {
 				//Generate Inventory PDF
 				$generate_inventory_pdf = JobOrder::generateInventoryPDF($job_order->id);
 
-				//Generate Inspection PDF
-				$generate_estimate_inspection_pdf = JobOrder::generateInspectionPDF($job_order->id);
+				// //Generate Inspection PDF
+				// $generate_estimate_inspection_pdf = JobOrder::generateInspectionPDF($job_order->id);
 
 				//Generate Estimation PDF
 				$generate_estimate_pdf = JobOrder::generateEstimatePDF($request->job_order_id);

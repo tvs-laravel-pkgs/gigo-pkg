@@ -759,6 +759,14 @@ class JobCardController extends Controller {
 				$job_card->gate_pass_pdf = '';
 			}
 
+			//Check Inspection PDF Available or not
+			$directoryPath = storage_path('app/public/gigo/pdf/' . $job_card->jobOrder->id . '_inward_inspection.pdf');
+			if (file_exists($directoryPath)) {
+				$job_card->inspection_pdf = url('storage/app/public/gigo/pdf/' . $job_card->jobOrder->id . '_inward_inspection.pdf');
+			} else {
+				$job_card->inspection_pdf = '';
+			}
+
 			return response()->json([
 				'success' => true,
 				'job_card' => $job_card,
