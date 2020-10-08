@@ -66,17 +66,6 @@
                                                                             </span>
                                                                         </div>
                                                                     </li>
-                                                                    <!-- <li class="wid-100">
-                                                                            <div class="three-box-content bg-grey text-center">
-                                                                                <span class="three-box-label">
-                                                                                    TOTAL
-                                                                                </span>
-                                                                                <span class="three-box-value">
-                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                    {{job_order.oem_recomentation_sub_total | number:2}}
-                                                                                </span>
-                                                                            </div>
-                                                                        </li> -->
                                                                     <li class="wid-50">
                                                                         <div class="three-box-content bg-grey text-center">
                                                                             <span class="three-box-label">
@@ -159,17 +148,6 @@
                                                                             </span>
                                                                         </div>
                                                                     </li>
-                                                                    <!-- <li class="wid-100">
-                                                                            <div class="three-box-content bg-grey text-center">
-                                                                                <span class="three-box-label">
-                                                                                    TOTAL
-                                                                                </span>
-                                                                                <span class="three-box-value">
-                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-dark.svg" alt="Rupee" />
-                                                                                    {{job_order.additional_rot_parts_sub_total | number:2}}
-                                                                                </span>
-                                                                            </div>
-                                                                        </li> -->
                                                                 </ul>
                                                                 <div ng-if="job_order.is_customer_agreed!=1" class="text-center">
                                                                     <button class="btn-link color-secondary-dark font-sm"><a href="#!/inward-vehicle/payable-labour-part-detail/form/{{job_order.id}}" class="btn-link color-secondary-dark font-sm">
@@ -231,17 +209,6 @@
                                                                             </span>
                                                                         </div>
                                                                     </li>
-                                                                    <!-- <li class="wid-100">
-                                                                            <div class="three-box-content bg-red text-center">
-                                                                                <span class="three-box-label">
-                                                                                    TOTAL
-                                                                                </span>
-                                                                                <span class="three-box-value">
-                                                                                    <img class="img-responsive img-inline" src="./public/theme/img/content/rupee-white.svg" alt="Rupee" />
-                                                                                    {{job_order.total_estimate_amount | number:2}}
-                                                                                </span>
-                                                                            </div>
-                                                                        </li> -->
                                                                 </ul>
                                                                 <div class="text-center">
                                                                     <button class="btn-link font-sm">
@@ -279,12 +246,12 @@
                                             </ul>
                                         </div><!-- View Data -->
                                     </div><!-- Column -->
-                                    <hr>
                                     <div class="col-md-12" ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-edit')">
-                                        <div class="text-center pt-40">
+                                        <div class="text-center pt-10">
                                             <a ng-if="send_approval_status == 1" class="btn btn-red job_completed" ng-click="sendConfirm(1)">Approve on behalf of Customer</a>
                                             <a ng-if="send_approval_status == 1" class="btn btn-red job_completed" ng-click="sendConfirm(2)">Send to Customer for Approval</a>
                                         </div>
+                                        <div class="mb-20"></div>
                                     </div>
                                     <div class="tab-pane-footer">
                                         <div class="row">

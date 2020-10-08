@@ -230,7 +230,7 @@ input[type=number] {
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label>Quantity <sup class="mandatory">*</sup></label>
-                                                <input type="text" ng-change="calculateTotal()" name="quantity" ng-model="issue_part.quantity" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
+                                                <input type="text" ng-change="calculateTotal()" name="quantity" ng-model="issue_part.quantity" min="1" max="{{$ctrl.job_order_issued_part_id && part.part_type.name =='Lubricants' ? total_request_qty : total_balance_qty}}"oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" placeholder="Enter Quantity" autocomplete="off" />
                                             </div><!-- Feild -->
                                         </div><!-- Column -->
                                         <div class="col-md-3">

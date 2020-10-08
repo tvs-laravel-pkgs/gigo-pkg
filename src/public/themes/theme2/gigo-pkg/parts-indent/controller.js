@@ -1254,7 +1254,7 @@ app.component('partsIndentIssuePartForm', {
                         if ($scope.part) {
                             console.log($scope.part.part_type);
                             if ($scope.part.part_type && $scope.part.part_type.name == 'Lubricants') {
-                                custom_noty('error', 'Mentioned Lubricant item cannot issued multiple times.Kindly issue only one time!');
+                                custom_noty('error', 'Lubricant items are cannot be issued multiple times. Kindly issue only one time!');
                             }
                         }
                         $scope.available_quantity = res.available_quantity;

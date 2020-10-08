@@ -1855,6 +1855,9 @@ class JobCardController extends Controller {
 			$job_card->work_completed_at = Carbon::now();
 			$job_card->save();
 
+			//Generate Inspection PDF
+			$generate_estimate_inspection_pdf = JobOrder::generateInspectionPDF($job_card->jobOrder->id);
+
 			DB::commit();
 
 			return response()->json([
@@ -2849,14 +2852,6 @@ class JobCardController extends Controller {
 
 		$job_order->total_tax_amount = $total_tax_amount;
 		$job_order->total_estimate_amount = round($total_amount);
-
-		if (empty($job_order->estimated_amount)) {
-			$job_order->min_estimated_amount = $job_order->total_estimate_amount;
-			$job_order->estimated_amount = $job_order->total_estimate_amount;
-		} else {
-			$job_order->min_estimated_amount = $job_order->total_estimate_amount;
-			$job_order->estimated_amount = $job_order->total_estimate_amount;
-		}
 
 		$job_order->total_labour_hours = round($total_labour_hours);
 
