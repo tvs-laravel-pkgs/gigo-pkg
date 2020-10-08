@@ -95,7 +95,7 @@
                                                 </span>
                                                 <span class="data" ng-if="bay.status_id == '8241' && bay.selected==false">ETA</span>
                                                 <span class="info" ng-if="bay.status_id == '8241' && bay.selected==false">
-                                                    ETA {{bay.job_order.estimated_delivery_date ? bay.job_order.estimated_delivery_date : ''  }}
+                                                    {{bay.job_order.estimated_delivery_date ? bay.job_order.estimated_delivery_date : ''  }}
                                                 </span>
                                             </li>
                                         </ul>

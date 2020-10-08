@@ -2632,6 +2632,9 @@ class JobCardController extends Controller {
 	}
 
 	public function getEstimate(Request $request) {
+
+		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
+
 		$job_card = JobCard::with(['jobOrder',
 			'jobOrder.type',
 			'jobOrder.vehicle',
@@ -2648,63 +2651,234 @@ class JobCardController extends Controller {
 		$job_order = JobOrder::with([
 			'vehicle',
 			'vehicle.model',
-			'vehicle.status',
+			'jobOrderRepairOrders' => function ($q) {
+				$q->whereNull('removal_reason_id');
+			},
+			'jobOrderParts' => function ($q) {
+				$q->whereNull('removal_reason_id');
+			},
+			'type',
+			'quoteType',
+			'serviceType',
+			'status',
 		])
 			->select([
 				'job_orders.*',
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%d/%m/%Y") as date'),
 				DB::raw('DATE_FORMAT(job_orders.created_at,"%h:%i %p") as time'),
 			])
-			->where('company_id', Auth::user()->company_id)
-			->find($job_card->job_order_id);
+			->find($job_card->jobOrder->id);
+
+		if (!$job_order) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => [
+					'Job Order Not Found',
+				],
+			]);
+		}
+
+		if (!$job_order->vehicle->currentOwner) {
+			return response()->json([
+				'success' => false,
+				'error' => 'Validation Error',
+				'errors' => [
+					'Customer Details not found',
+				],
+			]);
+		}
+
+		if ($job_order->vehicle->currentOwner->customer->primaryAddress) {
+			//Check which tax applicable for customer
+			if ($job_order->outlet->state_id == $job_order->vehicle->currentOwner->customer->primaryAddress->state_id) {
+				$tax_type = 1160; //Within State
+			} else {
+				$tax_type = 1161; //Inter State
+			}
+		} else {
+			$tax_type = 1160; //Within State
+		}
+
+		//Count Tax Type
+		$taxes = Tax::get();
 
 		$oem_recomentaion_labour_amount = 0;
 		$additional_rot_and_parts_labour_amount = 0;
 
-		foreach ($job_order->jobOrderRepairOrders as $oemrecomentation_labour) {
+		$oem_recomentaion_labour_amount_include_tax = 0;
+		$additional_rot_and_parts_labour_amount_include_tax = 0;
+		$total_labour_hours = JobOrderRepairOrder::where('job_order_id', $job_card->jobOrder->id)->sum('qty');
 
-			if ($oemrecomentation_labour['is_recommended_by_oem'] == 1) {
-				//SCHEDULED MAINTANENCE
-				$oem_recomentaion_labour_amount += $oemrecomentation_labour['amount'];
-			}
-			if ($oemrecomentation_labour['is_recommended_by_oem'] == 0) {
-				//ADDITIONAL ROT AND PARTS
-				$additional_rot_and_parts_labour_amount += $oemrecomentation_labour['amount'];
+		$total_schedule_labour_tax = 0;
+		$total_schedule_labour_amount = 0;
+		$total_schedule_labour_without_tax_amount = 0;
+		$total_payable_labour_tax = 0;
+		$total_payable_labour_amount = 0;
+		$total_payable_labour_without_tax_amount = 0;
+
+		//Repair Orders
+		if ($job_order->jobOrderRepairOrders) {
+			foreach ($job_order->jobOrderRepairOrders as $key => $labour) {
+				if (in_array($labour->split_order_type_id, $customer_paid_type_id) || !$labour->split_order_type_id) {
+					//SCHEDULE MAINTANENCE
+					if ($labour->is_recommended_by_oem == 1 && $labour->is_free_service != 1) {
+						if ($labour->repairOrder->taxCode) {
+							$tax_amount = 0;
+							$total_amount = 0;
+							foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_amount += $percentage_value;
+							}
+							$total_schedule_labour_tax += $tax_amount;
+							$total_amount = $tax_amount + $labour->amount;
+							$total_schedule_labour_amount += $total_amount;
+						} else {
+							$total_schedule_labour_amount += $labour->amount;
+						}
+						$total_schedule_labour_without_tax_amount += $labour->amount;
+					}
+					//PAYABLE
+					if ($labour->is_recommended_by_oem == 0 && $labour->is_free_service != 1) {
+						if ($labour->repairOrder->taxCode) {
+							$tax_amount = 0;
+							$total_amount = 0;
+							foreach ($labour->repairOrder->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									$percentage_value = ($labour->amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_amount += $percentage_value;
+							}
+							$total_payable_labour_tax += $tax_amount;
+							$total_amount = $tax_amount + $labour->amount;
+							$total_payable_labour_amount += $total_amount;
+						} else {
+							$total_payable_labour_amount += $labour->amount;
+						}
+						$total_payable_labour_without_tax_amount += $labour->amount;
+					}
+				}
 			}
 		}
 
-		$oem_recomentaion_part_amount = 0;
-		$additional_rot_and_parts_part_amount = 0;
-		foreach ($job_order->jobOrderParts as $oemrecomentation_labour) {
-			if ($oemrecomentation_labour['is_oem_recommended'] == 1) {
-				//SCHEDULED MAINTANENCE
-				$oem_recomentaion_part_amount += $oemrecomentation_labour['amount'];
-			}
-			if ($oemrecomentation_labour['is_oem_recommended'] == 0) {
-				//ADDITIONAL ROT AND PARTS
-				$additional_rot_and_parts_part_amount += $oemrecomentation_labour['amount'];
+		$total_schedule_part_amount = 0;
+		$total_schedule_part_without_tax_amount = 0;
+		$total_schedule_part_tax = 0;
+		$total_payable_part_tax = 0;
+		$total_payable_part_amount = 0;
+		$total_payable_part_without_tax_amount = 0;
+
+		//Parts
+		if ($job_order->jobOrderParts) {
+			foreach ($job_order->jobOrderParts as $key => $parts) {
+				if (in_array($parts->split_order_type_id, $customer_paid_type_id) || !$parts->split_order_type_id) {
+					//SCHEDULE MAINTANENCE
+					if ($parts->is_oem_recommended == 1 && $parts->is_free_service != 1) {
+						if ($parts->part->taxCode) {
+							$tax_amount = 0;
+							$total_amount = 0;
+							foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_amount += $percentage_value;
+							}
+							$total_schedule_part_tax += $tax_amount;
+							$total_amount = $tax_amount + $parts->amount;
+							$total_schedule_part_amount += $total_amount;
+						} else {
+							$total_schedule_part_amount += $parts->amount;
+						}
+						$total_schedule_part_without_tax_amount += $parts->amount;
+					}
+					if ($parts->is_oem_recommended == 0 && $parts->is_free_service != 1) {
+						if ($parts->part->taxCode) {
+							$tax_amount = 0;
+							$total_amount = 0;
+							foreach ($parts->part->taxCode->taxes as $tax_key => $value) {
+								$percentage_value = 0;
+								if ($value->type_id == $tax_type) {
+									$percentage_value = ($parts->amount * $value->pivot->percentage) / 100;
+									$percentage_value = number_format((float) $percentage_value, 2, '.', '');
+								}
+								$tax_amount += $percentage_value;
+							}
+							$total_payable_part_tax += $tax_amount;
+							$total_amount = $tax_amount + $parts->amount;
+							$total_payable_part_amount += $total_amount;
+						} else {
+							$total_payable_part_amount += $parts->amount;
+						}
+						$total_payable_part_without_tax_amount += $parts->amount;
+					}
+				}
 			}
 		}
+
+		$schedule_tax_total = $total_schedule_labour_tax + $total_schedule_part_tax;
+
+		$payable_tax_total = $total_payable_labour_tax + $total_payable_part_tax;
+
+		$total_amount = $total_schedule_labour_amount + $total_schedule_part_amount + $total_payable_labour_amount + $total_payable_part_amount;
+		$total_tax_amount = $schedule_tax_total + $payable_tax_total;
 
 		//OEM RECOMENTATION LABOUR AND PARTS AND SUB TOTAL
-		$job_order->oem_recomentation_labour_amount = $oem_recomentaion_labour_amount;
-		$job_order->oem_recomentation_part_amount = $oem_recomentaion_part_amount;
-		$job_order->oem_recomentation_sub_total = $oem_recomentaion_labour_amount + $oem_recomentaion_part_amount;
+		$job_order->oem_recomentation_labour_amount = $total_schedule_labour_without_tax_amount;
+		$job_order->oem_recomentation_part_amount = $total_schedule_part_without_tax_amount;
+		$job_order->oem_recomentation_tax_total = $schedule_tax_total;
+		$job_order->oem_recomentation_sub_total = $total_schedule_labour_amount + $total_schedule_part_amount;
 
 		//ADDITIONAL ROT & PARTS LABOUR AND PARTS AND SUB TOTAL
-		$job_order->additional_rot_parts_labour_amount = $additional_rot_and_parts_labour_amount;
-		$job_order->additional_rot_parts_part_amount = $additional_rot_and_parts_part_amount;
-		$job_order->additional_rot_parts_sub_total = $additional_rot_and_parts_labour_amount + $additional_rot_and_parts_part_amount;
+		$job_order->additional_rot_parts_labour_amount = $total_payable_labour_without_tax_amount;
+		$job_order->additional_rot_parts_part_amount = $total_payable_part_without_tax_amount;
+		$job_order->additional_rot_parts_tax_total = $payable_tax_total;
+		$job_order->additional_rot_parts_sub_total = $total_payable_labour_amount + $total_payable_part_amount;
 
 		//TOTAL ESTIMATE
-		$job_order->total_estimate_labour_amount = $oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount;
-		$job_order->total_estimate_parts_amount = $oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount;
-		$job_order->total_estimate_amount = (($oem_recomentaion_labour_amount + $additional_rot_and_parts_labour_amount) + ($oem_recomentaion_part_amount + $additional_rot_and_parts_part_amount));
+		$job_order->total_estimate_labour_amount = $total_schedule_labour_without_tax_amount + $total_payable_labour_without_tax_amount;
+
+		$job_order->total_estimate_parts_amount = $total_schedule_part_without_tax_amount + $total_payable_part_without_tax_amount;
+
+		$job_order->total_tax_amount = $total_tax_amount;
+		$job_order->total_estimate_amount = round($total_amount);
+
+		if (empty($job_order->estimated_amount)) {
+			$job_order->min_estimated_amount = $job_order->total_estimate_amount;
+			$job_order->estimated_amount = $job_order->total_estimate_amount;
+		} else {
+			$job_order->min_estimated_amount = $job_order->total_estimate_amount;
+			$job_order->estimated_amount = $job_order->total_estimate_amount;
+		}
+
+		$job_order->total_labour_hours = round($total_labour_hours);
+
+		$estimation_date = date("Y-m-d H:i:s", strtotime('+' . $job_order->total_labour_hours . ' hours', strtotime($job_order->created_at)));
+		// dd($job_order->created_at, $estimation_date);
+		$job_order->est_date = date("d-m-Y", strtotime($estimation_date));
+		$job_order->est_time = date("h:i a", strtotime($estimation_date));
+
+		//Check Custoemr Approval Need or not
+		$total_invoice_amount = $this->getApprovedLabourPartsAmount($job_order->id);
+
+		$send_approval_status = 0;
+		if ($total_invoice_amount) {
+			$send_approval_status = 1;
+		}
 
 		return response()->json([
 			'success' => true,
 			'job_order' => $job_order,
 			'job_card' => $job_card,
+			'revised_estimate_amount' => $total_invoice_amount,
+			'send_approval_status' => $send_approval_status,
 		]);
 
 	}
@@ -2834,14 +3008,6 @@ class JobCardController extends Controller {
 
 		$customer_paid_type_id = SplitOrderType::where('paid_by_id', '10013')->pluck('id')->toArray();
 
-		//Check Custoemr Approval Need or not
-		$total_invoice_amount = $this->getApprovedLabourPartsAmount($job_card->job_order_id);
-
-		$send_approval_status = 0;
-		if ($total_invoice_amount) {
-			$send_approval_status = 1;
-		}
-
 		return response()->json([
 			'success' => true,
 			'job_order' => $result['job_order'],
@@ -2851,8 +3017,6 @@ class JobCardController extends Controller {
 			'labour_total_amount' => $result['labour_amount'],
 			'parts_total_amount' => $result['part_amount'],
 			'job_card' => $job_card,
-			'revised_estimate_amount' => $total_invoice_amount,
-			'send_approval_status' => $send_approval_status,
 			'labours' => $result['labours'],
 			'customer_voices' => $result['customer_voices'],
 		]);

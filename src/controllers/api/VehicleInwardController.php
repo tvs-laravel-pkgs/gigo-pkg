@@ -466,11 +466,13 @@ class VehicleInwardController extends Controller {
 			}
 
 			$schedule_maintenance['labour_details'] = $schedule_labour_details;
-			$schedule_maintenance['labour_amount'] = $total_schedule_labour_amount;
+			// $schedule_maintenance['labour_amount'] = $total_schedule_labour_amount;
+			$schedule_maintenance['labour_amount'] = $total_schedule_without_tax_labour_amount;
 			$schedule_maintenance['without_tax_labour_amount'] = $total_schedule_without_tax_labour_amount;
 
 			$payable_maintenance['labour_details'] = $additional_labour_details;
-			$payable_maintenance['labour_amount'] = $total_payable_labour_amount;
+			// $payable_maintenance['labour_amount'] = $total_payable_labour_amount;
+			$payable_maintenance['labour_amount'] = $total_payable_without_tax_labour_amount;
 			$payable_maintenance['without_tax_labour_amount'] = $total_payable_without_tax_labour_amount;
 
 			$parts_details = JobOrderPart::with([
@@ -567,27 +569,31 @@ class VehicleInwardController extends Controller {
 			}
 
 			$schedule_maintenance['part_details'] = $schedule_part_details;
-			$schedule_maintenance['part_amount'] = $total_schedule_part_amount;
+			// $schedule_maintenance['part_amount'] = $total_schedule_part_amount;
+			$schedule_maintenance['part_amount'] = $total_schedule_without_tax_part_amount;
 			$schedule_maintenance['without_tax_part_amount'] = $total_schedule_without_tax_part_amount;
 
 			$payable_maintenance['part_details'] = $additional_part_details;
-			$payable_maintenance['part_amount'] = $total_payable_part_amount;
+			// $payable_maintenance['part_amount'] = $total_payable_part_amount;
+			$payable_maintenance['part_amount'] = $total_payable_without_tax_part_amount;
 			$payable_maintenance['without_tax_part_amount'] = $total_payable_without_tax_part_amount;
 
 			//TOTAL
-			$schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
+			// $schedule_maintenance['total_amount'] = $schedule_maintenance['labour_amount'] + $schedule_maintenance['part_amount'];
+			$schedule_maintenance['total_amount'] = $total_schedule_labour_amount + $total_schedule_part_amount;
 			$schedule_maintenance['tax_amount'] = $total_schedule_labour_tax + $total_schedule_part_tax;
 			$schedule_maintenance['without_tax_total_amount'] = $total_schedule_without_tax_part_amount + $total_schedule_without_tax_labour_amount;
 
-			$payable_maintenance['total_amount'] = $payable_maintenance['labour_amount'] + $payable_maintenance['part_amount'];
+			// $payable_maintenance['total_amount'] = $payable_maintenance['labour_amount'] + $payable_maintenance['part_amount'];
+			$payable_maintenance['total_amount'] = $total_payable_labour_amount + $total_payable_part_amount;
 			$payable_maintenance['tax_amount'] = $total_payable_labour_tax + $total_payable_part_tax;
 			$payable_maintenance['without_tax_total_amount'] = $total_payable_without_tax_labour_amount + $total_payable_without_tax_part_amount;
 
 			//TOTAL ESTIMATE
-			$total_estimate_labour_amount['labour_amount'] = $total_schedule_labour_amount + $total_payable_labour_amount;
-			$total_estimate_part_amount['part_amount'] = $total_schedule_part_amount + $total_payable_part_amount;
-			$total_estimate_amount = $total_estimate_labour_amount['labour_amount'] + $total_estimate_part_amount['part_amount'];
+			$total_estimate_labour_amount['labour_amount'] = $total_schedule_without_tax_labour_amount + $total_payable_without_tax_labour_amount;
+			$total_estimate_part_amount['part_amount'] = $total_schedule_without_tax_part_amount + $total_payable_without_tax_part_amount;
 			$total_tax_amount = $schedule_maintenance['tax_amount'] + $payable_maintenance['tax_amount'];
+			$total_estimate_amount = $total_estimate_labour_amount['labour_amount'] + $total_estimate_part_amount['part_amount'] + $total_tax_amount;
 
 			//VEHICLE INSPECTION ITEM
 			$vehicle_inspection_item_groups = array();
@@ -4274,14 +4280,6 @@ class VehicleInwardController extends Controller {
 
 			$total_labour_count = JobOrderRepairOrder::where('job_order_id', $r->id)->whereNull('removal_reason_id')->count();
 
-			//Check Custoemr Approval Need or not
-			$total_invoice_amount = $this->getApprovedLabourPartsAmount($job_order->id);
-
-			$send_approval_status = 0;
-			if ($total_invoice_amount) {
-				$send_approval_status = 1;
-			}
-
 			return response()->json([
 				'success' => true,
 				'job_order' => $result['job_order'],
@@ -4292,7 +4290,6 @@ class VehicleInwardController extends Controller {
 				'labour_total_amount' => $result['labour_amount'],
 				'parts_total_amount' => $result['part_amount'],
 				'labours' => $result['labours'],
-				'revised_estimate_amount' => $total_invoice_amount,
 				'customer_voices' => $result['customer_voices'],
 			]);
 
@@ -5536,6 +5533,8 @@ class VehicleInwardController extends Controller {
 				$tax_type = 1160; //Within State
 			}
 
+			$customer_approved_amount = $job_order->estimated_amount ? $job_order->estimated_amount : '0';
+
 			//Count Tax Type
 			$taxes = Tax::get();
 
@@ -5548,8 +5547,10 @@ class VehicleInwardController extends Controller {
 
 			$total_schedule_labour_tax = 0;
 			$total_schedule_labour_amount = 0;
+			$total_schedule_labour_without_tax_amount = 0;
 			$total_payable_labour_tax = 0;
 			$total_payable_labour_amount = 0;
+			$total_payable_labour_without_tax_amount = 0;
 
 			//Repair Orders
 			if ($job_order->jobOrderRepairOrders) {
@@ -5574,6 +5575,7 @@ class VehicleInwardController extends Controller {
 							} else {
 								$total_schedule_labour_amount += $labour->amount;
 							}
+							$total_schedule_labour_without_tax_amount += $labour->amount;
 						}
 						//PAYABLE
 						if ($labour->is_recommended_by_oem == 0 && $labour->is_free_service != 1) {
@@ -5594,15 +5596,18 @@ class VehicleInwardController extends Controller {
 							} else {
 								$total_payable_labour_amount += $labour->amount;
 							}
+							$total_payable_labour_without_tax_amount += $labour->amount;
 						}
 					}
 				}
 			}
 
 			$total_schedule_part_amount = 0;
+			$total_schedule_part_without_tax_amount = 0;
 			$total_schedule_part_tax = 0;
 			$total_payable_part_tax = 0;
 			$total_payable_part_amount = 0;
+			$total_payable_part_without_tax_amount = 0;
 
 			//Parts
 			if ($job_order->jobOrderParts) {
@@ -5627,6 +5632,7 @@ class VehicleInwardController extends Controller {
 							} else {
 								$total_schedule_part_amount += $parts->amount;
 							}
+							$total_schedule_part_without_tax_amount += $parts->amount;
 						}
 						if ($parts->is_oem_recommended == 0 && $parts->is_free_service != 1) {
 							if ($parts->part->taxCode) {
@@ -5646,6 +5652,7 @@ class VehicleInwardController extends Controller {
 							} else {
 								$total_payable_part_amount += $parts->amount;
 							}
+							$total_payable_part_without_tax_amount += $parts->amount;
 						}
 					}
 				}
@@ -5659,21 +5666,21 @@ class VehicleInwardController extends Controller {
 			$total_tax_amount = $schedule_tax_total + $payable_tax_total;
 
 			//OEM RECOMENTATION LABOUR AND PARTS AND SUB TOTAL
-			$job_order->oem_recomentation_labour_amount = $total_schedule_labour_amount;
-			$job_order->oem_recomentation_part_amount = $total_schedule_part_amount;
+			$job_order->oem_recomentation_labour_amount = $total_schedule_labour_without_tax_amount;
+			$job_order->oem_recomentation_part_amount = $total_schedule_part_without_tax_amount;
 			$job_order->oem_recomentation_tax_total = $schedule_tax_total;
 			$job_order->oem_recomentation_sub_total = $total_schedule_labour_amount + $total_schedule_part_amount;
 
 			//ADDITIONAL ROT & PARTS LABOUR AND PARTS AND SUB TOTAL
-			$job_order->additional_rot_parts_labour_amount = $total_payable_labour_amount;
-			$job_order->additional_rot_parts_part_amount = $total_payable_part_amount;
+			$job_order->additional_rot_parts_labour_amount = $total_payable_labour_without_tax_amount;
+			$job_order->additional_rot_parts_part_amount = $total_payable_part_without_tax_amount;
 			$job_order->additional_rot_parts_tax_total = $payable_tax_total;
 			$job_order->additional_rot_parts_sub_total = $total_payable_labour_amount + $total_payable_part_amount;
 
 			//TOTAL ESTIMATE
-			$job_order->total_estimate_labour_amount = $total_schedule_labour_amount + $total_payable_labour_amount;
+			$job_order->total_estimate_labour_amount = $total_schedule_labour_without_tax_amount + $total_payable_labour_without_tax_amount;
 
-			$job_order->total_estimate_parts_amount = $total_schedule_part_amount + $total_payable_part_amount;
+			$job_order->total_estimate_parts_amount = $total_schedule_part_without_tax_amount + $total_payable_part_without_tax_amount;
 
 			$job_order->total_tax_amount = $total_tax_amount;
 			$job_order->total_estimate_amount = round($total_amount);
@@ -5701,9 +5708,16 @@ class VehicleInwardController extends Controller {
 			$job_order->est_date = date("d-m-Y", strtotime($estimation_date));
 			$job_order->est_time = date("h:i a", strtotime($estimation_date));
 
+			$send_approval_status = 0;
+			if (round($total_amount) > $customer_approved_amount) {
+				$send_approval_status = 1;
+			}
+
 			return response()->json([
 				'success' => true,
 				'job_order' => $job_order,
+				'revised_estimate_amount' => round($total_amount),
+				'send_approval_status' => $send_approval_status,
 			]);
 
 		} catch (\Exception $e) {

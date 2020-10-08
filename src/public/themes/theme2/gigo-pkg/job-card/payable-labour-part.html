@@ -234,13 +234,6 @@
                                             </div>
                                         </div><!-- Table Transparent Wrap -->
                                         <div class="mb-20"></div><!-- Spacing -->
-                                        <hr>
-                                        <div class="col-md-12" ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-edit')">
-                                            <div class="text-center pt-40">
-                                                <a ng-if="send_approval_status == 1" class="btn btn-red job_completed" ng-click="sendConfirm(1)">Approve on behalf of Customer</a>
-                                                <a ng-if="send_approval_status == 1" class="btn btn-red job_completed" ng-click="sendConfirm(2)">Send to Customer for Approval</a>
-                                            </div>
-                                        </div>
                                     </div><!-- Column -->
                                     <div class="tab-pane-footer">
                                         <div class="row">
@@ -260,24 +253,7 @@
     </div><!-- Page Main Content -->
 </div><!-- Content Wrap -->
 <!-- Modal Delete -->
-<!-- Modal -->
-<div class="modal fade alert-modal failure" id="confirmation_modal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">Confirmation?</h4>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure?Do you want to send this estimate for customer Approval? </p>
-                <input type="hidden" name="job_order_id" value="{{job_order.id}}">
-                <input type="hidden" class="confirmation_type" name="confirmation_type">
-                <button class="btn btn-rose" data-dismiss="modal" aria-label="Close">No</button>
-                <button class="btn btn-success send_confirm" ng-click="sendOTPLinkConfirm()">Yes</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Modal -->
+
 <div class="modal filter fade" id="delete_labour_parts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm finance-view-modal" role="document">
         <form id="labour_parts_remove">
@@ -332,29 +308,6 @@
         </form>
     </div><!-- Modal Dialog -->
 </div><!-- Modal Content -->
-<div class="modal modal-otp alert-modal fade" id="otp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form id="approve_behalf_customer_confirm">
-                <div class="modal-header">
-                    <button type="button" class="close ripple" data-dismiss="modal" aria-label="Close"><i class="icon ion-md-close"></i></button>
-                </div><!-- Modal Header -->
-                <div class="modal-body">
-                    <h6 class="title">ENTER OTP</h6>
-                    <p class="info">Received in Customer Mobile +91<span class="customer_mobile_no"></span></p>
-                    <div class="form-group">
-                        <input type="text" autofocus name="otp_no" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');" class="form-control text-center" placeholder="Enter OTP" autocomplete="off" />
-                        <input type="hidden" name="job_order_id" id="job_order_id" value="{{job_order.id}}" />
-                        <input type="hidden" name="verify_otp" id="id" value="1" />
-                        <input type="hidden" name="revised_estimate_amount" value="{{revised_estimate_amount}}" />
-                    </div><!-- Feild -->
-                    <button type="submit" class="btn btn-secondary-dark btn-square btn-block submit_confirm" ng-click="saveOTP()">SUBMIT</button>
-                    <button type="button" class="btn-link link" ng-click="ResendOtp()">RESEND OTP</button>
-                </div><!-- Modal Body -->
-            </form>
-        </div><!-- Modal Content -->
-    </div><!-- Modal Dialog -->
-</div>
 <div class="modal fade filter" id="labour_form_modal" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <form id="labour_form" autocomplete="off">

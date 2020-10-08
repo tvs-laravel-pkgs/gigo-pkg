@@ -18,6 +18,11 @@
                         Additional Labour & Parts
                     </a>
                 </li>
+                <li ng-class="{active:active_tab == 'estimate'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-estimate-edit')">
+                    <a class="filter" href=".#!/job-card/estimate/{{job_card_id}}">
+                        Estimate
+                    </a>
+                </li>
                 <li ng-class="{active:active_tab == 'bay'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-bay')">
                     <a class="filter" href=".#!/job-card/bay-view/{{job_card_id}}">
                         Bay
@@ -61,11 +66,7 @@
                         Estimation Status
                     </a>
                 </li>
-                <li ng-class="{active:active_tab == 'estimate'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-estimation-status-view')">
-                    <a class="filter" href=".#!/job-card/estimate/{{job_card_id}}">
-                        Estimate
-                    </a>
-                </li> -->
+                -->
                 <li ng-class="{active:active_tab == 'vehicle-inspection'}" ng-if="$ctrl.hasPermission('inward-job-card-tab-vehicle-inspection-report-view')">
                     <a class="filter" href=".#!/job-card/vehicle-inspection/{{job_card_id}}">
                         Vehicle Inspection Report

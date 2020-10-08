@@ -3411,7 +3411,6 @@ app.component('inwardVehiclePayableLabourPartForm', {
                     $scope.extras = res.extras;
                     $scope.labours = res.labours;
                     $scope.customer_voices = res.customer_voices;
-                    $scope.revised_estimate_amount = res.revised_estimate_amount;
                     self.repair_order_ids = [];
                     $scope.$apply();
                 })

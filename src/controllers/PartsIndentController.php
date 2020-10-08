@@ -60,7 +60,10 @@ class PartsIndentController extends Controller {
 			'job_orders.status_id as job_order_status',
 			'job_cards.status_id as job_card_status',
 			// 'configs.name as status',
-		])->leftJoin('users as service_adv', 'service_adv.id', 'job_orders.service_advisor_id')
+		])
+
+			->join('gate_logs', 'gate_logs.job_order_id', 'job_orders.id')
+			->leftJoin('users as service_adv', 'service_adv.id', 'job_orders.service_advisor_id')
 			->leftJoin('job_cards', 'job_orders.id', 'job_cards.job_order_id')
 			->leftJoin('job_order_parts', 'job_order_parts.job_order_id', 'job_orders.id')
 			->leftJoin('job_order_issued_parts', 'job_order_issued_parts.job_order_part_id', 'job_order_parts.id')
