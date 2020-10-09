@@ -1774,3 +1774,18 @@ var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/the
 </script>
 <script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/survey-type/controller.js')}}'></script>
 
+<script type='text/javascript'>
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
+	    //OTP
+	    when('/otp/list', {
+	        template: '<otp-list></otp-list>',
+	        title: 'OTP',
+	    });
+	}]);
+
+	//Otp
+    var otp_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/otp/list.html')}}';
+</script>
+<script type='text/javascript' src='{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/otp/controller.js')}}'></script>
+

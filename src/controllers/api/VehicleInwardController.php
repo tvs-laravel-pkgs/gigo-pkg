@@ -5932,6 +5932,7 @@ class VehicleInwardController extends Controller {
 			$otp->created_by_id = Auth::user()->id;
 			$otp->created_at = $current_time;
 			$otp->expired_at = $expired_time;
+			$otp->outlet_id = Auth::user()->employee->outlet_id;
 			$otp->save();
 
 			$message = 'OTP is ' . $otp_no . ' for Job Order Estimate. Please show this SMS to Our Service Advisor to verify your Job Order Estimate';

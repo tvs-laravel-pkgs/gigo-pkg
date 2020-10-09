@@ -1229,3 +1229,12 @@ app.config(['$routeProvider', function($routeProvider) {
         title: 'Edit Survey Type',
     });
 }]);
+
+app.config(['$routeProvider', function($routeProvider) {
+    $routeProvider.
+    //OTP
+    when('/otp/list', {
+        template: '<otp-list></otp-list>',
+        title: 'OTP',
+    });
+}]);

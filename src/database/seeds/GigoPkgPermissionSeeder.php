@@ -2011,6 +2011,26 @@ class GigoPkgPermissionSeeder extends Seeder {
 				'name' => 'delete-sub-aggregate',
 				'display_name' => 'Delete',
 			],
+
+			//OTP
+			[
+				'display_order' => 100,
+				'parent' => 'gigo-pages',
+				'name' => 'otp',
+				'display_name' => 'OTP',
+			],
+			[
+				'display_order' => 1,
+				'parent' => 'otp',
+				'name' => 'otp-all-outlet',
+				'display_name' => 'View All Outlet',
+			],
+			[
+				'display_order' => 2,
+				'parent' => 'otp',
+				'name' => 'otp-own-outlet',
+				'display_name' => 'View Own Outlet',
+			],
 		];
 		Permission::createFromArrays($permissions);
 	}

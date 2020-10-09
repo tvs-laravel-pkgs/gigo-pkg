@@ -378,15 +378,19 @@
 </script>
 
 <script type='text/javascript'>
+    //Survey Type
+    var otp_list_template_url = '{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/otp/list.html')}}';
+</script>
+
+<script type='text/javascript'>
 
 	var view_img = './public/theme/img/table/cndn/view.svg';
 	var gate_out_img = './public/theme/img/table/cndn/gateout.svg';
 
-
 	//Vehicle Gate Passes
-var vehicle_gate_pass_table_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/list.html')}}";
-var vehicle_gate_pass_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/card-list.html')}}";
-var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/view.html')}}";
+    var vehicle_gate_pass_table_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/list.html')}}";
+    var vehicle_gate_pass_card_list_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/card-list.html')}}";
+    var vehicle_gate_pass_view_template_url = "{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/view.html')}}";
 </script>
 <!-- <script type='text/javascript' src="{{asset($gigo_pkg_prefix.'/public/themes/'.$theme.'/gigo-pkg/vehicle-gate-pass/controller.js')}}"></script> -->
 

@@ -349,4 +349,8 @@ Route::group(['namespace' => 'Abs\GigoPkg', 'middleware' => ['web', 'auth'], 'pr
 	Route::get('/repair-order/get-filter', 'RepairOrderController@getRepairOrderFilter')->name('getRepairOrderFilter');
 	Route::get('/repair-order/delete', 'RepairOrderController@deleteRepairOrder')->name('deleteRepairOrder');
 
+	//OTP
+	Route::get('/otp/get-list', 'OTPController@getOTPList')->name('getOTPList');
+	Route::get('/otp/get-filter-data', 'OTPController@getOTPFilter')->name('getOTPFilter');
+
 });

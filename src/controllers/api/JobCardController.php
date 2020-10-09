@@ -3504,6 +3504,7 @@ class JobCardController extends Controller {
 				$otp->created_by_id = Auth::user()->id;
 				$otp->created_at = $current_time;
 				$otp->expired_at = $expired_time;
+				$otp->outlet_id = Auth::user()->employee->outlet_id;
 				$otp->save();
 
 				DB::commit();
