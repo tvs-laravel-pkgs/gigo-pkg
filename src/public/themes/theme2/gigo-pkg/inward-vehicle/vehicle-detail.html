@@ -242,12 +242,14 @@
                                         <div class="tab-pane-footer" ng-show="show_vehicle_form">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="submit" class="btn btn-red save" ng-click="onSubmit(1)">
+                                                    <!-- <button type="submit" class="btn btn-red save" ng-click="onSubmit(1)">
                                                         Save & Close
-                                                    </button>
-                                                    <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt next" ng-click="onSubmit(0)">
+                                                    </button> -->
+                                                    <input type="submit" name="save_close" ng-click="onSubmit(1)" class="btn btn-red submit" value=" Save & Close">
+                                                    <input type="submit" name="save_next" ng-click="onSubmit(0)" class="btn btn-secondary-dark btn-min-wdth btn-nxt" value=" Next">
+                                                    <!-- <button type="submit" class="btn btn-secondary-dark btn-min-wdth btn-nxt next" ng-click="onSubmit(0)">
                                                         Next
-                                                    </button>
+                                                    </button> -->
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->

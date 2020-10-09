@@ -378,7 +378,6 @@
                                                                     <div class="form-group">
                                                                         <label>
                                                                             License Expiry Date
-                                                                            
                                                                         </label>
                                                                         <div class="input-group date" data-date-start-view="2" data-provide="datepicker">
                                                                             <input type="text" class="form-control" placeholder="Select Licence Expiry Date" ng-model="job_order.driver_license_expiry_date" name="driver_license_expiry_date" ng-change="checkLicenseExpiryDate(job_order.driver_license_expiry_date)" />
@@ -393,7 +392,6 @@
                                                                     <div class="form-group">
                                                                         <label>
                                                                             Insurance Expiry Date
-                                                                            
                                                                         </label>
                                                                         <div class="input-group date" data-date-start-view="2" data-provide="datepicker">
                                                                             <input type="text" class="form-control" placeholder="Select Insurance Expiry Date" ng-model="job_order.insurance_expiry_date" ng-change="checkInsuranceExpiryDate(job_order.insurance_expiry_date)" name="insurance_expiry_date" />
@@ -413,15 +411,17 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button ng-click="saveOrderDetailForm(1)" class="btn btn-red submit">
+                                                    <!--  <button ng-click="saveOrderDetailForm(1)" class="btn btn-red submit">
                                                         Save & Close
-                                                    </button>
+                                                     </button>-->
+                                                    <input type="submit" name="save_close" ng-click="saveOrderDetailForm(1)" class="btn btn-red submit" value=" Save & Close">
                                                     <a href=".#!/inward-vehicle/vehicle/photos/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
                                                         Previous
                                                     </a>
-                                                    <button ng-click="saveOrderDetailForm(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                    <input type="submit" name="save_next" ng-click="saveOrderDetailForm(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt" value=" Next">
+                                                    <!--  <button ng-click="saveOrderDetailForm(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Next
-                                                    </button>
+                                                    </button> -->
                                                 </div><!-- Column -->
                                             </div><!-- Row -->
                                         </div><!-- Tab Footer -->

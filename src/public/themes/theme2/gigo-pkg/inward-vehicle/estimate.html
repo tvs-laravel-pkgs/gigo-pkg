@@ -309,13 +309,15 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="submit" class="btn btn-red submit" ng-click="saveEstimate(1)">
+                                                    <!-- <button type="submit" class="btn btn-red submit" ng-click="saveEstimate(1)">
                                                         Save & Close
-                                                    </button>
+                                                    </button> -->
+                                                    <input type="submit" name="save_close" ng-click="saveEstimate(1)" class="btn btn-red submit" value=" Save & Close">
                                                     <a class="btn btn-secondary-dark btn-prev" href=".#!/inward-vehicle/payable-labour-part-detail/form/{{job_order_id}}">Previous</a>
-                                                    <button ng-click="saveEstimate(2)" class="btn btn-secondary-dark btn-min-wdth customer_denied btn-nxt">
+                                                    <input type="submit" name="save_next" ng-click="saveEstimate(2)" class="btn btn-secondary-dark btn-min-wdth customer_denied btn-nxt" value=" Next">
+                                                    <!-- <button ng-click="saveEstimate(2)" class="btn btn-secondary-dark btn-min-wdth customer_denied btn-nxt">
                                                         Next
-                                                    </button>
+                                                    </button> -->
                                                     <button class="btn btn-bordered btn-grey btn-min-wdth approval_behalf is_customer_agreed" ng-click="saveEstimate(3)">Approve on behalf of Customer</button>
                                                     <button class="btn btn-secondary-dark btn-min-wdth send_to_customer_approval is_customer_agreed" ng-click="saveEstimate(4)">Send to Customer for Approval</button>
                                                 </div>

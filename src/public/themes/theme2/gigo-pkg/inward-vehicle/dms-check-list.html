@@ -377,16 +377,18 @@
                                         <div class="tab-pane-footer">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="submit" ng-click="saveDms(1)" class="btn btn-red submit">
+                                                    <!-- <button type="submit" ng-click="saveDms(1)" class="btn btn-red submit">
                                                         Save & Close
-                                                    </button>
+                                                     </button>-->
+                                                    <input type="submit" name="save_close" ng-click="saveDms(1)" class="btn btn-red submit" value=" Save & Close">
                                                     <!-- <a href=".#!/inward-vehicle/inspection-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev"> -->
                                                     <a href=".#!/inward-vehicle/road-test-detail/form/{{job_order_id}}" class="btn btn-secondary-dark btn-prev">
                                                         Previous
                                                     </a>
-                                                    <button ng-click="saveDms(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                    <input type="submit" name="save_next" ng-click="saveDms(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt" value=" Next">
+                                                    <!-- <button ng-click="saveDms(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Next
-                                                    </button>
+                                                    </button> -->
                                                     <!--  <a class="btn btn-secondary-dark btn-prev">Previous</a>
                                                 <a class="btn btn-secondary-dark btn-min-wdth btn-nxt">Next</a> -->
                                                 </div>
