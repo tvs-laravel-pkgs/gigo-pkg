@@ -12,8 +12,7 @@ app.component('vehicleInspectionItemList', {
             return false;
         }
         self.add_permission = self.hasPermission('add-vehicle-inspection-item');
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#vehicle_inspection_items_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
@@ -40,8 +39,6 @@ app.component('vehicleInspectionItemList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getVehicleInspectionItemList'],
                 type: "GET",

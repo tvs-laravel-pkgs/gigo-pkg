@@ -12,8 +12,7 @@ app.component('estimationTypeList', {
             return false;
         }
         self.add_permission = self.hasPermission('estimation-types');
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#estimation_types_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
@@ -40,8 +39,6 @@ app.component('estimationTypeList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getEstimationTypeList'],
                 type: "GET",

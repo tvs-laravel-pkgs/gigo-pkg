@@ -6,15 +6,13 @@ app.component('campaignList', {
         var self = this;
         $('li').removeClass('active');
         $('.master_link').addClass('active').trigger('click');
-       // self.hasPermission = HelperService.hasPermission;
+        // self.hasPermission = HelperService.hasPermission;
         /*if (!self.hasPermission('campaigns')) {
             window.location = "#!/page-permission-denied";
             return false;
         }*/
         //self.add_permission = self.hasPermission('add-campaign');
-        var table_scroll;
-
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#campaigns_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
@@ -41,8 +39,6 @@ app.component('campaignList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getCampaignList'],
                 type: "GET",
@@ -181,31 +177,28 @@ app.component('campaignForm', {
                 } else {
                     self.switch_value = 'Active';
                 }
-                if(self.campaign.campaign_type == 2)
-                {
+                if (self.campaign.campaign_type == 2) {
                     $("#vehicle_model").hide();
                     $("#manufacturedate").hide();
                     $("#ch_no").show();
                     $("#vehicle_model_id").removeClass('required');
                     $("#manufacturedt").removeClass('required');
                     $("#with_chasis").show();
-                    $("#without_chasis").hide();  
+                    $("#without_chasis").hide();
                 }
-                if(self.campaign.campaign_type == 1)
-                {
+                if (self.campaign.campaign_type == 1) {
                     $("#vehicle_model").hide();
                     $("#manufacturedate").show();
-                    $("#ch_no").hide(); 
+                    $("#ch_no").hide();
                     $("#manufacturedt").addClass('required');
                     $("#vehicle_model_id").removeClass('required');
                     $("#with_chasis").hide();
                     $("#without_chasis").show();
                 }
-                if(self.campaign.campaign_type == 0)
-                {
+                if (self.campaign.campaign_type == 0) {
                     $("#vehicle_model").show();
                     $("#manufacturedate").hide();
-                    $("#ch_no").hide(); 
+                    $("#ch_no").hide();
                     $("#vehicle_model_id").addClass('required');
                     $("#manufacturedt").removeClass('required');
                     $("#with_chasis").hide();
@@ -222,44 +215,40 @@ app.component('campaignForm', {
         $("#ch_no").hide();
         $("#vehicle_model_id").addClass('required');
 
-       self.CampignTypeSelected = function(id)
-       {
-        if(id == 0)
-        {
-            $("#vehicle_model").show();
-            $("#manufacturedate").hide();
-            $("#ch_no").hide();
-            $("#vehicle_model_id").addClass('required');
-            $("#manufacturedt").removeClass('required');
-            $("#with_chasis").hide();
-            $("#without_chasis").show();
-        }
-        if(id == 1)
-        {
-            $("#vehicle_model").hide();
-            $("#manufacturedate").show();
-            $("#ch_no").hide();
-            $("#manufacturedt").addClass('required');
-            $("#vehicle_model_id").removeClass('required');
-            $("#with_chasis").hide();
-            $("#without_chasis").show();
-        }
-        if(id == 2)
-        {
-            $("#vehicle_model").hide();
-            $("#manufacturedate").hide();
-            $("#ch_no").show();
-            $("#vehicle_model_id").removeClass('required');
-            $("#manufacturedt").removeClass('required');
-            $("#with_chasis").show();
-            $("#without_chasis").hide();
+        self.CampignTypeSelected = function(id) {
+            if (id == 0) {
+                $("#vehicle_model").show();
+                $("#manufacturedate").hide();
+                $("#ch_no").hide();
+                $("#vehicle_model_id").addClass('required');
+                $("#manufacturedt").removeClass('required');
+                $("#with_chasis").hide();
+                $("#without_chasis").show();
+            }
+            if (id == 1) {
+                $("#vehicle_model").hide();
+                $("#manufacturedate").show();
+                $("#ch_no").hide();
+                $("#manufacturedt").addClass('required');
+                $("#vehicle_model_id").removeClass('required');
+                $("#with_chasis").hide();
+                $("#without_chasis").show();
+            }
+            if (id == 2) {
+                $("#vehicle_model").hide();
+                $("#manufacturedate").hide();
+                $("#ch_no").show();
+                $("#vehicle_model_id").removeClass('required');
+                $("#manufacturedt").removeClass('required');
+                $("#with_chasis").show();
+                $("#without_chasis").hide();
+            }
+
         }
 
-       }
-
-       self.addNewChassis = function() {
+        self.addNewChassis = function() {
             self.chassis_number.push({
-                campaign_id:'',
+                campaign_id: '',
                 chassis_number: '',
             });
         }
@@ -267,7 +256,7 @@ app.component('campaignForm', {
         self.remove_chassis_ids = [];
         self.removeChassisNumber = function(index) {
             self.chassis_number.splice(index, 1);
-            var id = $("#id"+index).val();
+            var id = $("#id" + index).val();
             if (id) {
                 self.remove_chassis_ids.push(id);
                 $('#remove_chassis_ids').val(JSON.stringify(self.remove_chassis_ids));
@@ -410,8 +399,8 @@ app.component('campaignForm', {
                 /*'manufacture_date': {
                     required: true,
                 },*/
-                'chassis_number':{
-                    required:true,
+                'chassis_number': {
+                    required: true,
                 },
             },
             messages: {

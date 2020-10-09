@@ -12,8 +12,7 @@ app.component('vehicleSecoundaryApplicationList', {
             return false;
         }
         self.add_permission = self.hasPermission('add-vehicle-secoundary-application');
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#vehicle_sec_app_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
@@ -40,8 +39,6 @@ app.component('vehicleSecoundaryApplicationList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getVehicleSecoundaryAppList'],
                 type: "GET",
@@ -56,8 +53,8 @@ app.component('vehicleSecoundaryApplicationList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'code', name: 'vehicle_secondary_applications.code',searchable: true },
-                { data: 'name', name: 'vehicle_secondary_applications.name' ,searchable: true },
+                { data: 'code', name: 'vehicle_secondary_applications.code', searchable: true },
+                { data: 'name', name: 'vehicle_secondary_applications.name', searchable: true },
                 { data: 'status', name: '' },
 
             ],

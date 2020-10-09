@@ -12,8 +12,7 @@ app.component('repairOrderList', {
             return false;
         }
         self.add_permission = self.hasPermission('repair-orders');
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#repair_order_table').DataTable({
             "dom": cndn_dom_structure,
             "language": {
@@ -41,8 +40,6 @@ app.component('repairOrderList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getRepairOrderList'],
                 type: "GET",

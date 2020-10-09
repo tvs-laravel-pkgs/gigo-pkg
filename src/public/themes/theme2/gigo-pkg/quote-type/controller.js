@@ -12,8 +12,7 @@ app.component('quoteTypeList', {
             return false;
         }
         self.add_permission = self.hasPermission('add-quote-type');
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#quote_types_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
@@ -40,8 +39,6 @@ app.component('quoteTypeList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getQuoteTypeList'],
                 type: "GET",

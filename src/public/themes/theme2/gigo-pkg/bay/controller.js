@@ -12,8 +12,7 @@ app.component('bayList', {
             return false;
         }
         self.add_permission = self.hasPermission('add-bay');
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#bays_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
@@ -41,8 +40,6 @@ app.component('bayList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: laravel_routes['getBayList'],
                 type: "GET",

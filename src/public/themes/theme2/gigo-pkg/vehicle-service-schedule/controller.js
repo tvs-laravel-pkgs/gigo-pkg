@@ -81,8 +81,7 @@ app.component('vehicleServiceScheduleList', {
         $scope.fetchData();*/
 
         self.add_permission = self.hasPermission('add-vehicle-service-schedule');
-        var table_scroll;
-        table_scroll = $('.page-main-content.list-page-content').height() - 37;
+        $('.page-main-content.list-page-content').css("overflow-y", "auto");
         var dataTable = $('#vehicle_service_schedule_list').DataTable({
             "dom": cndn_dom_structure,
             "language": {
@@ -109,8 +108,6 @@ app.component('vehicleServiceScheduleList', {
             serverSide: true,
             paging: true,
             stateSave: true,
-            scrollY: table_scroll + "px",
-            scrollCollapse: true,
             ajax: {
                 url: base_url + '/api/vehicle-service-schedule/list',
                 // url: laravel_routes['getVehicleServiceScheduleList'],
