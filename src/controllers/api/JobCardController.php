@@ -2508,9 +2508,16 @@ class JobCardController extends Controller {
 			]);
 		}
 
+		$extras = [
+			'job_order_type_list' => ServiceOrderType::getDropDownList(),
+			'service_type_list' => ServiceType::getDropDownList(),
+			'quote_type_list' => QuoteType::getDropDownList(),
+		];
+
 		return response()->json([
 			'success' => true,
 			'job_card' => $job_card,
+			'extras' => $extras,
 		]);
 
 	}

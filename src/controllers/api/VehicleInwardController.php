@@ -2507,7 +2507,7 @@ class VehicleInwardController extends Controller {
 		try {
 
 			//JOB ORDER SAVE
-			$job_order = JobOrder::find($request->job_order_id);
+			$job_order = JobOrder::with(['jobCard'])->find($request->job_order_id);
 
 			if (!$job_order) {
 				return response()->json([
@@ -2516,6 +2516,43 @@ class VehicleInwardController extends Controller {
 					'errors' => [
 						'Job Order Not Found!',
 					],
+				]);
+			}
+
+			if ($job_order->jobCard) {
+
+				$validator = Validator::make($request->all(), [
+					'type_id' => [
+						'required',
+						'integer',
+						'exists:service_order_types,id',
+					],
+					'quote_type_id' => [
+						'required',
+						'integer',
+						'exists:quote_types,id',
+					],
+				]);
+
+				if ($validator->fails()) {
+					return response()->json([
+						'success' => false,
+						'error' => 'Validation Error',
+						'errors' => $validator->errors()->all(),
+					]);
+				}
+
+				DB::beginTransaction();
+
+				$job_order->quote_type_id = $request->quote_type_id;
+				$job_order->type_id = $request->type_id;
+				$job_order->save();
+
+				DB::commit();
+
+				return response()->json([
+					'success' => true,
+					'message' => 'Order Detail saved successfully!!',
 				]);
 			}
 

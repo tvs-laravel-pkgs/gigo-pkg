@@ -1736,7 +1736,7 @@ app.component('jobCardPdf', {
 
                     $scope.gate_pass_url = base_url + '/gigo-pkg/pdf/gatepass/' + $scope.job_card.id;
                     $scope.gate_pass_pdf = res.job_card.gate_pass_pdf;
-                    
+
                     $scope.vehicle_inspection_pdf = res.job_card.inspection_pdf;
 
                     $scope.$apply();
@@ -5127,6 +5127,7 @@ app.component('jobCardOrderDetailView', {
                     }
                     $scope.job_card_id = $routeParams.job_card_id;
                     $scope.job_card = res.job_card;
+                    $scope.extras = res.extras;
                     console.log(res);
                     if ($scope.job_card.job_order.vehicle.last_job_order == null || $scope.job_card.job_order.vehicle.last_job_order.job_card == null) {
                         console.log(' == ');
@@ -5138,6 +5139,80 @@ app.component('jobCardOrderDetailView', {
                 });
         }
         $scope.fetchData();
+
+        //Save Form Data 
+        $scope.saveOrderDetailForm = function(id) {
+            var form_id = '#order_detail_form';
+            var v = jQuery(form_id).validate({
+                ignore: '',
+                rules: {
+                    'type_id': {
+                        required: true,
+                    },
+                    'quote_type_id': {
+                        required: true,
+                    },
+                },
+                
+                invalidHandler: function(event, validator) {
+                    custom_noty('error', 'You have errors, Please check all tabs');
+                },
+                submitHandler: function(form) {
+                    let formData = new FormData($(form_id)[0]);
+                    $rootScope.loading = true;
+                    $scope.button_action(id, 1);
+                    $.ajax({
+                            url: base_url + '/api/vehicle-inward/order-detail/save',
+                            method: "POST",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                        })
+                        .done(function(res) {
+                            $scope.button_action(id, 2);
+                            if (!res.success) {
+                                $rootScope.loading = false;
+                                $('.submit').button('reset');
+                                showErrorNoty(res);
+                                return;
+                            }
+                            if (id == 1) {
+                                custom_noty('success', res.message);
+                                $location.path('/job-card/table-list');
+                                $scope.$apply();
+                            } else {
+                                custom_noty('success', res.message);
+                                $location.path('/job-card/customer-detail/' + $scope.job_card_id);
+                                $scope.$apply();
+                            }
+                        })
+                        .fail(function(xhr) {
+                            $rootScope.loading = false;
+                            $scope.button_action(id, 2);
+                            custom_noty('error', 'Something went wrong at server');
+                        });
+                }
+            });
+        }
+
+        $scope.button_action = function(id, type) {
+            if (type == 1) {
+                if (id == 1) {
+                    $('.submit').button('loading');
+                    $('.btn-next').attr("disabled", "disabled");
+                } else {
+                    $('.btn-next').button('loading');
+                    $('.submit').attr("disabled", "disabled");
+                }
+                $('.btn-prev').bind('click', false);
+            } else {
+                $('.submit').button('reset');
+                $('.btn-next').button('reset');
+                $('.btn-prev').unbind('click', false);
+                $(".btn-next").removeAttr("disabled");
+                $(".submit").removeAttr("disabled");
+            }
+        }
 
         //Scrollable Tabs
         setTimeout(function() {
