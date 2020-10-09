@@ -791,17 +791,17 @@ app.component('inwardVehicleVehicleDetail', {
             if (type == 1) {
                 if (id == 1) {
                     $('.save').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.save').attr("disabled", "disabled");
                 }
                 $('.btn-prev').bind('click', false);
             } else {
                 $('.save').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".save").removeAttr("disabled");
             }
         }
@@ -1113,17 +1113,17 @@ app.component('inwardVehicleCustomerDetail', {
             if (type == 1) {
                 if (id == 1) {
                     $('.save').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.save').attr("disabled", "disabled");
                 }
                 $('.btn-prev').bind('click', false);
             } else {
                 $('.save').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".save").removeAttr("disabled");
             }
         }
@@ -1301,17 +1301,17 @@ app.component('inwardVehiclePhotos', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                 }
                 $('.btn-prev').bind('click', false);
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }
@@ -1580,17 +1580,17 @@ app.component('inwardVehicleOrderDetailForm', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                 }
                 $('.btn-prev').bind('click', false);
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }
@@ -1740,17 +1740,17 @@ app.component('inwardVehicleInventoryDetailForm', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                 }
                 $('.btn-prev').bind('click', false);
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }
@@ -1929,17 +1929,17 @@ app.component('inwardVehicleVocDetailForm', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                 }
                 $('.btn-prev').bind('click', false);
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }
@@ -2101,18 +2101,18 @@ app.component('inwardVehicleRoadTestDetailForm', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 }
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }
@@ -2248,18 +2248,18 @@ app.component('inwardVehicleExpertDiagnosisDetailForm', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 }
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }
@@ -2380,18 +2380,18 @@ app.component('inwardVehicleInspectionDetailForm', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 }
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }
@@ -2419,7 +2419,7 @@ app.component('inwardVehicleDmsCheckListForm', {
             window.location = "#!/inward-vehicle/table-list";
         }
 
-        $('.btn-nxt').attr("disabled", "disabled");
+        $('.btn-next').attr("disabled", "disabled");
         $(".submit").attr("disabled", "disabled");
 
         self.angular_routes = angular_routes;
@@ -2502,11 +2502,11 @@ app.component('inwardVehicleDmsCheckListForm', {
         self.checkbox = function() {
             if ($("#check_verify").prop('checked')) {
                 $('#check_val').val(1);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             } else {
                 $('#check_val').val(0);
-                $('.btn-nxt').attr("disabled", "disabled");
+                $('.btn-next').attr("disabled", "disabled");
                 $(".submit").attr("disabled", "disabled");
             }
         }
@@ -2655,18 +2655,18 @@ app.component('inwardVehicleDmsCheckListForm', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 }
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }
@@ -2975,18 +2975,18 @@ app.component('inwardVehicleScheduledMaintenanceForm', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 }
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }
@@ -3734,18 +3734,18 @@ app.component('inwardVehiclePayableLabourPartForm', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 }
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }
@@ -4366,10 +4366,10 @@ app.component('inwardVehicleEstimateForm', {
 
                     if ($scope.job_order && ($scope.job_order.is_customer_approved == null || $scope.job_order.is_customer_approved == 0) && $scope.job_order.is_customer_agreed == 1) {
                         $('.is_customer_agreed').show();
-                        $('.btn-nxt').hide();
+                        $('.btn-next').hide();
                     } else {
                         $('.is_customer_agreed').hide();
-                        $('.btn-nxt').show();
+                        $('.btn-next').show();
                     }
 
                     $scope.estimated_amount = $scope.job_order.estimated_amount;
@@ -4393,11 +4393,11 @@ app.component('inwardVehicleEstimateForm', {
             if (id == 1) {
                 $('.is_customer_agreed').show();
                 $('#is_customer_agreed').val(1);
-                $('.btn-nxt').hide();
+                $('.btn-next').hide();
             } else {
                 $('.is_customer_agreed').hide();
                 $('#is_customer_agreed').val(0);
-                $('.btn-nxt').show();
+                $('.btn-next').show();
             }
         };
 
@@ -4636,18 +4636,18 @@ app.component('inwardVehicleEstimateForm', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                     $('.btn-prev').bind('click', false);
                 }
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }
@@ -4796,17 +4796,17 @@ app.component('inwardVehicleEstimationStatusDetailForm', {
             if (type == 1) {
                 if (id == 1) {
                     $('.submit').button('loading');
-                    $('.btn-nxt').attr("disabled", "disabled");
+                    $('.btn-next').attr("disabled", "disabled");
                 } else {
-                    $('.btn-nxt').button('loading');
+                    $('.btn-next').button('loading');
                     $('.submit').attr("disabled", "disabled");
                 }
                 $('.btn-prev').bind('click', false);
             } else {
                 $('.submit').button('reset');
-                $('.btn-nxt').button('reset');
+                $('.btn-next').button('reset');
                 $('.btn-prev').unbind('click', false);
-                $(".btn-nxt").removeAttr("disabled");
+                $(".btn-next").removeAttr("disabled");
                 $(".submit").removeAttr("disabled");
             }
         }

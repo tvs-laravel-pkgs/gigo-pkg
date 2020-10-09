@@ -120,15 +120,17 @@
                                         <div class="tab-pane-footer" ng-if="job_card.status_id == 8221 || job_card.status_id == 8222 || job_card.status_id == 8223">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <button type="submit" ng-click="saveExportDiagonis(1)" class="btn btn-red submit">
+                                                    <!-- <button type="submit" ng-click="saveExportDiagonis(1)" class="btn btn-red submit">
                                                         Save & Close
-                                                    </button>
+                                                    </button> -->
+                                                    <input type="submit" name="save_close" ng-click="saveExportDiagonis(1)" class="btn btn-red submit" value=" Save & Close">
                                                     <a href=".#!/job-card/vehicle-inspection/{{job_card_id}}" class="btn btn-secondary-dark btn-prev">
                                                         Previous
                                                     </a>
-                                                    <button ng-click="saveExportDiagonis(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
+                                                    <input type="submit" name="save_next" ng-click="saveExportDiagonis(2)" class="btn btn-secondary-dark btn-min-wdth" value=" Next">
+                                                    <!-- <button ng-click="saveExportDiagonis(2)" class="btn btn-secondary-dark btn-min-wdth btn-nxt">
                                                         Next
-                                                    </button>
+                                                    </button> -->
                                                 </div>
                                             </div>
                                         </div><!-- Tab Footer -->
@@ -188,4 +190,4 @@
             </div><!-- Tab Form Wrap -->
         </div><!-- Page Form -->
     </div><!-- Page Main Content -->
-</div><!-- Content Wrap -->
+</div><!-- Content Wrap
