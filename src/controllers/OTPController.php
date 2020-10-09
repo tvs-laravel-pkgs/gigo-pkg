@@ -7,6 +7,7 @@ use App\GatePass;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
 use Auth;
+use Carbon\Carbon;
 use Entrust;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
